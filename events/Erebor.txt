@@ -1,0 +1,94 @@
+﻿###########################
+# Erebor Events
+###########################
+
+add_namespace = erebor
+
+# Demand Dale
+country_event = {
+	id = erebor.1
+	title = erebor.1.t
+	desc = erebor.1.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = erebor.1.a
+		ai_chance = {
+			base = 20
+			modifier = {
+				add = 10
+				ECU = { has_army_size = { size > 40 } }
+			}
+		}
+ 		ECU = { annex_country = { target = DOM } }
+	}
+	option = { # Refuse
+		name = erebor.1.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				any_other_country = {
+					has_guaranteed = DOM
+				}
+				factor = 5
+			}
+			modifier = {
+				add = 70
+				OR = { MEN = { has_government = neutrality } MEN = { has_government = democratic } }
+				country_exists = MEN
+				MEN = { has_army_size = { size > 20 } }
+			}
+		}
+		ECU = { create_wargoal = { type = annex_everything target = DOM } }
+	}
+}
+
+# Ask Dale to join Faction
+country_event = {
+	id = erebor.2
+	title = erebor.2.t
+	desc = erebor.2.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = erebor.2.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 10
+				ECU = { has_army_size = { size > 30 } }
+			}
+			modifier = {
+				add = 10
+				OR = {
+					AND = { ECU = { has_government = democratic } DOM = { has_government = democratic } }
+					AND = { ECU = { has_government = communism } DOM = { has_government = communism } }
+					AND = { ECU = { has_government = fascism } DOM = { has_government = fascism } }
+				}
+			}
+			modifier = {
+				has_opinion = { target = ECU value > 50 }
+				add = 50
+			}
+		}
+ 		ECU = { add_to_faction = DOM }
+	}
+	option = { # Refuse
+		name = erebor.2.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 50
+				is_in_faction = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+	}
+}

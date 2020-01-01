@@ -1,0 +1,1088 @@
+focus_tree = {
+id = 'rohan'
+country = {
+	factor=0
+	modifier = {
+		add = 10
+		tag = JOR
+	}
+}
+
+default = no
+
+continuous_focus_position = { x = 50 y = 2000 }
+
+
+#Custom focuses start here
+#Focus for Fate of Rohan
+		focus = {
+		id = thefateofrohan
+		icon = GFX_goal_generic_CAS
+		ai_will_do = { factor = 100 }
+ 		x =5
+ 		y =0
+ 		mutually_exclusive = { }
+ 		prerequisite = { }
+ 		cost = 10
+		available_if_capitulated = yes
+		completion_reward = { add_political_power = 100 }
+}
+
+#Focus for Accept Grima Wormtongue into the King's service
+	 	focus = {
+	 	id = acceptgrimawormtongueintothekingsservice
+	 	icon = GFX_acceptgrimawormtongueintothekingsservice
+	 	ai_will_do = { factor = 100 }
+		available = { has_global_flag = grima_hired }
+		x =5
+		y =1
+		mutually_exclusive = { }
+		prerequisite = { focus = thefateofrohan}
+		cost = 0
+		available_if_capitulated = yes
+		completion_reward = {	}
+}
+
+#Focus for Deny access to Gandalf
+	focus = {
+	id = denyaccesstogandalf
+	icon = GFX_goal_generic_small_arms
+	ai_will_do = { factor = 100 }
+	available = { has_global_flag = gandalf_denied_access_rohan }
+	x =2
+	y =2
+	mutually_exclusive = { focus = allowgandalfintothekingshalls }
+	prerequisite = { focus = acceptgrimawormtongueintothekingsservice}
+	cost = 0
+	available_if_capitulated = yes
+}
+
+#Focus for Allow Gandalf into the King's Halls
+	focus = {
+	id = allowgandalfintothekingshalls
+	icon = GFX_goal_generic_small_arms
+	ai_will_do = { factor = 100 }
+	available = { has_global_flag = gandalf_allowed_into_rohan }
+	x =7
+	y =2
+	mutually_exclusive = { focus = denyaccesstogandalf }
+	prerequisite = { focus = acceptgrimawormtongueintothekingsservice}
+	cost = 0
+	available_if_capitulated = yes
+}
+
+#Focus for Exile Grima
+	focus = {
+	id = exilegrima
+	icon = GFX_exilegrima
+	ai_will_do = { factor = 50 }
+	x =6
+	y =3
+	mutually_exclusive = { focus = executegrima}
+	prerequisite = { focus = allowgandalfintothekingshalls}
+	cost = 1
+	available_if_capitulated = yes
+	completion_reward = {
+		remove_ideas = ROH_grima_wormtongue
+		set_global_flag = grima_exiled
+		hidden_effect = { news_event = { hours = 48 id = news.341 } }
+	}
+}
+
+#Focus for Execute Grima
+	focus = {
+	id = executegrima
+	icon = GFX_executegrima
+	ai_will_do = { factor = 50 }
+	x =8
+	y =3
+	mutually_exclusive = { focus = exilegrima }
+	prerequisite = { focus = allowgandalfintothekingshalls}
+	cost = 1
+	available_if_capitulated = yes
+	completion_reward = {
+		remove_ideas = ROH_grima_wormtongue
+		set_global_flag = grima_executed
+		hidden_effect = { news_event = { hours = 48 id = news.342 } }
+	}
+}
+
+#Focus for Restore the Realm
+	focus = {
+	id = restoretherealm
+	icon = GFX_restoretherealm
+	ai_will_do = { factor = 100 }
+	x =7
+	y =4
+	mutually_exclusive = { }
+	prerequisite = { focus = executegrima  focus = exilegrima}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		set_politics = { ruling_party = democratic elections_allowed = no }
+		add_stability = 0.05
+		add_ideas = ROH_reformed_realm
+	}
+}
+
+#Focus for Encourage the Ents to seek vengance
+	focus = {
+	id = encouragetheentstoseekvengance
+	icon = GFX_cuttieswithisengard
+	ai_will_do = {
+		factor = 0
+		modifier = {
+			add = 12
+			has_government = democratic
+		}
+	}
+	available = { has_global_flag = ents_burned }
+ 	x =1
+ 	y =1
+ 	mutually_exclusive = { }
+ 	prerequisite = { focus = thefateofrohan}
+ 	cost = 10
+  available_if_capitulated = yes
+	completion_reward = { set_global_flag = ents_encouraged }
+ }
+
+#Focus for Wed Grima to Eowyn
+	focus = {
+	id = wedgrimatoeowyn
+	icon = GFX_wedgrimatoeowyn
+	ai_will_do = { factor = 30 }
+	x =1
+	y =4
+	mutually_exclusive = { }
+	prerequisite = { focus = denyaccesstogandalf}
+	cost = 1
+	available_if_capitulated = yes
+	completion_reward = {
+		add_popularity = { ideology = fascism popularity = 0.05 }
+		country_event = { days = 0 id = rohan.7 }
+	}
+}
+
+#Focus for Get rid of Theodred
+	focus = {
+	id = getridoftheodred
+	icon = GFX_getridoftheodred
+	ai_will_do = { factor = 30 }
+	bypass = { has_global_flag = theodred_dead }
+	available = { fascism > 0.2 }
+	x =3
+	y =3
+	mutually_exclusive = { }
+	prerequisite = { focus = denyaccesstogandalf}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_threat = 2
+		if {
+			limit = { NOT = { has_global_flag = theodred_dead } }
+			news_event = { hours = 48 id = news.340 }
+		}
+		set_global_flag = theodred_dead
+		remove_unit_leader = 1002
+	}
+}
+
+#Focus for Assasinate Eomer
+	focus = {
+	id = assasinateeomer
+	icon = GFX_assasinateeomer
+	ai_will_do = { factor = 30 }
+	available = { fascism > 0.3 }
+	x =3
+	y =4
+	mutually_exclusive = { }
+	prerequisite = { focus = denyaccesstogandalf}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_threat = 1
+		set_global_flag = eomer_dead
+		remove_unit_leader = 1001
+	}
+}
+
+#Focus for Get Rid of Theoden
+	focus = {
+	id = getridoftheoden
+	icon = GFX_getridoftheoden
+	ai_will_do = { factor = 30 }
+	available = { fascism > 0.45 }
+	x =2
+	y =5
+	mutually_exclusive = { }
+	prerequisite = { focus = assasinateeomer}
+	prerequisite = { focus = wedgrimatoeowyn}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_threat = 3
+		kill_country_leader = yes
+		set_politics = { ruling_party = fascism elections_allowed = no }
+		hidden_effect = { news_event = { hours = 48 id = news.339 } }
+		remove_unit_leader = 1000
+	}
+}
+
+#Focus for Welcome back Eomer
+	focus = {
+	id = welcomebackeomer
+	icon = GFX_welcomebackeomer
+	ai_will_do = { factor = 15 }
+	available = { 767 = { is_controlled_by = JOR } }
+	x =7
+	y =5
+	mutually_exclusive = { }
+	prerequisite = { focus = restoretherealm}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		JOR = { load_oob = "JOR_Riders" }
+		create_corps_commander = {
+			name = "Eomer"
+			picture = "Portrait_Rohan_Eomer.tga"
+			traits = { panzer_leader }
+			skill = 4
+			id = 1001
+		}
+	}
+}
+
+#Focus for Rule in Eowyn's Name
+	focus = {
+	id = ruleineowynsname
+	icon = GFX_goal_generic_air_doctrine
+	ai_will_do = { factor = 15 }
+	available = { has_government = fascism }
+	x =1
+	y =6
+	mutually_exclusive = { focus = crowngrimakingofrohan }
+	prerequisite = { focus = getridoftheoden}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { add_country_leader_trait = puppet_queen }
+}
+
+#Focus for Crown Grima King of Rohan
+	focus = {
+	id = crowngrimakingofrohan
+	icon = GFX_crowngrimakingofrohan
+	available = { has_government = fascism }
+	ai_will_do = { factor = 15 }
+	x =3
+	y =6
+	mutually_exclusive = { focus = ruleineowynsname}
+	prerequisite = { focus = getridoftheoden}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { retire_country_leader = yes }
+}
+
+#Focus for Unite with Isengard
+	focus = {
+	id = unitewithisengard
+	icon = GFX_unitewithisengard
+	ai_will_do = { factor = 5 }
+	available = { JOR = { has_government = fascism } ISR = { is_in_faction = yes } NOT = { is_puppet = yes } ISR = { has_country_leader = { ruling_only = yes name = "Saruman" } } ISR = { has_government = fascism } }
+	x =2
+	y =7
+	mutually_exclusive = { }
+	prerequisite = { focus = ruleineowynsname  focus = crowngrimakingofrohan}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		white_peace = ISR
+		if {
+			limit { ISR = { is_faction_leader = yes } }
+			ISR = { add_to_faction = JOR }
+			else = { MON = { add_to_faction = JOR } }
+		}
+	}
+}
+
+#Focus for Support Aragorn's Claim
+	focus = {
+	id = supportaragornsclaim
+	icon = GFX_goal_tfv_strengthen_commonwealth_ties
+	available = { NOT = { has_global_flag = aragorn_dead } }
+	ai_will_do = { factor = 5 }
+	x =9
+	y =5
+	mutually_exclusive = { }
+	prerequisite = { focus = restoretherealm}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { set_global_flag = aragorns_claim_supported }
+}
+
+#Focus for Prepare for War
+	focus = {
+	id = prepareforwar
+	icon = GFX_focus_secret_rearmament
+	ai_will_do = { factor = 15 }
+	x =5
+	y =6
+	mutually_exclusive = { }
+	prerequisite = { focus = restoretherealm  focus = getridoftheoden}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		army_experience = 30
+		add_ideas = extensive_conscription
+	}
+}
+
+#Focus for Bunker down in Helm's Deep
+	focus = {
+	id = bunkerdowninhelmsdeep
+	icon = GFX_bunkerdowninhelmsdeep
+	available = { 767 = { is_controlled_by = JOR } }
+	ai_will_do = { factor = 10 }
+	x =4
+	y =7
+	mutually_exclusive = { focus = remaininedoras}
+	prerequisite = { focus = prepareforwar}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		set_capital = 767
+		767 = { add_extra_state_shared_building_slots = 2 }
+	}
+}
+
+#Focus for Fortify Helm's Deep
+	focus = {
+	id = fortifyhelmsdeep
+	icon = GFX_goal_generic_construct_military
+	ai_will_do = { factor = 10 }
+	available = { 767 = { is_controlled_by = JOR } }
+	x =4
+	y =8
+	mutually_exclusive = { }
+	prerequisite = { focus = bunkerdowninhelmsdeep}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		767 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4958 } }
+		767 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7560 } }
+		767 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4482 } }
+		767 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4549 } }
+		767 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7448 } }
+	}
+}
+
+#Focus for Helm's Deep Airport
+	focus = {
+	id = helmsdeepairport
+	icon = GFX_goal_generic_build_airforce
+	ai_will_do = { factor = 2 }
+	available = { 767 = { is_controlled_by = JOR } }
+	x =2
+	y =8
+	mutually_exclusive = { }
+	prerequisite = { focus = bunkerdowninhelmsdeep}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		767 = {
+			add_building_construction = {
+				type = air_base
+				level = 2
+				instant_build = yes
+			}
+		}
+	}
+}
+
+#Focus for Remain in Edoras
+	focus = {
+	id = remaininedoras
+	icon = GFX_remaininedoras
+	available = { 766 = { is_controlled_by = JOR } }
+	ai_will_do = { factor = 10 }
+	x =6
+	y =7
+	mutually_exclusive = { focus = bunkerdowninhelmsdeep }
+	prerequisite = { focus = prepareforwar}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 766 = { add_extra_state_shared_building_slots = 2 } }
+}
+
+#Focus for Fortify Edoras
+	focus = {
+	id = fortifyedoras
+	icon = GFX_goal_generic_construct_military
+	ai_will_do = { factor = 10 }
+	available = { 766 = { is_controlled_by = JOR } }
+	x =6
+	y =8
+	mutually_exclusive = { }
+	prerequisite = { focus = remaininedoras}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		766 = { add_building_construction = {	type = bunker level = 8 instant_build = yes province = 12248 } }
+	}
+}
+
+#Focus for Edoras Railway Station
+	focus = {
+	id = edorasrailwaystation
+	icon = GFX_goal_generic_construct_infrastructure
+	ai_will_do = { factor = 1 }
+	available = { 766 = { is_controlled_by = JOR } }
+	x =8
+	y =8
+	mutually_exclusive = { }
+	prerequisite = { focus = remaininedoras}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		766 = {
+			add_building_construction = {
+				type = infrastructure
+				level = 3
+				instant_build = yes
+			}
+		}
+	}
+}
+
+#Focus for Cleanse the Orc Invasion
+	focus = {
+	id = cleansetheorcinvasion
+	icon = GFX_restoretherealm
+	ai_will_do = { factor = 30 }
+	available = { has_idea = ISR_orc_pillage }
+	x =5
+	y =9
+	mutually_exclusive = { }
+	prerequisite = { focus = fortifyedoras focus = fortifyhelmsdeep }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		remove_ideas = ISR_orc_pillage
+	}
+}
+
+#Focus for rohanian trade reforms
+	focus = {
+	id = rohaniantradereforms
+	icon = GFX_goal_generic_trade
+	available = { }
+	ai_will_do = { factor = 3 }
+	x =10
+	y =1
+	mutually_exclusive = { }
+	prerequisite = { focus = thefateofrohan}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { add_ideas = ROH_trade_reforms }
+}
+
+#Focus for adaptable exports
+	focus = {
+	id = adaptableexports
+	icon = GFX_focus_generic_self_management
+	available = { }
+	ai_will_do = { factor = 3 }
+	x =10
+	y =2
+	mutually_exclusive = { }
+	prerequisite = { focus = rohaniantradereforms}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { add_ideas = ROH_adaptable_exports }
+}
+
+#Focus for Mutual Benfit Act
+	focus = {
+	id = mutualbenefitact
+	icon = GFX_goal_tripartite_pact
+	available = { }
+	ai_will_do = { factor = 4 }
+	x =10
+	y =3
+	mutually_exclusive = { }
+	prerequisite = { focus = adaptableexports}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { add_ideas = ROH_mutual_benefit_pact }
+}
+
+#Focus for Technology Trading
+	focus = {
+	id = technologytrading
+	icon = GFX_goal_generic_scientific_exchange
+	available = { }
+	ai_will_do = { factor = 8 }
+	x =10
+	y =4
+	mutually_exclusive = { }
+	prerequisite = { focus = mutualbenefitact}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { add_research_slot = 1 }
+}
+
+#Focus for Rohanian Renovation Programme
+	focus = {
+	id = rohanianrenovationprogramme
+	icon = GFX_goal_generic_construction
+	available = { }
+	ai_will_do = { factor = 2 }
+	x =14
+	y =1
+	mutually_exclusive = { }
+	prerequisite = { focus = thefateofrohan}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+				name = JOR_industrial_revitalization
+				bonus = 0.5
+				uses = 1
+				category = industry
+			}
+ 	}
+}
+
+#Focus for Develop the East
+	focus = {
+	id = developtheeast
+	icon = GFX_goal_generic_construct_civ_factory
+	available = { }
+	ai_will_do = { factor = 2 }
+	available = { 766 = { is_controlled_by = JOR } }
+	x =12
+	y =2
+	mutually_exclusive = { }
+	prerequisite = { focus = rohanianrenovationprogramme}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		766 = { add_extra_state_shared_building_slots = 2 }
+		766 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+	}
+}
+
+#Focus for Expansion of New Towns
+	focus = {
+	id = expansionofnewtowns
+	icon = GFX_goal_generic_construct_civilian
+	available = { }
+	ai_will_do = { factor = 2 }
+	available = { 766 = { is_controlled_by = JOR } }
+	x =12
+	y =3
+	mutually_exclusive = { }
+	prerequisite = { focus = developtheeast}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		766 = {add_building_construction = { type = infrastructure level = 5 instant_build = yes } }
+	}
+}
+
+#Focus for Industrialize the eastern fold
+	focus = {
+	id = industrializetheeasternfold
+	icon = GFX_goal_generic_construct_mil_factory
+	available = { }
+	ai_will_do = { factor = 3 }
+	available = { 766 = { is_controlled_by = JOR } }
+	x =12
+	y =4
+	mutually_exclusive = { }
+	prerequisite = { focus = expansionofnewtowns}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		766 = { add_extra_state_shared_building_slots = 4 }
+		766 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+		766 = {add_building_construction = { type = arms_factory level = 2 instant_build = yes } }
+	}
+}
+
+#Focus for Develop the West
+	focus = {
+	id = developthewest
+	icon = GFX_goal_generic_construct_civ_factory
+	available = { }
+	ai_will_do = { factor = 1 }
+	available = { 767 = { is_controlled_by = JOR } 764 = { is_controlled_by = JOR } }
+	x =14
+	y =2
+	mutually_exclusive = { }
+	prerequisite = { focus = rohanianrenovationprogramme}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		767 = { add_extra_state_shared_building_slots = 1 }
+		767 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+		764 = { add_extra_state_shared_building_slots = 1 }
+		764 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+	}
+}
+
+#Focus for Expand the Mining Industry
+	focus = {
+	id = expandtheminingindustry
+	icon = GFX_goal_generic_construction2
+	available = { }
+	ai_will_do = { factor = 2 }
+	available = { 767 = { is_controlled_by = JOR } 764 = { is_controlled_by = JOR } }
+	x =14
+	y =3
+	mutually_exclusive = { }
+	prerequisite = { focus = developthewest}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_resource = { type = aluminium amount = 15 state = 767 }
+		add_resource = { type = tungsten amount = 10 state = 764 }
+	}
+}
+
+#Focus for Establish a rail network
+	focus = {
+	id = establisharailnetwork
+	icon = GFX_goal_generic_construct_civilian
+	available = { }
+	ai_will_do = { factor = 2 }
+	available = { 767 = { is_controlled_by = JOR } }
+	x =14
+	y =4
+	mutually_exclusive = { }
+	prerequisite = { focus = expandtheminingindustry}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 767 = {add_building_construction = { type = infrastructure level = 5 instant_build = yes } } }
+}
+
+#Focus for Develop Civilian Industry
+	focus = {
+	id = developcivilianindustry
+	icon = GFX_goal_generic_construct_civ_factory
+	available = { 767 = { is_controlled_by = JOR } 768 = { is_controlled_by = JOR } 766 = { is_controlled_by = JOR } 769 = { is_controlled_by = JOR } }
+	available = { }
+	ai_will_do = { factor = 2 }
+	x =11
+	y =5
+	mutually_exclusive = { focus = developmilitaryindustry }
+	prerequisite = { focus = establisharailnetwork}
+	prerequisite = { focus = industrializetheeasternfold}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		766 = { add_extra_state_shared_building_slots = 1 }
+		766 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+		767 = { add_extra_state_shared_building_slots = 1 }
+		767 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+		768 = { add_extra_state_shared_building_slots = 1 }
+		768 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+		769 = { add_extra_state_shared_building_slots = 1 }
+		769 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
+	}
+}
+
+#Focus for Develop Military Industry
+	focus = {
+	id = developmilitaryindustry
+	icon = GFX_goal_generic_construct_mil_factory
+	available = { }
+	ai_will_do = { factor = 2 }
+	available = { 767 = { is_controlled_by = JOR } 768 = { is_controlled_by = JOR } 766 = { is_controlled_by = JOR } 769 = { is_controlled_by = JOR } }
+	x =13
+	y =5
+	mutually_exclusive = { focus = developcivilianindustry }
+	prerequisite = { focus = establisharailnetwork}
+	prerequisite = { focus = industrializetheeasternfold}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		766 = { add_extra_state_shared_building_slots = 1 }
+		766 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
+		767 = { add_extra_state_shared_building_slots = 1 }
+		767 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
+		768 = { add_extra_state_shared_building_slots = 1 }
+		768 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
+		769 = { add_extra_state_shared_building_slots = 1 }
+		769 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
+	}
+}
+
+#Focus for Expand the University of Edoras
+	focus = {
+	id = expandtheuniversityofedoras
+	icon = GFX_focus_research
+	available = { }
+	ai_will_do = { factor = 8 }
+	x =12
+	y =6
+	mutually_exclusive = { }
+	prerequisite = { focus = developcivilianindustry focus = developmilitaryindustry }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { add_research_slot = 1 }
+}
+
+#Focus for Develop the North
+	focus = {
+	id = developthenorth
+	icon = GFX_goal_generic_construct_civ_factory
+	available = { }
+	ai_will_do = { factor = 1 }
+	available = { 771 = { is_controlled_by = JOR } }
+	x =16
+	y =2
+	mutually_exclusive = { }
+	prerequisite = { focus = rohanianrenovationprogramme}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		771 = { add_extra_state_shared_building_slots = 2 }
+		771 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+	}
+}
+
+#Focus for Invest in the Wold
+	focus = {
+	id = investinthewold
+	icon = GFX_goal_generic_construct_civ_factory
+	available = { }
+	ai_will_do = { factor = 1 }
+	available = { 771 = { is_controlled_by = JOR } }
+	x =16
+	y =3
+	mutually_exclusive = { }
+	prerequisite = { focus = developthenorth}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { add_resource = { type = oil amount = 10 state = 771 } }
+}
+
+#Focus for Army Modernization
+	focus = {
+	id = armymodernization
+	icon = GFX_goal_generic_axis_build_infantry
+	available = { }
+	ai_will_do = { factor = 2 }
+	x =20
+	y =1
+	mutually_exclusive = { }
+	prerequisite = { focus = thefateofrohan}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { army_experience = 25 }
+}
+
+#Focus for Standardization of Equipment
+	focus = {
+	id = standardizationofequipment
+	icon = GFX_goal_generic_small_arms
+	available = { }
+	ai_will_do = { factor = 2 }
+	x =18
+	y =2
+	mutually_exclusive = { }
+	prerequisite = { focus = armymodernization}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_standardisation_of_equipment
+			bonus = 0.5
+			uses = 1
+			category = infantry_weapons
+		}
+	}
+}
+
+#Focus for Modernized Artillery
+	focus = {
+	id = modernizedartillery
+	icon = GFX_goal_generic_army_artillery2
+	available = { }
+	ai_will_do = { factor = 2 }
+	x =18
+	y =3
+	mutually_exclusive = { }
+	prerequisite = { focus = standardizationofequipment}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_artillery_modernisation
+			bonus = 0.5
+			uses = 1
+			category = artillery
+		}
+	}
+}
+
+#Focus for Anti Tank Weapons
+	focus = {
+	id = antitankweapons
+	icon = GFX_goal_generic_army_tanks
+	available = { }
+	ai_will_do = { factor = 1 }
+	x =18
+	y =5
+	mutually_exclusive = { }
+	prerequisite = { focus = modernizedartillery}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_anti_tank_guns
+			bonus = 0.5
+			uses = 1
+			category = cat_anti_tank
+		}
+	}
+}
+
+#Focus for Ride of the Rohirrim
+	focus = {
+	id = rideoftherohirrim
+	icon = GFX_goal_generic_cavalry
+	available = { }
+	ai_will_do = { factor = 2 }
+	x =20
+	y =2
+	mutually_exclusive = { }
+	prerequisite = { focus = armymodernization}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+				name = JOR_ride_of_the_rohirrim
+				bonus = 0.5
+				uses = 2
+				category = motorized_equipment
+			}
+	}
+}
+
+#Focus for Armored Horses
+	focus = {
+	id = armoredhorses
+	icon = GFX_focus_generic_license_production
+	available = { }
+	ai_will_do = { factor = 2 }
+	x =20
+	y =3
+	mutually_exclusive = { }
+	prerequisite = { focus = rideoftherohirrim}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_armored_horses
+			bonus = 0.5
+			uses = 1
+			category = armor
+		}
+	}
+}
+
+#Focus for Mobility Focus
+	focus = {
+	id = mobilityfocus
+	icon = GFX_goal_generic_army_motorized
+	available = { }
+	ai_will_do = { factor = 1 }
+	x =21
+	y =4
+	mutually_exclusive = { focus = resistancefocus }
+	prerequisite = { focus = armoredhorses}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_mobility_focus
+			bonus = 0.5
+			uses = 2
+			category = cat_light_armor
+		}
+	}
+}
+
+#Focus for Resistance Focus
+	focus = {
+	id = resistancefocus
+	icon = GFX_goal_generic_defence
+	available = { }
+	ai_will_do = { factor = 1 }
+	x =19
+	y =4
+	mutually_exclusive = { focus = mobilityfocus }
+	prerequisite = { focus = armoredhorses}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_resistance_focus
+			bonus = 0.5
+			uses = 2
+			category = cat_heavy_armor
+		}
+	}
+}
+
+#Focus for Rohanian Eagles
+	focus = {
+	id = rohanianeagles
+	icon = GFX_goal_generic_air_fighter2
+	available = { }
+	ai_will_do = { factor = 1 }
+	x =22
+	y =2
+	mutually_exclusive = { }
+	prerequisite = { focus = armymodernization}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_rohanian_eagles
+			bonus = 0.5
+			uses = 2
+			category = air_doctrine
+		}
+	}
+}
+
+#Focus for Air Base Expansion
+	focus = {
+	id = airbaseexpansion
+	icon = GFX_goal_generic_position_armies
+	available = { }
+	ai_will_do = { factor = 3 }
+	available = { 768 = { is_controlled_by = JOR } 769 = { is_controlled_by = JOR } }
+	x =22
+	y =3
+	mutually_exclusive = { }
+	prerequisite = { focus = rohanianeagles}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		768 = {
+			add_building_construction = {
+				type = air_base
+				level = 2
+				instant_build = yes
+			}
+		}
+		769 = {
+			add_building_construction = {
+				type = air_base
+				level = 2
+				instant_build = yes
+			}
+		}
+	}
+}
+
+#Focus for Heavy Fighters
+	focus = {
+	id = heavyfighters
+	icon = GFX_goal_generic_air_bomber
+	available = { }
+	ai_will_do = { factor = 1 }
+	x =22
+	y =5
+	mutually_exclusive = { }
+	prerequisite = { focus = airbaseexpansion}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_heavy_fighters
+			bonus = 0.5
+			uses = 1
+			category = heavy_air
+		}
+		add_tech_bonus = {
+			name = JOR_heavy_fighters
+			bonus = 0.5
+			uses = 1
+			category = cat_heavy_fighter
+		}
+	}
+}
+
+#Focus for Radar Stations
+	focus = {
+	id = radarstations
+	icon = GFX_goal_generic_radar
+	available = { }
+	ai_will_do = { factor = 1 }
+	x =22
+	y =6
+	mutually_exclusive = { }
+	prerequisite = { focus = heavyfighters }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_radar_statios
+			bonus = 0.75
+			uses = 1
+			category = radar_tech
+		}
+	}
+}
+
+#Focus for Rocket Development
+	focus = {
+	id = rocketdevelopment
+	icon = GFX_focus_rocketry
+	available = { }
+	ai_will_do = { factor = 2 }
+	x =20
+	y =7
+	mutually_exclusive = { }
+	prerequisite = { focus = radarstations }
+	prerequisite = { focus = antitankweapons }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_rocket_development
+			bonus = 0.5
+			uses = 1
+			category = rocketry
+		}
+	}
+}
+
+#Focus for Super Weapon Effort
+	focus = {
+	id = superweaponeffort
+	icon = GFX_focus_wonderweapons
+	available = { }
+	ai_will_do = { factor = 3 }
+	x =20
+	y =8
+	mutually_exclusive = { }
+	prerequisite = { focus = rocketdevelopment }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = JOR_super_weapon_effort
+			bonus = 0.5
+			uses = 1
+			category = nuclear
+		}
+	}
+}
+
+
+}

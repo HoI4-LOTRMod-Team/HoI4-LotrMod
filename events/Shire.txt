@@ -1,0 +1,147 @@
+﻿###########################
+# Shire Events
+###########################
+
+add_namespace = shire
+
+# Bilbo disappears
+country_event = {
+	id = shire.1
+	title = shire.1.t
+	desc = shire.1.d
+	picture = GFX_report_event_party
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = SHX
+		date > 3018.3.1 
+	}
+
+	mean_time_to_happen = {
+		days = 10	
+	}
+	
+	option = { 
+		name = shire.1.a
+		trigger = { is_ai = no }
+		hidden_effect = {news_event = { hours = 24 id = news.331 }}
+	}
+	
+}
+
+
+# Shire Mutual Protection Pact
+country_event = {
+	id = shire.2
+	title = shire.2.t
+	desc = shire.2.d
+	picture = GFX_report_event_alliance
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = shire.2.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				has_opinion = { target = SHX value > 30 }
+				add = 30
+			}
+			modifier = {
+				has_opinion = { target = SHX value > 50 }
+				add = 50
+			}
+		}
+		THIS = { give_guarantee = SHX }
+		SHX = { give_guarantee = PREV }
+	}
+	option = { #Refuse
+		name = shire.2.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 100
+				has_government = fascism
+			}
+		}
+	}
+}
+
+# Shire Demands Independence
+country_event = {
+	id = shire.3
+	title = shire.3.t
+	desc = shire.3.d
+	picture = GFX_report_event_paper
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = shire.3.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				has_opinion = { target = SHX value > 0 }
+				add = 20
+			}
+		}
+		ARG = { end_puppet = SHX }
+	}
+	option = { #Refuse
+		name = shire.3.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 1000
+				has_government = fascism
+			}
+			modifier = {
+				add = 100
+				strength_ratio = { tag = SHX ratio > 1.0 }
+			}
+		}
+		ARG = { end_puppet = SHX }
+		ARG = { declare_war_on = { target = SHX type = annex_everything } }
+	}
+}
+
+# The Shire asks for help
+country_event = {
+	id = shire.4
+	title = shire.4.t
+	desc = shire.4.d
+	picture = GFX_report_event_alliance
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = shire.4.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				has_opinion = { target = SHX value > 30 }
+				add = 30
+			}
+			modifier = {
+				has_opinion = { target = SHX value > 90 }
+				add = 30
+			}
+			modifier = {
+				has_opinion = { target = ARG value < -50 }
+				add = 30
+			}
+		}
+		add_to_war = { targeted_alliance = SHX enemy = ARG } 
+	}
+	option = { #Refuse
+		name = shire.4.b
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = 200
+				strength_ratio = { tag = ARG ratio < 0.5 }
+			}
+		}
+	}
+}
