@@ -6,5 +6,5 @@ tags={
 	"Gameplay"
 }
 name="Lord of the Rings Mod"
-supported_version="1.8.1"
+supported_version="1.9.1"
 remote_file_id="1314446921"
