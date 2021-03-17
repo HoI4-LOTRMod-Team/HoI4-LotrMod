@@ -2,7 +2,7 @@ NDefines = {
 
 NGame = {
 	START_DATE = "3018.1.1.12",
-	END_DATE = "9999.1.1.1",
+	END_DATE = "4018.1.1.1",
 	MAP_SCALE_PIXEL_TO_KM = 7.114,					-- Yes, we did the math
 	SAVE_VERSION = 7,								-- 1.8.0
 	CHECKSUM_SALT = "zwOdv5d9wm9uDSOT",				-- Data to modify generated checksum when game binaries have changed but not any content files.
