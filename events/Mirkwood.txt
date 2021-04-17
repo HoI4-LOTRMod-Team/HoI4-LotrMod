@@ -1,0 +1,319 @@
+﻿###########################
+# Mirkwood Events
+###########################
+
+add_namespace = mirkwood
+
+# Interfere in Erebor
+country_event = {
+	id = mirkwood.1
+	title = mirkwood.1.t
+	desc = mirkwood.1.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MEN
+		ECU = { has_offensive_war_with = DOM }
+	}
+
+	mean_time_to_happen = {
+		days = 1	
+	}
+	
+	option = { #Seize hostilities!
+		name = mirkwood.1.a
+		ai_chance = {
+			base = 100
+		}
+		ECU = { country_event = { days = 1 id = mirkwood.2 } }
+	}
+	option = { #Let them be
+		name = mirkwood.1.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = 50
+				THIS = { has_government = communism }
+			}
+			modifier = {
+				has_opinion = { target = ECU value > 50 }
+				add = 50
+			}
+			modifier = {
+				add = 20
+				strength_ratio = { tag = ECU ratio < 2.5 }
+			}
+		}
+	}
+	
+}
+
+
+# Erebor prompted to stand down
+country_event = {
+	id = mirkwood.2
+	title = mirkwood.2.t
+	desc = mirkwood.2.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = mirkwood.2.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 20
+				THIS = { has_government = democratic }
+			}
+		}
+		ECU = { white_peace = DOM }
+		MEN = { give_guarantee = DOM }
+		hidden_effect = {news_event = { hours = 10 id = news.350 }}
+	}
+	option = { #Refuse
+		name = mirkwood.2.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 200
+				THIS = { has_government = fascism }
+			}
+			modifier = {
+				has_opinion = { target = MEN value < 0 }
+				add = 15
+			}
+			modifier = {
+				add = 30
+				strength_ratio = { tag = MEN ratio > 0.6 }
+			}
+			modifier = {
+				add = 30
+				ECU = { has_country_leader = { ruling_only = yes name = "Daín II Ironfoot" } }
+			}
+		}
+		MEN = { create_wargoal = { type = annex_everything target = ECU } }
+	}
+	
+}
+
+# Ents asked to join
+country_event = {
+	id = mirkwood.3
+	title = mirkwood.3.t
+	desc = mirkwood.3.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = mirkwood.3.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 20
+				THIS = { has_government = fascism }
+			}
+		}
+		MEN = { add_to_faction = EST }
+	}
+	option = { #Refuse
+		name = mirkwood.3.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				has_opinion = { target = MEN value < -30 }
+				add = 20
+			}
+		}
+	}
+	
+}
+
+
+# Spider attack (warningshot)
+country_event = {
+	id = mirkwood.4
+	title = mirkwood.4.t
+	desc = mirkwood.4.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MEN
+		date > 3019.7.1 
+		NOT = { has_global_flag = mirkwood_spiders_purged }
+		NOT = { has_global_flag = mirkwood_spiders_free }
+		NOT = { has_global_flag = mirkwood_spiders_warning }
+		NOT = { has_global_flag = mirkwood_spider_attack }
+		has_capitulated = no
+	}
+
+	mean_time_to_happen = {
+		days = 350
+		modifier = {
+			add = 20
+			has_global_flag = mirkwood_stabilize_attempt
+		}
+		modifier = {
+			add = 70
+			has_global_flag = mirkwood_dealing_with_spiders
+		}
+	}
+	
+	option = { 
+		name = mirkwood.4.a
+		set_global_flag = mirkwood_spider_warning
+		add_manpower = -60000
+		823 = { remove_core_of = MEN }
+	}
+	
+}
+
+# Spider war
+country_event = {
+	id = mirkwood.5
+	title = mirkwood.5.t
+	desc = mirkwood.5.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MEN
+		date > 3020.6.1 
+		has_global_flag = mirkwood_spider_warning
+		NOT = { has_global_flag = mirkwood_spiders_purged }
+		NOT = { has_global_flag = mirkwood_spiders_free }
+		NOT = { has_global_flag = mirkwood_spider_attack }
+		has_capitulated = no
+	}
+
+	mean_time_to_happen = {
+		days = 120
+		modifier = {
+			add = 40
+			has_global_flag = mirkwood_stabilize_attempt
+		}
+		modifier = {
+			add = 60
+			has_global_flag = mirkwood_dealing_with_spiders
+		}
+		modifier = {
+			add = 200
+			communism > 0.4
+		}
+	}
+	
+	option = { 
+		name = mirkwood.5.a
+		set_global_flag = mirkwood_spider_attack
+		SPR = {
+			add_state_core = 823
+			set_capital = 823
+			set_state_controller = 823
+			set_state_owner = 823
+			load_oob = "SPR_Spiders"
+			declare_war_on = { target = MEN type = annex_everything } 
+		}
+		hidden_effect = {news_event = { hours = 24 id = news.382 }}
+	}
+	
+}
+
+# Dol Guldur attack (warningshot)
+country_event = {
+	id = mirkwood.6
+	title = mirkwood.6.t
+	desc = mirkwood.6.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MEN
+		date > 3020.5.1 
+		NOT = { has_global_flag = mirkwood_dolguldur_purged }
+		NOT = { has_global_flag = mirkwood_dolguldur_attack }
+		NOT = { has_global_flag = mirkwood_dolguldur_warning }
+		has_capitulated = no
+	}
+
+	mean_time_to_happen = {
+		days = 350
+		modifier = {
+			add = 20
+			has_global_flag = mirkwood_stabilize_attempt
+		}
+		modifier = {
+			add = 70
+			has_global_flag = mirkwood_dealing_with_dolguldur
+		}
+	}
+	
+	option = { 
+		name = mirkwood.6.a
+		set_global_flag = mirkwood_dolguldur_warning
+		add_manpower = -80000
+		828 = { remove_core_of = MEN }
+	}
+	
+}
+
+# Dol Guldur war
+country_event = {
+	id = mirkwood.7
+	title = mirkwood.7.t
+	desc = mirkwood.7.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = MEN
+		date > 3020.12.1 
+		has_global_flag = mirkwood_dolguldur_warning
+		NOT = { has_global_flag = mirkwood_dolguldur_purged }
+		NOT = { has_global_flag = mirkwood_dolguldur_attack }
+		has_capitulated = no
+	}
+
+	mean_time_to_happen = {
+		days = 90
+		modifier = {
+			add = 40
+			has_global_flag = mirkwood_stabilize_attempt
+		}
+		modifier = {
+			add = 120
+			has_global_flag = mirkwood_dealing_with_dolguldur
+		}
+	}
+	
+	option = { 
+		name = mirkwood.7.a
+		set_global_flag = mirkwood_dolguldur_attack
+		GUA = {
+			add_state_core = 828
+			set_capital = 828
+			set_state_controller = 828
+			set_state_owner = 828
+			load_oob = "GUA_Orcs"
+			if = { 
+				limit = { MON = { has_government = fascism is_faction_leader = yes } }
+				MON = { add_to_faction = GUA }
+				MON = { create_wargoal = { type = annex_everything target = MEN } }
+				else = { GUA = { create_wargoal = { type = annex_everything target = MEN } } } 
+			 }
+		}
+		hidden_effect = {news_event = { hours = 24 id = news.383 }}
+	}
+	
+}

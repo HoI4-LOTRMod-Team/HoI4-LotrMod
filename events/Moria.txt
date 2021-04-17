@@ -1,0 +1,169 @@
+﻿###########################
+# Moria Events
+###########################
+
+add_namespace = moria
+
+# Mordor Civil War
+country_event = {
+	id = moria.1
+	title = moria.1.t
+	desc = moria.1.d
+	picture = GFX_report_event_orcs_marching
+
+	fire_only_once = yes
+	
+	trigger = {
+		tag = NOR
+		has_defensive_war = no
+		NOT = { has_government = communism }
+		date > 3018.1.15
+	}
+
+	mean_time_to_happen = {
+		days = 80
+	}
+
+	option = { # Support Dwarves
+		name = moria.1.a
+				ai_chance = {base = 10}
+		remove_unit_leader = 6001
+		set_global_flag = moria_civil_war
+		ECU = { country_event = { days = 2 id = moria.2 } }
+		add_ideas = NOR_civil_war
+		hidden_effect = {
+			set_capital = 875
+			start_civil_war = {
+				ruling_party = democratic
+				ideology = communism
+				size = -1.0
+				capital = 814
+				states = { 814 }
+			}
+			random_other_country = {
+				limit = {
+					original_tag = NOR
+					has_government = communism
+				}
+				load_oob = "NOR_Orcs" #in case we want special oob for communist mordor
+				load_focus_tree = moria
+				complete_national_focus = thefateofmoria
+				add_ideas = service_by_requirement
+				add_ideas = NOR_civil_war
+				add_ideas = NOR_loose_balrog
+				set_cosmetic_tag = NOR
+			}
+			news_event = { hours = 12 id = news.344 }
+
+			load_oob = "NOR_Dwarves"
+
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.4
+			}
+		}
+	}
+
+	option = { # Support Orcs
+		name = moria.1.b
+		ai_chance = {base = 10}
+		remove_unit_leader = 6001
+		set_global_flag = moria_civil_war
+		ECU = { country_event = { days = 2 id = moria.2 } }
+		add_ideas = NOR_civil_war
+		hidden_effect = {
+			set_capital = 875
+			start_civil_war = {
+				ruling_party = democratic
+				ideology = communism
+				size = -1.0
+				capital = 814
+				states = { 814 }
+			}
+			random_other_country = {
+				limit = {
+					original_tag = NOR
+					has_government = communism
+				}
+				load_oob = "NOR_Orcs" #in case we want special oob for communist mordor
+				load_focus_tree = moria
+				complete_national_focus = thefateofmoria
+				add_ideas = service_by_requirement
+				add_ideas = NOR_civil_war
+				add_ideas = NOR_loose_balrog
+				set_cosmetic_tag = NOR
+			}
+			news_event = { hours = 12 id = news.344 }
+
+			load_oob = "NOR_Dwarves"
+
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.4
+			}
+			#Exact same as option above but switch tag to the communists
+			random_other_country = {
+				limit = {
+					original_tag = NOR
+					has_government = communism
+				}
+				change_tag_from = NOR
+			}
+		}
+	}
+}
+
+# Erebor asked for reinforcements
+country_event = {
+	id = moria.2
+	title = moria.2.t
+	desc = moria.2.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+	
+	option = { #Nothing
+		name = moria.2.a
+		ai_chance = {
+			base = 50
+		}
+	}
+	option = { #Equipment
+		name = moria.2.b
+		ai_chance = {
+			base = 50
+		}
+		ECU = { send_equipment = { target = NOR type = infantry_equipment amount = 8000 } }
+	}
+	option = { #Troops
+		name = moria.2.c
+		ai_chance = {
+			base = 80
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		ECU = { add_manpower = -200000 }
+		NOR = { country_event = { days = 7 id = moria.3 } }
+	}
+}
+
+# Erebor reinforcements arrive
+country_event = {
+	id = moria.3
+	title = moria.3.t
+	desc = moria.3.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+	
+	option = { #Nothing
+		name = moria.3.a
+		load_oob = "NOR_Reinforcements"
+	}
+}

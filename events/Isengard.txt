@@ -1,0 +1,355 @@
+###########################
+# Isengard Events
+###########################
+
+add_namespace = isengard
+
+# Saruman Demands Enedwaith Total Submission
+country_event = {
+	id = isengard.4
+	title = isengard.4.t
+	desc = isengard.4.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = isengard.4.a
+		ai_chance = {
+			base = 30
+			modifier = {
+				add = -25
+				ISR = { has_army_size = { size < 30 } }
+			}
+			modifier = {
+				add = 30
+				ISR = { has_army_size = { size > 40 } }
+			}
+			modifier = {
+				add = 100
+				EGY = { has_government = fascism }
+			}
+		}
+ 		ISR = { annex_country = { target = EGY } }
+	}
+	option = { # Refuse
+		name = isengard.4.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				any_other_country = {
+					has_guaranteed = EGY
+				}
+				factor = 5
+			}
+			modifier = {
+				add = 20
+				EGY = { has_army_size = { size > 20 } }
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		EGY = { declare_war_on = { target = ISR type = annex_everything } }
+	}
+}
+
+# Rohan Refuses to Give up the Westmarch
+country_event = {
+	id = isengard.3
+	title = isengard.3.t
+	desc = isengard.3.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = isengard.3.a
+		trigger = { is_ai = no }
+		create_wargoal = { type = annex_everything target = JOR }
+	}
+	
+}
+
+# Rohan Gives up the Westmarch
+country_event = {
+	id = isengard.2
+	title = isengard.2.t
+	desc = isengard.2.d
+	picture = GFX_report_event_paper
+	
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+	
+	option = { 
+		name = isengard.2.a
+		trigger = { is_ai = no }
+		ISR = { set_state_owner = 764 }
+	}
+	
+}
+
+# Meet with Gandalf
+country_event = {
+	id = isengard.1
+	title = isengard.1.t
+	desc = isengard.1.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = { # Imprison him
+		name = isengard.1.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = -25
+				MON = { has_army_size = { size < 15 } }
+			}
+			modifier = {
+				add = 25
+				MON = { has_army_size = { size > 20 } }
+			}
+		}
+		add_ideas = ISR_commited_to_the_dark
+		set_global_flag = gandalf_imprisoned
+		hidden_effect = {news_event = { hours = 24 id = news.333 }}
+	}
+	option = { # Unite with him
+		name = isengard.1.b
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_ideas = ISR_commited_to_the_light
+		set_global_flag = gandalf_saruman_united
+		hidden_effect = {news_event = { hours = 24 id = news.334 }}
+	}
+}
+
+
+# Grima arrives in Isengard
+country_event = {
+	id = isengard.5
+	title = isengard.5.t
+	desc = isengard.5.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = ISR
+		has_global_flag = grima_exiled
+		ISR = { has_government = fascism }
+	}
+
+	mean_time_to_happen = {
+		days = 30
+	}
+
+	option = {
+		name = isengard.5.a
+		add_ideas = ROH_grima_wormtongue
+	}
+}
+
+
+#Saruman dies trigger
+country_event = {
+	id = isengard.1000
+	hidden = yes
+	
+	fire_only_once = yes
+
+	trigger = {
+		has_global_flag = grima_exiled
+		ISR = { surrender_progress > 0.5 }
+	}
+	
+	immediate = {
+		news_event = { id = news.1000 }
+	}
+	
+	option = {
+		 random_list = { 50 = { ISR = { country_event = { days = 1 id = isengard.6 } } } 50 = { } }
+	}
+}
+
+
+# Saruman dies
+country_event = {
+	id = isengard.6
+	title = isengard.6.t
+	desc = isengard.6.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.6.a
+		ISR = { kill_country_leader = yes }
+	}
+}
+
+#Hunt for the ring in argonath event
+country_event = {
+	id = isengard.7
+	title = isengard.7.t
+	desc = isengard.7.d
+	fire_only_once = yes
+	picture = GFX_report_event_ring
+	trigger = {
+		original_tag = ISR
+		NOT = {has_global_flag = ring_found}
+			has_government = fascism
+		date > 3019.11.1
+		date < 3020.1.1
+		has_completed_focus = rebrandisengard
+	}
+	
+
+			option = {name = isengard.7.a
+			add_political_power = -100
+			ISR = {complete_national_focus = huntfortheringinargonath}
+			trigger = {has_completed_focus = selectthestrongesfew}
+			ai_chance = { base = 100}
+				
+			random_list = {
+			10 = { 
+				modifier = {
+					add = 30
+					has_global_flag = fs_gondor_1}
+				modifier = {
+					add = 30
+					has_global_flag = fs_mirkwood_1
+				}
+				modifier = {
+					add = 30
+					has_global_flag = fs_erebor_1
+				}
+				modifier = {
+					add = 60
+					has_global_flag = fs_gondor_2
+				}
+				modifier = {
+					add = 60
+					has_global_flag = fs_mirkwood_2
+				}
+				modifier = {
+					add = 60
+					has_global_flag = fs_erebor_2
+				}
+				modifier = {
+					add = 60
+					has_global_flag = fs_gearedup_lothlorien
+				}
+				ISR = { remove_unit_leader = 147 country_event = { days = 1 id = fs.100}}
+				hidden_effect = {
+				random_list = {
+				50 = {if = { limit = { has_global_flag = fs_gondor_2 NOT = { has_global_flag = boromir_dead } } set_global_flag = boromir_dead news_event = { hours = 12 id = news.377 } } 
+				if = { limit = { has_global_flag = fs_gondor_1 NOT = { has_global_flag = faramir_dead } } set_global_flag = faramir_dead news_event = { hours = 12 id = news.378 } } }
+				50 = {}
+				}}
+			}
+			90 = {
+				modifier = {
+					add = 60
+					has_global_flag = aragorn_dead
+				}
+				news_event = { hours = 12 id = news.373 }
+				set_global_flag = ring_found
+				ISR = { add_ideas = one_true_ring }
+				set_global_flag = saruman_has_ring
+				hidden_effect = {
+				random_list = {
+				50 = {if = { limit = { has_global_flag = fs_gondor_2 NOT = { has_global_flag = boromir_dead } } set_global_flag = boromir_dead news_event = { hours = 12 id = news.377 } }
+
+				if = { limit = { has_global_flag = fs_gondor_1 NOT = { has_global_flag = faramir_dead } } set_global_flag = faramir_dead news_event = { hours = 12 id = news.378 } } }
+				50 = {}
+				}}
+
+			}
+			
+			}
+			}
+
+			option = {name = isengard.7.b
+			add_political_power = -100
+			ai_chance = { base = 50}
+				
+			random_list = {
+			10 = { 
+				modifier = {
+					add = 30
+					has_global_flag = fs_gondor_1}
+				modifier = {
+					add = 30
+					has_global_flag = fs_mirkwood_1
+				}
+				modifier = {
+					add = 30
+					has_global_flag = fs_erebor_1
+				}
+				modifier = {
+					add = 60
+					has_global_flag = fs_gondor_2
+				}
+				modifier = {
+					add = 60
+					has_global_flag = fs_mirkwood_2
+				}
+				modifier = {
+					add = 60
+					has_global_flag = fs_erebor_2
+				}
+				modifier = {
+					add = 60
+					has_global_flag = fs_gearedup_lothlorien
+				}
+				ISR = { country_event = { days = 1 id = fs.100}}
+				hidden_effect = {
+				random_list = {
+				50 = {if = { limit = { has_global_flag = fs_gondor_2 NOT = { has_global_flag = boromir_dead } } set_global_flag = boromir_dead news_event = { hours = 12 id = news.377 } } 
+				if = { limit = { has_global_flag = fs_gondor_1 NOT = { has_global_flag = faramir_dead } } set_global_flag = faramir_dead news_event = { hours = 12 id = news.378 } } }
+				50 = {}
+				}}
+			}
+			30 = {
+				modifier = {
+					add = 60
+					has_global_flag = aragorn_dead
+				}
+				news_event = { hours = 12 id = news.373 }
+				set_global_flag = ring_found
+				ISR = { add_ideas = one_true_ring }
+				set_global_flag = saruman_has_ring
+				hidden_effect = {
+				random_list = {
+				50 = {if = { limit = { has_global_flag = fs_gondor_2 NOT = { has_global_flag = boromir_dead } } set_global_flag = boromir_dead news_event = { hours = 12 id = news.377 } }
+
+				if = { limit = { has_global_flag = fs_gondor_1 NOT = { has_global_flag = faramir_dead } } set_global_flag = faramir_dead news_event = { hours = 12 id = news.378 } } }
+				50 = {}
+				}}
+
+			}
+			
+			}
+			}
+
+
+	option = {name = isengard.7.c
+				ai_chance = { base = 100
+				modifier = { is_historical_focus_on = yes factor = 0}}}
+}
+

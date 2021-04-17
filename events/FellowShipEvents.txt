@@ -1,0 +1,75 @@
+###########################
+# Fellowship Events
+###########################
+
+add_namespace = fs
+
+# Attempt failed at obtaining the ring
+country_event = {
+	id = fs.100
+	title = fs.100.t
+	desc = fs.100.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = fs.100.a
+	}
+}
+
+
+# Ring destroyed
+country_event = {
+	id = fs.6
+	title = fs.6.t
+	desc = fs.6.d
+	picture = GFX_report_event_hitler_parade
+
+	fire_only_once = yes
+	
+	trigger = {
+		original_tag = MON
+		has_government = fascism
+		date > 3025.1.1 
+		NOT = { has_global_flag = ring_found }
+	}
+
+	mean_time_to_happen = {
+		days = 150	
+	}
+
+	option = { # Serve Saruman
+		name = fs.6.a
+		trigger = {
+			ISR = { has_government = fascism }
+		}
+		ai_chance = {
+			base = 15
+		}
+		news_event = { hours = 12 id = news.376 }
+		dismantle_faction = yes 
+		kill_country_leader = yes
+ 		ISR = { annex_country = { target = MON } }
+	}
+	option = { # Anarchy
+		name = fs.6.b
+		ai_chance = {
+			base = 15
+		}
+		news_event = { hours = 12 id = news.376 }
+		dismantle_faction = yes 
+		kill_country_leader = yes
+		MON = { set_politics = { ruling_party = communism elections_allowed = no } }
+		MON = { add_popularity = { ideology = communism popularity = 1.0 } }
+	}
+	option = { # Elect a new leader
+		name = fs.6.c
+		ai_chance = {
+			base = 3
+		}
+		news_event = { hours = 12 id = news.376 }
+		kill_country_leader = yes
+		add_ideas = MOR_false_king
+	}
+}
