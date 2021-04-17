@@ -1,0 +1,1255 @@
+focus_tree = {
+id = 'mirkwood'
+country = {
+	factor=0
+	modifier = {
+		add = 10
+		tag = MEN
+	}
+}
+
+
+default = no
+
+continuous_focus_position = { x = 50 y = 2000 }
+
+
+#Custom focuses start here
+
+#Focus for The Fate of Mirkwood
+	 focus = {
+	 id = thefateofmirkwood
+	 icon = GFX_goal_generic_CAS
+	 ai_will_do = { factor = 35 }
+	 x =7
+	 y =0
+	 mutually_exclusive = { }
+	 prerequisite = { }
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = { add_political_power = 100 }
+}
+
+#Focus for Oppose Erebor
+		focus = {
+		id = opposeerebor
+		icon = GFX_goal_generic_political_pressure
+		ai_will_do = { factor = 3 }
+ 		x =0
+ 		y =1
+ 		mutually_exclusive = { focus = reconcileerebor }
+ 		prerequisite = { focus = thefateofmirkwood }
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			add_threat = 1
+			add_political_power = 70
+			ECU = { add_opinion_modifier = { target = MEN modifier = large_decrease } }
+			MEN = { add_opinion_modifier = { target = ECU modifier = large_decrease } }
+		}
+ }
+
+#Focus for Embargo Erebor
+		focus = {
+		id = embargoerebor
+		icon = GFX_goal_generic_trade
+		ai_will_do = { factor = 2 }
+		x =0
+		y =2
+		mutually_exclusive = { }
+		prerequisite = { focus = opposeerebor }
+		cost = 10
+ 		available_if_capitulated = yes
+		completion_reward = { add_opinion_modifier = { target = ECU modifier = embargo } }
+}
+
+#Focus for Claim Erebor
+		focus = {
+		id = claimerebor
+		icon = GFX_goal_generic_position_armies
+		ai_will_do = { factor = 2 }
+		x =0
+		y =4
+		mutually_exclusive = { }
+		prerequisite = { focus = embargoerebor }
+		cost = 10
+ 		available_if_capitulated = yes
+		completion_reward = {
+			add_threat = 5
+			add_state_claim = 831
+			add_state_claim = 829
+		}
+}
+
+#Focus for Reconcile Erebor
+		focus = {
+		id = reconcileerebor
+		icon = GFX_goal_generic_national_unity
+		ai_will_do = { factor = 4 }
+		x =2
+		y =1
+		mutually_exclusive = { focus = opposeerebor }
+		prerequisite = { focus = thefateofmirkwood }
+		cost = 10
+ 		available_if_capitulated = yes
+		completion_reward = {
+				remove_opinion_modifier = { target = ECU modifier = past_quarrels }
+				ECU = { remove_opinion_modifier = { target = MEN modifier = past_quarrels } }
+		}
+}
+
+#Focus for Import Erebor Steel
+		focus = {
+		id = importereborsteel
+		icon = GFX_goal_generic_positive_trade_relations
+		ai_will_do = { factor = 3 }
+		available = { 822 = { is_controlled_by = ROOT } }
+		x =2
+		y =2
+		mutually_exclusive = { }
+		prerequisite = { focus = reconcileerebor }
+		cost = 10
+ 		available_if_capitulated = yes
+		completion_reward = {
+			add_resource = { type = steel amount = 25 state = 822 }
+		}
+}
+
+#Focus for Diplomatic Rule
+	 focus = {
+	 id = diplomaticrule
+	 icon = GFX_goal_support_democracy
+	 ai_will_do = { factor = 7 }
+	 x =4
+	 y =2
+	 mutually_exclusive = { focus=consensusrule focus=ironfistrule }
+	 prerequisite = { focus = breakthesilence}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = { add_ideas = generic_democratic_intermediate }
+}
+
+#Focus for Draw closer to Erebor
+	 focus = {
+	 id = drawclosertoerebor
+	 icon = GFX_blamethedwarves
+	 ai_will_do = { factor = 5 }
+	 x =3
+	 y =3
+	 mutually_exclusive = { focus = drawclosertogondor }
+	 prerequisite = { focus = diplomaticrule}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = {
+	 		add_opinion_modifier = { target = ECU modifier = large_increase }
+	 		ECU = { add_opinion_modifier = { target = MEN modifier = large_increase } }
+	 }
+}
+
+#Focus for Unite with Erebor
+	 focus = {
+	 id = unitewitherebor
+	 icon = GFX_blamethedwarves
+	 ai_will_do = { factor = 7 }
+	 available = { ECU = { has_opinion = { target = MEN value > 19 } } is_in_faction = no ECU = { is_faction_leader = yes } }
+	 x =2
+	 y =4
+	 mutually_exclusive = {  }
+	 prerequisite = { focus = drawclosertoerebor}
+	 prerequisite = { focus = importereborsteel}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = { ECU = { add_to_faction = MEN } }
+}
+
+#Focus for Draw closer to Godnor
+	 focus = {
+	 id = drawclosertogondor
+	 icon = GFX_sabotagegondor
+	 ai_will_do = { factor = 5 }
+	 x =5
+	 y =3
+	 mutually_exclusive = { focus = drawclosertoerebor }
+	 prerequisite = { focus = diplomaticrule}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = {
+	 		add_opinion_modifier = { target = GEO modifier = large_increase }
+	 		GEO = { add_opinion_modifier = { target = MEN modifier = large_increase } }
+	 }
+}
+
+#Focus for Unite with Gondor
+	 focus = {
+	 id = men_unitewithgondor
+	 icon = GFX_sabotagegondor
+	 ai_will_do = { factor = 6 }
+	 available = { is_in_faction = no GEO = { is_faction_leader = yes } }
+	 x =5
+	 y =4
+	 mutually_exclusive = { }
+	 prerequisite = { focus = drawclosertogondor}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = { GEO = { add_to_faction = MEN } }
+}
+
+#Focus for Consensus Rule
+	 focus = {
+	 id = consensusrule
+	 icon = GFX_goal_support_communism
+	 ai_will_do = { factor = 8 }
+	 x =7
+	 y =2
+	 mutually_exclusive = { focus = diplomaticrule focus = ironfistrule }
+	 prerequisite = { focus = breakthesilence}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = { add_ideas = generic_communism_intermediate }
+}
+
+#Focus for Red in Heart and Mind
+	 focus = {
+	 id = redinheartandmind
+	 icon = GFX_focus_generic_join_comintern
+	 ai_will_do = { factor = 15 }
+	 available = { communism > 0.35 }
+	 x =7
+	 y =4
+	 mutually_exclusive = { }
+	 prerequisite = { focus = consensusrule}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = {
+	 		set_politics = { ruling_party = communism elections_allowed = no }
+		}
+}
+
+#Focus for Government Appropriation
+	 focus = {
+	 id = governmentappropriation
+	 icon = GFX_goal_generic_consumer_goods
+	 ai_will_do = { factor = 13 }
+	 available = { communism > 0.35 }
+	 x =7
+	 y =6
+	 mutually_exclusive = { }
+	 prerequisite = { focus = redinheartandmind}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = {
+	 		add_ideas = MEN_government_appropriation
+		}
+}
+
+#Focus for A new Era
+	 focus = {
+	 id = anewera
+	 icon = GFX_goal_support_democracy
+	 ai_will_do = { factor = 15 }
+	 available = { democratic > 0.35 }
+	 x =4
+	 y =6
+	 mutually_exclusive = { }
+	 prerequisite = { focus = diplomaticrule}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = {
+	 		add_ideas = home_of_the_free
+		}
+}
+
+#Focus for Renew the Old Forest Road
+		focus = {
+		id = renewtheoldforestroad
+		icon = GFX_goal_generic_construction
+		ai_will_do = { factor = 2 }
+		available = { 821 = { is_controlled_by = ROOT } 823 = { is_controlled_by = ROOT } 825 = { is_controlled_by = ROOT } }
+ 		x =20
+ 		y =0
+ 		mutually_exclusive = { }
+ 		prerequisite = { }
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				821 = { add_building_construction = {	type = infrastructure level = 3 instant_build = yes	}	}
+				823 = { add_building_construction = {	type = infrastructure level = 3 instant_build = yes	}	}
+				825 = { add_building_construction = {	type = infrastructure level = 3 instant_build = yes	}	}
+		}
+ }
+
+ #Focus for Clear the leaves
+		focus = {
+		id = cleartheleaves
+		icon = GFX_goal_generic_build_airforce
+		ai_will_do = { factor = 1 }
+ 		x =17
+ 		y =0
+ 		mutually_exclusive = { }
+ 		prerequisite = { }
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = { air_experience = 35 }
+ }
+
+#Focus for Renew the Forest Path
+		focus = {
+		id = renewtheforestpath
+		icon = GFX_goal_generic_construction
+		ai_will_do = { factor = 2 }
+		available = { 826 = { is_controlled_by = ROOT } 827 = { is_controlled_by = ROOT } 828 = { is_controlled_by = ROOT } }
+ 		x =20
+ 		y =1
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = renewtheoldforestroad }
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+ 				826 = { add_building_construction = {	type = infrastructure level = 3 instant_build = yes	}	}
+ 				827 = { add_building_construction = {	type = infrastructure level = 3 instant_build = yes	}	}
+ 				828 = { add_building_construction = {	type = infrastructure level = 3 instant_build = yes	}	}
+ 		}
+ }
+
+ #Focus for Military Rearmament
+		focus = {
+		id = men_militaryrearmament
+		icon = GFX_goal_generic_axis_build_infantry
+		ai_will_do = { factor = 3 }
+ 		x =25
+ 		y =0
+ 		mutually_exclusive = { }
+ 		prerequisite = { }
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = { army_experience = 50 }
+ }
+
+ #Focus for Self-centered Rule
+		focus = {
+		id = selfcenteredrule
+		icon = GFX_goal_generic_national_unity
+		ai_will_do = { factor = 10 }
+ 		x =14
+ 		y =1
+ 		mutually_exclusive = { focus = breakthesilence }
+ 		prerequisite = { focus = thefateofmirkwood}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				add_stability = 0.05
+				add_ideas = generic_neutrality
+		}
+ }
+
+ #Focus for Plow through the forest
+		focus = {
+		id = plowthroughtheforest
+		icon = GFX_goal_generic_army_tanks
+		ai_will_do = { factor = 1 }
+		available = { NOT = { has_completed_focus = destroythosewhodefilenature } }
+ 		x =27
+ 		y =1
+ 		mutually_exclusive = { focus = usetheforestasaweapon }
+ 		prerequisite = { focus = men_militaryrearmament}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = JOR_armored_horses
+				bonus = 0.5
+				uses = 1
+				category = armor
+			}
+		}
+ }
+
+ #Focus for Mirkwood Bows
+		focus = {
+		id = mirkwoodbows
+		icon = GFX_focus_generic_air_defense
+		ai_will_do = { factor = 2 }
+ 		x =23
+ 		y =1
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = men_militaryrearmament}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				add_tech_bonus = {
+					name = infantry_artillery_bonus
+					ahead_reduction = 1
+					uses = 2
+					category = artillery
+				}
+			}
+ }
+
+ #Focus for Break the Silence
+		focus = {
+		id = breakthesilence
+		icon = GFX_goal_generic_demand_territory
+		ai_will_do = { factor = 20 }
+ 		x =7
+ 		y =1
+ 		mutually_exclusive = { focus = selfcenteredrule }
+ 		prerequisite = { focus = thefateofmirkwood}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = { add_political_power = 50 }
+ }
+
+ #Focus for Expanded Northern Airbases
+		focus = {
+		id = expandednorthernairbases
+		icon = GFX_goal_generic_air_fighter2
+		ai_will_do = { factor = 1 }
+		available = { 821 = { is_controlled_by = ROOT } 822 = { is_controlled_by = ROOT } 823 = { is_controlled_by = ROOT } 824 = { is_controlled_by = ROOT } }
+ 		x =17
+ 		y =1
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = cleartheleaves}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				821 = { add_building_construction = {	type = anti_air_building level = 2 instant_build = yes	}	}
+				822 = { add_building_construction = {	type = anti_air_building level = 2 instant_build = yes	}	}
+				823 = { add_building_construction = {	type = anti_air_building level = 2 instant_build = yes	}	}
+				824 = { add_building_construction = {	type = anti_air_building level = 2 instant_build = yes	}	}
+		}
+ }
+
+#Focus for Use the forest as a weapon
+		focus = {
+		id = usetheforestasaweapon
+		icon = GFX_focus_RAJ_indian_gurkhas
+		ai_will_do = { factor = 2 }
+ 		x =25
+ 		y =1
+ 		mutually_exclusive = { focus = plowthroughtheforest }
+ 		prerequisite = { focus = men_militaryrearmament}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = MEN_weaponized_forest
+		}
+ }
+
+ #Focus for Iron Fist Rule
+		focus = {
+		id = ironfistrule
+		icon = GFX_goal_support_fascism
+		ai_will_do = { factor = 8 }
+ 		x =10
+ 		y =2
+ 		mutually_exclusive = { focus = diplomaticrule focus = consensusrule}
+ 		prerequisite = { focus = breakthesilence}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				add_ideas = generic_fascism_intermediate
+				add_stability = -0.05
+		}
+ }
+
+ #Focus for Motirization Improvements
+		focus = {
+		id = men_motirizationimprovements
+		icon = GFX_goal_generic_army_motorized
+		ai_will_do = { factor = 1 }
+ 		x =27
+ 		y =2
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = plowthroughtheforest}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+					name = JOR_ride_of_the_rohirrim
+					bonus = 0.5
+					uses = 2
+					category = motorized_equipment
+				}
+		}
+ }
+
+ #Focus for Equipment Modernization
+		focus = {
+		id = equipmentmodernization
+		icon = GFX_goal_generic_army_artillery
+		ai_will_do = { factor = 2 }
+ 		x =23
+ 		y =2
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = mirkwoodbows}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = JOR_standardisation_of_equipment
+				bonus = 0.5
+				uses = 1
+				category = infantry_weapons
+			}
+		}
+ }
+
+ #Focus for Army of the Greenwood
+		focus = {
+		id = armyofthegreenwood
+		icon = GFX_goal_generic_small_arms
+		ai_will_do = { factor = 3 }
+ 		x =25
+ 		y =2
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = usetheforestasaweapon}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = { add_ideas = MEN_army_of_the_greenwood }
+ }
+
+ #Focus for Exploit the rubber monopoly
+		focus = {
+		id = exploittherubbermonopoly
+		icon = GFX_goal_generic_positive_trade_relations
+		ai_will_do = { factor = 4 }
+ 		x =13
+ 		y =2
+ 		mutually_exclusive = { focus = butcherthemarket }
+ 		prerequisite = { focus = selfcenteredrule}
+ 		cost = 3
+  	available_if_capitulated = yes
+		completion_reward = { add_ideas = ROH_trade_reforms }
+ }
+
+ #Focus for Butcher the market
+		focus = {
+		id = butcherthemarket
+		icon = GFX_goal_generic_trade
+		ai_will_do = { factor = 4 }
+ 		x =15
+ 		y =2
+ 		mutually_exclusive = { focus = exploittherubbermonopoly }
+ 		prerequisite = { focus = selfcenteredrule}
+ 		cost = 3
+  	available_if_capitulated = yes
+		completion_reward = { add_ideas = closed_economy }
+ }
+
+ #Focus for Expanded Southern Airbases
+		focus = {
+		id = expandedsouthernairbases
+		icon = GFX_goal_generic_air_fighter2
+		ai_will_do = { factor = 1 }
+		available = { 825 = { is_controlled_by = ROOT } 826 = { is_controlled_by = ROOT } 827 = { is_controlled_by = ROOT } }
+ 		x =17
+ 		y =2
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = expandednorthernairbases}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				825 = { add_building_construction = {	type = anti_air_building level = 2 instant_build = yes	}	}
+				826 = { add_building_construction = {	type = anti_air_building level = 2 instant_build = yes	}	}
+				827 = { add_building_construction = {	type = anti_air_building level = 2 instant_build = yes	}	}
+		}
+ }
+
+ #Focus for Fortify the Core
+		focus = {
+		id = fortifythecore
+		icon = GFX_goal_generic_fortify_city
+		ai_will_do = { factor = 2 }
+		available = { 822 = { is_controlled_by = ROOT } 825 = { is_controlled_by = ROOT } 821 = { is_controlled_by = ROOT } }
+ 		x =19
+ 		y =2
+ 		mutually_exclusive = { focus = fortifythesouth}
+ 		prerequisite = { focus = renewtheforestpath}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				822 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 1726 } }
+				822 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 10533 } }
+				825 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 4730 } }
+				821 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 7837 } }
+				821 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 1784 } }
+				821 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 12574 } }
+				821 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 10592 } }
+		}
+ }
+
+ #Focus for Fortify the South
+		focus = {
+		id = fortifythesouth
+		icon = GFX_goal_generic_fortify_city
+		ai_will_do = { factor = 2 }
+		available = { 828 = { is_controlled_by = ROOT } }
+ 		x =21
+ 		y =2
+ 		mutually_exclusive = { focus = fortifythecore}
+ 		prerequisite = { focus = renewtheforestpath}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				828 = { add_building_construction = {	type = bunker level = 6 instant_build = yes province = 12177 } }
+				828 = { add_building_construction = {	type = bunker level = 6 instant_build = yes province = 10508 } }
+				828 = { add_building_construction = {	type = bunker level = 6 instant_build = yes province = 12487 } }
+				828 = { add_building_construction = {	type = bunker level = 6 instant_build = yes province = 10506 } }
+				828 = { add_building_construction = {	type = bunker level = 6 instant_build = yes province = 12658 } }
+		}
+ }
+
+ #Focus for Manufacturing Effort
+		focus = {
+		id = manufacturingeffort
+		icon = GFX_goal_generic_consumer_goods
+		ai_will_do = { factor = 3 }
+ 		x =20
+ 		y =3
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = renewtheforestpath}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+	 			add_tech_bonus = {
+	 				name = industrial_bonus
+	 				bonus = 0.5
+	 				uses = 1
+	 				category = industry
+	 			}
+	 		}
+ }
+
+#Focus for Tank Improvements
+		focus = {
+		id = tankimprovements
+		icon = GFX_goal_continuous_armor_production
+		ai_will_do = { factor = 2 }
+ 		x =27
+ 		y =3
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = men_motirizationimprovements}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+	 		add_tech_bonus = {
+	 			name = cat_heavy_armor
+	 			bonus = 0.5
+	 			uses = 2
+	 			category = cat_heavy_armor
+	 		}
+	 	}
+ }
+
+ #Focus for Guidance of the Wisest
+		focus = {
+		id = guidanceofthewisest
+		icon = GFX_guidanceofthewisest
+		ai_will_do = { factor = 10 }
+ 		x =9
+ 		y =3
+ 		mutually_exclusive = { focus = men_elvensupremacy }
+ 		prerequisite = { focus = ironfistrule}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			create_country_leader = {
+				name = "Radagast"
+				picture = "Portrait_Mirkwood_Radagast.tga"
+				expire = "1980.1.1"
+				ideology = nazism
+				traits = { indomitable_perseverance }
+			}
+		}
+ }
+
+ #Focus for Elven Supremacy
+		focus = {
+		id = men_elvensupremacy
+		icon = GFX_elvensupremacy
+		ai_will_do = { factor = 7 }
+ 		x =11
+ 		y =3
+ 		mutually_exclusive = { focus = guidanceofthewisest }
+ 		prerequisite = { focus = ironfistrule}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+					add_threat = 3
+				 	add_country_leader_trait = dictator
+		}
+ }
+
+ #Focus for High Above
+		focus = {
+		id = highabove
+		icon = GFX_goal_generic_air_bomber
+		ai_will_do = { factor = 1 }
+ 		x =16
+ 		y =3
+ 		mutually_exclusive = { focus = lowaltitudeassistance}
+ 		prerequisite = { focus = expandedsouthernairbases}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+ 			add_tech_bonus = {
+ 				name = bomber_bonus
+ 				bonus = 0.5
+ 				uses = 3
+ 				technology = strategic_bomber1
+ 				category = tactical_bomber
+ 			}
+ 		}
+ }
+
+ #Focus for Low Altitude Assistance
+		focus = {
+		id = lowaltitudeassistance
+		icon = GFX_goal_generic_air_fighter
+		ai_will_do = { factor = 1 }
+ 		x =18
+ 		y =3
+ 		mutually_exclusive = { focus = highabove}
+ 		prerequisite = { focus = expandedsouthernairbases}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+ 			add_tech_bonus = {
+ 				name = CAS_bonus
+ 				bonus = 0.5
+ 				ahead_reduction = 1
+ 				uses = 3
+ 				category = cas_bomber
+ 			}
+ 		}
+ }
+
+#Focus for Tactical Advantage
+		focus = {
+		id = tacticaladvantage
+		icon = GFX_goal_generic_cavalry
+		ai_will_do = { factor = 3 }
+ 		x =22
+ 		y =3
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = equipmentmodernization}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 25
+			add_tech_bonus = { name = land_doc_bonus bonus = 0.5 uses = 2 category = land_doctrine }
+		}
+ }
+
+ #Focus for Special Forces
+		focus = {
+		id = specialforces
+		icon = GFX_focus_secret_rearmament
+		ai_will_do = { factor = 2 }
+ 		x =24
+ 		y =3
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = equipmentmodernization}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 5
+			add_tech_bonus = {
+				name = special_bonus
+				bonus = 0.5
+				uses = 1
+				technology = paratroopers
+				technology = paratroopers2
+			}
+			add_tech_bonus = {
+				name = special_bonus
+				ahead_reduction = 1
+				uses = 1
+				technology = tech_mountaineers
+				technology = tech_mountaineers2
+				technology = tech_mountaineers3
+			}
+		}
+ }
+
+ #Focus for Settle the Skies
+		focus = {
+		id = settletheskies
+		icon = GFX_goal_generic_air_doctrine
+		ai_will_do = { factor = 2 }
+ 		x =17
+ 		y =4
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = highabove  focus = lowaltitudeassistance}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+					name =  air_doc_bonus
+					bonus = 0.5
+					uses = 2
+					category = air_doctrine
+				}
+			add_tech_bonus = {
+				name = fighter_bonus
+				bonus = 0.5
+				uses = 2
+				technology = early_fighter
+				technology = fighter1
+				technology = fighter2
+				technology = fighter3
+				technology = heavy_fighter1
+				technology = heavy_fighter2
+				technology = heavy_fighter3
+			}
+		}
+ }
+
+ #Focus for Civilian Industry
+		focus = {
+		id = civilianindustry
+		icon = GFX_goal_generic_construct_civ_factory
+		ai_will_do = { factor = 1 }
+ 		x =21
+ 		y =4
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = manufacturingeffort}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				random_owned_controlled_state = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+				}
+		}
+ }
+
+ #Focus for Military Industry
+		focus = {
+		id = militaryindustry
+		icon = GFX_goal_generic_construct_mil_factory
+		ai_will_do = { factor = 2 }
+ 		x =19
+ 		y =4
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = manufacturingeffort}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				random_owned_controlled_state = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = arms_factory level = 3 instant_build = yes }
+				}
+		}
+ }
+
+ #Focus for Greenwood the Greatest
+		focus = {
+		id = greenwoodthegreatest
+		icon = GFX_goal_generic_territory_or_war
+		ai_will_do = { factor = 15 }
+		available = { fascism > 0.35 }
+ 		x =10
+ 		y =4
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = guidanceofthewisest  focus = men_elvensupremacy}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = { set_politics = { ruling_party = fascism elections_allowed = no } }
+ }
+
+ #Focus for Destroy those who defile nature
+		focus = {
+		id = destroythosewhodefilenature
+		icon = GFX_goal_generic_demand_territory
+		ai_will_do = { factor = 10 }
+ 		x =9
+ 		y =5
+ 		mutually_exclusive = { focus = drawclosertothedarkness }
+ 		prerequisite = { focus = greenwoodthegreatest}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				create_faction = "green_union"
+				MON = { add_opinion_modifier = { target = MEN modifier = large_decrease } }
+		}
+ }
+
+ #Focus for Wipe out the Dwarves
+		focus = {
+		id = wipeoutthedwarves
+		icon = GFX_goal_generic_major_war
+		ai_will_do = {
+			factor = 2
+			modifier = {
+					add = -2
+					has_war = yes
+			}
+		}
+		available = { threat > 0.5 NOT={is_in_faction_with = ECU} }
+ 		x =0
+ 		y =5
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = claimerebor focus =greenwoodthegreatest}
+		prerequisite = { focus = claimerebor focus =redinheartandmind}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = { create_wargoal = { type = annex_everything target = ECU } }
+ }
+
+ #Focus for Military Industry 2
+		focus = {
+		id = militaryindustry2
+		icon = GFX_goal_generic_construct_mil_factory
+		ai_will_do = { factor = 3 }
+ 		x =19
+ 		y =5
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = militaryindustry}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				random_owned_controlled_state = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = arms_factory level = 3 instant_build = yes }
+				}
+		}
+ }
+
+ #Focus for Civilian Industry 2
+		focus = {
+		id = civilianindustry2
+		icon = GFX_goal_generic_construct_civ_factory
+		ai_will_do = { factor = 1 }
+ 		x =21
+ 		y =5
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = civilianindustry}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				random_owned_controlled_state = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+				}
+		}
+ }
+
+ #Focus for Draw closer to the darkness
+		focus = {
+		id = drawclosertothedarkness
+		icon = GFX_drawclosertothedarkness
+		ai_will_do = { factor = 5 }
+ 		x =11
+ 		y =5
+ 		mutually_exclusive = { focus = destroythosewhodefilenature }
+ 		prerequisite = { focus = greenwoodthegreatest}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				set_global_flag = mirkwood_dark_sympathies
+				MON = { add_opinion_modifier = { target = MEN modifier = large_increase } }
+		}
+ }
+
+#Focus for Extra Research Slot
+		focus = {
+		id = extraresearchslot
+		icon = GFX_focus_research
+		ai_will_do = { factor = 12 }
+ 		x =20
+ 		y =6
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = militaryindustry2}
+  	prerequisite = { focus =civilianindustry2}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = { add_research_slot = 1 }
+ }
+
+ #Focus for Confederate the Ents
+		focus = {
+		id = confederatetheents
+		icon = GFX_confederatetheents
+		ai_will_do = { factor = 10 }
+ 		x =9
+ 		y =6
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = destroythosewhodefilenature}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				EST = { country_event = { days = 1 id = mirkwood.3 } }
+		}
+ }
+
+ #Focus for Perception Management
+		focus = {
+		id = perceptionmanagement
+		icon = GFX_goal_generic_intelligence_exchange
+		ai_will_do = { factor = 12 }
+ 		x =14
+ 		y =6
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = selfcenteredrule}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				add_ideas = perception_management
+		}
+ }
+
+ #Focus for Mirkwood Rockets!
+		focus = {
+		id = mirkwoodrockets
+		icon = GFX_focus_rocketry
+		ai_will_do = { factor = 3 }
+ 		x =17
+ 		y =7
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = extraresearchslot}
+  	prerequisite = { focus =settletheskies}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = JOR_rocket_development
+				bonus = 0.5
+				uses = 2
+				category = rocketry
+			}
+		}
+ }
+
+ #Focus for Nuclear Effort
+		focus = {
+		id = men_nucleareffort
+		icon = GFX_focus_wonderweapons
+		ai_will_do = { factor = 2 }
+ 		x =22
+ 		y =7
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = extraresearchslot}
+		prerequisite = { focus =tacticaladvantage}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = secret_bonus
+				bonus = 0.5
+				uses = 1
+				category = nuclear
+			}
+		}
+ }
+
+ #Focus for Stabilize the Mirkwood
+		focus = {
+		id = stabilizethemirkwood
+		icon = GFX_goal_generic_neutrality_focus
+		ai_will_do = { factor = 10 }
+ 		x =10
+ 		y =7
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = governmentappropriation  focus = perceptionmanagement  focus = greenwoodthegreatest  focus = anewera}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			add_political_power = 50
+			set_global_flag = mirkwood_stabilize_attempt
+		}
+ }
+
+ #Focus for Extra Research Slot 2
+		focus = {
+		id = extraresearchslot2
+		icon = GFX_focus_research
+		ai_will_do = { factor = 12 }
+ 		x =20
+ 		y =8
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = mirkwoodrockets}
+  	prerequisite = { focus =men_nucleareffort}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = { add_research_slot = 1 }
+ }
+
+ #Focus for Deal with Dol Guldur
+		focus = {
+		id = dealwithdolguldur
+		icon = GFX_drawclosertothedarkness
+		ai_will_do = { factor = 10 }
+		available = { NOT = { has_global_flag = mirkwood_dolguldur_attack } }
+ 		x =12
+ 		y =8
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = stabilizethemirkwood}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				set_global_flag = mirkwood_dealing_with_dolguldur
+		}
+ }
+
+ #Focus for Deal with the Spiders
+		focus = {
+		id = dealwiththespiders
+		icon = GFX_dealwiththespiders
+		ai_will_do = { factor = 12 }
+		available = { NOT = { has_global_flag = mirkwood_spider_attack } }
+ 		x =8
+ 		y =8
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = stabilizethemirkwood}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			set_global_flag = mirkwood_dealing_with_spiders
+		}
+ }
+
+ #Focus for Purge the Orcs of Dol Guldur
+		focus = {
+		id = purgetheorcsofdolguldur
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 7 }
+		available = { NOT = { has_global_flag = mirkwood_dolguldur_attack } }
+ 		x =11
+ 		y =9
+ 		mutually_exclusive = { focus = men_strikeadealwithsauron }
+ 		prerequisite = { focus = dealwithdolguldur}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				add_manpower = -50000
+				set_global_flag = mirkwood_dolguldur_purged
+				add_state_core = 828
+		}
+ }
+
+ #Focus for Strike a deal with Sauron
+		focus = {
+		id = men_strikeadealwithsauron
+		icon = GFX_unitewithsauron
+		ai_will_do = { factor = 8 }
+		available = { NOT = { has_global_flag = mirkwood_dolguldur_attack } any_country = { original_tag = MON has_government = fascism is_faction_leader = yes } }
+ 		x =13
+ 		y =9
+ 		mutually_exclusive = { focus = purgetheorcsofdolguldur }
+ 		prerequisite = { focus = drawclosertothedarkness}
+  	prerequisite = { focus =dealwithdolguldur}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			random_country = {
+				limit = {original_tag = MON has_government = fascism is_faction_leader = yes}
+				add_to_faction = ROOT
+				add_state_core = 828
+			}
+		}
+ }
+
+ #Focus for Let the spiders roam free
+		focus = {
+		id = letthespidersroamfree
+		icon = GFX_dealwiththespiders
+		ai_will_do = { factor = 15 }
+		available = { NOT = { has_global_flag = mirkwood_spider_attack } }
+ 		x =7
+ 		y =9
+ 		mutually_exclusive = { focus = keepthespidersundercontrol }
+ 		prerequisite = { focus = dealwiththespiders}
+  	prerequisite = { focus =governmentappropriation}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+				set_global_flag = mirkwood_spiders_free
+				add_ideas = generic_communism
+				add_state_core = 823
+		}
+ }
+
+ #Focus for Keep the Spiders under control
+		focus = {
+		id = keepthespidersundercontrol
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 7 }
+ 		x =9
+ 		y =9
+ 		mutually_exclusive = { focus = letthespidersroamfree }
+ 		prerequisite = { focus = dealwiththespiders}
+		available = { NOT = { has_global_flag = mirkwood_spider_attack } }
+ 		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_manpower = -25000
+			set_global_flag = mirkwood_spiders_purged
+		  add_state_core = 823
+		}
+ }
+
+ #Focus for Arachnid Anarchy
+		focus = {
+		id = arachnidanarchy
+		icon = GFX_arachnid
+		ai_will_do = { factor = 8 }
+		available = { communism > 0.6 }
+		available = { NOT = { has_global_flag = mirkwood_spider_attack } }
+ 		x =7
+ 		y =10
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = letthespidersroamfree}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			set_cosmetic_tag = ARA
+			create_country_leader = {
+				name = "Shelob"
+				picture = "Portrait_Mirkwood_Shelob.tga"
+				expire = "1980.1.1"
+				ideology = marxism
+				traits = { }
+			}
+		}
+ }
+
+ #Focus for Children of Ungoliant
+		focus = {
+		id = childrenofungoliant
+		icon = GFX_dealwiththespiders
+		ai_will_do = { factor = 5 }
+		available = { NOT = { has_global_flag = mirkwood_spider_attack } }
+ 		x =6
+ 		y =11
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = arachnidanarchy}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = MEN_children_of_ungoliant
+		}
+ }
+
+ #Focus for Giant Spiderwebs
+		focus = {
+		id = giantspiderwebs
+		icon = GFX_dealwiththespiders
+		ai_will_do = { factor = 4 }
+		available = { NOT = { has_global_flag = mirkwood_spider_attack } }
+ 		x =8
+ 		y =11
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = arachnidanarchy}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			random_owned_controlled_state = {
+					add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}
+			}
+			random_owned_controlled_state = {
+					add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}
+			}
+		}
+ }#End of focuses
+}

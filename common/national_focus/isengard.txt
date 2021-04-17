@@ -1,0 +1,1461 @@
+focus_tree = {
+id = 'isengard'
+country = {
+	factor=0
+	modifier = {
+		add = 10
+		tag = ISR
+	}
+}
+
+continuous_focus_position = { x = 50 y = 2000 }
+
+default = no
+
+#Custom focuses start here
+#Focus for Fate of Isengard
+		focus = {
+		id = thefateofisengard
+		icon = GFX_goal_generic_CAS
+		ai_will_do = { factor = 100 }
+ 		x =4
+ 		y =0
+ 		mutually_exclusive = { }
+ 		prerequisite = { }
+ 		cost = 0
+  	available_if_capitulated = yes
+		completion_reward = { }
+}
+
+#Focus for Ways of the Light
+	 focus = {
+	 id = waysofthelight
+	 icon = GFX_waysofthelight
+	 ai_will_do = { factor = 20 }
+	 x =3
+	 y =1
+	 mutually_exclusive = { focus = waysofthedark }
+	 prerequisite = { focus = thefateofisengard}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = { add_ideas = ISR_ways_of_the_light }
+}
+
+#Focus for Ways of the Dark
+	 focus = {
+	 id = waysofthedark
+	 icon = GFX_waysofthedark
+	 ai_will_do = { factor = 40 }
+	 x =5
+	 y =1
+	 mutually_exclusive = { focus = waysofthelight }
+	 prerequisite = { focus = thefateofisengard}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = { add_ideas = ISR_ways_of_the_dark }
+}
+
+#Focus for Meet with Gandalf
+	 focus = {
+	 id = meetwithgandalf
+	 icon = GFX_goal_generic_improve_relations
+	 ai_will_do = { factor = 100 }
+	 available = { has_country_leader = { ruling_only = yes name = "Saruman" } }
+	 x =4
+	 y =2
+	 mutually_exclusive = { }
+	 prerequisite = { focus = waysofthedark  focus = waysofthelight}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = { country_event = { days = 0 id = isengard.1 } }
+}
+
+#Focus for Unite with Gandalf
+	 focus = {
+	 id = unitewithgandalf
+	 icon = GFX_unitewithgandalf
+	 ai_will_do = { factor = 100 }
+	 x =2
+	 y =3
+	 available = { has_global_flag = gandalf_saruman_united }
+	 mutually_exclusive = { focus = imprisongandalf}
+	 prerequisite = { focus = meetwithgandalf}
+	 cost = 0
+ 	 available_if_capitulated = yes
+	 completion_reward = { }
+}
+
+#Focus for A Gift to Gondor
+	focus = {
+	 id = agifttogondor
+	 icon = GFX_goal_generic_national_unity
+	 ai_will_do = { factor = 5 }
+	 x =2
+	 y =4
+	 mutually_exclusive = { }
+	 prerequisite = { focus = unitewithgandalf}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+	 	GEO = { add_opinion_modifier = { target = ISR modifier = large_increase } }
+	 	send_equipment = { target = GEO type = infantry_equipment amount = 10000 }
+	}
+}
+
+#Focus for Improve White Council Relations
+	focus = {
+	 id = improvewhitecouncilrelations
+	 icon = GFX_goal_generic_national_unity
+	 ai_will_do = { factor = 5 }
+	 x =2
+	 y =5
+	 mutually_exclusive = { }
+	 prerequisite = { focus = agifttogondor}
+	 cost = 5
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+	 	SYR = { add_opinion_modifier = { target = ISR modifier = large_increase } }
+		LIT = { add_opinion_modifier = { target = ISR modifier = large_increase } }
+	}
+}
+
+#Focus for Declare Against Sauron
+	 focus = {
+	 id = declareagainstsauron
+	 icon = GFX_goal_support_democracy
+	 ai_will_do = { factor = 15 }
+	 available = { democratic > 0.5 }
+	 x =0
+	 y =4
+	 mutually_exclusive = { }
+	 prerequisite = { focus = unitewithgandalf}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = { set_politics = { ruling_party = democratic elections_allowed = no } }
+}
+
+#Focus for Share knowledge with Gandalf
+	 focus = {
+	 id = shareknowledgewithgandalf
+	 icon = GFX_focus_research
+	 ai_will_do = { factor = 25 }
+	 x =0
+	 y =5
+	 mutually_exclusive = { }
+	 prerequisite = { focus = declareagainstsauron}
+	 cost = 15
+ 	 available_if_capitulated = yes
+	 completion_reward = { add_research_slot = 1 }
+}
+
+#Focus for Protect Isengard
+	 focus = {
+	 id = protectisengard
+	 icon = GFX_goal_generic_fortify_city
+	 ai_will_do = { factor = 6 }
+	 available = { 772 = { is_controlled_by = ROOT } }
+	 x =0
+	 y =6
+	 mutually_exclusive = { }
+	 prerequisite = { focus = shareknowledgewithgandalf}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+	 		772 = { add_building_construction = {	type = bunker level = 10 instant_build = yes province = 10348 } }
+			772 = { add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}	}
+	 }
+}
+
+#Focus for Persuade Enedwaith2 (democratic)
+	 focus = {
+	 id = persuadeenedwaith2
+	 icon = GFX_goal_generic_dangerous_deal
+	 ai_will_do = { factor = 5 }
+	 x =0
+	 y =7
+	 mutually_exclusive = { }
+	 prerequisite = { focus = protectisengard}
+	 cost = 5
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+	 		EGY = { add_ideas = generic_democratic }
+	 }
+}
+
+#Focus for Unite with Gondor
+	 focus = {
+	 id = isr_unitewithgondor
+	 icon = GFX_focus_generic_diplomatic_treaty
+	 ai_will_do = { factor = 5 }
+	 available = { OR = { GEO = { has_government = democratic }  GEO = { has_government = neutrality } } GEO = { is_faction_leader = yes } }
+	 x =0
+	 y =7
+	 mutually_exclusive = { }
+	 prerequisite = { focus = protectisengard}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+	 		GEO = { add_to_faction = ISR }
+	 }
+}
+
+#Focus for Anorganic Magic
+	 focus = {
+	 id = anorganicmagic
+	 icon = GFX_goal_generic_construction2
+	 ai_will_do = { factor = 5 }
+	 available = { 772 = { is_controlled_by = ISR } }
+	 x =2
+	 y =7
+	 mutually_exclusive = { }
+	 prerequisite = { focus = shareknowledgewithgandalf}
+	 cost = 5
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+	 		add_resource = { type = steel amount = 25 state = 772 }
+	 }
+}
+
+#Focus for Improved Combat Tactics 2
+	 focus = {
+	 id = improvedcombattactics2
+	 icon = GFX_goal_generic_army_doctrines
+	 ai_will_do = { factor = 5 }
+	 x =2
+	 y =8
+	 mutually_exclusive = { }
+	 prerequisite = { focus = anorganicmagic}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = { add_tech_bonus = { name = land_doc_bonus bonus = 0.5 uses = 3 category = land_doctrine } }
+}
+
+#Focus for Advanced Warfare2
+	 focus = {
+	 id = advancedwarfare2
+	 icon = GFX_focus_rocketry
+	 ai_will_do = { factor = 2 }
+	 x =2
+	 y =9
+	 mutually_exclusive = { }
+	 prerequisite = { focus = improvedcombattactics2 }
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = {
+ 			add_tech_bonus = {
+ 				name = jet_rocket_bonus
+ 				ahead_reduction = 0.5
+ 				uses = 2
+ 				category = rocketry
+ 				category = jet_technology
+ 			}
+ 		}
+}
+
+#Focus for Very Intense Wizardry
+	focus = {
+	id = veryintensewizardry
+	icon = GFX_focus_wonderweapons
+	ai_will_do = { factor = 2 }
+	x =2
+	y =10
+	prerequisite = { focus = advancedwarfare2 }
+	mutually_exclusive = { }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = secret_bonus
+			bonus = 0.5
+			uses = 2
+			category = nuclear
+			category = rocketry
+		}
+	}
+}
+
+#Focus for Extra Research Slot
+	focus = {
+	id = ISR_extraresearchslot2
+	icon = GFX_focus_research
+	ai_will_do = { factor = 7 }
+	x =2
+	y =11
+	prerequisite = { focus = veryintensewizardry }
+	mutually_exclusive = { }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_research_slot = 1
+	}
+}
+
+#Focus for Imprison Gandalf
+	 focus = {
+	 id = imprisongandalf
+	 icon = GFX_imprisongandalf
+	 ai_will_do = { factor = 100 }
+	 x =6
+	 y =3
+	 available = { has_global_flag = gandalf_imprisoned }
+	 mutually_exclusive = { focus = unitewithgandalf }
+	 prerequisite = { focus = meetwithgandalf}
+	 cost = 0
+   available_if_capitulated = yes
+	 completion_reward = { add_threat = 5  }
+}
+
+#Focus for Rebrand Isengard
+	 focus = {
+	 id = rebrandisengard
+	 icon = GFX_rebrandisengard
+	 ai_will_do = { factor = 100 }
+	 available = { fascism > 0.35 }
+	 x =6
+	 y =4
+	 mutually_exclusive = {  }
+	 prerequisite = { focus = imprisongandalf}
+	 cost = 10
+ 	 available_if_capitulated = no
+	 completion_reward = { set_politics = { ruling_party = fascism elections_allowed = no } add_threat = 3 }
+}
+
+#Focus for Build an army worthy of Mordor
+		focus = {
+		id = buildanarmyworthyofmordor
+		icon = GFX_buildanarmyworthyofmordor
+		ai_will_do = { factor = 70 }
+ 		x =17
+ 		y =4
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = imprisongandalf }
+		prerequisite = { focus = militaryinnovations }
+ 		cost = 5
+  	available_if_capitulated = no
+		completion_reward = { army_experience = 25 add_threat = 5 }
+ }
+
+
+  #Focus for Set up a Production Line
+ 		focus = {
+ 		id = setupaproductionline
+ 		icon = GFX_goal_generic_construct_mil_factory
+ 		ai_will_do = { factor = 8 }
+		available = { 772 = { is_controlled_by = ISR } }
+  	x =14
+  	y =5
+  	mutually_exclusive = { }
+  	prerequisite = { focus = buildanarmyworthyofmordor }
+  	cost = 10
+   	available_if_capitulated = no
+		completion_reward = {
+			772 = { add_extra_state_shared_building_slots = 10 }
+			772 = {add_building_construction = { type = arms_factory level = 7 instant_build = yes } }
+			772 = {add_building_construction = { type = industrial_complex level = 3 instant_build = yes } }
+		}
+  }
+
+  #Focus for Excavate for resources
+ 		focus = {
+ 		id = excavateforresources
+ 		icon = GFX_goal_generic_construction2
+ 		ai_will_do = { factor = 5 }
+		available = { 772 = { is_controlled_by = ISR } }
+  	x =14
+  	y =6
+  	mutually_exclusive = { }
+  	prerequisite = { focus = setupaproductionline }
+  	cost = 10
+   	available_if_capitulated = no
+		completion_reward = { add_resource = { type = steel amount = 10 state = 772 } add_resource = { type = chromium amount = 12 state = 772 } add_resource = { type = aluminium amount = 8 state = 772 } }
+  }
+
+	#Focus for Dig up the Fangorn Forest
+		focus = {
+		id = digupthefangornforest
+		icon = GFX_goal_generic_construction2
+		ai_will_do = { factor = 3 }
+		available = { has_global_flag = ents_burned 772 = { is_controlled_by = ISR } }
+		x =14
+		y =7
+		mutually_exclusive = { }
+		prerequisite = { focus = excavateforresources }
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = { add_resource = { type = steel amount = 30 state = 772 } }
+	}
+
+	#Focus for Establish Orc Breeding Grounds
+		 focus = {
+		 id = establishorcbreedinggrounds
+		 icon = GFX_establishorcbreedinggrounds
+		 ai_will_do = { factor = 50 }
+		 x =16
+		 y =5
+		 mutually_exclusive = { }
+		 prerequisite = { focus = buildanarmyworthyofmordor }
+		 cost = 10
+	 	 available_if_capitulated = no
+		 completion_reward = { add_manpower = 250000 add_ideas = ISR_orc_breeding }
+	}
+
+	#Focus for More Orcs!
+		 focus = {
+		 id = moreorcs
+		 icon = GFX_establishorcbreedinggrounds
+		 ai_will_do = { factor = 15 }
+		 x =16
+		 y =6
+		 mutually_exclusive = { }
+		 prerequisite = { focus = establishorcbreedinggrounds }
+		 cost = 10
+	 	 available_if_capitulated = no
+		 completion_reward = { add_manpower = 250000 add_ideas = ISR_orc_breeding2 }
+	}
+
+	#Focus for Select the Strongest Few
+		 focus = {
+		 id = selectthestrongesfew
+		 icon = GFX_establishorcbreedinggrounds
+		 ai_will_do = { factor = 50 }
+		 x =16
+		 y =7
+		 mutually_exclusive = { }
+		 prerequisite = { focus = moreorcs }
+		 cost = 2
+	 	 available_if_capitulated = no
+		 completion_reward = {
+		 	create_corps_commander = {
+ 				name = "Uglúk"
+ 				picture = "Portrait_Isengard_Ugluk.tga"
+ 				traits = { panzer_leader }
+ 				skill = 1
+				attack_skill = 1
+				defense_skill = 2
+				planning_skill = 4
+				logistics_skill = 3
+			}
+			create_corps_commander = {
+ 				name = "Lurtz"
+ 				id = 147
+ 				picture = "Portrait_Isengard_Lurtz.tga"
+ 				traits = { ranger trickster }
+ 				skill = 3
+				attack_skill = 5
+				defense_skill = 3
+				planning_skill = 2
+				logistics_skill = 3
+			}
+			create_corps_commander = {
+ 				name = "Hargor"
+ 				picture = "Portrait_Isengard_Hargor.tga"
+ 				traits = { trait_engineer }
+ 				skill = 2
+				attack_skill = 1
+				defense_skill = 2
+				planning_skill = 3
+				logistics_skill = 1
+			}
+			create_corps_commander = {
+ 				name = "Mauhur"
+ 				picture = "Portrait_Isengard_Mauhur.tga"
+ 				traits = { urban_assault_specialist }
+ 				skill = 1
+				attack_skill = 2
+				defense_skill = 1
+				planning_skill = 3
+				logistics_skill = 2
+			}
+			create_field_marshal = {
+ 				name = "Gara"
+ 				picture = "Portrait_Isengard_Gara.tga"
+ 				traits = { old_guard }
+ 				skill = 3
+				attack_skill = 2
+				defense_skill = 2
+				planning_skill = 4
+				logistics_skill = 3
+			}
+			create_field_marshal = {
+ 				name = "Lugdush"
+ 				picture = "Portrait_Isengard_Lugdush.tga"
+ 				traits = { offensive_doctrine }
+ 				skill = 1
+				attack_skill = 2
+				defense_skill = 1
+				planning_skill = 1
+				logistics_skill = 2
+			}
+		 }
+	}
+
+	#Focus for Military Research Committee
+		 focus = {
+		 id = militaryresearchcommittee
+		 icon = GFX_goal_tfv_generic_tech_sharing
+		 ai_will_do = { factor = 5 }
+		 x =19
+		 y =5
+		 mutually_exclusive = { }
+		 prerequisite = { focus = buildanarmyworthyofmordor }
+		 cost = 10
+	 	 available_if_capitulated = no
+		 completion_reward = { army_experience = 25 }
+	}
+
+	#Focus for Improved Steel Manufacturing
+		 focus = {
+		 id = improvedsteelmanufacturing
+		 icon = GFX_goal_generic_construct_civilian
+		 ai_will_do = { factor = 2 }
+		 available = { 772 = { is_controlled_by = ISR } }
+		 x =18
+		 y =6
+		 mutually_exclusive = { }
+		 prerequisite = { focus = militaryresearchcommittee }
+		 cost = 7
+	 	 available_if_capitulated = no
+		 completion_reward = { add_resource = { type = steel amount = 25 state = 772 } }
+	}
+
+	#Focus for Examine the Eagles
+		 focus = {
+		 id = examinetheeagles
+		 icon = GFX_goal_generic_air_fighter
+		 ai_will_do = { factor = 1 }
+		 available = { 772 = { is_controlled_by = ISR } }
+		 x =18
+		 y =7
+		 mutually_exclusive = { }
+		 prerequisite = { focus = improvedsteelmanufacturing }
+		 cost = 10
+	 	 available_if_capitulated = yes
+		 completion_reward = {
+		 	772 = { add_building_construction = { type = air_base level = 2 instant_build = yes } }
+	 		add_tech_bonus = { name = air_doc_bonus bonus = 0.5 uses = 1 category = air_doctrine }
+		}
+	}
+
+	#Focus for Improved Combat Tactics
+		 focus = {
+		 id = improvedcombattactics
+		 icon = GFX_goal_generic_army_doctrines
+		 ai_will_do = { factor = 2 }
+		 x =20
+		 y =6
+		 mutually_exclusive = { }
+		 prerequisite = { focus = militaryresearchcommittee }
+		 cost = 10
+	 	 available_if_capitulated = yes
+		 completion_reward = { add_tech_bonus = { name = land_doc_bonus bonus = 0.5 uses = 3 category = land_doctrine } }
+	}
+
+	#Focus for Advanced Warfare
+		 focus = {
+		 id = advancedwarfare
+		 icon = GFX_focus_rocketry
+		 ai_will_do = { factor = 2 }
+		 x =20
+		 y =7
+		 mutually_exclusive = { }
+		 prerequisite = { focus = improvedcombattactics }
+		 cost = 10
+		 available_if_capitulated = yes
+		 completion_reward = {
+	 			add_tech_bonus = {
+	 				name = jet_rocket_bonus
+	 				ahead_reduction = 0.5
+	 				uses = 2
+	 				category = rocketry
+	 				category = jet_technology
+	 			}
+	 		}
+	}
+
+	#Focus for Train Orc Scholars
+		 focus = {
+		 id = trainorcscholars
+		 icon = GFX_focus_research
+		 ai_will_do = { factor = 8 }
+		 x =19
+		 y =8
+		 mutually_exclusive = { }
+		 prerequisite = { focus = advancedwarfare }
+		 prerequisite = { focus = examinetheeagles }
+		 cost = 10
+		 available_if_capitulated = yes
+		 completion_reward = { add_research_slot = 1 }
+	}
+
+	#Focus for Intense Wizardry
+		focus = {
+		id = intensewizardry
+		icon = GFX_focus_wonderweapons
+		ai_will_do = { factor = 2 }
+		available = { has_government = fascism has_country_leader = { ruling_only = yes name = "Saruman" } }
+		x =19
+		y =9
+		prerequisite = { focus = trainorcscholars }
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = secret_bonus
+				bonus = 0.5
+				uses = 1
+				category = nuclear
+				category = rocketry
+			}
+		}
+	}
+
+ #Focus for Burn the Fangorn Forest
+		focus = {
+		id = burnthefangornforest
+		icon = GFX_burnthefangornforest
+		ai_will_do = { factor = 6 }
+ 		x =7
+ 		y =2
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = waysofthedark }
+ 		cost = 5
+  	available_if_capitulated = no
+		completion_reward = {
+			add_threat = 5
+			set_global_flag = ents_burned
+			add_offsite_building = { type = arms_factory level = 1 }
+			add_equipment_to_stockpile = { type = infantry_equipment_1 amount = 15000 producer = ISR }
+			EST = { country_event = { days = 1 id = entwood.7 } }
+		}
+ }
+
+#Focus for Protect the Fangorn Forest
+		focus = {
+		id = protectthefangornforest
+		icon = GFX_goal_generic_defence
+		ai_will_do = { factor = 3 }
+		x =1
+		y =2
+		mutually_exclusive = { }
+		prerequisite = { focus = waysofthelight }
+		cost = 5
+		available_if_capitulated = no
+		completion_reward = {
+			EST = { add_opinion_modifier = { target = ISR modifier = isr_entwood_protected } }
+			add_threat = -3
+			give_guarantee = EST
+			add_resource = { type = rubber amount = 30 state = 772 }
+		}
+}
+
+ #Focus for Claim Dominion over Enedwaith
+		focus = {
+		id = claimdominionoverenedwaith
+		icon = GFX_goal_demand_sudetenland
+		ai_will_do = { factor = 15 }
+		available = { has_government = fascism }
+		bypass = { has_war_with = EGY }
+ 		x =8
+ 		y =5
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = rebrandisengard}
+ 		cost = 10
+  	available_if_capitulated = no
+		completion_reward = {
+			add_threat = 4
+			add_state_claim = 818
+			add_state_claim = 819
+			add_state_claim = 820
+			add_state_claim = 773
+		}
+ }
+
+#Focus for Take East Dunland
+		focus = {
+		id = takeeastdunland
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 20 }
+		available = { has_government = fascism NOT = { has_war_with = EGY } }
+		x =7
+		y =6
+		mutually_exclusive = { }
+		prerequisite = { focus = claimdominionoverenedwaith}
+		cost = 5
+		available_if_capitulated = no
+		completion_reward = {
+			ISR = { set_state_owner = 773 }
+		}
+}
+
+#Focus for Subjugate Enedwaith
+	 focus = {
+	 id = subjugateenedwaith
+	 icon = GFX_goal_generic_major_war
+	 ai_will_do = { factor = 3 }
+	 available = { has_government = fascism }
+	 bypass = { has_war_with = EGY }
+	 x =8
+	 y =7
+	 mutually_exclusive = { focus = persuadeenedwaith}
+	 prerequisite = { focus = claimdominionoverenedwaith}
+	 cost = 10
+	 available_if_capitulated = no
+	 completion_reward = { EGY = { country_event = { days = 1 id = isengard.4 } } }
+}
+
+#Focus for Persuade Enedwaith
+	 focus = {
+	 id = persuadeenedwaith
+	 icon = GFX_goal_generic_war_with_comintern
+	 ai_will_do = { factor = 6 }
+	 available = { has_government = fascism NOT = { has_war_with = EGY } }
+	 x =10
+	 y =7
+	 mutually_exclusive = { focus = subjugateenedwaith}
+	 prerequisite = { focus = claimdominionoverenedwaith}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = { EGY = { add_ideas = ISR_sarumans_influence_f } }
+}
+
+#Focus for Strike a Deal with Enedwaith
+	 focus = {
+	 id = strikeadealwithenedwaith
+	 icon = GFX_goal_generic_war_with_comintern
+	 ai_will_do = { factor = 35 }
+	 available = { EGY = {fascism > 0.30} has_government = fascism NOT = { has_war_with = EGY } }
+	 x =10
+	 y =8
+	 mutually_exclusive = { }
+	 prerequisite = { focus = persuadeenedwaith}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+	 		news_event = { hours = 24 id = news.364 }
+	 		EGY = { set_politics = { ruling_party = fascism elections_allowed = no } }
+	 		puppet = EGY
+	 }
+}
+
+#Focus for Rally the Tribes of East Dunland
+	 focus = {
+	 id = rallythetribesofeastdunland
+	 icon = GFX_rallythetribesofeastdunland
+	 ai_will_do = { factor = 30 }
+	 available = { has_government = fascism NOT = { has_war_with = EGY } }
+	 x =7
+	 y =8
+	 mutually_exclusive = { }
+	 prerequisite = { focus = takeeastdunland}
+	 cost = 5
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+	 		ISR = { load_oob = "ISR_Militia" }
+	 }
+}
+
+#Focus for Quarrel with Rohan
+	 focus = {
+	 id = quarrelwithrohan
+	 icon = GFX_quarrelwithrohan
+	 ai_will_do = { factor = 15 }
+	 x =12
+	 y =4
+	 mutually_exclusive = { }
+	 prerequisite = { focus = imprisongandalf}
+	 cost = 5
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+	 	JOR = { add_opinion_modifier = { target = ISR modifier = isr_quarrel } }
+		ISR = { add_opinion_modifier = { target = JOR modifier = isr_quarrel } }
+		add_threat = 2
+		hidden_effect = {news_event = { hours = 48 id = news.335 }}
+	 }
+}
+
+#Focus for Pillage the towns of Rohan
+	 focus = {
+	 id = pillagethetownsofrohan
+	 icon = GFX_establishneworcbreedinggrounds
+	 ai_will_do = { factor = 10 }
+	 bypass = { has_war_with = JOR }
+	 x =12
+	 y =5
+	 mutually_exclusive = { }
+	 prerequisite = { focus = quarrelwithrohan}
+	 prerequisite = { focus = rebrandisengard}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+		add_threat = 2
+		JOR = { add_ideas = ISR_orc_pillage }
+	 }
+}
+
+#Focus for Take the Fords of Isen
+	 focus = {
+	 id = takethefordsofisen
+	 icon = GFX_goal_generic_major_war
+	 ai_will_do = { factor = 35 }
+	 bypass = { has_war_with = JOR }
+	 x =12
+	 y =6
+	 mutually_exclusive = { }
+	 prerequisite = { focus = pillagethetownsofrohan}
+	 cost = 3
+ 	 available_if_capitulated = yes
+	 completion_reward = {
+	 	ISR = { set_state_owner = 765 }
+		add_threat = 10
+		JOR = { add_manpower = -20000 }
+	 	hidden_effect = {
+			if {
+				limit = { NOT = { has_global_flag = theodred_dead } }
+				JOR = { country_event = { days = 0 id = rohan.4 } } set_global_flag = theodred_dead
+			}
+		}
+	 }
+}
+
+#Focus for Demand the Westmarch
+	 focus = {
+	 id = demandthewestmarch
+	 icon = GFX_goal_generic_political_pressure
+	 ai_will_do = {
+	 	factor = 5
+		modifier = {
+				add = 5
+				ISR = { num_divisions > 60 }
+		}
+		modifier = {
+				add = 2
+				765 = { is_controlled_by = ISR }
+		}
+	}
+	 bypass = { has_war_with = JOR }
+	 x =12
+	 y =7
+	 mutually_exclusive = { }
+	 prerequisite = { focus = takethefordsofisen}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = { JOR = { country_event = { days = 0 id = rohan.5 } } }
+}
+
+#Focus for War with Gondor
+	 focus = {
+	 id = isr_warwithgondor
+	 icon = GFX_goal_generic_major_war
+	 available = { NOT = { is_in_faction_with = GEO } }
+	 ai_will_do = {
+	 	factor = 0
+		modifier = {
+			add = 1
+			NOT = { has_war = yes }
+			NOT = { is_in_faction_with = GEO }
+			is_in_faction = yes
+		}
+	}
+	 bypass = { has_war_with = GEO }
+	 x =11
+	 y =9
+	 mutually_exclusive = { }
+	 prerequisite = { focus = warwithrohan}
+	 cost = 10
+   available_if_capitulated = yes
+	 completion_reward = { create_wargoal = { type = annex_everything target = GEO } }
+}
+
+#Focus for War with Lórien
+	 focus = {
+	 id = warwithlorien
+	 icon = GFX_goal_generic_major_war
+	 available = { NOT = { is_in_faction_with = LIT } }
+	 ai_will_do = {
+	 	factor = 0
+		modifier = {
+			add = 1
+			NOT = { has_war = yes }
+			NOT = { is_in_faction_with = LIT }
+			is_in_faction = yes
+		}
+	}
+	 bypass = { has_war_with = LIT }
+	 x =13
+	 y =9
+	 mutually_exclusive = { }
+	 prerequisite = { focus = warwithrohan}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = { create_wargoal = { type = annex_everything target = LIT } }
+}
+
+#Focus for War with Rohan
+	 focus = {
+	 id = warwithrohan
+	 icon = GFX_goal_generic_major_war
+	 ai_will_do = {
+		factor = 2
+		modifier = {
+				add = 5
+				ISR = { num_divisions > 60 }
+		}
+		modifier = {
+				add = 2
+				765 = { is_controlled_by = ISR }
+		}
+		modifier = {
+				add = 5
+				764 = { is_controlled_by = ISR }
+		}
+		modifier = {
+				factor = 2
+				JOR = { num_divisions < 80 }
+		}
+	}
+	 bypass = { has_war_with = JOR }
+	 available = { NOT = { is_in_faction_with = JOR } NOT = { JOR= { has_completed_focus = unitewithisengard } } }
+	 x =12
+	 y =8
+	 mutually_exclusive = { }
+	 prerequisite = { focus = demandthewestmarch}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = { create_wargoal = { type = annex_everything target = JOR } }
+}
+
+#Focus for Slave Soldiers of Rohan
+	 focus = {
+	 id = slavesoldiersofrohan
+	 icon = GFX_focus_CZE_german_puppet
+	 ai_will_do = {
+		factor = 2
+		modifier = {
+				add = 20
+				ISR = { has_manpower < 100  }
+		}
+	}
+	available = { 766 = { is_controlled_by = ISR } 767 = { is_controlled_by = ISR } }
+	 x =12
+	 y =10
+	 mutually_exclusive = { }
+	 prerequisite = { focus = warwithrohan}
+	 cost = 10
+ 	 available_if_capitulated = yes
+	 completion_reward = { add_ideas = ISR_slave_soldiers }
+}
+
+#Focus for Helms Deep Has but one Weakness
+	 focus = {
+	 id = helmsdeephasbutoneweakness
+	 icon = GFX_goal_generic_major_war
+	 ai_will_do = { factor = 20 }
+	 available = { has_government = fascism has_country_leader = { ruling_only = yes name = "Saruman" } }
+	 x =14
+	 y =8
+	 mutually_exclusive = { }
+	 prerequisite = { focus = demandthewestmarch}
+	 cost = 2
+ 	 available_if_capitulated = yes
+	 completion_reward = { 767 = { remove_building = { type = bunker province = 5003 level = 8 } } }
+}
+
+#Focus for Unite with Sauron
+		focus = {
+		id = unitewithsauron
+		icon = GFX_unitewithsauron
+		ai_will_do = { factor = 6 }
+		available = { has_government = fascism NOT = { ISR = { has_completed_focus = ourownway } } }
+		bypass = { any_country = { original_tag = MON has_government = fascism is_faction_leader = yes is_in_faction_with = ROOT } }
+ 		x =6
+ 		y =5
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = rebrandisengard}
+ 		cost = 2
+  	available_if_capitulated = yes
+		completion_reward = { MON = { add_to_faction = ISR } }
+ }
+
+ #Focus for Hunt for the Ring in Argonath
+		focus = {
+		id = huntfortheringinargonath
+		icon = GFX_huntfortheringinargonath
+		available = { always = no}
+		ai_will_do = { factor = 100 }
+ 		x =4
+ 		y =5
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = rebrandisengard}
+ 		cost = 1
+  	available_if_capitulated = yes
+		completion_reward = {  }
+ }
+
+ #Focus for Give the Ring to Sauron
+		focus = {
+		id = givetheringtosauron
+		icon = GFX_givetheringtosauron
+		ai_will_do = { factor = 100 }
+		available = { has_government = fascism has_global_flag=saruman_has_ring }
+ 		x =3
+ 		y =6
+ 		mutually_exclusive = { focus = keeptheringforyourself }
+ 		prerequisite = { focus = huntfortheringinargonath}
+ 		cost = 3
+  	available_if_capitulated = yes
+		completion_reward = {
+			clr_global_flag = sarman_has_ring
+			set_global_flag = sauron_has_ring
+			random_other_country = {
+				limit = { original_tag = MON has_government = fascism }
+				add_ideas = one_true_ring
+			}
+			remove_ideas = one_true_ring
+		}
+ }
+
+ #Focus for Keep the Ring for yourself!
+		focus = {
+		id = keeptheringforyourself
+		icon = GFX_goal_demand_sudetenland
+		ai_will_do = { factor = 100 }
+		available = { has_government = fascism has_global_flag=saruman_has_ring }
+ 		x =5
+ 		y =6
+ 		mutually_exclusive = { focus = givetheringtosauron }
+ 		prerequisite = { focus = huntfortheringinargonath}
+ 		cost = 3
+  	available_if_capitulated = yes
+ }
+
+ #Focus for Betray Sauron
+		focus = {
+		id = betraysauron
+		icon = GFX_goal_generic_major_war
+		ai_will_do = {
+			factor = 0
+			modifier = {
+					add = 2
+					has_global_flag = isengard_sovereignity_encouraged
+			}
+			modifier = {
+					add = 10
+					MON = { num_divisions < 30 }
+			}
+			modifier = {
+					add = 5
+					strength_ratio = { tag = MON ratio > 0.7 }
+			}
+		}
+		available = { has_government = fascism }
+ 		x =6
+ 		y =7
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = unitewithsauron}
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			MON = { remove_from_faction = ISR }
+			MON = { add_opinion_modifier = { target = ISR modifier = isr_treason } }
+		}
+ }
+
+ #Focus for Our Own Way
+		focus = {
+		id = ourownway
+		icon = GFX_focus_generic_support_the_left_right
+		ai_will_do = { factor = 15 }
+		available = { has_government = fascism has_country_leader = { ruling_only = yes name = "Saruman" } if { limit = { ISR = { has_completed_focus = unitewithsauron } } has_completed_focus = betraysauron } }
+ 		x =5
+ 		y =8
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = betraysauron focus = keeptheringforyourself }
+ 		cost = 10
+  	available_if_capitulated = yes
+		completion_reward = {
+			create_faction = "servants_of_saruman"
+			set_cosmetic_tag = SOS
+		}
+ }
+
+ #Focus for Military Innovations
+ 		focus = {
+ 		id = militaryinnovations
+ 		icon = GFX_goal_generic_axis_build_infantry
+ 		ai_will_do = { factor = 25 }
+  	x =13
+  	y =0
+  	mutually_exclusive = { }
+  	prerequisite = { }
+  	cost = 10
+   	available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 10
+			add_tech_bonus = {
+				name = land_doc_bonus
+				bonus = 0.5
+				uses = 2
+				category = land_doctrine
+			}
+		}
+  }
+
+	#Focus for Compund Crossbows
+  	focus = {
+  	id = compoundcrossbows
+  	icon = GFX_focus_generic_air_defense
+  	ai_will_do = { factor = 5 }
+   	x =9
+   	y =1
+   	prerequisite = { focus = militaryinnovations }
+   	mutually_exclusive = { }
+   	cost = 10
+    available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = arty_bonus
+				bonus = 0.5
+				uses = 2
+				category = artillery
+			}
+		}
+   }
+
+	#Focus for Armor Innovations
+   	focus = {
+   	id = armorinnovations
+   	icon = GFX_goal_generic_army_tanks
+   	ai_will_do = { factor = 4 }
+    x =9
+    y =2
+    prerequisite = { focus = compoundcrossbows }
+    mutually_exclusive = { }
+    cost = 10
+    available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 5
+			add_tech_bonus = {
+				name = armor_bonus
+				bonus = 0.5
+				uses = 2
+				category = armor
+			}
+		}
+  }
+
+	#Focus for Specialized Divisions
+   	focus = {
+   	id = specializeddivisions
+   	icon = GFX_goal_generic_wolf_pack
+   	ai_will_do = { factor = 1 }
+    x =9
+    y =3
+    prerequisite = { focus = armorinnovations }
+    mutually_exclusive = { }
+    cost = 10
+    available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 5
+			add_tech_bonus = {
+				name = special_bonus
+				bonus = 0.5
+				uses = 1
+				technology = paratroopers
+				technology = paratroopers2
+			}
+			add_tech_bonus = {
+				name = special_bonus
+				ahead_reduction = 1
+				uses = 1
+				technology = tech_mountaineers2
+			}
+		}
+  }
+
+	#Focus for Air Innovations
+   	focus = {
+   	id = airinnovations
+   	icon = GFX_goal_generic_air_fighter2
+   	ai_will_do = { factor = 2 }
+    x =13
+    y =1
+    prerequisite = { focus = militaryinnovations }
+    mutually_exclusive = { }
+    cost = 10
+    available_if_capitulated = yes
+		completion_reward = {
+			772 = {
+					add_building_construction = {
+						type = air_base
+						level = 2
+						instant_build = yes
+					}
+				}
+		}
+  }
+
+	#Focus for Rain Fire from above
+   	focus = {
+   	id = rainfirefromabove
+   	icon = GFX_goal_poland_goal
+   	ai_will_do = { factor = 3 }
+    x =11
+    y =2
+    prerequisite = { focus = airinnovations }
+    mutually_exclusive = { focus = strategicassistance }
+    cost = 10
+    available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = op_dest_bonus
+				bonus = 0.5
+				uses = 2
+				category = strategic_destruction_tree
+			}
+			add_tech_bonus = {
+				name = bomber_bonus
+				bonus = 0.5
+				uses = 1
+				technology = strategic_bomber2
+				technology = CAS2
+			}
+		}
+  }
+
+	#Focus for Strategic assistance
+   	focus = {
+   	id = strategicassistance
+   	icon = GFX_goal_generic_air_bomber
+   	ai_will_do = { factor = 3 }
+    x =13
+    y =2
+    prerequisite = { focus = airinnovations }
+    mutually_exclusive = { focus = rainfirefromabove }
+    cost = 10
+    available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = strat_dest_bonus
+				bonus = 0.5
+				uses = 2
+				category = battlefield_support_tree
+			}
+			add_tech_bonus = {
+				name = bomber_bonus
+				bonus = 0.5
+				uses = 1
+				technology = tactical_bomber2
+			}
+		}
+  }
+
+	#Focus for Wrathful Eagles
+   	focus = {
+   	id = wrathfuleagles
+   	icon = GFX_goal_generic_air_fighter
+   	ai_will_do = { factor = 2 }
+    x =15
+    y =2
+    prerequisite = { focus = airinnovations }
+    mutually_exclusive = { }
+    cost = 10
+    available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+					name = fighter_bonus
+					bonus = 0.5
+					uses = 1
+					technology = early_fighter
+					technology = fighter1
+					technology = fighter2
+					technology = fighter3
+					technology = jet_fighter1
+					technology = jet_fighter2
+				}
+			}
+  }
+
+	#Focus for Improved Explosives
+		focus = {
+		id = improvedexplosives
+		icon = GFX_focus_generic_cryptologic_bomb
+		ai_will_do = { factor = 3 }
+		x =11
+		y =3
+		prerequisite = { focus = rainfirefromabove }
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = op_dest_bonus
+				bonus = 0.5
+				uses = 2
+				category = strategic_destruction_tree
+			}
+		}
+	}
+
+	#Focus for Low Altitude Improvements
+		focus = {
+		id = lowaltitudeimprovements
+		icon = GFX_goal_generic_occupy_start_war
+		ai_will_do = { factor = 3 }
+		x =13
+		y =3
+		prerequisite = { focus = strategicassistance }
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+					name = radar_tech_bonus
+					bonus = 0.5
+					uses = 3
+					category = radar_tech
+				}
+		 }
+	}
+
+	#Focus for Expand Isengard Logistics
+		focus = {
+		id = expandisengardlogistics
+		icon = GFX_goal_generic_position_armies
+		ai_will_do = { factor = 5 }
+		available = { 772 = { is_controlled_by = ISR } }
+		x =20
+		y =0
+		prerequisite = { }
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			772 = { add_extra_state_shared_building_slots = 1	}
+		}
+	}
+
+	#Focus for Enhance Weapon Production
+		focus = {
+		id = ISR_enhanceweaponproduction
+		icon = GFX_goal_generic_construct_mil_factory
+		ai_will_do = { factor = 4 }
+		x =18
+		y =1
+		prerequisite = { focus = expandisengardlogistics }
+		mutually_exclusive = { }
+		available = { 772 = { is_controlled_by = ISR } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_offsite_building = { type = arms_factory level = 2 }
+		}
+	}
+
+	#Focus for Enhance Weapon Production2
+		focus = {
+		id = ISR_enhanceweaponproduction2
+		icon = GFX_goal_generic_construct_mil_factory
+		ai_will_do = { factor = 3 }
+		x =18
+		y =2
+		prerequisite = { focus = ISR_enhanceweaponproduction }
+		mutually_exclusive = { }
+		available = { 772 = { is_controlled_by = ISR } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_offsite_building = { type = arms_factory level = 1 }
+		}
+	}
+
+
+	#Focus for Enhance Civilian Production
+		focus = {
+		id = ISR_enhancecivilianproduction
+		icon = GFX_goal_generic_construct_civ_factory
+		ai_will_do = { factor = 3 }
+		x =20
+		y =1
+		prerequisite = { focus = expandisengardlogistics }
+		mutually_exclusive = { }
+		available = { 772 = { is_controlled_by = ISR } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_offsite_building = { type = industrial_complex level = 2 }
+			add_tech_bonus = {
+				name = construction_tech_bonus
+				bonus = 0.5
+				uses = 1
+				category = construction_tech
+			}
+		}
+	}
+
+	#Focus for Enhance Civilian Production2
+		focus = {
+		id = ISR_enhancecivilianproduction2
+		icon = GFX_goal_generic_construct_civ_factory
+		ai_will_do = { factor = 2 }
+		x =20
+		y =2
+		prerequisite = { focus = ISR_enhancecivilianproduction }
+		prerequisite = { focus = transportlines }
+		mutually_exclusive = { }
+		available = { 772 = { is_controlled_by = ISR } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_offsite_building = { type = industrial_complex level = 2 }
+			add_tech_bonus = {
+				name = construction_tech_bonus
+				bonus = 0.5
+				uses = 1
+				category = construction_tech
+			}
+		}
+	}
+
+	#Focus for Transport Lines
+		focus = {
+		id = transportlines
+		icon = GFX_goal_generic_construct_infrastructure
+		ai_will_do = { factor = 7 }
+		x =22
+		y =1
+		prerequisite = { focus = expandisengardlogistics }
+		mutually_exclusive = { }
+		available = { 772 = { is_controlled_by = ISR } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			772 = {
+						if = {
+							limit = { is_controlled_by = ISR }
+							add_building_construction = {
+								type = infrastructure
+								level = 10
+								instant_build = yes
+							}
+						}
+					}
+		}
+	}
+
+	#Focus for Extra Research Slot
+		focus = {
+		id = ISR_extraresearchslot
+		icon = GFX_focus_research
+		ai_will_do = { factor = 8 }
+		x =20
+		y =3
+		prerequisite = { focus = ISR_enhanceweaponproduction2 }
+		prerequisite = { focus = ISR_enhancecivilianproduction2 }
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = { add_research_slot = 1	}
+	}
+
+}
