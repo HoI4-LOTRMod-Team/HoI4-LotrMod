@@ -284,7 +284,7 @@ PixelShader =
 			if ( abs( Input.vUV.y - 0.5f ) <= 0.25f )
 			{
 				waterSideAlpha.x = 0.0f;
-				waterSideAlpha.y = 1.0f;
+				waterSideAlpha.y = max(waterColor.r*3.0f, 1.0f);
 			}
 		#endif
 
@@ -355,7 +355,7 @@ PixelShader =
 			float fresnelBias = 0.5f;
 			float fresnel = saturate( dot( -vEyeDir, normal ) ) * 0.5f;
 			fresnel = saturate( fresnelBias + ( 1.0f - fresnelBias ) * pow( 1.0f - fresnel, 10.0) );
-			waterColor = waterColor * ( 1.0f - fresnel ) + reflectiveColor * fresnel;
+			//waterColor = waterColor * ( 1.0f - fresnel );// + reflectiveColor * fresnel;
 
 			float3 diffuse = lerp( waterColor, diffuseColor.rgb, waterSideAlpha.x );
 
@@ -366,7 +366,7 @@ PixelShader =
 		#endif
 
 			float vSpecularIntensity = lerp(.085, 0.051, vSnowSpecGloss);
-			vSpecularIntensity = lerp( vSpecularIntensity, diffuseColor.a, waterSideAlpha.x ) * ( 1.0f - gradientBorderFactor*0.5 );
+			vSpecularIntensity = 0.0f;//lerp( vSpecularIntensity, diffuseColor.a, waterSideAlpha.x ) * ( 1.0f - gradientBorderFactor*0.5 );
 			float vGlossiness =  lerp( spec / 0.5f, 5.0f, waterSideAlpha.x ) + vSnowSpecGloss * SNOW_SPEC_GLOSS_MULT;
 
 			LightingProperties lightingProperties;
@@ -405,7 +405,6 @@ PixelShader =
 			// fade slower if water, faster if land(help river crossings)
 			float vDesiredFade = (lerp( vFadeValue * 2.0f, 0.0f, saturate( waterSideAlpha.x * 4.0f ) ));
 			float vAlphaMultiplier = saturate(lerp( vDesiredFade, 1.0f, vFastFade ));
-
 
 			DebugReturn(vOut, lightingProperties, fShadowTerm);
 
