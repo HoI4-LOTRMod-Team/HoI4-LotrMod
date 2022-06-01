@@ -5,7 +5,7 @@ tags={
 	"Events"
 	"Gameplay"
 }
-name="Lord of the Rings Mod dev"
+name="Lord of the Rings Mod"
 supported_version="1.11.11"
 remote_file_id="1314446921"
 
@@ -48,6 +48,7 @@ replace_path="common/units/unit_modifiers"
 replace_path="events"
 replace_path="gfx/interface/equipmentdesigner/tanks/designer"
 replace_path="gfx/loadingscreens"
+replace_path="history/general"
 replace_path="history/states"
 replace_path="history/countries"
 replace_path="localisation/english"
