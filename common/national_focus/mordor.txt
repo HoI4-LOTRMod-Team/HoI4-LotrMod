@@ -1401,7 +1401,7 @@ focus = {
 	icon = GFX_goal_generic_dangerous_deal
 	ai_will_do = { factor = 3 }
 	x = 0
-	y = 2
+	y = 3
 	relative_position_id = invite_isengard_to_faction
 	available = {
 		ISR = {
@@ -1429,7 +1429,7 @@ focus = {
 	id = core_gondor
 	icon = GFX_restorethekingdom
 	ai_will_do = { factor = 25 }
-	x = -4
+	x = -3
 	y = 1
 	relative_position_id = war_with_gondor
 	available = {
@@ -1710,54 +1710,13 @@ focus = {
 	icon = GFX_goal_generic_dangerous_deal
 	ai_will_do = { factor = 20 }
 	bypass = { has_government = communism }
-	x = 4
+	x = 2
 	y = 1
 	relative_position_id = conquestofmiddleearth
 	prerequisite = { focus = conquestofmiddleearth}
 	cost = 5
 	available_if_capitulated = yes
 	completion_reward = { add_political_power = 25 }
-}
-
- #Focus for Enslave the North
-focus = {
-	id = enslavethenorth
-	icon = GFX_focus_RAJ_indian_gurkhas
-	ai_will_do = { factor = 12 }
-	available = { SWE = { has_war = no } has_civil_war = no }
-	x = -2
-	y = 1
-	relative_position_id = seekalliesintheeast
-	prerequisite = { focus = seekalliesintheeast}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		SWE = {
-			country_event = mordor.2
-		}
-	}
-}
-
- #Focus for Establish control over the Dead Marshes
-focus = {
-	id = establishcontroloverthedeadmarshes
-	icon = GFX_focus_RAJ_indian_gurkhas
-	ai_will_do = { factor = 5 }
-	available = { OR = { SWE = { is_puppet_of = ROOT } 842 = { is_controlled_by = ROOT } } }
-	bypass = { NOT = { has_government = fascism } }
-	x = 0
-	y = 1
-	relative_position_id = enslavethenorth
-	prerequisite = { focus = enslavethenorth }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		if = {
-			limit = { SWE = { is_puppet_of = ROOT } }
-			SWE = { add_country_leader_trait = dictator }
-			else = { add_political_power = 50 }
-		}
-	}
 }
 
  #Focus for Enslave the East
@@ -1806,7 +1765,7 @@ focus = {
 	icon = GFX_goal_generic_major_war
 	ai_will_do = { factor = 10 }
 	available = { }
-	x = -1
+	x = 0
 	y = 1
 	available = {
 		OR = {
@@ -2230,7 +2189,7 @@ focus = {
 		}
 	}
 	available = { num_divisions > 50 has_government = fascism }
-	x = 8
+	x = 6
 	y = 4
 	relative_position_id = conquestofmiddleearth
 	prerequisite = { focus = establishcontroloverthesouth focus = establishcontroloverthedeadmarshes focus = establishcontrolovertheeast }
@@ -2297,6 +2256,49 @@ focus = {
 	completion_reward = { create_wargoal = { type = annex_everything target = DOM } }
 }
 
+focus = {
+	id = go_through_the_swamp
+	icon = GFX_goal_generic_major_war
+	ai_will_do = {
+		factor = 0
+	}
+	available = {
+
+	}
+	x = -1
+	y = 1
+	relative_position_id = rallythetroops
+	prerequisite = { focus = rallythetroops }
+	mutually_exclusive = { focus = attack_head_on }
+	cost = 10
+	completion_reward = {
+		create_wargoal = { 
+			type = annex_everything target = SWE 
+		} 
+		custom_effect_tooltip = build_railroad_network_in_swamp
+	}
+}
+
+focus = {
+	id = attack_head_on
+	icon = GFX_meats_back_on_the_menu
+	ai_will_do = {
+		factor = 100
+	}
+	available = {
+
+	}
+	x = -3
+	y = 1
+	relative_position_id = rallythetroops
+	prerequisite = { focus = rallythetroops }
+	mutually_exclusive = { focus = go_through_the_swamp }
+	cost = 10
+	completion_reward = {
+		add_ideas = MOR_attack_on_gondor
+	}
+}
+
 #Focus for War with Gondor!
 focus = {
 	id = war_with_gondor
@@ -2322,10 +2324,10 @@ focus = {
 		}
 	}
 	x = -2
-	y = 1
+	y = 2
 	relative_position_id = rallythetroops
 	mutually_exclusive = { focus = suggest_war_with_gondor }
-	prerequisite = { focus = rallythetroops}
+	prerequisite = { focus = go_through_the_swamp  focus = attack_head_on} 
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
