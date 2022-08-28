@@ -2304,7 +2304,15 @@ focus = {
 focus = {
 	id = war_with_gondor
 	icon = GFX_goal_Gondor_wargoal
-	bypass = { has_war_with = GEO }
+	bypass = { 
+		OR = {
+			GEO = {
+				is_in_faction_with = MON
+				is_puppet_of = MON
+				exists = no
+			}
+		}
+	}
 	ai_will_do = {
 		factor = 10
 		modifier = {
@@ -2346,16 +2354,15 @@ focus = {
 		icon = GFX_goal_Rohan_wargoal
 		ai_will_do = { factor = 10	}
 		available = { 
-			JER = { 
+			JOR = { 
 				NOT = { 
 					is_in_faction_with = ROOT 
-					has_government = fascism
 				} 
 			}
 		}
 		bypass = {
 			OR = {
-				JER = {
+				JOR = {
 					is_in_faction_with = MON
 					is_puppet_of = MON
 					exists = no
@@ -2369,7 +2376,42 @@ focus = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			create_wargoal = { type = puppet_wargoal_focus target = JER }
+			create_wargoal = { type = puppet_wargoal_focus target = JOR }
+		}
+	}
+
+	focus = {
+		id = core_rohan
+		icon = GFX_restoretherealm
+		ai_will_do = { factor = 25 }
+		x = 0
+		y = 1
+		relative_position_id = war_with_rohan
+		available = {
+			at_war = no
+			controls_state = 766
+		}
+		prerequisite = { focus = war_with_rohan }
+		cost = 10
+		completion_reward = {
+			add_state_core = 766
+		}
+	}
+
+	focus = {
+		id = expand_horses
+		icon = GFX_restoretherealm
+		ai_will_do = { factor = 25 }
+		x = 0
+		y = 1
+		relative_position_id = core_rohan
+		prerequisite = { focus = core_rohan }
+		cost = 10
+		available = {
+			controls_state = 766
+		}
+		completion_reward = {
+			add_resource = { type = rubber amount = 15 state = 766 }
 		}
 	}
 
