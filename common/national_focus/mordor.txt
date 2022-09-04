@@ -254,6 +254,21 @@ focus = {
 	}
 }
 
+focus = {
+	id = one_orc_army
+	icon = GFX_goal_generic_allies_build_infantry
+	relative_position_id = arealmoforcs
+	x = 5
+	y = 1
+	cost = 10
+	prerequisite = { focus = arealmoforcs}
+	search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_WAR_SUPPORT }
+	completion_reward = {
+		army_experience = 15
+		add_ideas = MOR_one_orc_army
+	}
+}
+
 #Focus for Spread the Revolution
 focus = {
 	id = spreadtherevolution
@@ -527,7 +542,7 @@ focus = {
 	 ai_will_do = { factor = 25 }
 	 available = { has_government = communism }
 	 relative_position_id = union_of_working_class
-	 x = 2
+	 x = 3
 	 y = 1
 	 prerequisite = { focus = union_of_working_class}
 	 cost = 10
@@ -586,7 +601,7 @@ focus = {
 
 focus = {
 	id = send_request_for_joining_union
-	icon = GFX_goal_generic_forceful_treaty
+	icon = GFX_goal_skull_treaty
 	relative_position_id = spread_the_revolution_to_our_neighbors
 	x = 0
 	y = 1
@@ -601,10 +616,103 @@ focus = {
 }
 
 focus = {
+	id = spread_the_revolution_further
+	icon = GFX_goal_generic_occupy_states_ongoing_war
+	relative_position_id = send_request_for_joining_union
+	x = 0
+	y = 1
+	cost = 10
+	prerequisite = { focus = send_request_for_joining_union}
+	completion_reward = {
+		create_wargoal = { type = puppet_wargoal_focus target = DOR }
+	}
+}
+
+focus = {
+	id = spirit_of_the_orc_revolution
+	icon = GFX_goal_generic_soviet_construction
+	relative_position_id = spread_the_revolution_further
+	x = 0
+	y = 1
+	cost = 10
+	prerequisite = { focus = support_rohan_revolution focus = spread_revolution_with_force_to_rohan focus = spread_the_revolution_further}
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		add_ideas = MOR_orc_revolution
+	}
+}
+
+focus = {
+	 id = spread_the_revolution_to_the_north
+	 icon = GFX_focus_generic_join_comintern
+	 ai_will_do = { factor = 25 }
+	 available = { has_government = communism }
+	 relative_position_id = support_rohan_revolution
+	 x = 0
+	 y = 1
+	 prerequisite = { focus = support_rohan_revolution focus = spread_revolution_with_force_to_rohan focus = spread_the_revolution_further}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = {
+		create_wargoal = { 
+			type = annex_everything target = SWE 
+		} 
+		if = {
+			limit = {
+				NOT = {
+					ECU = {
+						has_government = communism
+					}
+				}
+			}
+			ECU = { 
+				add_timed_idea = { idea = MOR_influence days = 365 }
+				add_opinion_modifier = {
+					target = MON
+					modifier = medium_increase 
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					DOM = {
+						has_government = communism
+					}
+				}
+			}
+			DOM = { 
+				add_timed_idea = { idea = MOR_influence days = 365 }
+				add_opinion_modifier = {
+					target = MON
+					modifier = medium_increase 
+				}
+			}
+		}
+	} #Add communist drift to Rohan Gondor, Eryn Lasgalen and Moria
+}
+
+focus = {
+	id = send_request_for_joining_union_to_north
+	icon = GFX_goal_skull_treaty
+	relative_position_id = spread_the_revolution_to_the_north
+	x = 0
+	y = 1
+	cost = 10
+	prerequisite = { focus = spread_the_revolution_to_the_north}
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	completion_reward = {
+		add_political_power = 100
+		custom_effect_tooltip = send_request_for_joining_union_north_tooltip
+		#unlocks decisions to give nations ultimatems
+	}
+}
+
+focus = {
 	id = reject_morgoth_teachings
 	icon = GFX_stop_melkor_worship
 	relative_position_id = arealmoforcs
-	x = 6
+	x = 8
 	y = 1
 	cost = 10
 	bypass = { 
@@ -1462,7 +1570,7 @@ focus = {
 
 focus = {
 	id = suggest_war_with_gondor
-	icon = GFX_goal_generic_dangerous_deal
+	icon = GFX_goal_generic_military_deal
 	ai_will_do = { factor = 3 }
 	x = 0
 	y = 3
@@ -2300,7 +2408,7 @@ focus = {
 	relative_position_id = rallythetroops
 	prerequisite = { focus = rallythetroops }
 	mutually_exclusive = { focus = attack_head_on }
-	cost = 1
+	cost = 10
 	completion_reward = {
 		create_wargoal = { 
 			type = annex_everything target = SWE 
