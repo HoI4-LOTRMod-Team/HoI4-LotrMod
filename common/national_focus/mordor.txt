@@ -1164,7 +1164,7 @@ focus = {
 		ai_will_do = { factor = 3 }
 		available = { 753 = { is_controlled_by = ROOT } 747 = { is_controlled_by = ROOT } }
  		x = 0
- 		y = 1
+ 		y = 2
 		relative_position_id = thebeatingheart
  		mutually_exclusive = { }
  		prerequisite = { focus = thebeatingheart }
@@ -1207,27 +1207,99 @@ focus = {
  }
 
  #Focus for Global Rail network
-		focus = {
-		id = globalrailnetwork
-		icon = GFX_goal_generic_construct_infrastructure
-		ai_will_do = { factor = 3 }
-		available = { 752 = { is_controlled_by = ROOT } 750 = { is_controlled_by = ROOT } 743 = { is_controlled_by = ROOT } 744 = { is_controlled_by = ROOT } 748 = { is_controlled_by = ROOT } }
- 		x = 2
- 		y = 1
-		relative_position_id = centralizedindustry
- 		mutually_exclusive = { }
- 		prerequisite = { focus =  decentralizedindustry focus = centralizedindustry }
- 		cost = 10
-  		available_if_capitulated = yes
-		search_filters = { FOCUS_FILTER_INDUSTRY }
-		completion_reward = {
-				752 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				750 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				743 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				744 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				748 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
+focus = {
+	id = globalrailnetwork
+	icon = GFX_goal_generic_construct_infrastructure
+	ai_will_do = { factor = 3 }
+	available = { 752 = { is_controlled_by = ROOT } 750 = { is_controlled_by = ROOT } 743 = { is_controlled_by = ROOT } 744 = { is_controlled_by = ROOT } 748 = { is_controlled_by = ROOT } }
+	x = 2
+	y = 1
+	relative_position_id = centralizedindustry
+	prerequisite = { focus =  decentralizedindustry focus = centralizedindustry }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+			752 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
+			750 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
+			743 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
+			744 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
+			748 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
+	}
+}
+
+focus = {
+	id = railnetwork_to_the_east
+	icon = GFX_goal_generic_construct_infrastructure
+	ai_will_do = { factor = 10 }
+	available = {
+		controls_state = 861
+		controls_state = 752
+		controls_state = 745
+	}
+	x = 0
+	y = 1 
+	relative_position_id = globalrailnetwork
+	prerequisite = { focus = globalrailnetwork }
+	cost = 10
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		build_railway = {
+			level = 2
+			start_province = 7988
+			target_province = 7108
 		}
- }
+		861 = {
+			add_building_construction = {
+				type = supply_node
+				level = 1
+				instant_build = yes
+				province = 7108
+			}
+		}
+	}
+}
+
+focus = {
+	id = infrastructure_to_the_east
+	icon = GFX_goal_generic_construct_infrastructure
+	ai_will_do = { factor = 10 }
+	available = {
+		controls_state = 863
+		controls_state = 862
+		controls_state = 861
+	}
+	x = 0
+	y = 1 
+	relative_position_id = railnetwork_to_the_east
+	prerequisite = { focus = railnetwork_to_the_east }
+	cost = 10
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		863 = {
+			add_building_construction = {
+				type = infrastructure
+				level = 3
+				instant_build = yes
+			}
+		}
+		862 = {
+			add_building_construction = {
+				type = infrastructure
+				level = 3
+				instant_build = yes
+			}
+		}
+		861 = {
+			add_building_construction = {
+				type = infrastructure
+				level = 3
+				instant_build = yes
+			}
+		}
+	}
+}
+
 
  focus = {
 	 id = improve_industry
@@ -1258,7 +1330,7 @@ focus = {
 		ai_will_do = { factor = 3 }
 		available = { 752 = { is_controlled_by = ROOT } 750 = { is_controlled_by = ROOT } 743 = { is_controlled_by = ROOT } 744 = { is_controlled_by = ROOT } 748 = { is_controlled_by = ROOT } }
  		x = 0
- 		y = 1
+ 		y = 2
 		relative_position_id = improve_industry
  		prerequisite = { focus = improve_industry }
  		cost = 10
@@ -1287,6 +1359,7 @@ focus = {
  		y = 1
 		relative_position_id = centralizedmilitirization
  		prerequisite = { focus = decentralizedmilitirization focus = centralizedmilitirization }
+		prerequisite = { focus = infrastructure_to_the_east }
  		cost = 10
   		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_RESEARCH }
