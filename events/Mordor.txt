@@ -73,6 +73,8 @@ country_event = {
 				#load_oob = "SPA_Civil_War"
 			}
 
+			add_ideas = MOR_rejected_morgoth_1
+
 			set_politics = {
 				ruling_party = communism
 				elections_allowed = no
@@ -252,7 +254,7 @@ country_event = {
 			}
 			modifier = {
 				add = 100
-				has_government = fascism
+				has_completed_focus = join_the_dark_pact
 			}
 		}
  		FROM = {country_event = { hours = 2 id = mordor.7 } }
@@ -270,6 +272,10 @@ country_event = {
 					has_guaranteed = HAI
 				}
 				factor = 5
+			}
+			modifier = {
+				add = 100
+				has_completed_focus = go_solo
 			}
 		}
 		FROM = {country_event = { hours = 2 id = mordor.8 } }
@@ -289,14 +295,14 @@ country_event = {
 		name = mordor.7.a
 		news_event = { hours = 6 id = news.347 }
 		random_list = {
-				70 = {
+			70 = {
 				HAI = {
 					set_politics = { ruling_party = fascism elections_allowed = no } 
 					dismantle_faction = yes
 					MON = { add_to_faction = HAI }
-					if { limit = { has_global_flag = harad_BEL_faction } MON = { add_to_faction = BEL } }
-					if { limit = { has_global_flag = harad_UKR_faction } MON = { add_to_faction = UKR } }
-					if { limit = { has_global_flag = harad_KAZ_faction } MON = { add_to_faction = KAZ } }
+					if = { limit = { has_global_flag = harad_BEL_faction } MON = { add_to_faction = BEL } }
+					if = { limit = { has_global_flag = harad_UKR_faction } MON = { add_to_faction = UKR } }
+					if = { limit = { has_global_flag = harad_KAZ_faction } MON = { add_to_faction = KAZ } }
 				}
 			}
  			30 = { 
@@ -304,7 +310,7 @@ country_event = {
 					set_politics = { ruling_party = fascism elections_allowed = no } 
 					dismantle_faction = yes
 					MON = { add_to_faction = HAI }
-					if { limit = { has_global_flag = harad_KAZ_faction } MON = { add_to_faction = KAZ } }
+					if = { limit = { has_global_flag = harad_KAZ_faction } MON = { add_to_faction = KAZ } }
 					HAI = {country_event = { hours = 2 id = mordor.9 } } 
 				}
 			}
@@ -323,10 +329,26 @@ country_event = {
 
 	option = {
 		name = mordor.8.a
-		random_list = {
-			60 = { }
- 			40 = { HAI = {country_event = { hours = 2 id = mordor.10 } } }
+		if = {
+			limit = {
+				HAI = {
+					has_government = fascism
+				}
+				MON = {
+					create_wargoal = {
+						type = puppet_wargoal_focus
+						target = HAI
+					}
+				}
+			}
 		}
+		else = {
+			random_list = {
+				60 = { }
+				40 = { HAI = {country_event = { hours = 2 id = mordor.10 } } }
+			}
+		}
+
 	}
 }
 
@@ -372,11 +394,11 @@ country_event = {
 					original_tag = HAI
 					has_government = neutrality
 				}
-				if { limit = { has_global_flag = harad_faction } create_faction = southern_confederacy }
-				if { limit = { has_global_flag = harad_BEL_faction } add_to_faction = BEL }
-				if { limit = { has_global_flag = harad_UKR_faction } add_to_faction = UKR }
-				if { limit = { has_global_flag = harad_BEL_puppet } puppet = BEL }
-				if { limit = { has_global_flag = harad_UKR_puppet } puppet = UKR }
+				if = { limit = { has_global_flag = harad_faction } create_faction = southern_confederacy }
+				if = { limit = { has_global_flag = harad_BEL_faction } add_to_faction = BEL }
+				if = { limit = { has_global_flag = harad_UKR_faction } add_to_faction = UKR }
+				if = { limit = { has_global_flag = harad_BEL_puppet } puppet = BEL }
+				if = { limit = { has_global_flag = harad_UKR_puppet } puppet = UKR }
 			}
 		}
 	}
@@ -425,8 +447,8 @@ country_event = {
 					original_tag = HAI
 					has_government = fascism
 				}
-				if { limit = { has_global_flag = harad_KAZ_faction } KAZ = { leave_faction = yes } MON = { add_to_faction = KAZ } }
-				if { limit = { has_global_flag = harad_KAZ_puppet } puppet = KAZ }
+				if = { limit = { has_global_flag = harad_KAZ_faction } KAZ = { leave_faction = yes } MON = { add_to_faction = KAZ } }
+				if = { limit = { has_global_flag = harad_KAZ_puppet } puppet = KAZ }
 			}
 		}
 	}
@@ -558,5 +580,146 @@ country_event = {
 		name = mordor.43.a
 		set_global_flag = ring_found
 		add_ideas = one_true_ring
+	}
+}
+
+# send demand to join union of orcs (communist path)
+country_event = {
+	id = mordor.44
+	title = mordor.44.t
+	desc = mordor.44.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.44.a
+		MON = {
+			puppet = ROOT
+		}
+		
+	}
+	option = {
+		name = mordor.44.b
+		add_war_support = 0.10
+		MON = {
+			create_wargoal = {
+				type = puppet_wargoal_focus
+				target = ROOT
+			}
+		}
+	}
+}
+
+country_event = {
+	id = mordor.45
+	title = mordor.45.t
+	desc = mordor.45.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.45.a
+		add_stability = 0.05
+		MON = {
+			add_to_faction = NOR
+		}
+	}
+
+	option = {
+		name = mordor.45.b
+	}
+}
+
+#Harad asked for alliance
+country_event = {
+	id = mordor.46
+	title = mordor.46.t
+	desc = mordor.46.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.46.a
+		MON = {
+			add_to_faction = HAI
+		}
+	}
+
+	option = {
+		name = mordor.46.b
+	}
+}
+
+# send demand to join the Dark Pact
+country_event = {
+	id = mordor.47
+	title = mordor.47.t
+	desc = mordor.47.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.47.a
+		MON = {
+			add_to_faction = ROOT
+		}
+		
+	}
+	option = {
+		name = mordor.47.b
+		add_war_support = 0.10
+		MON = {
+			create_wargoal = {
+				type = annex_everything
+				target = ROOT
+			}
+		}
+	}
+}
+
+# ask for alliance
+country_event = {
+	id = mordor.48
+	title = mordor.48.t
+	desc = mordor.48.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.48.a
+		MON = {
+			add_to_faction = ROOT
+		}
+		
+	}
+	option = {
+		name = mordor.48.b
+		MEN = {
+			country_event = { id = mirkwood.9 }
+		}
+	}
+	option = {
+		name = mordor.48.c
+		#No fuck off
+	}
+}
+
+# declines request for Dol Guldur
+country_event = {
+	id = mordor.49
+	title = mordor.49.t
+	desc = mordor.49.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.49.a
+		
 	}
 }
