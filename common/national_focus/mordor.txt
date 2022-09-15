@@ -1,4 +1,4 @@
-focus_tree = {
+﻿focus_tree = {
 	id = 'mordor'
 	country = {
 		factor=0
@@ -138,21 +138,82 @@ default = no
 	 id = marchonbaraddr
 	 icon = GFX_focus_YUG_pan_slavic_congress
 	 ai_will_do = { factor = 25 }
-	 bypass = { has_global_flag = mordor_civil_war}
-	 x = 2
-	 y =4
-	 available = { communism > 0.75 }
-	 mutually_exclusive = { }
+	 bypass = { has_global_flag = mordor_civil_war has_government = communism}
+	 relative_position_id = seizethemeansofproduction
+	 x = 1
+	 y = 1
+	 available = { communism > 0.60 }
 	 prerequisite = { focus = seizethemeansofproduction }
 	 cost = 10
 	 available_if_capitulated = yes
+	 search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_MANPOWER }
 	 completion_reward = {
-	 remove_ideas = MOR_orc_resistance
-	 remove_ideas = MOR_orc_takeover
-	 	random_list = {
- 			60 = { country_event = mordor.1 } #launch civil war and remove orc_takever spirit
-	 		40 = { set_politics = { ruling_party = communism elections_allowed = no } }
+		remove_ideas = MOR_orc_resistance
+		remove_ideas = MOR_orc_takeover
+		country_event = mordor.1 
+	 }
+}
+
+focus = {
+	id = request_assistance_moria
+	icon = GFX_beatbacktheorcinvasion
+	ai_will_do = { factor = 50 }
+	prerequisite = { focus = marchonbaraddr }
+	available = { 
+		has_government = communism 
+		has_civil_war = yes
+		NOR = { has_government = communism}
+		
+	}
+	relative_position_id = marchonbaraddr
+	x = -2
+	y = 1
+	cost = 5
+	completion_reward = {
+		NOR = {
+			country_event = moria.4
 		}
+		#give moria a event where they can choose to help Mordor
+	}
+}
+
+focus = {
+	id = request_alliance_moria
+	icon = GFX_focus_generic_treaty
+	ai_will_do = { factor = 50 }
+	prerequisite = { focus = request_assistance_moria }
+	available = { 
+		has_government = communism 
+		is_faction_leader = yes
+		NOR = { has_government = communism} 
+	}
+	relative_position_id = request_assistance_moria
+	x = 0
+	y = 1
+	cost = 5
+	completion_reward = {
+		NOR = {
+			country_event = moria.5
+		}
+	}
+}
+
+
+#Focus for Put Meat back on the Menu!
+	 focus = {
+	 id = putmeatbackonthemenu
+	 icon = GFX_meats_back_on_the_menu
+	 ai_will_do = { factor = 25 }
+	 available = { has_government = communism }
+	 relative_position_id = marchonbaraddr
+	 x = 2
+	 y = 1
+	 prerequisite = { focus = marchonbaraddr }
+	 cost = 10
+	 available_if_capitulated = yes
+	 search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_STABILITY}
+	 completion_reward = {
+	 	add_ideas = MOR_survival
 	 }
 }
 
@@ -172,12 +233,352 @@ default = no
 	 prerequisite = { focus = marchonbaraddr }
 	 cost = 10
 	 available_if_capitulated = yes
-	 completion_reward = { add_political_power = 100 }
+	 search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
+	 completion_reward = { 
+		 add_political_power = 100 
+		 add_stability = 0.05
+	}
+}
+
+focus = {
+	id = union_of_working_class
+	icon = GFX_union_of_working_orc_class
+	relative_position_id = arealmoforcs
+	x = 2
+	y = 1
+	prerequisite = { focus = arealmoforcs }
+	cost = 5
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = { 
+		add_political_power = 50
+		create_faction = Union_of_orcs
+	}
+}
+
+focus = {
+	id = rise_orcs_of_dol_guldur
+	icon = GFX_goal_dol_guldur
+	relative_position_id = union_of_working_class
+	x = 2
+	y = 1
+	prerequisite = { focus = union_of_working_class }
+	cost = 10
+	search_filters = { }
+	available = {
+		MEN = {
+			NOT = {
+				has_government = communism
+				has_completed_focus = purgetheorcsofdolguldur
+			}
+			owns_state = 828
+		}
+		is_faction_leader = yes
+	}
+	completion_reward = { 
+		DGU = {
+			set_politics = {
+				ruling_party = communism
+				elections_allowed = no
+			}
+			set_state_controller = 828
+			set_state_owner = 828
+			load_oob = "GUA_Orcs"
+		}
+		add_to_faction = DGU
+		MEN = {
+			create_wargoal = { 
+				type = annex_everything target = DGU 
+			}
+		}
+	}
+}
+
+focus = {
+	id = one_orc_army
+	icon = GFX_goal_generic_allies_build_infantry
+	relative_position_id = arealmoforcs
+	x = 5
+	y = 1
+	cost = 10
+	prerequisite = { focus = arealmoforcs}
+	search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_WAR_SUPPORT }
+	completion_reward = {
+		army_experience = 15
+		add_ideas = MOR_one_orc_army
+	}
 }
 
 #Focus for Spread the Revolution
-	 focus = {
-	 id = spreadtherevolution
+focus = {
+	id = spreadtherevolution
+	icon = GFX_focus_generic_join_comintern
+	ai_will_do = { factor = 25 }
+	available = { has_government = communism }
+	relative_position_id = union_of_working_class
+	x = 0
+	y = 1
+	prerequisite = { focus = union_of_working_class}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_threat = 1
+		if = {
+			limit = {
+				NOT = {
+					JOR = {
+						has_government = communism
+					}
+				}
+			}
+			JOR = { 
+				add_timed_idea = { idea = MOR_influence days = 365 }
+				add_opinion_modifier = {
+					target = MON
+					modifier = small_increase 
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					GEO = {
+						has_government = communism
+					}
+				}
+			}
+			GEO = { 
+					add_timed_idea = { idea = MOR_influence days = 365 }
+					add_opinion_modifier = {
+					target = MON
+					modifier = small_increase 
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					MEN = {
+						has_government = communism
+					}
+				}
+			}
+			MEN = { 
+					add_timed_idea = { idea = MOR_influence days = 365 }
+					add_opinion_modifier = {
+					target = MON
+					modifier = small_increase 
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					NOR = {
+						has_government = communism
+					}
+				}
+			}
+			NOR = { 
+					add_timed_idea = { idea = MOR_influence days = 365 }
+					add_opinion_modifier = {
+					target = MON
+					modifier = small_increase 
+				}
+			}
+		}
+	} #Add communist drift to Rohan Gondor, Eryn Lasgalen and Moria
+}
+
+focus = {
+	id = support_gonder_revolution
+	icon = GFX_goal_generic_demand_territory
+	relative_position_id = spreadtherevolution
+	x = 0
+	y = 1
+	prerequisite = { focus = spreadtherevolution }
+	available = { 
+		OR = { 
+			GEO = { communism > 0.25 NOT = { has_government = communism } } 
+			GEO = { has_government = communism } 
+		} 
+	}
+	cost = 10
+	available_if_capitulated = no
+	mutually_exclusive = { focus = spread_revolution_with_force }
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	completion_reward = {
+		if = {
+			limit = {
+				NOT = { GEO = { has_government = communism} }
+			}
+			add_threat = 3
+			GEO = {
+				add_popularity = {
+					ideology = communism
+					popularity = 0.05
+				}
+				start_civil_war = {
+					ideology = communism
+					only_own_territory = yes
+					army_ratio = 0.35
+					capital = 754
+					states = { 
+						754 760 756 877
+					}
+					keep_political_party_members = yes
+				}
+				#Communisme will start civil war in Gonder. Will join your faction if exists or maybe become your puppet?
+			}
+			every_country = {
+				limit = {
+					has_government = communism
+					has_civil_war = yes
+					original_tag = GEO
+				}
+				MON = {
+					add_to_faction = PREV
+				}
+			}
+		}
+		else = {
+			MON = {
+				add_to_faction = GEO
+			}
+		}
+	}
+}
+
+focus = {
+	id = support_rohan_revolution
+	icon = GFX_goal_generic_demand_territory
+	relative_position_id = support_gonder_revolution
+	x = 0
+	y = 1
+	prerequisite = { focus = support_gonder_revolution }
+	available = { OR = { JOR = { communism > 0.25 NOT = { has_government = communism } } JOR = { has_government = communism } } }
+	cost = 10
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	completion_reward = {
+		if = {
+			limit = {
+				NOT = { JOR = { has_government = communism} }
+			}
+			add_threat = 3
+			JOR = {
+				add_popularity = {
+					ideology = communism
+					popularity = 0.05
+				}
+				start_civil_war = {
+					ideology = communism
+					only_own_territory = yes
+					army_ratio = 0.35
+					capital = 768
+					states = { 
+						771 768
+					}
+					keep_political_party_members = yes
+				}
+				#Communisme will start civil war in Gonder. Will join your faction if exists or maybe become your puppet?
+			}
+			every_country = {
+				limit = {
+					has_government = communism
+					has_civil_war = yes
+					original_tag = JOR
+				}
+				MON = {
+					add_to_faction = PREV
+				}
+			}
+		}
+		else if = {
+			limit = {
+				JOR = { has_government = communism }
+			}
+			MON = {
+				add_to_faction = JOR
+			}
+		}
+	}
+}
+
+focus = {
+	id = prepare_for_violence_revolution
+	icon = GFX_goal_generic_construction
+	relative_position_id = arealmoforcs
+	x = 0
+	y = 2
+	prerequisite = { focus = arealmoforcs }
+	cost = 10
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_INDUSTRY }
+	completion_reward = { 
+		add_threat = 1
+		add_war_support = 0.10
+		753 = { add_extra_state_shared_building_slots = 2 }
+		753 = {add_building_construction = { type = arms_factory level = 2 instant_build = yes } }
+	}
+}
+
+focus = {
+	id = spread_revolution_with_force
+	icon = GFX_goal_generic_major_war
+	relative_position_id = prepare_for_violence_revolution
+	x = 0
+	y = 1
+	bypass = {
+		GEO = {
+			exists = no
+		}
+	}
+	available = {
+		GEO = {
+			exists = yes
+		}
+	}
+	prerequisite = { focus = prepare_for_violence_revolution }
+	cost = 10
+	available_if_capitulated = no
+	mutually_exclusive = { focus = support_gonder_revolution }
+	completion_reward = { 
+		create_wargoal = {
+			type = puppet_wargoal_focus
+			target = GEO
+		}
+	}
+}
+
+focus = {
+	id = spread_revolution_with_force_to_rohan
+	icon = GFX_goal_generic_occupy_states_ongoing_war
+	relative_position_id = spread_revolution_with_force
+	x = 0
+	y = 1
+	bypass = {
+		JOR = {
+			exists = no
+		}
+	}
+	available = {
+		JOR = {
+			exists = yes
+		}
+	}
+	prerequisite = { focus = spread_revolution_with_force }
+	cost = 10
+	available_if_capitulated = no
+	completion_reward = { 
+		create_wargoal = {
+			type = puppet_wargoal_focus
+			target = JOR
+		}
+	}
+}
+
+focus = {
+	 id = spread_the_revolution_to_our_neighbors
 	 icon = GFX_focus_generic_join_comintern
 	 ai_will_do = { factor = 25 }
 	 available = { has_government = communism }
@@ -206,33 +607,92 @@ default = no
 	 available_if_capitulated = yes
 }
 
-#Focus for The Fate of Mordor
-		focus = {
-		id = thefateofmordor
-		icon = GFX_goal_generic_CAS
-		ai_will_do = { factor = 15 }
- 		x = 16
- 		y = 0
- 		mutually_exclusive = { }
- 		prerequisite = { }
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = { add_political_power = 50 }
- }
-
  #Focus for The Fate of Minas Morgul
-		focus = {
-		id = thefateofminasmorgul
-		icon = GFX_goal_generic_CAS
-		ai_will_do = { factor = 3 }
- 		x =27
- 		y =0
- 		mutually_exclusive = { }
- 		prerequisite = { }
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-				add_political_power = 50
+focus = {
+	id = thefateofminasmorgul
+	icon = GFX_goal_generic_CAS
+	ai_will_do = { factor = 3 }
+	x = 0
+	y = 0
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		add_political_power = 50
+	}
+}
+
+
+ #Focus for Liberate Minas Morgul
+focus = {
+	id = liberateminasmorgul
+	icon = GFX_goal_generic_national_unity
+	ai_will_do = { factor = 1 }
+	x = -2
+	y = 1
+	available = {
+		has_war = no
+		controls_state = 746
+	}
+	relative_position_id = thefateofminasmorgul
+	mutually_exclusive = { focus = grantautonomy focus = integrateintomordor }
+	prerequisite = { focus = thefateofminasmorgul}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		release = MMO
+		hidden_effect = {
+			MMO = {
+				load_oob = "MMO_on_creation"
+			}
+		}
+	}
+}
+
+ #Focus for Integrate into Mordor
+focus = {
+	id = integrateintomordor
+	icon = GFX_goal_generic_secret_weapon
+	ai_will_do = { factor = 3 }
+	x = 0
+	y = 1
+	relative_position_id = thefateofminasmorgul
+	mutually_exclusive = { focus = grantautonomy focus = liberateminasmorgul }
+	prerequisite = { focus = thefateofminasmorgul}
+	cost = 10
+	search_filters = { FOCUS_FILTER_MANPOWER }
+	available_if_capitulated = yes
+	available = {
+		controls_state = 746
+	}
+	completion_reward = {
+		add_threat = 5
+		add_state_core = 747
+	}
+}
+
+ #Focus for Grant Autonomy
+focus = {
+	id = grantautonomy
+	icon = GFX_goal_generic_cavalry
+	ai_will_do = { factor = 5 }
+	x = 2
+	y = 1
+	relative_position_id = thefateofminasmorgul
+	mutually_exclusive = { focus = liberateminasmorgul focus = integrateintomordor }
+	prerequisite = { focus = thefateofminasmorgul}
+	cost = 10
+	available = {
+		has_war = no
+		controls_state = 746
+	}
+	available_if_capitulated = yes
+	completion_reward = {
+		release = MMO
+		puppet = MMO
+		hidden_effect = {
+			MMO = {
+				load_oob = "MMO_on_creation"
+			}
 		}
 }
 
@@ -712,6 +1172,37 @@ default = no
  }
 
 
+#Focus for Submit to Sauron
+	 focus = {
+	 id = submittosauron
+	 icon = GFX_submittosauron
+	 ai_will_do = { factor = 100 }
+	 available = { has_government = fascism }
+	 x = 3
+	 y = 1
+	offset = {
+		x = -3
+		y = 0
+		trigger = {
+			has_game_rule = {
+				rule = obsolete_focus_branches_visibility
+				option = HIDE
+			}
+			has_completed_focus = submittosauron
+		}
+	}
+	 relative_position_id = establishahierarchy
+	 mutually_exclusive = { focus = resistsauron }
+	 prerequisite = { focus = establishahierarchy }
+	 cost = 5
+	 available_if_capitulated = yes
+	 search_filters = { FOCUS_FILTER_STABILITY }
+	 completion_reward = { 
+		add_ideas = MOR_enslaved_nation add_threat = 2 
+		mark_focus_tree_layout_dirty = yes
+	}
+}
+
  #Focus for Conquest of Middle Earth
 		focus = {
 		id = conquestofmiddleearth
@@ -843,18 +1334,471 @@ default = no
  }
 
  #Focus for Seek Allies in the West
-		focus = {
-		id = seekalliesinthewest
-		icon = GFX_goal_generic_dangerous_deal
-		ai_will_do = { factor = 4 }
- 		x =10
- 		y =3
- 		mutually_exclusive = { }
- 		prerequisite = { focus = submittosauron}
-  	prerequisite = { focus =playthelonggame}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = { add_political_power = 50 }
+focus = {
+	id = seekalliesinthewest
+	icon = GFX_goal_generic_dangerous_deal
+	ai_will_do = { factor = 4 }
+	x = -3
+	y = 1
+	relative_position_id = conquestofmiddleearth
+	prerequisite = { focus = conquestofmiddleearth}
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = { add_political_power = 50 }
+}
+
+#Focus for Reach out to Isengard
+focus = {
+	id = reach_out_to_isengard
+	icon = GFX_unitewithisengard
+	ai_will_do = { factor = 3 }
+	x = 1
+	y = 1
+	relative_position_id = seekalliesinthewest
+	prerequisite = { focus = seekalliesinthewest}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+		ISR = { add_opinion_modifier = { target = ROOT modifier = large_increase } } 
+		ISR = {
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.05
+			}
+		}
+	}
+}
+
+#Take over Isengard
+focus = {
+	id = demand_submission_isengard
+	icon = GFX_goal_generic_forceful_treaty
+	ai_will_do = { factor = 1 }
+	x = 2
+	y = 1
+	relative_position_id = reach_out_to_isengard
+	prerequisite = { focus = reach_out_to_isengard }
+	mutually_exclusive = { focus = invite_isengard_to_faction }
+	cost = 10
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	completion_reward = {
+		if = {
+			limit = {
+				ISR = {
+					has_government = fascism
+				}
+			}
+			ISR = {
+				country_event = { id = isengard.10 }
+			}
+		}else = {
+			create_wargoal = { 
+				type = annex_everything target = ISR 
+			}
+		}
+	} 
+}
+
+#Invite Isengard
+focus = {
+	id = invite_isengard_to_faction
+	icon = GFX_buildanarmyworthyofmordor
+	ai_will_do = { factor = 3 }
+	x = 0
+	y = 1
+	relative_position_id = reach_out_to_isengard
+	available = {
+		ISR = { 
+			has_government = fascism
+		}
+	}
+	bypass = {
+		ISR = {
+			is_in_faction_with = MON
+		}
+	}
+	mutually_exclusive = { focus = demand_submission_isengard }
+	prerequisite = { focus = reach_out_to_isengard }
+	cost = 5
+	completion_reward  = {
+		ISR = {
+			country_event = { id = isengard.8 }
+		}
+	}
+}
+
+focus = {
+	id = suggest_war_with_gondor
+	icon = GFX_goal_generic_military_deal
+	ai_will_do = { factor = 3 }
+	x = 0
+	y = 3
+	relative_position_id = invite_isengard_to_faction
+	available = {
+		ISR = {
+			has_government = fascism
+			is_in_faction_with  = MON
+		}
+		GEO = { 
+			NOT = { 
+				is_in_faction_with = ROOT 
+				has_government = fascism
+				exists = no
+			} 
+		}
+	}
+	mutually_exclusive = { focus = war_with_gondor }
+	prerequisite = { focus = invite_isengard_to_faction }
+	cost = 10
+	completion_reward  = {
+		ISR = {
+			country_event = { id = isengard.9 }
+		}
+	}
+}
+
+#Focus for Reach out to Angmar
+focus = {
+	id = reachouttoangmar
+	icon = GFX_reachouttoangmar
+	ai_will_do = { factor = 3 }
+	x = -1
+	y = 1
+	relative_position_id = seekalliesinthewest
+	prerequisite = { focus = seekalliesinthewest}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+		ANG = { 
+			add_opinion_modifier = { target = ROOT modifier = large_increase }
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.05
+			} 
+		} 
+	}
+}
+
+#Focus to invite Angmar
+#focus = {
+#	id = invite_angmar_to_faction
+#	icon = GFX_goal_generic_dangerous_deal
+#	ai_will_do = { factor = 3 }
+#	x = 0
+#	y = 1
+#	relative_position_id = reachouttoangmar
+#	available = {
+#		ANG = {
+#			has_government = fascism
+#		}
+#	}
+#	prerequisite = { focus = reachouttoangmar}
+#	cost = 10
+#	available_if_capitulated = yes
+#	completion_reward = { 
+#		ANG = { 
+#			country_event = {
+#				id = angmar.5
+#			}
+#		} 
+#	}
+#}
+
+focus = {
+	id = demand_alliance
+	icon = GFX_goal_skull_treaty
+	ai_will_do = { 
+		base = 0
+		modifier = {
+			every_country = {
+				limit = { 
+					has_government = fascism
+					NOT = { is_in_faction_with = MON }
+				}
+				add = 10
+			}
+		}
+	}
+	x = 0
+	y = 1
+	relative_position_id = reachouttoangmar
+	prerequisite = { focus = reachouttoangmar focus = reach_out_to_isengard }
+	cost = 10
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	completion_reward = {
+		every_country = {
+			limit = { 
+				has_government = fascism
+				NOT = { is_in_faction_with = MON }
+			}
+			country_event = {
+				id = mordor.47
+			}
+		}
+	}
+}
+
+ #Focus for Shoot down the Eagles!
+focus = {
+	id = shootdowntheeagles
+	icon = GFX_goal_generic_construct_military
+	ai_will_do = { factor = 3 }
+	available = { 751 = { is_controlled_by = ROOT } 744 = { is_controlled_by = ROOT } 745 = { is_controlled_by = ROOT } }
+	x = 2
+	y = 1
+	relative_position_id = warpreparations
+	mutually_exclusive = { }
+	prerequisite = { focus = warpreparations}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		751 = { add_building_construction = {	type = anti_air_building level = 3 instant_build = yes	}	}
+		744 = { add_building_construction = {	type = anti_air_building level = 3 instant_build = yes	}	}
+		745 = { add_building_construction = {	type = anti_air_building level = 3 instant_build = yes	}	}
+	}
+}
+
+#Dol Guldur
+focus = {
+	id = sent_troops_to_dol_guldur
+	icon = GFX_drawclosertothedarkness
+	ai_will_do = { factor = 10 }
+	x = 17
+	y = 1
+	relative_position_id = submittosauron
+	prerequisite = { focus = submittosauron }
+	mutually_exclusive = { focus = demand_restore_dol_guldur }
+	cost = 10
+	available = {
+		MEN = {
+			NOT = {
+				has_government = fascism
+				has_completed_focus = purgetheorcsofdolguldur
+			}
+			owns_state = 828
+		}
+	}
+	search_filters = { FOCUS_FILTER_MANPOWER }
+	completion_reward = {
+		add_manpower = -10000
+		add_equipment_to_stockpile = { type = infantry_equipment_1   amount = -1500  }
+		828 = {
+			add_compliance = -15
+		}
+		MEN = {
+			country_event = {
+				id = mirkwood.8
+			}
+		}
+		custom_effect_tooltip = setup_dol_guldur
+	}
+}
+
+focus = {
+	id = set_up_fortress
+	icon = GFX_drawclosertothedarkness
+	ai_will_do = { focus = 15 }
+	x = 0
+	y = 1
+	relative_position_id = sent_troops_to_dol_guldur
+	prerequisite = { focus = sent_troops_to_dol_guldur }
+	cost = 10
+	bypass = {
+		DGU = {
+			exists = yes
+			is_in_faction_with = MON
+		}
+	}
+	available = {
+		MEN = {
+			NOT = {
+				has_government = fascism
+			}
+		}
+		828 = {
+			compliance < 40
+		}
+	}
+	completion_reward = {
+		hidden_effect = {
+			MEN = {
+				release = DGU
+			}
+			DGU = {
+				set_state_controller = 828
+				set_state_owner = 828
+				load_oob = "GUA_Orcs"
+				set_politics = {
+					ruling_party = fascism
+					elections_allowed = no
+				}
+			}
+		}
+		add_to_faction = DGU
+		puppet = DGU
+		MEN = {
+			create_wargoal = { 
+				type = annex_everything target = DGU 
+			}
+		}
+	}
+}
+
+focus = {
+	id = annex_dol_guldur
+	icon = GFX_drawclosertothedarkness
+	ai_will_do = { factor = 15 }
+	relative_position_id = set_up_fortress
+	x = 0
+	y = 1
+	prerequisite = { focus = set_up_fortress }
+	mutually_exclusive = { focus = reaforce_dol_guldur }
+	available = {
+		DGU = {
+			has_war = no
+			exists = yes
+			is_puppet_of = MON
+			has_government = fascism
+		}
+	}
+	cost = 10
+	completion_reward = {
+		annex_country = DGU
+	}
+}
+
+focus = {
+	id = reaforce_dol_guldur
+	icon = GFX_goal_dol_guldur
+	ai_will_do = { factor = 15 }
+	relative_position_id = set_up_fortress
+	x = -2
+	y = 1
+	prerequisite = { focus = set_up_fortress focus = demand_restore_dol_guldur }
+	mutually_exclusive = { focus = annex_dol_guldur }
+	available = {
+		has_equipment = {
+    		infantry_equipment > 1999
+		}
+		#has_manpower = 50000 check doesnt work for some reason
+		DGU = {
+			exists = yes
+			has_government = fascism
+		}
+	}
+	cost = 10
+	search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		add_manpower = -50000
+		add_equipment_to_stockpile = { type = infantry_equipment amount = -2000  }
+
+		DGU = {
+			add_stability = 0.05
+			add_war_support = 0.15
+			add_manpower = 50000
+			add_equipment_to_stockpile = { type = infantry_equipment amount = 2000  }
+		}
+		828 = {
+			add_extra_state_shared_building_slots = 3
+			add_building_construction = { type = arms_factory level = 3 instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = take_down_the_swamp
+	icon = GFX_focus_RAJ_indian_gurkhas
+	ai_will_do = { factor = 15 }
+	relative_position_id = reaforce_dol_guldur
+	x = 1
+	y = 1
+	prerequisite = { focus = reaforce_dol_guldur focus = annex_dol_guldur }
+	available = {
+		SWE = {
+			exists = yes
+			NOT = {
+				is_puppet_of = MON
+			}
+		}
+		DGU = {
+			exists = yes
+			has_government = fascism
+			OR = {
+				is_puppet_of = MON
+				is_in_faction_with = MON
+			}
+		}
+	}
+	cost = 10
+	completion_reward = {
+		create_wargoal = { type = annex_everything target = SWE }
+	}
+}
+
+focus = {
+	id = demand_restore_dol_guldur
+	icon = GFX_drawclosertothedarkness
+	ai_will_do = { factor = 15 }
+	relative_position_id = submittosauron
+	x = 15
+	y = 1
+	prerequisite = { focus = submittosauron }
+	mutually_exclusive = { focus = sent_troops_to_dol_guldur }
+	available = {
+		MEN = {
+			has_government = fascism
+			owns_state = 828
+		}
+	}
+	cost = 10
+	completion_reward = {
+		MEN = {
+			country_event = { id = mirkwood.10 }
+		}
+	}
+}
+
+ #Focus for Seek Allies in the East
+focus = {
+	id = seekalliesintheeast
+	icon = GFX_goal_generic_dangerous_deal
+	ai_will_do = { factor = 20 }
+	bypass = { has_government = communism }
+	x = 2
+	y = 1
+	relative_position_id = conquestofmiddleearth
+	prerequisite = { focus = conquestofmiddleearth}
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = { add_political_power = 25 }
+}
+
+ #Focus for Enslave the East
+focus = {
+	id = enslavetheeast
+	icon = GFX_focus_RAJ_indian_gurkhas
+	ai_will_do = { factor = 15 }
+	available = { PRU = { has_war = no } has_civil_war = no }
+	x = 0
+	y = 1
+	bypass = {
+		PRU = {
+			is_in_faction_with = MON
+		}
+	}
+	relative_position_id = seekalliesintheeast
+	prerequisite = { focus = seekalliesintheeast}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	completion_reward = {
+		PRU = {
+				country_event = mordor.4
+			}
+	}
  }
 
  #Focus for Shoot down the Eagles!
@@ -891,19 +1835,110 @@ default = no
 		completion_reward = { add_political_power = 25 }
  }
 
- #Focus for Hunt for the Ring
-		focus = {
-		id = huntforthering
-		icon = GFX_huntforthering
-		ai_will_do = { factor = 100 }
- 		x =6
- 		y =3
- 		mutually_exclusive = { }
- 		prerequisite = { focus = submittosauron}
- 		cost = 4
-  	available_if_capitulated = yes
-		completion_reward = { army_experience = 25 }
- }
+ #Focus for Enslave the South
+focus = {
+	id = enslavethesouth
+	icon = GFX_focus_RAJ_indian_gurkhas
+	ai_will_do = { factor = 15 }
+	available = { has_civil_war = no }
+	bypass = {
+		HAI = {
+			is_in_faction_with = MON
+		}
+	}
+	x = 2
+	y = 1
+	relative_position_id = seekalliesintheeast
+	prerequisite = { focus = seekalliesintheeast}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	completion_reward = {
+		HAI = {
+				country_event = mordor.6
+		}
+	}
+}
+
+#Focus for Strenghten the Southern Border
+focus = {
+	id = strenghtenthesouthernborder
+	icon = GFX_goal_generic_construction2
+	ai_will_do = { factor = 3 }
+	available = { OR = { HAI = { is_puppet_of = PREV has_civil_war = no } any_country = { original_tag = HAI is_puppet_of = ROOT has_civil_war = no } } }
+	x = 2
+	y = 1
+	relative_position_id = enslavethesouth
+	prerequisite = { focus = enslavethesouth}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		846 = { add_building_construction = {	type = bunker level = 7 instant_build = yes province = 1144 } }
+		846 = { add_building_construction = {	type = coastal_bunker level = 10 instant_build = yes province = 13138 } }
+		848 = { add_building_construction = {	type = bunker level = 7 instant_build = yes province = 4883 } }
+		848 = { add_building_construction = {	type = coastal_bunker level = 10 instant_build = yes province = 12241 } }
+		847 = { add_building_construction = {	type = bunker level = 7 instant_build = yes province = 4395 } }
+		847 = { add_building_construction = {	type = bunker level = 7 instant_build = yes province = 13161 } }
+		847 = { add_building_construction = {	type = coastal_bunker level = 10 instant_build = yes province = 13161 } }
+	}
+}
+
+ #Focus for Establish Control over the South
+focus = {
+	id = establishcontroloverthesouth
+	icon = GFX_focus_RAJ_indian_gurkhas
+	ai_will_do = { factor = 9 }
+	available = { OR = { HAI = { has_civil_war = no } any_country = { original_tag = HAI has_civil_war = no } } }
+	x = 0
+	y = 1
+	relative_position_id = enslavethesouth
+	prerequisite = { focus = enslavethesouth}
+	bypass = { NOT = { has_government = fascism } }
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		random_other_country = {
+			limit = {
+				original_tag = HAI
+				has_government = fascism
+				is_in_faction_with = ROOT
+			}
+			add_country_leader_trait = dictator
+			add_political_power = 150
+		}
+	}
+}
+
+focus = {
+	id = honor_morgoth
+	icon = GFX_servant_of_melkor
+	x = 2
+	y = 1
+	relative_position_id = submittosauron
+	ai_will_do = { factor = 25 }
+	cost = 10
+	prerequisite = { focus = submittosauron }
+	search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL FOCUS_FILTER_WAR_SUPPORT}
+	completion_reward = {
+		add_ideas = MOR_servant_morgoth
+	}
+}
+
+#Focus for Hunt for the Ring
+focus = {
+	id = huntforthering
+	icon = GFX_huntforthering
+	ai_will_do = { factor = 100 }
+	x = -2
+	y = 1
+	relative_position_id = submittosauron
+	prerequisite = { focus = submittosauron}
+	cost = 4
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP }
+	completion_reward = { army_experience = 25 }
+}
 
  #Focus for Gather the Nazgûl
 		focus = {
@@ -1461,18 +2496,192 @@ default = no
 					strength_ratio = { tag = GON ratio < 1.5 }
 			}
 		}
-		available = { GON = { NOT = { is_in_faction_with = ROOT } NOT = { has_government = fascism } }  has_government = fascism }
- 		x =20
- 		y =7
- 		mutually_exclusive = { }
- 		prerequisite = { focus = rallythetroops}
- 		cost = 10
-  	available_if_capitulated = yes
+	}
+	available = {
+		OR = {
+			GEO = {
+				NOT = {
+					is_in_faction_with = MON
+				}
+				is_puppet = no
+				exists = yes
+			}
+		}
+	}
+	x = -3
+	y = 1
+	relative_position_id = rallythetroops
+	prerequisite = { focus = rallythetroops }
+	mutually_exclusive = { focus = go_through_the_swamp }
+	cost = 10
+	completion_reward = {
+		add_ideas = MOR_attack_on_gondor
+	}
+}
+
+#Focus for War with Gondor!
+focus = {
+	id = war_with_gondor
+	icon = GFX_wargoal_gondor
+	bypass = { 
+		GEO = {
+			OR = {
+				exists = no
+				is_puppet_of = MON
+				is_in_faction_with = MON
+			}
+			
+		}
+	}
+	ai_will_do = {
+		factor = 10
+		modifier = {
+			add = -6
+			has_war = yes
+		}
+		modifier = {
+				add = -4
+				strength_ratio = { tag = GEO ratio < 1.5 }
+		}
+	}
+	available = { 
+		GEO = { 
+			NOT = { 
+				is_in_faction_with = ROOT 
+			} 
+		}
+	}
+	x = -2
+	y = 2
+	relative_position_id = rallythetroops
+	mutually_exclusive = { focus = suggest_war_with_gondor }
+	prerequisite = { focus = go_through_the_swamp  focus = attack_head_on} 
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		create_wargoal = { type = puppet_wargoal_focus target = GEO }
+		if = { 
+			limit = { country_exists = IRE } 
+			create_wargoal = { type = annex_everything target = IRE }
+		}
+	}
+}
+
+focus = {
+	id = core_gondor
+	icon = GFX_restorethekingdom
+	ai_will_do = { factor = 25 }
+	x = -3
+	y = 1
+	relative_position_id = war_with_gondor
+	search_filters = { FOCUS_FILTER_MANPOWER }
+	available = {
+		has_war = no
+		controls_state = 763
+		controls_state = 762
+	}
+	prerequisite = { focus = war_with_gondor focus = suggest_war_with_gondor }
+	cost = 10
+	completion_reward = {
+		add_state_core = 763
+		add_state_core = 762
+	}
+}
+
+	#Focus for War with Rohan!
+	focus = {
+		id = war_with_rohan
+		icon = GFX_wargoal_rohan
+		ai_will_do = { factor = 10	}
+		available = { 
+			JOR = { 
+				NOT = { 
+					is_in_faction_with = ROOT 
+				} 
+			}
+		}
+		bypass = {
+			JOR = {
+				OR = {
+					is_in_faction_with = MON
+					is_puppet_of = MON
+					exists = no
+				}
+			}
+		}
+		x = 0
+		y = 1
+		relative_position_id = war_with_gondor
+		prerequisite = { focus = war_with_gondor}
+		cost = 10
+		available_if_capitulated = yes
 		completion_reward = {
 		 	create_wargoal = { type = puppet_wargoal_focus target = GON }
 			if = { limit = { country_exists = IRE } create_wargoal = { type = annex_everything target = IRE } }
 		}
  }
 
- #End of focuses
+	focus = {
+		id = core_rohan
+		icon = GFX_restoretherealm
+		ai_will_do = { factor = 25 }
+		x = 0
+		y = 1
+		relative_position_id = war_with_rohan
+		available = {
+			has_war = no
+			controls_state = 766
+		}
+		prerequisite = { focus = war_with_rohan }
+		cost = 10
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		completion_reward = {
+			add_state_core = 766
+		}
+	}
+
+	focus = {
+		id = expand_horses
+		icon = GFX_restoretherealm
+		ai_will_do = { factor = 25 }
+		x = 0
+		y = 1
+		relative_position_id = core_rohan
+		prerequisite = { focus = core_rohan }
+		cost = 10
+		available = {
+			controls_state = 766
+		}
+		completion_reward = {
+			add_resource = { type = rubber amount = 15 state = 766 }
+		}
+	}
+
+	#Conquest of middle-Earth
+	#Focus for War with Rohan!
+	focus = {
+		id = war_with_everyone
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 10	}
+		available = { 
+
+		}
+		x = 2
+		y = 1
+		relative_position_id = war_with_rohan
+		prerequisite = { focus = war_with_rohan}
+		prerequisite = { focus = war_with_dale}
+		cost = 20
+		available_if_capitulated = yes
+		completion_reward = {
+			every_country = {
+				limit = {
+					NOT = { has_government = democratic }
+				}
+				MON = {
+					create_wargoal = { type = annex_everything target = PREV }
+				}
+			}
+		}
+	}
 }
