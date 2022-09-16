@@ -498,10 +498,7 @@ focus = {
 				}
 			}
 		}
-		else if = {
-			limit = {
-				JOR = { has_government = communism }
-			}
+		else = {
 			MON = {
 				add_to_faction = JOR
 			}
@@ -947,14 +944,34 @@ focus = {
 	id = militaryeffort
 	icon = GFX_focus_generic_commonwealth_build_infantry
 	ai_will_do = { factor = 3 }
-	x = 59
+	x = 56
 	y = 0
 	search_filters = { FOCUS_FILTER_ARMY_XP }
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	completion_reward = { army_experience = 25 }
  }
 
+focus = {
+	id = breed_the_trolls
+	icon = GFX_establishneworcbreedinggrounds
+	ai_will_do = { factor = 1 }
+	x = 4
+	y = 1
+	relative_position_id = militaryeffort
+	prerequisite = { focus = militaryeffort}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.5
+			uses = 1
+			technology = troll
+		}
+	}
+}
  #Focus for Minimized Death Toll
 focus = {
 	id = minimizeddeathtoll
@@ -981,34 +998,30 @@ focus = {
 	x = -1
 	y = 1
 	relative_position_id = minimizeddeathtoll
-	mutually_exclusive = { focus = armoredunits }
+	mutually_exclusive = { focus = calvary_units }
 	prerequisite = { focus = minimizeddeathtoll}
 	cost = 10
 	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_RESEARCH }
+	search_filters = { FOCUS_FILTER_RESEARCH }
 	completion_reward = {
-		army_experience = 5
 		add_tech_bonus = {
 			name = special_bonus
 			bonus = 0.5
 			uses = 1
-			technology = paratroopers
-			technology = paratroopers2
+			category = lotr_infantry_specialforces
 		}
 		add_tech_bonus = {
 			name = special_bonus
 			ahead_reduction = 1
 			uses = 1
-			technology = tech_mountaineers
-			technology = tech_mountaineers2
-			technology = tech_mountaineers3
+			category = lotr_infantry_specialforces
 		}
 	}
 }
 
  #Focus for Armored Units
 focus = {
-	id = armoredunits
+	id = calvary_units
 	icon = GFX_establishneworcbreedinggrounds
 	ai_will_do = { factor = 1 }
 	x = 1
@@ -1023,8 +1036,43 @@ focus = {
 		add_tech_bonus = {
 			name = armor_bonus
 			bonus = 0.5
+			uses = 1
+			category = lotr_cavalry_lancer
+		}
+		add_tech_bonus = {
+			name = armor_bonus
+			bonus = 0.5
+			uses = 1
+			category = lotr_cavalry_light
+		}
+		add_tech_bonus = {
+			name = armor_bonus
+			bonus = 0.5
+			uses = 1
+			category = lotr_cavalry_heavy
+		}
+	}
+}
+
+ #Focus for Mechanization Effort
+focus = {
+	id = mechanizationeffort
+	icon = GFX_goal_generic_army_motorized
+	ai_will_do = { factor = 2 }
+	x = 0
+	y = 1
+	relative_position_id = calvary_units
+	mutually_exclusive = { }
+	prerequisite = { focus = calvary_units}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		add_tech_bonus = {
+			name = cat_light_armor
+			ahead_reduction = 0.5
 			uses = 2
-			category = armor
+			category = cat_light_armor
 		}
 	}
 }
@@ -1034,7 +1082,7 @@ focus = {
 	id = nopricetoohigh
 	icon = GFX_goal_generic_political_pressure
 	ai_will_do = { factor = 4 }
-	x = 1
+	x = 2
 	y = 1
 	relative_position_id = militaryeffort
 	mutually_exclusive = { focus = minimizeddeathtoll }
@@ -1058,54 +1106,32 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_MANPOWER }
-	completion_reward = { add_manpower = 500000 }
+	completion_reward = { 
+		add_tech_bonus = {
+			name = armor_bonus
+			bonus = 0.5
+			uses = 1
+			technology = orc_breeding_pits
+		}
+	}
  }
 
- #Focus for Mechanization Effort
-focus = {
-	id = mechanizationeffort
-	icon = GFX_goal_generic_army_motorized
-	ai_will_do = { factor = 2 }
-	x = 3
-	y = 1
-	relative_position_id = militaryeffort
-	mutually_exclusive = { }
-	prerequisite = { focus = militaryeffort}
-	cost = 10
-	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_RESEARCH }
-	completion_reward = {
-		add_tech_bonus = {
-			name = cat_light_armor
-			ahead_reduction = 0.5
-			uses = 2
-			category = cat_light_armor
-		}
-	}
-}
+ #Focus for Extra research slot
+		focus = {
+		id = mor_extraresearchslot
+		icon = GFX_focus_research
+		ai_will_do = { factor = 15 }
+ 		x = 2
+ 		y = 1
+		relative_position_id = centralizedmilitirization
+ 		prerequisite = { focus = decentralizedmilitirization focus = centralizedmilitirization }
+		prerequisite = { focus = infrastructure_to_the_east }
+ 		cost = 10
+  		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = { add_research_slot = 1 }
+ }
 
- #Focus for Orc Strategists
-focus = {
-	id = orcstrategists
-	icon = GFX_goal_generic_army_doctrines
-	ai_will_do = { factor = 3 }
-	x = 0
-	y = 1
-	relative_position_id = mechanizationeffort
-	mutually_exclusive = { }
-	prerequisite = { focus = mechanizationeffort}
-	cost = 10
-	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_RESEARCH }
-	completion_reward = {
-	add_tech_bonus = {
-			name =  land_doc_bonus
-			bonus = 0.3
-			uses = 3
-			category = land_doctrine
-		}
-	}
-}
 
  #Focus for rockets
 focus = {
@@ -1216,6 +1242,32 @@ focus = {
 		}
  }
 
+  focus = {
+	 id = research_rural_industry
+	 icon = GFX_goal_generic_production2
+	 ai_will_do = { factor = 3 }
+	 prerequisite = { focus = thebeatingheart }
+	 relative_position_id = thebeatingheart
+	 x = 0
+	 y = 1
+	 cost = 10
+	 search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_INDUSTRY }
+	 completion_reward = {
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.5
+			uses = 1
+			category = lotr_labour_construction_industry
+		}
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.75
+			uses = 1
+			technology = dispersed_industry2
+		}
+	 }
+ }
+
  #Focus for Centralized Militirization
 		focus = {
 		id = centralizedmilitirization
@@ -1223,10 +1275,9 @@ focus = {
 		ai_will_do = { factor = 3 }
 		available = { 753 = { is_controlled_by = ROOT } 747 = { is_controlled_by = ROOT } }
  		x = 0
- 		y = 2
-		relative_position_id = thebeatingheart
- 		mutually_exclusive = { }
- 		prerequisite = { focus = thebeatingheart }
+ 		y = 1
+		relative_position_id = research_rural_industry
+ 		prerequisite = { focus = research_rural_industry }
  		cost = 10
   		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_INDUSTRY }
@@ -1382,6 +1433,32 @@ focus = {
 	 }
  }
 
+  focus = {
+	 id = research_urban_industry
+	 icon = GFX_goal_generic_production2
+	 ai_will_do = { factor = 3 }
+	 prerequisite = { focus = improve_industry }
+	 relative_position_id = improve_industry
+	 x = 0
+	 y = 1
+	 cost = 10
+	 search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_INDUSTRY }
+	 completion_reward = {
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.5
+			uses = 1
+			category = lotr_labour_construction_industry
+		}
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.75
+			uses = 1
+			technology = concentrated_industry2
+		}
+	 }
+ }
+
  #Focus for deCentralized Militirization
 		focus = {
 		id = decentralizedmilitirization
@@ -1389,9 +1466,9 @@ focus = {
 		ai_will_do = { factor = 3 }
 		available = { 752 = { is_controlled_by = ROOT } 750 = { is_controlled_by = ROOT } 743 = { is_controlled_by = ROOT } 744 = { is_controlled_by = ROOT } 748 = { is_controlled_by = ROOT } }
  		x = 0
- 		y = 2
-		relative_position_id = improve_industry
- 		prerequisite = { focus = improve_industry }
+ 		y = 1
+		relative_position_id = research_urban_industry
+ 		prerequisite = { focus = research_urban_industry }
  		cost = 10
   	    available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_INDUSTRY }
@@ -1409,22 +1486,6 @@ focus = {
 		}
  }
 
- #Focus for Extra research slot
-		focus = {
-		id = mor_extraresearchslot
-		icon = GFX_focus_research
-		ai_will_do = { factor = 15 }
- 		x = 2
- 		y = 1
-		relative_position_id = centralizedmilitirization
- 		prerequisite = { focus = decentralizedmilitirization focus = centralizedmilitirization }
-		prerequisite = { focus = infrastructure_to_the_east }
- 		cost = 10
-  		available_if_capitulated = yes
-		search_filters = { FOCUS_FILTER_RESEARCH }
-		completion_reward = { add_research_slot = 1 }
- }
-
  #Focus for Wrath of the Fellbeasts
 		focus = {
 		id = wrathofthefellbeasts
@@ -1434,10 +1495,12 @@ focus = {
  		y = 0
  		mutually_exclusive = { }
  		prerequisite = { }
- 		cost = 10
+ 		cost = 5
   		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_AIR_XP }
-		completion_reward = { air_experience = 50 }
+		completion_reward = { 
+			air_experience = 25 
+		}
  }
 
  #Focus for Ferocious Fellbeasts
@@ -1454,37 +1517,10 @@ focus = {
 		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
  			add_tech_bonus = {
- 				name = fighter_bonus
+ 				name = lotr_fellbeasts
  				bonus = 0.5
- 				uses = 2
- 				technology = early_fighter
- 				technology = fighter1
- 				technology = fighter2
- 				technology = fighter3
- 			}
- 		}
- }
-
- #Focus for Armored Plating
-		focus = {
-		id = armoredplating
-		icon = GFX_goal_generic_defence
-		ai_will_do = { factor = 1 }
- 		x = 0
- 		y = 1
-		 relative_position_id = ferociousfellbeasts
- 		prerequisite = { focus = ferociousfellbeasts }
- 		cost = 10
-  		available_if_capitulated = yes
-		search_filters = { FOCUS_FILTER_RESEARCH }
-		completion_reward = {
- 			add_tech_bonus = {
- 				name = fighter_bonus
- 				bonus = 0.5
- 				uses = 2
- 				technology = heavy_fighter1
- 				technology = heavy_fighter2
- 				technology = heavy_fighter3
+ 				uses = 1
+ 				technology = fighter_fellbeast
  			}
  		}
  }
@@ -1503,68 +1539,30 @@ focus = {
 	search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
  			add_tech_bonus = {
- 				name = bomber_bonus
+ 				name = lotr_fellbeasts
  				bonus = 0.5
- 				uses = 2
- 				technology = strategic_bomber1
- 				category = tactical_bomber
- 			}
- 		}
- }
-
- #Focus for Battlefieldsupport
-		focus = {
-		id = mor_battlefieldsupport
-		icon = GFX_goal_generic_air_fighter2
-		ai_will_do = { factor = 2 }
- 		x = 0
- 		y = 1
-		 relative_position_id = firebreathingfellbeasts
- 		mutually_exclusive = { focus = utterdestruction }
- 		prerequisite = { focus = firebreathingfellbeasts }
- 		cost = 10
-  		available_if_capitulated = yes
-		search_filters = { FOCUS_FILTER_RESEARCH }
-		completion_reward = {
- 			add_tech_bonus = {
- 				name = CAS_bonus
- 				bonus = 0.5
- 				ahead_reduction = 1
  				uses = 1
- 				category = cas_bomber
+ 				technology = bomber_fellbeast
  			}
  		}
  }
 
- #Focus for Utter destruction
-		focus = {
-		id = utterdestruction
-		icon = GFX_goal_generic_occupy_start_war
-		ai_will_do = { factor = 1 }
- 		x = 2
- 		y = 1
-		 relative_position_id = firebreathingfellbeasts
- 		mutually_exclusive = { focus = mor_battlefieldsupport }
- 		prerequisite = { focus = firebreathingfellbeasts }
- 		cost = 10
-  		available_if_capitulated = yes
-		search_filters = { FOCUS_FILTER_RESEARCH }
-		completion_reward = {
-			add_tech_bonus = {
-				name = strat_dest_bonus
-				bonus = 0.5
-				uses = 1
-				category = battlefield_support_tree
-			}
-			add_tech_bonus = {
-				name = bomber_bonus
-				bonus = 0.5
-				uses = 1
-				technology = strategic_bomber2
-			}
-		}
+ #Focus for Armored Plating
+focus = {
+	id = fellbeasts_supremecy
+	icon = GFX_goal_generic_defence
+	ai_will_do = { factor = 1 }
+	x = 1
+	y = 1
+	relative_position_id = ferociousfellbeasts
+	prerequisite = { focus = ferociousfellbeasts focus = firebreathingfellbeasts}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		add_ideas = Fellbeasts_supremecy
+	}
  }
-
 
 #Focus for Submit to Sauron
 	 focus = {
@@ -1613,6 +1611,28 @@ focus = {
 		army_experience = 25 
 		add_threat = 5 
 		add_ideas = MOR_middle_earth_conquest
+	}
+}
+
+ #Focus for Orc Strategists
+focus = {
+	id = orcstrategists
+	icon = GFX_goal_generic_army_doctrines
+	ai_will_do = { factor = 3 }
+	x = 0
+	y = 1
+	relative_position_id = conquestofmiddleearth
+	prerequisite = { focus = conquestofmiddleearth}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+	add_tech_bonus = {
+			name =  land_doc_bonus
+			bonus = 0.3
+			uses = 3
+			category = land_doctrine
+		}
 	}
 }
 
