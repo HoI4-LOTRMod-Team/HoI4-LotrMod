@@ -885,7 +885,7 @@ focus = {
     id = PRU_follow_the_dark_lord
     icon = GFX_unleashsauron
     mutually_exclusive = { focus = follow_the_wizards}
-    x = 15
+    x = 17
     y = 0
     cost = 10
     ai_will_do = {
@@ -953,6 +953,7 @@ focus = {
     relative_position_id = power_to_khamul
 	prerequisite = { focus = power_to_khamul }
 	mutually_exclusive = { focus = PRU_go_solo }
+    mutually_exclusive = { focus = PRU_create_faction }
 	available = {
 		MON = {
 			is_faction_leader = yes
@@ -963,7 +964,7 @@ focus = {
 		is_in_faction_with = MON
 	}
 	ai_will_do = { factor = 50 }
-	cost = 10
+	cost = 5
 	completion_reward = {
 		MON = {
 			country_event = { id = mordor.46 }
@@ -974,11 +975,12 @@ focus = {
 focus = {
 	id = PRU_go_solo
 	icon = GFX_focus_generic_treaty
-	x = 0
+	x = -4
 	y = 1
 	relative_position_id = power_to_khamul
 	prerequisite = { focus = power_to_khamul }
 	mutually_exclusive = { focus = PRU_join_the_dark_pact }
+    mutually_exclusive = { focus = PRU_create_faction }
 	available = {
 		NOT = {
 			is_in_faction = yes
@@ -992,14 +994,92 @@ focus = {
 	}
 }
 
+focus = {
+    id = PRU_prepare_invasion_mordor
+    icon = GFX_goal_generic_construct_infrastructure
+	x = 0
+	y = 1
+	relative_position_id = PRU_go_solo
+	prerequisite = { focus = PRU_go_solo }
+	available = {
+		NOT = {
+			is_in_faction_with = MON
+		}
+	}
+	ai_will_do = { factor = 25 }
+	cost = 10
+	completion_reward = {
+        add_war_support = 0.10
+        build_railway = {
+			level = 2
+			start_province = 1084
+			target_province = 10966
+		}
+        build_railway = {
+			level = 2
+			start_province = 10966
+			target_province = 12334
+		}
+		865 = {
+			add_building_construction = {
+				type = supply_node
+				level = 1
+				instant_build = yes
+				province = 12334
+			}
+		}
+	}
+}
+
+focus = {
+    id = PRU_invaded_mordor
+    icon = GFX_goal_generic_major_war
+	x = 0
+	y = 1
+	relative_position_id = PRU_prepare_invasion_mordor
+	prerequisite = { focus = PRU_prepare_invasion_mordor }
+	available = {
+		NOT = {
+			is_in_faction_with = MON
+		}
+	}
+	ai_will_do = { factor = 25 }
+	cost = 10
+	completion_reward = {
+        create_wargoal = { 
+            type = annex_everything target = MON 
+        }
+	}
+}
+
+focus = {
+    id = PRU_create_faction
+    	icon = GFX_focus_generic_treaty
+	x = 0
+	y = 1
+	relative_position_id = power_to_khamul
+	prerequisite = { focus = power_to_khamul }
+	mutually_exclusive = { focus = PRU_join_the_dark_pact }
+    mutually_exclusive = { focus = PRU_go_solo }
+	available = {
+		NOT = {
+			is_in_faction = yes
+		}
+	}
+	ai_will_do = { factor = 50 }
+	cost = 5
+	completion_reward = {
+        create_faction = eastlands_alliance
+	}
+}
 
 focus = {
 	id = PRU_honor_morgoth
 	icon = GFX_servant_of_melkor
-	x = 3
+	x = 6
 	y = 1
-	relative_position_id = PRU_go_solo
-	prerequisite = { focus = PRU_join_the_dark_pact focus = PRU_go_solo }
+	relative_position_id = power_to_khamul
+	prerequisite = { focus = power_to_khamul }
 	ai_will_do = { factor = 25 }
 	cost = 10
 	completion_reward = {
@@ -1007,6 +1087,112 @@ focus = {
 	}
 }
 
+focus = {
+    id = PRU_take_dorwinion
+    icon = GFX_goal_generic_occupy_states_ongoing_war
+    x = 2
+    y = 1
+    relative_position_id = PRU_create_faction
+    prerequisite = { focus = PRU_join_the_dark_pact focus = PRU_go_solo }
+    mutually_exclusive = { focus = PRU_ally_dorwinion }
+    ai_will_do = { factor = 25 }
+    cost = 10
+    completion_reward = {
+        create_wargoal = { 
+            type = annex_everything target = DOR 
+        }
+    }
+}
+
+focus = {
+    id = PRU_build_vineyards
+    icon = GFX_goal_generic_construction
+    x = 0
+    y = 1
+    relative_position_id = PRU_take_dorwinion
+    prerequisite = { focus = PRU_take_dorwinion }
+    ai_will_do = { factor = 25 }
+    available = {
+        controls_state = 878
+        controls_state = 844
+    }
+    cost = 10
+    completion_reward = {
+        878 = {
+            add_resource = {
+                type = oil
+                amount = 10
+            }
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = fuel_silo level = 2 instant_build = yes }
+		}
+        844 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = fuel_silo level = 1 instant_build = yes }
+		}
+    }
+}
+
+focus = {
+    id = PRU_ally_dorwinion
+    icon = GFX_focus_generic_treaty
+    x = 0
+    y = 1
+    relative_position_id = PRU_create_faction
+    prerequisite = { focus = PRU_create_faction }
+    mutually_exclusive = { focus = PRU_take_dorwinion }
+    ai_will_do = { factor = 25 }
+    cost = 5
+    completion_reward = {
+
+    }
+}
+
+focus = {
+    id = PRU_ally_harad
+    icon = GFX_goal_generic_dangerous_deal
+    x = 0
+    y = 1
+    relative_position_id = PRU_ally_dorwinion
+    prerequisite = { focus = PRU_ally_dorwinion }
+    ai_will_do = { factor = 25 }
+    cost = 5
+    completion_reward = {
+
+    }
+}
+
+focus = {
+    id = PRU_our_search_for_iron
+    icon = GFX_goal_generic_construction2
+    x = 2
+    y = 1
+    relative_position_id = PRU_go_solo
+    prerequisite = { focus = PRU_join_the_dark_pact focus = PRU_go_solo }
+    ai_will_do = { factor = 25 }
+    cost = 10
+    completion_reward = {
+        ECU = {
+
+        }
+    }
+}
+
+focus = {
+    id = PRU_take_erebor
+    icon = GFX_wargoal_erebor
+    x = 0
+    y = 1
+    relative_position_id = PRU_our_search_for_iron
+    prerequisite = { focus = PRU_our_search_for_iron }
+    ai_will_do = { factor = 25 }
+    cost = 10
+    completion_reward = {
+        create_wargoal = { 
+            type = annex_everything target = ECU 
+        }
+    }
+}
 
 # democrate
 focus = {
