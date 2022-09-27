@@ -19,6 +19,11 @@ can_ROOT_get_wargoal_on_THIS = {
 	NOT = { is_subject_of = ROOT }
 }
 
+#Country scope
+is_JAP_or_ally_of_JAP = {
+	always = no
+}
+
 is_border_conflict_defender_vs_FROM = {
 	has_variable = ROOT.defender_state_vs_@FROM
 }
@@ -100,6 +105,10 @@ is_controlled_by_ROOT_or_ally = {
 	}
 }
 
+is_csa_state = {
+	always = no
+}
+
 has_naval_treaty_trigger = {
 	always = no
 }
@@ -145,6 +154,112 @@ ai_land_doctrine_tier_2_trigger = {
 		has_tech = vast_offensives
 		has_tech = large_front_offensive
 	}
+}
+
+CHI_is_on_historical_plan_trigger = {
+	has_dlc = "Waking the Tiger"
+	OR = {
+		AND = {
+			is_historical_focus_on = yes
+			has_game_rule = {
+				rule = CHI_ai_behavior
+				option = DEFAULT
+			}
+		}
+		has_country_flag = CHI_AI_RANDOM_HISTORICAL
+		has_game_rule = {
+			rule = CHI_ai_behavior
+			option = HISTORICAL
+		}
+	}
+}
+SOV_is_on_historical_plan_trigger = {
+	OR = {
+		AND = {
+			is_historical_focus_on = yes
+			has_game_rule = {
+				rule = SOV_ai_behavior
+				option = DEFAULT
+			}
+		}
+		has_country_flag = SOV_AI_RANDOM_COMMUNIST_HISTORICAL
+		has_game_rule = {
+			rule = SOV_ai_behavior
+			option = HISTORICAL
+		}
+	}
+}
+USA_is_on_historical_plan_trigger = {
+	OR = {
+		AND = {
+			is_historical_focus_on = yes
+			has_game_rule = {
+				rule = USA_ai_behavior
+				option = DEFAULT
+			}
+		}
+		has_country_flag = USA_AI_DEMOCRATIC_HISTORICAL
+		has_game_rule = {
+			rule = USA_ai_behavior
+			option = DEMOCRATIC_HISTORICAL
+		}
+	}
+}
+ROM_is_on_historical_plan_trigger = {
+	has_dlc = "Death or Dishonor"
+	OR = {
+		AND = {
+			is_historical_focus_on = yes
+			has_game_rule = {
+				rule = ROM_ai_behavior
+				option = DEFAULT
+			}
+		}
+		has_country_flag = ROM_AI_RANDOM_FASCIST_HISTORICAL
+		has_game_rule = {
+			rule = ROM_ai_behavior
+			option = FASCIST_HISTORICAL
+		}
+	}
+}
+HUN_is_on_historical_plan_trigger = {
+	has_dlc = "Death or Dishonor"
+	OR = {
+		AND = {
+			is_historical_focus_on = yes
+			has_game_rule = {
+				rule = HUN_ai_behavior
+				option = DEFAULT
+			}
+		}
+		has_country_flag = HUN_AI_RANDOM_FASCIST_HISTORICAL
+		has_game_rule = {
+			rule = HUN_ai_behavior
+			option = FASCIST_HISTORICAL
+		}
+	}
+}
+ENG_is_on_historical_plan_trigger = {
+	OR = {
+		AND = {
+			is_historical_focus_on = yes
+			has_game_rule = {
+				rule = ENG_ai_behavior
+				option = DEFAULT
+			}
+		}
+		has_country_flag = ENG_AI_DEMOCRATIC_HISTORICAL
+		has_game_rule = {
+			rule = eng_ai_behavior
+			option = DEMOCRATIC_HISTORICAL
+		}
+	}
+}
+
+SOV_save_pp_for_manpower_trouble = {
+	has_manpower < 1000000
+	has_political_power < 200
+	surrender_progress > 0
 }
 
 anti_submarine_strategy_required_trigger = {
@@ -335,4 +450,137 @@ has_expert_level_trigger = {
 
 has_genius_level_trigger = {
 	skill > 7
+}
+
+is_league_of_nations_member = {
+	always = no
+}
+
+state_is_in_the_mediterranean_sea = {
+	always = no
+}
+
+is_major_not_original_tag_root = {
+	is_major = yes
+	hidden_trigger = {
+		NOT = { original_tag = ROOT }
+	}
+}
+
+is_initial_ethiopian_state = {
+	always = no
+}
+
+has_subject_autonomy_feature = {
+	has_dlc = "Together for Victory"
+	#TODO_Manu: More DLCs?
+}
+
+is_organization_of_african_unity_member = {
+	custom_trigger_tooltip = {
+		tooltip = is_league_of_nations_member_tt
+		has_idea = organization_of_african_unity_member_idea
+	}
+}
+
+has_tech_sharing_feature = {
+	OR = {
+		has_dlc = "Together for Victory"
+		has_dlc = "Death or Dishonor"
+		has_dlc = "Waking the Tiger"
+		has_dlc = "La Resistance"
+	}
+}
+
+has_war_with_non_exiled_country = {
+	custom_trigger_tooltip = {
+		tooltip = has_war_with_non_exiled_country_tt
+		has_war = yes
+		any_enemy_country = {
+			is_government_in_exile = no
+		}
+	}
+
+}
+
+is_at_peace_exiled_countries_excluded = {
+	custom_trigger_tooltip = {
+		tooltip = is_at_peace_exiled_countries_excluded_tt
+		NOT = {
+			any_enemy_country = {
+				is_government_in_exile = no
+			}
+		}
+	}
+}
+
+#State scope
+state_is_fully_controlled_by_ROOT_or_subject = {
+	custom_trigger_tooltip = {
+		tooltip = state_is_fully_controlled_by_ROOT_or_subject_tt
+		OR = {
+			is_fully_controlled_by = ROOT
+			controller = {
+				is_subject_of = ROOT
+				has_full_control_of_state = PREV
+			}
+		}
+	}
+}
+
+is_alpine_state = {
+	custom_trigger_tooltip = {
+		tooltip = is_alpine_TT
+	}
+	hidden_trigger = {
+		always = no
+	}
+}
+
+state_has_any_resource = {
+	OR = {
+		has_resources_amount = {
+			resource = oil
+			amount > 0
+		}
+		has_resources_amount = {
+			resource = aluminium
+			amount > 0
+		}
+		has_resources_amount = {
+			resource = rubber
+			amount > 0
+		}
+		has_resources_amount = {
+			resource = tungsten
+			amount > 0
+		}
+		has_resources_amount = {
+			resource = steel
+			amount > 0
+		}
+		has_resources_amount = {
+			resource = chromium
+			amount > 0
+		}
+	}
+}
+
+country_can_be_reasonable_target_of_wargoal = { #Expected scopes: Target country is THIS, country getting wargoal is PREV
+	NOT = {
+		has_war_with = ROOT
+		is_in_faction_with = PREV
+		has_guaranteed = PREV
+		is_guaranteed_by = PREV
+		has_non_aggression_pact_with = PREV
+		is_subject_of = PREV
+	}
+}
+
+is_unlikely_country_tag = {
+	OR = {
+	    tag = NEP
+		tag = DGU
+		tag = MMO
+	}
 }
