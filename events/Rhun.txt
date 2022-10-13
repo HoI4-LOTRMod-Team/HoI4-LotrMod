@@ -72,3 +72,75 @@ country_event = {
 		name = rhun.4.b
 	}
 }
+
+# Start of civil war
+country_event = {
+	id = rhun.5
+	title = rhun.5.t
+	desc = rhun.5.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = rhun.5.a
+		ai_chance = {
+			base = 50
+		}
+		hidden_effect = {
+            set_politics = {
+                ruling_party = democratic
+                elections_allowed = yes
+            }
+        }
+        start_civil_war = {
+            ideology = fascism
+            size = 0.9
+            capital = 869
+        }
+
+		if = {
+			limit = {
+				is_in_array = {
+					array = RHU_list_states_civil_war
+					value = 865
+				}
+			}
+			load_oob = "rhun/CV_rally_troops_lithlad"
+		}
+        
+        hidden_effect = {
+            for_each_loop = {
+                array = RHU_list_states_civil_war
+                RHU = {
+                    transfer_state = v
+                }
+            }
+
+            RHU = {
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment_1
+                    amount = 1000
+                }
+            }
+            if = {
+                limit = {
+                    controls_state = 869 #Central Rhun
+                }
+                load_oob = "rhun/CV_central_rhun"
+            }
+            if = {
+                limit = {
+                    controls_state = 845 #South Rhun
+                }
+                load_oob = "rhun/CV_south_rhun"
+            }
+            if = {
+                limit = {
+                    controls_state = 843 #North Rhun
+                }
+                load_oob = "rhun/CV_north_rhun"
+            }
+        }
+	}
+}
