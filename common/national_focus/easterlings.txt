@@ -370,7 +370,7 @@ focus = {
     id = RHU_follow_the_dark_lord
     icon = GFX_unleashsauron
     mutually_exclusive = { focus = RHU_follow_the_wizards}
-    x = 18
+    x = 19
     y = 0
     cost = 10
     ai_will_do = {
@@ -451,7 +451,13 @@ focus = {
 		is_in_faction_with = MOR
 	}
 	ai_will_do = { 
-        base = 50
+        base = 25
+        modifier = {
+            add = 25
+            MOR = {
+                has_government = fascism
+            }
+        }
     }
 	cost = 5
 	completion_reward = {
@@ -464,7 +470,7 @@ focus = {
 focus = {
 	id = RHU_go_solo
 	icon = GFX_focus_generic_treaty
-	x = -4
+	x = -6
 	y = 1
 	relative_position_id = power_to_khamul
 	prerequisite = { focus = power_to_khamul }
@@ -491,6 +497,202 @@ focus = {
 		add_stability = 0.10
 		add_political_power = 100
 	}
+}
+
+focus = {
+	id = RHU_take_swamp
+	icon = GFX_goal_demand_sudetenland
+	x = 2
+	y = 1
+	relative_position_id = RHU_go_solo
+	prerequisite = { focus = RHU_go_solo focus = RHU_create_faction focus = RHU_join_the_dark_pact }
+	available = {
+		DAG = {
+            exists = yes
+            NOT = {
+                is_in_faction_with = RHU
+            }
+        }
+	}
+	ai_will_do = { 
+        base = 25
+        modifier = {
+            add = -20
+            DAG = {
+                is_puppet = yes
+            }
+        }
+    }
+	cost = 10
+	completion_reward = {
+        create_wargoal = { 
+            type = annex_everything target = DAG 
+        }
+	}
+}
+
+focus = {
+	id = RHU_swamp_invest_in_railways
+	icon = GFX_goal_generic_construct_infrastructure
+	x = 0
+	y = 1
+	relative_position_id = RHU_take_swamp
+	prerequisite = { focus = RHU_take_swamp }
+	available = {
+        controls_state = 838
+        controls_state = 837
+        controls_state = 842
+	}
+	ai_will_do = { 
+        base = 50
+    }
+	cost = 10
+	completion_reward = {
+        build_railway = {
+			level = 2
+			start_province = 10689
+			target_province = 5087
+		}
+        build_railway = {
+			level = 2
+			start_province = 10689
+			target_province = 7822
+		}
+		865 = {
+			add_building_construction = {
+				type = supply_node
+				level = 1
+				instant_build = yes
+				province = 7822
+			}
+		}
+	}
+}
+
+
+focus = {
+	id = RHU_swamp_invest_in_infra
+	icon = GFX_goal_generic_construct_infrastructure
+	x = -2
+	y = 1
+	relative_position_id = RHU_swamp_invest_in_railways
+	prerequisite = { focus = RHU_swamp_invest_in_railways }
+	available = {
+		controls_state = 838
+        controls_state = 837
+        controls_state = 842
+	}
+	ai_will_do = { 
+        base = 25
+    }
+	cost = 10
+	completion_reward = {
+        838 = {
+            add_extra_state_shared_building_slots = 3
+            add_building_construction = { type = infrastructure level = 3 instant_build = yes }
+        }
+        837 = {
+            add_extra_state_shared_building_slots = 3
+            add_building_construction = { type = infrastructure level = 3 instant_build = yes }
+        }
+        842 = {
+            add_extra_state_shared_building_slots = 3
+            add_building_construction = { type = infrastructure level = 3 instant_build = yes }
+        }
+	}
+}
+
+focus = {
+	id = RHU_swamp_invest_in_factory
+	icon = GFX_focus_generic_industry_1
+	x = 0
+	y = 1
+	relative_position_id = RHU_swamp_invest_in_railways
+	prerequisite = { focus = RHU_swamp_invest_in_railways }
+	available = {
+        controls_state = 838
+	}
+	ai_will_do = { 
+        base = 25
+    }
+	cost = 10
+	completion_reward = {
+        838 = {
+            add_extra_state_shared_building_slots = 3
+            add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+            add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+        }
+	}
+}
+
+focus = {
+	id = RHU_the_new_dark_lord
+	icon = GFX_focus_generic_treaty
+	x = 0
+	y = 1
+	relative_position_id = RHU_go_solo
+	prerequisite = { focus = RHU_go_solo }
+	available = {
+		
+	}
+	ai_will_do = { 
+        base = 25
+    }
+	cost = 10
+	completion_reward = {
+		add_ideas = RHU_the_new_dark_lord
+        news_event = { hours = 6 id = news.384 }
+        if = {
+            limit = {
+                MOR = {
+                    has_government = fascism
+                }
+            }
+            MOR = {
+                add_opinion_modifier  = {
+                    target = MOR
+                    modifier = large_decrease
+                }
+            }
+        }
+	}
+}
+
+focus = {
+    id = RHU_take_middle_earth
+    icon = GFX_goal_generic_major_war
+    x = 0
+    y = 1
+    relative_position_id = RHU_the_new_dark_lord
+    prerequisite = { focus = RHU_the_new_dark_lord}
+    available = {
+        DOR = {
+            OR = {
+                exists	= no
+                is_puppet_of = RHU
+            }
+        }
+        DAG = {
+            OR = {
+                exists	= no
+                is_puppet_of = RHU
+            }
+        }
+    }
+    ai_will_do = {
+
+    }
+    cost = 10
+    completion_reward = {
+        every_country = {
+            limit = {
+                NOT = { has_government = fascism }
+            }
+            RHU = {
+                create_wargoal = { type = annex_everything target = PREV }
+            }
+        }
+    }
 }
 
 focus = {
@@ -533,11 +735,14 @@ focus = {
 focus = {
 	id = RHU_honor_morgoth
 	icon = GFX_servant_of_melkor
-	x = 6
+	x = 2
 	y = 1
-	relative_position_id = power_to_khamul
-	prerequisite = { focus = power_to_khamul }
+	relative_position_id = RHU_join_the_dark_pact
+	prerequisite = { focus = RHU_join_the_dark_pact }
 	ai_will_do = { factor = 25 }
+    available = {
+        is_in_faction_with = MOR
+    }
 	cost = 10
 	completion_reward = {
 		add_ideas = MOR_servant_morgoth
@@ -709,9 +914,9 @@ focus = {
 focus = {
     id = RHU_our_search_for_iron
     icon = GFX_focus_generic_steel
-    x = 2
+    x = -2
     y = 1
-    relative_position_id = RHU_go_solo
+    relative_position_id = RHU_create_faction
     prerequisite = { focus = RHU_join_the_dark_pact focus = RHU_go_solo focus = RHU_create_faction }
     ai_will_do = { factor = 25 }
     cost = 10
