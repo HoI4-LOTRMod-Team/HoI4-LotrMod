@@ -811,9 +811,6 @@ focus = {
 	 icon = GFX_goal_tripartite_pact
 	 ai_will_do = { factor = 0 }
 	 relative_position_id = resistsauron
-	 available = {
-		always = false
-	 }
 	 x = 1
 	 y = 1
 	 mutually_exclusive = { focus = seizethemeansofproduction }
@@ -1119,89 +1116,6 @@ focus = {
 	}
  }
 
- #Focus for rockets
-focus = {
-	id = mor_rocketry
-	icon = GFX_focus_rocketry
-	ai_will_do = { factor = 5 }
-	x = 0
-	y = 1
-		relative_position_id = mor_extraresearchslot
-	mutually_exclusive = { }
-	prerequisite = { focus = mor_extraresearchslot}
-	cost = 10
-	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_RESEARCH }
-	completion_reward = {
-			add_tech_bonus = {
-				name = jet_rocket_bonus
-				ahead_reduction = 0.5
-				uses = 2
-				category = rocketry
-				category = jet_technology
-			}
-		}
- }
-
- #Focus for Nuclear
-focus = {
-	id = mor_nuclear
-	icon = GFX_focus_wonderweapons
-	ai_will_do = { factor = 5 }
-	x = 0
-	y = 1
-	relative_position_id = mor_rocketry
-	prerequisite = { focus = mor_rocketry}
-	cost = 10
-	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_RESEARCH }
-	completion_reward = {
-		add_tech_bonus = {
-			name = secret_bonus
-			bonus = 0.5
-			uses = 1
-			category = nuclear
-			category = rocketry
-		}
- 	}
- }
-
- #Focus for Extra research slot
-		focus = {
-		id = mor_extraresearchslot
-		icon = GFX_focus_research
-		ai_will_do = { factor = 15 }
- 		x = 2
- 		y = 1
-		relative_position_id = centralizedmilitirization
- 		prerequisite = { focus = decentralizedmilitirization focus = centralizedmilitirization }
-		prerequisite = { focus = infrastructure_to_the_east }
- 		cost = 10
-  		available_if_capitulated = yes
-		search_filters = { FOCUS_FILTER_RESEARCH }
-		completion_reward = { add_research_slot = 1 }
- }
-
- #Focus for extra research slot 2
-	focus = {
-	id = mor_extraresearchslot2
-	icon = GFX_focus_research
-	ai_will_do = { factor = 25 }
-	x = 0
-	y = 1
-	available = {
-		num_of_factories > 75
-	}
-	relative_position_id = mor_nuclear
-	prerequisite = { focus = mor_nuclear}
-	cost = 10
-	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_RESEARCH }
-	completion_reward = { 
-		add_research_slot = 1 
-	}
- }
-
  #Focus for Centralized Industry
 		focus = {
 		id = centralizedindustry
@@ -1500,6 +1414,42 @@ focus = {
 		}
  }
 
+  #Focus for Extra research slot
+		focus = {
+		id = mor_extraresearchslot
+		icon = GFX_focus_research
+		ai_will_do = { factor = 15 }
+ 		x = 2
+ 		y = 1
+		relative_position_id = centralizedmilitirization
+ 		prerequisite = { focus = decentralizedmilitirization focus = centralizedmilitirization }
+		prerequisite = { focus = infrastructure_to_the_east }
+ 		cost = 10
+  		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		completion_reward = { add_research_slot = 1 }
+ }
+
+ #Focus for extra research slot 2
+	focus = {
+	id = mor_extraresearchslot2
+	icon = GFX_focus_research
+	ai_will_do = { factor = 25 }
+	x = 0
+	y = 1
+	available = {
+		num_of_factories > 75
+	}
+	relative_position_id = mor_extraresearchslot
+	prerequisite = { focus = mor_extraresearchslot}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = { 
+		add_research_slot = 1 
+	}
+ }
+
  #Focus for Wrath of the Fellbeasts
 		focus = {
 		id = wrathofthefellbeasts
@@ -1786,9 +1736,37 @@ focus = {
 	y = 3
 	relative_position_id = invite_isengard_to_faction
 	available = {
+		OR = {
+			MOR = {
+				any_neighbor_country  = {
+					tag = GON
+				}
+			}
+			MOR = {
+				any_subject_country  = {
+					any_neighbor_country  = {
+						tag = GON
+					}
+				}
+			}
+		}
 		ISE = {
 			has_government = fascism
-			is_in_faction_with  = MOR
+			is_in_faction_with = MOR
+		}
+		OR = {
+			ISE = {
+				any_neighbor_country  = {
+					tag = GON
+				}
+			}
+			ISE = {
+				any_subject_country  = {
+					any_neighbor_country  = {
+						tag = GON
+					}
+				}
+			}
 		}
 		GON = { 
 			NOT = { 
@@ -1806,18 +1784,6 @@ focus = {
 		ISE = {
 			country_event = { id = isengard.9 }
 		}
-
-		MOR = {
-			if = {
-				limit = {
-					any_neighbor_state = {
-						is_owned_by = GON
-					}
-				}
-				add_political_power = 10
-			}
-		}
-
 	}
 }
 
@@ -2393,16 +2359,10 @@ focus = {
 	prerequisite = { focus = submittosauron}
 	cost = 10
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP }
 	completion_reward = {
-		recruit_character = MOR_Witch_king
-		recruit_character = MOR_Khamul
-		recruit_character = MOR_Uvantha
-		recruit_character = MOR_Hoarmurath
-		recruit_character = MOR_Dwar
-		recruit_character = MOR_Adunaphel
-		recruit_character = MOR_Akhorahil
-		recruit_character = MOR_Ji_Indur
-		recruit_character = MOR_Ren
+		army_experience = 10
+		custom_effect_tooltip = MOR_gather_the_nazgul
 	}
  }
 
