@@ -693,12 +693,31 @@ focus = {
 }
 
 focus = {
-	id = demand_tolfalas
-	icon = GFX_goal_generic_dangerous_deal
+	id = HAR_war_propaganda_gondor
+	icon = GFX_focus_generic_support_the_left_right
 	x = 1
 	y = 1
 	relative_position_id = go_solo
 	prerequisite = { focus = go_solo focus = join_the_dark_pact }
+	ai_will_do = { factor = 25 }
+	cost = 5
+	completion_reward = {
+		add_war_support = 0.05
+		add_opinion_modifier = { target = GON modifier = medium_decrease }
+		GON = {
+			add_war_support = 0.05
+			add_opinion_modifier = { target = HAR modifier = medium_decrease }
+		}
+	}
+}
+
+focus = {
+	id = demand_tolfalas
+	icon = GFX_goal_generic_dangerous_deal
+	x = 0
+	y = 1
+	relative_position_id = HAR_war_propaganda_gondor
+	prerequisite = { focus = HAR_war_propaganda_gondor }
 	available = {
 		GON = {
 			owns_state = 755
@@ -737,20 +756,13 @@ focus = {
 
 focus = {
 	id = finish_gondor
-	icon = GFX_goal_generic_major_war
+	icon = GFX_wargoal_gondor
 	relative_position_id = demand_tolfalas
 	prerequisite = { focus = demand_tolfalas }
 	x = 0
 	y = 1
 	ai_will_do = { factor = 50 }
 	cost = 10
-	bypass = {
-		HAR = {
-			NOT = {
-				owns_state = 755
-			}
-		}
-	}
 	completion_reward = {
 		create_wargoal = { type = puppet_wargoal_focus target = GON }
 	}
@@ -766,11 +778,25 @@ focus = {
 	ai_will_do = { factor = 50 }
 	cost = 10
 	completion_reward = {
-		add_war_support = 0.10
+		army_experience = 10
 		random_owned_state = {
 			limit = { is_core_of = HAR }
-			add_extra_state_shared_building_slots = 1 add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+			add_extra_state_shared_building_slots = 2 add_building_construction = { type = arms_factory level = 2 instant_build = yes }
 		}
+	}
+}
+
+focus = {
+	id = HAR_ready_the_army
+	icon = GFX_goal_generic_construct_mil_factory
+	relative_position_id = prepare_for_war_against_mordor
+	prerequisite = { focus = prepare_for_war_against_mordor }
+	x = 0
+	y = 1
+	ai_will_do = { factor = 50 }
+	cost = 10
+	completion_reward = {
+		add_ideas = HAR_ready_the_army
 	}
 }
 
@@ -779,8 +805,8 @@ focus = {
 	icon = GFX_goal_generic_major_war
 	x = 0
 	y = 1
-	relative_position_id = prepare_for_war_against_mordor
-	prerequisite = { focus = prepare_for_war_against_mordor }
+	relative_position_id = HAR_ready_the_army
+	prerequisite = { focus = HAR_ready_the_army }
 	available = {
 		NOT = {
 			is_in_faction_with = MOR
