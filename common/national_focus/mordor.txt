@@ -2702,15 +2702,99 @@ focus = {
 		}
 	}
 	available = { ERE = { NOT = { is_in_faction_with = ROOT } }  has_government = fascism }
-	x = 2
+	x = 1
 	y = 1
 	relative_position_id = rallythetroops
-	mutually_exclusive = { }
+	mutually_exclusive = { focus = MOR_invite_erebor }
 	prerequisite = { focus = rallythetroops}
 	cost = 10
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_ANNEXATION }
 	completion_reward = { create_wargoal = { type = annex_everything target = ERE } }
+}
+
+focus = {
+	id = MOR_invite_erebor
+	icon = GFX_goal_erebor
+	x = 4
+	y = 1
+	relative_position_id = rallythetroops
+	prerequisite = { focus = rallythetroops }
+	mutually_exclusive = { focus = war_with_erebor }
+	cost = 10
+	ai_will_do = {
+		base = 25
+	}
+	completion_reward = {
+		ERE = {
+			country_event = { id = erebor.5 }
+		}
+	}
+}
+
+focus = {
+	id = MOR_iron_hills
+	icon = GFX_focus_generic_steel
+	x = 1
+	y = 1
+	relative_position_id = war_with_erebor
+	prerequisite = { focus = war_with_erebor }
+	cost = 10
+	ai_will_do = {
+		base = 25
+	}
+	completion_reward = {
+		834 = {
+            add_resource = {
+                type = steel
+                amount = 20
+            }
+        }
+	}
+}
+
+focus = {
+	id = MOR_bring_in_dwarf_slaves
+	icon = GFX_goal_generic_construct_civilian
+	x = 0
+	y = 1
+	relative_position_id = MOR_iron_hills
+	prerequisite = { focus = MOR_iron_hills }
+	cost = 10
+	ai_will_do = {
+		base = 25
+	}
+	completion_reward = {
+		add_ideas = MOR_dwarf_slaves
+	}
+}
+
+focus = {
+	id = MOR_learn_from_the_dwarves
+	icon = GFX_blamethedwarves
+	x = 0
+	y = 2
+	relative_position_id = MOR_invite_erebor
+	prerequisite = { focus = MOR_invite_erebor }
+	cost = 10
+	ai_will_do = {
+		base = 25
+	}
+	completion_reward = {
+		army_experience = 25
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.5
+			uses = 2
+			category = lotr_labour_metalworking
+		}
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 1
+			uses = 1
+			category = lotr_labour_construction_industry
+		}
+	}
 }
 
 #Focus for War with Dale!
@@ -2734,7 +2818,7 @@ focus = {
 		}
 	}
 	available = { DAL = { NOT = { is_in_faction_with = ROOT } } has_government = fascism }
-	x = 0
+	x = -1
 	y = 1
 	relative_position_id = war_with_erebor
 	mutually_exclusive = { }
@@ -2980,10 +3064,9 @@ focus = {
 			}
 		}
 		x = 2
-		y = 1
+		y = 2
 		relative_position_id = war_with_rohan
-		prerequisite = { focus = war_with_rohan}
-		prerequisite = { focus = war_with_dale}
+		prerequisite = { focus = war_with_rohan focus = war_with_dale focus = MOR_learn_from_the_dwarves}
 		cost = 20
 		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_ANNEXATION }
