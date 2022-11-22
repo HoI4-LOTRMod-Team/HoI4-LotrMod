@@ -326,7 +326,6 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		add_threat = 1
 		if = {
 			limit = {
 				NOT = {
@@ -391,6 +390,7 @@ focus = {
 				}
 			}
 		}
+		custom_effect_tooltip = MOR_communist_revolution_tooltip
 	} #Add communist drift to Rohan Gondor, Eryn Lasgalen and Moria
 }
 
@@ -403,7 +403,7 @@ focus = {
 	prerequisite = { focus = spreadtherevolution }
 	available = { 
 		OR = { 
-			GON = { communism > 0.25 NOT = { has_government = communism } } 
+			GON = { communism > 0.55 NOT = { has_government = communism } } 
 			GON = { has_government = communism } 
 		} 
 	}
@@ -416,12 +416,7 @@ focus = {
 			limit = {
 				NOT = { GON = { has_government = communism} }
 			}
-			add_threat = 3
 			GON = {
-				add_popularity = {
-					ideology = communism
-					popularity = 0.05
-				}
 				start_civil_war = {
 					ideology = communism
 					#only_own_territory = yes
@@ -460,7 +455,15 @@ focus = {
 	x = 0
 	y = 1
 	prerequisite = { focus = support_gonder_revolution }
-	available = { OR = { ROH = { communism > 0.25 NOT = { has_government = communism } } ROH = { has_government = communism } } }
+	available = { 
+		OR = { 
+			ROH = { 
+				communism > 0.55 
+				NOT = { has_government = communism } 
+			} 
+			ROH = { has_government = communism } 
+		} 
+	}
 	cost = 10
 	available_if_capitulated = no
 	search_filters = { FOCUS_FILTER_ANNEXATION }
@@ -469,12 +472,7 @@ focus = {
 			limit = {
 				NOT = { ROH = { has_government = communism} }
 			}
-			add_threat = 3
 			ROH = {
-				add_popularity = {
-					ideology = communism
-					popularity = 0.05
-				}
 				start_civil_war = {
 					ideology = communism
 					#only_own_territory = yes
@@ -526,7 +524,7 @@ focus = {
 
 focus = {
 	id = spread_revolution_with_force
-	icon = GFX_goal_generic_maROH_war
+	icon = GFX_wargoal_gondor
 	relative_position_id = prepare_for_violence_revolution
 	x = 0
 	y = 1
@@ -555,7 +553,7 @@ focus = {
 
 focus = {
 	id = spread_revolution_with_force_to_rohan
-	icon = GFX_goal_generic_occupy_states_ongoing_war
+	icon = GFX_wargoal_rohan
 	relative_position_id = spread_revolution_with_force
 	x = 0
 	y = 1
@@ -807,6 +805,47 @@ focus = {
 	}
 }
 
+focus = {
+	id = MOR_experienced_leadership
+	icon = GFX_focus_eng_concessions_to_the_trade_unions
+	relative_position_id = together_we_are_strong
+	x = 0
+	y = 2
+	cost = 10
+	prerequisite = { focus = together_we_are_strong }
+	prerequisite = { focus = send_request_for_joining_union }
+	search_filters = { FOCUS_FILTER_STABILITY }
+	available = {
+		OR = {
+			HAR = {
+				has_government = communism
+				is_in_faction_with = MOR
+			}
+			HAR = {
+				is_puppet_of = MOR
+			}
+			HAR = {
+				exists = no
+			}
+		}
+		OR = {
+			RHU = {
+				has_government = communism
+				is_in_faction_with = MOR
+			}
+			RHU = {
+				is_puppet_of = MOR
+			}
+			RHU = {
+				exists = no
+			}
+		}
+	}
+	completion_reward = {
+		swap_ruler_traits = { remove = lackofauthority add = regional_traditionalist_leader }
+		
+	}
+}
 #Focus for Seek Help from Gondor
 	 focus = {
 	 id = seekhelpfromgondor
