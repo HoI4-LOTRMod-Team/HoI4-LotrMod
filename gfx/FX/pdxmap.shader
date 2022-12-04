@@ -322,7 +322,10 @@ PixelShader =
 
 			// Gradient Borders
 			float vBloomAlpha = 0.0f;
-			gradient_border_apply( diffuse.rgb, normal, Input.uv2, GradientBorderChannel1, GradientBorderChannel2, 1.0f, vGBCamDistOverride_GBOutlineCutoff.zw, vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+			float3 pure_border_col = float3(0,0,0);
+			gradient_border_apply( pure_border_col, normal, Input.uv2, GradientBorderChannel1, GradientBorderChannel2, 1.0f, vGBCamDistOverride_GBOutlineCutoff.zw, vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+			//diffuse.rgb += pure_border_col;
+			diffuse.rgb = 0.5*(diffuse.rgb + pure_border_col) + 0.5*diffuse.rgb*(pure_border_col);
 
 			// Secondary color mask
 			secondary_color_mask( diffuse.rgb, normal, Input.uv2, ProvinceSecondaryColorMap, vBloomAlpha );
@@ -405,11 +408,48 @@ PixelShader =
 		float3 map_color = 0.6 * float3(0.66, 0.435, 0.196) * tint.a;// * clamp(2*tint.rgb, 0.2f, 0.8f);
 
 		float dist = vCamPos.y;
-		float map_fac = (dist - 1800) / 1000;
+		float dist_fac = (dist - 600) / 800;
+		dist_fac = clamp(dist_fac, 0, 1);
+
+		float map_fac = 0.5;
+
+		//map_fac = dot(vGlobeNormal, float3(0,1,0));
+
+		//map_fac = 1.0f - pow(dot(vEyeDir, float3(0,-1,0.3)), 50);
+
+		//map_fac = 0.01f*Input.vScreenCoord.y;
+
+		float w_x = Input.vScreenCoord.x*2.0f - dist;
+		float w_y = Input.vScreenCoord.y*2.0f - dist;
+
+		map_fac = 0.005f*length(float2(w_x, w_y));
+		map_fac = pow(map_fac, 3.0f);
+		map_fac *= 150.0f / dist;
+
 		map_fac = clamp(map_fac, 0, 1);
-		map_fac = 0.5;
+
+		//if(dist > 1000) map_fac = 1;
+		map_fac = max(map_fac, smoothstep(600, 1200, dist));
+
+		//map_fac *= dist_fac;
+
+		//if(Input.vScreenCoord.y*2.0f > dist) map_fac = 0.0f;
+		//if(Input.vScreenCoord.x*2.0f < dist) map_fac = 0.0f;
+		//else { map_fac = 1; }
+
+		//map_fac *= Input.vScreenCoord.x/1000.0f;
+		
+		//map_fac = min(map_fac,dist_fac);
+
+		//map_fac = 0.01f*Input.prepos.y;
+
+		map_color = 0.5f*map_color*pure_border_col + 0.5f*(map_color+pure_border_col);
+
+		//map_fac = 1;
 
 		return float4(lerp(vOut, map_color, map_fac), 1);
+		//return float4(pure_border_col, 1);
+		//return float4(map_fac, map_fac, map_fac, 1);
 		// LOTR Stuff end
 
 		#ifdef LOW_END_GFX
