@@ -666,6 +666,7 @@ focus = {
 	y = 1
 	cost = 10
 	prerequisite = { focus = send_request_for_joining_union}
+	will_lead_to_war_with = DOR
 	available = {
 		OR = {
 			RHU = {
@@ -704,6 +705,7 @@ focus = {
 	 prerequisite = { focus = support_rohan_revolution focus = spread_revolution_with_force_to_rohan focus = spread_the_revolution_further}
 	 cost = 10
 	 available_if_capitulated = yes
+	 will_lead_to_war_with = DAG
 	 completion_reward = {
 		create_wargoal = { 
 			type = annex_everything target = DAG 
@@ -1727,6 +1729,7 @@ focus = {
 	mutually_exclusive = { focus = invite_isengard_to_faction }
 	cost = 10
 	search_filters = { FOCUS_FILTER_ANNEXATION }
+	will_lead_to_war_with = ISE
 	completion_reward = {
 		if = {
 			limit = {
@@ -2176,6 +2179,7 @@ focus = {
 	}
 	cost = 10
 	search_filters = { FOCUS_FILTER_ANNEXATION }
+	will_lead_to_war_with = DAG
 	completion_reward = {
 		create_wargoal = { type = annex_everything target = DAG }
 	}
@@ -2757,7 +2761,14 @@ focus = {
 focus = {
 	id = war_with_erebor
 	icon = GFX_wargoal_erebor
-	bypass = { has_war_with = ERE }
+	bypass = { 
+		OR = {
+			has_war_with = ERE 
+			ERE = {
+				is_puppet_of = MOR
+			}
+		}
+	}
 	ai_will_do = {
 		factor = 5
 		modifier = {
@@ -2790,7 +2801,9 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_ANNEXATION }
-	completion_reward = { create_wargoal = { type = annex_everything target = ERE } }
+	completion_reward = { 
+		create_wargoal = { type = annex_everything target = ERE } 
+	}
 }
 
 focus = {
@@ -2806,6 +2819,9 @@ focus = {
 			has_government = fascism
 			is_in_faction = no
 		}
+	}
+	bypass = {
+		is_in_faction_with = ERE
 	}
 	cost = 10
 	ai_will_do = {
@@ -2827,7 +2843,12 @@ focus = {
 	prerequisite = { focus = war_with_erebor }
 	cost = 10
 	available = {
-		controls_state = 834
+		OR = {
+			controls_state = 834
+			ERE = {
+				is_puppet_of = MOR
+			}
+		}
 	}
 	ai_will_do = {
 		base = 25

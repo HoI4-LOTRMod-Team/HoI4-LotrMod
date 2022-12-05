@@ -1,4 +1,5 @@
 focus_tree = {
+
 	id = generic_focus
 
 	country = {
@@ -8,20 +9,21 @@ focus_tree = {
 	default = yes
 	reset_on_civilwar = no
 
+### Army Branch
+
 	focus = {
 		id = army_effort
 		icon = GFX_goal_generic_allies_build_infantry
 		x = 1
 		y = 0
-		cost = 10
+		cost = 5
 
 		available_if_capitulated = yes
 
 		completion_reward = {
-			army_experience = 5
-			add_tech_bonus = {
-				name = land_doc_bonus
-				bonus = 0.5
+			army_experience = 25
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
 				uses = 1
 				category = land_doctrine
 			}
@@ -32,7 +34,8 @@ focus_tree = {
 		id = equipment_effort
 		icon = GFX_goal_generic_small_arms
 		prerequisite = { focus = army_effort }
-		x = 0
+		relative_position_id = army_effort
+		x = -1
 		y = 1
 		cost = 10
 
@@ -41,9 +44,63 @@ focus_tree = {
 		completion_reward = {
 			add_tech_bonus = {
 				name = infantry_weapons_bonus
-				bonus = 0.5
+				bonus = 1.0
 				uses = 1
 				category = lotr_infantry_weapons
+			}
+			add_tech_bonus = {
+				name = infantry_weapons_bonus
+				bonus = 1.0
+				uses = 1
+				category = lotr_infantry_archery
+			}
+		}
+	}
+
+	focus = {
+		id = equipment_effort_2
+		icon = GFX_goal_generic_army_artillery
+		prerequisite = { focus = equipment_effort }
+		relative_position_id = equipment_effort
+		x = 0
+		y = 2
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = infantry_artillery_bonus
+				bonus = 0.5
+				uses = 1
+				category = lotr_infantry_archery
+			}
+			add_tech_bonus = {
+				name = tech_bonus_infantry_advances
+				bonus = 1.0
+				ahead_reduction = 2
+				uses = 1
+				category = lotr_infantry_weapons
+			}
+		}
+	}
+
+	focus = {
+		id = equipment_effort_3
+		icon = GFX_goal_generic_army_artillery2
+		prerequisite = { focus = equipment_effort_2 }
+		relative_position_id = equipment_effort_2
+		x = 0
+		y = 2
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			add_tech_bonus = {
+				name = infantry_artillery_bonus
+				ahead_reduction = 1
+				uses = 2
 				category = lotr_infantry_archery
 			}
 		}
@@ -53,8 +110,9 @@ focus_tree = {
 		id = motorization_effort
 		icon = GFX_goal_generic_army_motorized
 		prerequisite = { focus = army_effort }
-		bypass = { has_tech = motorised_infantry }
-		x = 2
+		#bypass = { has_tech = motorised_infantry }
+		relative_position_id = army_effort
+		x = 1
 		y = 1
 		cost = 10
 
@@ -70,52 +128,12 @@ focus_tree = {
 	}
 
 	focus = {
-		id = doctrine_effort
-		icon = GFX_goal_generic_army_doctrines
-		prerequisite = { focus = army_effort }
-		x = 1
-		y = 2
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			army_experience = 5
-			add_tech_bonus = {
-				name = land_doc_bonus
-				bonus = 0.5
-				uses = 1
-				category = land_doctrine
-			}
-		}
-	}
-
-	focus = {
-		id = equipment_effort_2
-		icon = GFX_goal_generic_army_artillery
-		prerequisite = { focus = equipment_effort }
-		x = 0
-		y = 3
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_tech_bonus = {
-				name = infantry_artillery_bonus
-				bonus = 0.5
-				uses = 1
-				category = lotr_infantry_archery
-			}
-		}
-	}
-
-	focus = {
 		id = mechanization_effort
 		icon = GFX_goal_generic_build_tank
 		prerequisite = { focus = motorization_effort }
-		x = 2
-		y = 3
+		relative_position_id = motorization_effort
+		x = 0
+		y = 2
 		cost = 10
 
 		available_if_capitulated = yes
@@ -131,52 +149,12 @@ focus_tree = {
 	}
 
 	focus = {
-		id = doctrine_effort_2
-		icon = GFX_goal_generic_army_doctrines
-		prerequisite = { focus = doctrine_effort }
-		x = 1
-		y = 4
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			army_experience = 5
-			add_tech_bonus = {
-				name = land_doc_bonus
-				bonus = 0.5
-				uses = 1
-				category = land_doctrine
-			}
-		}
-	}
-
-	focus = {
-		id = equipment_effort_3
-		icon = GFX_goal_generic_army_artillery2
-		prerequisite = { focus = equipment_effort_2 }
-		x = 0
-		y = 5
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_tech_bonus = {
-				name = infantry_artillery_bonus
-				ahead_reduction = 1
-				uses = 1
-				category = lotr_infantry_archery
-			}
-		}
-	}
-
-	focus = {
 		id = armor_effort
 		icon = GFX_goal_generic_army_tanks
 		prerequisite = { focus = mechanization_effort }
-		x = 2
-		y = 5
+		relative_position_id = mechanization_effort
+		x = 0
+		y = 2
 		cost = 10
 
 		available_if_capitulated = yes
@@ -192,13 +170,56 @@ focus_tree = {
 	}
 
 	focus = {
+		id = doctrine_effort
+		icon = GFX_goal_generic_army_doctrines
+		prerequisite = { focus = army_effort }
+		relative_position_id = army_effort
+		x = 0
+		y = 2
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			army_experience = 15
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+
+	focus = {
+		id = doctrine_effort_2
+		icon = GFX_goal_generic_army_doctrines
+		prerequisite = { focus = doctrine_effort }
+		relative_position_id = doctrine_effort
+		x = 0
+		y = 2
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			army_experience = 15
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 1
+				category = land_doctrine
+			}
+		}
+	}
+
+	focus = {
 		id = special_forces
 		icon = GFX_goal_generic_special_forces
 		prerequisite = { focus = equipment_effort_3 }
 		prerequisite = { focus = doctrine_effort_2 }
 		prerequisite = { focus = armor_effort }
-		x = 1
-		y = 6
+		relative_position_id = doctrine_effort_2
+		x = 0
+		y = 2
 		cost = 10
 
 		available_if_capitulated = yes
@@ -206,8 +227,8 @@ focus_tree = {
 		completion_reward = {
 			add_tech_bonus = {
 				name = special_forces_bonus
-				bonus = 0.5
-				uses = 1
+				bonus = 1.0
+				uses = 3
 				technology = paratroopers
 				technology = paratroopers2
 				technology = marines
@@ -218,12 +239,14 @@ focus_tree = {
 		}
 	}
 
+### Aviation Branch
+
 	focus = {
 		id = aviation_effort
 		icon = GFX_goal_generic_build_airforce
 		x = 5
 		y = 0
-		cost = 10
+		cost = 5
 
 		available_if_capitulated = yes
 
@@ -237,9 +260,8 @@ focus_tree = {
 					instant_build = yes
 				}
 			}
-			add_tech_bonus = {
-				name = air_doc_bonus
-				bonus = 0.5
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
 				uses = 1
 				category = air_doctrine
 			}
@@ -292,9 +314,8 @@ focus_tree = {
 					ROOT = { set_country_flag = aviation_effort_AB }
 				}
 			}
-			add_tech_bonus = {
-				name = air_doc_bonus
-				bonus = 0.5
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
 				uses = 1
 				category = air_doctrine
 			}
@@ -306,7 +327,8 @@ focus_tree = {
 		icon = GFX_goal_generic_air_fighter
 		prerequisite = { focus = aviation_effort }
 		mutually_exclusive = { focus = bomber_focus }
-		x = 4
+		relative_position_id = aviation_effort
+		x = -1
 		y = 1
 		cost = 10
 
@@ -328,7 +350,8 @@ focus_tree = {
 		icon = GFX_goal_generic_air_bomber
 		prerequisite = { focus = aviation_effort }
 		mutually_exclusive = { focus = fighter_focus }
-		x = 6
+		relative_position_id = aviation_effort
+		x = 1
 		y = 1
 		cost = 10
 
@@ -349,7 +372,8 @@ focus_tree = {
 		id = aviation_effort_2
 		icon = GFX_goal_generic_air_doctrine
 		prerequisite = { focus = bomber_focus focus = fighter_focus }
-		x = 5
+		relative_position_id = aviation_effort
+		x = 0
 		y = 2
 		cost = 10
 
@@ -422,11 +446,20 @@ focus_tree = {
 					ROOT = { set_country_flag = aviation_effort_2_AB }
 				}
 			}
-			add_tech_bonus = {
-				name =  air_doc_bonus
-				bonus = 0.5
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
 				uses = 1
 				category = air_doctrine
+			}
+			every_owned_state = {
+				if = {
+					limit = { is_controlled_by = ROOT }
+					add_building_construction = {
+						type = anti_air_building
+						level = 1
+						instant_build = yes
+					}				
+				}
 			}
 		}
 	}
@@ -436,8 +469,9 @@ focus_tree = {
 		icon = GFX_goal_generic_CAS
 		prerequisite = { focus = aviation_effort_2 }
 		prerequisite = { focus = motorization_effort }
-		x = 4
-		y = 3
+		relative_position_id = fighter_focus
+		x = 0
+		y = 2
 		cost = 10
 
 		available_if_capitulated = yes
@@ -459,8 +493,9 @@ focus_tree = {
 		icon = GFX_focus_rocketry
 		prerequisite = { focus = aviation_effort_2 }
 		prerequisite = { focus = infrastructure_effort }
-		x = 5
-		y = 4
+		relative_position_id = aviation_effort_2
+		x = 0
+		y = 2
 		cost = 10
 
 		available_if_capitulated = yes
@@ -488,8 +523,9 @@ focus_tree = {
 		icon = GFX_goal_generic_air_naval_bomber
 		prerequisite = { focus = aviation_effort_2 }
 		prerequisite = { focus = flexible_navy }
-		x = 6
-		y = 3
+		relative_position_id = bomber_focus
+		x = 0
+		y = 2
 		cost = 10
 
 		available_if_capitulated = yes
@@ -506,12 +542,14 @@ focus_tree = {
 		}
 	}
 
+### Naval Branch
+
 	focus = {
 		id = naval_effort
 		icon = GFX_goal_generic_construct_naval_dockyard
 		x = 9
 		y = 0
-		cost = 10
+		cost = 5
 
 		available_if_capitulated = yes
 
@@ -640,7 +678,8 @@ focus_tree = {
 		icon = GFX_goal_generic_build_navy
 		prerequisite = { focus = naval_effort }
 		mutually_exclusive = { focus = large_navy }
-		x = 8
+		relative_position_id = naval_effort
+		x = -1
 		y = 1
 		cost = 10
 
@@ -675,7 +714,8 @@ focus_tree = {
 		icon = GFX_goal_generic_navy_doctrines_tactics
 		prerequisite = { focus = naval_effort }
 		mutually_exclusive = { focus = flexible_navy }
-		x = 10
+		relative_position_id = naval_effort
+		x = 1
 		y = 1
 		cost = 10
 
@@ -696,9 +736,8 @@ focus_tree = {
 		}
 
 		completion_reward = {
-			add_tech_bonus = {
-				name = fleet_in_being_bonus
-				bonus = 0.5
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.50
 				uses = 2
 				category = fleet_in_being_tree
 			}
@@ -709,8 +748,9 @@ focus_tree = {
 		id = submarine_effort
 		icon = GFX_goal_generic_navy_submarine
 		prerequisite = { focus = flexible_navy focus = large_navy }
-		x = 8
-		y = 2
+		relative_position_id = flexible_navy
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -735,7 +775,7 @@ focus_tree = {
 				bonus = 0.5
 				ahead_reduction = 1
 				uses = 1
-				technology = lotr_sailing_longship
+				category = lotr_sailing_longship
 			}
 		}
 	}
@@ -744,8 +784,9 @@ focus_tree = {
 		id = cruiser_effort
 		icon = GFX_goal_generic_navy_cruiser
 		prerequisite = { focus = large_navy focus = flexible_navy }
-		x = 10
-		y = 2
+		relative_position_id = large_navy
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -779,8 +820,9 @@ focus_tree = {
 		id = destroyer_effort
 		icon = GFX_goal_generic_wolf_pack
 		prerequisite = { focus = submarine_effort }
-		x = 8
-		y = 3
+		relative_position_id = submarine_effort
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -814,8 +856,9 @@ focus_tree = {
 		id = capital_ships_effort
 		icon = GFX_goal_generic_navy_battleship
 		prerequisite = { focus = cruiser_effort }
-		x = 10
-		y = 3
+		relative_position_id = cruiser_effort
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -846,12 +889,295 @@ focus_tree = {
 		}
 	}
 
+focus = {
+		id = lotr_expanded_dockyards
+		icon = GFX_goal_generic_construct_naval_dockyard
+		prerequisite = { focus = naval_effort }
+		prerequisite = { focus = infrastructure_effort }
+		relative_position_id = naval_effort
+		x = 0
+		y = 4
+		cost = 10
+	
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+
+		available_if_capitulated = yes
+#		cancel_if_invalid = no
+#		continue_if_invalid = yes
+
+		ai_will_do = {
+			factor = 200	#Tier 2
+
+			modifier = {
+				factor = 10
+				has_country_flag = AI_plan_new_navy
+			}
+		}
+
+		available = {
+			any_state = {
+				is_coastal = yes
+				is_controlled_by = ROOT
+			}
+		}
+
+		completion_reward = {
+			if = {	# Prefer an owned state without dockyards
+				limit = { 
+					any_owned_state = {
+						is_coastal = yes
+						dockyard < 1
+					}
+				}
+				random_owned_controlled_state = {
+					limit = {
+						is_coastal = yes
+						dockyard < 1
+						free_building_slots = {
+							building = dockyard
+							size > 1
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = dockyard
+						level = 2
+						instant_build = yes
+					}
+				}
+			}
+			else = { # Otherwise build in an owned state with existing dockyards
+				random_owned_controlled_state = {
+					limit = {
+						dockyard > 0
+						free_building_slots = {
+							building = dockyard
+							size > 0
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+
+			random_state = { #After the first build set, then pick any controlled state to build more.
+				limit = {
+					controller = { tag = ROOT }
+					free_building_slots = {
+						building = dockyard
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = dockyard
+					level = 2
+					instant_build = yes
+				}
+			} # End building Dockyards
+		} # End Rewards Bloc
+	}
+
+	focus = {
+		id = lotr_naval_base_effort
+		icon = GFX_focus_coastal_fort
+		prerequisite = { focus = lotr_expanded_dockyards }
+		relative_position_id = lotr_expanded_dockyards
+		x = 0
+		y = 1
+		cost = 10
+	
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+
+		available_if_capitulated = yes
+#		cancel_if_invalid = no
+#		continue_if_invalid = yes
+
+		ai_will_do = {
+			factor = 800	#Tier 3
+
+			modifier = {
+				factor = 10
+				has_country_flag = AI_plan_new_navy
+			}
+		}
+
+		available = {
+			any_state = {
+				is_coastal = yes
+				is_controlled_by = ROOT
+			}
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = lotr_naval_base_effort_tt
+			custom_effect_tooltip = lotr_naval_base_effort_tt2
+			hidden_effect = {
+				every_owned_state = {
+					limit = { 
+						is_controlled_by = ROOT
+						is_coastal = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 2
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes
+						}
+					}
+				} #End Fortify Coasts bloc
+				every_owned_state = {
+					limit = { 
+						is_controlled_by = ROOT
+						is_coastal = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 2
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_naval_base  = yes
+						}
+					}
+				} #End Fortify Naval Bases bloc
+			}
+		}
+	}
+
+	focus = {
+		id = fishery_platforms
+		icon = GFX_goal_generic_oil_refinery
+		prerequisite = { focus = lotr_naval_base_effort }
+		relative_position_id = lotr_naval_base_effort
+		x = 0
+		y = 1
+		cost = 10
+	
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+
+		available_if_capitulated = yes
+#		cancel_if_invalid = no
+#		continue_if_invalid = yes
+
+		ai_will_do = {
+			factor = 1600	#Tier 4
+
+			# any or all conditions don't seem to work in this bloc; some how it renders the reward effect null. Relying on bypass to prevent AI from using it.
+			# all_owned_state = {
+			# 	limit = { is_controlled_by = ROOT }
+			# 	has_resources_amount = { resource = oil amount < 10 }
+			# }
+		}
+
+		available = {
+			any_state = {
+				is_coastal = yes
+				is_controlled_by = ROOT
+			}
+			all_controlled_state = {
+				# is_controlled_by = ROOT
+				has_resources_amount = {
+					resource = oil
+					amount < 11
+				}
+				custom_trigger_tooltip = {
+					tooltip = lotr_oil_platforms_trigger_tt
+					all_neighbor_state = {
+						NOT = { has_state_flag = offshore_drilling }
+					}
+				}
+			}
+		}
+
+		bypass = {
+			# any_owned_state = {
+			# 	is_controlled_by = ROOT
+			# 	has_resources_amount = {
+			# 		resource = oil
+			# 		amount > 9
+			# 	}
+			# }
+		}
+
+		completion_reward = {
+
+			set_temp_variable = { num_oil = random }
+			multiply_temp_variable = { num_oil = 25 }
+			set_temp_variable = { rfactor = random }
+			multiply_temp_variable = { rfactor = 5 }
+			round_temp_variable = rfactor
+
+			# For some reason randomize_temp_variable is not working at all. Emulating binomial. 17-73.
+
+			if = { limit = { check_variable = { num_oil < 8 } } 
+				add_to_temp_variable = { num_oil = 8 }
+			}
+			else_if = { limit = { check_variable = { num_oil > 18 } } 
+				subtract_from_temp_variable = { num_oil = 7 }
+			}
+			if = { limit { check_variable = { num_oil < 12 }  }
+				add_to_temp_variable = { num_oil = rfactor }
+			}
+			else = {
+				subtract_from_temp_variable = { num_oil = rfactor }
+			}
+
+			# End emulation.
+			if = {
+				limit = { 
+					any_owned_state = {
+						is_coastal = yes
+						is_controlled_by = ROOT
+						naval_base > 0
+					}
+				}
+				random_owned_controlled_state = {
+					limit = { naval_base > 0 }
+					hidden_effect = {
+						add_resource = {
+							type = oil
+							amount = var:num_oil
+						}
+					}
+					custom_effect_tooltip = lotr_oil_platforms_tt
+					set_state_flag = offshore_drilling
+				}				
+			} # End IF bloc.
+			else = {
+				random_controlled_state = {
+					limit = { is_coastal = yes }
+					hidden_effect = {
+						add_resource = {
+							type = oil
+							amount = var:num_oil
+						}
+					}
+					custom_effect_tooltip = lotr_oil_platforms_tt
+					set_state_flag = offshore_drilling
+				}
+			}
+
+		} # End Reward Bloc
+	} # End Focus Bloc
+
+### Industry Branch
+
 	focus = {
 		id = industrial_effort
 		icon = GFX_goal_generic_production
-		x = 13
+		x = 14
 		y = 0
-		cost = 10
+		cost = 5
 
 		available_if_capitulated = yes
 
@@ -877,7 +1203,8 @@ focus_tree = {
 		id = construction_effort
 		icon = GFX_goal_generic_construct_civ_factory
 		prerequisite = { focus = industrial_effort }
-		x = 12
+		relative_position_id = industrial_effort
+		x = -1
 		y = 1
 		cost = 10
 
@@ -949,7 +1276,8 @@ focus_tree = {
 		id = production_effort
 		icon = GFX_goal_generic_construct_mil_factory
 		prerequisite = { focus = industrial_effort }
-		x = 14
+		relative_position_id = industrial_effort
+		x = 1
 		y = 1
 		cost = 10
 
@@ -1020,8 +1348,9 @@ focus_tree = {
 		id = construction_effort_2
 		icon = GFX_goal_generic_construct_civ_factory
 		prerequisite = { focus = construction_effort }
-		x = 12
-		y = 2
+		relative_position_id = construction_effort
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1091,8 +1420,9 @@ focus_tree = {
 		id = production_effort_2
 		icon = GFX_goal_generic_construct_mil_factory
 		prerequisite = { focus = production_effort }
-		x = 14
-		y = 2
+		relative_position_id = production_effort
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1162,8 +1492,9 @@ focus_tree = {
 		id = infrastructure_effort
 		icon = GFX_goal_generic_construct_infrastructure
 		prerequisite = { focus = construction_effort_2 }
-		x = 12
-		y = 3
+		relative_position_id = construction_effort_2
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1255,8 +1586,9 @@ focus_tree = {
 		id = production_effort_3
 		icon = GFX_goal_generic_construct_mil_factory
 		prerequisite = { focus = production_effort_2 }
-		x = 14
-		y = 3
+		relative_position_id = production_effort_2
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1326,8 +1658,9 @@ focus_tree = {
 		id = infrastructure_effort_2
 		icon = GFX_goal_generic_construct_infrastructure
 		prerequisite = { focus = infrastructure_effort }
-		x = 12
-		y = 4
+		relative_position_id = infrastructure_effort
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1419,8 +1752,9 @@ focus_tree = {
 		id = construction_effort_3
 		icon = GFX_goal_generic_construct_civ_factory
 		prerequisite = { focus = infrastructure_effort }
-		x = 14
-		y = 4
+		relative_position_id = infrastructure_effort
+		x = 2
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1490,8 +1824,9 @@ focus_tree = {
 		id = nuclear_effort
 		icon = GFX_focus_wonderweapons
 		prerequisite = { focus = infrastructure_effort_2 }
-		x = 10
-		y = 5
+		relative_position_id = infrastructure_effort_2
+		x = -2
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1517,8 +1852,9 @@ focus_tree = {
 		id = extra_tech_slot
 		icon = GFX_focus_research
 		prerequisite = { focus = infrastructure_effort_2 }
-		x = 12
-		y = 5
+		relative_position_id = infrastructure_effort_2
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1532,13 +1868,14 @@ focus_tree = {
 		id = extra_tech_slot_2
 		icon = GFX_focus_research
 		prerequisite = { focus = extra_tech_slot }
+		relative_position_id = extra_tech_slot
 		available = {
 			num_of_factories > 50
 		}
 		cancel_if_invalid = no
 		continue_if_invalid = yes
-		x = 12
-		y = 6
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1552,8 +1889,9 @@ focus_tree = {
 		id = secret_weapons
 		icon = GFX_goal_generic_secret_weapon
 		prerequisite = { focus = infrastructure_effort_2 }
-		x = 14
-		y = 5
+		relative_position_id = infrastructure_effort_2
+		x = -2
+		y = 0
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1577,9 +1915,481 @@ focus_tree = {
 	}
 
 	focus = {
+		id = production_effort_4
+		icon = GFX_focus_generic_tank_production
+		prerequisite = { focus = production_effort_3 }
+		prerequisite = { focus = construction_effort_3 }
+		relative_position_id = construction_effort_3		
+		x = -1
+		y = 4
+		cost = 10
+	
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+
+		available_if_capitulated = yes
+#		cancel_if_invalid = no
+#		continue_if_invalid = yes
+
+		completion_reward = {
+			every_owned_state = {
+				limit = { is_controlled_by = ROOT }
+				if = {
+					limit = { num_of_factories < 10 }
+					is_in_home_area = yes
+				}
+				OR = {
+					is_in_home_area = yes
+					NOT = {
+						owner = {
+							any_owned_state = {
+								free_building_slots = {
+									building = arms_factory
+									size > 0
+									include_locked = yes
+								}
+								is_in_home_area = yes
+							}
+						}
+					}
+				}
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+				add_extra_state_shared_building_slots = 1
+			} #End Every state bloc
+			if = {
+				limit = { num_of_controlled_states < 4 }
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = arms_factory
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = arms_factory
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			} # End <4 states bloc
+			if = {
+				limit = { num_of_controlled_states < 2 }
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = arms_factory
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = arms_factory
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			} #End <2 states bloc
+			if = {
+				limit = { num_of_factories < 10 }
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = arms_factory
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = arms_factory
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			} #End num of factories bloc
+
+			### Configuring AI strategy
+			if = {
+				limit = {
+					is_in_faction_with = SOV
+					NOT = { has_country_flag = AI_plan_Defense_Full_finished }
+				}	# To exclude TAN & MON from the next bloc
+				set_country_flag = AI_plan_Defense_Full
+			}
+			else_if = {
+				limit = {
+					num_of_factories < 12
+					NOT = { has_country_flag = AI_plan_infrastructure_finished }
+				}
+				set_country_flag = AI_plan_infrastructure
+			}
+			clr_country_flag = AI_plan_mil_prod
+			set_country_flag = AI_plan_mil_prod_finished
+			if = {
+				limit = { NOT = { has_country_flag = AI_plan_WarPrep_Finished } }
+				set_country_flag = AI_plan_WarPrep
+			}
+
+		} # End Rewards Bloc
+	}
+
+#### TODO
+	focus = {
+		id = construction_effort_4
+		icon = GFX_goal_generic_forceful_treaty
+		prerequisite = { focus = construction_effort_3 }
+		prerequisite = { focus = production_effort_3 }
+		relative_position_id = construction_effort_3
+		x = 0
+		y = 3
+		cost = 10
+	
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
+
+		available_if_capitulated = yes
+#		cancel_if_invalid = no
+#		continue_if_invalid = yes
+
+		completion_reward = {
+			every_owned_state = {
+				limit = { is_controlled_by = ROOT }
+				if = {
+					limit = { num_of_factories < 10 }
+					is_in_home_area = yes
+				}
+				OR = {
+					is_in_home_area = yes
+					NOT = {
+						owner = {
+							any_owned_state = {
+								free_building_slots = {
+									building = industrial_complex
+									size > 0
+									include_locked = yes
+								}
+								is_in_home_area = yes
+							}
+						}
+					}
+				}
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+				add_extra_state_shared_building_slots = 1
+			} #End Every state bloc
+			if = {
+				limit = { num_of_controlled_states < 4 }
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			} # End <4 states bloc
+			if = {
+				limit = { num_of_controlled_states < 2 }
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			} #End <2 states bloc
+			if = {
+				limit = { num_of_factories < 10 }
+				random_owned_controlled_state = {
+					limit = {
+						free_building_slots = {
+							building = industrial_complex
+							size > 0
+							include_locked = yes
+						}
+						OR = {
+							is_in_home_area = yes
+							NOT = {
+								owner = {
+									any_owned_state = {
+										free_building_slots = {
+											building = industrial_complex
+											size > 0
+											include_locked = yes
+										}
+										is_in_home_area = yes
+									}
+								}
+							}
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			} #End num of factories bloc
+
+		} # End Rewards Bloc
+	}
+
+	focus = {
+		id = resource_extraction
+		icon = GFX_focus_generic_steel
+		prerequisite = { focus = production_effort_4 focus = construction_effort_4 }
+		relative_position_id = production_effort_4
+		x = -1
+		y = -1
+		cost = 10
+	
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+
+		available_if_capitulated = no
+#		cancel_if_invalid = no
+		continue_if_invalid = yes
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = mobilize_army_construction_tt
+				has_army_manpower = { size > 10000 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = reserve_army_construction_tt
+				has_manpower > 2000
+			}
+			has_tech = excavation1
+			has_tech = excavation2
+			has_tech = excavation3
+		}
+
+		select_effect = {
+			add_manpower = -2000
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = demobilize_reserve_army_construction_tt
+			hidden_effect = { add_manpower = 2000 }
+			if = {
+				limit = {
+					any_owned_state = {
+						NOT = { has_state_flag = force_excavated }
+					}
+				}
+				random_owned_state = {
+					limit = {
+						is_in_home_area = yes
+						NOT = { has_state_flag = force_excavated }
+					}
+					add_resource = {
+					 	type = steel
+						amount = 15
+					}
+					add_resource = {
+					 	type = chromium
+						amount = 6
+					}
+					set_state_flag = deep_mined
+				}
+			}
+			else = {
+				random_owned_state = {
+					limit = { is_in_home_area = yes }
+					add_resource = {
+					 	type = steel
+						amount = 12
+					}
+					add_resource = {
+					 	type = chromium
+						amount = 3
+					}
+					set_state_flag = deep_mined
+				}
+			}
+			custom_effect_tooltip = stacked_resource_warning_tt
+
+		} #End Rewards Bloc
+	}
+
+	focus = {
+		id = the_earth_has_one_weakness
+		icon = GFX_goal_generic_construction2
+		prerequisite = { focus = infrastructure_effort_3 }
+		prerequisite = { focus = production_effort_4 }
+		x = -3
+		y = -1
+		relative_position_id = production_effort_4
+		cost = 10
+	
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+
+		available_if_capitulated = no
+#		cancel_if_invalid = no
+		continue_if_invalid = yes
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = mobilize_army_construction_tt
+				has_army_manpower = { size > 10000 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = reserve_army_construction_tt
+				has_manpower > 2000
+			}
+			has_equipment = {
+				artillery_equipment > 99
+			}
+		}
+		select_effect = {
+			add_manpower = -2000
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = -100
+				producer = ROOT
+			}
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = force_excavation_tt
+			hidden_effect = { add_manpower = -500 }
+			if = {
+				limit = {
+					any_owned_state = {
+						NOT = { has_state_flag = deep_mined }
+					}
+				}
+				random_owned_state = {
+					limit = {
+						is_in_home_area = yes
+						NOT = { has_state_flag = deep_mined }
+					}
+					add_resource = {
+					 	type = steel
+						amount = 20
+					}
+					set_state_flag = force_excavated
+				}
+			}
+			else = {
+				random_owned_state = {
+					limit = { is_in_home_area = yes }
+					add_resource = {
+					 	type = steel
+						amount = 10
+					}
+					set_state_flag = force_excavated
+				}
+			}
+			custom_effect_tooltip = stacked_resource_warning_tt
+
+		} # End Rewards Bloc
+	}
+
+### POLITICAL BRANCH
+
+	focus = {
 		id = political_effort
-		icon = GFX_goal_generic_demand_territory
-		x = 19
+		icon = GFX_focus_hol_the_foundations_of_defense #GFX_goal_generic_demand_territory
+		x = 20
 		y = 0
 		cost = 10
 
@@ -1602,7 +2412,8 @@ focus_tree = {
 				has_government = neutrality
 			}
 		}
-		x = 18
+		relative_position_id = political_effort
+		x = -1
 		y = 1
 		cost = 10
 
@@ -1628,6 +2439,8 @@ focus_tree = {
 		}
 	}
 
+### Fascist Path
+
 	focus = {
 		id = nationalism_focus
 		icon = GFX_goal_support_fascism #icon = GFX_goal_tripartite_pact
@@ -1639,8 +2452,9 @@ focus_tree = {
 				has_government = neutrality
 			}
 		}
-		x = 16
-		y = 2
+		relative_position_id = collectivist_ethos
+		x = -2
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1670,6 +2484,76 @@ focus_tree = {
 	}
 
 	focus = {
+		id = militarism
+		icon = GFX_goal_generic_political_pressure
+		prerequisite = { focus = nationalism_focus }
+		relative_position_id = nationalism_focus
+		x = 0
+		y = 1
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			if = {
+				limit = { has_idea = neutrality_idea }
+				remove_ideas = neutrality_idea
+			}
+			add_ideas = militarism_focus
+			army_experience = 20
+			set_rule = { can_send_volunteers = yes }
+		}
+	}
+
+	focus = {
+		id = military_youth
+		icon = GFX_goal_generic_more_territorial_claims
+		prerequisite = { focus = militarism }
+		relative_position_id = militarism
+		x = 0
+		y = 1
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			add_ideas = military_youth_focus
+			if = {
+				limit = { has_government = fascism }
+				add_popularity = {
+					ideology = fascism
+					popularity = 0.2
+				}
+			}
+			if = {
+				limit = { has_government = communism }
+				add_popularity = {
+					ideology = communism
+					popularity = 0.2
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = paramilitarism
+		icon = GFX_goal_generic_military_sphere
+		prerequisite = { focus = military_youth }
+		relative_position_id = military_youth
+		x = 0
+		y = 1
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			add_ideas = paramilitarism_focus
+		}
+	}
+
+### Communist Path
+
+	focus = {
 		id = internationalism_focus
 		icon = GFX_goal_support_communism #icon = GFX_goal_tripartite_pact
 		prerequisite = { focus = collectivist_ethos }
@@ -1686,8 +2570,9 @@ focus_tree = {
 				}
 			}
 		}
-		x = 18
-		y = 2
+		relative_position_id = collectivist_ethos
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1717,75 +2602,12 @@ focus_tree = {
 	}
 
 	focus = {
-		id = liberty_ethos
-		icon = GFX_goal_support_democracy
-		prerequisite = { focus = political_effort }
-		mutually_exclusive = { focus = collectivist_ethos }
-		available = {
-			OR = {
-				has_government = democratic
-				has_government = neutrality
-			}
-		}
-		x = 20
-		y = 1
-		cost = 10
-
-		available_if_capitulated = yes
-
-
-		ai_will_do = {
-			factor = 95
-			modifier = {
-				factor = 0.1
-				any_neighbor_country = {
-					is_major = yes
-					OR = {
-						has_government = communism
-						has_government = fascism
-					}
-				}
-				NOT = {
-					any_neighbor_country = {
-						is_major = yes
-						has_government = democratic
-					}
-				}
-			}
-		}
-
-		completion_reward = {
-			add_ideas = liberty_ethos_focus
-		}
-	}
-
-	focus = {
-		id = militarism
-		icon = GFX_goal_generic_political_pressure
-		prerequisite = { focus = nationalism_focus }
-		x = 16
-		y = 3
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			if = {
-				limit = { has_idea = neutrality_idea }
-				remove_ideas = neutrality_idea
-			}
-			add_ideas = militarism_focus
-			army_experience = 20
-			set_rule = { can_send_volunteers = yes }
-		}
-	}
-
-	focus = {
 		id = political_correctness
 		icon = GFX_goal_generic_dangerous_deal
 		prerequisite = { focus = internationalism_focus }
-		x = 18
-		y = 3
+		relative_position_id = internationalism_focus
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1801,135 +2623,12 @@ focus_tree = {
 	}
 
 	focus = {
-		id = neutrality_focus
-		icon = GFX_goal_generic_neutrality_focus
-		prerequisite = { focus = liberty_ethos }
-		mutually_exclusive = { focus = interventionism_focus }
-		x = 20
-		y = 2
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			if = {
-				limit = { NOT = { has_idea = neutrality_idea } }
-				add_ideas = neutrality_idea
-			}
-			add_political_power = 150
-		}
-	}
-
-	focus = {
-		id = interventionism_focus
-		icon = GFX_goal_generic_political_pressure
-		prerequisite = { focus = liberty_ethos }
-		mutually_exclusive = { focus = neutrality_focus }
-		x = 22
-		y = 2
-		cost = 10
-
-		available_if_capitulated = yes
-
-
-		ai_will_do = {
-			factor = 1
-			modifier = {
-				factor = 0
-				has_idea = neutrality_idea
-			}
-		}
-
-		completion_reward = {
-			if = {
-				limit = { has_idea = neutrality_idea }
-				remove_ideas = neutrality_idea
-			}
-			set_rule = { can_send_volunteers = yes }
-			add_political_power = 150
-		}
-	}
-
-	focus = {
-		id = military_youth
-		icon = GFX_goal_generic_more_territorial_claims
-		prerequisite = { focus = militarism }
-		x = 16
-		y = 4
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_ideas = military_youth_focus
-			if = {
-				limit = { has_government = fascism }
-				add_popularity = {
-					ideology = fascism
-					popularity = 0.2
-				}
-			}
-			if = {
-				limit = { has_government = communism }
-				add_popularity = {
-					ideology = communism
-					popularity = 0.2
-				}
-			}
-		}
-	}
-
-	focus = {
-		id = deterrence
-		icon = GFX_goal_generic_defence
-		prerequisite = { focus = neutrality_focus }
-		x = 20
-		y = 3
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_ideas = deterrence
-		}
-	}
-
-	focus = {
-		id = volunteer_corps
-		icon = GFX_goal_generic_allies_build_infantry
-		prerequisite = { focus = interventionism_focus }
-		x = 22
-		y = 3
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_ideas = volunteer_corps_focus
-		}
-	}
-
-	focus = {
-		id = paramilitarism
-		icon = GFX_goal_generic_military_sphere
-		prerequisite = { focus = military_youth }
-		x = 16
-		y = 5
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_ideas = paramilitarism_focus
-		}
-	}
-
-	focus = {
 		id = indoctrination_focus
 		icon = GFX_goal_generic_propaganda
 		prerequisite = { focus = political_correctness }
-		x = 18
-		y = 4
+		relative_position_id = political_correctness
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -1941,59 +2640,12 @@ focus_tree = {
 	}
 
 	focus = {
-		id = foreign_expeditions
-		icon = GFX_goal_generic_more_territorial_claims
-		prerequisite = { focus = volunteer_corps }
-		x = 22
-		y = 4
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_ideas = foreign_expeditions_focus
-		}
-	}
-
-	focus = {
-		id = why_we_fight
-		icon = GFX_goal_generic_propaganda
-		prerequisite = { focus = foreign_expeditions focus = deterrence }
-		available = {
-			OR = {
-				threat > 0.75
-				has_defensive_war = yes
-			}
-		}
-
-		continue_if_invalid = yes
-
-		x = 20
-		y = 5
-		cost = 10
-
-		available_if_capitulated = yes
-
-		completion_reward = {
-			add_ideas = why_we_fight_focus
-			custom_effect_tooltip = why_we_fight_effect
-			hidden_effect = {
-				if = {
-					limit = { NOT = { has_idea = neutrality_idea } }
-					set_rule = { can_create_factions = yes }
-				}
-			}
-		}
-	}
-
-	focus = {
 		id = political_commissars
 		icon = GFX_goal_generic_forceful_treaty
 		prerequisite = { focus = indoctrination_focus }
-		available = {
-		}
-		x = 18
-		y = 5
+		relative_position_id = indoctrination_focus
+		x = 0
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -2022,8 +2674,9 @@ focus_tree = {
 		id = ideological_fanaticism
 		icon = GFX_goal_generic_demand_territory
 		prerequisite = { focus = paramilitarism focus = political_commissars }
-		x = 17
-		y = 6
+		relative_position_id = paramilitarism
+		x = 1
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -2040,6 +2693,269 @@ focus_tree = {
 		}
 	}
 
+### End of Fascist / Communist Paths
+
+	focus = {
+		id = liberty_ethos
+		icon = GFX_goal_support_democracy
+		prerequisite = { focus = political_effort }
+		mutually_exclusive = { focus = collectivist_ethos }
+		available = {
+			OR = {
+				has_government = democratic
+				has_government = neutrality
+			}
+		}
+		relative_position_id = political_effort
+		x = 1
+		y = 1
+		cost = 10
+
+		available_if_capitulated = yes
+
+
+		ai_will_do = {
+			factor = 95
+			modifier = {
+				factor = 0.1
+				any_neighbor_country = {
+					is_major = yes
+					OR = {
+						has_government = communism
+						has_government = fascism
+					}
+				}
+				NOT = {
+					any_neighbor_country = {
+						is_major = yes
+						has_government = democratic
+					}
+				}
+			}
+		}
+
+		completion_reward = {
+			add_ideas = liberty_ethos_focus
+			add_ideas = generic_democratic
+		}
+	}
+
+### Neutrality Path
+
+	focus = {
+		id = neutrality_focus
+		icon = GFX_goal_generic_neutrality_focus
+		prerequisite = { focus = generic_pick_a_path }
+		mutually_exclusive = { focus = drawclosertogondor focus = drawclosertoerebor focus = unitewithsauron }
+		relative_position_id = generic_pick_a_path
+		x = -3
+		y = 1
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			if = {
+				limit = { NOT = { has_idea = neutrality_idea } }
+				add_ideas = neutrality_idea
+			}
+			add_political_power = 150
+		}
+	}
+
+	focus = {
+		id = deterrence
+		icon = GFX_goal_generic_defence
+		prerequisite = { focus = neutrality_focus }
+		relative_position_id = neutrality_focus
+		x = 0
+		y = 1
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			add_ideas = deterrence
+			hidden_effect = {
+				every_owned_state = {
+					limit = { 
+						is_controlled_by = ROOT
+						any_neighbor_state = {
+							NOT = { is_owned_and_controlled_by = ROOT }
+						}
+					}
+					add_building_construction = {
+						type = bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_border = yes
+						}
+					}
+				#ADDS TO CONSTRUCTION QUEUE, PARTICULARLY USEFUL FOR AI
+					add_building_construction = {
+						type = bunker
+						level = 4
+						instant_build = no
+						province = {
+							all_provinces = yes
+							limit_to_border = yes
+						}
+					}
+				} #End Foritify Borders bloc
+				every_owned_state = {
+					limit = { 
+						is_controlled_by = ROOT
+						is_coastal = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_naval_base  = yes
+						}
+					}
+				#ADDS TO CONSTRUCTION QUEUE, PARTICULARLY USEFUL FOR AI
+					add_building_construction = {
+						type = coastal_bunker
+						level = 4
+						instant_build = no
+						province = {
+							all_provinces = yes
+							limit_to_naval_base  = yes
+						}
+					}
+				} #End Fortify Naval Bases bloc
+				every_owned_state = {
+					limit = { 
+						is_controlled_by = ROOT
+						is_coastal = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes
+						}
+					}
+				#ADDS TO CONSTRUCTION QUEUE, PARTICULARLY USEFUL FOR AI
+					add_building_construction = {
+						type = coastal_bunker
+						level = 4
+						instant_build = no
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes
+						}
+					}
+				} #End Fortify Coasts bloc
+			} # End Hidden Effects Bloc
+		}
+	}
+
+### Democratic / Intervention Path
+
+	focus = {
+		id = interventionism_focus
+		icon = GFX_goal_generic_political_pressure
+		prerequisite = { focus = liberty_ethos }
+		mutually_exclusive = { focus = neutrality_focus }
+		relative_position_id = liberty_ethos
+		x = 0
+		y = 1
+		cost = 10
+
+		available_if_capitulated = yes
+
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				has_idea = neutrality_idea
+			}
+		}
+
+		completion_reward = {
+			if = {
+				limit = { has_idea = neutrality_idea }
+				remove_ideas = neutrality_idea
+			}
+			set_rule = { can_send_volunteers = yes }
+			add_political_power = 150
+		}
+	}
+
+	focus = {
+		id = volunteer_corps
+		icon = GFX_goal_generic_allies_build_infantry
+		prerequisite = { focus = interventionism_focus }
+		relative_position_id = interventionism_focus
+		x = 0
+		y = 1
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			add_ideas = volunteer_corps_focus
+		}
+	}
+
+	focus = {
+		id = foreign_expeditions
+		icon = GFX_goal_generic_more_territorial_claims
+		prerequisite = { focus = volunteer_corps }
+		relative_position_id = volunteer_corps
+		x = 0
+		y = 1
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			add_ideas = foreign_expeditions_focus
+		}
+	}
+
+	focus = {
+		id = why_we_fight
+		icon = GFX_goal_generic_propaganda
+		prerequisite = { focus = foreign_expeditions focus = deterrence }
+		available = {
+			OR = {
+				threat > 0.75
+				has_defensive_war = yes
+			}
+		}
+
+		continue_if_invalid = yes
+		relative_position_id = deterrence
+		x = 0
+		y = 2
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			add_ideas = why_we_fight_focus
+			custom_effect_tooltip = why_we_fight_effect
+			hidden_effect = {
+				if = {
+					limit = { NOT = { has_idea = neutrality_idea } }
+					set_rule = { can_create_factions = yes }
+				}
+			}
+		}
+	}
+
+### End Neutrality / Democratic Path
+
 	focus = {
 		id = technology_sharing
 		icon = GFX_goal_generic_scientific_exchange
@@ -2055,8 +2971,9 @@ focus_tree = {
 				}
 			}
 		}
-		x = 19
-		y = 7
+		relative_position_id = ideological_fanaticism
+		x = 2
+		y = 1
 		cost = 10
 
 		available_if_capitulated = yes
@@ -2093,5 +3010,114 @@ focus_tree = {
 			}
 		}
 	}
+
+### Political Adjustments
+
+	focus = {
+		id = generic_pick_a_path
+		icon = GFX_goal_generic_demand_territory
+		prerequisite = { focus = political_effort }
+		relative_position_id = political_effort
+		x = 6
+		y = 1
+		cost = 10
+
+		available_if_capitulated = yes
+
+		completion_reward = {
+			add_political_power = 150
+		}
+	}
+
+#Focus for Draw closer to Erebor
+	 focus = {
+	 id = drawclosertoerebor
+	 icon = GFX_blamethedwarves
+	 available = { is_in_faction = no ERE = { is_faction_leader = yes } }
+	 ai_will_do = { factor = 5 }
+	 relative_position_id = generic_pick_a_path
+	 x = -1
+	 y = 1
+	 mutually_exclusive = { focus = drawclosertogondor focus = neutrality_focus focus = unitewithsauron }
+	 prerequisite = { focus = generic_pick_a_path}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = {
+	 		add_opinion_modifier = { target = ERE modifier = large_increase }
+	 		ERE = { add_opinion_modifier = { target = ROOT modifier = large_increase } }
+	 }
+}
+
+#Focus for Unite with Erebor
+	 focus = {
+	 id = unitewitherebor
+	 icon = GFX_blamethedwarves
+	 ai_will_do = { factor = 7 }
+	 available = { ERE = { has_opinion = { target = ROOT value > 19 } } is_in_faction = no ERE = { is_faction_leader = yes } }
+	 relative_position_id = drawclosertoerebor
+	 x =0
+	 y =1
+	 mutually_exclusive = {  }
+	 prerequisite = { focus = drawclosertoerebor}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = { ERE = { add_to_faction = ROOT } }
+}
+
+#Focus for Draw closer to Godnor
+	 focus = {
+	 id = drawclosertogondor
+	 icon = GFX_sabotagegondor
+	 ai_will_do = { factor = 5 }
+	 relative_position_id = generic_pick_a_path
+	 x =1
+	 y =1
+	 mutually_exclusive = { focus = drawclosertoerebor focus = neutrality_focus focus = unitewithsauron }
+	 prerequisite = { focus = generic_pick_a_path }
+	 available = { is_in_faction = no GON = { is_faction_leader = yes } }
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = {
+	 		add_opinion_modifier = { target = GON modifier = large_increase }
+	 		GON = { add_opinion_modifier = { target = ROOT modifier = large_increase } }
+	 }
+}
+
+#Focus for Unite with Gondor
+	 focus = {
+	 id = unitewithgondor
+	 icon = GFX_sabotagegondor
+	 ai_will_do = { factor = 8 }
+	 available = { is_in_faction = no GON = { is_faction_leader = yes } }
+	 relative_position_id = drawclosertogondor
+	 x =0
+	 y =1
+	 mutually_exclusive = { }
+	 prerequisite = { focus = drawclosertogondor}
+	 cost = 10
+	 available_if_capitulated = yes
+	 completion_reward = { GON = { add_to_faction = ROOT } }
+}
+
+#Focus for Unite with Sauron
+	focus = {
+	id = unitewithsauron
+	icon = GFX_unitewithsauron
+	ai_will_do = { factor = 6 }
+		modifier = {
+			factor = 0
+			date < 3021.1.1
+		}
+	available = { has_government = fascism }
+	bypass = { any_country = { original_tag = MOR has_government = fascism is_faction_leader = yes is_in_faction_with = ROOT}}
+	relative_position_id = generic_pick_a_path
+ 		x =3
+ 		y =1
+ 		mutually_exclusive = { focus = neutrality_focus focus = drawclosertogondor focus = drawclosertoerebor }
+ 		prerequisite = { focus = generic_pick_a_path }
+ 		cost = 2
+  	available_if_capitulated = yes
+		completion_reward = { MOR = { add_to_faction = ROOT } }
+}
 
 }

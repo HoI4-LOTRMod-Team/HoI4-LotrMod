@@ -165,7 +165,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 	 y =2
 	 mutually_exclusive = { }
 	 prerequisite = { focus = homeofthedwarves}
-	 cost = 10
+	 cost = 5
 	 available_if_capitulated = yes
 	 completion_reward = { add_political_power = 50 }
 }
@@ -196,11 +196,13 @@ continuous_focus_position = { x = 50 y = 2000 }
 	 y =4
 	 mutually_exclusive = { }
 	 prerequisite = { focus = powertothemonarchs}
-	 cost = 10
+	 cost = 5
 	 available_if_capitulated = yes
 	 completion_reward = {
-	 		add_popularity = { ideology = fascism popularity = -0.05 }
-			add_popularity = { ideology = communism popularity = -0.05 }
+		add_popularity = { ideology = fascism popularity = -0.05 }
+		add_popularity = { ideology = communism popularity = -0.05 }
+		add_political_power = 50
+		add_stability = -0.10
 	 }
 }
 
@@ -617,7 +619,7 @@ continuous_focus_position = { x = 50 y = 2000 }
  		mutually_exclusive = { }
  		prerequisite = { }
  		cost = 10
-  	available_if_capitulated = no
+  		available_if_capitulated = no
 		completion_reward = {
 
 		}
@@ -665,6 +667,31 @@ continuous_focus_position = { x = 50 y = 2000 }
 			832 = { add_extra_state_shared_building_slots = 1 }
 			832 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
 		}
+	}
+
+	focus = {
+		id = ERE_war_with_rhun
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 2 }
+		available = { 
+			NOT = {
+				OR = {
+					is_in_faction_with = RHU
+					has_government = democratic
+					has_government = neutrality
+					RHU = {
+						is_puppet_of = ERE
+					}
+				}
+			}
+		}
+ 		x = 10
+ 		y = 5
+ 		prerequisite = { focus = improvedproductionline }
+ 		cost = 10
+  		available_if_capitulated = no
+		will_lead_to_war_with = RHU
+		completion_reward = { create_wargoal = { type = puppet_wargoal_focus target = RHU } }
 	}
 
  #Focus for Rail Network
@@ -779,11 +806,13 @@ continuous_focus_position = { x = 50 y = 2000 }
  		y =4
  		mutually_exclusive = { }
  		prerequisite = { focus = powertotheminers}
- 		cost = 10
-  	available_if_capitulated = yes
+ 		cost = 5
+  		available_if_capitulated = yes
 		completion_reward = {
  	 		add_popularity = { ideology = fascism popularity = 0.05 }
  			add_popularity = { ideology = communism popularity = 0.05 }
+			add_political_power = 50
+			add_stability = -0.10
  	 }
  }
 
@@ -914,19 +943,19 @@ continuous_focus_position = { x = 50 y = 2000 }
  }
 
  #Focus for Axes and Swords
-		focus = {
+	focus = {
 		id = axesandswords
 		icon = GFX_goal_support_fascism
 		ai_will_do = { factor = 10 }
-		available = { fascism > 0.3 }
+		available = { fascism > 0.50 }
  		x =6
  		y =5
  		mutually_exclusive = { focus = hammersandshovels }
  		prerequisite = { focus = nomoregreedykings}
 		cancel_if_invalid = no
- 	  continue_if_invalid = yes
+ 	  	continue_if_invalid = yes
  		cost = 10
-  	available_if_capitulated = yes
+  		available_if_capitulated = yes
 		completion_reward = {
 			add_threat = 2
 			set_politics = { ruling_party = fascism elections_allowed = no }
@@ -940,7 +969,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = hammersandshovels
 		icon = GFX_goal_support_communism
 		ai_will_do = { factor = 10 }
-		available = { communism > 0.3 }
+		available = { communism > 0.50 }
  		x =8
  		y =5
  		mutually_exclusive = { focus = axesandswords }
@@ -1020,16 +1049,31 @@ continuous_focus_position = { x = 50 y = 2000 }
 		completion_reward = { GON = { add_to_faction = ERE } }
  }
 
+ focus = {
+	id = ERE_for_the_greater_good
+	icon = GFX_goal_support_fascism
+	ai_will_do = { factor = 25 }
+	available = { has_government = fascism }
+	x = 5
+	y = 6
+	prerequisite = { focus = axesandswords }
+	cost = 10
+	available_if_capitulated = no
+	completion_reward = {
+		add_ideas = militarism_focus
+	}
+ }
+
  #Focus for Dwarf Imperium
 		focus = {
 		id = dwarfimperium
 		icon = GFX_goal_generic_secret_weapon
 		ai_will_do = { factor = 8 }
 		available = { NOT = { is_in_faction = yes } OR = { has_government = fascism has_government = communism } is_puppet = no }
- 		x =5
- 		y =6
+ 		x = 7
+ 		y = 6
  		mutually_exclusive = { }
- 		prerequisite = { focus = axesandswords}
+ 		prerequisite = { focus = axesandswords focus = hammersandshovels}
  		cost = 10
   	available_if_capitulated = no
 		completion_reward = { create_faction = "sons_of_durin" }
@@ -1057,13 +1101,13 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = servicenotself
 		icon = GFX_goal_generic_war_with_comintern
 		ai_will_do = { factor = 5 }
-		available = { OR = { has_government = fascism has_government = communism } }
- 		x =7
- 		y =6
+		available = { has_government = communism }
+ 		x = 9
+ 		y = 6
  		mutually_exclusive = { }
- 		prerequisite = { focus = axesandswords focus = hammersandshovels}
+ 		prerequisite = { focus = hammersandshovels}
  		cost = 10
-  	available_if_capitulated = no
+  		available_if_capitulated = no
 		completion_reward = {
 				add_ideas = workers_culture
 				add_ideas = progress_cult_focus
