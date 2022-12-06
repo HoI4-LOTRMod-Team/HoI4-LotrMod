@@ -884,7 +884,7 @@ NGraphics = {
 	TONE_MAP_MIDDLE_GREY = 0.5, --0.7
 	TONE_MAP_LUMINANCE_WHITE = 1.0, --
 	MOON_HEIGHT = 600, -- higher means softer shadows and more intense light
-	SUN_HEIGHT  = 600, -- higher means softer shadows and more intense light
+	SUN_HEIGHT  = 1000, -- higher means softer shadows and more intense light
 	MOON_HEIGHT_WATER = 550,   -- higher means softer shadows and more intense light
 	SUN_HEIGHT_WATER  = 5000,  -- higher means softer shadows and more intense light
 	MOON_LATITUDE = 0, -- NOT USED
@@ -900,7 +900,7 @@ NGraphics = {
 	AMBIENT_LIGHT_POS_Z = { 0.6,  0.2, 0.924 }, -- top
 	AMBIENT_LIGHT_NEG_Z = { 0.55, 0.1, 0.9 }, -- bottom
 
-	SUN_DIFFUSE_COLOR   	= {0.14, 0.0, 1.0},
+	SUN_DIFFUSE_COLOR   	= {0.14, 0.3, 1.0},
 	SUN_INTENSITY 			= 1.0; -- 0.4
 	SUN_SPECULAR_INTENSITY 	= 1.0;
 	MOON_DIFFUSE_COLOR  	= {0.58, 0.5, 1.0},
