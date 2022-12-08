@@ -310,7 +310,8 @@ PixelShader =
 			float4 TerrainColor = tex2D( TerrainColorTint, Input.uv2 );
 
 		#ifndef LOW_END_GFX
-			float CityLightsMask = TerrainColor.a;
+			// LOTR NOTE: Changed this to 0, since we use TerrainColor.a for the papermap.
+			float CityLightsMask = 0.0f;//TerrainColor.a;
 		#endif
 
 			float vSnowAlpha = 1-vSpec;
