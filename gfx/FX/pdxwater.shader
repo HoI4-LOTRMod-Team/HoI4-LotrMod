@@ -285,7 +285,11 @@ PixelShader =
 			float2 B;
 			float3 M;
 			float3 normal;
-			SampleWater( Input.uv, vTime_HalfPixelOffset.x, B, M, normal, LeanTexture1, LeanTexture2 );
+
+			// LOTR NOTE: We multiply the UVs and Time for larger wave effect
+			//Input.uv*=0.005f;
+			float2 nuv = float2(Input.uv.x*0.005f, Input.uv.y*0.0035f);
+			SampleWater( nuv, 0.2f*vTime_HalfPixelOffset.x, B, M, normal, LeanTexture1, LeanTexture2 );
 
 			float vSpecMap = tex2D( SpecularMap, Input.uv ).a;
 			normal.y += ( 1.0f - vSpecMap );
@@ -293,13 +297,14 @@ PixelShader =
 			normal = normalize( normal );
 
 			float vFlatten = vSpecMap;
-			B *= vFlatten;
+			B *= vFlatten*0.5f; // LOTR NOTE: Factor to lessen the sun glare
 			M *= vFlatten * vFlatten;
 
 		#ifdef LOW_END_GFX
 			float3 SunDirWater = float3( 0, -1, 0 );
 		#else
 			float3 SunDirWater = CalculateSunDirectionWater( Input.pos );
+			//float3 SunDirWater = float3( 0, -1, 0 ); // LOTR NOTE: TODO: Consider this
 		#endif
 			float3 H = normalize( normalize(vCamPos - Input.pos).xzy + -SunDirWater.xzy );
 			float2 HWave = H.xy/H.z - B;
@@ -319,7 +324,7 @@ PixelShader =
 			float3 vEyeDir = normalize( Input.pos - vCamPos.xyz );
 			float3 reflection = reflect( vEyeDir, normal );
 
-			float vSpecularIntensity = 0.010f;
+			float vSpecularIntensity = 0.0050f; // LOTR NOTE: Lowered from 0.01
 			float vGlossiness = (spec/9.0f) * (1-vSpecMap);
 			//float CubeMipmapIndex = GetEnvmapMipLevel(saturate(1.0f-vSpecMap));
 
@@ -401,9 +406,19 @@ PixelShader =
 			DebugReturn(vOut, lightingProperties, fShadowTerm);
 		#endif
 			//float4 tint = tex2D( TerrainColorTint, Input.uv );
+			//return float4( tint.rgb, 1.0f );
+			//return float4(1,0,0,1);
+			//return float4( vOut, 1.0f - waterShore );
+			//return float4( vOut, 1.0f );
+
+			float dist = vCamPos.y;
+			float dist_fac = (dist - 600) / 800;
+			dist_fac = clamp(dist_fac, 0, 1);
+			float map_fac = dist_fac;
+
 			//return tint;
-			return float4(0,0,0,0);
-			return float4( vOut, 1.0f - waterShore );
+			return float4(vOut, 1.0f - waterShore);
+			//return float4(vOut, (1.0f - waterShore)*(1.0f-map_fac));
 		}
 	]]
 }
