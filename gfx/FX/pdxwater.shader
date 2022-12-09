@@ -148,15 +148,6 @@ PixelShader =
 			AddressV = "Wrap"
 			Type = "Shadow"
 		}
-		TerrainColorTint =
-		{
-			Index = 16
-			MagFilter = "Linear"
-			MinFilter = "Linear"
-			MipFilter = "Linear"
-			AddressU = "Wrap"
-			AddressV = "Wrap"
-		}
 	}
 }
 
@@ -332,10 +323,11 @@ PixelShader =
 			float3 reflectiveColor = texCUBE( ReflectionCubeMap, reflection ).rgb;
 
 		#ifdef NO_REFRACTIONS
-			float3 refractiveColor = float3( 0, 0.1f, 0.2f );
+			float3 og_refractiveColor = float3( 0, 0.1f, 0.2f );
 		#else
-			float3 refractiveColor = tex2D( WaterRefraction, refractiveUV.xy - vRefractionDistortion ).rgb;
+			float3 og_refractiveColor = tex2D( WaterRefraction, refractiveUV.xy - vRefractionDistortion ).rgb;
 		#endif
+			float3 refractiveColor = og_refractiveColor;
 
 			float fresnelBias = 0.5f; // CUBEMAP INTENSITY
 			float fresnel = saturate( dot( -vEyeDir, normal ) ) * 0.5f;
@@ -405,20 +397,72 @@ PixelShader =
 		#else
 			DebugReturn(vOut, lightingProperties, fShadowTerm);
 		#endif
-			//float4 tint = tex2D( TerrainColorTint, Input.uv );
+			float2 GBCUV = float2(Input.uv.x, Input.uv.y);
+			float alp = tex2D( SpecularMap, GBCUV).a;
+			alp = min(alp, 0.1f)*10.0f;
+			//alp = step(0.0001f, alp);
+			//alp = min(1.0f, alp*20.0f);
+
+			float3 col = og_refractiveColor;
+
+			gradient_border_apply( col, normal,
+				Input.uv + vRefractionDistortion * 0.0075f,
+				GradientBorderChannel1, GradientBorderChannel2, 0.0f,
+				vGBCamDistOverride_GBOutlineCutoff.zw * GB_OUTLINE_CUTOFF_SEA,
+				vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+			secondary_color_mask( col, normal,
+				Input.uv - vRefractionDistortion * 0.001,
+				ProvinceSecondaryColorMap,
+				vBloomAlpha );
+
+			col = ApplyFOW( col, ShadowMap, Input.vScreenCoord );
+			col = ApplyDistanceFog( col, Input.pos );
+
+
+			//col = tex2D( GradientBorderChannel1, refractiveUV.xy - vRefractionDistortion );
+
+			//float alp = tex2D( GradientBorderChannel1, Input.uv ).r;
+
+			//col *= float3(1.21f, 1.11f, 1.18f);
+
+			//col = float3(alp, alp, alp);
+			//col.g = 0.5f*col.b;
+
+			//float3 col_desat = float3(1,1,1) * 0.33f*(col.r + col.g + col.b);
+			//col = lerp(col, col_desat, 0.5f);
+
+			float interp = clamp((col.r / 0.25f), 0, 1);
+			interp = alp + 0.1f;
+
+			vOut.rgb = lerp(col, vOut.rgb, interp);
+			if(col.r > 0.25f) {
+				//vOut.rgb = (col.r / 0.25f) * float3(1.11f, 1.11f, 1.11f);
+			}
+			//vOut.b *= 2.0f;
+			//vOut.r *= 0.5f;
+			//vOut.g *= 0.5f;
+
+
+			//float3 asd = refractiveColor;
+			//vOut.rgb = asd.rgb;
 			//return float4( tint.rgb, 1.0f );
 			//return float4(1,0,0,1);
 			//return float4( vOut, 1.0f - waterShore );
 			//return float4( vOut, 1.0f );
 
 			float dist = vCamPos.y;
-			float dist_fac = (dist - 600) / 800;
+			float dist_fac = smoothstep(1800, 2600, dist);
 			dist_fac = clamp(dist_fac, 0, 1);
 			float map_fac = dist_fac;
 
+			//float fac = dot(normal, float3(1,0,0));
+			//vOut.r = fac;
+			//vOut.g = fac;
+			//vOut.b = fac;
+
 			//return tint;
-			return float4(vOut, 1.0f - waterShore);
-			//return float4(vOut, (1.0f - waterShore)*(1.0f-map_fac));
+			//return float4(vOut, 1.0f - waterShore);
+			return float4(vOut, (1.0f - waterShore)*(1.0f-map_fac));
 		}
 	]]
 }

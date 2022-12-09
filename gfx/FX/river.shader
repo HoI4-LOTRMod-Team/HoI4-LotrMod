@@ -281,8 +281,8 @@ PixelShader =
 		#else
 			float4 diffuseColor = tex2D( Diffuse, float2( vNewUV.x, 1.0f - vNewUV.y ) );
 			float2 waterSideAlpha = tex2D( RiverData, vNewUV ).br;
-			waterSideAlpha.x = 0.1f; // LOTR NOTE: I think this looks better like this
 		#endif
+			waterSideAlpha.x = 0.1f; // LOTR NOTE: I think this looks better like this
 
 			float2 B;
 			float3 M;
