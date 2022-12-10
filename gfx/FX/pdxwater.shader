@@ -278,8 +278,7 @@ PixelShader =
 			float3 normal;
 
 			// LOTR NOTE: We multiply the UVs and Time for larger wave effect
-			//Input.uv*=0.005f;
-			float2 nuv = float2(Input.uv.x*0.005f, Input.uv.y*0.0035f);
+			float2 nuv = float2(Input.uv.x*0.0065f, Input.uv.y*0.00455f);
 			SampleWater( nuv, 0.2f*vTime_HalfPixelOffset.x, B, M, normal, LeanTexture1, LeanTexture2 );
 
 			float vSpecMap = tex2D( SpecularMap, Input.uv ).a;
