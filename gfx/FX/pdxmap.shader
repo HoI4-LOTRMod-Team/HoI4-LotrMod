@@ -321,11 +321,34 @@ PixelShader =
 			diffuse.rgb = ApplySnow( diffuse.rgb, Input.prepos, normal, vMudSnow, SnowTexture, CityLightsAndSnowNoise, vGlossiness, vSnowAlpha );
 			diffuse.rgb = GetMudColor( diffuse.rgb, vMudSnow, Input.prepos, normal, vGlossiness, vSpec, MudDiffuseGloss, MudNormalSpec );
 
+			// LOTR STUFF
+
+			float papermap_fac = smoothstep(450, 650, vCamPos.y);	// Factor of papermap vs terrainmap
+			float borders_fac = smoothstep(1800, 2600, vCamPos.y);  // Factor of displaying country colors / borders or not
+
+			// Papermap color
+			float3 papermap = 0.8f * float3(0.66, 0.435, 0.196) * TerrainColor.a * 
+				lerp(
+					1.0f,
+					min(TerrainColor.rgb*10.0f, 1.0f),
+					0.63f // This value effectively controls the saturation
+					)
+			;
+
+			// The actual color of the map
+			float3 map_color = lerp(diffuse.rgb, papermap, papermap_fac);
+
+			// LOTR STUFF END
+
+
 			// Gradient Borders
 			float vBloomAlpha = 0.0f;
 
-			// LOTR NOTE: Applying borders used to be here, has no been moved further below!
-			//gradient_border_apply( diffuse.rgb, normal, Input.uv2, GradientBorderChannel1, GradientBorderChannel2, 1.0f, vGBCamDistOverride_GBOutlineCutoff.zw, vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+			gradient_border_apply( map_color, normal, Input.uv2, GradientBorderChannel1, GradientBorderChannel2, 1.0f, vGBCamDistOverride_GBOutlineCutoff.zw, vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+
+			// LOTR NOTE: In vanilla we would pass diffuse.rgb directly intp the function above.
+			// However, we need the map_color value later.
+			diffuse.rgb = map_color;
 
 			// Secondary color mask
 			secondary_color_mask( diffuse.rgb, normal, Input.uv2, ProvinceSecondaryColorMap, vBloomAlpha );
@@ -400,28 +423,16 @@ PixelShader =
 
 		// LOTR STUFF:
 
-		float papermap_fac = smoothstep(450, 650, vCamPos.y);	// Factor of papermap vs terrainmap
-		float borders_fac = smoothstep(1800, 2600, vCamPos.y);  // Factor of displaying country colors / borders or not
+		// Summary: There are now three different colors/values:
+		//  - papermap: The color of the papermap with no borders or anything
+		//  - map_color: papermap but WITH borders if the camera is zoomed in enough, otherwise its a *flat* TerrainColor with borders
+		//  - vOut: TerrainColor with borders, lighting and everything else. This is what vanilla always returns
 
-		// Papermap color
-		float3 papermap = 0.8f * float3(0.66, 0.435, 0.196) * TerrainColor.a * 
-			lerp(
-				1.0f,
-				min(TerrainColor.rgb*10.0f, 1.0f),
-				0.63f // This value effectively controls the saturation
-				)
-		;
-		//papermap.r = 1.0f;
+		// Apply papermap. Both these values have borders
+		vOut = lerp(vOut, map_color, papermap_fac);
 
-		// Apply papermap
-		vOut = lerp(vOut, papermap, papermap_fac);
-
-		// Get output with borders applied
-		float3 vOut_borders = vOut;
-		gradient_border_apply( vOut_borders, normal, Input.uv2, GradientBorderChannel1, GradientBorderChannel2, 1.0f, vGBCamDistOverride_GBOutlineCutoff.zw, vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
-
-		// Apply borders
-		vOut = lerp(vOut_borders, vOut, borders_fac);
+		// Get rid of borders at a certain distance
+		vOut = lerp(vOut, papermap, borders_fac);
 
 		// Return
 		DebugReturn(vOut, lightingProperties, fShadowTerm);
