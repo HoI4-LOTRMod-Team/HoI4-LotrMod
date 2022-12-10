@@ -346,15 +346,16 @@ PixelShader =
 
 			float vBloomAlpha = 0.0f;
 
-			gradient_border_apply( refractiveColor, normal,
-				Input.uv + vRefractionDistortion * 0.0075f,
-				GradientBorderChannel1, GradientBorderChannel2, 0.0f,
-				vGBCamDistOverride_GBOutlineCutoff.zw * GB_OUTLINE_CUTOFF_SEA,
-				vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
-			secondary_color_mask( refractiveColor, normal,
-				Input.uv - vRefractionDistortion * 0.001,
-				ProvinceSecondaryColorMap,
-				vBloomAlpha );
+			// LOTR NOTE: This used to be here, now we do it further below
+			//gradient_border_apply( refractiveColor, normal,
+			//	Input.uv + vRefractionDistortion * 0.0075f,
+			//	GradientBorderChannel1, GradientBorderChannel2, 0.0f,
+			//	vGBCamDistOverride_GBOutlineCutoff.zw * GB_OUTLINE_CUTOFF_SEA,
+			//	vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+			//secondary_color_mask( refractiveColor, normal,
+			//	Input.uv - vRefractionDistortion * 0.001,
+			//	ProvinceSecondaryColorMap,
+			//	vBloomAlpha );
 
 			LightingProperties lightingProperties;
 			lightingProperties._WorldSpacePos = Input.pos;
@@ -385,6 +386,35 @@ PixelShader =
 
 			float3 vOut = ComposeLight(lightingProperties, diffuseLight, specularLight);
 
+		// LOTR NOTE: This used to be here, now we do it further below
+		#ifndef LOW_END_GFX
+			//vOut = ApplyFOW( vOut, ShadowMap, Input.vScreenCoord );
+			//vOut = ApplyDistanceFog( vOut, Input.pos );
+		#endif
+
+			// LOTR NOTE: This used to be here, now we do it further below
+			//vOut = DayNightWithBlend( vOut, CalcGlobeNormal( Input.pos.xz ), lerp(BORDER_NIGHT_DESATURATION_MAX, 1.0f, vBloomAlpha) );
+
+
+			// LOTR STUFF
+
+			// The lakes we want are marked as completely black on the Specular alpha channel
+			float lake_fac = vSpecMap;
+			lake_fac = min(lake_fac, 0.1f)*10.0f; // This takes every alp < 0.1 and interpolates it into [0,1]
+
+			// For lakes, use the original refractiveColor (without specular and stuff). This makes them look more like rivers
+			vOut.rgb = lerp(og_refractiveColor, vOut.rgb, lake_fac);
+
+			gradient_border_apply( vOut, normal,
+				Input.uv + vRefractionDistortion * 0.0075f,
+				GradientBorderChannel1, GradientBorderChannel2, 0.0f,
+				vGBCamDistOverride_GBOutlineCutoff.zw * GB_OUTLINE_CUTOFF_SEA,
+				vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+			secondary_color_mask( vOut, normal,
+				Input.uv - vRefractionDistortion * 0.001,
+				ProvinceSecondaryColorMap,
+				vBloomAlpha );
+
 		#ifndef LOW_END_GFX
 			vOut = ApplyFOW( vOut, ShadowMap, Input.vScreenCoord );
 			vOut = ApplyDistanceFog( vOut, Input.pos );
@@ -392,76 +422,14 @@ PixelShader =
 
 			vOut = DayNightWithBlend( vOut, CalcGlobeNormal( Input.pos.xz ), lerp(BORDER_NIGHT_DESATURATION_MAX, 1.0f, vBloomAlpha) );
 
+			// papermap factor
+			float map_fac = smoothstep(1800, 2600, CamPos.y);
+
 		#ifdef LOW_END_GFX
 			DebugReturn(vOut, lightingProperties, 0.0f);
 		#else
 			DebugReturn(vOut, lightingProperties, fShadowTerm);
 		#endif
-			float2 GBCUV = float2(Input.uv.x, Input.uv.y);
-			float alp = tex2D( SpecularMap, GBCUV).a;
-			alp = min(alp, 0.1f)*10.0f;
-			//alp = step(0.0001f, alp);
-			//alp = min(1.0f, alp*20.0f);
-
-			float3 col = og_refractiveColor;
-
-			gradient_border_apply( col, normal,
-				Input.uv + vRefractionDistortion * 0.0075f,
-				GradientBorderChannel1, GradientBorderChannel2, 0.0f,
-				vGBCamDistOverride_GBOutlineCutoff.zw * GB_OUTLINE_CUTOFF_SEA,
-				vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
-			secondary_color_mask( col, normal,
-				Input.uv - vRefractionDistortion * 0.001,
-				ProvinceSecondaryColorMap,
-				vBloomAlpha );
-
-			col = ApplyFOW( col, ShadowMap, Input.vScreenCoord );
-			col = ApplyDistanceFog( col, Input.pos );
-
-
-			//col = tex2D( GradientBorderChannel1, refractiveUV.xy - vRefractionDistortion );
-
-			//float alp = tex2D( GradientBorderChannel1, Input.uv ).r;
-
-			//col *= float3(1.21f, 1.11f, 1.18f);
-
-			//col = float3(alp, alp, alp);
-			//col.g = 0.5f*col.b;
-
-			//float3 col_desat = float3(1,1,1) * 0.33f*(col.r + col.g + col.b);
-			//col = lerp(col, col_desat, 0.5f);
-
-			float interp = clamp((col.r / 0.25f), 0, 1);
-			interp = alp + 0.1f;
-
-			vOut.rgb = lerp(col, vOut.rgb, interp);
-			if(col.r > 0.25f) {
-				//vOut.rgb = (col.r / 0.25f) * float3(1.11f, 1.11f, 1.11f);
-			}
-			//vOut.b *= 2.0f;
-			//vOut.r *= 0.5f;
-			//vOut.g *= 0.5f;
-
-
-			//float3 asd = refractiveColor;
-			//vOut.rgb = asd.rgb;
-			//return float4( tint.rgb, 1.0f );
-			//return float4(1,0,0,1);
-			//return float4( vOut, 1.0f - waterShore );
-			//return float4( vOut, 1.0f );
-
-			float dist = vCamPos.y;
-			float dist_fac = smoothstep(1800, 2600, dist);
-			dist_fac = clamp(dist_fac, 0, 1);
-			float map_fac = dist_fac;
-
-			//float fac = dot(normal, float3(1,0,0));
-			//vOut.r = fac;
-			//vOut.g = fac;
-			//vOut.b = fac;
-
-			//return tint;
-			//return float4(vOut, 1.0f - waterShore);
 			return float4(vOut, (1.0f - waterShore)*(1.0f-map_fac));
 		}
 	]]

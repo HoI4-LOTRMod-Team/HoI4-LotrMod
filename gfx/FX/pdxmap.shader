@@ -397,8 +397,6 @@ PixelShader =
 
 			vOut = DayNightWithBlend( vOut, vGlobeNormal, lerp(BORDER_NIGHT_DESATURATION_MAX, 1.0f, vBloomAlpha) );
 
-			DebugReturn(vOut, lightingProperties, fShadowTerm);
-
 
 		// LOTR STUFF:
 
@@ -426,6 +424,8 @@ PixelShader =
 		vOut = lerp(vOut_borders, vOut, borders_fac);
 
 		// Return
+		DebugReturn(vOut, lightingProperties, fShadowTerm);
+		
 		return float4(vOut, max(0.5f, vNightFactor));
 
 		// LOTR STUFF END
