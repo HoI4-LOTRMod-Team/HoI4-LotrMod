@@ -423,7 +423,7 @@ PixelShader =
 			vOut = DayNightWithBlend( vOut, CalcGlobeNormal( Input.pos.xz ), lerp(BORDER_NIGHT_DESATURATION_MAX, 1.0f, vBloomAlpha) );
 
 			// papermap factor
-			float map_fac = smoothstep(1800, 2600, CamPos.y);
+			float map_fac = smoothstep(1800, 2600, vCamPos.y);
 
 		#ifdef LOW_END_GFX
 			DebugReturn(vOut, lightingProperties, 0.0f);
