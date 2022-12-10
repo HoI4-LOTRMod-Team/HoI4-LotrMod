@@ -323,7 +323,9 @@ PixelShader =
 
 			// Gradient Borders
 			float vBloomAlpha = 0.0f;
-			gradient_border_apply( diffuse.rgb, normal, Input.uv2, GradientBorderChannel1, GradientBorderChannel2, 1.0f, vGBCamDistOverride_GBOutlineCutoff.zw, vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+
+			// LOTR NOTE: Applying borders used to be here, has no been moved further below!
+			//gradient_border_apply( diffuse.rgb, normal, Input.uv2, GradientBorderChannel1, GradientBorderChannel2, 1.0f, vGBCamDistOverride_GBOutlineCutoff.zw, vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
 
 			// Secondary color mask
 			secondary_color_mask( diffuse.rgb, normal, Input.uv2, ProvinceSecondaryColorMap, vBloomAlpha );
@@ -397,52 +399,42 @@ PixelShader =
 
 			DebugReturn(vOut, lightingProperties, fShadowTerm);
 
-		// Weird LOTR stuff:
 
-		// Raw terrain color
-		float4 tint = tex2D( TerrainColorTint, Input.uv2 );
+		// LOTR STUFF:
 
-		// desat terrain color
-		float f_tint_desat = 0.334f*(tint.r + tint.g + tint.b);
-		float4 tint_desat = float4(f_tint_desat, f_tint_desat, f_tint_desat, 1);
+		float papermap_fac = smoothstep(450, 650, vCamPos.y);	// Factor of papermap vs terrainmap
+		float borders_fac = smoothstep(1800, 2600, vCamPos.y);  // Factor of displaying country colors / borders or not
 
-
-
-
-
-		float3 map_color = 1.0 * float3(0.66, 0.435, 0.196) * tint.a * 
+		// Papermap color
+		float3 papermap = 0.8f * float3(0.66, 0.435, 0.196) * TerrainColor.a * 
 			lerp(
-				clamp((0.2f+tint_desat.rgb)*10.0f, 0.0f, 1.0f),
-				clamp(tint.rgb*10.0f, 0.0f, 1.0f),
-				0.6f
+				1.0f,
+				min(TerrainColor.rgb*10.0f, 1.0f),
+				0.63f // This value effectively controls the saturation
 				)
 		;
-		map_color*=0.6;
+		//papermap.r = 1.0f;
 
-		float dist = vCamPos.y;
-		float dist_fac = (dist - 600) / 800;
-		dist_fac = clamp(dist_fac, 0, 1);
+		// Apply papermap
+		vOut = lerp(vOut, papermap, papermap_fac);
 
-		float map_fac = smoothstep(450, 650, dist);
+		// Get output with borders applied
+		float3 vOut_borders = vOut;
+		gradient_border_apply( vOut_borders, normal, Input.uv2, GradientBorderChannel1, GradientBorderChannel2, 1.0f, vGBCamDistOverride_GBOutlineCutoff.zw, vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
 
-		// Fade out pure_border_col at a certain distance
-		float3 b_c_map_color;// = 0.5f*map_color*pure_border_col + 0.5f*(map_color+pure_border_col);
+		// Apply borders
+		vOut = lerp(vOut_borders, vOut, borders_fac);
 
-		b_c_map_color = map_color;
+		// Return
+		return float4(vOut, max(0.5f, vNightFactor));
 
-		gradient_border_apply(b_c_map_color, normal, Input.uv2, GradientBorderChannel1, GradientBorderChannel2, 1.0f, vGBCamDistOverride_GBOutlineCutoff.zw, vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+		// LOTR STUFF END
 
-		map_color = lerp(map_color, b_c_map_color, 1.0f-smoothstep(1800, 2600, dist));
-
-		return float4(lerp(vOut, map_color, map_fac), 1);
-		//return float4(pure_border_col, 1);
-		//return float4(map_fac, map_fac, map_fac, 1);
-		// LOTR Stuff end
-
+		// Old version:
 		#ifdef LOW_END_GFX
 			return float4( vOut, vNightFactor * CITY_LIGHTS_BLOOM_FACTOR );
 		#else
-			return float4( vOut, saturate(CityLightsMask * vNightFactor * CITY_LIGHTS_BLOOM_FACTOR) );
+			return float4( vOut, saturate(CityLightsMask * vNightFactor) );
 		#endif
 		}
 	]]
