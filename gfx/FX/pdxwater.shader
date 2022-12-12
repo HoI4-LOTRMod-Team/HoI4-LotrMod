@@ -314,7 +314,7 @@ PixelShader =
 			float3 vEyeDir = normalize( Input.pos - vCamPos.xyz );
 			float3 reflection = reflect( vEyeDir, normal );
 
-			float vSpecularIntensity = 0.0050f; // LOTR NOTE: Lowered from 0.01
+			float vSpecularIntensity = 0.01f;
 			float vGlossiness = (spec/9.0f) * (1-vSpecMap);
 			//float CubeMipmapIndex = GetEnvmapMipLevel(saturate(1.0f-vSpecMap));
 
@@ -328,7 +328,7 @@ PixelShader =
 		#endif
 			float3 refractiveColor = og_refractiveColor;
 
-			float fresnelBias = 0.5f; // CUBEMAP INTENSITY
+			float fresnelBias = 0.4f; // CUBEMAP INTENSITY // LOTR: Lowered from 0.5f
 			float fresnel = saturate( dot( -vEyeDir, normal ) ) * 0.5f;
 			fresnel = saturate( fresnelBias + ( 1.0f - fresnelBias ) * pow( 1.0f - fresnel, 10.0) );
 			refractiveColor = refractiveColor * ( 1.0f - fresnel ) + reflectiveColor * fresnel;
