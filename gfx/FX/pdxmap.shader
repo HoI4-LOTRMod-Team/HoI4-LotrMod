@@ -323,7 +323,7 @@ PixelShader =
 
 			// LOTR STUFF
 
-			float papermap_fac = smoothstep(450, 650, vCamPos.y);	// Factor of papermap vs terrainmap
+			float papermap_fac = smoothstep(500, 750, vCamPos.y);	// Factor of papermap vs terrainmap
 			float borders_fac = smoothstep(1800, 2600, vCamPos.y);  // Factor of displaying country colors / borders or not
 
 			// Papermap color
