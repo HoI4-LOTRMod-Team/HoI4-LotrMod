@@ -4,7 +4,7 @@
 
 add_namespace = harad
 
-# Rhun making contact with the fascists in secre
+# Rhun making contact with the fascists in secret
 country_event = {
 	id = harad.1
 	title = harad.1.t
@@ -44,5 +44,72 @@ country_event = {
             add_opinion_modifier = { target = HAR modifier = small_decrease }
             country_event = { id = rhun.1 }
         }
+	}
+}
+
+#Harad Puppet
+country_event = {
+	id = harad.2
+	title = harad.2.t
+	desc = harad.2.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = harad.2.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = -25
+				FROM = { has_army_size = { size < 20 } }
+			}
+			modifier = {
+				add = 30
+				FROM = { has_army_size = { size > 24 } }
+			}
+			modifier = {
+				add = -100
+				has_completed_focus = join_the_dark_pact
+			}
+			modifier = {
+				add = 25
+				HAR = {
+					has_government = fascism
+				}
+			}
+			modifier = {
+				add = -999
+				has_completed_focus = go_solo
+			}
+		}
+		RHU = {
+			puppet = HAR
+		}
+ 		FROM = {country_event = { hours = 2 id = rhun.2 } }
+	}
+	option = { # Refuse
+		name = harad.2.b
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				any_other_country = {
+					has_guaranteed = HAR
+				}
+				factor = 5
+			}
+			modifier = {
+				add = 999
+				has_completed_focus = go_solo
+			}
+		}
+		add_stability = -0.05
+		add_political_power = 50
+		add_war_support = 0.10
+		FROM = {country_event = { hours = 2 id = rhun.1 } }
 	}
 }
