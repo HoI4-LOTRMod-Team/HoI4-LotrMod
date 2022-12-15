@@ -5,7 +5,8 @@ tags={
 	"Events"
 	"Gameplay"
 }
-name="Lord of the Rings Mod"
+name="Lord of the Rings Mod WIP"
+
 replace_path="history/states"
 replace_path="history/countries"
 replace_path="history/general"
@@ -57,6 +58,7 @@ replace_path="common/units/names_ships"
 replace_path="common/units/names_divisions"
 replace_path="common/units/codenames_operatives"
 replace_path="common/units/names_railway_guns"
+replace_path="music"
 replace_path="portraits"
 supported_version="1.12.*"
 path="C:/Users/Kahl/Documents/Paradox Interactive/Hearts of Iron IV/mod/lotr"
