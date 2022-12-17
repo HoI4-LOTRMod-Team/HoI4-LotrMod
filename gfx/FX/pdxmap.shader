@@ -329,7 +329,7 @@ PixelShader =
 			// Papermap color
 			float3 papermap = 0.8f * float3(0.66, 0.435, 0.196) * TerrainColor.a * 
 				lerp(
-					1.0f,
+					float3(1.0f, 1.0f, 1.0f),
 					min(TerrainColor.rgb*10.0f, 1.0f),
 					0.63f // This value effectively controls the saturation
 					)
