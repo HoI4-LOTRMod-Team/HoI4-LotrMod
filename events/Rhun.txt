@@ -1,0 +1,348 @@
+###########################
+# Erebor Events
+###########################
+
+add_namespace = rhun
+
+# General refuse event
+country_event = {
+	id = rhun.1
+	title = rhun.1.t
+	desc = rhun.1.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Okay
+		name = rhun.1.a
+	}
+}
+
+# General agree event
+country_event = {
+	id = rhun.2
+	title = rhun.2.t
+	desc = rhun.2.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	option = { # Okay
+		name = rhun.2.a
+	}
+}
+
+# Erebor refuses on given away control state 92
+country_event = {
+	id = rhun.3
+	title = rhun.3.t
+	desc = rhun.3.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	option = { # Okay
+		name = rhun.3.a
+	}
+}
+
+# Invite to defensive pact
+country_event = {
+	id = rhun.4
+	title = rhun.4.t
+	desc = rhun.4.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = rhun.4.a
+		ai_chance = {
+			base = 40
+			modifier = { # Rohan has higher chance of saying yes when either Gondor or Isengard is fascist
+				factor = 20
+				original_tag = ROH
+				OR = {
+					ISE = {
+						has_government = fascism
+					}
+					GON = {
+						has_government = fascism
+					}
+				}
+			}
+			modifier = { # Dale has higher chance of saying yes when Erebor is fascist
+				factor = 20
+				original_tag = DAL
+				ERE = {
+					has_government = fascism
+				}
+			}
+		}
+		RHU = {
+			add_to_faction = ROOT
+		}
+	}
+
+	option = { #no
+		name = rhun.4.b
+		ai_chance = {
+			base = 10
+			modifier = { # Rohan has higher chance of saying no when Gondor and Isengard aren't fascist or communist
+				factor = 20
+				original_tag = ROH
+				NOT = {
+					GON = {
+						has_government = fascism
+						has_government = communism
+					}
+					ISE = {
+						has_government = fascism
+						has_government = communism
+					}
+				}
+			}
+		}
+	}
+}
+
+# Start of democratic civil war
+country_event = {
+	id = rhun.5
+	title = rhun.5.t
+	desc = rhun.5.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = rhun.5.a
+		ai_chance = {
+			base = 50
+		}
+		hidden_effect = {
+            set_politics = {
+                ruling_party = democratic
+                elections_allowed = yes
+            }
+        }
+        start_civil_war = {
+            ideology = fascism
+            size = 0.9
+            capital = 128
+        }
+		news_event = { hours = 6 id = news.385 }
+
+        hidden_effect = {
+            for_each_loop = {
+                array = RHU_list_states_civil_war
+                RHU = {
+                    transfer_state = v
+                }
+            }
+
+            RHU = {
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment_0
+                    amount = 750
+                }
+            }
+			##Stolen weapons
+			if = {
+				limit = {
+					has_global_flag = RHU_stolen_weapons
+				}
+				RHU = {
+					add_equipment_to_stockpile = {
+						type = infantry_equipment_0
+						amount = 750
+					}
+				}
+			}
+			##Hidden supplies
+			if = {
+				limit = {
+					has_global_flag = RHU_hiden_supplies
+				}
+				RHU = {
+					add_ideas = RHU_hidden_supplies
+				}
+			}
+			##Load templates
+			load_oob = "rhun/CV_templates"
+			## If troops are rallied
+			if = {
+				limit = {
+					has_global_flag = easterlings_lithlad_rallied
+				}
+				load_oob = "rhun/CV_rally_troops_lithlad"
+			}
+			if = {
+				limit = {
+					has_global_flag = easterlings_agasha_rallied
+				}
+				load_oob = "rhun/CV_rally_troops_agasha_dag"
+			}
+			if = {
+				limit = {
+					has_global_flag = easterlings_far_eastern_rallied
+				}
+				load_oob = "rhun/CV_rally_troops_far_eastern"
+			}
+			if = {
+				limit = {
+					has_global_flag = easterlings_north_rhun_rallied
+				}
+				load_oob = "rhun/CV_rally_troops_lithlad"
+			}
+
+
+			## If land is controlled
+            if = {
+                limit = {
+                    controls_state = 128 #Central Rhun
+                }
+                load_oob = "rhun/CV_central_rhun"
+            }
+            if = {
+                limit = {
+                    controls_state = 104 #South Rhun
+                }
+                load_oob = "rhun/CV_south_rhun"
+            }
+            if = {
+                limit = {
+                    controls_state = 102 #North Rhun
+                }
+                load_oob = "rhun/CV_north_rhun"
+            }
+        }
+	}
+}
+
+# Harad demands submission
+country_event = {
+	id = rhun.6
+	title = rhun.6.t
+	desc = rhun.6.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = rhun.6.a
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = -5
+				has_war = yes
+			}
+			modifier = {
+				factor = -5
+				is_puppet = yes
+			}
+			modifier = {
+				factor = -5
+				RHU = {
+					has_idea = RHU_alone_we_will_fight
+				}
+			}
+		}
+		add_war_support = -0.10
+		add_stability = -0.05
+		add_political_power = -100
+		HAR = {
+			puppet = RHU
+			add_ideas = HAR_unrest_in_rhun
+			set_global_flag = RHU_unrest_in_rhun
+		}
+	}
+
+	option = { #no
+		ai_chance = {
+			base = 0
+			modifier = {
+				factor = 5
+				has_war = yes
+			}
+			modifier = {
+				factor = 5
+				is_puppet = yes
+			}
+			modifier = {
+				factor = 5
+				RHU = {
+					has_idea = RHU_alone_we_will_fight
+				}
+			}
+		}
+		name = rhun.6.b
+		add_war_support = 0.10
+		add_stability = 0.05
+		add_political_power = -100
+		add_opinion_modifier = { target = HAR modifier = medium_decrease }
+		HAR = {
+			add_opinion_modifier = { target = RHU modifier = medium_decrease }
+			create_wargoal = {
+				target = RHU
+				type = puppet_wargoal_focus
+			}
+		}
+	}
+}
+
+# Invite to the easterlings faction
+country_event = {
+	id = rhun.7
+	title = rhun.7.t
+	desc = rhun.7.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = rhun.7.a
+		ai_chance = {
+			base = 40
+			modifier = {
+				add = 20
+				has_opinion = {
+					target = RHU
+					value > 75
+				}
+			}
+			modifier = {
+				add = 999
+				has_global_flag = RHU_made_contact_with_fascism
+			}
+		}
+		RHU = {
+			add_to_faction = ROOT
+		}
+	}
+
+	option = { #no
+		name = rhun.7.b
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+# Dorwinion agreed
+country_event = {
+	id = rhun.8
+	title = rhun.8.t
+	desc = rhun.8.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = rhun.8.a
+		ai_chance = {
+			base = 40
+		}
+
+	}
+}
