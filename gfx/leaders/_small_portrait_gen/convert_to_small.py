@@ -16,7 +16,7 @@ def convert_image(img_file, out_path):
 	img = image.Image(filename=img_file)
 
 	# resize image to small
-	img.resize(width=mask.width, height=mask.height, filter='box', blur=1)
+	img.resize(width=mask.width, height=mask.height, filter='lanczos', blur=1)
 
 	apply_mask(img, mask)
 	frame.composite(img)
