@@ -2220,10 +2220,13 @@ focus ={
 		NOT = {
 			is_in_faction_with = MIR
 		}
+		MIR = {
+			exists = yes
+		}
 	}
 	cost = 10
 	search_filters = { FOCUS_FILTER_ANNEXATION }
-	will_lead_to_war_with = DAG
+	will_lead_to_war_with = MIR
 	completion_reward = {
 		create_wargoal = { type = annex_everything target = MIR }
 	}
@@ -2651,9 +2654,10 @@ focus = {
   		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
-				5 = { add_building_construction = {	type = bunker level = 6 instant_build = yes province = 6967 } }
-				5 = { add_building_construction = {	type = bunker level = 6 instant_build = yes province = 2663 } }
-				5 = { add_building_construction = {	type = bunker level = 6 instant_build = yes province = 4660 } }
+				2 = { 
+					add_building_construction = {	type = bunker level = 4 instant_build = yes province = 4323 }
+					add_building_construction = {	type = infrastructure level = 1 instant_build = yes }
+				}
 		}
  }
 
@@ -2672,7 +2676,7 @@ focus = {
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_INDUSTRY }
 	completion_reward = {
-			3 = { add_building_construction = {	type = bunker level = 6 instant_build = yes province = 8037 } }
+			185 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 7371 } }
 	}
 }
 
@@ -2690,7 +2694,7 @@ focus = {
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_INDUSTRY }
 	completion_reward = {
-		2 = { add_building_construction = {	type = bunker level = 6 instant_build = yes province = 12801 } }
+		3 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 4828 } }
 	}
 }
 
@@ -2708,7 +2712,7 @@ focus = {
  		cost = 2
   	available_if_capitulated = yes
 		completion_reward = {
-
+			custom_effect_tooltip = MOR_event_triggert_focus
 		}
  }
 
@@ -2727,9 +2731,10 @@ focus = {
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_INDUSTRY }
 	completion_reward = {
-		120 = { add_building_construction = {	type = infrastructure level = 5 instant_build = yes } }
-		121 = { add_building_construction = {	type = infrastructure level = 5 instant_build = yes } }
-		122 = { add_building_construction = {	type = infrastructure level = 5 instant_build = yes } }
+		2 = { add_building_construction = {	type = infrastructure level = 1 instant_build = yes } }
+		188 = { add_building_construction = {	type = infrastructure level = 1 instant_build = yes } }
+		186 = { add_building_construction = {	type = infrastructure level = 1 instant_build = yes } }
+		10 = { add_building_construction = {	type = infrastructure level = 1 instant_build = yes } }
 	}
 }
 
@@ -2745,7 +2750,9 @@ focus = {
 	prerequisite = { focus = searchtheshireforthering}
 	cost = 10
 	available_if_capitulated = yes
-	completion_reward = { }
+	completion_reward = {
+		custom_effect_tooltip = MOR_event_triggert_focus
+	}
 }
 
  #Focus for Rally the Troops
@@ -2794,7 +2801,15 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = { 
 		transfer_state = 204
-		204 = { add_compliance = 50 }
+		if = {
+			limit = {
+				controls_state = 204
+			}
+			add_state_core = 204
+		} else = {
+			204 = { add_compliance = 50 }
+		}
+		
 		add_threat = 1
 		GON = {
 			add_opinion_modifier = { target = MOR modifier = small_decrease }
@@ -3000,8 +3015,8 @@ focus = {
 		factor = 100
 	}
 	bypass = {
-		OR = {
-			GON = {
+		GON = {
+			OR = {
 				is_puppet_of = MOR
 				exists = no
 				is_in_faction_with = MOR
@@ -3049,6 +3064,10 @@ focus = {
 		modifier = {
 			add = -6
 			has_war = yes
+		}
+		modifier = {
+			add = 10
+			has_war_with = ROH
 		}
 		modifier = {
 				add = -4
@@ -3216,8 +3235,9 @@ focus = {
 		completion_reward = {
 			every_country = {
 				limit = {
-					NOT = { has_government = democratic }
+					NOT = { has_government = fascism }
 					NOT = { tag = NEP }
+					NOT = { is_in_faction_with = MOR }
 				}
 				MOR = {
 					create_wargoal = { type = annex_everything target = PREV }
