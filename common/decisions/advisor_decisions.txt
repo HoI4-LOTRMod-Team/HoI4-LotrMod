@@ -18,32 +18,82 @@ advisor_decisions_category = {
         	has_idea_with_trait = investment_gambler
     	}
 
-	    cancel_trigger = {
-	        #has_war = no
-	    }
+	    #cancel_trigger = {
+	    #    always = no
+	    #}
+
 	    is_good = yes
-
-	    days_mission_timeout = 7
+	    days_mission_timeout = 60
 	    selectable_mission = no
-
 	    days_remove = 1
 
 	    timeout_effect = {
-	    	set_variable_to_random = {
-			    var = THIS.economic_gambler_factor
-			    min = -0.15
-			    max = 0.10
-			    integer = no
-			}
 
-			# prevent stacking bonuses due to short months
-			remove_dynamic_modifier = { modifier = economic_gambler_modifier }
+	    	custom_effect_tooltip = investment_gambling_venture_timeout
 
-			add_dynamic_modifier = {
-			    modifier = economic_gambler_modifier
-			    days = 30
+	    	hidden_effect = {
+		    	# prevent stacking bonuses due to short months
+				remove_dynamic_modifier = { modifier = investment_gambler_modifier }
+
+				# refresh bonus for another 60 days if advisor is still employed
+				if = {
+					limit = { has_idea_with_trait = investment_gambler }
+					set_variable_to_random = {
+					    var = THIS.investment_gambler_factor
+					    min = -0.20
+					    max = 0.10
+					    integer = no
+					}
+
+					add_dynamic_modifier = {
+					    modifier = investment_gambler_modifier
+					    days = 60
+					}
+				}
 			}
 	    }
+	}
 
+	longterm_planner_improvement = {
+		icon = mission_icon     # For GFX_decision_mission_icon
+
+        available = {
+			always = no
+        }
+
+		visible = {
+			has_idea_with_trait = longterm_planner
+		}
+
+		activation = {
+        	has_idea_with_trait = longterm_planner
+        	check_variable = { var = THIS.longterm_planner_factor  value = -0.1  compare = greater_than }
+    	}
+
+	    cancel_trigger = {
+	        NOT = { has_idea_with_trait = longterm_planner }
+	    }
+
+	    is_good = yes
+	    days_mission_timeout = 5
+	    selectable_mission = no
+	    days_remove = 1
+
+	    timeout_effect = {
+
+	    	custom_effect_tooltip = longterm_planner_improvement_timeout
+
+	    	hidden_effect = {
+				add_to_variable = {
+				    var = THIS.longterm_planner_factor
+				    value = -0.02
+				}
+
+				if = {
+					limit = { NOT = { has_dynamic_modifier = { modifier = longterm_planner_modifier } } }
+					add_dynamic_modifier = { modifier = longterm_planner_modifier }
+				}
+			}
+	    }
 	}
 }
