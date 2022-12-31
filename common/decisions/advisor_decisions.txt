@@ -10,10 +10,6 @@ advisor_decisions_category = {
 			always = no
         }
 
-		visible = {
-			has_idea_with_trait = investment_gambler
-		}
-
 		activation = {
         	has_idea_with_trait = investment_gambler
     	}
@@ -61,10 +57,6 @@ advisor_decisions_category = {
 			always = no
         }
 
-		visible = {
-			has_idea_with_trait = longterm_planner
-		}
-
 		activation = {
         	has_idea_with_trait = longterm_planner
         	check_variable = { var = THIS.longterm_planner_factor  value = -0.1  compare = greater_than }
@@ -75,7 +67,7 @@ advisor_decisions_category = {
 	    }
 
 	    is_good = yes
-	    days_mission_timeout = 5
+	    days_mission_timeout = 365
 	    selectable_mission = no
 	    days_remove = 1
 
@@ -94,6 +86,160 @@ advisor_decisions_category = {
 					add_dynamic_modifier = { modifier = longterm_planner_modifier }
 				}
 			}
+	    }
+	}
+
+	serial_indeptor_loans_start = {
+		icon = mission_icon
+
+		is_good = yes
+	    days_mission_timeout = 0
+	    selectable_mission = no
+	    days_remove = 1
+
+	    fire_only_once = yes # Can only loan money once!
+
+        activation = {
+			has_idea_with_trait = serial_indeptor
+        }
+
+        available = {
+			has_idea_with_trait = serial_indeptor
+        }
+
+        complete_effect = {
+        	# Advisor hired:
+        	hidden_effect = {
+	        	# This is the % of offmaps you get at the start as well as the % of consumers you need to pay back later
+	        	set_variable = {
+				    var = THIS.serial_indeptor_percentage
+				    value = 0.2
+				}
+
+				# This is the amount of offmap factories the loan gives. (And how many are removed when it expires)
+				set_variable = {
+				    var = THIS.serial_indeptor_factories
+				    value = 0.21 # rounding up a little bit :)
+				}
+	        	multiply_variable = {
+				    var = THIS.serial_indeptor_factories
+				    value = THIS.num_of_civilian_factories 
+				}
+				round_variable = THIS.serial_indeptor_factories
+				clamp_variable = { var = THIS.serial_indeptor_factories min = 1 max = 10 }
+
+				# Add offsite factories equal to the amount
+	        	add_offsite_building = { type = industrial_complex level = THIS.serial_indeptor_factories }
+
+	        	# Begin countdown for repayment
+	        	activate_mission = serial_indeptor_loans
+        	}
+        }
+	}
+
+	serial_indeptor_loans = {
+		icon = mission_icon
+
+		is_good = yes
+	    days_mission_timeout = 712
+	    selectable_mission = no
+	    days_remove = 1
+
+	    fire_only_once = yes # Can only loan money once!
+
+	    available = {
+	    	always = no
+	    }
+
+	    allowed = {
+	    	always = no
+	    }
+
+	    timeout_effect = {
+	    	# Time for repayment
+
+	    	custom_effect_tooltip = serial_indeptor_timeout
+
+	    	hidden_effect = {
+	    		# Remove those factories granted earlier
+	    		set_temp_variable = { temp_pay = THIS.serial_indeptor_factories }
+	    		multiply_temp_variable = { temp_pay = -1 }
+	    		add_offsite_building = { type = industrial_complex level = temp_pay }
+
+	    		# add repayment consumer goods
+	    		add_dynamic_modifier = {
+	    			modifier = serial_indebtor_repayment
+	    			days = 712
+    			}
+			}
+	    }
+	}
+
+	serial_indeptor_extra_loan1 = {
+		icon = mission_icon
+
+	    fire_only_once = yes # Can only loan money once!
+
+	    visible = {
+	    	NOT = { has_dynamic_modifier = { modifier = serial_indebtor_repayment } }
+	    	has_idea_with_trait = serial_indeptor
+	    }
+	    available = {
+	    	NOT = { has_dynamic_modifier = { modifier = serial_indebtor_repayment } }
+	    	has_idea_with_trait = serial_indeptor
+	    }
+
+	    complete_effect = {
+	    	# add bonus factories
+	    	set_temp_variable = { temp_bonus_factories = 0.06 } # rounding up a little :)
+	    	multiply_variable = {
+			    var = temp_bonus_factories
+			    value = THIS.num_of_civilian_factories 
+			}
+			round_variable = temp_bonus_factories
+			clamp_temp_variable = { var = temp_bonus_factories min = 1 max = 10 }
+
+			add_offsite_building = { type = industrial_complex level = temp_bonus_factories }
+
+			add_to_variable = { THIS.serial_indeptor_factories = temp_bonus_factories }
+
+			# Increase repayment
+	    	add_to_variable = { THIS.serial_indeptor_percentage = 0.05 }
+			custom_effect_tooltip = serial_indeptor_extra_loan_effect
+	    }
+	}
+
+	serial_indeptor_extra_loan2 = {
+		icon = mission_icon
+
+	    fire_only_once = yes # Can only loan money once!
+
+	    visible = {
+	    	NOT = { has_dynamic_modifier = { modifier = serial_indebtor_repayment } }
+	    	has_idea_with_trait = serial_indeptor
+	    }
+	    available = {
+	    	NOT = { has_dynamic_modifier = { modifier = serial_indebtor_repayment } }
+	    	has_idea_with_trait = serial_indeptor
+	    }
+
+	    complete_effect = {
+	    	# add bonus factories
+	    	set_temp_variable = { temp_bonus_factories = 0.06 } # rounding up a little :)
+	    	multiply_variable = {
+			    var = temp_bonus_factories
+			    value = THIS.num_of_civilian_factories 
+			}
+			round_variable = temp_bonus_factories
+			clamp_temp_variable = { var = temp_bonus_factories min = 1 max = 10 }
+
+			add_offsite_building = { type = industrial_complex level = temp_bonus_factories }
+
+			add_to_variable = { THIS.serial_indeptor_factories = temp_bonus_factories }
+
+			# Increase repayment
+	    	add_to_variable = { THIS.serial_indeptor_percentage = 0.05 }
+			custom_effect_tooltip = serial_indeptor_extra_loan_effect
 	    }
 	}
 }
