@@ -14,7 +14,7 @@ ideas = {
 			cost = 300
 
 			modifier = {
-				consumer_goods_factor = 0.75
+				consumer_goods_factor = 0.6
 				political_power_gain = 0.25
 			}
 
@@ -76,7 +76,7 @@ ideas = {
 			cost = 300
 
 			modifier = {
-				consumer_goods_factor = 0.25
+				consumer_goods_factor = 0.3
 				political_power_gain = -0.2
 			}
 
@@ -118,7 +118,7 @@ ideas = {
 			cost = 300
 
 			modifier = {
-				consumer_goods_factor = 0.15
+				consumer_goods_factor = 0.2
 				political_power_gain = -0.35
 			}
 
@@ -234,6 +234,11 @@ ideas = {
 					political_power_daily < 0.6
 					has_idea = closed_economy
 				}
+
+				modifier = { # protectionist trade is a better version of this
+					factor = 0
+					has_government = unaligned
+				}
    			}
 
 			allowed_to_remove = {
@@ -311,6 +316,11 @@ ideas = {
 					factor = 5
 					political_power_daily < 0.6
 				}
+
+				modifier = { # cooperative trade is a better version of this
+					factor = 0
+					has_government = cooperative
+				}
    			}
 
 			cancel_if_invalid = no
@@ -336,6 +346,16 @@ ideas = {
 				civilian_intel_to_others = 10.0
 				navy_intel_to_others = 5
 			}
+
+			ai_will_do = {
+   				factor = 2
+
+   				modifier = {
+					factor = 5
+					political_power_daily < 0.6
+					has_idea = closed_economy
+				}
+   			}
 
 			on_add = {
 				custom_effect_tooltip = negotiated_trade_effect_tooltip
@@ -371,6 +391,15 @@ ideas = {
 			on_add = {
 				custom_effect_tooltip = negotiated_trade_effect_tooltip
 			}
+
+			ai_will_do = {
+   				factor = 2
+
+				modifier = {
+					factor = 5
+					political_power_daily < 0.6
+				}
+   			}
 
 			allowed_to_remove = {
 				always = yes
@@ -446,6 +475,10 @@ ideas = {
 			allowed = {
 				always = yes
 			}
+			available = {
+				has_war_support > 0.1
+			}
+
 			removal_cost = -1
 			cost = 300
 
@@ -486,6 +519,16 @@ ideas = {
 
 			allowed = {
 				always = yes
+			}
+			available = {
+				OR = {
+					has_government = belligerent
+					AND = {
+						has_war = yes
+						enemies_strength_ratio > 0.5
+					}
+				}
+				has_war_support > 0.2
 			}
 			removal_cost = -1
 			cost = 300
@@ -533,11 +576,25 @@ ideas = {
 			allowed = {
 				always = yes
 			}
+			available = {
+				OR = {
+					has_government = belligerent
+					AND = {
+						has_war = yes
+						enemies_strength_ratio > 0.6
+					}
+				}
+				OR = {
+					has_war_support > 0.6
+					surrender_progress > 0
+				}
+			}
+
 			removal_cost = -1
 			cost = 300
 
 			modifier = {
-				conscription = 0.08
+				conscription = 0.065
 				political_power_gain = -0.3
 				industrial_capacity_factory = -0.1
 				industrial_capacity_dockyard = -0.1
@@ -585,11 +642,19 @@ ideas = {
 			allowed = {
 				always = yes
 			}
+			available = {
+				has_war = yes
+				OR = {
+					has_war_support > 0.7
+					surrender_progress > 0
+				}
+				enemies_strength_ratio > 0.75
+			}
 			removal_cost = -1
 			cost = 300
 
 			modifier = {
-				conscription = 0.12
+				conscription = 0.1
 				political_power_gain = -0.5
 				industrial_capacity_factory = -0.25
 				industrial_capacity_dockyard = -0.25
@@ -637,11 +702,14 @@ ideas = {
 			allowed = {
 				always = yes
 			}
+			available = {
+				has_government = revolutionary
+			}
 			removal_cost = -1
 			cost = 300
 
 			modifier = {
-				conscription = 0.25
+				conscription = 0.20
 				industrial_capacity_factory = -0.5
 				industrial_capacity_dockyard = -0.5
 				production_speed_buildings_factor = -0.5
@@ -706,11 +774,26 @@ ideas = {
 
 			modifier = {
 				consumer_goods_factor = 0.05
-				conscription = 0.01
+				conscription = 0.015
 			}
 
 			allowed_to_remove = {
 				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 5
+				modifier = {
+					# Ignore if high on manpower
+					factor = 0.5
+					manpower_per_military_factory > 5000
+				}
+				modifier = {
+					#Prio if low on manpower
+					factor = 10
+					manpower_per_military_factory < 1000
+					num_of_available_civilian_factories > 20
+				}
 			}
 
 			cancel_if_invalid = no
@@ -728,11 +811,26 @@ ideas = {
 
 			modifier = {
 				consumer_goods_factor = 0.1
-				conscription = 0.025
+				conscription = 0.04
 			}
 
 			allowed_to_remove = {
 				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 4
+				modifier = {
+					# Ignore if high on manpower
+					factor = 0.5
+					manpower_per_military_factory > 5000
+				}
+				modifier = {
+					#Prio if low on manpower
+					factor = 8
+					manpower_per_military_factory < 1000
+					num_of_available_civilian_factories > 45
+				}
 			}
 
 			cancel_if_invalid = no
@@ -750,11 +848,26 @@ ideas = {
 
 			modifier = {
 				consumer_goods_factor = 0.2
-				conscription = 0.05
+				conscription = 0.08
 			}
 
 			allowed_to_remove = {
 				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 3
+				modifier = {
+					# Ignore if high on manpower
+					factor = 0.5
+					manpower_per_military_factory > 5000
+				}
+				modifier = {
+					#Prio if low on manpower
+					factor = 5
+					manpower_per_military_factory < 1000
+					num_of_available_civilian_factories > 60
+				}
 			}
 
 			cancel_if_invalid = no
@@ -778,6 +891,21 @@ ideas = {
 
 			allowed_to_remove = {
 				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 5
+				modifier = {
+					# Ignore if high on manpower
+					factor = 0.5
+					manpower_per_military_factory > 5000
+				}
+				modifier = {
+					#Prio if low on manpower
+					factor = 8
+					manpower_per_military_factory < 1000
+					num_of_available_civilian_factories > 45
+				}
 			}
 
 			cancel_if_invalid = no
@@ -839,10 +967,10 @@ ideas = {
 
 			modifier = {
 				political_power_gain = -0.15
-				taxation_law_cost_factor = -0.0
-				trade_law_cost_factor = -0.0
-				conscription_law_cost_factor = -0.0
-				mercenary_law_cost_factor = -0.0
+				taxation_law_cost_factor = 0.1
+				trade_law_cost_factor = 0.1
+				conscription_law_cost_factor = 0.1
+				mercenary_law_cost_factor = 0.1
 			}
 
 			allowed_to_remove = {
@@ -863,7 +991,7 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.0
+				political_power_gain = 0.15
 				taxation_law_cost_factor = -0.15
 				trade_law_cost_factor = -0.15
 				conscription_law_cost_factor = -0.15
@@ -874,7 +1002,7 @@ ideas = {
 			}
 
 			ai_will_do = {
-   				factor = 10
+   				factor = 15
 
    				modifier = {
 					factor = 20
@@ -899,6 +1027,9 @@ ideas = {
 			allowed = {
 				always = yes
 			}
+			available = {
+				has_war_support > 0.25
+			}
 			removal_cost = -1
 
 			modifier = {
@@ -913,7 +1044,7 @@ ideas = {
 			}
 
 			ai_will_do = {
-   				factor = 10
+   				factor = 15
 
    				modifier = {
 					factor = 20
@@ -937,6 +1068,24 @@ ideas = {
 			allowed = {
 				always = yes
 			}
+			available = {
+				OR = {
+					has_government = belligerent
+					AND = {
+						has_war_support > 0.35
+						threat > 0.15
+					}
+					AND = {
+						has_war = yes
+						any_enemy_country = {
+							ic_ratio = {
+								tag = ROOT
+								ratio > 0.4
+							}
+						}
+					}
+				}
+			}
 			removal_cost = -1
 
 			modifier = {
@@ -951,7 +1100,7 @@ ideas = {
 			}
 
 			ai_will_do = {
-   				factor = 10
+   				factor = 15
 
    				modifier = {
 					factor = 20
@@ -977,6 +1126,22 @@ ideas = {
 			}
 			available = {
 				NOT = { has_government = revolutionary }
+				OR = {
+					has_government = belligerent
+					AND = {
+						has_war_support > 0.5
+						threat > 0.5
+					}
+					AND = {
+						has_war = yes
+						any_enemy_country = {
+							ic_ratio = {
+								tag = ROOT
+								ratio > 0.4
+							}
+						}
+					}
+				}
 			}
 			removal_cost = -1
 
@@ -992,7 +1157,7 @@ ideas = {
 			}
 
 			ai_will_do = {
-   				factor = 10
+   				factor = 15
 
    				modifier = {
 					factor = 20
@@ -1018,6 +1183,14 @@ ideas = {
 			}
 			available = {
 				NOT = { has_government = revolutionary }
+				has_war = yes
+				has_war_support > 0.8
+				any_enemy_country = {
+					ic_ratio = {
+						tag = ROOT
+						ratio > 0.5
+					}
+				}
 			}
 			removal_cost = -1
 
@@ -1033,7 +1206,7 @@ ideas = {
 			}
 
 			ai_will_do = {
-   				factor = 10
+   				factor = 15
 
    				modifier = {
 					factor = 20
@@ -1059,6 +1232,8 @@ ideas = {
 			}
 			available = {
 				has_government = belligerent
+				threat > 0.25
+				has_war_support > 0.5
 			}
 			removal_cost = -1
 
@@ -1074,7 +1249,7 @@ ideas = {
 			}
 
 			ai_will_do = {
-   				factor = 10
+   				factor = 15
 
    				modifier = {
 					factor = 20
