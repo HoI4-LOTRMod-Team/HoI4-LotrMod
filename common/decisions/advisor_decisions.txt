@@ -179,6 +179,7 @@ advisor_decisions_category = {
 		icon = mission_icon
 
 	    fire_only_once = yes # Can only loan money once!
+	    cost = 50
 
 	    visible = {
 	    	NOT = { has_dynamic_modifier = { modifier = serial_indebtor_repayment } }
@@ -213,6 +214,7 @@ advisor_decisions_category = {
 		icon = mission_icon
 
 	    fire_only_once = yes # Can only loan money once!
+	    cost = 50
 
 	    visible = {
 	    	NOT = { has_dynamic_modifier = { modifier = serial_indebtor_repayment } }
@@ -309,6 +311,96 @@ advisor_decisions_category = {
 		        type = artillery_equipment
 		        amount = -1000
 		    }
+	    }
+	}
+
+	ruthless_pillager_relocate_civs = {
+		icon = mission_icon
+
+		cost = 75
+		state_target = yes
+		target_array = controlled_states
+		is_good = yes
+	    selectable_mission = yes
+	    days_remove = 120
+
+	    target_root_trigger = {
+	        has_idea_with_trait = ruthless_pillager
+	    }
+
+	    target_trigger = {
+	        NOT = { FROM = { is_core_of = ROOT } }
+	        FROM = { industrial_complex > 0 }
+	    }
+
+	    available = {
+	    	has_idea_with_trait = ruthless_pillager
+	    	has_full_control_of_state = FROM
+	    	NOT = { FROM = { is_core_of = ROOT } }
+	    }
+
+	    cancel_trigger = {
+    		OR = {
+	    		ROOT = { NOT = { has_idea_with_trait = ruthless_pillager } }
+    			ROOT = { NOT = { has_full_control_of_state = FROM } }
+    			FROM = { industrial_complex < 1	}
+			}
+	    }
+
+        remove_effect = {
+        	set_temp_variable = { temp_icl = FROM.industrial_complex_level }
+        	clamp_temp_variable = { var = temp_icl max = 2 }
+        	FROM = {
+        		remove_building = {
+				    type = industrial_complex
+				    level = var:industrial_complex_level
+				}
+				add_resistance = 15
+        	}
+        	random_owned_controlled_state = {
+			    limit = {
+			        is_core_of = ROOT
+			    }
+			    add_extra_state_shared_building_slots = temp_icl
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = temp_icl
+				    instant_build = yes
+				}
+			}
+        }
+	}
+
+	demand_tribute = {
+		icon = mission_icon
+
+		cost = 75
+		target_array = subjects
+		is_good = yes
+	    selectable_mission = yes
+	    days_remove = 720
+
+	    target_root_trigger = {
+	        has_idea_with_trait = tribute_collector
+	    }
+
+	    available = {
+	    	has_idea_with_trait = tribute_collector
+	    }
+
+	    cancel_trigger = {
+	    	NOT = { has_idea_with_trait = tribute_collector }
+	    }
+
+	    cancel_effect = {
+            FROM = { remove_ideas = paying_tribute }
+        }
+
+        complete_effect = {
+      		FROM = { add_ideas = paying_tribute }
+	    }
+	    timeout_effect = {
+	        FROM = { remove_ideas = paying_tribute }
 	    }
 	}
 
