@@ -1,0 +1,30 @@
+
+# This is being called every week (and possibly when a new advisor is hired)
+# This is called for every country separately
+# We call it from common/on_actions/...
+
+lotr_advisors_update_vars_weekly = {
+
+	# Last-minute-improviser
+	if = {
+		limit = { has_idea_with_trait = last_minute_improviser }
+		set_variable = { ROOT.last_minute_improviser_bonus = ROOT.surrender_progress }
+		multiply_variable = { var = ROOT.last_minute_improviser_bonus value = 0.2 }	# This bonus is 0-20 based on surrender limit
+	}
+
+	# Keeper of Knowledge
+	if = {
+		limit = { has_idea_with_trait = keeper_of_knowledge }
+		set_variable = { ROOT.keeper_of_knowledge_bonus = ROOT.num_researched_technologies }
+		multiply_variable = { var = ROOT.keeper_of_knowledge_bonus value = 0.0015 }	# Grants 0.15% for each researched tech
+	}
+
+	# Woodworking Enthusiast
+	if = {
+		limit = { has_idea_with_trait = woodworking_enthusiast }
+		set_variable = { ROOT.woodworking_enthusiast_bonus = ROOT.resource@chromium }
+		multiply_variable = { var = ROOT.woodworking_enthusiast_bonus value = 0.18 } # Grants 0.18% for each surplus of wood/chromium
+		multiply_variable = { var = ROOT.woodworking_enthusiast_bonus value = 0.01 } # Giga-weirdness: When multiplying directly with 0.0018 it doesn't work.
+	}
+	
+}
