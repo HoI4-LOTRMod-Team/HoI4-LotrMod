@@ -490,4 +490,77 @@ advisor_decisions_category = {
 			}
 		}
 	}
+
+	ambitous_expansionist_send_demand = {
+		icon = mission_icon
+
+		target_root_trigger = {
+			has_idea_with_trait = ambitous_expansionist
+		}
+
+		target_trigger = {
+	        hidden_trigger = {
+				# Can't claim wastes or dagorlad
+				FROM = { NOT = { original_tag = NEP } }
+				FROM = { NOT = { original_tag = DAG } }
+				NOT = { is_subject = yes }
+				NOT = { has_war_with = FROM }
+				NOT = { is_ally_with = FROM }
+				NOT = { FROM = { is_major = yes } }
+			}
+	    }
+
+        available = {
+        	has_idea_with_trait = ambitous_expansionist
+        	FROM = {
+        		any_owned_state = {
+					any_neighbor_state = { is_owned_by = ROOT }
+				}
+        	}
+        }
+
+        cancel_trigger = {
+        	NOT = {
+        		has_idea_with_trait = ambitous_expansionist
+        	}
+        }
+
+	    cost = 150
+	    target_array = neighbors
+	    cancel_if_not_visible = yes
+	    is_good = yes
+	    fire_only_once = yes
+
+	    ai_will_do = {
+		    base = 1
+		    modifier = {
+		        add = 10
+		        strength_ratio = {
+				    tag = FROM
+				    ratio > 1
+				}
+		    }
+		    modifier = {
+		        factor = 0.5
+		        FROM = { is_in_faction = yes }
+		    }
+		}
+
+		complete_effect = {
+			custom_effect_tooltip = ambitous_expansionist_send_demand_tooltip
+			hidden_effect = {
+				FROM = {
+					random_owned_state = {
+						limit = {
+							is_owned_by = FROM
+							any_neighbor_state = { is_owned_by = ROOT }
+						}
+
+						save_event_target_as = target_claimed_state
+					}
+					country_event = { id = lotr_generic.1 days = 7 random_days = 7 }
+				}
+			}
+		}
+	}
 }

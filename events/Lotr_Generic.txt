@@ -1,0 +1,221 @@
+###########################
+# Generic LOTR Events
+###########################
+
+add_namespace = lotr_generic
+
+
+# Claim state with chance of working out a deal
+country_event = {
+	id = lotr_generic.1
+	title = lotr_generic.1.t
+	desc = lotr_generic.1.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	# Outrage response / do nothing about it
+	option = {
+		name = lotr_generic.1.a
+
+		ai_chance = {
+			base = 10
+			modifier = {
+		        add = 10
+		        strength_ratio = {
+				    tag = FROM
+				    ratio > 1
+				}
+		    }
+		}
+
+		event_target:target_claimed_state = {
+        	add_claim_by = FROM
+        }
+	}
+	# Try to work out a deal where we get to keep the territory
+	option = {
+		name = lotr_generic.1.b
+
+		ai_chance = {
+			base = 10
+			modifier = {
+		        add = 10
+		        strength_ratio = {
+				    tag = FROM
+				    ratio < 1.5
+				}
+		    }
+		}
+
+		event_target:target_claimed_state = {
+        	add_claim_by = FROM
+        }
+        custom_effect_tooltip = lotr_generic.1.b_tooltip
+        hidden_effect = {
+			FROM = { country_event = { id = lotr_generic.2 days = 1 random_days = 1 } }
+		}
+	}
+	# Hand it over for a non-agression pact
+	option = {
+		name = lotr_generic.1.c
+
+		ai_chance = {
+			base = 4
+			modifier = {
+		        factor = 0
+		        strength_ratio = {
+				    tag = FROM
+				    ratio > 1
+				}
+		    }
+		}
+
+		effect_tooltip = {
+
+			FROM = {
+				transfer_state = event_target:target_claimed_state
+			}
+			diplomatic_relation = {
+			    country = FROM
+			    relation = non_aggression_pact
+			    active = yes
+			}
+		}
+		hidden_effect = {
+			FROM = { country_event = { id = lotr_generic.5 days = 1 random_days = 1 } }
+		}
+	}
+}
+
+# Attempt to work out a deal regarding a claimed state
+country_event = {
+	id = lotr_generic.2
+	title = lotr_generic.2.t
+	desc = lotr_generic.2.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	# Accept deal
+	option = {
+		name = lotr_generic.2.a
+
+		ai_chance = {
+			base = 10
+			modifier = {
+		        add = 10
+		        strength_ratio = {
+				    tag = FROM
+				    ratio > 1
+				}
+		    }
+		}
+
+		event_target:target_claimed_state = {
+        	remove_claim_by = ROOT
+        }
+        diplomatic_relation = {
+		    country = FROM
+		    relation = non_aggression_pact
+		    active = yes
+		}
+		FROM = { give_resource_rights = { receiver = ROOT state = event_target:target_claimed_state } }
+
+		hidden_effect = {
+        	FROM = { country_event = { id = lotr_generic.3 days = 1 random_days = 1 } }
+    	}
+	}
+	# Decline Deal
+	option = {
+		name = lotr_generic.2.b
+
+		ai_chance = {
+			base = 10
+			modifier = {
+		        factor = 0.15
+		        strength_ratio = {
+				    tag = FROM
+				    ratio < 1
+				}
+		    }
+		}
+
+		effect_tooltip = {
+			FROM = {
+				add_political_power = 100
+				add_war_support = 0.1
+			}
+		}
+
+		hidden_effect = {
+			FROM = { country_event = { id = lotr_generic.4 days = 1 random_days = 1 } }
+		}
+	}
+}
+
+# Claim-deal accepted
+country_event = {
+	id = lotr_generic.3
+	title = lotr_generic.3.t
+	desc = lotr_generic.3.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	# Ok
+	option = {
+		name = lotr_generic.3.a
+
+		effect_tooltip = {
+	        event_target:target_claimed_state = {
+	        	remove_claim_by = FROM
+	        }
+	        diplomatic_relation = {
+			    country = FROM
+			    relation = non_aggression_pact
+			    active = yes
+			}
+	    }
+	}
+}
+
+# Claim-deal declined
+country_event = {
+	id = lotr_generic.4
+	title = lotr_generic.4.t
+	desc = lotr_generic.4.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	# Ok
+	option = {
+		name = lotr_generic.4.a
+
+		add_political_power = 100
+		add_war_support = 0.1
+	}
+}
+
+# Hand over a claimed state for a NA-pact
+country_event = {
+	id = lotr_generic.5
+	title = lotr_generic.5.t
+	desc = lotr_generic.5.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	option = { # Okay
+		name = lotr_generic.5.a
+
+		transfer_state = event_target:target_claimed_state
+
+		diplomatic_relation = {
+		    country = FROM
+		    relation = non_aggression_pact
+		    active = yes
+		}
+	}
+}
