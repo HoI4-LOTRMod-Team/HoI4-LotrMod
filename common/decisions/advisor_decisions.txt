@@ -563,4 +563,102 @@ advisor_decisions_category = {
 			}
 		}
 	}
+
+	sanction_imposer_embargo_country = {
+		icon = mission_icon
+
+        available = {
+        	has_opinion = { target = FROM value < -25 }
+        }
+
+        visible = {
+        	has_idea_with_trait = sanction_imposer
+			NOT = { has_war_with = ROOT }
+			has_opinion = { target = FROM value < 0 }
+        }
+
+        cancel_trigger = {
+        	OR = {
+        		has_war_with = ROOT
+				NOT = { has_idea_with_trait = sanction_imposer }
+				has_opinion = { target = FROM value > 0 }
+        	}
+        }
+
+        cancel_effect = {
+        	break_embargo = FROM
+        }
+
+	    cost = 100
+	    target_array = countries
+	    cancel_if_not_visible = yes
+	    days_remove = -1
+
+		complete_effect = {
+			send_embargo = FROM
+		}
+	}
+
+	reasoning_charmer_build_collaboration = {
+		icon = mission_icon
+
+		target_root_trigger = {
+			has_idea_with_trait = reasoning_charmer
+		}
+
+		target_trigger = {
+			has_war_with = FROM
+	    }
+
+        available = {
+        	always = yes
+        }
+
+        cancel_trigger = {
+        	OR = {
+        		NOT = { has_idea_with_trait = reasoning_charmer }
+        		NOT = { has_war_with = FROM }
+    		}
+        }
+
+	    cost = 150
+	    target_array = countries
+	    cancel_if_not_visible = yes
+	    is_good = yes
+	    fire_only_once = yes
+	    days_remove = 140
+
+	    ai_will_do = {
+		    base = 0
+		    modifier = {
+		        add = 2
+		        num_of_available_civilian_factories > 15
+		    }
+		    modifier = {
+		        add = 8
+		        num_of_available_civilian_factories > 30
+		    }
+		}
+
+		modifier = {
+			civilian_factory_use = 5
+		}
+
+		remove_effect = {
+			random_list = {
+			    5 = {
+			        
+			    }
+			    10 = {
+			        add_collaboration = { target = FROM value = 0.1 }
+			    }
+			    10 = {
+			        add_collaboration = { target = FROM value = 0.15 }
+			    }
+			    5 = {
+			        add_collaboration = { target = FROM value = 0.2 }
+			    }
+			}
+		}
+	}
 }
