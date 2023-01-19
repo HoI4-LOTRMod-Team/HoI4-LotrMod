@@ -1,0 +1,74 @@
+###########################
+# Ring Eventchain
+###########################
+
+add_namespace = fs
+
+
+
+# Move into next state
+country_event = {
+	id = fs.1000
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate {
+		# update vars
+		set_variable = { global.fs_currentstate = global.fs_path_stack^0 }
+
+		# debugging stuff
+		log = "currentState: [?global.fs_currentstate]"
+
+		# add to event-log
+		# TODO
+
+		# pop stack
+		remove_from_array = { array = global.fs_path_stack index = 0 }
+
+		# no more entries on the patch-stack ---> Arrived at destination
+		if = {
+			limit = { global.fs_path_stack^num < 1 }
+			# TODO: Ring destroyed!
+		}
+
+		# next entry is NOT a state ---> Call the corresponding event
+		else_if = {
+			limit = { global.fs_path_stack^0 < 0 }
+			# TODO
+		}
+
+		# next entry is a state ---> Move fellowship into next state
+		else = {
+			country_event = { id = fs.1000 days = 3 random_days = 3 }
+		}
+
+
+	}
+}
+
+
+
+# Commence event-chain
+country_event = {
+	id = fs.1001
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate {
+		# add to event-log
+		# TODO
+
+		# set variables
+		set_variable = { global.fs_currentstate = 43 }
+
+		# starting pathstack
+		add_to_array = { global.fs_path_stack = 44 }
+		add_to_array = { global.fs_path_stack = 45 }
+		add_to_array = { global.fs_path_stack = 46 }
+
+		country_event = { id = fs.1000 days = 3 random_days = 3 }
+	}
+}
+
