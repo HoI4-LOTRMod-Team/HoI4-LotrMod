@@ -458,7 +458,7 @@ PixelShader =
 		float lava = 0.0f;
 		if(vDiffuse.r>=1.0f && vDiffuse.g<=0.0f && vDiffuse.b>=1.0f) {
 			lava = 1.0f;
-			lava_emit = tex2D( DiffuseMap, float2(vUV0.x, 1.0f-vUV0.y) );
+			lava_emit = tex2D( DiffuseMap, float2(vUV0.x, 1.0f-vUV0.y) ).rgb;
 			vDiffuse = float4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 
@@ -566,6 +566,14 @@ PixelShader =
 			vColor = lerp( vColor, vDiffuse.rgb, vEmissive );
 			alpha = vEmissive;
 		#endif
+
+			// LOTR STUFF
+			if(lava>0.0f) {
+				// This controls the "glowiness" of the lava
+				lava_emit.rg *= 3.5f;
+				// 0.05 controls the amount of black slag on top of the lava, while 1.2 controls how red it is.
+				vColor = smoothstep(0, vColor.r, 0.05f) * pow(lava_emit, float3(1.2f, 1.2f, 1.2f));
+			}
 		
 			float FogColorFactor = 0.0;
 			float FogAlphaFactor = 0.0;
@@ -580,12 +588,6 @@ PixelShader =
 			vColor.rgb = lerp( vColor.rgb, RIM_COLOR.rgb, vRim );
 		#endif	
 */			
-			if(lava>0.0f) {
-				// This controls the "glowiness" of the lava
-				lava_emit.rg *= 3.5f;
-				// 0.05 controls the amount of black slag on top of the lava, while 1.2 controls how red it is.
-				vColor = smoothstep(vColor, 0, 0.05) * pow(lava_emit, 1.2);
-			}
 
 			DebugReturn(vColor, lightingProperties, fShadowTerm);
 			

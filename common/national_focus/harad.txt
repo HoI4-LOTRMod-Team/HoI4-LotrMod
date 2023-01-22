@@ -1,11 +1,11 @@
 focus_tree = {
 id = 'harad'
 country = {
-factor=0
-modifier = {
-	add = 10
-	original_tag = HAR
-}
+	factor=0
+	modifier = {
+		add = 10
+		original_tag = HAR
+	}
 }
 
 continuous_focus_position = { x = 50 y = 2000 }
@@ -13,56 +13,600 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 default = no
 #Custom focuses start here
-#Focus for Construction Pursuits
-		focus = {
-		id = constructionpursuits
-		icon = GFX_goal_generic_construction
-		ai_will_do = { factor = 5 }
- x =10
- y =0
- mutually_exclusive = { }
- prerequisite = { }
- cost = 10
-  available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = { name = construction_pursuits bonus = 0.5 uses = 2 category = lotr_labour }
+#Focus for navy
+focus = {
+	id = navy_focus
+	icon = GFX_goal_generic_navy_doctrines_tactics
+	ai_will_do = {
+		factor = 5
 	}
- }
-
- #Focus for Technology Pursuits
-		focus = {
-		id = technologypursuits
-		icon = GFX_goal_generic_scientific_exchange
-		ai_will_do = { factor = 4 }
- x =14
- y =0
- mutually_exclusive = { }
- prerequisite = { }
- cost = 10
-  available_if_capitulated = yes
+	x = 38
+	y = 0
+	cost = 10
 	completion_reward = {
- 			add_tech_bonus = {
- 				name = industrial_bonus
- 				bonus = 0.5
- 				uses = 2
- 				category = lotr_knowledge
- 			}
- 		}
- }
+		navy_experience = 35
+	}
+}
 
- #Focus for Regional Hierarchy
-		focus = {
-		id = regionalhierarchy
-		icon = GFX_goal_generic_territory_or_war
-		ai_will_do = { factor = 50 }
- 		x =4
- 		y =1
- 		mutually_exclusive = { }
- 		prerequisite = { focus = politicalamelioration }
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = { add_political_power = 100 }
- }
+#Focus for Battleship Effort
+focus = {
+	id = HAR_battleship_effort
+	icon = GFX_goal_generic_navy_anti_submarine
+	ai_will_do = { factor = 2 }
+  	x = 1
+  	y = 1
+	relative_position_id = navy_focus
+  	mutually_exclusive = { focus = HAR_submarine_effort }
+  	prerequisite = { focus = navy_focus}
+  	cost = 10
+   	available_if_capitulated = yes
+	completion_reward = {
+		navy_experience = 5
+		add_tech_bonus = {
+			name = bc_bonus
+			bonus = 0.5
+			uses = 1
+			technology = basic_battlecruiser
+		}
+		add_tech_bonus = {
+			name = d_bonus
+			bonus = 0.5
+			uses = 1
+			technology = basic_battleship
+			technology = improved_battleship
+			technology = advanced_battleship
+			technology = heavy_battleship
+			technology = heavy_battleship2
+		}
+	}
+  }
+
+#Focus for Submarine Effort
+focus = {
+	id = HAR_submarine_effort
+	icon = GFX_goal_generic_navy_submarine
+	ai_will_do = { factor = 2 }
+  	x = -1
+  	y = 1
+	relative_position_id = navy_focus
+	mutually_exclusive = { focus = HAR_battleship_effort}
+  	prerequisite = { focus = navy_focus}
+  	cost = 10
+   	available_if_capitulated = yes
+	completion_reward = {
+		navy_experience = 5
+		add_tech_bonus = {
+			name = ss_bonus
+			bonus = 0.5
+			uses = 1
+			technology = basic_submarine
+			technology = improved_submarine
+			technology = advanced_submarine
+		}
+		add_tech_bonus = {
+			name = sub_op_bonus
+			bonus = 0.5
+			uses = 2
+			technology = submarine_operations
+			technology = undersea_blockade
+			technology = convoy_interdiction
+			technology = submarine_offensive
+		}
+	}
+  }
+
+#Focus for Construction Pursuits
+focus = {
+	id = constructionpursuits
+	icon = GFX_goal_generic_construction
+	ai_will_do = {
+		factor = 25
+	}
+	x = 31
+	y = 0
+	mutually_exclusive = { }
+	prerequisite = { }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+        add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.5
+			uses = 2
+			category = lotr_labour_construction
+		}
+	}
+}
+
+ #Focus for Civilian Construction Effort
+focus = {
+	id = civilianconstructioneffort
+	icon = GFX_goal_generic_construct_civ_factory
+	ai_will_do = { factor = 4 }
+	x = 2
+	y = 1
+	relative_position_id = constructionpursuits
+	mutually_exclusive = { }
+	prerequisite = { focus = constructionpursuits }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		random_owned_state = {
+				limit = { is_core_of = HAR }
+				add_extra_state_shared_building_slots = 3 add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+		}
+	}
+}
+
+ #Focus for Military Construction Effort
+focus = {
+	id = militaryconstructioneffort
+	icon = GFX_goal_generic_construct_mil_factory
+	ai_will_do = { base = 25 }
+	x = -2
+	y = 1
+	relative_position_id = constructionpursuits
+	mutually_exclusive = { }
+	prerequisite = { focus = constructionpursuits }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		random_owned_state = {
+			limit = { is_core_of = HAR }
+			add_extra_state_shared_building_slots = 2 add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = HAR_infrastructure_east
+	icon = GFX_goal_generic_construct_infrastructure
+	ai_will_do = {
+		base = 25
+		modifier = {
+			factor = 25
+			has_completed_focus = go_solo
+		}
+	}
+	prerequisite = { focus = constructionpursuits }
+	x = 4
+	y = 1
+	relative_position_id = constructionpursuits
+	cost = 10
+	available_if_capitulated = yes
+	available = {
+		controls_state = 123
+		controls_state = 119
+		controls_state = 118
+		controls_state = 117
+	}
+	bypass = {
+		OR = {
+			has_completed_focus = liberalunion
+			has_completed_focus = authoritarianfederation
+		}
+	}
+	completion_reward = {
+		123 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
+		119 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
+		118 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
+		117 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
+	}
+}
+
+focus = {
+	id = HAR_railway_system_east
+	icon = GFX_goal_generic_construct_infrastructure
+	ai_will_do = {
+		base = 25
+		modifier = {
+			factor = 25
+			has_completed_focus = go_solo
+		}
+	}
+	prerequisite = { focus = HAR_infrastructure_east}
+	x = 0
+	y = 1
+	relative_position_id = HAR_infrastructure_east
+	cost = 10
+	available_if_capitulated = yes
+	available = {
+		controls_state = 115
+		controls_state = 123
+	}
+	completion_reward = {
+		build_railway = {
+			level = 2
+			start_province = 2251
+			target_province = 3404
+		}
+		build_railway = {
+			level = 1
+			start_province = 3404
+			target_province = 3450
+		}
+		123 = {
+			add_building_construction = {
+				type = supply_node
+				level = 1
+				instant_build = yes
+				province = 3450
+			}
+		}
+		123 = {
+			add_building_construction = {
+				type = supply_node
+				level = 1
+				instant_build = yes
+				province = 3404
+			}
+		}
+	}
+}
+
+focus = {
+	id = HAR_mobile_supply
+	icon = GFX_goal_generic_position_armies
+	ai_will_do = {
+		base = 50
+		modifier = {
+			factor = 25
+			has_completed_focus = go_solo
+		}
+	}
+	prerequisite = { focus = HAR_railway_system_east}
+	x = 0
+	y = 1
+	relative_position_id = HAR_railway_system_east
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_ideas = HAR_mobile_supply
+	}
+}
+
+ #Focus for Industry Modernization
+focus = {
+	id = HAR_invest_in_industry
+	icon = GFX_goal_generic_production2
+	ai_will_do = {
+		base = 25
+	}
+	x = 0
+	y = 1
+	relative_position_id = civilianconstructioneffort
+	prerequisite = { focus = civilianconstructioneffort }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 1
+			uses = 1
+			category = lotr_labour_construction_industry
+		}
+	}
+}
+
+
+ #Focus for Import rare Minerals
+focus = {
+	id = importrareminerals
+	icon = GFX_goal_generic_positive_trade_relations
+	ai_will_do = {
+		base = 20
+	}
+	x = 0
+	y = 1
+	relative_position_id = HAR_invest_in_industry
+	prerequisite = { focus = HAR_invest_in_industry }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_resource = { type = chromium amount = 16 state = 109 }
+		add_resource = { type = tungsten amount = 16 state = 109 }
+		add_resource = { type = rubber amount = 16 state = 109 }
+	}
+}
+
+
+focus = {
+	id = HAR_build_industry
+	icon = GFX_goal_generic_construct_civ_factory
+	ai_will_do = {
+		base = 20
+	}
+	x = 0
+	y = 1
+	relative_position_id = importrareminerals
+	prerequisite = { focus = importrareminerals }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		random_owned_state = {
+			limit = { is_core_of = HAR }
+			add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+		}
+		random_owned_state = {
+			limit = { is_core_of = HAR }
+			add_extra_state_shared_building_slots = 1 add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+		}
+	}
+}
+
+ #Focus for Joined Knowledge Pursuits
+	focus = {
+	id = joinedknowledgepursuits
+	icon = GFX_focus_research
+	ai_will_do = {
+		base = 25
+	}
+	x = 1
+	y = 1
+	relative_position_id = HAR_build_industry
+	prerequisite = { focus = HAR_build_industry }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_research_slot = 1
+	}
+}
+
+#Focus for Nautical Research Association
+focus = {
+	id = nauticalresearchassociation
+	icon = GFX_focus_research
+	ai_will_do = { base = 20 }
+	x = 0
+	y = 1
+	cost = 10
+	available = {
+		num_of_factories > 50
+	}
+	relative_position_id = joinedknowledgepursuits
+	prerequisite = { focus = joinedknowledgepursuits }
+	available_if_capitulated = yes
+	completion_reward = { add_research_slot = 1 }
+}
+
+ #Focus for Army Modernization
+focus = {
+	id = hai_armymodernization
+	icon = GFX_goal_generic_axis_build_infantry
+	ai_will_do = {
+		base = 20
+	}
+	x = 26
+	y = 0
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		army_experience = 35
+	}
+}
+
+ #Focus for Warbred Mûmakil
+focus = {
+	id = warbredmmakil
+	icon = GFX_goal_generic_army_tanks
+	ai_will_do = {
+		base = 20
+	}
+	x = 0
+	y = 1
+	relative_position_id = hai_armymodernization
+	prerequisite = { focus = hai_armymodernization }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = warbred_mumakil
+			bonus = 1.0
+			uses = 1
+			category = cat_heavy_armor
+		}
+		add_tech_bonus = {
+			name = warbred_mumakil
+			bonus = 0.5
+			uses = 1
+			category = cat_medium_armor
+		}
+	}
+}
+
+#Focus for Orc Strategists
+focus = {
+	id = learn_strategies
+	icon = GFX_goal_generic_army_doctrines
+	ai_will_do = { base = 20 }
+	x = 0
+	y = 1
+	relative_position_id = warbredmmakil
+	prerequisite = { focus = warbredmmakil}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name =  land_doc_bonus
+			bonus = 0.3
+			uses = 3
+			category = land_doctrine
+		}
+	}
+}
+
+
+focus = {
+	id = invest_in_military_industry
+	icon = GFX_goal_generic_construct_mil_factory
+	ai_will_do = { base = 20 }
+	x = 0
+	y = 1
+	relative_position_id = militaryconstructioneffort
+	prerequisite = { focus = militaryconstructioneffort}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		random_owned_state = {
+			limit = { is_core_of = HAR }
+			add_extra_state_shared_building_slots = 1 add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+		}
+		random_owned_state = {
+			limit = { is_core_of = HAR }
+			add_extra_state_shared_building_slots = 1 add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+		random_owned_state = {
+			limit = { is_core_of = HAR }
+			add_extra_state_shared_building_slots = 1 add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+	}
+}
+
+
+focus = {
+	id = defend_against_mordor
+	icon = GFX_goal_generic_construct_military
+	relative_position_id = invest_in_military_industry
+	prerequisite = { focus = invest_in_military_industry }
+	x = 1
+	y = 1
+	ai_will_do = {
+		base = 20
+		modifier = {
+			factor = 25
+			has_completed_focus = go_solo
+		}
+		modifier = {
+			factor = -10
+			has_completed_focus = join_the_dark_pact
+		}
+	}
+	cost = 10
+	completion_reward = {
+		107 = {
+			add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4126 }
+		}
+		123 = {
+			add_building_construction = {	type = bunker level = 3 instant_build = yes province = 3620 }
+			add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1657 }
+			add_building_construction = {	type = bunker level = 3 instant_build = yes province = 59 }
+			add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1803 }
+			add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4435 }
+		}
+	}
+}
+
+focus = {
+	id = HAR_expand_military_production
+	icon = GFX_goal_generic_construct_mil_factory
+	relative_position_id = defend_against_mordor
+	prerequisite = { focus = defend_against_mordor  focus = defense_against_Gondor }
+	x = -1
+	y = 1
+	ai_will_do = { base = 20 }
+	cost = 10
+	completion_reward = {
+		random_owned_state = {
+			limit = { is_core_of = HAR }
+			add_extra_state_shared_building_slots = 1 add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+		random_owned_state = {
+			limit = { is_core_of = HAR }
+			add_extra_state_shared_building_slots = 1 add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+		random_owned_state = {
+			limit = { is_core_of = HAR }
+			add_extra_state_shared_building_slots = 1 add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = HAR_state_invest_in_military
+	icon = GFX_goal_generic_small_arms
+	relative_position_id = HAR_expand_military_production
+	prerequisite = { focus = HAR_expand_military_production }
+	mutually_exclusive = { focus = HAR_state_invest_in_industry }
+	x = 0
+	y = 1
+	ai_will_do = { base = 25 }
+	cost = 10
+	completion_reward = {
+		add_ideas = HAR_invest_in_military
+	}
+}
+
+focus = {
+	id = HAR_state_invest_in_industry
+	icon = GFX_goal_generic_consumer_goods
+	relative_position_id = HAR_build_industry
+	prerequisite = { focus = HAR_build_industry }
+	mutually_exclusive = { focus = HAR_state_invest_in_military }
+	x = -1
+	y = 1
+	ai_will_do = { base = 25 }
+	cost = 10
+	completion_reward = {
+		add_ideas = HAR_invest_in_industry
+	}
+}
+#Focus for bunkers by Gondor
+focus = {
+	id = defense_against_Gondor
+	icon = GFX_goal_generic_construct_military
+	ai_will_do = {
+		base = 25
+		modifier = {
+			factor = 15
+			has_completed_focus = HAR_war_propaganda_gondor
+		}
+	}
+	x = -1
+	y = 1
+	relative_position_id = invest_in_military_industry
+	prerequisite = { focus = invest_in_military_industry}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		107 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 5523 } }
+		107 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7314 } }
+		107 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 1296 } }
+		107 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7323 } }
+		107 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4169 } }
+		107 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 5230 } }
+
+		105 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7354 } }
+		105 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 2696 } }
+		105 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 5461 } }
+		105 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7311 } }
+		105 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 3710 } }
+		105 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 5283 } }
+		105 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 717 } }
+		105 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4070 } }
+	}
+}
+
+#Learn Gondor tactics
+focus = {
+	id = HAR_learn_gondor_tactics
+	icon = GFX_goal_generic_army_artillery2
+	ai_will_do = { base = 25 }
+	x = 0
+	y = 2
+	relative_position_id = learn_strategies
+	prerequisite = { focus = learn_strategies }
+	prerequisite = { focus = defense_against_Gondor }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+        add_tech_bonus = {
+			name = lotr_machines_ballista
+			ahead_reduction = 0.5
+			uses = 2
+			category = lotr_machines_ballista
+		}
+	}
+}
 
  #Focus for Political Amelioration
 		focus = {
@@ -74,83 +618,402 @@ default = no
  		mutually_exclusive = { }
  		prerequisite = { }
  		cost = 10
-  	available_if_capitulated = yes
+  		available_if_capitulated = yes
 		completion_reward = { add_political_power = 100 }
  }
 
- #Focus for Civilian Construction Effort
-		focus = {
-		id = civilianconstructioneffort
-		icon = GFX_goal_generic_construct_civ_factory
-		ai_will_do = { factor = 4 }
- x =9
- y =1
- mutually_exclusive = { }
- prerequisite = { focus = constructionpursuits }
- cost = 10
-  available_if_capitulated = yes
+focus = {
+	id = follow_the_dark_lord
+	icon = GFX_unleashsauron
+	ai_will_do = { factor = 75 }
+	x = 13
+	y = 1
+	relative_position_id = politicalamelioration
+	prerequisite = { focus = politicalamelioration }
+	cost = 10
 	completion_reward = {
-			random_owned_state = {
-					limit = { is_core_of = HAR }
-					add_extra_state_shared_building_slots = 3 add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
-			}
+		add_ideas = HAR_follower_of_the_dark_lord
 	}
- }
+}
 
- #Focus for Military Construction Effort
-		focus = {
-		id = militaryconstructioneffort
-		icon = GFX_goal_generic_construct_mil_factory
-		ai_will_do = { factor = 4 }
- x =11
- y =1
- mutually_exclusive = { }
- prerequisite = { focus = constructionpursuits }
- cost = 10
-  available_if_capitulated = yes
+focus = {
+	id = spread_propaganda
+	icon = GFX_goal_support_fascism
+	ai_will_do = { factor = 25 }
+	x = -2
+	y = 1
+	relative_position_id = follow_the_dark_lord
+	prerequisite = { focus = follow_the_dark_lord }
+	cost = 5
 	completion_reward = {
-			random_owned_state = {
-					limit = { is_core_of = HAR }
-					add_extra_state_shared_building_slots = 2 add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
-			}
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.10
+		}
+		add_stability = -0.05
 	}
- }
+}
 
- #Focus for Army Modernization
-		focus = {
-		id = hai_armymodernization
-		icon = GFX_goal_generic_axis_build_infantry
-		ai_will_do = { factor = 7 }
- x =13
- y =1
- mutually_exclusive = { }
- prerequisite = { focus = technologypursuits }
- cost = 10
-  available_if_capitulated = yes
-	completion_reward = {
-			army_experience = 35
+focus = {
+	id = power_to_the_mouth_of_sauron
+	ai_will_do = { factor = 50 }
+	icon = GFX_goal_demand_sudetenland
+	x = 0
+	y = 1
+	relative_position_id = follow_the_dark_lord
+	prerequisite = { focus = follow_the_dark_lord }
+	available = {
+		fascism > 0.6
 	}
- }
-
- #Focus for Industry Modernization
-		focus = {
-		id = industrymodernization
-		icon = GFX_goal_generic_production2
-		ai_will_do = { factor = 3 }
- x =15
- y =1
- mutually_exclusive = { }
- prerequisite = {focus = technologypursuits }
- cost = 10
-  available_if_capitulated = yes
+	bypass = {
+		has_government = fascism
+	}
+	cost = 10
 	completion_reward = {
-		add_tech_bonus = {
-				name = industrial_revitalization
-				bonus = 0.5
-				uses = 1
-				category = lotr_labour_construction_industry
+		add_stability = -0.05
+		set_politics = {
+			ruling_party = fascism
+			elections_allowed = no
+		}
+	}
+}
+
+focus = {
+	id = join_the_dark_pact
+	icon = GFX_focus_generic_treaty
+	x = 4
+	y = 1
+	relative_position_id = power_to_the_mouth_of_sauron
+	prerequisite = { focus = power_to_the_mouth_of_sauron }
+	mutually_exclusive = { focus = go_solo }
+	available = {
+		MOR = {
+			is_faction_leader = yes
+			has_government = fascism
+		}
+	}
+	bypass = {
+		is_in_faction_with = MOR
+	}
+	ai_will_do = {
+		factor = 25
+		modifier = {
+			add = -25
+			has_war_with = MOR
+		}
+	}
+	cost = 10
+	completion_reward = {
+		MOR = {
+			country_event = { id = mordor.46 }
+		}
+	}
+}
+
+focus = {
+    id = join_research_group
+    icon = GFX_focus_research
+    x = 1
+    y = 1
+    relative_position_id = join_the_dark_pact
+    prerequisite = { focus = join_the_dark_pact }
+    ai_will_do = { factor = 25 }
+    available = {
+        is_in_faction_with = MOR
+    }
+    cost = 10
+    completion_reward = {
+        add_to_tech_sharing_group = mordor_research
+    }
+}
+
+focus = {
+	id = go_solo
+	icon = GFX_focus_generic_treaty
+	x = 0
+	y = 1
+	relative_position_id = power_to_the_mouth_of_sauron
+	prerequisite = { focus = power_to_the_mouth_of_sauron }
+	mutually_exclusive = { focus = join_the_dark_pact }
+	available = {
+		NOT = {
+			is_in_faction_with = MOR
+		}
+	}
+	ai_will_do = {
+		base = 25
+
+		modifier = {
+			factor = 25
+			RHU = {
+				OR = {
+					has_completed_focus = RHU_go_solo
+				}
+				NOT = {
+					has_completed_focus = RHU_join_the_dark_pact
+				}
 			}
- 	}
+		}
+	}
+	cost = 5
+	completion_reward = {
+		if = {
+			limit = {
+				has_global_flag = RHU_made_contact_with_fascism
+			}
+			add_stability = 0.05
+			add_war_support = 0.05
+			add_political_power = 100
+		} else = {
+			add_stability = 0.10
+        	add_ideas = RHU_alone_we_will_fight
+		}
+	}
+}
+
+focus = {
+	id = honor_morgoth_hai
+	icon = GFX_servant_of_melkor
+	x = 3
+	y = 1
+	relative_position_id = go_solo
+	prerequisite = { focus = join_the_dark_pact focus = go_solo }
+	ai_will_do = { factor = 25 }
+	cost = 10
+	completion_reward = {
+		add_ideas = MOR_servant_morgoth
+	}
+}
+
+focus = {
+	id = HAR_war_propaganda_gondor
+	icon = GFX_focus_generic_support_the_left_right
+	x = 1
+	y = 1
+	relative_position_id = go_solo
+	prerequisite = { focus = go_solo focus = join_the_dark_pact }
+	ai_will_do = { factor = 25 }
+	cost = 5
+	completion_reward = {
+		add_war_support = 0.05
+		add_opinion_modifier = { target = GON modifier = medium_decrease }
+		GON = {
+			add_war_support = 0.05
+			add_opinion_modifier = { target = HAR modifier = medium_decrease }
+		}
+	}
+}
+
+focus = {
+	id = demand_south_ithilien
+	icon = GFX_goal_generic_dangerous_deal
+	x = 0
+	y = 1
+	relative_position_id = HAR_war_propaganda_gondor
+	prerequisite = { focus = HAR_war_propaganda_gondor }
+	available = {
+		GON = {
+			owns_state = 135
+		}
+	}
+	ai_will_do = {
+		factor = 10
+		modifier = {
+			add = -50
+			is_in_faction_with = MOR
+			date < 3021.1.1
+		}
+		modifier = {
+			add = 25
+			is_in_faction_with = MOR
+			date > 3021.1.1
+		}
+		modifier = {
+			add = -50
+			is_in_faction = no
+			date < 3022.1.1
+		}
+		modifier = {
+			add = 25
+			is_in_faction = no
+			date > 3022.1.1
+		}
+	}
+	cost = 10
+	completion_reward = {
+		GON = {
+			country_event = { id = gondor.6 }
+		}
+	}
+}
+
+focus = {
+	id = finish_gondor
+	icon = GFX_wargoal_gondor
+	prerequisite = { focus = demand_south_ithilien }
+	x = 0
+	y = 1
+	relative_position_id = demand_south_ithilien
+	ai_will_do = { factor = 25 }
+	cost = 10
+	available = {
+		GON = {
+			NOT = {
+				controls_state = 135
+			}
+		}
+	}
+	will_lead_to_war_with = GON
+	completion_reward = {
+		create_wargoal = {
+			type = take_state_focus
+			target = GON
+			generator = { 135 }
+		}
+	}
+}
+
+focus = {
+	id = HAR_look_to_the_east
+	icon = GFX_focus_generic_support_the_left_right
+	relative_position_id = go_solo
+	prerequisite = { focus = go_solo }
+	x = -3
+	y = 1
+	ai_will_do = { factor = 25 }
+	cost = 5
+	available = {
+		NOT = {
+			is_in_faction_with = RHU
+		}
+	}
+	completion_reward = {
+		add_war_support = 0.05
+		add_opinion_modifier = { target = RHU modifier = medium_decrease }
+		RHU = {
+			add_war_support = 0.05
+			add_opinion_modifier = { target = HAR modifier = medium_decrease }
+		}
+	}
+}
+
+focus = {
+	id = HAR_demand_submission_east
+	icon = GFX_wargoal_rhun
+	relative_position_id = HAR_look_to_the_east
+	prerequisite = { focus = HAR_look_to_the_east }
+	x = 0
+	y = 1
+	ai_will_do = {
+		base = 25
+		modifier = {
+			factor = -20
+			RHU = {
+				is_in_faction_with = MOR
+			}
+		}
+	}
+	available = {
+		NOT = {
+			is_in_faction_with = RHU
+		}
+	}
+	will_lead_to_war_with = RHU
+	cost = 10
+	completion_reward = {
+		RHU = {
+			country_event = rhun.6
+		}
+	}
+}
+
+focus = {
+	id = prepare_for_war_against_mordor
+	icon = GFX_goal_generic_construct_mil_factory
+	relative_position_id = go_solo
+	prerequisite = { focus = go_solo }
+	x = -1
+	y = 1
+	ai_will_do = {
+		base = 50
+	}
+	cost = 10
+	completion_reward = {
+		army_experience = 10
+		random_owned_state = {
+			limit = { is_core_of = HAR }
+			add_extra_state_shared_building_slots = 2 add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = HAR_ready_the_army
+	icon = GFX_goal_generic_construct_mil_factory
+	relative_position_id = prepare_for_war_against_mordor
+	prerequisite = { focus = prepare_for_war_against_mordor }
+	x = 0
+	y = 1
+	ai_will_do = {
+		factor = 25
+	}
+	cost = 10
+	completion_reward = {
+		add_ideas = HAR_ready_the_army
+	}
+}
+
+focus = {
+	id = mordor_has_become_weak
+	icon = GFX_wargoal_mordor
+	x = 0
+	y = 1
+	relative_position_id = HAR_ready_the_army
+	prerequisite = { focus = HAR_ready_the_army }
+	available = {
+		NOT = {
+			is_in_faction_with = MOR
+		}
+	}
+	ai_will_do = {
+		factor = 0
+		modifier = {
+			add = 25
+			date > 3022.1.1
+		}
+	}
+	will_lead_to_war_with = MOR
+	cost = 10
+	completion_reward = {
+		if = {
+			limit = {
+				MOR = { has_government = fascism }
+			}
+			create_wargoal = { type = puppet_wargoal_focus target = MOR }
+		}
+		if = {
+			limit = {
+				MOR = { has_government = communism}
+			}
+			create_wargoal = { type = annex_everything target = MOR }
+		}
+	}
+}
+
+ #Focus for Regional Hierarchy
+		focus = {
+		id = regionalhierarchy
+		icon = GFX_goal_generic_territory_or_war
+		ai_will_do = {
+			factor = 25
+		}
+ 		x =4
+ 		y =1
+ 		mutually_exclusive = { }
+ 		prerequisite = { focus = politicalamelioration }
+ 		cost = 10
+  		available_if_capitulated = yes
+		completion_reward = { add_political_power = 100 }
  }
 
  #Focus for Stand as One
@@ -181,72 +1044,6 @@ default = no
 		completion_reward = {
 			remove_ideas = HAR_fractured_nation
 		}
- }
-
- #Focus for Joined Knowledge Pursuits
-		focus = {
-		id = joinedknowledgepursuits
-		icon = GFX_focus_research
-		ai_will_do = { factor = 7 }
- x =10
- y =2
- mutually_exclusive = { }
- prerequisite = { focus = civilianconstructioneffort }
- prerequisite = { focus = militaryconstructioneffort }
- cost = 10
-  available_if_capitulated = yes
-	completion_reward = {
-		add_research_slot = 1
-	}
- }
-
- #Focus for Air Domination
-		focus = {
-		id = airdomination
-		icon = GFX_goal_generic_air_fighter
-		ai_will_do = { factor = 3 }
- x =12
- y =2
- mutually_exclusive = { }
- prerequisite = { focus = hai_armymodernization }
- cost = 10
-  available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-				name = fighter_bonus
-				bonus = 0.5
-				uses = 2
-				category = lotr_eagles
-				category = lotr_fellbeasts
-			}
-		}
- }
-
- #Focus for Warbred Mûmakil
-		focus = {
-		id = warbredmmakil
-		icon = GFX_goal_generic_army_tanks
-		ai_will_do = { factor = 8 }
- x =14
- y =2
- mutually_exclusive = { }
- prerequisite = { focus = hai_armymodernization }
- cost = 10
-  available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = warbred_mumakil
-			bonus = 1.0
-			uses = 1
-			category = lotr_men_secrets_mumakil
-		}
-		add_tech_bonus = {
-			name = warbred_mumakil
-			bonus = 0.5
-			uses = 1
-			category = lotr_men_secrets_mumakil
-		}
-	}
  }
 
  #Focus for Cohesion through Infrastructure
@@ -302,67 +1099,6 @@ default = no
 	}
  }
 
- #Focus for Rocket Engineering
-		focus = {
-		id = rocketengineering
-		icon = GFX_focus_rocketry
-		ai_will_do = { factor = 5 }
- x =11
- y =3
- mutually_exclusive = { }
- prerequisite = { focus = joinedknowledgepursuits }
- prerequisite = { focus = airdomination }
- cost = 10
-  available_if_capitulated = yes
-	completion_reward = {
-		 add_tech_bonus = {
-			 name = jet_rocket_bonus
-			 ahead_reduction = 1.0
-			 uses = 1
-			 category = rocketry
-			 category = lotr_knowledge_magic
-		 }
-	 }
- }
-
- #Focus for Fleet Modernization
-		focus = {
-		id = fleetmodernization
-		icon = GFX_goal_generic_amphibious_assault
-		ai_will_do = { factor = 7 }
- x =13
- y =3
- mutually_exclusive = { }
- prerequisite = { focus = hai_armymodernization }
- cost = 10
-  available_if_capitulated = yes
-	completion_reward = {
-		navy_experience = 50
-			add_tech_bonus = {
-				name = bb_bonus
-				bonus = 0.5
-				uses = 1
-				category = lotr_sailing
-			}
-	 }
- }
-
- #Focus for Synthetic Refinery Effort
-		focus = {
-		id = syntheticrefineryeffort
-		icon = GFX_goal_unknown
-		ai_will_do = { factor = 4 }
- x =15
- y =3
- mutually_exclusive = { }
- prerequisite = { focus = industrymodernization }
- cost = 10
-  available_if_capitulated = yes
-	completion_reward = {
-			add_tech_bonus = { name = extraction_techniques bonus = 0.75 uses = 1 category = lotr_labour_farming }
-	}
- }
-
  #Focus for Appeal to the Haradrim
 		focus = {
 		id = appealtotheharadrim
@@ -376,10 +1112,10 @@ default = no
   available_if_capitulated = yes
 	completion_reward = {
 		add_war_support = 0.2
-		add_state_core = 858
-		add_state_core = 859
-		add_state_core = 860
-		add_state_core = 864
+		add_state_core = 117
+		add_state_core = 118
+		add_state_core = 119
+		add_state_core = 123
 	}
  }
 
@@ -395,8 +1131,8 @@ default = no
  cost = 10
   available_if_capitulated = yes
 	completion_reward = {
-		add_state_core = 853
-		add_state_core = 849
+		add_state_core = 112
+		add_state_core = 108
 	}
  }
 
@@ -442,7 +1178,7 @@ default = no
 				release = PEL
 				add_to_faction = PEL
 				set_global_flag = harad_PEL_faction
-				if = {
+				else = {
 				release_puppet = PEL
 				set_global_flag = harad_PEL_puppet
 				}
@@ -467,7 +1203,7 @@ default = no
 				release = UMB
 				add_to_faction = UMB
 				set_global_flag = harad_UMB_faction
-				if = {
+				else = {
 				release_puppet = UMB
 				set_global_flag = harad_UMB_puppet
 				}
@@ -487,24 +1223,6 @@ default = no
  cost = 10
   available_if_capitulated = yes
 	completion_reward = { add_ideas = HAR_subject_taxation }
- }
-
- #Focus for Import rare Minerals
-		focus = {
-		id = importrareminerals
-		icon = GFX_goal_generic_positive_trade_relations
-		ai_will_do = { factor = 5 }
- x =13
- y =4
- mutually_exclusive = { }
- prerequisite = { focus = fleetmodernization }
- cost = 10
-  available_if_capitulated = yes
-	completion_reward = {
-			add_resource = { type = chromium amount = 16 state = 850 }
-			add_resource = { type = tungsten amount = 16 state = 850 }
-			add_resource = { type = rubber amount = 16 state = 850 }
-	}
  }
 
  #Focus for Subjugate Umbar
@@ -550,8 +1268,8 @@ default = no
 	completion_reward = {
 		KND = {
 			add_ideas = HAR_endeavour
-			858 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = arms_factory level = 3 instant_build = yes } }
-			858 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = industrial_complex level = 3 instant_build = yes } }
+			117 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = arms_factory level = 3 instant_build = yes } }
+			117 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = industrial_complex level = 3 instant_build = yes } }
 		}
 	}
  }
@@ -561,7 +1279,7 @@ default = no
 		id = thepellardurendeavour
 		icon = GFX_goal_unknown
 		ai_will_do = { factor = 25 }
-		available = { has_civil_war = no country_exists = PEL NOT = { has_war_with = PEL } }
+		available = { has_civil_war = no country_exists = KND NOT = { has_war_with = KND } }
  x =7
  y =5
  mutually_exclusive = { }
@@ -569,10 +1287,10 @@ default = no
  cost = 10
   available_if_capitulated = yes
 	completion_reward = {
-		PEL = {
+		KND = {
 			add_ideas = HAR_endeavour
-			853 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = arms_factory level = 3 instant_build = yes } }
-			853 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = industrial_complex level = 3 instant_build = yes } }
+			112 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = arms_factory level = 3 instant_build = yes } }
+			112 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = industrial_complex level = 3 instant_build = yes } }
 		}
 	}
  }
@@ -592,24 +1310,10 @@ default = no
 	completion_reward = {
 		UMB = {
 			add_ideas = HAR_endeavour
-			849 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = arms_factory level = 3 instant_build = yes } }
-			849 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = industrial_complex level = 3 instant_build = yes } }
+			108 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = arms_factory level = 3 instant_build = yes } }
+			108 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = industrial_complex level = 3 instant_build = yes } }
 		}
 	}
- }
-
- #Focus for Nautical Research Association
-		focus = {
-		id = nauticalresearchassociation
-		icon = GFX_focus_research
-		ai_will_do = { factor = 25 }
- x =13
- y =6
- mutually_exclusive = { }
- prerequisite = { focus = importrareminerals }
- cost = 10
-  available_if_capitulated = yes
-	completion_reward = { add_research_slot = 1 }
  }
 
  #Focus for Unite the Realm
@@ -649,7 +1353,7 @@ default = no
 		id = manufacturingefforts
 		icon = GFX_goal_generic_production2
 		ai_will_do = { factor = 5 }
-		available = { has_civil_war = no country_exists = KND country_exists = PEL NOT = { has_war_with = KND } NOT = { has_war_with = PEL } }
+		available = { has_civil_war = no country_exists = KND country_exists = KND NOT = { has_war_with = KND } NOT = { has_war_with = KND } }
  x =6
  y =6
  mutually_exclusive = { }
@@ -658,9 +1362,9 @@ default = no
  cost = 10
   available_if_capitulated = yes
 	completion_reward = {
-			add_tech_bonus = { name = manufacturing_effort bonus = 0.5 uses = 1 category = lotr_labour_construction_industry }
-			KND = { add_tech_bonus = { name = manufacturing_effort bonus = 0.5 uses = 1 category = lotr_labour_construction_industry } }
-			PEL = { add_tech_bonus = { name = manufacturing_effort bonus = 0.5 uses = 1 category = lotr_labour_construction_industry } }
+			add_tech_bonus = { name = manufacturing_effort bonus = 0.5 uses = 1 category = industry }
+			KND = { add_tech_bonus = { name = manufacturing_effort bonus = 0.5 uses = 1 category = industry } }
+			KND = { add_tech_bonus = { name = manufacturing_effort bonus = 0.5 uses = 1 category = industry } }
 	}
  }
 
@@ -669,7 +1373,7 @@ default = no
 		id = thecoastalhighwayproject
 		icon = GFX_goal_generic_navy_cruiser
 		ai_will_do = { factor = 10 }
-		available = { has_civil_war = no country_exists = UMB country_exists = PEL NOT = { has_war_with = UMB } NOT = { has_war_with = PEL } }
+		available = { has_civil_war = no country_exists = UMB country_exists = KND NOT = { has_war_with = UMB } NOT = { has_war_with = KND } }
  x =8
  y =6
  mutually_exclusive = { }
@@ -678,10 +1382,10 @@ default = no
  cost = 10
   available_if_capitulated = yes
 	completion_reward = {
-			846 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
-			847 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
-			849 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
-			853 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
+			105 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
+			106 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
+			108 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
+			112 = { add_building_construction = {	type = infrastructure level = 2 instant_build = yes } }
 	}
  }
 
@@ -745,8 +1449,8 @@ default = no
  cost = 10
   available_if_capitulated = yes
 	completion_reward = {
-		add_resource = { type = oil amount = 8 state = 858 }
-		add_resource = { type = oil amount = 8 state = 859 }
+		add_resource = { type = oil amount = 8 state = 117 }
+		add_resource = { type = oil amount = 8 state = 118 }
 	}
  }
 
@@ -755,18 +1459,17 @@ default = no
 		id = thepellardurarmada
 		icon = GFX_goal_generic_construct_naval_dockyard
 		ai_will_do = { factor = 15 }
-		available = { has_civil_war = no country_exists = PEL NOT = { has_war_with = PEL } }
+		available = { has_civil_war = no country_exists = KND NOT = { has_war_with = KND } }
  x =7
  y =7
  mutually_exclusive = { }
  prerequisite = { focus = thepellardurendeavour }
- prerequisite = { focus = nauticalresearchassociation }
  cost = 10
   available_if_capitulated = yes
 	completion_reward = {
-			853 = { add_extra_state_shared_building_slots = 5 add_building_construction = { type = dockyard level = 5 instant_build = yes } }
+			112 = { add_extra_state_shared_building_slots = 5 add_building_construction = { type = dockyard level = 5 instant_build = yes } }
 			custom_effect_tooltip = HAR_pellardur_armada_tt
-			hidden_effect = { load_oob = "PEL_Armada" }
+			hidden_effect = { load_oob = "KND_Armada" }
 	}
  }
 
@@ -780,11 +1483,10 @@ default = no
  y =7
  mutually_exclusive = { }
  prerequisite = { focus = theumbarendeavour }
- prerequisite = { focus = nauticalresearchassociation }
  cost = 10
   available_if_capitulated = yes
 	completion_reward = {
-			849 = { add_extra_state_shared_building_slots = 5 add_building_construction = { type = dockyard level = 5 instant_build = yes } }
+			108 = { add_extra_state_shared_building_slots = 5 add_building_construction = { type = dockyard level = 5 instant_build = yes } }
 			custom_effect_tooltip = HAR_umbar_armada_tt
 			hidden_effect = { load_oob = "UMB_Armada" }
 	}
@@ -820,10 +1522,10 @@ default = no
  cost = 10
   available_if_capitulated = yes
 	completion_reward = {
-		add_resource = { type = oil amount = 12 state = 858 }
-		add_resource = { type = oil amount = 12 state = 859 }
-		add_tech_bonus = { name = extraction_techniques bonus = 1.0 uses = 2 category = lotr_labour_metalworking_mining }
-		KND = { add_tech_bonus = { name = extraction_techniques bonus = 1.0 uses = 2 category = lotr_labour_metalworking_mining } }
+		add_resource = { type = oil amount = 12 state = 117 }
+		add_resource = { type = oil amount = 12 state = 118 }
+		add_tech_bonus = { name = extraction_techniques bonus = 1.0 uses = 2 category = excavation_tech }
+		KND = { add_tech_bonus = { name = extraction_techniques bonus = 1.0 uses = 2 category = excavation_tech } }
 	}
  }
 
@@ -832,7 +1534,7 @@ default = no
 		id = afleettofear
 		icon = GFX_goal_generic_navy_doctrines_tactics
 		ai_will_do = { factor = 20 }
-		available = { has_civil_war = no country_exists = PEL country_exists = UMB NOT = { has_war_with = PEL } NOT = { has_war_with = UMB } }
+		available = { has_civil_war = no country_exists = KND country_exists = UMB NOT = { has_war_with = KND } NOT = { has_war_with = UMB } }
  x =8
  y =8
  mutually_exclusive = { }
@@ -840,8 +1542,8 @@ default = no
  cost = 10
   available_if_capitulated = yes
 	completion_reward = {
-		847 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = dockyard level = 3 instant_build = yes } }
-		846 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = dockyard level = 3 instant_build = yes } }
+		106 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = dockyard level = 3 instant_build = yes } }
+		105 = { add_extra_state_shared_building_slots = 3 add_building_construction = { type = dockyard level = 3 instant_build = yes } }
 	}
  }
 
@@ -850,7 +1552,7 @@ default = no
 		id = battleshipimprovement
 		icon = GFX_goal_generic_navy_battleship
 		ai_will_do = { factor = 10 }
-		available = { has_civil_war = no country_exists = PEL country_exists = UMB NOT = { has_war_with = PEL } NOT = { has_war_with = UMB } }
+		available = { has_civil_war = no country_exists = KND country_exists = UMB NOT = { has_war_with = KND } NOT = { has_war_with = UMB } }
  x =8
  y =9
  mutually_exclusive = { }
@@ -863,7 +1565,11 @@ default = no
 				name = bb_bonus
 				bonus = 0.7
 				uses = 1
-				category = lotr_sailing_sailingship
+				technology = basic_battleship
+				technology = improved_battleship
+				technology = advanced_battleship
+				technology = heavy_battleship
+				technology = heavy_battleship2
 			}
 	 }
  }#End of focuses

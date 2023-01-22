@@ -21,20 +21,19 @@ country_event = {
 		hidden_effect = {
 			unlock_national_focus = submittosauron
 			complete_national_focus = submittosauron
-			set_capital = { state = 753 }
+			set_capital = { state = 12 }
 			start_civil_war = {
 				ruling_party = fascism
 				ideology = communism
 				size = 0.5
-				capital = 744
-				states = { 744 745 752 750 749 748 863 862 861 }
+				capital = 187
+				states = { 187 3 122 9 8 4 }
 			}
 			random_other_country = {
 				limit = {
 					original_tag = MOR
 					has_government = communism
 				}
-				#load_oob = "SPI_Civil_War" #in case we want special oob for communist mordor
 				set_equipment_fraction = 0.5
 				add_ideas = service_by_requirement
 				add_ideas = closed_economy
@@ -53,12 +52,12 @@ country_event = {
 		name = mordor.1.b
 		set_global_flag = mordor_civil_war
 		hidden_effect = {
-			set_capital = { state = 744 }
+			set_capital = { state = 3 }
 			start_civil_war = {
 				ideology = fascism
 				size = 0.5
-				capital = 753
-				states = { 751 753 746 747 743 }
+				capital = 12
+				states = { 10 12 186 2 188 5 6 7 185 11 120 }
 			}
 			random_other_country = {
 				limit = {
@@ -70,7 +69,6 @@ country_event = {
 				add_ideas = service_by_requirement
 				add_ideas = closed_economy
 				set_equipment_fraction = 0.5
-				#load_oob = "SPA_Civil_War"
 			}
 
 			add_ideas = MOR_rejected_morgoth_1
@@ -83,7 +81,6 @@ country_event = {
 				ideology = communism
 				popularity = 1.0
 			}
-			#load_oob = "SPI_Civil_War"
 			set_equipment_fraction = 0.5
 		}
 	}
@@ -175,16 +172,43 @@ country_event = {
 		ai_chance = {
 			base = 50
 			modifier = {
+				add = 25
+				RHU = {
+					has_government = fascism
+				}
+			}
+			modifier = {
+				add = 50
+				RHU = {
+					has_completed_focus = RHU_join_the_dark_pact
+				}
+			}
+			modifier = {
 				add = -25
-				FROM = { has_army_size = { size < 35 } }
+				FROM = { has_army_size = { size > 25 } }
 			}
 			modifier = {
 				add = 100
-				FROM = { has_army_size = { size > 34 } }
+				FROM = { has_army_size = { size > 40 } }
 			}
 			modifier = {
 				add = 20
 				is_in_faction_with = FROM
+			}
+			modifier = {
+				add = 200
+				is_historical_focus_on = yes
+			}
+			modifier = { ## Making sure it wont switch as puppet of Harad to puppet of Mordor
+				add = -999
+				is_puppet_of = HAR
+			}
+			modifier = {
+				factor = -999
+				OR = {
+					has_completed_focus = RHU_go_solo
+					has_completed_focus = RHU_create_faction
+				}
 			}
 		}
 		FROM = {
@@ -194,12 +218,28 @@ country_event = {
 	option = { # Refuse
 		name = mordor.4.b
 		ai_chance = {
-			base = 20
+			base = 25
 			modifier = {
 				any_other_country = {
 					has_guaranteed = RHU
 				}
 				factor = 5
+			}
+			modifier = {
+				factor = 25
+				NOT = {
+					HAR = {
+						is_in_faction_with = MOR
+					}
+				}
+			}
+			modifier = {
+				factor = 999
+				OR = {
+					has_completed_focus = RHU_go_solo
+					has_completed_focus = RHU_create_faction
+					has_completed_focus = RHU_follow_the_wizards
+				}
 			}
 			modifier = {
 				factor = 0
@@ -224,9 +264,18 @@ country_event = {
 	option = {
 		name = mordor.5.a
 
-		puppet = RHU
-		add_named_threat = { threat = 7 name = mordor.5.t }
-		set_country_flag = RHU_puppeted
+		every_country = {
+			limit = {
+				original_tag = RHU
+			}
+			MOR = {
+				puppet = FROM
+			}
+			FROM = {
+				set_country_flag = RHU_puppeted
+			}
+		}
+		add_named_threat = { threat = 5 name = mordor.5.t }
 		news_event = { hours = 6 id = news.346 }
 	}
 }
@@ -256,6 +305,20 @@ country_event = {
 				add = 100
 				has_completed_focus = join_the_dark_pact
 			}
+			modifier = {
+				add = 25
+				HAR = {
+					has_government = fascism
+				}
+			}
+			modifier = {
+				add = 200
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				add = -999
+				has_completed_focus = go_solo
+			}
 		}
  		FROM = {country_event = { hours = 2 id = mordor.7 } }
 	}
@@ -274,7 +337,7 @@ country_event = {
 				factor = 5
 			}
 			modifier = {
-				add = 100
+				add = 999
 				has_completed_focus = go_solo
 			}
 		}
@@ -366,13 +429,13 @@ country_event = {
 
 		#Start Civil War
 		hidden_effect = {
-			set_capital = { state = 856 }
+			set_capital = { state = 115 }
 			start_civil_war = {
 				ruling_party = fascism 			#party in power
 				ideology = neutrality			#party of uprising
 				size = 0.5				#size
-				capital = 850				#uprising capital
-				states = { 846 847 848 849 850 851 853 854 855 857 }	#uprising states
+				capital = 109				#uprising capital
+				states = { 105 106 107 108 109 110 112 113 114 116 }	#uprising states
 			}
 			random_other_country = {
 				limit = {
@@ -419,13 +482,13 @@ country_event = {
 
 		#Start Civil War
 		hidden_effect = {
-			set_capital = { state = 753 }
+			set_capital = { state = 12 }
 			start_civil_war = {
 				ruling_party = neutrality		#party in power
 				ideology = fascism			#party of uprising
 				size = 0.5				#size
-				capital = 856				#uprising capital
-				states = { 864 858 859 860 856 852 }	#uprising states
+				capital = 115				#uprising capital
+				states = { 123 117 118 119 115 111 }	#uprising states
 			}
 			random_other_country = {
 				limit = {
@@ -631,7 +694,7 @@ country_event = {
 	}
 }
 
-#Harad asked for alliance
+#Rhun/Harad ask to join faction
 country_event = {
 	id = mordor.46
 	title = mordor.46.t
@@ -642,13 +705,43 @@ country_event = {
 
 	option = {
 		name = mordor.46.a
+		ai_chance = {
+			base = 50
+
+			modifier = {
+				add = 50
+				is_historical_focus_on = yes
+			}
+		}
 		MOR = {
-			add_to_faction = HAR
+			add_to_faction = FROM
 		}
 	}
 
 	option = {
 		name = mordor.46.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = -10
+				is_historical_focus_on = yes
+			}
+		}
+		if = {
+			limit = {
+				original_tag = RHU
+			}
+			RHU = {
+				unlock_national_focus = RHU_go_solo
+			}
+		} else_if = {
+			limit = {
+				original_tag = HAR
+			}
+			HAR = {
+				unlock_national_focus = go_solo
+			}
+		}
 	}
 }
 
@@ -663,8 +756,36 @@ country_event = {
 
 	option = {
 		name = mordor.47.a
+
 		MOR = {
 			add_to_faction = ROOT
+		}
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = -999
+				has_war_with = MOR
+			}
+			modifier = {
+				add = -999
+				has_idea = RHU_alone_we_will_fight
+			}
+			modifier = { # decreasing change of majors joining
+				add = -10
+				OR = {
+					original_tag = ERE
+					original_tag = GON
+					original_tag = ROH
+				}
+			}
+			modifier = {
+				add = -999
+				original_tag = RHU
+				OR = {
+					has_completed_focus = RHU_go_solo
+					has_completed_focus = RHU_create_faction
+				}
+			}
 		}
 
 	}
@@ -677,10 +798,17 @@ country_event = {
 				target = ROOT
 			}
 		}
+		ai_chance = {
+			base = 15
+			modifier = {
+				add = 25
+				is_historical_focus_on = yes
+			}
+		}
 	}
 }
 
-# ask for alliance
+# Mirkwood asks for alliance
 country_event = {
 	id = mordor.48
 	title = mordor.48.t
@@ -694,6 +822,9 @@ country_event = {
 		MOR = {
 			add_to_faction = ROOT
 		}
+		ai_chance = {
+			base = 10
+		}
 
 	}
 	option = {
@@ -701,9 +832,18 @@ country_event = {
 		MIR = {
 			country_event = { id = mirkwood.9 }
 		}
+		ai_chance = {
+			base = 30
+		}
 	}
 	option = {
 		name = mordor.48.c
+		ai_chance = {
+			base = 0
+		}
+		MIR = {
+			country_event = { id = mordor.49 }
+		}
 		#No fuck off
 	}
 }
@@ -719,6 +859,89 @@ country_event = {
 
 	option = {
 		name = mordor.49.a
+	}
+}
 
+# declines request for Dol Guldur
+country_event = {
+	id = mordor.50
+	title = mordor.50.t
+	desc = mordor.50.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #agree
+		name = mordor.50.a
+		ai_chance = {
+			base = 75
+		}
+		RHU = {
+			load_oob = RHU_trolls_reinforcements
+		}
+	}
+
+	option = { #decline
+		name = mordor.50.b
+		ai_chance = {
+			base = 25
+		}
+		add_manpower = -1000
+	}
+}
+
+# shelob arrived
+country_event = {
+	id = mordor.51
+	title = mordor.51.t
+	desc = mordor.51.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #agree
+		name = mordor.51.a
+		ai_chance = {
+			base = 50
+		}
+		add_manpower = -500
+		custom_effect_tooltip = MOR_get_shelob
+		set_global_flag = MOR_allow_shelob
+	}
+
+	option = { #decline
+		name = mordor.51.b
+		ai_chance = {
+			base = 0
+		}
+		#Maybe add something in the future
+	}
+}
+
+#COUNTRY NAME asked to join faction
+country_event = {
+	id = mordor.52
+	title = mordor.52.t
+	desc = mordor.52.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.52.a
+		ai_chance = {
+			base = 50
+		}
+		MOR = {
+			add_to_faction = FROM
+		}
+	}
+
+	option = {
+		name = mordor.52.b
+		ai_chance = {
+			base = 10
+		}
+		add_political_power = -50
 	}
 }

@@ -1,0 +1,505 @@
+################
+##### RHU ######
+################
+RHU_spread_support = {
+	RHU_steal_weapons = {
+		icon = GFX_decision_generic_civil_support
+		cost = 75
+
+		visible = {
+			has_civil_war = no
+		}
+
+		available = {
+
+		}
+
+		days_remove = 25
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		remove_effect = {
+			set_global_flag = RHU_stolen_weapons
+			add_equipment_to_stockpile = { type = infantry_equipment_0   amount = -750  }
+			custom_effect_tooltip = RHU_tooltip_steal_weapons
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	RHU_hide_supplies = {
+		icon = GFX_decision_generic_civil_support
+		cost = 50
+
+		visible = {
+			has_civil_war = no
+		}
+
+		days_remove = 75
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		remove_effect = {
+			set_global_flag = RHU_hiden_supplies
+			custom_effect_tooltip = RHU_tooltip_hide_supplies
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	RHU_send_support = {
+        icon = GFX_decision_generic_civil_support
+		cost = 50
+
+        state_target = yes
+        targets = { 104 124 208 131 132 130 128 129 209 126 125 102 207 127 }
+        available = {
+            owns_state = FROM
+        }
+
+		visible = {
+			has_civil_war = no
+		}
+
+		days_remove = 20
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		remove_effect = {
+			hidden_effect = {
+				if = {
+					limit = {
+						check_variable = {
+							RHU_count_states_civil_war > 3
+						}
+					}
+					random_list = {
+						60 = {
+							#nothing happends
+						}
+						40 = {
+							 country_event = { id = rhun.5 } #civil war breaks out
+						}
+					}
+				}
+			}
+            add_stability = -0.05
+            add_popularity = {
+			    ideology = democratic
+			    popularity = 0.05
+		    }
+            add_to_array = {
+                array = RHU_list_states_civil_war
+                value = FROM
+            }
+			add_to_variable = { RHU_count_states_civil_war = 1 }
+			custom_effect_tooltip = RHU_rally_state
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	RHU_rally_troops_lithlad = {
+		icon = GFX_decision_generic_civil_support
+		cost = 75
+
+        state_target = yes
+        targets = { 124 }
+        available = {
+            owns_state = FROM
+			is_in_array = {
+				array = RHU_list_states_civil_war
+				value = FROM 
+			}
+        }
+
+		visible = {
+			has_civil_war = no
+		}
+
+		days_remove = 30
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		remove_effect = {
+			set_global_flag = easterlings_lithlad_rallied
+			custom_effect_tooltip = RHU_rally_troops
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	RHU_rally_troops_agasha = {
+		icon = GFX_decision_generic_civil_support
+		cost = 75
+
+        state_target = yes
+        targets = { 130 }
+        available = {
+            owns_state = FROM
+			is_in_array = {
+				array = RHU_list_states_civil_war
+				value = FROM 
+			}
+        }
+
+		visible = {
+			has_civil_war = no
+		}
+
+		days_remove = 30
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		remove_effect = {
+			set_global_flag = easterlings_agasha_rallied
+			custom_effect_tooltip = RHU_rally_troops
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	RHU_rally_troops_far_eastern = {
+		icon = GFX_decision_generic_civil_support
+		cost = 75
+
+        state_target = yes
+        targets = { 132 }
+        available = {
+            owns_state = FROM
+			is_in_array = {
+				array = RHU_list_states_civil_war
+				value = FROM 
+			}
+        }
+
+		visible = {
+			has_civil_war = no
+		}
+
+		days_remove = 30
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		remove_effect = {
+			set_global_flag = easterlings_far_eastern_rallied
+			custom_effect_tooltip = RHU_rally_troops
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	RHU_rally_troops_north_rhun= {
+		icon = GFX_decision_generic_civil_support
+		cost = 75
+
+        state_target = yes
+        targets = { 102 }
+        available = {
+            owns_state = FROM
+			is_in_array = {
+				array = RHU_list_states_civil_war
+				value = FROM 
+			}
+        }
+
+		visible = {
+			has_civil_war = no
+		}
+
+		days_remove = 30
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		remove_effect = {
+			set_global_flag = easterlings_north_rhun_rallied
+			custom_effect_tooltip = RHU_rally_troops
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+}
+
+#############
+# Kill the blue wizards 
+#############
+RHU_kill_the_blue_wizards_cat = {
+	RHU_kill_alatar = {
+		icon = GFX_decision_generic_civil_support
+		cost = 50
+
+        available = {
+			OR = {
+				has_idea = RHU_mission_of_the_blue_wizards
+				has_idea = RHU_mission_of_the_blue_wizards_1
+			}
+        }
+
+		visible = {
+			has_civil_war = no
+			NOT = {
+				has_global_flag = rhun_alatar_has_fallen
+			}
+		}
+
+		days_remove = 20
+        fixed_random_seed = no
+
+		remove_effect = {
+			random_list = {
+				40 = {
+					modifier = {
+						factor = 0.8
+						is_ai = yes
+					}
+					add_stability = -0.025
+					add_popularity = {
+						ideology = democratic
+						popularity = 0.05
+					}
+				}
+				60 = {
+					modifier = {
+						factor = 1.2
+						is_ai = yes
+					}
+					add_stability = -0.025
+					add_popularity = {
+						ideology = fascism
+						popularity = 0.05
+					}
+					set_global_flag = rhun_alatar_has_fallen
+					if = {
+						limit = {
+							has_idea = RHU_mission_of_the_blue_wizards
+						}
+						swap_ideas = { 
+							remove_idea = RHU_mission_of_the_blue_wizards 
+							add_idea = RHU_mission_of_the_blue_wizards_1
+						}
+					} else = {
+						remove_ideas = RHU_mission_of_the_blue_wizards_1
+						add_stability = 0.05
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 7
+		}
+	}
+	RHU_kill_pallando = {
+		icon = GFX_decision_generic_civil_support
+		cost = 50
+
+        available = {
+			OR = {
+				has_idea = RHU_mission_of_the_blue_wizards
+				has_idea = RHU_mission_of_the_blue_wizards_1
+			}
+        }
+
+		visible = {
+			has_civil_war = no
+			NOT = {
+				has_global_flag = rhun_pallando_has_fallen
+			}
+		}
+
+		days_remove = 20
+        fixed_random_seed = no
+
+		remove_effect = {
+			random_list = {
+				40 = {
+					modifier = {
+						factor = 0.8
+						is_ai = yes
+					}
+					add_stability = -0.025
+					add_popularity = {
+						ideology = democratic
+						popularity = 0.05
+					}
+				}
+				60 = {
+					modifier = {
+						factor = 1.2
+						is_ai = yes
+					}
+					add_stability = -0.025
+					add_popularity = {
+						ideology = fascism
+						popularity = 0.05
+					}
+					set_global_flag = rhun_pallando_has_fallen
+					if = {
+						limit = {
+							has_idea = RHU_mission_of_the_blue_wizards
+						}
+						swap_ideas = { 
+							remove_idea = RHU_mission_of_the_blue_wizards 
+							add_idea = RHU_mission_of_the_blue_wizards_1
+						}
+					} else = {
+						remove_ideas = RHU_mission_of_the_blue_wizards_1
+						add_stability = 0.05
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 7
+		}
+	}
+}
+
+#############
+# Influencing neighbours
+#############
+RHU_influencing_neighbours = {
+	RHU_influencing_dorwinion = {
+		icon = GFX_decision_dorwinion_fascism_support
+		cost = 100
+
+		visible = {
+			has_civil_war = no
+		}
+
+		available = {
+
+		}
+
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		complete_effect = {
+			DOR = {
+				add_timed_idea = { idea = RHU_dark_influences days = 365 }
+			}
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	RHU_propose_construction_embassy = {
+		icon = GFX_decision_dorwinion_fascism_support
+		cost = 150
+
+		visible = {
+			has_civil_war = no
+		}
+
+		available = {
+
+		}
+
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		complete_effect = {
+			DOR = {
+				country_event = { id = dorwinion.2 }
+			}
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	RHU_ignite_civil_war = {
+		icon = GFX_decision_dorwinion_fascism_support
+		cost = 200
+
+		visible = {
+			has_civil_war = no
+		}
+
+		available = {
+			DOR = {
+				fascism > 0.55
+			}
+		}
+
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		complete_effect = {
+			DOR = {
+				start_civil_war = {
+					ideology = fascism
+					size = 0.7
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	RHU_influencing_harad = {
+		icon = GFX_decision_harad_fascism_support
+		cost = 100
+
+		visible = {
+			has_civil_war = no
+			NOT = {
+				is_in_faction_with = HAR
+			}
+		}
+
+		available = {
+
+		}
+
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		complete_effect = {
+			HAR = {
+				add_timed_idea = { idea = RHU_dark_influences days = 365 }
+			}
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+
+	RHU_meet_insecret_with_harad = {
+		icon = GFX_decision_harad_fascism_support
+		cost = 125
+
+		visible = {
+			has_civil_war = no
+			NOT = {
+				is_in_faction_with = HAR
+			}
+		}
+
+		available = {
+
+		}
+
+		days_remove = 25
+		fire_only_once = yes
+        fixed_random_seed = no
+
+		remove_effect = {
+			custom_effect_tooltip = RHU_make_contact_with_fascism_tooltip
+			HAR = {
+				country_event = { id = harad.1 }
+			}
+		}
+		ai_will_do = {
+			factor = 3
+		}
+	}
+}

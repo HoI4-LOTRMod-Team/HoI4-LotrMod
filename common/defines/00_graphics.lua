@@ -100,6 +100,8 @@ NMapMode = {
 	SUPPLY_HOVERED_PROVINCE_COLOR_INDEX = 4, -- Border color of hovered province. Refers to the colors in BORDER_COLOR_CUSTOM_HIGHLIGHTS.
 	PEACE_HOVERED_STATE_COLOR_INDEX = 3 , -- Border color of hovered state in Peace conference. Refers to the colors in BORDER_COLOR_CUSTOM_HIGHLIGHTS.
 	PEACE_CLAIMED_STATE_COLOR_INDEX = 2 , -- Border color of claimed states in Peace conference. Refers to the colors in BORDER_COLOR_CUSTOM_HIGHLIGHTS.
+	SELECTION_HOVERED_STATE_COLOR_INDEX_CONTROLLED = 5, -- Border color of hovered controlled states in various select mapmodes. Refers to the colors in BORDER_COLOR_CUSTOM_HIGHLIGHTS.
+	SELECTION_HOVERED_STATE_COLOR_INDEX_FOREIGN = 6,	-- Border color of hovered foreign states in various select mapmodes. Refers to the colors in BORDER_COLOR_CUSTOM_HIGHLIGHTS.
 },
 
 NMapIcons = {
@@ -679,6 +681,8 @@ NGraphics = {
 		0.1, 0.6, 0.2, 1.0,   -- 2: good, while active
 		0.8, 0.3, 0.0, 1.0,   -- 3: bad, while passive
 		0.0, 0.4, 0.8, 1.0,   -- 4: good, while passive
+		0.3, 0.9, 0.3, 0.8,   -- 5: controlled, neutral positive
+		0.7, 0.7, 0.0, 1.0,   -- 6: not ours, neutral negative
 	},
 	BORDER_COLOR_TUTORIAL_HIGHLIGHT_R = 0.0,
 	BORDER_COLOR_TUTORIAL_HIGHLIGHT_G = 0.61,
@@ -696,7 +700,7 @@ NGraphics = {
 	BORDER_COLOR_BORDER_CONFLICT_NON_EDGE_G = 1.0,
 	BORDER_COLOR_BORDER_CONFLICT_NON_EDGE_B = 0.0,
 	BORDER_COLOR_BORDER_CONFLICT_NON_EDGE_A = 0.9,
-	DRAW_REFRACTIONS_CUTOFF = 250,
+	DRAW_REFRACTIONS_CUTOFF = 0,
 	DRAW_SHADOWS_CUTOFF = 400,
 	DRAW_SHADOWS_FADE_LENGTH = 50,
 	DRAW_FOW_CUTOFF = 400,
@@ -782,20 +786,16 @@ NGraphics = {
 	NORTH_POLE_OFFSET = 0.93,
 	COUNTRY_FLAG_TEX_WIDTH = 82, -- Expected texture size
 	COUNTRY_FLAG_TEX_HEIGHT = 52,
+	COUNTRY_FLAG_TEX_MAX_SIZE = 256, -- Tweak dependly on amount of countries. Must be power of 2. No more then 2048.
 	COUNTRY_FLAG_MEDIUM_TEX_WIDTH = 41,
 	COUNTRY_FLAG_MEDIUM_TEX_HEIGHT = 26,
 	COUNTRY_FLAG_MEDIUM_TEX_MAX_SIZE = 1024, -- Tweak dependly on amount of countries. Must be power of 2. No more then 2048.
 	COUNTRY_FLAG_SMALL_TEX_WIDTH = 10,
 	COUNTRY_FLAG_SMALL_TEX_HEIGHT = 7,
-	COUNTRY_FLAG_TEX_MAX_SIZE = 256, -- Tweak dependly on amount of countries. Must be power of 2. No more then 2048.
-	COUNTRY_FLAG_SMALL_TEX_MAX_SIZE = 64, -- Tweak dependly on amount of countries. Must be power of 2. No more then 2048.
-	COUNTRY_FLAG_STRIPE_TEX_MAX_WIDTH = 10,
-	COUNTRY_FLAG_STRIPE_TEX_MAX_HEIGHT = 4096,
-	COUNTRY_FLAG_LARGE_STRIPE_MAX_WIDTH = 41,
-	COUNTRY_FLAG_LARGE_STRIPE_MAX_HEIGHT = 16384,
+	COUNTRY_FLAG_SMALL_TEX_MAX_SIZE = 256, -- Tweak dependly on amount of countries. Must be power of 2. No more then 2048.
 	VICTORY_POINT_LEVELS = 2,
 	VICTORY_POINT_MAP_ICON_AFTER = {0, 20}, -- After this amount of VP the map icon becomes bigger dot.
-	VICTORY_POINT_MAP_ICON_TEXT_CUTOFF = {150, 250, 500},  -- At what camera distance the VP name text disappears.
+	VICTORY_POINT_MAP_ICON_TEXT_CUTOFF = {230, 320, 500},  -- At what camera distance the VP name text disappears.
 	VICTORY_POINTS_DISTANCE_CUTOFF = {250, 500, 1000}, -- At what distance VPs are hidden
 	AIRBASE_ICON_DISTANCE_CUTOFF = 900, -- At what distance air bases are hidden
 	NAVALBASE_ICON_DISTANCE_CUTOFF = 900, -- 1300, -- At what distance naval bases are hidden
@@ -805,7 +805,7 @@ NGraphics = {
 	RESISTANCE_MAP_ICON_DISTANCE_CUTOFF = 1200,  -- At what camera distance the resistance/compliance map icons are hidden
 	PROVINCE_ANIM_TEXT_DISTANCE_CUTOFF = 500,
 	CAPITAL_ICON_CUTOFF = 1100,	-- At what camera distance capital icons disappears
-	UNITS_DISTANCE_CUTOFF = 120,
+	UNITS_DISTANCE_CUTOFF = 180,
 	SHIPS_DISTANCE_CUTOFF = 240,
 	UNIT_ARROW_DISTANCE_CUTOFF = 875,
 	UNITS_ICONS_DISTANCE_CUTOFF = 900,
@@ -884,7 +884,7 @@ NGraphics = {
 	TONE_MAP_MIDDLE_GREY = 0.5, --0.7
 	TONE_MAP_LUMINANCE_WHITE = 1.0, --
 	MOON_HEIGHT = 600, -- higher means softer shadows and more intense light
-	SUN_HEIGHT  = 600, -- higher means softer shadows and more intense light
+	SUN_HEIGHT  = 850, -- higher means softer shadows and more intense light
 	MOON_HEIGHT_WATER = 550,   -- higher means softer shadows and more intense light
 	SUN_HEIGHT_WATER  = 5000,  -- higher means softer shadows and more intense light
 	MOON_LATITUDE = 0, -- NOT USED
@@ -900,11 +900,11 @@ NGraphics = {
 	AMBIENT_LIGHT_POS_Z = { 0.6,  0.2, 0.924 }, -- top
 	AMBIENT_LIGHT_NEG_Z = { 0.55, 0.1, 0.9 }, -- bottom
 
-	SUN_DIFFUSE_COLOR   	= {0.14, 0.0, 1.0},
+	SUN_DIFFUSE_COLOR   	= {0.14, 0.3, 1.0},
 	SUN_INTENSITY 			= 1.0; -- 0.4
 	SUN_SPECULAR_INTENSITY 	= 1.0;
 	MOON_DIFFUSE_COLOR  	= {0.58, 0.5, 1.0},
-	MOON_INTENSITY 			= 2.5;
+	MOON_INTENSITY 			= 1.0;
 
 	CUBEMAP_INTENSITY = 1.0,
 
@@ -1283,9 +1283,9 @@ NFrontend = {
 	CAMERA_SPEED_IN_MENUS = 0.1,
 	CAMERA_INTERPOLATION_SPEED = 0.19,
 
-	FRONTEND_POS_X = 2958.0,
-	FRONTEND_POS_Y = 900.0,
-	FRONTEND_POS_Z = 1500.0,
+	FRONTEND_POS_X = 1558.0,
+	FRONTEND_POS_Y = 1900.0,
+	FRONTEND_POS_Z = 1100.0,
 	FRONTEND_LOOK_X = 2958.0,
 	FRONTEND_LOOK_Y = 0.0,
 	FRONTEND_LOOK_Z = 1519.0,
