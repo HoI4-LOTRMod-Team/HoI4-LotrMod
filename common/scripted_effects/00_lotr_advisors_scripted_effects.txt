@@ -45,5 +45,49 @@ lotr_advisors_update_vars_weekly = {
 		multiply_variable = { var = ROOT.valuable_luxury_crafter_bonus value = 0.01 }
 		clamp_variable = { var = ROOT.valuable_luxury_crafter_bonus min = -0.25 }
 	}
+
+	# Chaos Enjoyer
+	if = {
+		limit = { has_idea_with_trait = chaos_enjoyer }
+		set_variable = { ROOT.chaos_enjoyer_bonus = 1 }
+		subtract_from_variable = { ROOT.chaos_enjoyer_bonus = ROOT.stability }
+		multiply_variable = { var = ROOT.chaos_enjoyer_bonus value = 0.1 } # Grants up to 10% bonus based on how LOW the stability is
+	}
+
+	# Knowledge Collector
+	if = {
+		limit = { has_idea_with_trait = knowledge_collector }
+		set_variable = { ROOT.knowledge_collector_bonus = num_subjects }
+		multiply_variable = { var = ROOT.knowledge_collector_bonus value = 0.03 } # Grants up to 3% bonus for each subject
+		clamp_variable = { var = ROOT.knowledge_collector_bonus max = 0.21 }
+	}
+
+	# Cadaver Experimenter
+	if = {
+		limit = { has_idea_with_trait = cadaver_experimenter }
+		set_variable = { ROOT.cadaver_experimenter_bonus = casualties_k }
+		multiply_variable = { var = ROOT.cadaver_experimenter_bonus value = 0.01 }
+		multiply_variable = { var = ROOT.cadaver_experimenter_bonus value = 0.01 } # Grants 1% bonus for every 100k casualties
+		clamp_variable = { var = ROOT.cadaver_experimenter_bonus max = 0.20 }
+	}
+
+	# Construction Coordinator
+	if = {
+		limit = { has_idea_with_trait = construction_coordinator }
+		set_variable = { ROOT.construction_coordinator_bonus = 0 }
+		for_each_scope_loop = {
+		    array = ROOT.neighbors
+		    if = {
+		        limit = {
+		        	has_government = revolutionary
+		            exists = yes
+		            NOT = { has_war_with = ROOT }
+		        }
+		        add_to_variable = { ROOT.construction_coordinator_bonus = 0.1 }
+		    }
+		}
+		# Grants 10% bonus for each commie neighbour
+		clamp_variable = { var = ROOT.construction_coordinator_bonus max = 0.30 }
+	}
 	
 }
