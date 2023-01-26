@@ -1534,8 +1534,9 @@ shared_focus = {
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
 
 		available_if_capitulated = yes
-#		cancel_if_invalid = no
-#		continue_if_invalid = yes
+		available = {
+			has_tech = construction2
+		}
 
 		completion_reward = {
 			random_owned_controlled_state = {
@@ -1676,13 +1677,17 @@ shared_focus = {
 		icon = GFX_goal_generic_industry_I
 		prerequisite = { focus = construction_effort_3 }
 		relative_position_id = construction_effort_3
-		x = 0
+		x = 2
 		y = 1
 		cost = 10
 	
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
 
 		available_if_capitulated = yes
+
+		available = {
+			has_tech = construction2
+		}
 
 		completion_reward = {
 			random_owned_controlled_state = {
@@ -1715,10 +1720,81 @@ shared_focus = {
 	}
 
 	shared_focus = {
+		id = generic_the_earth_has_one_weakness
+		icon = GFX_goal_generic_construction2
+		prerequisite = { focus = construction_effort_3 }
+		x = 0
+		y = 1
+		relative_position_id = construction_effort_3	
+		cost = 10
+	
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+
+		available_if_capitulated = no
+#		cancel_if_invalid = no
+		continue_if_invalid = yes
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = mobilize_army_construction_tt
+				has_army_manpower = { size > 10000 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = reserve_army_construction_tt
+				has_manpower > 2000
+			}
+			has_equipment = {
+				artillery_equipment > 99
+			}
+		}
+		select_effect = {
+			add_manpower = -2000
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = -100
+				producer = ROOT
+			}
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = force_excavation_tt
+			hidden_effect = { add_manpower = -500 }
+			if = {
+				limit = {
+					any_owned_state = {
+						NOT = { has_state_flag = deep_mined }
+					}
+				}
+				random_owned_state = {
+					limit = {
+						NOT = { has_state_flag = deep_mined }
+					}
+					add_resource = {
+					 	type = steel
+						amount = 20
+					}
+					set_state_flag = force_excavated
+				}
+			}
+			else = {
+				random_owned_state = {
+					add_resource = {
+					 	type = steel
+						amount = 10
+					}
+					set_state_flag = force_excavated
+				}
+			}
+			custom_effect_tooltip = stacked_resource_warning_tt
+
+		} # End Rewards Bloc
+	}
+
+	shared_focus = {
 		id = generic_resource_extraction
 		icon = GFX_focus_generic_steel
-		prerequisite = { focus = generic_construction_effort_4 }
-		relative_position_id = generic_construction_effort_4
+		prerequisite = { focus = generic_the_earth_has_one_weakness }
+		relative_position_id = generic_the_earth_has_one_weakness
 		x = 0
 		y = 1
 		cost = 10
@@ -1783,77 +1859,6 @@ shared_focus = {
 			custom_effect_tooltip = stacked_resource_warning_tt
 
 		} #End Rewards Bloc
-	}
-
-	shared_focus = {
-		id = generic_the_earth_has_one_weakness
-		icon = GFX_goal_generic_construction2
-		prerequisite = { focus = generic_construction_effort_4 }
-		x = 2
-		y = 1
-		relative_position_id = generic_construction_effort_4	
-		cost = 10
-	
-		search_filters = { FOCUS_FILTER_INDUSTRY }
-
-		available_if_capitulated = no
-#		cancel_if_invalid = no
-		continue_if_invalid = yes
-
-		available = {
-			custom_trigger_tooltip = {
-				tooltip = mobilize_army_construction_tt
-				has_army_manpower = { size > 10000 }
-			}
-			custom_trigger_tooltip = {
-				tooltip = reserve_army_construction_tt
-				has_manpower > 2000
-			}
-			has_equipment = {
-				artillery_equipment > 99
-			}
-		}
-		select_effect = {
-			add_manpower = -2000
-			add_equipment_to_stockpile = {
-				type = artillery_equipment
-				amount = -100
-				producer = ROOT
-			}
-		}
-
-		completion_reward = {
-			custom_effect_tooltip = force_excavation_tt
-			hidden_effect = { add_manpower = -500 }
-			if = {
-				limit = {
-					any_owned_state = {
-						NOT = { has_state_flag = deep_mined }
-					}
-				}
-				random_owned_state = {
-					limit = {
-						NOT = { has_state_flag = deep_mined }
-					}
-					add_resource = {
-					 	type = steel
-						amount = 20
-					}
-					set_state_flag = force_excavated
-				}
-			}
-			else = {
-				random_owned_state = {
-					add_resource = {
-					 	type = steel
-						amount = 10
-					}
-					set_state_flag = force_excavated
-				}
-			}
-			custom_effect_tooltip = stacked_resource_warning_tt
-
-		} # End Rewards Bloc
 	}
 
 	shared_focus = {
