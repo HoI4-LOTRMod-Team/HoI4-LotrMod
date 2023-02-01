@@ -25,7 +25,15 @@ advisor_decisions_category = {
 
 	    timeout_effect = {
 
-	    	custom_effect_tooltip = investment_gambling_venture_timeout
+	    	if = {
+				# Gambler was given a raise -> increased risk
+				limit = { has_country_flag = investment_gambler_raise }
+
+				custom_effect_tooltip = investment_gambling_venture_timeout_raise
+			}
+			else = {
+	    		custom_effect_tooltip = investment_gambling_venture_timeout
+    		}
 
 	    	hidden_effect = {
 		    	# prevent stacking bonuses due to short months
@@ -34,16 +42,41 @@ advisor_decisions_category = {
 				# refresh bonus for another 120 days if advisor is still employed
 				if = {
 					limit = { has_idea_with_trait = investment_gambler }
-					set_variable_to_random = {
-					    var = THIS.investment_gambler_factor
-					    min = -0.20
-					    max = 0.10
-					    integer = no
+
+					if = {
+						# Gambler was given a raise -> increased risk
+						limit = { has_country_flag = investment_gambler_raise }
+
+						clr_country_flag = investment_gambler_raise
+						set_variable_to_random = {
+						    var = THIS.investment_gambler_factor
+						    min = -0.25
+						    max = 0.15
+						    integer = no
+						}
+					}
+					else = {
+						set_variable_to_random = {
+						    var = THIS.investment_gambler_factor
+						    min = -0.20
+						    max = 0.10
+						    integer = no
+						}
 					}
 
 					add_dynamic_modifier = {
 					    modifier = investment_gambler_modifier
 					    days = 120
+					}
+
+					# Trigger flavour events if things went particularly well/badly
+					if = {
+						limit = { check_variable = { THIS.investment_gambler_factor < -0.17 } }
+						country_event = lotr_gambler.1
+					}
+					else_if = {
+						limit = { check_variable = { THIS.investment_gambler_factor > 0.08 } }
+						country_event = lotr_gambler.2
 					}
 				}
 			}

@@ -3,6 +3,7 @@
 ###########################
 
 add_namespace = lotr_generic
+add_namespace = lotr_gambler # investment gambler advisor
 
 
 # Claim state with chance of working out a deal
@@ -217,5 +218,76 @@ country_event = {
 		    relation = non_aggression_pact
 		    active = yes
 		}
+	}
+}
+
+# Investment gambler good outcome
+country_event = {
+	id = lotr_gambler.1
+	title = lotr_gambler.1.t
+	desc = lotr_gambler.1.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	option = { # Okay
+		name = lotr_gambler.1.a
+		ai_chance = { base = 3 }
+	}
+
+	option = { # Give him a raise
+		name = lotr_gambler.1.b
+		ai_chance = { base = 1 }
+
+		add_timed_idea = {
+		    idea = minor_expense
+		    days = 60
+		}
+
+		set_country_flag = investment_gambler_raise
+		custom_effect_tooltip = investment_gambler_raise_effect_tooltip
+	}
+}
+
+# Investment gambler bad outcome
+country_event = {
+	id = lotr_gambler.2
+	title = lotr_gambler.2.t
+	desc = lotr_gambler.2.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	option = { # Okay
+		name = lotr_gambler.2.a
+		ai_chance = { base = 10 }
+
+
+	}
+
+	option = { # Attempt to mitigate the situation
+		name = lotr_gambler.2.b
+		ai_chance = { base = 1 }
+
+		add_political_power = -150
+
+		random_list = {
+		    15 = {
+		        subtract_from_variable = {
+				    var = THIS.investment_gambler_factor
+				    value = -0.02
+				    tooltip = lotr_gambler.2.b.tooltip
+				}
+		    }
+		    10 = {
+		    }
+		}
+	}
+
+	option = { # Off with his head!
+		name = lotr_gambler.2.c
+		ai_chance = { base = 1 }
+
+		remove_ideas_with_trait = investment_gambler
 	}
 }
