@@ -1194,6 +1194,14 @@ focus = {
 				set_global_flag = mirkwood_spiders_free
 				add_ideas = generic_revolutionary
 				add_state_core = 82
+
+				every_state = {
+			 		limit = {
+			 			is_core_of = MIR
+			 			NOT = { state = 81 } # Thranduils halls are off-limits
+		 			}
+			 		add_core_of = SPI
+			 	}
 		}
  }
 
@@ -1240,7 +1248,7 @@ focus = {
 		icon = GFX_arachnid
 		ai_will_do = { factor = 8 }
 		available = { revolutionary > 0.6 }
-		available = { NOT = { has_global_flag = mirkwood_spider_attack } }
+		available = { NOT = { has_global_flag = mirkwood_spider_attack } NOT = { has_war_with = SPI } }
  		x =7
  		y =10
  		mutually_exclusive = { }
@@ -1248,52 +1256,79 @@ focus = {
  		cost = 10
   	available_if_capitulated = yes
 		completion_reward = {
-			set_cosmetic_tag = ARA
-			create_country_leader = {
-				name = "Shelob"
-				picture = "Portrait_Mirkwood_Shelob.dds"
-				expire = "1980.1.1"
-				ideology = devouring_swarm
-				traits = { }
+			# give up our cores
+			every_state = {
+		 		limit = {
+		 			is_core_of = SPI
+	 			}
+		 		remove_core_of = MIR
+		 	}
+
+			# release SPI and give up cores on them
+			release = SPI
+
+			# set politics
+			SPI = {
+				set_politics = { ruling_party = revolutionary elections_allowed = no }
+				set_popularities = { revolutionary = 100 }
 			}
+
+			# Give SPI some of our troops and tech
+			SPI = {
+				inherit_technology = MIR
+				add_political_power = 800  # catch-up bonus
+
+				# improve relations
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = large_increase
+				}
+			}
+
+			# allow choosing which side to play (keep elves, keep elves + puppet SPI, play SPI)
+			countr
+			country_event = { id = mirkwood.13 }
+
 		}
  }
 
  #Focus for Children of Ungoliant
-		focus = {
+	focus = {
 		id = childrenofungoliant
 		icon = GFX_dealwiththespiders
 		ai_will_do = { factor = 5 }
-		available = { NOT = { has_global_flag = mirkwood_spider_attack } }
+		available = { NOT = { has_global_flag = mirkwood_spider_attack } NOT = { has_war_with = SPI } }
  		x =6
  		y =11
  		mutually_exclusive = { }
  		prerequisite = { focus = arachnidanarchy}
  		cost = 10
-  	available_if_capitulated = yes
+  		available_if_capitulated = yes
 		completion_reward = {
-			add_ideas = MIR_children_of_ungoliant
+			SPI = { add_ideas = MIR_children_of_ungoliant }
 		}
  }
 
  #Focus for Giant Spiderwebs
-		focus = {
+	focus = {
 		id = giantspiderwebs
 		icon = GFX_dealwiththespiders
 		ai_will_do = { factor = 4 }
-		available = { NOT = { has_global_flag = mirkwood_spider_attack } }
+		available = { NOT = { has_global_flag = mirkwood_spider_attack } NOT = { has_war_with = SPI } }
  		x =8
  		y =11
  		mutually_exclusive = { }
  		prerequisite = { focus = arachnidanarchy}
  		cost = 10
-  	available_if_capitulated = yes
+  		available_if_capitulated = yes
 		completion_reward = {
-			random_owned_controlled_state = {
-					add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}
-			}
-			random_owned_controlled_state = {
-					add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}
+			SPI = {
+				random_owned_controlled_state = {
+						add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}
+				}
+				random_owned_controlled_state = {
+						add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}
+				}
 			}
 		}
  }#End of focuses
