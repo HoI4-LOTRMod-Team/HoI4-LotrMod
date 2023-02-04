@@ -231,7 +231,13 @@ default = no
 	 prerequisite = { focus = anorganicmagic}
 	 cost = 10
  	 available_if_capitulated = yes
-	 completion_reward = { add_tech_bonus = { name = land_doc_bonus bonus = 0.5 uses = 3 category = land_doctrine } }
+	 completion_reward = { 
+		add_doctrine_cost_reduction = {
+			cost_reduction = 0.5
+			uses = 2
+			category = land_doctrine
+		}
+	}
 }
 
 #Focus for Advanced Warfare2
@@ -585,7 +591,11 @@ default = no
 	 	 available_if_capitulated = yes
 		 completion_reward = {
 		 	31 = { add_building_construction = { type = air_base level = 2 instant_build = yes } }
-	 		add_tech_bonus = { name = air_doc_bonus bonus = 0.5 uses = 1 category = air_doctrine }
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 1
+				category = air_doctrine
+			}
 		}
 	}
 
@@ -600,7 +610,13 @@ default = no
 		 prerequisite = { focus = militaryresearchcommittee }
 		 cost = 10
 	 	 available_if_capitulated = yes
-		 completion_reward = { add_tech_bonus = { name = land_doc_bonus bonus = 0.5 uses = 3 category = land_doctrine } }
+		 completion_reward = { 
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 2
+				category = land_doctrine
+			}
+		  }
 	}
 
 	#Focus for Advanced Warfare
@@ -748,7 +764,7 @@ default = no
 #Focus for Subjugate Enedwaith
 	 focus = {
 	 id = subjugateenedwaith
-	 icon = GFX_goal_generic_major_war
+	 icon = GFX_goal_generic_more_territorial_claims
 	 ai_will_do = { factor = 3 }
 	 available = { has_government = belligerent }
 	 bypass = { has_war_with = ENE }
@@ -764,7 +780,7 @@ default = no
 #Focus for Persuade Enedwaith
 	 focus = {
 	 id = persuadeenedwaith
-	 icon = GFX_goal_generic_war_with_comintern
+	 icon = GFX_goal_support_fascism
 	 ai_will_do = { factor = 6 }
 	 available = { has_government = belligerent NOT = { has_war_with = ENE } }
 	 x =10
@@ -779,9 +795,19 @@ default = no
 #Focus for Strike a Deal with Enedwaith
 	 focus = {
 	 id = strikeadealwithenedwaith
-	 icon = GFX_goal_generic_war_with_comintern
+	 icon = GFX_goal_generic_forceful_treaty
 	 ai_will_do = { factor = 35 }
-	 available = { ENE = {belligerent > 0.30} has_government = belligerent NOT = { has_war_with = ENE } }
+
+	 available = { 
+		ENE = {
+			OR = {
+				belligerent > 0.70
+				has_government = belligerent
+			}
+		} 
+		NOT = { has_war_with = ENE } 
+	}
+
 	 x =10
 	 y =8
 	 mutually_exclusive = { }
@@ -789,9 +815,10 @@ default = no
 	 cost = 10
  	 available_if_capitulated = yes
 	 completion_reward = {
-	 		news_event = { hours = 24 id = news.364 }
-	 		ENE = { set_politics = { ruling_party = belligerent elections_allowed = no } }
-	 		puppet = ENE
+
+		ENE = {
+			country_event = { id = enedwaith.1 }
+		}
 	 }
 }
 
@@ -1119,10 +1146,11 @@ default = no
  		mutually_exclusive = { }
  		prerequisite = { focus = unitewithsauron}
  		cost = 10
-  	available_if_capitulated = yes
+  		available_if_capitulated = yes
 		completion_reward = {
 			MOR = { remove_from_faction = ISE }
 			MOR = { add_opinion_modifier = { target = ISE modifier = isr_treason } }
+			news_event = { id = news.387 }
 		}
  }
 
@@ -1157,10 +1185,9 @@ default = no
    	available_if_capitulated = yes
 		completion_reward = {
 			army_experience = 10
-			add_tech_bonus = {
-				name = land_doc_bonus
-				bonus = 0.5
-				uses = 2
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 1
 				category = land_doctrine
 			}
 		}
