@@ -15,11 +15,14 @@ def convert_image(img_file, out_path):
 	mask = image.Image(filename='mask.png')
 	img = image.Image(filename=img_file)
 
-	# resize image to small
-	img.resize(width=mask.width, height=mask.height, filter='lanczos', blur=1)
+	# resize target image
+	img.resize(width=mask.width, height=mask.height, filter='lanczos2', blur=1)
 
+	# Apply alpha mask
 	apply_mask(img, mask)
-	frame.composite(img)
+
+	# Add it ontop of the frame
+	frame.composite(img, top=7, left=3)
 
 	with frame as op:
 	    op.compression = 'dxt5'
