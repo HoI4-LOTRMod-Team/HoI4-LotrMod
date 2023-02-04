@@ -26,41 +26,68 @@ country_event = {
 		name = moria.1.a
 		ai_chance = {base = 10}
 
-		kill_ideology_leader = neutrality
+		kill_ideology_leader = unaligned
+
+		add_ideas = MOA_civil_war
 
 		set_global_flag = moria_civil_war
 		ERE = { country_event = { days = 2 id = moria.2 } }
-		add_ideas = MOA_civil_war
+
 		hidden_effect = {
-			set_capital = { state = 134 }
-			start_civil_war = {
-				ruling_party = democratic
-				ideology = communism
-				size = -1.0
-				capital = 73
-				states = { 73 }
-			}
-			random_other_country = {
-				limit = {
-					original_tag = MOA
-					has_government = communism
+			every_state = {
+		 		limit = { is_core_of = MOA }
+		 		add_core_of = MOC
+		 	}
+		 	transfer_units_fraction= {
+				target = MOC
+				size = 0.5
+				stockpile_ratio = 0.5
+				army_ratio = 0.5
+				navy_ratio = 0.5
+				air_ratio = 0.5
+				keep_unit_leaders_trigger = {
+					always = yes
 				}
-				load_oob = "MOA_Orcs" #in case we want special oob for communist mordor
-				load_focus_tree = moria
+			}
+			MOC = {
+				transfer_state = 73
+				inherit_technology = MOA
+
+				ERE = { end_puppet = MOA } # cheeky business: we temporarily stop the puppet relationship so the orcs dont declare war on ERE aswell
+				declare_war_on = { target = MOA type = civil_war }
+				add_civil_war_target = MOA
+				ERE = { puppet =  { target = MOA end_wars = no end_civil_wars = no } }
+
+				load_oob = "MOA_Orcs"
 				complete_national_focus = thefateofmoria
+				add_ideas = MOA_loose_balrog
 				add_ideas = service_by_requirement
 				add_ideas = MOA_civil_war
-				add_ideas = MOA_loose_balrog
-				set_cosmetic_tag = MOA
 			}
+			73 = {
+				teleport_armies = {
+				    limit = {
+				        tag = MOA
+				    }
+				    to_state_array = owned_controlled_states
+			    }
+			}
+			MOA = {
+				set_capital = { state = 134 }
+				load_oob = "MOA_Dwarves"
+
+				add_popularity = {
+					ideology = cooperative
+					popularity = 0.4
+				}
+
+				set_politics = {
+					ruling_party = cooperative
+				    elections_allowed = no
+				}
+			}
+
 			news_event = { hours = 12 id = news.344 }
-
-			load_oob = "MOA_Dwarves"
-
-			add_popularity = {
-				ideology = democratic
-				popularity = 0.4
-			}
 		}
 	}
 
@@ -68,49 +95,73 @@ country_event = {
 		name = moria.1.b
 		ai_chance = {base = 10}
 
-		kill_ideology_leader = neutrality
+		kill_ideology_leader = unaligned
+
+		add_ideas = MOA_civil_war
 
 		set_global_flag = moria_civil_war
 		ERE = { country_event = { days = 2 id = moria.2 } }
-		add_ideas = MOA_civil_war
+
 		hidden_effect = {
-			set_capital = { state = 134 }
-			start_civil_war = {
-				ruling_party = democratic
-				ideology = communism
-				size = -1.0
-				capital = 73
-				states = { 73 }
-			}
-			random_other_country = {
-				limit = {
-					original_tag = MOA
-					has_government = communism
+			every_state = {
+		 		limit = { is_core_of = MOA }
+		 		add_core_of = MOC
+		 	}
+		 	transfer_units_fraction= {
+				target = MOC
+				size = 0.5
+				stockpile_ratio = 0.5
+				army_ratio = 0.5
+				navy_ratio = 0.5
+				air_ratio = 0.5
+				keep_unit_leaders_trigger = {
+					always = yes
 				}
-				load_oob = "MOA_Orcs" #in case we want special oob for communist mordor
-				load_focus_tree = moria
+			}
+			MOC = {
+				transfer_state = 73
+				inherit_technology = MOA
+
+				ERE = { end_puppet = MOA } # cheeky business: we temporarily stop the puppet relationship so the orcs dont declare war on ERE aswell
+				declare_war_on = { target = MOA type = civil_war }
+				add_civil_war_target = MOA
+				ERE = { puppet =  { target = MOA end_wars = no end_civil_wars = no } }
+
+				load_oob = "MOA_Orcs"
 				complete_national_focus = thefateofmoria
+				add_ideas = MOA_loose_balrog
 				add_ideas = service_by_requirement
 				add_ideas = MOA_civil_war
-				add_ideas = MOA_loose_balrog
-				set_cosmetic_tag = MOA
 			}
-			news_event = { hours = 12 id = news.344 }
-
-			load_oob = "MOA_Dwarves"
-
-			add_popularity = {
-				ideology = democratic
-				popularity = 0.4
+			73 = {
+				teleport_armies = {
+				    limit = {
+				        tag = MOA
+				    }
+				    to_state_array = owned_controlled_states
+			    }
 			}
-			#Exact same as option above but switch tag to the communists
-			random_other_country = {
-				limit = {
-					original_tag = MOA
-					has_government = communism
+			MOA = {
+				set_capital = { state = 134 }
+				load_oob = "MOA_Dwarves"
+
+				add_popularity = {
+					ideology = cooperative
+					popularity = 0.4
 				}
+
+				set_politics = {
+					ruling_party = cooperative
+				    elections_allowed = no
+				}
+			}
+
+			MOC = {
+				#Exact same as option above but switch tag to the communists
 				change_tag_from = MOA
 			}
+
+			news_event = { hours = 12 id = news.344 }
 		}
 	}
 }
@@ -218,7 +269,7 @@ country_event = {
 		name = moria.5.a
 		add_stability = 0.05
 		MOR = {
-			add_to_faction = MOA
+			add_to_faction = ROOT
 		}
 	}
 

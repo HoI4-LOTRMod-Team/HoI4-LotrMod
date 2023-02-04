@@ -1,0 +1,1014 @@
+####################
+#POLITICAL ADVISORS#
+####################
+
+advisor_decisions_category = {
+	investment_gambling_venture = {
+		icon = mission_icon     # For GFX_decision_mission_icon
+
+        available = {
+			always = no
+        }
+
+		activation = {
+        	has_idea_with_trait = investment_gambler
+    	}
+
+	    #cancel_trigger = {
+	    #    always = no
+	    #}
+
+	    is_good = yes
+	    days_mission_timeout = 120
+	    selectable_mission = no
+	    days_remove = 1
+
+	    timeout_effect = {
+
+	    	if = {
+				# Gambler was given a raise -> increased risk
+				limit = { has_country_flag = investment_gambler_raise }
+
+				custom_effect_tooltip = investment_gambling_venture_timeout_raise
+			}
+			else = {
+	    		custom_effect_tooltip = investment_gambling_venture_timeout
+    		}
+
+	    	hidden_effect = {
+		    	# prevent stacking bonuses due to short months
+				remove_dynamic_modifier = { modifier = investment_gambler_modifier }
+
+				# refresh bonus for another 120 days if advisor is still employed
+				if = {
+					limit = { has_idea_with_trait = investment_gambler }
+
+					if = {
+						# Gambler was given a raise -> increased risk
+						limit = { has_country_flag = investment_gambler_raise }
+
+						clr_country_flag = investment_gambler_raise
+						set_variable_to_random = {
+						    var = THIS.investment_gambler_factor
+						    min = -0.25
+						    max = 0.15
+						    integer = no
+						}
+					}
+					else = {
+						set_variable_to_random = {
+						    var = THIS.investment_gambler_factor
+						    min = -0.20
+						    max = 0.11
+						    integer = no
+						}
+					}
+
+					add_dynamic_modifier = {
+					    modifier = investment_gambler_modifier
+					    days = 120
+					}
+
+					# Trigger flavour events if things went particularly well/badly
+					if = {
+						limit = { check_variable = { THIS.investment_gambler_factor < -0.15 } }
+						country_event = lotr_gambler.1
+					}
+					else_if = {
+						limit = { check_variable = { THIS.investment_gambler_factor > 0.07 } }
+						country_event = lotr_gambler.2
+					}
+				}
+			}
+	    }
+	}
+
+	longterm_planner_improvement = {
+		icon = mission_icon     # For GFX_decision_mission_icon
+
+        available = {
+			always = no
+        }
+
+		activation = {
+        	has_idea_with_trait = longterm_planner
+        	check_variable = { var = THIS.longterm_planner_factor  value = -0.12  compare = greater_than }
+    	}
+
+	    cancel_trigger = {
+	        NOT = { has_idea_with_trait = longterm_planner }
+	    }
+
+	    is_good = yes
+	    days_mission_timeout = 365
+	    selectable_mission = no
+	    days_remove = 1
+
+	    timeout_effect = {
+
+	    	custom_effect_tooltip = longterm_planner_improvement_timeout
+
+	    	hidden_effect = {
+				add_to_variable = {
+				    var = THIS.longterm_planner_factor
+				    value = -0.02
+				}
+
+				if = {
+					limit = { NOT = { has_dynamic_modifier = { modifier = longterm_planner_modifier } } }
+					add_dynamic_modifier = { modifier = longterm_planner_modifier }
+				}
+			}
+	    }
+	}
+
+	serial_indeptor_loans_start = {
+		icon = mission_icon
+
+		is_good = yes
+	    days_mission_timeout = 0
+	    selectable_mission = no
+	    days_remove = 1
+
+	    fire_only_once = yes # Can only loan money once!
+
+        activation = {
+			has_idea_with_trait = serial_indeptor
+        }
+
+        available = {
+			has_idea_with_trait = serial_indeptor
+        }
+
+        complete_effect = {
+        	# Advisor hired:
+        	hidden_effect = {
+	        	# This is the % of offmaps you get at the start as well as the % of consumers you need to pay back later
+	        	set_variable = {
+				    var = THIS.serial_indeptor_percentage
+				    value = 0.2
+				}
+
+				# This is the amount of offmap factories the loan gives. (And how many are removed when it expires)
+				set_variable = {
+				    var = THIS.serial_indeptor_factories
+				    value = 0.21 # rounding up a little bit :)
+				}
+	        	multiply_variable = {
+				    var = THIS.serial_indeptor_factories
+				    value = THIS.num_of_civilian_factories 
+				}
+				round_variable = THIS.serial_indeptor_factories
+				clamp_variable = { var = THIS.serial_indeptor_factories min = 1 max = 10 }
+
+				# Add offsite factories equal to the amount
+	        	add_offsite_building = { type = industrial_complex level = THIS.serial_indeptor_factories }
+
+	        	# Begin countdown for repayment
+	        	activate_mission = serial_indeptor_loans
+        	}
+        }
+	}
+
+	serial_indeptor_loans = {
+		icon = mission_icon
+
+		is_good = yes
+	    days_mission_timeout = 712
+	    selectable_mission = no
+	    days_remove = 1
+
+	    fire_only_once = yes # Can only loan money once!
+
+	    available = {
+	    	always = no
+	    }
+
+	    allowed = {
+	    	always = no
+	    }
+
+	    timeout_effect = {
+	    	# Time for repayment
+
+	    	custom_effect_tooltip = serial_indeptor_timeout
+
+	    	hidden_effect = {
+	    		# Remove those factories granted earlier
+	    		set_temp_variable = { temp_pay = THIS.serial_indeptor_factories }
+	    		multiply_temp_variable = { temp_pay = -1 }
+	    		add_offsite_building = { type = industrial_complex level = temp_pay }
+
+	    		# add repayment consumer goods
+	    		add_dynamic_modifier = {
+	    			modifier = serial_indebtor_repayment
+	    			days = 712
+    			}
+			}
+	    }
+	}
+
+	serial_indeptor_extra_loan1 = {
+		icon = mission_icon
+
+	    fire_only_once = yes # Can only loan money once!
+	    cost = 50
+
+	    visible = {
+	    	NOT = { has_dynamic_modifier = { modifier = serial_indebtor_repayment } }
+	    	has_idea_with_trait = serial_indeptor
+	    }
+	    available = {
+	    	NOT = { has_dynamic_modifier = { modifier = serial_indebtor_repayment } }
+	    	has_idea_with_trait = serial_indeptor
+	    }
+
+	    ai_will_do = {
+		    base = 0
+		    modifier = {
+		        add = 1
+		        surrender_progress > 0.5
+		    }
+		}
+
+	    complete_effect = {
+	    	# add bonus factories
+	    	set_temp_variable = { temp_bonus_factories = 0.06 } # rounding up a little :)
+	    	multiply_variable = {
+			    var = temp_bonus_factories
+			    value = THIS.num_of_civilian_factories 
+			}
+			round_variable = temp_bonus_factories
+			clamp_temp_variable = { var = temp_bonus_factories min = 1 max = 10 }
+
+			add_offsite_building = { type = industrial_complex level = temp_bonus_factories }
+
+			add_to_variable = { THIS.serial_indeptor_factories = temp_bonus_factories }
+
+			# Increase repayment
+	    	add_to_variable = { THIS.serial_indeptor_percentage = 0.05 }
+			custom_effect_tooltip = serial_indeptor_extra_loan_effect
+	    }
+	}
+
+	serial_indeptor_extra_loan2 = {
+		icon = mission_icon
+
+	    fire_only_once = yes # Can only loan money once!
+	    cost = 50
+
+	    visible = {
+	    	NOT = { has_dynamic_modifier = { modifier = serial_indebtor_repayment } }
+	    	has_idea_with_trait = serial_indeptor
+	    }
+	    available = {
+	    	NOT = { has_dynamic_modifier = { modifier = serial_indebtor_repayment } }
+	    	has_idea_with_trait = serial_indeptor
+	    }
+
+	    ai_will_do = {
+		    base = 0
+		    modifier = {
+		        add = 1
+		        surrender_progress > 0.5
+		    }
+		}
+
+	    complete_effect = {
+	    	# add bonus factories
+	    	set_temp_variable = { temp_bonus_factories = 0.06 } # rounding up a little :)
+	    	multiply_variable = {
+			    var = temp_bonus_factories
+			    value = THIS.num_of_civilian_factories 
+			}
+			round_variable = temp_bonus_factories
+			clamp_temp_variable = { var = temp_bonus_factories min = 1 max = 10 }
+
+			add_offsite_building = { type = industrial_complex level = temp_bonus_factories }
+
+			add_to_variable = { THIS.serial_indeptor_factories = temp_bonus_factories }
+
+			# Increase repayment
+	    	add_to_variable = { THIS.serial_indeptor_percentage = 0.05 }
+			custom_effect_tooltip = serial_indeptor_extra_loan_effect
+	    }
+	}
+
+	backalley_dealer_sell_infantry_equipment = {
+		icon = mission_icon
+
+	    selectable_mission = yes
+	    days_remove = 356
+
+	    visible = {
+	    	has_idea_with_trait = backalley_dealer
+	    }
+	    available = {
+	    	has_idea_with_trait = backalley_dealer
+	    	has_equipment = { infantry_equipment > 4999 }
+	    }
+
+	    ai_will_do = {
+		    base = 0
+		    modifier = {
+		        add = 5
+		        has_equipment = { infantry_equipment > 20000 }
+		    }
+		}
+
+	    complete_effect = {
+	    	add_offsite_building = { type = industrial_complex level = 2 }
+	    	add_equipment_to_stockpile = {
+		        type = infantry_equipment
+		        amount = -5000
+		    }
+	    }
+	}
+
+	backalley_dealer_sell_support_equipment = {
+		icon = mission_icon
+
+	    selectable_mission = yes
+	    days_remove = 356
+
+	    visible = {
+	    	has_idea_with_trait = backalley_dealer
+	    }
+	    available = {
+	    	has_idea_with_trait = backalley_dealer
+	    	has_equipment = { support_equipment > 999 }
+	    }
+
+	    ai_will_do = {
+		    base = 0
+		    modifier = {
+		        add = 5
+		        has_equipment = { support_equipment > 4000 }
+		    }
+		}
+
+	    complete_effect = {
+	    	add_offsite_building = { type = industrial_complex level = 1 }
+	    	add_equipment_to_stockpile = {
+		        type = support_equipment
+		        amount = -1000
+		    }
+	    }
+	}
+
+	backalley_dealer_sell_archery_equipment = {
+		icon = mission_icon
+
+	    selectable_mission = yes
+	    days_remove = 356
+
+	    visible = {
+	    	has_idea_with_trait = backalley_dealer
+	    }
+	    available = {
+	    	has_idea_with_trait = backalley_dealer
+	    	has_equipment = { artillery_equipment > 999 }
+	    }
+
+	    ai_will_do = {
+		    base = 0
+		    modifier = {
+		        add = 5
+		        has_equipment = { artillery_equipment > 4000 }
+		    }
+		}
+
+	    complete_effect = {
+	    	add_offsite_building = { type = industrial_complex level = 1 }
+	    	add_equipment_to_stockpile = {
+		        type = artillery_equipment
+		        amount = -1000
+		    }
+	    }
+	}
+
+	ruthless_pillager_relocate_civs = {
+		icon = mission_icon
+
+		cost = 75
+		state_target = yes
+		target_array = controlled_states
+		is_good = yes
+	    selectable_mission = yes
+	    days_remove = 120
+
+	    target_root_trigger = {
+	        has_idea_with_trait = ruthless_pillager
+	    }
+
+	    target_trigger = {
+	        NOT = { FROM = { is_core_of = ROOT } }
+	        FROM = { industrial_complex > 0 }
+	    }
+
+	    available = {
+	    	has_idea_with_trait = ruthless_pillager
+	    	has_full_control_of_state = FROM
+	    	NOT = { FROM = { is_core_of = ROOT } }
+	    }
+
+	    cancel_trigger = {
+    		OR = {
+	    		ROOT = { NOT = { has_idea_with_trait = ruthless_pillager } }
+    			ROOT = { NOT = { has_full_control_of_state = FROM } }
+    			FROM = { industrial_complex < 1	}
+			}
+	    }
+
+	    ai_will_do = {
+		    base = 10
+		}
+
+        remove_effect = {
+        	set_temp_variable = { temp_icl = FROM.industrial_complex_level }
+        	clamp_temp_variable = { var = temp_icl max = 2 }
+        	FROM = {
+        		remove_building = {
+				    type = industrial_complex
+				    level = var:industrial_complex_level
+				}
+				add_resistance = 15
+        	}
+        	random_owned_controlled_state = {
+			    limit = {
+			        is_core_of = ROOT
+			    }
+			    add_extra_state_shared_building_slots = temp_icl
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = temp_icl
+				    instant_build = yes
+				}
+			}
+        }
+	}
+
+	demand_tribute = {
+		icon = mission_icon
+
+		cost = 75
+		target_array = subjects
+		is_good = yes
+	    selectable_mission = yes
+	    days_remove = 720
+
+	    ai_will_do = {
+		    base = 10
+		}
+
+	    target_root_trigger = {
+	        has_idea_with_trait = tribute_collector
+	    }
+
+	    available = {
+	    	has_idea_with_trait = tribute_collector
+	    }
+
+	    cancel_trigger = {
+	    	NOT = { has_idea_with_trait = tribute_collector }
+	    }
+
+	    cancel_effect = {
+            FROM = { remove_ideas = paying_tribute }
+        }
+
+        complete_effect = {
+      		FROM = { add_ideas = paying_tribute }
+	    }
+	    timeout_effect = {
+	        FROM = { remove_ideas = paying_tribute }
+	    }
+	}
+
+	pedantic_organizer_improvement = {
+		icon = mission_icon     # For GFX_decision_mission_icon
+
+        available = {
+			always = no
+        }
+
+		activation = {
+        	has_idea_with_trait = pedantic_organizer
+        	check_variable = { var = THIS.pedantic_organizer_factor  value = 0.12  compare = less_than }
+    	}
+
+	    cancel_trigger = {
+	        NOT = { has_idea_with_trait = pedantic_organizer }
+	    }
+
+	    is_good = yes
+	    days_mission_timeout = 365
+	    selectable_mission = no
+	    days_remove = 1
+
+	    timeout_effect = {
+
+	    	custom_effect_tooltip = pedantic_organizer_improvement_timeout
+
+	    	hidden_effect = {
+				add_to_variable = {
+				    var = THIS.pedantic_organizer_factor
+				    value = 0.02
+				}
+
+				if = {
+					limit = { NOT = { has_dynamic_modifier = { modifier = pedantic_organizer_modifier } } }
+					add_dynamic_modifier = { modifier = pedantic_organizer_modifier }
+				}
+			}
+	    }
+	}
+
+	negotiate_trade_deal = {
+		icon = mission_icon
+
+        available = {
+        	OR = {
+        		has_idea = protectionist_trade
+        		has_idea = cooperative_trade
+        	}
+			NOT = { has_war_with = FROM }
+        }
+
+        visible = {
+			OR = {
+        		has_idea = protectionist_trade
+        		has_idea = cooperative_trade
+        	}
+        }
+
+        cancel_trigger = {
+        	NOT = {
+        		OR = {
+	        		has_idea = protectionist_trade
+	        		has_idea = cooperative_trade
+	        	}
+        	}
+        }
+
+        ai_will_do = {
+		    base = 10
+		}
+
+	    cost = 100
+	    target_array = neighbors
+	    targets_dynamic = yes
+	    cancel_if_not_visible = yes
+	    days_remove = -1
+
+	    #targeted_modifier = {
+		#    tag = FROM
+		#    trade_cost_for_target_factor = -0.5
+		#}
+
+		complete_effect = {
+			FROM = {
+				add_relation_modifier = {
+					target = ROOT
+					modifier = negotiated_trade_modifier
+				}
+			}
+		}
+	}
+
+	ambitous_expansionist_send_demand = {
+		icon = mission_icon
+
+		target_root_trigger = {
+			has_idea_with_trait = ambitous_expansionist
+		}
+
+		target_trigger = {
+	        hidden_trigger = {
+				# Can't claim wastes or dagorlad
+				FROM = { NOT = { original_tag = NEP } }
+				FROM = { NOT = { original_tag = DAG } }
+				NOT = { is_subject = yes }
+				NOT = { has_war_with = FROM }
+				NOT = { is_ally_with = FROM }
+				NOT = { FROM = { is_major = yes } }
+			}
+	    }
+
+        available = {
+        	has_idea_with_trait = ambitous_expansionist
+        	FROM = {
+        		any_owned_state = {
+					any_neighbor_state = { is_owned_by = ROOT }
+				}
+        	}
+        }
+
+        cancel_trigger = {
+        	NOT = {
+        		has_idea_with_trait = ambitous_expansionist
+        	}
+        }
+
+	    cost = 150
+	    target_array = neighbors
+	    cancel_if_not_visible = yes
+	    is_good = yes
+	    fire_only_once = yes
+
+	    ai_will_do = {
+		    base = 1
+		    modifier = {
+		        add = 10
+		        strength_ratio = {
+				    tag = FROM
+				    ratio > 1
+				}
+		    }
+		    modifier = {
+		        factor = 0.5
+		        FROM = { is_in_faction = yes }
+		    }
+		}
+
+		complete_effect = {
+			custom_effect_tooltip = ambitous_expansionist_send_demand_tooltip
+			hidden_effect = {
+				FROM = {
+					random_owned_state = {
+						limit = {
+							is_owned_by = FROM
+							any_neighbor_state = { is_owned_by = ROOT }
+						}
+
+						save_event_target_as = target_claimed_state
+					}
+					country_event = { id = lotr_generic.1 days = 7 random_days = 7 }
+				}
+			}
+		}
+	}
+
+	sanction_imposer_embargo_country = {
+		icon = mission_icon
+
+        available = {
+        	has_opinion = { target = FROM value < -25 }
+        }
+
+        visible = {
+        	has_idea_with_trait = sanction_imposer
+			NOT = { has_war_with = ROOT }
+			has_opinion = { target = FROM value < 0 }
+        }
+
+        cancel_trigger = {
+        	OR = {
+        		has_war_with = ROOT
+				NOT = { has_idea_with_trait = sanction_imposer }
+				has_opinion = { target = FROM value > 0 }
+        	}
+        }
+
+        cancel_effect = {
+        	break_embargo = FROM
+        }
+
+        ai_will_do = {
+		    base = 0
+		    modifier = {
+		    	add = 3
+		    	has_opinion = { target = FROM value < -50 }
+		    }
+		}
+
+	    cost = 100
+	    target_array = countries
+	    cancel_if_not_visible = yes
+	    days_remove = -1
+
+		complete_effect = {
+			send_embargo = FROM
+		}
+	}
+
+	reasoning_charmer_build_collaboration = {
+		icon = mission_icon
+
+		target_root_trigger = {
+			has_idea_with_trait = reasoning_charmer
+		}
+
+		target_trigger = {
+			has_war_with = FROM
+	    }
+
+        available = {
+        	always = yes
+        }
+
+        cancel_trigger = {
+        	OR = {
+        		NOT = { has_idea_with_trait = reasoning_charmer }
+        		NOT = { has_war_with = FROM }
+    		}
+        }
+
+	    cost = 150
+	    target_array = countries
+	    cancel_if_not_visible = yes
+	    is_good = yes
+	    fire_only_once = yes
+	    days_remove = 140
+
+	    ai_will_do = {
+		    base = 0
+		    modifier = {
+		        add = 2
+		        num_of_available_civilian_factories > 15
+		    }
+		    modifier = {
+		        add = 8
+		        num_of_available_civilian_factories > 30
+		    }
+		}
+
+		modifier = {
+			civilian_factory_use = 5
+		}
+
+		remove_effect = {
+			random_list = {
+			    5 = {
+			        
+			    }
+			    10 = {
+			        add_collaboration = { target = FROM value = 0.1 }
+			    }
+			    10 = {
+			        add_collaboration = { target = FROM value = 0.15 }
+			    }
+			    5 = {
+			        add_collaboration = { target = FROM value = 0.2 }
+			    }
+			}
+		}
+	}
+
+	sow_of_distrust = {
+		icon = mission_icon
+
+		cost = 150
+		target_array = neighbors
+		is_good = yes
+	    selectable_mission = yes
+	    days_remove = 356
+
+	    target_root_trigger = {
+	        has_idea_with_trait = sower_of_distrust
+	    }
+
+	    available = {
+	    	FROM = {
+	    		any_neighbor_country = {
+	    			NOT = { tag = ROOT }
+	    			NOT = { has_war_with = FROM }
+	    		}
+	    	}
+	    }
+
+	    ai_will_do = {
+		    base = 1
+		}
+
+	    cancel_trigger = {
+	    	NOT = { has_idea_with_trait = sower_of_distrust }
+	    }
+
+	    remove_effect = {
+	    	FROM = {
+		        random_neighbor_country = {
+		        	limit = {
+		        		NOT = { tag = ROOT }
+		        		NOT = { has_war_with = FROM }
+	        		}
+		        	random_list = {
+					    10 = {
+					        add_opinion_modifier = { target = FROM modifier = small_decrease }
+					    }
+					    8 = {
+					        add_opinion_modifier = { target = FROM modifier = medium_decrease }
+					    }
+					    3 = {
+					        add_opinion_modifier = { target = FROM modifier = large_decrease }
+					    }
+					}
+		        }
+	        }
+	    }
+	}
+
+	valuable_luxury_crafter_start = {
+		# A bit weird: we can't run on_add for characters, instead we use this auto-triggered mission.
+
+		icon = mission_icon
+
+		is_good = yes
+	    days_mission_timeout = 0
+	    selectable_mission = no
+	    days_remove = 1
+
+	    fire_only_once = no
+
+        activation = {
+			has_idea_with_trait = valuable_luxury_crafter
+			NOT = { has_dynamic_modifier = { modifier = valuable_luxury_crafter_modifier } }
+        }
+
+        available = {
+			has_idea_with_trait = valuable_luxury_crafter
+			NOT = { has_dynamic_modifier = { modifier = valuable_luxury_crafter_modifier } }
+        }
+
+        complete_effect = {
+        	# Advisor hired:
+        	hidden_effect = {
+				lotr_advisors_update_vars_weekly = yes # manually update variables when hired
+		    	add_dynamic_modifier = { modifier = valuable_luxury_crafter_modifier }
+		    }
+        }
+	}
+
+	chaos_enjoyer_start = {
+		# A bit weird: we can't run on_add for characters, instead we use this auto-triggered mission.
+
+		icon = mission_icon
+
+		is_good = yes
+	    days_mission_timeout = 0
+	    selectable_mission = no
+	    days_remove = 1
+
+	    fire_only_once = no
+
+        activation = {
+			has_idea_with_trait = chaos_enjoyer
+			NOT = { has_dynamic_modifier = { modifier = chaos_enjoyer_modifier } }
+        }
+
+        available = {
+			has_idea_with_trait = chaos_enjoyer
+			NOT = { has_dynamic_modifier = { modifier = chaos_enjoyer_modifier } }
+        }
+
+        complete_effect = {
+        	# Advisor hired:
+        	hidden_effect = {
+				lotr_advisors_update_vars_weekly = yes # manually update variables when hired
+		    	add_dynamic_modifier = { modifier = chaos_enjoyer_modifier }
+		    }
+        }
+	}
+
+	food_exporter_sell_food = {
+		icon = mission_icon
+
+	    selectable_mission = yes
+	    days_remove = 356
+
+	    visible = {
+	    	has_idea_with_trait = food_exporter
+	    }
+	    available = {
+	    	has_idea_with_trait = food_exporter
+	    	fuel_ratio > 0.95
+	    	has_fuel > 30000
+	    }
+
+	    ai_will_do = {
+		    base = 5
+		    modifier = {
+		    	factor = 0.5
+		    	has_war = yes # Might need this food later...
+		    }
+		    modifier = {
+		    	add = 5
+		    	has_fuel > 100000
+		    }
+		}
+
+	    complete_effect = {
+	    	set_fuel = 0
+	    	random_owned_controlled_state = {
+			    limit = {
+			        is_core_of = ROOT
+			    }
+			    add_extra_state_shared_building_slots = 1
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+				}
+			}
+			if = {
+				limit = { check_variable = { max_fuel_k > 60 } } # if maximum stockpile is up to 60k, you get a bonus factory :)
+				random_owned_controlled_state = {
+				    limit = {
+				        is_core_of = ROOT
+				    }
+				    add_extra_state_shared_building_slots = 1
+				    add_building_construction = {
+					    type = industrial_complex
+					    level = 1
+					    instant_build = yes
+					}
+				}
+			}
+	    }
+	}
+
+	captain_of_the_ithilien_rangers_start = {
+		# A bit weird: we can't run on_add for characters, instead we use this auto-triggered mission.
+
+		icon = mission_icon
+
+		is_good = yes
+	    days_mission_timeout = 0
+	    selectable_mission = no
+	    days_remove = 1
+
+	    fire_only_once = no
+
+        activation = {
+			has_idea_with_trait = captain_of_the_ithilien_rangers
+			NOT = { has_dynamic_modifier = { modifier = captain_of_the_ithilien_rangers_modifier } }
+			has_country_leader = { character = GON_denethor ruling_only = yes }
+        }
+
+        available = {
+			has_idea_with_trait = captain_of_the_ithilien_rangers
+			NOT = { has_dynamic_modifier = { modifier = captain_of_the_ithilien_rangers_modifier } }
+			has_country_leader = { character = GON_denethor ruling_only = yes }
+        }
+
+        complete_effect = {
+        	# Advisor hired:
+        	hidden_effect = {
+		    	add_dynamic_modifier = { modifier = captain_of_the_ithilien_rangers_modifier }
+		    }
+        }
+	}
+
+	spark_of_genius_spark = {
+		icon = mission_icon     # For GFX_decision_mission_icon
+
+        available = {
+			always = no
+        }
+
+        allowed = {
+        	always = no # We trigger this mission in on_add of the spark of genius
+        }
+
+	    cancel_trigger = {
+	        NOT = { has_idea_with_trait = spark_of_genius }
+	    }
+
+	    is_good = yes
+	    days_mission_timeout = 365
+	    selectable_mission = no
+	    days_remove = 1
+
+	    timeout_effect = {
+
+	    	custom_effect_tooltip = spark_of_genius_timeout_tooltip
+
+	    	hidden_effect = {
+	    		# Give a tech bonus in a random category
+	    		random_list = {
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_infantry_weapons } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_infantry_archery } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_support_tech } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_cavalry_carriages } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_cavalry_archers } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_cavalry_light } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_cavalry_lancer } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_cavalry_heavy } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_machines_ballista } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_machines_siege_equipment } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_knowledge_alchemy } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_knowledge_scriptorium } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_knowledge_intrigue } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_labour_metalworking } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_labour_construction } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_labour_farming } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_sailing_longship } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_sailing_galley } }
+				    10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "Spark of Genius" category = lotr_sailing_sailingship } }
+				}
+
+				activate_mission = spark_of_genius_spark
+			}
+	    }
+	}
+}

@@ -1,79 +1,115 @@
-has_unsupported_economic_law = {
+has_unsupported_centralization_law = {
 	if = {
 		limit = {
-			has_idea = low_economic_mobilisation
+			has_idea = moderate_centralization
 		}
-		has_idea = low_economic_mobilisation
-		has_war_support < 0.15
+		has_idea = moderate_centralization
+		NOT = {
+			has_war_support > 0.15
+		}
 	}
 	else_if = {
 		limit = {
-			has_idea = partial_economic_mobilisation
+			has_idea = strong_centralization
+			NOT = { has_idea_with_trait = warden_of_the_keys }
 		}
-		has_idea = partial_economic_mobilisation
-		has_war_support < 0.25
+		has_idea = strong_centralization
+		NOT = {
+			has_war_support > 0.25
+			threat > 0.25
+		}
 	}
 	else_if = {
 		limit = {
-			has_idea = war_economy
+			has_idea = very_strong_centralization
 		}
-		has_idea = war_economy
-		has_war_support < 0.5
+		has_idea = very_strong_centralization
+		NOT = {
+			NOT = { has_government = revolutionary }
+			has_war_support > 0.5
+			threat > 0.5
+		}
 	}
 	else_if = {
 		limit = {
-			has_idea = tot_economic_mobilisation
+			has_idea = wartime_centralization
 		}
-		has_idea = tot_economic_mobilisation
-		has_war_support < 0.8
+		has_idea = wartime_centralization
+		NOT = {
+			has_war = yes
+			has_war_support > 0.8
+			NOT = { has_government = revolutionary }
+		}
+	}
+	else_if = {
+		limit = {
+			has_idea = absolute_centralization
+		}
+		has_idea = absolute_centralization
+		NOT = {
+			has_government = belligerent
+			threat > 0.25
+			has_war_support > 0.5
+		}
 	}
 	else = {
 		always = no
 	}
 }
+
 has_unsupported_manpower_law = {
 	if = {
 		limit = {
-			has_idea = limited_conscription
+			has_idea = limited_levy
 		}
-			has_idea = limited_conscription
-			has_war_support < 0.1
-			hidden_trigger = { NOT = { tag = TUR } }
+		has_idea = limited_levy
+		NOT = {
+			has_war_support > 0.2
+		}
+		NOT = { has_government = belligerent }
+		NOT = { has_government = revolutionary }
 	}
 	else_if = {
 		limit = {
-			has_idea = extensive_conscription
+			has_idea = extensive_levy
 		}
-			has_idea = extensive_conscription
-			has_war_support < 0.2
-			NOT = { has_government = communism }
-			NOT = { has_government = fascism }
+		has_idea = extensive_levy
+		NOT = {
+			has_war_support > 0.6
+		}
+		NOT = { has_government = belligerent }
+		NOT = { has_government = revolutionary }
 	}
 	else_if = {
 		limit = {
-			has_idea = service_by_requirement
+			has_idea = mass_levy
 		}
-			has_idea = service_by_requirement
-			has_war_support < 0.6
-			NOT = { has_government = communism }
-			NOT = { has_government = fascism }
+		has_idea = mass_levy
+		NOT = {
+			has_war_support > 0.7
+		}
+		NOT = { has_government = belligerent }
+		NOT = { has_government = revolutionary }
 	}
 	else_if = {
 		limit = {
-			has_idea = all_adults_serve
+			has_idea = horde
 		}
-		has_idea = all_adults_serve
+		has_idea = horde
+		NOT = { has_government = revolutionary }
 	}
 	else_if = {
 		limit = {
-			has_idea = scraping_the_barrel
+			has_idea = slave_soldiers
 		}
-		has_idea = scraping_the_barrel
+		has_idea = slave_soldiers
+		NOT = { has_government = belligerent }
 	}
 	else = {
 		always = no
 	}
 }
+
 has_excessive_army_size = { #not currently used due to AI concerns
 	OR = {
 		AND = {
@@ -81,7 +117,7 @@ has_excessive_army_size = { #not currently used due to AI concerns
 			has_army_manpower = { size = 250000 }
 			has_manpower < 1
 			NOT = {
-				has_government = communism
+				has_government = revolutionary
 			}
 		}
 		AND = {
@@ -89,7 +125,7 @@ has_excessive_army_size = { #not currently used due to AI concerns
 			has_army_manpower = { size = 500000 }
 			has_manpower < 1
 			NOT = {
-				has_government = communism
+				has_government = revolutionary
 			}
 		}
 		AND = {
@@ -97,7 +133,7 @@ has_excessive_army_size = { #not currently used due to AI concerns
 			has_army_manpower = { size = 750000 }
 			has_manpower < 1
 			NOT = {
-				has_government = communism
+				has_government = revolutionary
 			}
 		}
 		AND = {
@@ -105,18 +141,18 @@ has_excessive_army_size = { #not currently used due to AI concerns
 			has_army_manpower = { size = 1000000 }
 			has_manpower < 1
 			NOT = {
-				has_government = communism
+				has_government = revolutionary
 			}
 		}
 		AND = {
 			has_army_manpower = { size = 2500000 }
 			has_manpower < 1
-			has_government = democratic
+			has_government = cooperative
 		}
 		AND = {
 			has_army_manpower = { size = 3000000 }
 			has_manpower < 1
-			has_government = fascism
+			has_government = belligerent
 		}
 	}
 }
