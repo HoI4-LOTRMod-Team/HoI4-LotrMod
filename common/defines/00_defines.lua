@@ -3111,7 +3111,7 @@ NFocus = {
 NOperatives = {
 	AGENCY_CREATION_DAYS = 30,						-- Number of days needed to create an intelligence agency
 	AGENCY_UPGRADE_DAYS = 30,						-- Number of days needed to upgrade an intelligence agency
-	AGENCY_CREATION_FACTORIES = 5,					-- Number of factories used to create an intelligence agency
+	AGENCY_CREATION_FACTORIES = 3,					-- Number of factories used to create an intelligence agency
 	AGENCY_AI_BASE_NUM_FACTORIES = 25.0,				-- Used by AI to pace the upgrades. Formula : if( AGENCY_AI_BASE_NUM_FACTORIES <= num_civ_factories - num_upgrades * AGENCY_AI_PER_UPGRADE_FACTORIES )
 	AGENCY_AI_PER_UPGRADE_FACTORIES = 6.0,			-- Used by AI to pace the upgrades. Formula : if( AGENCY_AI_BASE_NUM_FACTORIES <= num_civ_factories - num_upgrades * AGENCY_AI_PER_UPGRADE_FACTORIES )
 	AGENCY_UPGRADE_PER_OPERATIVE_SLOT = 5,			-- Number of upgrade needed to unlock an additional operative slot
