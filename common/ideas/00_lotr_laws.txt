@@ -1,0 +1,1284 @@
+ideas = {
+
+	taxation_law = {
+		law = yes
+
+		no_taxes = {
+
+			picture = law_no_taxes
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				consumer_goods_factor = 0.5
+				political_power_gain = 0.25
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			cancel_if_invalid = no
+
+			level = 1
+		}
+
+		low_taxes = {
+
+			picture = law_low_taxes
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				consumer_goods_factor = 0.35
+				# political_power_gain = 0.0
+			}
+
+			ai_will_do = {
+   				factor = 5
+
+   				modifier = {
+					factor = 30
+					has_political_power > 150
+				}
+
+				modifier = {
+					factor = 0
+					NOT = { has_idea = no_taxes }
+				}
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			cancel_if_invalid = no
+			default = yes
+			level = 2
+		}
+
+		medium_taxes = {
+
+			picture = law_medium_taxes
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				consumer_goods_factor = 0.25
+				political_power_gain = -0.2
+			}
+
+			ai_will_do = {
+   				factor = 5
+
+   				modifier = {
+					factor = 30
+					has_political_power > 150
+				}
+
+				modifier = {
+					factor = 0
+					political_power_daily < 0.6
+				}
+
+				modifier = {
+					factor = 0
+					NOT = { has_idea = low_taxes }
+				}
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			cancel_if_invalid = no
+			level = 3
+		}
+
+		high_taxes = {
+
+			picture = law_high_taxes
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				consumer_goods_factor = 0.15
+				political_power_gain = -0.35
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 5
+
+   				modifier = {
+					factor = 30
+					has_political_power > 150
+				}
+
+				modifier = {
+					factor = 0.2
+					political_power_daily < 0.8
+				}
+
+				modifier = {
+					factor = 0
+					political_power_daily < 0.6
+				}
+
+				modifier = {
+					factor = 0
+					NOT = { has_idea = medium_taxes }
+				}
+			}
+
+			cancel_if_invalid = no
+			level = 4
+		}
+	}
+
+	trade_law = {
+		law = yes
+
+		closed_economy = {
+
+			picture = law_closed_economy
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				min_export = 0.0
+				political_power_gain = -0.35
+			}
+
+			ai_will_do = {
+   				factor = 1
+
+   				modifier = {
+					factor = 0
+
+					is_major = no
+					is_in_faction = yes
+					has_war = yes
+				}
+
+				# minors not at war should want to get the bonuses from free trade
+				modifier = {
+					factor = 0
+
+					is_major = no
+					has_war = no
+				}
+
+				modifier = {
+					factor = 0
+
+					# don't take if we have a reasonable sized ally
+					# since they will require our trades
+					has_large_ally_not_pick_closed_economy = yes
+				}
+   			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			cancel_if_invalid = no
+			level = 4
+		}
+
+		limited_exports = {
+
+			picture = law_limited_exports
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				min_export = 0.25
+				political_power_gain = -0.2
+				civilian_intel_to_others = 10.0
+				navy_intel_to_others = 5
+			}
+
+			ai_will_do = {
+   				factor = 1
+
+   				modifier = {
+					factor = 5
+					political_power_daily < 0.6
+					has_idea = closed_economy
+				}
+
+				modifier = { # protectionist trade is a better version of this
+					factor = 0
+					has_government = unaligned
+				}
+   			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			cancel_if_invalid = no
+			level = 3
+		}
+
+		export_focus = {
+
+			picture = law_export_focus
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				min_export = 0.6
+				political_power_gain = 0.0
+				civilian_intel_to_others = 20.0
+				navy_intel_to_others = 10.0
+			}
+
+			ai_will_do = {
+   				factor = 1
+
+   				modifier = {
+					factor = 5
+					political_power_daily < 0.6
+					OR = {
+						has_idea = limited_exports
+						has_idea = closed_economy
+					}
+				}
+   			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			cancel_if_invalid = no
+			default = yes
+			level = 2
+		}
+
+		free_trade = {
+
+			picture = law_free_trade
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				min_export = 0.8
+				political_power_gain = 0.25
+				civilian_intel_to_others = 40.0
+				navy_intel_to_others = 20.0
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 1
+
+				modifier = {
+					factor = 5
+					political_power_daily < 0.6
+				}
+
+				modifier = { # cooperative trade is a better version of this
+					factor = 0
+					has_government = cooperative
+				}
+   			}
+
+			cancel_if_invalid = no
+			level = 1
+		}
+
+		protectionist_trade = {
+
+			picture = law_protectionist_trade
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				has_government = unaligned
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				min_export = 0.25
+				political_power_gain = -0.25
+				civilian_intel_to_others = 10.0
+				navy_intel_to_others = 5
+			}
+
+			ai_will_do = {
+   				factor = 2
+
+   				modifier = {
+					factor = 5
+					political_power_daily < 0.6
+					has_idea = closed_economy
+				}
+   			}
+
+			on_add = {
+				custom_effect_tooltip = negotiated_trade_effect_tooltip
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			cancel_if_invalid = no
+		}
+
+		cooperative_trade = {
+
+			picture = law_cooperative_trade
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				has_government = cooperative
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				min_export = 0.8
+				political_power_gain = 0.25
+				civilian_intel_to_others = 40.0
+				navy_intel_to_others = 20.0
+			}
+
+			on_add = {
+				custom_effect_tooltip = negotiated_trade_effect_tooltip
+			}
+
+			ai_will_do = {
+   				factor = 2
+
+				modifier = {
+					factor = 5
+					political_power_daily < 0.6
+				}
+   			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			cancel_if_invalid = no
+		}
+	}
+
+	conscription_law = {
+		law = yes
+
+		no_standing_army = {
+
+			picture = law_no_standing_army
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				conscription = 0.004
+				political_power_gain = 0.25
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			cancel_if_invalid = no
+			level = 1
+		}
+
+		priviledged_service = {
+
+			picture = law_priviledged_service
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				conscription = 0.01
+				political_power_gain = 0.05
+				training_time_factor = -0.15
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 1
+
+   				modifier = {
+					factor = 60 # being disarmed is bad in a wargame yo
+					has_idea = no_standing_army
+				}
+			}
+
+			cancel_if_invalid = no
+			default = yes
+			level = 2
+		}
+
+		volunteer_service = {
+
+			picture = law_volunteer_service
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				has_war_support > 0.1
+			}
+
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				conscription = 0.015
+				political_power_gain = 0.0
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 5
+				modifier = {
+					# Ignore if high on manpower
+					factor = 0.5
+					manpower_per_military_factory > 5000
+				}
+				modifier = {
+					#Prio if low on manpower
+					factor = 20
+					manpower_per_military_factory < 1000
+				}
+				modifier = {
+					factor = 0
+					NOT = { has_idea = priviledged_service }
+				}
+			}
+
+			cancel_if_invalid = no
+			level = 3
+		}
+
+		limited_levy = {
+
+			picture = law_limited_levy
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				OR = {
+					has_government = belligerent
+					AND = {
+						has_war = yes
+						enemies_strength_ratio > 0.5
+					}
+				}
+				has_war_support > 0.2
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				conscription = 0.03
+				political_power_gain = -0.15
+				training_time_factor = 0.1
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 1
+
+				modifier = {
+					# Ignore if high on manpower
+					factor = 0.5
+					manpower_per_military_factory > 3000
+				}
+
+				modifier = {
+					#Prio if low on manpower
+					factor = 20
+					manpower_per_military_factory <  800
+				}
+
+				modifier = {
+					factor = 0
+					NOT = { has_idea = volunteer_service }
+				}
+
+			}
+
+			cancel_if_invalid = no
+			level = 4
+		}
+
+		extensive_levy = {
+
+			picture = law_extensive_levy
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				OR = {
+					has_government = belligerent
+					AND = {
+						has_war = yes
+						enemies_strength_ratio > 0.6
+					}
+				}
+				OR = {
+					has_war_support > 0.6
+					surrender_progress > 0
+				}
+			}
+
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				conscription = 0.06
+				political_power_gain = -0.3
+				industrial_capacity_factory = -0.1
+				industrial_capacity_dockyard = -0.1
+				production_speed_buildings_factor = -0.1
+				training_time_factor = 0.2
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 1
+				modifier = {
+					#Prio if low on manpower
+					factor = 20
+					manpower_per_military_factory <  700
+				}
+				modifier = {
+					#Lower chance if has decent amount
+					factor = 0.5
+					manpower_per_military_factory >  1000
+				}
+				modifier = {
+					#Block has plenty manpower
+					factor = 0
+					manpower_per_military_factory >  3000
+				}
+
+				modifier = {
+					factor = 0
+					NOT = { has_idea = limited_levy }
+				}
+
+			}
+
+			cancel_if_invalid = no
+			level = 5
+		}
+
+		mass_levy = {
+
+			picture = law_mass_levy
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				has_war = yes
+				OR = {
+					has_war_support > 0.7
+					surrender_progress > 0
+				}
+				enemies_strength_ratio > 0.75
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				conscription = 0.1
+				political_power_gain = -0.5
+				industrial_capacity_factory = -0.25
+				industrial_capacity_dockyard = -0.25
+				production_speed_buildings_factor = -0.25
+				training_time_factor = 0.3
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 1
+				modifier = {
+					#Prio if low on manpower
+					factor = 20
+					manpower_per_military_factory <  600
+				}
+				modifier = {
+					#Lower chance if has decent amount
+					factor = 0.5
+					manpower_per_military_factory >  1000
+				}
+				modifier = {
+					#Block has plenty manpower
+					factor = 0
+					manpower_per_military_factory >  2800
+				}
+
+				modifier = {
+					factor = 0
+					NOT = { has_idea = extensive_levy }
+				}
+			}
+
+			cancel_if_invalid = no
+			level = 6
+		}
+
+		# revolutionary / unchained / mutinous
+		horde = {
+
+			picture = law_horde
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				has_government = revolutionary
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				conscription = 0.20
+				industrial_capacity_factory = -0.5
+				industrial_capacity_dockyard = -0.5
+				production_speed_buildings_factor = -0.5
+				training_time_factor = -0.15
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 1
+				modifier = { # yolo
+					factor = 10
+					has_manpower < 10000
+				}
+				modifier = {
+					#Block has plenty manpower
+					factor = 0
+					manpower_per_military_factory >  2800
+				}
+			}
+
+			cancel_if_invalid = no
+		}
+	}
+
+	mercenary_law = {
+		law = yes
+
+		no_mercenaries = {
+
+			picture = law_no_mercenaries
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+
+			modifier = {
+				consumer_goods_factor = 0.0
+				conscription = 0.00
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 1
+				modifier = {
+					factor = 0
+					manpower_per_military_factory < 1000
+				}
+			}
+
+			cancel_if_invalid = no
+			level = 1
+		}
+
+		elite_mercenaries = {
+
+			picture = law_elite_mercenaries
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+
+			modifier = {
+				consumer_goods_factor = 0.05
+				conscription = 0.01
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 5
+				modifier = {
+					# Ignore if high on manpower
+					factor = 0.5
+					manpower_per_military_factory > 5000
+				}
+				modifier = {
+					#Prio if low on manpower
+					factor = 10
+					manpower_per_military_factory < 1000
+					num_of_available_civilian_factories > 20
+				}
+			}
+
+			cancel_if_invalid = no
+			default = yes
+			level = 2
+		}
+
+		limited_mercenaries = {
+
+			picture = law_limited_mercenaries
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+
+			modifier = {
+				consumer_goods_factor = 0.1
+				conscription = 0.04
+				army_org_factor = -0.05
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 4
+				modifier = {
+					# Ignore if high on manpower
+					factor = 0.5
+					manpower_per_military_factory > 5000
+				}
+				modifier = {
+					#Prio if low on manpower
+					factor = 8
+					manpower_per_military_factory < 1000
+					num_of_available_civilian_factories > 45
+				}
+			}
+
+			cancel_if_invalid = no
+			level = 3
+		}
+
+		extensive_mercenaries = {
+
+			picture = law_extensive_mercenaries
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+
+			modifier = {
+				consumer_goods_factor = 0.2
+				conscription = 0.08
+				army_org_factor = -0.1
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 3
+				modifier = {
+					# Ignore if high on manpower
+					factor = 0.5
+					manpower_per_military_factory > 5000
+				}
+				modifier = {
+					#Prio if low on manpower
+					factor = 5
+					manpower_per_military_factory < 1000
+					num_of_available_civilian_factories > 60
+				}
+			}
+
+			cancel_if_invalid = no
+			level = 4
+		}
+
+		# belligerent
+		slave_soldiers = {
+
+			picture = law_slave_soldiers
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+
+			modifier = {
+				non_core_manpower = 0.01
+				resistance_target = 0.1
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			available = {
+				has_government = belligerent
+			}
+
+			ai_will_do = {
+   				factor = 5
+				modifier = {
+					# Ignore if high on manpower
+					factor = 0.5
+					manpower_per_military_factory > 5000
+				}
+				modifier = {
+					#Prio if low on manpower
+					factor = 8
+					manpower_per_military_factory < 1000
+					num_of_available_civilian_factories > 45
+				}
+			}
+
+			cancel_if_invalid = no
+		}
+	}
+
+	# NOTE: This needs to be defined last or the law_cost_factors won't work!
+	centralization_law = {
+		law = yes
+
+		communal_decentralization = {
+
+			picture = law_communal_decentralization
+
+			#visible = {
+			#	has_government = revolutionary
+			#}
+			available = {
+				has_government = revolutionary
+			}
+			removal_cost = -1
+
+			modifier = {
+				political_power_gain = -0.25
+				consumer_goods_factor = -0.3
+				taxation_law_cost_factor = 0.15
+				trade_law_cost_factor = 0.15
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 10
+
+   				modifier = {
+					factor = 20
+
+					is_major = yes
+				}
+				modifier = { # no pp block
+					factor = 0
+					political_power_daily < 0.35
+				}
+   			}
+
+			cancel_if_invalid = yes
+		}
+
+		no_centralization = {
+
+			picture = law_no_centralization
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+
+			modifier = {
+				political_power_gain = -0.15
+				taxation_law_cost_factor = 0.1
+				trade_law_cost_factor = 0.1
+				conscription_law_cost_factor = 0.1
+				mercenary_law_cost_factor = 0.1
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			cancel_if_invalid = no
+			level = 1
+		}
+
+		weak_centralization = {
+
+			picture = law_weak_centralization
+
+			allowed = {
+				always = yes
+			}
+			removal_cost = -1
+
+			modifier = {
+				political_power_gain = 0.15
+				taxation_law_cost_factor = -0.15
+				trade_law_cost_factor = -0.15
+				conscription_law_cost_factor = -0.15
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 15
+
+   				modifier = {
+					factor = 20
+
+					is_major = yes
+				}
+				modifier = { # downgrade block
+					factor = 0
+					NOT = { has_idea = no_centralization }
+				}
+   			}
+
+			cancel_if_invalid = no
+			default = yes
+			level = 2
+		}
+
+		moderate_centralization = {
+
+			picture = law_moderate_centralization
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				has_war_support > 0.25
+			}
+			removal_cost = -1
+
+			modifier = {
+				political_power_gain = 0.3
+				taxation_law_cost_factor = -0.3
+				trade_law_cost_factor = -0.3
+				conscription_law_cost_factor = -0.3
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 15
+
+   				modifier = {
+					factor = 20
+
+					is_major = yes
+				}
+				modifier = { # downgrade block
+					factor = 0
+					NOT = { has_idea = weak_centralization }
+				}
+   			}
+
+			cancel_if_invalid = no
+			level = 3
+		}
+
+		strong_centralization = {
+
+			picture = law_strong_centralization
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				OR = {
+					hidden_trigger = {
+					    has_idea_with_trait = warden_of_the_keys
+					}
+					has_government = belligerent
+					AND = {
+						has_war_support > 0.35
+						threat > 0.15
+					}
+					AND = {
+						has_war = yes
+						any_enemy_country = {
+							ic_ratio = {
+								tag = ROOT
+								ratio > 0.4
+							}
+						}
+					}
+				}
+			}
+			removal_cost = -1
+
+			modifier = {
+				political_power_gain = 0.5
+				taxation_law_cost_factor = -0.4
+				trade_law_cost_factor = -0.4
+				conscription_law_cost_factor = -0.4
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 15
+
+   				modifier = {
+					factor = 20
+
+					is_major = yes
+				}
+				modifier = { # downgrade block
+					factor = 0
+					NOT = { has_idea = moderate_centralization }
+				}
+   			}
+
+			cancel_if_invalid = no
+			level = 4
+		}
+
+		very_strong_centralization = {
+
+			picture = law_very_strong_centralization
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				NOT = { has_government = revolutionary }
+				OR = {
+					has_government = belligerent
+					AND = {
+						has_war_support > 0.5
+						threat > 0.5
+					}
+					AND = {
+						has_war = yes
+						any_enemy_country = {
+							ic_ratio = {
+								tag = ROOT
+								ratio > 0.4
+							}
+						}
+					}
+				}
+			}
+			removal_cost = -1
+
+			modifier = {
+				political_power_gain = 0.75
+				taxation_law_cost_factor = -0.5
+				trade_law_cost_factor = -0.5
+				conscription_law_cost_factor = -0.5
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 15
+
+   				modifier = {
+					factor = 20
+
+					is_major = yes
+				}
+				modifier = { # downgrade block
+					factor = 0
+					NOT = { has_idea = strong_centralization }
+				}
+   			}
+
+			cancel_if_invalid = no
+			level = 5
+		}
+
+		wartime_centralization = {
+
+			picture = law_wartime_centralization
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				NOT = { has_government = revolutionary }
+				has_war = yes
+				has_war_support > 0.8
+				any_enemy_country = {
+					ic_ratio = {
+						tag = ROOT
+						ratio > 0.5
+					}
+				}
+			}
+			removal_cost = -1
+
+			modifier = {
+				political_power_gain = 1.0
+				taxation_law_cost_factor = -0.55
+				trade_law_cost_factor = -0.55
+				conscription_law_cost_factor = -0.55
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 15
+
+   				modifier = {
+					factor = 20
+
+					is_major = yes
+				}
+				modifier = { # downgrade block
+					factor = 0
+					NOT = { has_idea = very_strong_centralization }
+				}
+   			}
+
+			cancel_if_invalid = no
+			level = 6
+		}
+
+		absolute_centralization = {
+
+			picture = law_absolute_centralization
+
+			allowed = {
+				always = yes
+			}
+			available = {
+				has_government = belligerent
+				threat > 0.25
+				has_war_support > 0.5
+			}
+			removal_cost = -1
+
+			modifier = {
+				political_power_gain = 1.0
+				taxation_law_cost_factor = -0.75
+				trade_law_cost_factor = -0.75
+				conscription_law_cost_factor = -0.75
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 15
+
+   				modifier = {
+					factor = 20
+
+					is_major = yes
+				}
+   			}
+
+			cancel_if_invalid = no
+			level = 7
+		}
+	}
+
+}

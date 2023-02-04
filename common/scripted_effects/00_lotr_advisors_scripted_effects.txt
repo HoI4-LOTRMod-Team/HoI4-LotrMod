@@ -1,0 +1,129 @@
+
+# This is being called every week (and possibly when a new advisor is hired)
+# This is called for every country separately
+# We call it from common/on_actions/...
+
+lotr_advisors_update_vars_weekly = {
+
+	# Last-minute-improviser
+	if = {
+		limit = { has_idea_with_trait = last_minute_improviser }
+		set_variable = { ROOT.last_minute_improviser_bonus = ROOT.surrender_progress }
+		multiply_variable = { var = ROOT.last_minute_improviser_bonus value = 0.2 }	# This bonus is 0-20 based on surrender limit
+	}
+
+	# Keeper of Knowledge
+	if = {
+		limit = { has_idea_with_trait = keeper_of_knowledge }
+		set_variable = { ROOT.keeper_of_knowledge_bonus = ROOT.num_researched_technologies }
+		multiply_variable = { var = ROOT.keeper_of_knowledge_bonus value = 0.0015 }	# Grants 0.15% for each researched tech
+	}
+
+	# Woodworking Enthusiast
+	if = {
+		limit = { has_idea_with_trait = woodworking_enthusiast }
+		set_variable = { ROOT.woodworking_enthusiast_bonus = ROOT.resource@chromium }
+		multiply_variable = { var = ROOT.woodworking_enthusiast_bonus value = 0.18 } # Grants 0.18% for each surplus of wood/chromium
+		multiply_variable = { var = ROOT.woodworking_enthusiast_bonus value = 0.01 } # Giga-weirdness: When multiplying directly with 0.0018 it doesn't work.
+		clamp_variable = { var = ROOT.woodworking_enthusiast_bonus max = 0.25 }
+	}
+
+	# Rare Mineral Researcher
+	if = {
+		limit = { has_idea_with_trait = rare_mineral_researcher }
+		set_variable = { ROOT.rare_mineral_researcher_bonus = ROOT.resource@aluminium }
+		multiply_variable = { var = ROOT.rare_mineral_researcher_bonus value = 0.5 } # Grants 0.5% for each surplus of mithril
+		multiply_variable = { var = ROOT.rare_mineral_researcher_bonus value = 0.01 }
+		clamp_variable = { var = ROOT.rare_mineral_researcher_bonus max = 0.15 }
+	}
+
+	# Valuable Luxury Crafter
+	if = {
+		limit = { has_idea_with_trait = valuable_luxury_crafter }
+		set_variable = { ROOT.valuable_luxury_crafter_bonus = ROOT.resource@aluminium }
+		multiply_variable = { var = ROOT.valuable_luxury_crafter_bonus value = -0.5 } # Grants -0.5% consumies for each surplus of mithril
+		multiply_variable = { var = ROOT.valuable_luxury_crafter_bonus value = 0.01 }
+		clamp_variable = { var = ROOT.valuable_luxury_crafter_bonus min = -0.25 }
+	}
+
+	# Chaos Enjoyer
+	if = {
+		limit = { has_idea_with_trait = chaos_enjoyer }
+		set_variable = { ROOT.chaos_enjoyer_bonus = 1 }
+		subtract_from_variable = { ROOT.chaos_enjoyer_bonus = ROOT.stability }
+		multiply_variable = { var = ROOT.chaos_enjoyer_bonus value = 0.1 } # Grants up to 10% bonus based on how LOW the stability is
+	}
+
+	# Knowledge Collector
+	if = {
+		limit = { has_idea_with_trait = knowledge_collector }
+		set_variable = { ROOT.knowledge_collector_bonus = num_subjects }
+		multiply_variable = { var = ROOT.knowledge_collector_bonus value = 0.03 } # Grants up to 3% bonus for each subject
+		clamp_variable = { var = ROOT.knowledge_collector_bonus max = 0.21 }
+	}
+
+	# Cadaver Experimenter
+	if = {
+		limit = { has_idea_with_trait = cadaver_experimenter }
+		set_variable = { ROOT.cadaver_experimenter_bonus = casualties_k }
+		multiply_variable = { var = ROOT.cadaver_experimenter_bonus value = 0.01 }
+		multiply_variable = { var = ROOT.cadaver_experimenter_bonus value = 0.01 } # Grants 1% bonus for every 100k casualties
+		clamp_variable = { var = ROOT.cadaver_experimenter_bonus max = 0.20 }
+	}
+
+	# Construction Coordinator
+	if = {
+		limit = { has_idea_with_trait = construction_coordinator }
+		set_variable = { ROOT.construction_coordinator_bonus = 0 }
+		for_each_scope_loop = {
+		    array = ROOT.neighbors
+		    if = {
+		        limit = {
+		        	has_government = revolutionary
+		            exists = yes
+		            NOT = { has_war_with = ROOT }
+		        }
+		        add_to_variable = { ROOT.construction_coordinator_bonus = 0.1 }
+		    }
+		}
+		# Grants 10% bonus for each commie neighbour
+		clamp_variable = { var = ROOT.construction_coordinator_bonus max = 0.30 }
+	}
+
+	# Full-Stomach Learner (Hobbits)
+	if = {
+		limit = { has_idea_with_trait = full_stomach_learner }
+		set_variable = { ROOT.full_stomach_learner_bonus = fuel_ratio }
+		multiply_variable = { var = ROOT.full_stomach_learner_bonus value = 0.08 } # Gives 0-8% speed based on fuel stockpile
+	}
+
+	# Tender Dendrochronologist (Ents)
+	if = {
+		limit = { has_idea_with_trait = tender_dendrochronologist }
+		set_variable = { ROOT.tender_dendrochronologist_bonus = ROOT.resource@chromium }
+		multiply_variable = { var = ROOT.tender_dendrochronologist_bonus value = 0.18 } # Grants 0.18% for each surplus of wood/chromium
+		multiply_variable = { var = ROOT.tender_dendrochronologist_bonus value = 0.01 }
+		clamp_variable = { var = ROOT.tender_dendrochronologist_bonus max = 0.20 }
+	}
+
+	# Cobweb Constructor (Spiders)
+	if = {
+		limit = { has_idea_with_trait = cobweb_constructor }
+		set_variable = { ROOT.cobweb_constructor_bonus = ROOT.resource@tungsten }
+		multiply_variable = { var = ROOT.cobweb_constructor_bonus value = 0.2 } # Grants 0.2% for each surplus of string
+		multiply_variable = { var = ROOT.cobweb_constructor_bonus value = 0.01 }
+		clamp_variable = { var = ROOT.cobweb_constructor_bonus max = 0.3 }
+	}
+
+	# Peaceful Builder (Elves)
+	if = {
+		limit = { has_idea_with_trait = peaceful_builder }
+		# Grant 15% construction speed if word tension under 30%, otherwise 5%
+		set_variable = { ROOT.peaceful_builder_bonus = 0.05 }
+		if = {
+			limit = { threat < 0.3 }
+			set_variable = { ROOT.peaceful_builder_bonus = 0.15 }
+		}
+		
+	}
+}

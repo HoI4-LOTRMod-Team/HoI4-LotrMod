@@ -36,8 +36,8 @@ shared_focus = industrial_effort
 #Focus for Seek former Glory
 			focus = {
 			id = seekformerglory
-			icon = GFX_goal_support_fascism
-			relative_position_id = thefateofangmar
+			icon = GFX_goal_support_belligerent
+
 			ai_will_do = { factor = 5 }
 	 		x =2
 	 		y =1
@@ -45,7 +45,7 @@ shared_focus = industrial_effort
 	 		prerequisite = { focus = thefateofangmar}
 	 		cost = 10
 	  	available_if_capitulated = yes
-			completion_reward = { add_ideas = generic_fascism add_threat = 2 }
+			completion_reward = { add_ideas = generic_belligerent add_threat = 2 }
 	 }
 
 #Focus for Stay true to Gondor
@@ -60,7 +60,7 @@ shared_focus = industrial_effort
 	 		prerequisite = { focus = thefateofangmar}
 	 		cost = 10
 	  	available_if_capitulated = yes
-			completion_reward = { add_ideas = generic_democratic }
+			completion_reward = { add_ideas = generic_cooperative }
 	 }
 
 #Focus for Reconcile with Arnor
@@ -68,10 +68,10 @@ shared_focus = industrial_effort
 			id = reconcilewitharnor
 			icon = GFX_goal_generic_national_unity
 			ai_will_do = { factor = 8 }
-			available = { has_government = democratic }
-			relative_position_id = staytruetogondor
-	 		x =0
-	 		y =1
+			available = { has_government = cooperative }
+	 		x =16
+	 		y =2
+      
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = staytruetogondor}
 	 		cost = 10
@@ -88,10 +88,11 @@ shared_focus = industrial_effort
 			id = terrorizetheprovisionalgovernment
 			icon = GFX_goal_generic_territory_or_war
 			ai_will_do = { factor = 7 }
-			bypass = { OR = { has_government = fascism has_government = communism } }
-			relative_position_id = seekformerglory
-	 		x =0
-	 		y =1
+
+			bypass = { OR = { has_government = belligerent has_government = revolutionary } }
+	 		x =21
+	 		y =2
+
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = seekformerglory}
 	 		cost = 10
@@ -111,7 +112,7 @@ shared_focus = industrial_effort
 	 #Focus for Empower the Commoners
 			focus = {
 			id = empowerthecommoners
-			icon = GFX_goal_support_communism
+			icon = GFX_goal_support_revolutionary
 			ai_will_do = { factor = 4 }
 			relative_position_id = terrorizetheprovisionalgovernment
 	 		x =-1
@@ -128,10 +129,11 @@ shared_focus = industrial_effort
 			id = sanctionmordor
 			icon = GFX_goal_generic_trade
 			ai_will_do = { factor = 3 }
-			available = { has_government = democratic }
-			relative_position_id = reconcilewitharnor
-	 		x =0
-	 		y =1
+
+			available = { has_government = cooperative }
+	 		x =16
+	 		y =3
+
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = reconcilewitharnor}
 	 		cost = 10
@@ -157,7 +159,7 @@ shared_focus = industrial_effort
 	 		prerequisite = { focus = terrorizetheprovisionalgovernment}
 	 		cost = 10
 	  	available_if_capitulated = yes
-			completion_reward = { add_popularity = { ideology = fascism popularity = 0.1 } }
+			completion_reward = { add_popularity = { ideology = belligerent popularity = 0.1 } }
 	 }
 
 #Focus for Empower former Angmar Nobles
@@ -180,10 +182,11 @@ shared_focus = industrial_effort
 			id = denouncethewitchking
 			icon = GFX_focus_rom_handle_king
 			ai_will_do = { factor = 3 }
-			available = { has_government = democratic }
-			relative_position_id = sanctionmordor
-	 		x =0
-	 		y =1
+
+			available = { has_government = cooperative }
+	 		x =16
+	 		y =4
+
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = sanctionmordor}
 	 		cost = 10
@@ -195,17 +198,35 @@ shared_focus = industrial_effort
 			}
 	 }
 
+	# Join Forces with the orcs
+	focus = {
+			id = joinforceswithorcs
+			icon = GFX_buildanarmyworthyofmordor
+			ai_will_do = { factor = 7 }
+			available = { OR = { has_government = belligerent has_government = revolutionary } }
+	 		x =21
+	 		y =4
+	 		mutually_exclusive = { }
+	 		prerequisite = { focus = empowerthecommoners  focus = empowerformerangmarnobles}
+	 		cost = 10
+	  	available_if_capitulated = yes
+			completion_reward = {
+				lotr_switch_to_orcs = yes
+			}
+	}
+
 	 #Focus for Sever Ties with Gondor
 			focus = {
 			id = severtieswthgondor
 			icon = GFX_goal_tfv_sever_ties_with_uk
 			ai_will_do = { factor = 7 }
-			available = { OR = { has_government = fascism has_government = communism } }
-			relative_position_id = terrorizetheprovisionalgovernment
-	 		x =0
-	 		y =2
+
+			available = { OR = { has_government = belligerent has_government = revolutionary } }
+	 		x =21
+	 		y =5
+
 	 		mutually_exclusive = { }
-	 		prerequisite = { focus = empowerthecommoners  focus = empowerformerangmarnobles}
+	 		prerequisite = { focus = joinforceswithorcs }
 	 		cost = 10
 	  	available_if_capitulated = yes
 			completion_reward = {
@@ -225,11 +246,12 @@ shared_focus = industrial_effort
 			id = ANG_unitewithsauron
 			icon = GFX_unitewithsauron
 			ai_will_do = { factor = 5 }
-			available = { has_government = fascism MOR = { is_faction_leader = yes } }
+			available = { has_government = belligerent MOR = { is_faction_leader = yes } }
 			bypass = { is_in_faction_with = MOR }
-			relative_position_id = severtieswthgondor
-	 		x =-1
-	 		y =1
+
+	 		x =20
+	 		y =6
+
 	 		mutually_exclusive = { focus = ourownempire}
 	 		prerequisite = { focus = severtieswthgondor}
 	 		cost = 10
@@ -242,16 +264,17 @@ shared_focus = industrial_effort
 			id = ourownempire
 			icon = GFX_goal_generic_secret_weapon
 			ai_will_do = { factor = 4 }
-			relative_position_id = severtieswthgondor
-	 		x =1
-	 		y =1
+
+	 		x =22
+	 		y =6
+
 	 		mutually_exclusive = { focus = ANG_unitewithsauron}
 	 		prerequisite = { focus = severtieswthgondor}
 	 		cost = 10
 	  	available_if_capitulated = yes
 			completion_reward = {
 				if = {
-					limit = { has_government = fascism }
+					limit = { has_government = belligerent }
 					create_faction = "empire_of_angmar"
 					else = { create_faction = "union_of_angmar" }
 				}
@@ -263,25 +286,26 @@ shared_focus = industrial_effort
 			id = welcomebacktheoldmaster
 			icon = GFX_goal_tfv_strengthen_commonwealth_ties
 			ai_will_do = { factor = 8 }
-			available = { has_government = fascism }
-			relative_position_id = ANG_unitewithsauron
-	 		x =0
-	 		y =1
+
+			available = { has_government = belligerent }
+	 		x =20
+	 		y =7
+
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = ANG_unitewithsauron}
 	 		cost = 10
 	  		available_if_capitulated = yes
 			completion_reward = {
 				add_threat = 1
-				create_country_leader = {
-					name = "Witch King of Angmar"
-					desc = "POLITICS_KING_ZOG_DESC"
-					picture = "Portrait_Angmar_Witch.dds"
-					expire = "1980.1.1"
-					ideology = nazism
-					traits = { ringbearer }
+				add_country_leader_role = {
+				    character = ANG_Witch_king
+				    promote_leader = yes
+				    country_leader = {
+				        ideology = domineering
+				        expire = "1980.1.1"
+				        traits = { ringbearer }
+				    }
 				}
-				recruit_character = ANG_Witch_king
 				if = {
 					limit = {
 						MMO = {
@@ -315,9 +339,10 @@ shared_focus = industrial_effort
 			id = findanewleader
 			icon = GFX_focus_generic_home_defense
 			ai_will_do = { factor = 8 }
-			relative_position_id = ourownempire
-	 		x =0
-	 		y =1
+      
+	 		x =22
+	 		y =7
+
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = ourownempire}
 	 		cost = 10
@@ -329,7 +354,7 @@ shared_focus = industrial_effort
 					desc = "POLITICS_KING_ZOG_DESC"
 					picture = "Portrait_Angmar_Oulf.dds"
 					expire = "1980.1.1"
-					ideology = marxism
+					ideology = collectivist
 					traits = { }
 				}
 				create_country_leader = {
@@ -337,7 +362,7 @@ shared_focus = industrial_effort
 					desc = "POLITICS_KING_ZOG_DESC"
 					picture = "Portrait_Angmar_Danthild.dds"
 					expire = "1980.1.1"
-					ideology = nazism
+					ideology = domineering
 					traits = { }
 				}
 			}
@@ -348,9 +373,10 @@ shared_focus = industrial_effort
 			id = claimthenorth
 			icon = GFX_goal_generic_major_war
 			ai_will_do = { factor = 8 }
-			relative_position_id = severtieswthgondor
-	 		x =0
-	 		y =3
+
+	 		x =21
+	 		y =8
+
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = findanewleader  focus = welcomebacktheoldmaster}
 	 		cost = 10
