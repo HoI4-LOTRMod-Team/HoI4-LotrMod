@@ -5,8 +5,7 @@ tags={
 	"Events"
 	"Gameplay"
 }
-name="Lord of the Rings Mod WIP"
-
+name="Lord of the Rings Mod"
 replace_path="history/states"
 replace_path="history/countries"
 replace_path="history/general"
@@ -33,6 +32,7 @@ replace_path="common/ai_peace"
 replace_path="common/autonomous_states"
 replace_path="common/characters"
 replace_path="common/countries"
+replace_path="common/country_leader"
 replace_path="common/operations"
 replace_path="common/bop"
 replace_path="common/dynamic_modifiers"

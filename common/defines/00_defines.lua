@@ -2135,7 +2135,7 @@ NAI = {
 	PLAN_VALUE_TO_EXECUTE = -0.5,				-- AI will typically avoid carrying out a plan it below this value (0.0 is considered balanced).
 	DECLARE_WAR_NOT_NEIGHBOR_FACTOR = 0.25,		-- Multiplier applied before force factor if country is not neighbor with the one it is considering going to war
 	CALL_ALLY_BASE_DESIRE = 20,					-- exactly what it says
-	CALL_ALLY_DEMOCRATIC_DESIRE = 50,			-- Desire to call ally added for democratic AI
+	CALL_ALLY_DEMOCRATIC_DESIRE = 50,			-- Desire to call ally added for cooperative AI
 	CALL_ALLY_NEUTRAL_DESIRE = 25,				-- Desire to call ally added for neutral AI
 	CALL_ALLY_FASCIST_DESIRE = -10,				-- Desire to call ally added for fascist AI
 	CALL_ALLY_COMMUNIST_DESIRE = 75,			-- Desire to call ally added for communist AI
@@ -2156,7 +2156,7 @@ NAI = {
 	MIN_FRONT_SIZE_TO_CONSIDER_STANDARD_COHESION = 20,	-- How long should fronts be before we consider switching to standard cohesion (under this, standard cohesion fronts will switch back to relaxed)
 
 	JOIN_ALLY_BASE_DESIRE = 20,					-- exactly what it says
-	JOIN_ALLY_DEMOCRATIC_DESIRE = 50,			-- Desire to join ally added for democratic AI
+	JOIN_ALLY_DEMOCRATIC_DESIRE = 50,			-- Desire to join ally added for cooperative AI
 	JOIN_ALLY_NEUTRAL_DESIRE = 25,				-- Desire to join ally added for neutral AI
 	JOIN_ALLY_FASCIST_DESIRE = -10,				-- Desire to join ally added for fascist AI
 	JOIN_ALLY_COMMUNIST_DESIRE = 75,			-- Desire to join ally added for communist AI
@@ -2172,14 +2172,14 @@ NAI = {
 	DEFAULT_SUPPLY_TRAIN_NEED_FACTOR = 1.5,     -- AI multiplies current train usage by this to determine desired nr of wanted trains. Can be modified by wanted_supply_train min_wanted_supply_trains ai strats.
 
 	POLITICAL_IDEA_MIN_SCORE = 0.1,				-- Only replace or add an idea if score is above this score.
-	HIGH_COMMAND_ADDED_WEIGHT_FACTOR = 1.0,		-- Weight multiplier for high_command advisors over other chosen advisor or idea types
-	CHIEF_ADDED_WEIGHT_FACTOR = 12.5,			-- Weight multiplier for chief roles over other advisor or idea types
+	HIGH_COMMAND_ADDED_WEIGHT_FACTOR = 0.5,	-- Weight multiplier for high_command advisors over other chosen advisor or idea types
+	CHIEF_ADDED_WEIGHT_FACTOR = 1.0,			-- Weight multiplier for chief roles over other advisor or idea types
 
 	GARRISON_TEMPLATE_SCORE_IC_FACTOR = 1.0,		-- ai uses these defines while calculating garrison template score of a template.
 	GARRISON_TEMPLATE_SCORE_MANPOWER_FACTOR = 0.05,  -- formula is (template_ic * ic_factor + template_manpower * manpower_factor ) / template_supression (lower is better)
 
 	ADVISOR_SCORE_TRAIT_MODIFIER_FACTOR = 0.2,     -- When scoring advisors, factor the score contribution from the advisor's trait modifiers by this value
-	ADVISOR_SCORE_CHEAPER_IS_BETTER_FACTOR = 0.1,  -- When scoring advisors, this define scales how much the AI prefers cheaper advisors over more expensive ones. 0.0 means no effect, 0.15 means a cost difference of 100 PP modifies the score by 15 %.
+	ADVISOR_SCORE_CHEAPER_IS_BETTER_FACTOR = 0.5,  -- When scoring advisors, this define scales how much the AI prefers cheaper advisors over more expensive ones. 0.0 means no effect, 0.15 means a cost difference of 100 PP modifies the score by 15 %.
 	ADVISOR_SCORE_CHEAPER_IS_BETTER_MIN = 0.5,     -- Clamps the above scoring factor to at minimum this value
 
 	-- stuff related to how the AI evaluates/scores how useful modifiers are
@@ -2615,8 +2615,8 @@ NAI = {
 	MINES_PLANTING_DESIRE_PER_ENEMY_STATE = 0.1,		-- Scoring for how much do we want to plant naval mines with our air wings if the naval region is adjacent to the enemy state. Multiple adjacent states increases the score. Max sum of score is 1.0.
 	MINES_PLANTING_DESIRE_PER_NAVAL_THREAT = 250,		-- How much threat must be generated in the naval region, in order to get the maximum desire to plant naval mines in there.
 	NAVAL_MIN_EXCORT_PLANES = 0,						-- Min amount of planes requested to excort operations
-	DEMOCRATIC_AI_FACTION_KICKING_PLAYER_THREAT_DIFFERENCE = 6.0, -- World threat generation difference needed to kick a player from a democratic faction
-	BEFRIEND_FACTOR_FOR_KICKING_COUNTRIES = 7.5,		-- World threat difference addition per 100 befriend against a country, democratic leaders will forgive allies if they are befriending them
+	DEMOCRATIC_AI_FACTION_KICKING_PLAYER_THREAT_DIFFERENCE = 6.0, -- World threat generation difference needed to kick a player from a cooperative faction
+	BEFRIEND_FACTOR_FOR_KICKING_COUNTRIES = 7.5,		-- World threat difference addition per 100 befriend against a country, cooperative leaders will forgive allies if they are befriending them
 
 	LAND_DEFENSE_AIR_SUPERIORITY_IMPORTANCE = 1.0,		-- Strategic importance of air superiority ( amount of enemy planes in area )
 	LAND_DEFENSE_CIVIL_FACTORY_IMPORTANCE = 50,			-- Strategic importance of civil factories
@@ -2741,11 +2741,11 @@ NAI = {
 
 	DECISION_PRIORITY_RANDOMIZER = 0.1,					-- random factor that is used while picking decisions. ai is able to pick a lower priority decision earler than a higher one if it is within this threshold
 
-	DESIGN_COMPANY_SCORE_MULTIPLIER = 2.0,              -- score multiplier for hiring a design company
-	ARMY_CHIEF_SCORE_MULTIPLIER = 2.0,                  -- score multiplier for hiring an army chief
-	AIR_CHIEF_SCORE_MULTIPLIER = 1.5,                   -- score multiplier for hiring an air chief
+	DESIGN_COMPANY_SCORE_MULTIPLIER = 1.25,              -- score multiplier for hiring a design company
+	ARMY_CHIEF_SCORE_MULTIPLIER = 0.75,                  -- score multiplier for hiring an army chief
+	AIR_CHIEF_SCORE_MULTIPLIER = 1.0,                   -- score multiplier for hiring an air chief
 	NAVY_CHIEF_SCORE_MULTIPLIER = 1.0,                  -- score multiplier for hiring an navy chief
-	POLITICAL_ADVISOR_SCORE_MULTIPLIER = 1.0,           -- score multiplier for hiring political advisors
+	POLITICAL_ADVISOR_SCORE_MULTIPLIER = 1.25,           -- score multiplier for hiring political advisors
 	THEORIST_ACCEPTANCE_MULTIPLIER = 0.7,						-- scale the acceptance of hiring a theorist by this number times the amount of non-theorists we have, capped at one.
 	MIN_SCALED_IDEA_WEIGHT_TO_COMPARE_WITH_DECISIONS = 100,		-- idea scores are scaled between these two values while comparing them to decisions
 	MAX_SCALED_IDEA_WEIGHT_TO_COMPARE_WITH_DECISIONS = 200,		-- idea scores are scaled between these two values while comparing them to decisions
@@ -3116,7 +3116,7 @@ NFocus = {
 NOperatives = {
 	AGENCY_CREATION_DAYS = 30,						-- Number of days needed to create an intelligence agency
 	AGENCY_UPGRADE_DAYS = 30,						-- Number of days needed to upgrade an intelligence agency
-	AGENCY_CREATION_FACTORIES = 5,					-- Number of factories used to create an intelligence agency
+	AGENCY_CREATION_FACTORIES = 3,					-- Number of factories used to create an intelligence agency
 	AGENCY_AI_BASE_NUM_FACTORIES = 25.0,				-- Used by AI to pace the upgrades. Formula : if( AGENCY_AI_BASE_NUM_FACTORIES <= num_civ_factories - num_upgrades * AGENCY_AI_PER_UPGRADE_FACTORIES )
 	AGENCY_AI_PER_UPGRADE_FACTORIES = 6.0,			-- Used by AI to pace the upgrades. Formula : if( AGENCY_AI_BASE_NUM_FACTORIES <= num_civ_factories - num_upgrades * AGENCY_AI_PER_UPGRADE_FACTORIES )
 	AGENCY_UPGRADE_PER_OPERATIVE_SLOT = 5,			-- Number of upgrade needed to unlock an additional operative slot
@@ -3734,11 +3734,11 @@ NIntel = {
 },
 
 NCharacter = {
-	OFFICER_CORP_ADVISOR_ENTRIES_IN_MENU = { "high_command", "theorist", "army_chief", "air_chief", "navy_chief" },
-	OFFICER_CORP_HIGH_COMMAND_SLOTS_IN_MENU = 3, --For Alert manager to count the number of High Command Slots in the UI
-	POLITICAL_ADVISOR_SLOTS_IN_MENU = 3, --For Alert manager to count the number of Political Advisor Slots in the UI
+	OFFICER_CORP_ADVISOR_ENTRIES_IN_MENU = { "high_command", "theorist", "army_chief", "cavalry_chief", "navy_chief" },
+	OFFICER_CORP_HIGH_COMMAND_SLOTS_IN_MENU = 2, --For Alert manager to count the number of High Command Slots in the UI
+	POLITICAL_ADVISOR_SLOTS_IN_MENU = 2, --For Alert manager to count the number of Political Advisor Slots in the UI
 
-	DEFAULT_PP_COST_FOR_MILITARY_ADVISOR = 50,	-- When an advisor does not have cost assigned this is the default used
+	DEFAULT_PP_COST_FOR_MILITARY_ADVISOR = 150,	-- When an advisor does not have cost assigned this is the default used
 	DEFAULT_PP_COST_FOR_POLITICAL_ADVISOR = 150,
 	DEFAULT_CP_COST_FOR_ADVISOR = 0,	-- For Starting Advisors
 	DEFAULT_CP_COST_FOR_DYNAMIC_ADVISORS = 0,	-- For Advisors created during gameplay
@@ -3747,9 +3747,9 @@ NCharacter = {
 	COUNTRY_LEADER_BASE_EXPIRE_YEAR_LENGTH = 5, -- When creating a dynamic country leader if an expire date is not set it will have 5 years as a base expiration date
 	COUNTRY_LEADER_BASE_RANDOM_MAX_YEAR_LENGTH = 15, -- Max random value added to COUNTRY_LEADER_BASE_EXPIRE_YEAR_LENGTH
 
-	SPECIALIST_ADVISOR_MIN_RANK = 4,
-	EXPERT_ADVISOR_MIN_RANK = 6,
-	GENIUS_ADVISOR_MIN_RANK = 8,
+	SPECIALIST_ADVISOR_MIN_RANK = 3,
+	EXPERT_ADVISOR_MIN_RANK = 5,
+	GENIUS_ADVISOR_MIN_RANK = 7,
 },
 
 NSupply = {
