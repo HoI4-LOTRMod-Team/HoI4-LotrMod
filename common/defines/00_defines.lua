@@ -2172,14 +2172,14 @@ NAI = {
 	DEFAULT_SUPPLY_TRAIN_NEED_FACTOR = 1.5,     -- AI multiplies current train usage by this to determine desired nr of wanted trains. Can be modified by wanted_supply_train min_wanted_supply_trains ai strats.
 
 	POLITICAL_IDEA_MIN_SCORE = 0.1,				-- Only replace or add an idea if score is above this score.
-	HIGH_COMMAND_ADDED_WEIGHT_FACTOR = 1.0,		-- Weight multiplier for high_command advisors over other chosen advisor or idea types
-	CHIEF_ADDED_WEIGHT_FACTOR = 3.0,			-- Weight multiplier for chief roles over other advisor or idea types
+	HIGH_COMMAND_ADDED_WEIGHT_FACTOR = 0.75,	-- Weight multiplier for high_command advisors over other chosen advisor or idea types
+	CHIEF_ADDED_WEIGHT_FACTOR = 1.5,			-- Weight multiplier for chief roles over other advisor or idea types
 
 	GARRISON_TEMPLATE_SCORE_IC_FACTOR = 1.0,		-- ai uses these defines while calculating garrison template score of a template.
 	GARRISON_TEMPLATE_SCORE_MANPOWER_FACTOR = 0.05,  -- formula is (template_ic * ic_factor + template_manpower * manpower_factor ) / template_supression (lower is better)
 
 	ADVISOR_SCORE_TRAIT_MODIFIER_FACTOR = 0.5,     -- When scoring advisors, factor the score contribution from the advisor's trait modifiers by this value
-	ADVISOR_SCORE_CHEAPER_IS_BETTER_FACTOR = 0.2,  -- When scoring advisors, this define scales how much the AI prefers cheaper advisors over more expensive ones. 0.0 means no effect, 0.15 means a cost difference of 100 PP modifies the score by 15 %.
+	ADVISOR_SCORE_CHEAPER_IS_BETTER_FACTOR = 0.5,  -- When scoring advisors, this define scales how much the AI prefers cheaper advisors over more expensive ones. 0.0 means no effect, 0.15 means a cost difference of 100 PP modifies the score by 15 %.
 	ADVISOR_SCORE_CHEAPER_IS_BETTER_MIN = 0.5,     -- Clamps the above scoring factor to at minimum this value
 
 	-- stuff related to how the AI evaluates/scores how useful modifiers are
@@ -3735,8 +3735,8 @@ NIntel = {
 
 NCharacter = {
 	OFFICER_CORP_ADVISOR_ENTRIES_IN_MENU = { "high_command", "theorist", "army_chief", "cavalry_chief", "navy_chief" },
-	OFFICER_CORP_HIGH_COMMAND_SLOTS_IN_MENU = 3, --For Alert manager to count the number of High Command Slots in the UI
-	POLITICAL_ADVISOR_SLOTS_IN_MENU = 3, --For Alert manager to count the number of Political Advisor Slots in the UI
+	OFFICER_CORP_HIGH_COMMAND_SLOTS_IN_MENU = 2, --For Alert manager to count the number of High Command Slots in the UI
+	POLITICAL_ADVISOR_SLOTS_IN_MENU = 2, --For Alert manager to count the number of Political Advisor Slots in the UI
 
 	DEFAULT_PP_COST_FOR_MILITARY_ADVISOR = 150,	-- When an advisor does not have cost assigned this is the default used
 	DEFAULT_PP_COST_FOR_POLITICAL_ADVISOR = 150,
