@@ -15,10 +15,11 @@ country_event = {
 
 	immediate {
 		# update vars
-		set_variable = { global.fs_currentstate = global.fs_path_stack^0 }
-
-		# debugging stuff
-		log = "currentState: [?global.fs_currentstate]"
+		if = {
+			limit = { check_variable = { global.fs_path_stack^0 < 1000 } }
+			set_variable = { global.fs_currentstate = global.fs_path_stack^0 }
+			log = "currentState: [?global.fs_currentstate]"
+		}
 
 		# add to event-log
 		# TODO
@@ -28,14 +29,14 @@ country_event = {
 
 		# no more entries on the patch-stack ---> Arrived at destination
 		if = {
-			limit = { global.fs_path_stack^num < 1 }
-			# TODO: Ring destroyed!
+			limit = { check_variable = { global.fs_path_stack^num < 1 } }
+			log = "RING DESTROYED"
 		}
 
 		# next entry is NOT a state ---> Call the corresponding event
 		else_if = {
-			limit = { global.fs_path_stack^0 < 0 }
-			# TODO
+			limit = { check_variable = { global.fs_path_stack^0 > 1000 } }
+			country_event = { id = fs.1002 days = 3 random_days = 3 }
 		}
 
 		# next entry is a state ---> Move fellowship into next state
@@ -61,14 +62,32 @@ country_event = {
 		# TODO
 
 		# set variables
-		set_variable = { global.fs_currentstate = 43 }
+		set_variable = { global.fs_currentstate = 42 }
+		log = "currentState: [?global.fs_currentstate]"
 
 		# starting pathstack
-		add_to_array = { global.fs_path_stack = 44 }
-		add_to_array = { global.fs_path_stack = 45 }
-		add_to_array = { global.fs_path_stack = 46 }
+		add_to_array = { global.fs_path_stack = 76 }
+		add_to_array = { global.fs_path_stack = 149 }
+		add_to_array = { global.fs_path_stack = 144 }
+		add_to_array = { global.fs_path_stack = 64 }
+		add_to_array = { global.fs_path_stack = 200 }
+		add_to_array = { global.fs_path_stack = 202 }
+		add_to_array = { global.fs_path_stack = 65 }
+		add_to_array = { global.fs_path_stack = 1002 }
 
 		country_event = { id = fs.1000 days = 3 random_days = 3 }
 	}
 }
 
+
+# Ring at Rivendell
+country_event = {
+	id = fs.1003
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate {
+		log = "RING ARRIVED IN RIVENDELL"
+	}
+}

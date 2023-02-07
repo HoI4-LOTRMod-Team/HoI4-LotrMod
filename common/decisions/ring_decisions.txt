@@ -4,40 +4,6 @@
 
 
 ring_decisions = {
-	init = {
-        icon = GFX_decision_generic_civil_support
-		cost = 100
-
-        available = {
-			always = yes
-        }
-
-		visible = {
-			always = yes
-		}
-
-		fire_only_once = yes
-        fixed_random_seed = no
-
-		complete_effect = {
-			add_to_array = {
-			    array = global.ring_states
-			    value = 12
-			}
-			add_to_array = {
-			    array = global.ring_states
-			    value = 13
-			}
-			add_to_array = {
-			    array = global.ring_states
-			    value = 14
-			}
-		}
-		ai_will_do = {
-			factor = 0
-		}
-	}
-
 	test = {
         icon = GFX_decision_generic_civil_support
 		cost = 100
@@ -46,32 +12,29 @@ ring_decisions = {
 			always = yes
         }
 
+        # NOTE: This checks EVERY STATE to show a decision on just ONE state.
+        # TODO: Improve this crappy performance memery
+        target_array = global.states
+        state_target = yes
+
+        target_root_trigger = {
+	        always = yes
+	    }
+
+        target_trigger = {
+	        FROM = { state = global.fs_currentstate }
+	    }
+
 		visible = {
+			#has_variable = global.fs_currentstate
+			#check_variable = { global.fs_currentstate < 1000 }
+			#check_variable = { global.fs_currentstate > 0 }
 			always = yes
 		}
 
 		fire_only_once = yes
-        fixed_random_seed = no
 
 		complete_effect = {
-			#set_temp_variable = { temp_var = 0 }
-
-			for_each_loop = {
-			    array = core_states
-			    value = v
-			    index = i
-
-			    #custom_effect_tooltip = omega_pepega
-			    #set_state_controller = 8
-			    add_manpower = v
-			}
-
-			#custom_effect_tooltip = test_desc
-
-			set_state_controller = global.ring_states^0
-		}
-		ai_will_do = {
-			factor = 0
 		}
 	}
 }
