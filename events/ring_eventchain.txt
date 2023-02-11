@@ -14,21 +14,14 @@ country_event = {
 	hidden = yes
 
 	immediate {
-		# update vars
-		if = {
-			limit = { check_variable = { global.fs_path_stack^0 < 1000 } }
-
-			set_variable = { global.fs_currentstate = global.fs_path_stack^0 }
-			add_to_variable = { global.fs_steps = 1 }
-
-			log = "currentState: [?global.fs_currentstate]"
-		}
+		# pop stack
+		set_variable = { global.fs_currentstate = global.fs_path_stack^0 }
+		add_to_variable = { global.fs_steps = 1 }
+		remove_from_array = { array = global.fs_path_stack index = 0 }
+		log = "currentState: [?global.fs_currentstate]"
 
 		# add to event-log
 		# TODO
-
-		# pop stack
-		remove_from_array = { array = global.fs_path_stack index = 0 }
 
 		# no more entries on the patch-stack ---> Arrived at destination
 		if = {
@@ -36,15 +29,55 @@ country_event = {
 			log = "RING DESTROYED"
 		}
 
-		# next entry is NOT a state ---> Call the corresponding event
-		else_if = {
-			limit = { check_variable = { global.fs_path_stack^0 > 1000 } }
+		# unique state-based encounters
 
-			ring_execute_custom_encounter = yes
+		# Old forest encounter
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 150 } }
+
+			# Add Merry and Pippin
+			FS_merry = { ring_add_member_to_fellowship = yes }
+			FS_pippin = { ring_add_member_to_fellowship = yes }
 		}
 
-		# next entry is a state ---> Move fellowship into next state
-		else = {
+		# Bree encounter
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 149 } }
+
+			# Add 'Strider'
+			FS_aragorn = { ring_add_member_to_fellowship = yes }
+		}
+
+		# Weathertop encounter
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 145 } }
+
+			# Only Frodo and Arwen
+			ring_clear_fellowship_members = yes
+			FS_frodo = { ring_add_member_to_fellowship = yes }
+			FS_arwen = { ring_add_member_to_fellowship = yes }
+		}
+
+		# Buinen Encounter
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 200 } }
+
+			
+		}
+
+		# Rivendell
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 65 } }
+
+			log "RING AT RIVENDELL"
+
+			set_global_flag = fs_no_fellowship
+		}
+
+		
+		# Move into next state if fellowship still exists
+		if = {
+			limit = { NOT = { has_global_flag = fs_no_fellowship } }
 			ring_move_into_next_state = yes
 		}
 
@@ -76,122 +109,19 @@ country_event = {
 
 
 		# TEMP: Testing out eventlog
-		add_to_array = { global.fs_eventlog = token:fs_event_frodo_depars_shire }
-		add_to_array = { global.fs_eventlog = token:fs_event_old_forest_encounter_avoided }
-		add_to_array = { global.fs_eventlog = token:fs_event_merry_and_pippin_join }
+		#add_to_array = { global.fs_eventlog = token:fs_event_frodo_depars_shire }
+		#add_to_array = { global.fs_eventlog = token:fs_event_old_forest_encounter_avoided }
+		#add_to_array = { global.fs_eventlog = token:fs_event_merry_and_pippin_join }
 
-		# starting pathstack
-		add_to_array = { global.fs_path_stack = 150 }	# entering old forest
-		add_to_array = { global.fs_path_stack = 1004 }	# old forest encounter
-
-		ring_move_into_next_state = yes
-	}
-}
-
-# Old forest encounter
-country_event = {
-	id = fs.1004
-
-	is_triggered_only = yes
-	hidden = yes
-
-	immediate {
-		# add to event-log
-		# TODO
-
-		# Add Merry and Pippin
-		FS_merry = { ring_add_member_to_fellowship = yes }
-		FS_pippin = { ring_add_member_to_fellowship = yes }
-
-		# moving on to Bree
+		# starting pathstack (Shire to Rivendell)
+		add_to_array = { global.fs_path_stack = 150 }
 		add_to_array = { global.fs_path_stack = 149 }
-		add_to_array = { global.fs_path_stack = 1005 }
-
-		ring_move_into_next_state = yes
-	}
-}
-
-# Bree encounter
-country_event = {
-	id = fs.1005
-
-	is_triggered_only = yes
-	hidden = yes
-
-	immediate {
-		# add to event-log
-		# TODO
-
-		# Add 'Strider'
-		FS_aragorn = { ring_add_member_to_fellowship = yes }
-
-		# moving on to Weathertop
-		add_to_array = { global.fs_path_stack = 145 }	# TODO: This may not be the correct state
-		add_to_array = { global.fs_path_stack = 1006 }
-
-		ring_move_into_next_state = yes
-	}
-}
-
-# Weathertop encounter
-country_event = {
-	id = fs.1006
-
-	is_triggered_only = yes
-	hidden = yes
-
-	immediate {
-		# add to event-log
-		# TODO
-
-		# Only Frodo and Arwen
-		ring_clear_fellowship_members = yes
-		FS_frodo = { ring_add_member_to_fellowship = yes }
-		FS_arwen = { ring_add_member_to_fellowship = yes }
-
-		# Bruinen
+		add_to_array = { global.fs_path_stack = 145 }
 		add_to_array = { global.fs_path_stack = 64 }
 		add_to_array = { global.fs_path_stack = 200 }
-		add_to_array = { global.fs_path_stack = 1007 }
-
-		ring_move_into_next_state = yes
-	}
-}
-
-# Bruinen encounter
-country_event = {
-	id = fs.1007
-
-	is_triggered_only = yes
-	hidden = yes
-
-	immediate {
-		# add to event-log
-		# TODO
-
-		# Only Frodo and Arwen
-		ring_clear_fellowship_members = yes
-		FS_frodo = { ring_add_member_to_fellowship = yes }
-		FS_arwen = { ring_add_member_to_fellowship = yes }
-
-		# to Rivendell
 		add_to_array = { global.fs_path_stack = 202 }
 		add_to_array = { global.fs_path_stack = 65 }
-		add_to_array = { global.fs_path_stack = 1008 }
 
 		ring_move_into_next_state = yes
-	}
-}
-
-
-# Ring at Rivendell
-country_event = {
-	id = fs.1008
-
-	is_triggered_only = yes
-	hidden = yes
-
-	immediate {
-		log = "RING ARRIVED IN RIVENDELL"
 	}
 }
