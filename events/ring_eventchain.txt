@@ -18,10 +18,10 @@ country_event = {
 		set_variable = { global.fs_currentstate = global.fs_path_stack^0 }
 		add_to_variable = { global.fs_steps = 1 }
 		remove_from_array = { array = global.fs_path_stack index = 0 }
-		log = "currentState: [?global.fs_currentstate]"
+		#log = "currentState: [?global.fs_currentstate]"
 
-		# add to event-log
-		# TODO
+		# add to eventlog
+		var:global.fs_currentstate = { ring_log_arrived_in_new_state = yes }
 
 		# no more entries on the patch-stack ---> Arrived at destination
 		if = {
@@ -52,10 +52,10 @@ country_event = {
 		else_if = {
 			limit = { check_variable = { global.fs_currentstate = 145 } }
 
-			# Only Frodo and Arwen
+			# Only Frodo and Arwen press on
 			ring_clear_fellowship_members = yes
-			FS_frodo = { ring_add_member_to_fellowship = yes }
-			FS_arwen = { ring_add_member_to_fellowship = yes }
+			FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+			FS_arwen = { ring_add_member_to_fellowship_nolog = yes }
 		}
 
 		# Buinen Encounter
@@ -69,7 +69,7 @@ country_event = {
 		else_if = {
 			limit = { check_variable = { global.fs_currentstate = 65 } }
 
-			log "RING AT RIVENDELL"
+			log = "RING AT RIVENDELL"
 
 			set_global_flag = fs_no_fellowship
 		}
@@ -106,12 +106,6 @@ country_event = {
 		# Initial fellowship
 		FS_frodo = { ring_add_member_to_fellowship = yes }
 		FS_sam = { ring_add_member_to_fellowship = yes }
-
-
-		# TEMP: Testing out eventlog
-		#add_to_array = { global.fs_eventlog = token:fs_event_frodo_depars_shire }
-		#add_to_array = { global.fs_eventlog = token:fs_event_old_forest_encounter_avoided }
-		#add_to_array = { global.fs_eventlog = token:fs_event_merry_and_pippin_join }
 
 		# starting pathstack (Shire to Rivendell)
 		add_to_array = { global.fs_path_stack = 150 }

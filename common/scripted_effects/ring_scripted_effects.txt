@@ -3,23 +3,42 @@
 
 
 
-
+# Adds the current scope as a member of the fellowship
 ring_add_member_to_fellowship = {
-	
-	log = "ADDED TO FELLOWSHIP: [THIS.GetName]"
+
+	add_to_array = { global.fs_eventlog_targets = THIS }
+	add_to_array = { global.fs_eventlog = token:fs_event_member_joins }
+
 
 	add_to_array = { global.fs_members = THIS }
 }
 
 
+# Adds the current scope as a member of the fellowship, but does NOT log this to the eventlog
+ring_add_member_to_fellowship_nolog = {
+
+	add_to_array = { global.fs_members = THIS }
+}
+
+
+# Removes the current scope from the fellowship
 ring_remove_member_from_fellowship = {
 
-	log = "AREMOVED FROM FELLOWSHIP: [THIS.GetName]"
+	add_to_array = { global.fs_eventlog_targets = THIS }
+	add_to_array = { global.fs_eventlog = token:fs_event_member_leaves }
 	
 	remove_from_array = { global.fs_members = THIS }
 }
 
 
+# Removes the current scope from the fellowship, but does NOT log this to the eventlog
+ring_remove_member_from_fellowship_nolog = {
+
+	remove_from_array = { global.fs_members = THIS }
+}
+
+
+# Clears all members from the fellowship, does NOT add an entry to the eventlog
 ring_clear_fellowship_members = {
 
 	log = "FELLOWSHIP CLEARED"
@@ -27,6 +46,16 @@ ring_clear_fellowship_members = {
 	clear_array = global.fs_members
 }
 
+
+# Adds an entry to the eventlog stating that the fellowship has arrived in the current scope
+ring_log_arrived_in_new_state = {
+
+	add_to_array = { global.fs_eventlog_targets = THIS }
+	add_to_array = { global.fs_eventlog = token:fs_event_arrive_in_new_state }
+}
+
+
+# Queues up an event to move into the next state (fs.1000)
 ring_move_into_next_state = {
 
 	country_event = { id = fs.1000 days = 3 random_days = 3 }
