@@ -56,9 +56,31 @@ ring_log_arrived_in_new_state = {
 
 
 # Queues up an event to move into the next state (fs.1000)
-ring_move_into_next_state = {
+ring_fellowship_begin_move_to_next_state = {
 
-	SHI = {
-		country_event = { id = fs.1000 days = 3 random_days = 3 }
+	# TODO: Set this variable based on the speed of the fellowship
+	set_variable = { global.fs_days_left_in_state = 3 }
+}
+
+
+# Runs every day. Pls keep as simple as possible for best performance
+# Note to self: Maybe make this a weekly update instead?
+ring_daily_update = {
+	if = {
+
+		# Update fs_days_left_in_state
+		limit = { check_variable = { global.fs_days_left_in_state > 0 } }
+		subtract_from_variable = { global.fs_days_left_in_state = 1 }
+
+		# When the timer runs out, move fellowship to the enxt state
+		if = {
+			limit = { check_variable = { global.fs_days_left_in_state = 0 } }
+
+			# This event moves the fellowship to the enxt state
+			SHI = { country_event = fs.1000 }
+
+			# Set the days remaining to negative, so that we don't accidentally call this again
+			set_variable = { global.fs_days_left_in_state = -1 }
+		}
 	}
 }
