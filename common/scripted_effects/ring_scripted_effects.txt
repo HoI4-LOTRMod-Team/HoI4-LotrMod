@@ -9,6 +9,8 @@ ring_add_member_to_fellowship = {
 	add_to_array = { global.fs_eventlog_targets = THIS }
 	add_to_array = { global.fs_eventlog = token:fs_event_member_joins }
 
+	# Set this characters starting HP
+	THIS = { set_variable = { health = army_defense_level } }
 
 	add_to_array = { global.fs_members = THIS }
 }
@@ -66,6 +68,7 @@ ring_fellowship_begin_move_to_next_state = {
 # Runs every day. Pls keep as simple as possible for best performance
 # Note to self: Maybe make this a weekly update instead?
 ring_daily_update = {
+
 	if = {
 
 		# Update fs_days_left_in_state
@@ -83,4 +86,110 @@ ring_daily_update = {
 			set_variable = { global.fs_days_left_in_state = -1 }
 		}
 	}
+}
+
+
+# Executes an interception attempt by the current scope
+ring_execute_interception_attempt = {
+
+	set_temp_variable = { fs_interception_cancelled = 0 }
+
+	ring_interception_detection_check = yes
+
+	if = {
+		limit = { check_temp_variable = { fs_interception_cancelled = 0 } }
+
+		# Run a total of 6 attempts at taking the ring
+		for_loop_effect = {
+		    start = 1
+		    end = 6
+		    compare_type = less_than_or_equals
+		    add = 1
+		    value = temp_attempt
+		    break = fs_interception_cancelled
+
+		    ring_interception_single_attempt = yes
+		}
+	}
+}
+
+
+# Before being able to intercept the ring, we must first successfully locate the fellowship
+ring_interception_detection_check = {
+
+	# Calculate average fellowship stealth skill (planning_skill)
+	set_temp_variable = { temp_avg_fs_stealth = 0 }
+	for_each_scope_loop = {
+	    array = global.fs_members
+	    value = member
+	    
+	    add_to_temp_variable = { temp_avg_fs_stealth = planning_level }
+	}
+	divide_temp_variable = { temp_avg_fs_stealth = global.fs_members^num }
+
+	# Calculate the average stealth skill of the hunting party
+	set_temp_variable = { temp_avg_hp_stealth = 0 }
+	for_each_scope_loop = {
+	    array = ROOT.fs_hunting_party
+	    value = member
+	    
+	    add_to_temp_variable = { temp_avg_hp_stealth = planning_level }
+	}
+	divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
+	# Hunting party gets 200% bonus because this is their home turf
+	multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
+
+	# Check which side wins:
+	random_list = {
+		var:temp_avg_fs_stealth = {
+			# Fellowship wins -> remains undetected
+			set_temp_variable = { fs_interception_cancelled = 1 }
+		}
+		var:temp_avg_hp_stealth = {
+			# Hunting pary wins -> fellowship located -> interception proceeds
+		}
+	}
+}
+
+
+# Runs a single attempt at intercepting the ring
+# Attempts generally follow this loop: combat -> attempt to seize the ring -> disengage or repeat
+ring_interception_single_attempt = {
+
+	ring_interception_execute_combat = yes
+
+	ring_interception_try_seize = yes
+
+	ring_interception_disengage_check = yes
+}
+
+
+ring_interception_execute_combat = {
+	
+	# hunting party attacks random fellowship-member
+	# TODO
+
+
+	# fellowship counter-attacks
+	random_scope_in_array = {
+	    array = global.fs_members
+	    break = break
+	    
+	    # TODO: deal damage to hunting party
+    }
+
+    # check/update dead members
+}
+
+
+}
+
+
+ring_interception_try_seize = {
+	
+}
+
+
+ring_interception_disengage_check = {
+	
 }
