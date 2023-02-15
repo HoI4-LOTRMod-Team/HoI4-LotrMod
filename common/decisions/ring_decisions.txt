@@ -35,13 +35,50 @@ ring_decisions = {
 		}
 	}
 
+	test_setup = {
+        icon = GFX_decision_generic_civil_support
+		cost = 0
+
+        available = {
+			always = yes
+        }
+
+		visible = {
+			always = yes
+		}
+
+		fire_only_once = yes
+
+		complete_effect = {
+			SHI = {
+				# set variables
+				set_variable = { global.fs_currentstate = 144 }
+				set_variable = { global.fs_steps = 1 }
+
+
+				set_variable = { global.fs_days_left_in_state = 1000 }
+
+				set_global_flag = fs_started
+
+				# Initial fellowship
+				FS_frodo = { ring_add_member_to_fellowship = yes }
+				FS_sam = { ring_add_member_to_fellowship = yes }
+
+				#ring_fellowship_begin_move_to_next_state = yes
+			}
+		}
+	}
+
 	# TODO: this should appear on all states we have prepared an ambush as well
 	launch_interception_attempt = {
 		icon = GFX_decision_generic_civil_support
-		cost = 100
+		cost = 0
 
 		targets = { global.fs_currentstate }
 		state_target = yes
+		selectable_mission = yes
+		is_good = yes
+		#days_mission_timeout = 10
 
 		target_root_trigger = {
 			has_global_flag = fs_started
@@ -63,14 +100,16 @@ ring_decisions = {
 			check_variable = { global.fs_days_left_in_state > 14 }  # Need fellowship to stay for the duration of the mission
 		}
 
-		days_mission_timeout = 10
-
 		cancel_trigger = {
 			NOT = { controls_state = global.fs_currentstate }
 		}
 
 		timeout_effect = {
 			ring_execute_interception_attempt = yes
+		}
+
+		complete_effect = {
+
 		}
 	}
 }
