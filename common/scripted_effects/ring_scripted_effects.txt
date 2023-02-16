@@ -22,7 +22,7 @@ ring_add_member_to_hunting_party = {
 	# Set this characters starting HP
 	THIS = { set_variable = { health = army_defense_level } }
 
-	add_to_array = { PREV.fs_hunting_party = THIS }
+	add_to_array = { ROOT.fs_hunting_party = THIS }
 }
 
 
@@ -48,6 +48,13 @@ ring_remove_member_from_fellowship_nolog = {
 
 	remove_from_array = { global.fs_members = THIS }
 }
+
+
+ring_remove_member_from_hunting_party = {
+
+	remove_from_array = { ROOT.fs_hunting_party = THIS }
+}
+
 
 
 # Clears all members from the fellowship, does NOT add an entry to the eventlog
@@ -184,22 +191,57 @@ ring_interception_single_attempt = {
 ring_combat_execute_attack = {
 
 	log = "[?temp_attacker.GetName] attacks [?temp_defender.GetName]"
-	
-	#log = "EXECUTING DEXTERITY CHECK"
-	#log = "PREV Dex: [?PREV.logistics_level]"
-	#log = "THIS Dex: [?logistics_level]"
 
-	#set_temp_variable_to_random = whatevs
-	#log = "RANDOM: [?whatevs]"
+	# Get defender dexterity
+	var:temp_defender = {
 
+		set_temp_variable = { temp_defender_dex = logistics_level }
+	}
+
+	# Dex check
 	random_list = {
-		10 = {
-			log = "A"
+		1 = {
+			log = "Attack hits"
+			ring_combat_deal_damage = yes
 		}
-		10 = {
-			log = "B"
+		temp_defender_dex = {
+			log = "Attack misses"
+		}
+	}	
+}
+
+
+ring_combat_deal_damage = {
+	# Get attack attack
+	var:temp_attacker = {
+
+		set_temp_variable = { temp_attacker_attack = attack_level }
+	}
+
+	# subtract from health
+	var:temp_defender = {
+		log = "HEALTH LEFT: [?health]"
+
+
+		subtract_from_variable = { health = temp_attacker_attack }
+
+		log = "[?temp_attacker_attack] DAMAGE DEALT TO [?temp_defender.GetName]. HEALTH LEFT: [?health]"
+
+		# check for death
+		if = {
+			limit = {
+				check_variable = { health < 1 }
+			}
+			ring_combat_kill_character = yes
 		}
 	}
+}
+
+ring_combat_kill_character = {
+	log = "[?THIS.GetName] has died."
+
+	ring_remove_member_from_hunting_party = yes
+	ring_remove_member_from_fellowship = yes
 }
 
 
@@ -219,8 +261,8 @@ ring_interception_execute_combat = {
 	    set_temp_variable = { temp_defender = THIS }
     }
 
-    log = "ATTACKER: [?temp_attacker.GetName]"
-    log = "DEFENDER: [?temp_defender.GetName]"
+    #log = "ATTACKER: [?temp_attacker.GetName]"
+    #log = "DEFENDER: [?temp_defender.GetName]"
 
     ring_combat_execute_attack = yes
 
