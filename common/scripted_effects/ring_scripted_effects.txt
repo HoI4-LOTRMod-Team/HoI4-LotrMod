@@ -109,9 +109,11 @@ ring_execute_interception_attempt = {
 	if = {
 		limit = { check_variable = { fs_interception_cancelled = 0 } }
 
-		# Run a total of 6 attempts at taking the ring
+		log = "EXECUTING INTERCEPTION ATTEMPTS"
+
+		# Run a total of 3 attempts at taking the ring
 		for_loop_effect = {
-		    end = 6
+		    end = 3
 		    value = temp_attempt
 
 		    ring_interception_single_attempt = yes
@@ -143,7 +145,9 @@ ring_interception_detection_check = {
 	# Hunting party gets 200% bonus because this is their home turf
 	multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
 
-	log = "Detection-Check: F[?temp_avg_fs_stealth] vs. S[?temp_avg_hp_stealth]"
+	log = "EXECTUING DETECTION CHECK"
+	log = "AVG. FELLOWSHIP STEALTH SKILL: [?temp_avg_fs_stealth]"
+	log = "AVG. HUNTING PARTY STEALTH SKILL: [?temp_avg_hp_stealth]"
 
 	# Check which side wins:
 	random_list = {
@@ -166,26 +170,67 @@ ring_interception_detection_check = {
 # Attempts generally follow this loop: combat -> attempt to seize the ring -> disengage or repeat
 ring_interception_single_attempt = {
 
+	log = "EXECUTING ATTEMPT [?temp_attempt]"
+
 	ring_interception_execute_combat = yes
 
-	ring_interception_try_seize = yes
+	#ring_interception_try_seize = yes
 
-	ring_interception_disengage_check = yes
+	#ring_interception_disengage_check = yes
+}
+
+
+# combat of temp_attacker trying to attack temp_defender
+ring_combat_execute_attack = {
+
+	log = "[?temp_attacker.GetName] attacks [?temp_defender.GetName]"
+	
+	#log = "EXECUTING DEXTERITY CHECK"
+	#log = "PREV Dex: [?PREV.logistics_level]"
+	#log = "THIS Dex: [?logistics_level]"
+
+	#set_temp_variable_to_random = whatevs
+	#log = "RANDOM: [?whatevs]"
+
+	random_list = {
+		10 = {
+			log = "A"
+		}
+		10 = {
+			log = "B"
+		}
+	}
 }
 
 
 ring_interception_execute_combat = {
 	
-	# hunting party attacks random fellowship-member
-	# TODO
+	# select random member from hunting party
+    random_scope_in_array = {
+	    array = ROOT.fs_hunting_party
+	    
+	    set_temp_variable = { temp_attacker = THIS }
+    }
+
+    # select random member from fellowship
+    random_scope_in_array = {
+	    array = global.fs_members
+	    
+	    set_temp_variable = { temp_defender = THIS }
+    }
+
+    log = "ATTACKER: [?temp_attacker.GetName]"
+    log = "DEFENDER: [?temp_defender.GetName]"
+
+    ring_combat_execute_attack = yes
 
 
 	# fellowship counter-attacks
-	random_scope_in_array = {
-	    array = global.fs_members
-	    
-	    # TODO: deal damage to hunting party
-    }
+	#random_scope_in_array = {
+	#    array = global.fs_members
+	#    
+	#    # TODO: deal damage to hunting party
+    #}
 
     # check/update dead members
 }
