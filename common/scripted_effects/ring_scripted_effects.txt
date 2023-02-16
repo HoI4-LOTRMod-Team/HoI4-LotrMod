@@ -9,10 +9,7 @@ ring_add_member_to_fellowship = {
 	add_to_array = { global.fs_eventlog_targets = THIS }
 	add_to_array = { global.fs_eventlog = token:fs_event_member_joins }
 
-	# Set this characters starting HP
-	THIS = { set_variable = { health = army_defense_level } }
-
-	add_to_array = { global.fs_members = THIS }
+	ring_add_member_to_fellowship_nolog = yes
 }
 
 
@@ -21,6 +18,7 @@ ring_add_member_to_hunting_party = {
 
 	# Set this characters starting HP
 	THIS = { set_variable = { health = army_defense_level } }
+	THIS = { set_variable = { isdead = 0 } }
 
 	add_to_array = { ROOT.fs_hunting_party = THIS }
 }
@@ -28,6 +26,10 @@ ring_add_member_to_hunting_party = {
 
 # Adds the current scope as a member of the fellowship, but does NOT log this to the eventlog
 ring_add_member_to_fellowship_nolog = {
+
+	# Set this characters starting vars
+	THIS = { set_variable = { health = army_defense_level } }
+	THIS = { set_variable = { isdead = 0 } }
 
 	add_to_array = { global.fs_members = THIS }
 }
@@ -113,18 +115,15 @@ ring_execute_interception_attempt = {
 
 	ring_interception_detection_check = yes
 
-	if = {
-		limit = { check_variable = { fs_interception_cancelled = 0 } }
+	for_loop_effect = {
+	    end = 6
+	    value = temp_attempt
 
-		log = "EXECUTING INTERCEPTION ATTEMPTS"
+	    if = {
+			limit = { check_variable = { fs_interception_cancelled = 0 } }
 
-		# Run a total of 3 attempts at taking the ring
-		for_loop_effect = {
-		    end = 3
-		    value = temp_attempt
-
-		    ring_interception_single_attempt = yes
-		}
+	    	ring_interception_single_attempt = yes
+    	}
 	}
 }
 
@@ -181,9 +180,9 @@ ring_interception_single_attempt = {
 
 	ring_interception_execute_combat = yes
 
-	#ring_interception_try_seize = yes
+	ring_interception_try_seize = yes
 
-	#ring_interception_disengage_check = yes
+	ring_interception_disengage_check = yes
 }
 
 
@@ -238,8 +237,10 @@ ring_combat_deal_damage = {
 ring_combat_kill_character = {
 	log = "[?THIS.GetName] has died."
 
+	set_variable = { THIS.isdead = 1 }
+
 	ring_remove_member_from_hunting_party = yes
-	ring_remove_member_from_fellowship = yes
+	ring_remove_member_from_fellowship_nolog = yes
 }
 
 
@@ -306,9 +307,29 @@ ring_interception_execute_combat = {
 
 ring_interception_try_seize = {
 	
+	# Implementation (for now): You only take the ring of Frodo dies
+	if = {
+		limit = {
+			check_variable = { FS_Frodo.isdead > 0 }
+
+			log = "RING HAS BEEN SEIZED!"
+		}
+	}
 }
 
 
 ring_interception_disengage_check = {
 	
+	# With every passing attempt we increase likelyhood to disengage
+	random_list = {
+		2 = {
+			# Do nothing -> keep fighting
+		}
+		var:temp_attempt = {
+			# disengage
+			set_temp_variable = { fs_interception_cancelled = 1 }
+
+			log = "COMBAT DISENGAGED"
+		}
+	}
 }
