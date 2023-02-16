@@ -16,6 +16,16 @@ ring_add_member_to_fellowship = {
 }
 
 
+# Adds the current scope as a member of the hunting party of the previous scope
+ring_add_member_to_hunting_party = {
+
+	# Set this characters starting HP
+	THIS = { set_variable = { health = army_defense_level } }
+
+	add_to_array = { PREV.fs_hunting_party = THIS }
+}
+
+
 # Adds the current scope as a member of the fellowship, but does NOT log this to the eventlog
 ring_add_member_to_fellowship_nolog = {
 
@@ -133,14 +143,20 @@ ring_interception_detection_check = {
 	# Hunting party gets 200% bonus because this is their home turf
 	multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
 
+	log = "Detection-Check: F[?temp_avg_fs_stealth] vs. S[?temp_avg_hp_stealth]"
+
 	# Check which side wins:
 	random_list = {
 		var:temp_avg_fs_stealth = {
 			# Fellowship wins -> remains undetected
 			set_temp_variable = { fs_interception_cancelled = 1 }
+
+			log = "DETECTION FAILED"
 		}
 		var:temp_avg_hp_stealth = {
 			# Hunting pary wins -> fellowship located -> interception proceeds
+
+			log = "DETECTION SUCCESSFUL"
 		}
 	}
 }
