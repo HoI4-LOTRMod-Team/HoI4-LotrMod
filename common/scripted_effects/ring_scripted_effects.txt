@@ -220,8 +220,6 @@ ring_combat_deal_damage = {
 
 	# subtract from health
 	var:temp_defender = {
-		log = "HEALTH LEFT: [?health]"
-
 
 		subtract_from_variable = { health = temp_attacker_attack }
 
@@ -247,34 +245,62 @@ ring_combat_kill_character = {
 
 ring_interception_execute_combat = {
 	
-	# select random member from hunting party
-    random_scope_in_array = {
-	    array = ROOT.fs_hunting_party
-	    
-	    set_temp_variable = { temp_attacker = THIS }
+	# HUNTING PARTY ATTACK
+	if = {
+		# Only run this if both parties still have people alive
+		limit = {
+			check_variable = { ROOT.fs_hunting_party^num > 0 }
+			check_variable = { global.fs_members^num > 0 }
+		}
+
+		# select random member from hunting party
+	    random_scope_in_array = {
+		    array = ROOT.fs_hunting_party
+		    
+		    set_temp_variable = { temp_attacker = THIS }
+	    }
+
+	    # select random member from fellowship
+	    random_scope_in_array = {
+		    array = global.fs_members
+		    
+		    set_temp_variable = { temp_defender = THIS }
+	    }
+
+	    ring_combat_execute_attack = yes
+    }
+    else = {
+    	set_temp_variable = { fs_interception_cancelled = 1 }
     }
 
-    # select random member from fellowship
-    random_scope_in_array = {
-	    array = global.fs_members
-	    
-	    set_temp_variable = { temp_defender = THIS }
+
+    # FELLOWSHIP COUNTER-ATTACK: (Exactly the same as above but reversed)
+    if = {
+		# Only run this if both parties still have people alive
+		limit = {
+			check_variable = { ROOT.fs_hunting_party^num > 0 }
+			check_variable = { global.fs_members^num > 0 }
+		}
+
+	    # select random member from hunting party
+	    random_scope_in_array = {
+		    array = global.fs_members
+		    
+		    set_temp_variable = { temp_attacker = THIS }
+	    }
+
+	    # select random member from fellowship
+	    random_scope_in_array = {
+		    array = ROOT.fs_hunting_party
+		    
+		    set_temp_variable = { temp_defender = THIS }
+	    }
+
+	    ring_combat_execute_attack = yes
     }
-
-    #log = "ATTACKER: [?temp_attacker.GetName]"
-    #log = "DEFENDER: [?temp_defender.GetName]"
-
-    ring_combat_execute_attack = yes
-
-
-	# fellowship counter-attacks
-	#random_scope_in_array = {
-	#    array = global.fs_members
-	#    
-	#    # TODO: deal damage to hunting party
-    #}
-
-    # check/update dead members
+    else = {
+    	set_temp_variable = { fs_interception_cancelled = 1 }
+    }
 }
 
 
