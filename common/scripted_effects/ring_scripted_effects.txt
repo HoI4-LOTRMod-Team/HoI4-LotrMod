@@ -6,7 +6,8 @@
 # Adds the current scope as a member of the fellowship
 ring_add_member_to_fellowship = {
 
-	add_to_array = { global.fs_eventlog_targets = THIS }
+	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 	add_to_array = { global.fs_eventlog = token:fs_event_member_joins }
 
 	ring_add_member_to_fellowship_nolog = yes
@@ -38,7 +39,8 @@ ring_add_member_to_fellowship_nolog = {
 # Removes the current scope from the fellowship
 ring_remove_member_from_fellowship = {
 
-	add_to_array = { global.fs_eventlog_targets = THIS }
+	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 	add_to_array = { global.fs_eventlog = token:fs_event_member_leaves }
 	
 	remove_from_array = { global.fs_members = THIS }
@@ -62,8 +64,6 @@ ring_remove_member_from_hunting_party = {
 # Clears all members from the fellowship, does NOT add an entry to the eventlog
 ring_clear_fellowship_members = {
 
-	log = "FELLOWSHIP CLEARED"
-
 	clear_array = global.fs_members
 }
 
@@ -78,7 +78,8 @@ ring_clear_hunting_party = {
 # Adds an entry to the eventlog stating that the fellowship has arrived in the current scope
 ring_log_arrived_in_new_state = {
 
-	add_to_array = { global.fs_eventlog_targets = THIS }
+	add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+	add_to_array = { global.fs_eventlog_suffix_targets = THIS }
 	add_to_array = { global.fs_eventlog = token:fs_event_arrive_in_new_state }
 }
 
@@ -120,6 +121,10 @@ ring_execute_interception_attempt = {
 
 	set_temp_variable = { fs_interception_cancelled = 0 }
 
+	add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+	add_to_array = { global.fs_eventlog_suffix_targets = ROOT.fs_hunting_party^0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_tries_to_intercept }
+
 	ring_interception_detection_check = yes
 
 	for_loop_effect = {
@@ -160,22 +165,24 @@ ring_interception_detection_check = {
 	# Hunting party gets 200% bonus because this is their home turf
 	multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
 
-	log = "EXECTUING DETECTION CHECK"
-	log = "AVG. FELLOWSHIP STEALTH SKILL: [?temp_avg_fs_stealth]"
-	log = "AVG. HUNTING PARTY STEALTH SKILL: [?temp_avg_hp_stealth]"
-
 	# Check which side wins:
 	random_list = {
 		var:temp_avg_fs_stealth = {
 			# Fellowship wins -> remains undetected
 			set_temp_variable = { fs_interception_cancelled = 1 }
 
-			log = "DETECTION FAILED"
+			# Add to eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_failed_to_locate }
 		}
 		var:temp_avg_hp_stealth = {
 			# Hunting pary wins -> fellowship located -> interception proceeds
 
-			log = "DETECTION SUCCESSFUL"
+			# Add to eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_managed_to_locate }
 		}
 	}
 }
@@ -186,8 +193,6 @@ ring_interception_detection_check = {
 # ARGS: temp_attempt (attempt number), ROOT.fs_hunting_party, global.fs_members
 # RETURN: Sets fs_interception_cancelled to 1 if ring was seized or combat was disengaged
 ring_interception_single_attempt = {
-
-	log = "EXECUTING ATTEMPT [?temp_attempt]"
 
 	ring_interception_execute_combat = yes
 
@@ -201,8 +206,6 @@ ring_interception_single_attempt = {
 # ARGS: temp_attacker, temp_defender (Attacking and defending characters)
 ring_combat_execute_attack = {
 
-	log = "[?temp_attacker.GetName] attacks [?temp_defender.GetName]"
-
 	# Get defender dexterity
 	var:temp_defender = {
 
@@ -212,11 +215,18 @@ ring_combat_execute_attack = {
 	# Dex check
 	random_list = {
 		1 = {
-			log = "Attack hits"
+			# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_hits }
+
 			ring_combat_deal_damage = yes
 		}
 		temp_defender_dex = {
-			log = "Attack misses"
+			# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = temp_defender }
+			add_to_array = { global.fs_eventlog_suffix_targets = temp_attack }
+			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_misses }
 		}
 	}	
 }
@@ -237,7 +247,10 @@ ring_combat_deal_damage = {
 
 		subtract_from_variable = { health = temp_attacker_attack }
 
-		log = "[?temp_attacker_attack] DAMAGE DEALT TO [?temp_defender.GetName]. HEALTH LEFT: [?health]"
+		# eventlog
+		add_to_array = { global.fs_eventlog_prefix_targets = temp_defender }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_char_takes_damage }
 
 		# check for death
 		if = {
@@ -253,7 +266,10 @@ ring_combat_deal_damage = {
 # Kills the current scope
 # Can be both fellowship or hunting-party member
 ring_combat_kill_character = {
-	log = "[?THIS.GetName] has died."
+	# eventlog
+	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_char_dies }
 
 	set_variable = { THIS.isdead = 1 }
 
@@ -333,11 +349,15 @@ ring_interception_execute_combat = {
 ring_interception_try_seize = {
 	
 	if = {
-		limit = {
-			check_variable = { FS_Frodo.isdead > 0 }
+		limit = { check_variable = { FS_Frodo.isdead > 0 } }
 
-			log = "RING HAS BEEN SEIZED!"
-		}
+		# eventlog
+		add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_takes_the_ring }
+
+		# TODO: Actually do something here
+		log = "RING HAS BEEN SEIZED!"
 	}
 }
 
@@ -356,7 +376,14 @@ ring_interception_disengage_check = {
 			# disengage
 			set_temp_variable = { fs_interception_cancelled = 1 }
 
-			log = "COMBAT DISENGAGED"
+			# eventlog
+			if = {
+				limit = { check_variable = { ROOT.fs_hunting_party^num > 0 } }
+
+				add_to_array = { global.fs_eventlog_prefix_targets = ROOT.fs_hunting_party^0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_disengages }
+			}
 		}
 	}
 }
