@@ -1,6 +1,22 @@
 
+# Ensures that the evenlog is no longer than 25 entries, removinmg older entries first
+ring_trim_eventlog = {
 
+	while_loop_effect = {
+	    limit = { check_variable = { global.fs_eventlog_prefix_targets^num > 25 } }
+	    remove_from_array = { array = global.fs_eventlog_prefix_targets index = 0 }
+	}
 
+	while_loop_effect = {
+	    limit = { check_variable = { global.fs_eventlog_suffix_targets^num > 25 } }
+	    remove_from_array = { array = global.fs_eventlog_suffix_targets index = 0 }
+	}
+
+	while_loop_effect = {
+	    limit = { check_variable = { global.fs_eventlog^num > 25 } }
+	    remove_from_array = { array = global.fs_eventlog index = 0 }
+	}
+}
 
 
 # Adds the current scope as a member of the fellowship
@@ -9,6 +25,7 @@ ring_add_member_to_fellowship = {
 	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
 	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 	add_to_array = { global.fs_eventlog = token:fs_event_member_joins }
+	ring_trim_eventlog = yes
 
 	ring_add_member_to_fellowship_nolog = yes
 }
@@ -42,6 +59,7 @@ ring_remove_member_from_fellowship = {
 	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
 	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 	add_to_array = { global.fs_eventlog = token:fs_event_member_leaves }
+	ring_trim_eventlog = yes
 	
 	remove_from_array = { global.fs_members = THIS }
 }
@@ -81,6 +99,7 @@ ring_log_arrived_in_new_state = {
 	add_to_array = { global.fs_eventlog_prefix_targets = 0 }
 	add_to_array = { global.fs_eventlog_suffix_targets = THIS }
 	add_to_array = { global.fs_eventlog = token:fs_event_arrive_in_new_state }
+	ring_trim_eventlog = yes
 }
 
 
@@ -124,6 +143,7 @@ ring_execute_interception_attempt = {
 	add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
 	add_to_array = { global.fs_eventlog_suffix_targets = ROOT.fs_hunting_party^0 }
 	add_to_array = { global.fs_eventlog = token:fs_event_tries_to_intercept }
+	ring_trim_eventlog = yes
 
 	ring_interception_detection_check = yes
 
@@ -175,6 +195,7 @@ ring_interception_detection_check = {
 			add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 			add_to_array = { global.fs_eventlog = token:fs_event_failed_to_locate }
+			ring_trim_eventlog = yes
 		}
 		var:temp_avg_hp_stealth = {
 			# Hunting pary wins -> fellowship located -> interception proceeds
@@ -183,6 +204,7 @@ ring_interception_detection_check = {
 			add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 			add_to_array = { global.fs_eventlog = token:fs_event_managed_to_locate }
+			ring_trim_eventlog = yes
 		}
 	}
 }
@@ -206,6 +228,12 @@ ring_interception_single_attempt = {
 # ARGS: temp_attacker, temp_defender (Attacking and defending characters)
 ring_combat_execute_attack = {
 
+	# eventlog: attacked attacks defender
+	add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+	add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+	add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_hits }
+	ring_trim_eventlog = yes
+
 	# Get defender dexterity
 	var:temp_defender = {
 
@@ -215,18 +243,15 @@ ring_combat_execute_attack = {
 	# Dex check
 	random_list = {
 		1 = {
-			# eventlog
-			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
-			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
-			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_hits }
-
+			# deal damage (eventlog is taken care of in that function)
 			ring_combat_deal_damage = yes
 		}
-		temp_defender_dex = {
-			# eventlog
+		var:temp_defender_dex = {
+			# eventlog: defender dodges attack
 			add_to_array = { global.fs_eventlog_prefix_targets = temp_defender }
-			add_to_array = { global.fs_eventlog_suffix_targets = temp_attack }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_misses }
+			ring_trim_eventlog = yes
 		}
 	}	
 }
@@ -247,17 +272,18 @@ ring_combat_deal_damage = {
 
 		subtract_from_variable = { health = temp_attacker_attack }
 
-		# eventlog
-		add_to_array = { global.fs_eventlog_prefix_targets = temp_defender }
-		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-		add_to_array = { global.fs_eventlog = token:fs_event_char_takes_damage }
-
 		# check for death
 		if = {
 			limit = {
 				check_variable = { health < 1 }
 			}
 			ring_combat_kill_character = yes
+		}
+		else = {
+			# if no death, add to eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = temp_defender }
+			var:temp_attacker = { add_to_array = { global.fs_eventlog_suffix_targets = attack_level } }
+			add_to_array = { global.fs_eventlog = token:fs_event_char_takes_damage }
 		}
 	}
 }
@@ -270,6 +296,7 @@ ring_combat_kill_character = {
 	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
 	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 	add_to_array = { global.fs_eventlog = token:fs_event_char_dies }
+	ring_trim_eventlog = yes
 
 	set_variable = { THIS.isdead = 1 }
 
@@ -355,6 +382,7 @@ ring_interception_try_seize = {
 		add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
 		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 		add_to_array = { global.fs_eventlog = token:fs_event_takes_the_ring }
+		ring_trim_eventlog = yes
 
 		# TODO: Actually do something here
 		log = "RING HAS BEEN SEIZED!"
@@ -383,6 +411,7 @@ ring_interception_disengage_check = {
 				add_to_array = { global.fs_eventlog_prefix_targets = ROOT.fs_hunting_party^0 }
 				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 				add_to_array = { global.fs_eventlog = token:fs_event_disengages }
+				ring_trim_eventlog = yes
 			}
 		}
 	}

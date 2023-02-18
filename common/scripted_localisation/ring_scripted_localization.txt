@@ -1,13 +1,21 @@
 ##### TODO: unfinished
 
-
 defined_text = {
 	name = DisplayRingEventLog
 	text = {
 		trigger = {
-			check_variable = { temp_event_index < 10 } # upper limit for lines in event-log
+			# upper limit for lines in event-log
+			# NOTE: There is a recursion-depth limit to this, please ensure that global.fs_eventlog^num is always under a certain number
+			# You can use ring_trim_eventlog = yes (whenever you add to the eventlog) for this.
+			check_variable = { temp_event_index < global.fs_eventlog^num }
 
-			add_to_temp_variable = { temp_event_index = 1 }
+			if = {
+				limit = { has_variable = temp_event_index }
+				add_to_temp_variable = { temp_event_index = 1 }
+			}
+			else = {
+				set_temp_variable = { temp_event_index = 0 }
+			}
 		}
 		localization_key = "ring_event_log_recruse"
 	}
@@ -17,6 +25,18 @@ defined_text = {
 
 defined_text = {
 	name = DisplayRingEvent
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^temp_event_index = token:fs_event_char_takes_damage }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetName] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey][?global.fs_eventlog_suffix_targets^temp_event_index] damage."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^temp_event_index = token:fs_event_tries_to_intercept }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetNameWithFlag] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey][?global.fs_eventlog_suffix_targets^temp_event_index.GetName]."
+	}
 	text = {
 		trigger = {
 			check_variable = { global.fs_eventlog^num > temp_event_index }
@@ -56,7 +76,13 @@ defined_text = {
 			check_variable = { temp_index < 10 } # upper limit for lines in event-log
 			check_variable = { temp_index < ROOT.fs_hunting_party^num }
 
-			add_to_temp_variable = { temp_index = 1 }
+			if = {
+				limit = { has_variable = temp_index }
+				add_to_temp_variable = { temp_index = 1 }
+			}
+			else = {
+				set_temp_variable = { temp_index = 0 }
+			}
 		}
 		localization_key = "ring_hunting_party_recruse"
 	}
