@@ -22,12 +22,16 @@ ring_trim_eventlog = {
 # Adds the current scope as a member of the fellowship
 ring_add_member_to_fellowship = {
 
-	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
-	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-	add_to_array = { global.fs_eventlog = token:fs_event_member_joins }
-	ring_trim_eventlog = yes
+	if = {
+		limit = { check_variable = { global.fs_members^num < 12 } } # Do not allow more than 12 members. the UI won't work.
 
-	ring_add_member_to_fellowship_nolog = yes
+		add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_member_joins }
+		ring_trim_eventlog = yes
+
+		ring_add_member_to_fellowship_nolog = yes
+	}
 }
 
 
@@ -45,11 +49,15 @@ ring_add_member_to_hunting_party = {
 # Adds the current scope as a member of the fellowship, but does NOT log this to the eventlog
 ring_add_member_to_fellowship_nolog = {
 
-	# Set this characters starting vars
-	THIS = { set_variable = { health = army_defense_level } }
-	THIS = { set_variable = { isdead = 0 } }
+	if = {
+		limit = { check_variable = { global.fs_members^num < 12 } }  # Do not allow more than 12 members. the UI won't work.
 
-	add_to_array = { global.fs_members = THIS }
+		# Set this characters starting vars
+		THIS = { set_variable = { health = army_defense_level } }
+		THIS = { set_variable = { isdead = 0 } }
+
+		add_to_array = { global.fs_members = THIS }
+	}
 }
 
 
