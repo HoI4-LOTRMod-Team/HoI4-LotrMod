@@ -148,6 +148,15 @@ ring_execute_interception_attempt = {
 
 	set_temp_variable = { fs_interception_cancelled = 0 }
 
+	# Maximum amount of casualties before disengaging
+	set_temp_variable = { fs_interception_max_casualties = ROOT.fs_hunting_party^num }
+	multiply_temp_variable = { fs_interception_max_casualties = ROOT.fs_max_casualty_rate }
+
+	# Because its easier to calculate: Min. number of party members to keep fighting
+	set_temp_variable = { fs_interception_min_members = ROOT.fs_hunting_party^num }
+	subtract_from_temp_variable = { fs_interception_min_members = fs_interception_max_casualties }
+
+
 	add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
 	add_to_array = { global.fs_eventlog_suffix_targets = ROOT.fs_hunting_party^0 }
 	add_to_array = { global.fs_eventlog = token:fs_event_tries_to_intercept }
@@ -156,7 +165,7 @@ ring_execute_interception_attempt = {
 	ring_interception_detection_check = yes
 
 	for_loop_effect = {
-	    end = 6
+	    end = 4
 	    value = temp_attempt
 
 	    if = {
@@ -164,6 +173,32 @@ ring_execute_interception_attempt = {
 
 	    	ring_interception_single_attempt = yes
     	}
+	}
+
+	# eventlog if fellowship killed the entire hunting party
+	if = {
+		limit = {
+			NOT = { ring_frodo_is_dead = yes }
+			check_variable = { ROOT.fs_hunting_party^num < 1 }
+		}
+
+		add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_kills_all_enemies }
+		ring_trim_eventlog = yes
+	}
+
+	# if the for-loop ran to end without cancelling, let the fellowship escape
+	else_if = {
+		limit = {
+			NOT = { ring_frodo_is_dead = yes }
+			check_variable = { fs_interception_cancelled = 0 }
+		}
+
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = ROOT }
+		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_escapes }
+		ring_trim_eventlog = yes
 	}
 }
 
@@ -250,7 +285,7 @@ ring_combat_execute_attack = {
 
 	# Dex check
 	random_list = {
-		1 = {
+		2 = {
 			# deal damage (eventlog is taken care of in that function)
 			ring_combat_deal_damage = yes
 		}
@@ -310,6 +345,9 @@ ring_combat_kill_character = {
 
 	ring_remove_member_from_hunting_party = yes
 	ring_remove_member_from_fellowship_nolog = yes
+
+	# This makes the character unusable by everyone
+	retire = yes
 }
 
 
@@ -384,7 +422,7 @@ ring_interception_execute_combat = {
 ring_interception_try_seize = {
 	
 	if = {
-		limit = { check_variable = { FS_Frodo.isdead > 0 } }
+		limit = { ring_frodo_is_dead = yes }
 
 		# eventlog
 		add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
@@ -403,23 +441,27 @@ ring_interception_try_seize = {
 # RETURN: Sets fs_interception_cancelled = 1 if disengaged
 ring_interception_disengage_check = {
 	
-	# With every passing attempt we increase likelyhood to disengage
-	random_list = {
-		2 = {
-			# Do nothing -> keep fighting
-		}
-		var:temp_attempt = {
-			# disengage
-			set_temp_variable = { fs_interception_cancelled = 1 }
+	if = {
+		# Check if we WANT to disengage in the first place
+		limit = { NOT = { check_variable = { ROOT.fs_hunting_party^num > fs_interception_min_members } } }
 
-			# eventlog
-			if = {
-				limit = { check_variable = { ROOT.fs_hunting_party^num > 0 } }
+		random_list = {
+			1 = {
+				# Disengage fails
+			}
+			3 = {
+				# disengage
+				set_temp_variable = { fs_interception_cancelled = 1 }
 
-				add_to_array = { global.fs_eventlog_prefix_targets = ROOT.fs_hunting_party^0 }
-				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-				add_to_array = { global.fs_eventlog = token:fs_event_disengages }
-				ring_trim_eventlog = yes
+				# eventlog
+				if = {
+					limit = { check_variable = { ROOT.fs_hunting_party^num > 0 } }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = ROOT.fs_hunting_party^0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_disengages }
+					ring_trim_eventlog = yes
+				}
 			}
 		}
 	}

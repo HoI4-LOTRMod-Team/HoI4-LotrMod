@@ -4,11 +4,6 @@ defined_text = {
 	name = DisplayRingEventLog
 	text = {
 		trigger = {
-			# upper limit for lines in event-log
-			# NOTE: There is a recursion-depth limit to this, please ensure that global.fs_eventlog^num is always under a certain number
-			# You can use ring_trim_eventlog = yes (whenever you add to the eventlog) for this.
-			check_variable = { temp_event_index < global.fs_eventlog^num }
-
 			if = {
 				limit = { has_variable = temp_event_index }
 				add_to_temp_variable = { temp_event_index = 1 }
@@ -16,6 +11,11 @@ defined_text = {
 			else = {
 				set_temp_variable = { temp_event_index = 0 }
 			}
+
+			# upper limit for lines in event-log
+			# NOTE: There is a recursion-depth limit to this, please ensure that global.fs_eventlog^num is always under a certain number
+			# You can use ring_trim_eventlog = yes (whenever you add to the eventlog) for this.
+			check_variable = { temp_event_index < global.fs_eventlog^num }
 		}
 		localization_key = "ring_event_log_recruse"
 	}
@@ -73,18 +73,47 @@ defined_text = {
 	name = DisplayHuntingParty
 	text = {
 		trigger = {
-			check_variable = { temp_index < 10 } # upper limit for lines in event-log
-			check_variable = { temp_index < ROOT.fs_hunting_party^num }
-
 			if = {
-				limit = { has_variable = temp_index }
-				add_to_temp_variable = { temp_index = 1 }
+				limit = { has_variable = temp_hp_index }
+				add_to_temp_variable = { temp_hp_index = 1 }
 			}
 			else = {
-				set_temp_variable = { temp_index = 0 }
+				set_temp_variable = { temp_hp_index = 0 }
 			}
+
+			check_variable = { temp_hp_index < 12 } # upper limit for lines in event-log
+			check_variable = { temp_hp_index < ROOT.fs_hunting_party^num }
 		}
 		localization_key = "ring_hunting_party_recruse"
+	}
+}
+
+defined_text = {
+	name = DisplayHuntingPartyStats
+	text = {
+		trigger = {
+			if = {
+				limit = { has_variable = temp_hps_index }
+				add_to_temp_variable = { temp_hps_index = 1 }
+			}
+			else = {
+				set_temp_variable = { temp_hps_index = 0 }
+			}
+
+			check_variable = { temp_hps_index < 12 } # upper limit for lines in event-log
+			check_variable = { temp_hps_index < ROOT.fs_hunting_party^num }
+		}
+		localization_key = "ring_hunting_party_stats_recruse"
+	}
+}
+
+defined_text = {
+	name = DisplayHuntingPartyAggregateStats
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "ring_hunting_party_stats_aggregate"
 	}
 }
 
@@ -95,6 +124,16 @@ defined_text = {
 			always = yes
 		}
 		localization_key = "[GetHPSymbol] [?health]/[?defense_level]"
+	}
+}
+
+defined_text = {
+	name = GetMaxHP
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "[GetHPSymbol] [?defense_level]"
 	}
 }
 
