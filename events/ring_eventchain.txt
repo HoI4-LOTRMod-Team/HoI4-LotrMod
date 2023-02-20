@@ -37,11 +37,23 @@ country_event = {
 			limit = { check_variable = { global.fs_currentstate = 150 } }
 
 			# Add Merry and Pippin
-			FS_merry = { ring_add_member_to_fellowship = yes }
-			FS_pippin = { ring_add_member_to_fellowship = yes }
+			FS_merry = { ring_add_member_to_fellowship_nolog = yes }
+			FS_pippin = { ring_add_member_to_fellowship_nolog = yes }
 
-			# Send Mordor Event
-			MOR = { country_event = fs_intercept.1 }
+			# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_merry_pippin_join }
+			ring_trim_eventlog = yes
+
+			# flavour
+			if = {
+				limit = { has_global_flag = fs_nazgul_sent_to_shire }
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_old_forest_nazgul }
+				ring_trim_eventlog = yes
+			}
 		}
 
 		# Bree encounter
@@ -49,29 +61,81 @@ country_event = {
 			limit = { check_variable = { global.fs_currentstate = 149 } }
 
 			# Add 'Strider'
-			FS_aragorn = { ring_add_member_to_fellowship = yes }
+			FS_aragorn = { ring_add_member_to_fellowship_nolog = yes }
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_aragorn_in_bree }
+			ring_trim_eventlog = yes
+
+			# Gandalf not imprisoned -> he is in Bree
+			if = {
+				limit = { has_global_flag = gandalf_saruman_united }
+
+				FS_gandalf = { ring_add_member_to_fellowship_nolog = yes }
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_gandalf_in_bree }
+				ring_trim_eventlog = yes
+			}
+
+			# Nazgul encounter
+			if = {
+				limit = { has_global_flag = fs_nazgul_sent_to_shire }
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_bree_nazgul }
+				ring_trim_eventlog = yes
+			}
 		}
 
 		# Weathertop encounter
 		else_if = {
 			limit = { check_variable = { global.fs_currentstate = 145 } }
 
-			# Only Frodo and Arwen press on
-			ring_clear_fellowship_members = yes
-			FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
-			FS_arwen = { ring_add_member_to_fellowship_nolog = yes }
+			if = {
+				limit = { has_global_flag = fs_nazgul_sent_to_shire }
+
+				# TODO: Give Mordor event to launch minor skirmish interception with nazgul
+
+				# TODO: include this if in the event/interception outcome
+				if = {
+					limit = { NOT = { ring_frodo_is_dead = yes } }
+
+					# Only Frodo and Arwen press on
+					ring_clear_fellowship_members = yes
+					FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+					FS_arwen = { ring_add_member_to_fellowship_nolog = yes }
+
+					# eventlog
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_arwen_ride }
+					ring_trim_eventlog = yes
+				}
+			}
+			# No nazgul -> the whole group moves towards rivendell on foot
+			else = {
+				# Arwen joins because why not
+				FS_arwen = { ring_add_member_to_fellowship_nolog = yes }
+			}
 		}
 
 		# Buinen Encounter
 		else_if = {
 			limit = { check_variable = { global.fs_currentstate = 200 } }
 
-			
+			# TODO: if nazgul in shire: make chance of Arwen summoning flood-waters that sweep the Nazgul away
 		}
 
 		# Rivendell
 		else_if = {
 			limit = { check_variable = { global.fs_currentstate = 65 } }
+
+			set_global_flag = fs_arrived_in_rivendell
+
+			# TODO: ASSEMBLE THE FELLOWSHIP!
 
 			log = "RING AT RIVENDELL"
 
@@ -97,9 +161,6 @@ country_event = {
 	hidden = yes
 
 	immediate {
-		# add to event-log
-		# TODO
-
 		# set variables
 		set_variable = { global.fs_currentstate = 42 }
 		set_variable = { global.fs_steps = 1 }
@@ -108,8 +169,29 @@ country_event = {
 		set_global_flag = fs_started
 
 		# Initial fellowship
-		FS_frodo = { ring_add_member_to_fellowship = yes }
-		FS_sam = { ring_add_member_to_fellowship = yes }
+		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+		FS_sam = { ring_add_member_to_fellowship_nolog = yes }
+
+		if = {
+			limit = { has_global_flag = fs_nazgul_sent_to_shire }
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_start }
+			ring_trim_eventlog = yes
+		}
+		else = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_start_nazgul }
+			ring_trim_eventlog = yes
+		}
+
+		# Gandalf goes to meet Saruman
+		country_event = { days = 16 id = isengard.1 }
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_gandalf_goes_to_saruman }
+		ring_trim_eventlog = yes
 
 		# starting pathstack (Shire to Rivendell)
 		add_to_array = { global.fs_path_stack = 150 }
@@ -123,17 +205,3 @@ country_event = {
 		ring_fellowship_begin_move_to_next_state = yes
 	}
 }
-
-
-# Commence event-chain
-country_event = {
-	id = fs.19
-
-	is_triggered_only = yes
-	hidden = yes
-
-	immediate {
-		ring_execute_interception_attempt = yes
-	}
-}
-
