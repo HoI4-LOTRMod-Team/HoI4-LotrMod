@@ -173,7 +173,6 @@ ring_execute_interception_attempt = {
 	set_temp_variable = { fs_interception_min_members = ROOT.fs_hunting_party^num }
 	subtract_from_temp_variable = { fs_interception_min_members = fs_interception_max_casualties }
 
-
 	add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
 	add_to_array = { global.fs_eventlog_suffix_targets = ROOT.fs_hunting_party^0 }
 	add_to_array = { global.fs_eventlog = token:fs_event_tries_to_intercept }
@@ -288,12 +287,6 @@ ring_interception_single_attempt = {
 # ARGS: temp_attacker, temp_defender (Attacking and defending characters)
 ring_combat_execute_attack = {
 
-	# eventlog: attacked attacks defender
-	add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
-	add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
-	add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_hits }
-	ring_trim_eventlog = yes
-
 	# Get defender dexterity
 	var:temp_defender = {
 
@@ -308,9 +301,9 @@ ring_combat_execute_attack = {
 		}
 		var:temp_defender_dex = {
 			# eventlog: defender dodges attack
-			add_to_array = { global.fs_eventlog_prefix_targets = temp_defender }
-			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_misses }
+			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_miss }
 			ring_trim_eventlog = yes
 		}
 	}	
@@ -332,18 +325,41 @@ ring_combat_deal_damage = {
 
 		subtract_from_variable = { health = temp_attacker_attack }
 
+		# add damage dealt to eventlog
+		if = {
+			limit = { var:temp_attacker = { check_variable = { attack_level = 1 } } }
+			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_1dmg }
+			ring_trim_eventlog = yes
+		}
+		else_if = {
+			limit = { var:temp_attacker = { check_variable = { attack_level = 2 } } }
+			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_2dmg }
+			ring_trim_eventlog = yes
+		}
+		else_if = {
+			limit = { var:temp_attacker = { check_variable = { attack_level = 3 } } }
+			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_3dmg }
+			ring_trim_eventlog = yes
+		}
+		else = {
+			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_massivedmg }
+			ring_trim_eventlog = yes
+		}
+
 		# check for death
 		if = {
 			limit = {
 				check_variable = { health < 1 }
 			}
 			ring_combat_kill_character = yes
-		}
-		else = {
-			# if no death, add to eventlog
-			add_to_array = { global.fs_eventlog_prefix_targets = temp_defender }
-			var:temp_attacker = { add_to_array = { global.fs_eventlog_suffix_targets = attack_level } }
-			add_to_array = { global.fs_eventlog = token:fs_event_char_takes_damage }
 		}
 	}
 }
@@ -457,7 +473,7 @@ ring_interception_try_seize = {
 # ARGS: temp_attempt (Attempt number at taking ring)
 # RETURN: Sets fs_interception_cancelled = 1 if disengaged
 ring_interception_disengage_check = {
-	
+
 	if = {
 		# Check if we WANT to disengage in the first place
 		limit = { NOT = { check_variable = { ROOT.fs_hunting_party^num > fs_interception_min_members } } }
@@ -466,7 +482,7 @@ ring_interception_disengage_check = {
 			1 = {
 				# Disengage fails
 			}
-			3 = {
+			4 = {
 				# disengage
 				set_temp_variable = { fs_interception_cancelled = 1 }
 
