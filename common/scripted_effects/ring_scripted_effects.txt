@@ -51,13 +51,20 @@ ring_toggle_member_to_hunting_party = {
 # Adds the current scope as a member of the hunting party of ROOT
 ring_add_member_to_hunting_party = {
 
-	# Set this characters starting HP
-	THIS = { set_variable = { health = army_defense_level } }
-	THIS = { set_variable = { isdead = 0 } }
+	if = {
+		limit = {
+			THIS = { check_variable = { isdead = 0 } }					# dont assign dead people
+			NOT = { has_character_flag = fs_assigned_to_hunting_party } # dont assign twice
+		}
 
-	add_to_array = { ROOT.fs_hunting_party = THIS }
+		# Set this characters starting HP
+		THIS = { set_variable = { health = army_defense_level } }
+		THIS = { set_variable = { isdead = 0 } }
 
-	set_character_flag = fs_assigned_to_hunting_party
+		add_to_array = { ROOT.fs_hunting_party = THIS }
+
+		set_character_flag = fs_assigned_to_hunting_party
+	}
 }
 
 
@@ -132,13 +139,15 @@ ring_log_arrived_in_new_state = {
 ring_fellowship_begin_move_to_next_state = {
 
 	# TODO: Set this variable based on the speed of the fellowship
-	set_variable = { global.fs_days_left_in_state = 3 }
+	set_variable = { global.fs_days_left_in_state = 7 }
 }
 
 
 # Runs every day. Pls keep as simple as possible for best performance
 # Note to self: Maybe make this a weekly update instead?
 ring_daily_update = {
+
+	log = "[?global.fs_days_left_in_state]"
 
 	if = {
 
@@ -151,10 +160,8 @@ ring_daily_update = {
 			limit = { check_variable = { global.fs_days_left_in_state = 0 } }
 
 			# This event moves the fellowship to the enxt state
+			log = "EXECUTING EVENT FS1000"
 			SHI = { country_event = fs.1000 }
-
-			# Set the days remaining to negative, so that we don't accidentally call this again
-			set_variable = { global.fs_days_left_in_state = -1 }
 		}
 	}
 }
@@ -219,6 +226,94 @@ ring_execute_interception_attempt = {
 }
 
 
+# Fills the hunting party with all 9 nazgul that are still alive
+ring_MOR_set_hunting_party_to_nazgul = {
+	MOR = {
+		ring_clear_hunting_party = yes
+
+		MOR_Witch_king		= { ring_add_member_to_hunting_party = yes }
+		MOR_Khamul			= { ring_add_member_to_hunting_party = yes }
+		MOR_Uvantha			= { ring_add_member_to_hunting_party = yes }
+		MOR_Hoarmurath		= { ring_add_member_to_hunting_party = yes }
+		MOR_Dwar			= { ring_add_member_to_hunting_party = yes }
+		MOR_Adunaphel		= { ring_add_member_to_hunting_party = yes }
+		MOR_Akhorahil		= { ring_add_member_to_hunting_party = yes }
+		MOR_Ji_Indur		= { ring_add_member_to_hunting_party = yes }
+		MOR_Ren				= { ring_add_member_to_hunting_party = yes }
+	}
+}
+
+
+# Special combat atop the weathertop
+ring_execute_weathertop_encounter = {
+
+	# Only Nazgul allowed
+	ring_MOR_set_hunting_party_to_nazgul = yes
+
+	add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_weathertop_encounter }
+	ring_trim_eventlog = yes
+
+	# Nazgul attack once:
+	ring_interception_combat_hp_attack_fs = yes
+
+	# Aragorn gets to attack 3-4 times
+    SHI = { FS_aragorn = { set_temp_variable = { temp_attacker = THIS } } }
+	random_list = {
+		1 = {
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+		}
+		1 = {
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+		}
+	}
+
+	# If Gandalf is with fellowship, he attacks once as well
+	if = {
+		limit = { SHI = { FS_gandalf = { is_in_array = { global.fs_members = THIS } } } }
+		SHI = { FS_gandalf = { set_temp_variable = { temp_attacker = THIS } } }
+		random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+		ring_combat_execute_attack = yes
+	}
+
+	# Nazgul attack one more time:
+	ring_interception_combat_hp_attack_fs = yes
+
+	# Post-combat:
+	if = {
+		limit = { NOT = { ring_frodo_is_dead = yes } }
+
+		SHI = {
+			# Only Frodo and Arwen press on
+			ring_clear_fellowship_members = yes
+			FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+			FS_arwen = { ring_add_member_to_fellowship_nolog = yes }
+
+			# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_arwen_ride }
+			ring_trim_eventlog = yes
+
+			# Send Sauron the bad news
+			MOR = { country_event = { days = 3 id = mordor.56 } }
+		}
+	}
+}
+
 # Runs a detection check if ROOT can detect the fellowship
 # ARGS: ROOT.fs_hunting_party, global.fs_members
 # RETURN: If the check fails, it sets fs_interception_cancelled to 1
@@ -277,8 +372,6 @@ ring_interception_single_attempt = {
 
 	ring_interception_execute_combat = yes
 
-	ring_interception_try_seize = yes
-
 	ring_interception_disengage_check = yes
 }
 
@@ -287,26 +380,37 @@ ring_interception_single_attempt = {
 # ARGS: temp_attacker, temp_defender (Attacking and defending characters)
 ring_combat_execute_attack = {
 
-	# Get defender dexterity
-	var:temp_defender = {
+	if = {
+		# Dont run this if we fucked up with the parameters somewhere
+		limit = {
+			var:temp_defender = { is_corps_commander = yes }
+			var:temp_attacker = { is_corps_commander = yes }
+		}
 
-		set_temp_variable = { temp_defender_dex = logistics_level }
+		# Get defender dexterity
+		var:temp_defender = {
+
+			set_temp_variable = { temp_defender_dex = logistics_level }
+		}
+
+		# Dex check
+		random_list = {
+			2 = {
+				# deal damage (eventlog is taken care of in that function)
+				ring_combat_deal_damage = yes
+			}
+			var:temp_defender_dex = {
+				# eventlog: defender dodges attack
+				add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+				add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+				add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_miss }
+				ring_trim_eventlog = yes
+			}
+		}	
 	}
-
-	# Dex check
-	random_list = {
-		2 = {
-			# deal damage (eventlog is taken care of in that function)
-			ring_combat_deal_damage = yes
-		}
-		var:temp_defender_dex = {
-			# eventlog: defender dodges attack
-			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
-			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
-			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_miss }
-			ring_trim_eventlog = yes
-		}
-	}	
+	else = {
+		log = "Tried to execute ring_combat_execute_attack, but one of the parameters was not a character."
+	}
 }
 
 
@@ -314,53 +418,64 @@ ring_combat_execute_attack = {
 # Lowers the defenders health by the attackers attack_level. If the health reaches <0, kills the defender
 # ARGS: temp_attacker, temp_defender (damage dealer and taker)
 ring_combat_deal_damage = {
-	# Get attack attack
-	var:temp_attacker = {
-
-		set_temp_variable = { temp_attacker_attack = attack_level }
-	}
-
-	# subtract from health
-	var:temp_defender = {
-
-		subtract_from_variable = { health = temp_attacker_attack }
-
-		# add damage dealt to eventlog
-		if = {
-			limit = { var:temp_attacker = { check_variable = { attack_level = 1 } } }
-			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
-			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
-			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_1dmg }
-			ring_trim_eventlog = yes
-		}
-		else_if = {
-			limit = { var:temp_attacker = { check_variable = { attack_level = 2 } } }
-			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
-			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
-			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_2dmg }
-			ring_trim_eventlog = yes
-		}
-		else_if = {
-			limit = { var:temp_attacker = { check_variable = { attack_level = 3 } } }
-			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
-			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
-			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_3dmg }
-			ring_trim_eventlog = yes
-		}
-		else = {
-			add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
-			add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
-			add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_massivedmg }
-			ring_trim_eventlog = yes
+	if = {
+		# Dont run this if we fucked up with the parameters somewhere
+		limit = {
+			var:temp_defender = { is_corps_commander = yes }
+			var:temp_attacker = { is_corps_commander = yes }
 		}
 
-		# check for death
-		if = {
-			limit = {
-				check_variable = { health < 1 }
+		# Get attack attack
+		var:temp_attacker = {
+
+			set_temp_variable = { temp_attacker_attack = attack_level }
+		}
+
+		# subtract from health
+		var:temp_defender = {
+
+			subtract_from_variable = { health = temp_attacker_attack }
+
+			# add damage dealt to eventlog
+			if = {
+				limit = { var:temp_attacker = { check_variable = { attack_level = 1 } } }
+				add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+				add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+				add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_1dmg }
+				ring_trim_eventlog = yes
 			}
-			ring_combat_kill_character = yes
+			else_if = {
+				limit = { var:temp_attacker = { check_variable = { attack_level = 2 } } }
+				add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+				add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+				add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_2dmg }
+				ring_trim_eventlog = yes
+			}
+			else_if = {
+				limit = { var:temp_attacker = { check_variable = { attack_level = 3 } } }
+				add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+				add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+				add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_3dmg }
+				ring_trim_eventlog = yes
+			}
+			else = {
+				add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+				add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+				add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_massivedmg }
+				ring_trim_eventlog = yes
+			}
+
+			# check for death
+			if = {
+				limit = {
+					check_variable = { health < 1 }
+				}
+				ring_combat_kill_character = yes
+			}
 		}
+	}
+	else = {
+		log = "Tried to execute ring_combat_execute_attack, but one of the parameters was not a character."
 	}
 }
 
@@ -368,19 +483,27 @@ ring_combat_deal_damage = {
 # Kills the current scope
 # Can be both fellowship or hunting-party member
 ring_combat_kill_character = {
-	# eventlog
-	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
-	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-	add_to_array = { global.fs_eventlog = token:fs_event_char_dies }
-	ring_trim_eventlog = yes
 
-	set_variable = { THIS.isdead = 1 }
+	if = {
+		limit = { THIS = { check_variable = { isdead = 0 } } } # cant kill someone who is already dead
 
-	ring_remove_member_from_hunting_party = yes
-	ring_remove_member_from_fellowship_nolog = yes
+		# eventlog
+		add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_char_dies }
+		ring_trim_eventlog = yes
 
-	# This makes the character unusable by everyone
-	retire = yes
+		set_variable = { THIS.isdead = 1 }
+
+		ring_remove_member_from_hunting_party = yes
+		ring_remove_member_from_fellowship_nolog = yes
+
+		# This makes the character unusable by everyone
+		retire = yes
+
+		# check if frodo is dead
+		ring_try_seize = yes
+	}
 }
 
 
@@ -391,6 +514,15 @@ ring_combat_kill_character = {
 # RETURN: Sets fs_interception_cancelled = 1 if either party is empty
 ring_interception_execute_combat = {
 	
+	# Back-and-forth attack
+	ring_interception_combat_hp_attack_fs = yes
+
+	ring_interception_combat_fs_attack_hp = yes
+}
+
+
+# Executes a single attack of the hunting party onto the fellowship
+ring_interception_combat_hp_attack_fs = {
 	# HUNTING PARTY ATTACK
 	if = {
 		# Only run this if both parties still have people alive
@@ -418,9 +550,12 @@ ring_interception_execute_combat = {
     else = {
     	set_temp_variable = { fs_interception_cancelled = 1 }
     }
+}
 
 
-    # FELLOWSHIP COUNTER-ATTACK: (Exactly the same as above but reversed)
+# Executes a single attack of the fellowship onto the hunting party
+ring_interception_combat_fs_attack_hp = {
+	# FELLOWSHIP COUNTER-ATTACK: (Exactly the same as above but reversed)
     if = {
 		# Only run this if both parties still have people alive
 		limit = {
@@ -452,19 +587,12 @@ ring_interception_execute_combat = {
 
 # Runs a single attempt of the hunting party (ROOT) trying to take the ring
 # Implementation (for now): You only take the ring of Frodo dies
-ring_interception_try_seize = {
+ring_try_seize = {
 	
 	if = {
 		limit = { ring_frodo_is_dead = yes }
 
-		# eventlog
-		add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
-		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-		add_to_array = { global.fs_eventlog = token:fs_event_takes_the_ring }
-		ring_trim_eventlog = yes
-
-		# TODO: Actually do something here
-		log = "RING HAS BEEN SEIZED!"
+		ring_seize_ring = yes
 	}
 }
 
@@ -498,4 +626,17 @@ ring_interception_disengage_check = {
 			}
 		}
 	}
+}
+
+ring_seize_ring = {
+	log = "RING SEIZED"
+
+	# eventlog
+	add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_takes_the_ring }
+	ring_trim_eventlog = yes
+
+	# TODO: Actually do something here
+	log = "RING HAS BEEN SEIZED!"
 }
