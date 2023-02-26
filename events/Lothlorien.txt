@@ -45,96 +45,233 @@ country_event = {
 	}
 }
 
+# Offer shelter to fellowship
+country_event = {
+	id = lothlorien.3
+	title = lothlorien.3.t
+	desc = lothlorien.3.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {base = 4}
+		name = lothlorien.3.a
+
+		set_global_flag = LTH_offered_shelter
+		LTH = {complete_national_focus = offersheltertothefellowship}
+
+		# give choice to take the ring after a while
+		hidden_effect = {
+			LTH = { country_event = { days = 7 id = lothlorien.2 } }
+
+			ring_heal_fellowship = yes
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_give_shelter }
+			ring_trim_eventlog = yes
+		}
+	}
+	option = {
+		ai_chance = {base = 1 
+		modifier = {is_historical_focus_on = yes factor = 0}}
+		name = lothlorien.3.b
+
+		hidden_effect = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_refuse_shelter }
+			ring_trim_eventlog = yes
+		}
+	}
+}
+
+# Take ring?
 country_event = {
 	id = lothlorien.2
 	title = lothlorien.2.t
 	desc = lothlorien.2.d
 	fire_only_once = yes
 	picture = GFX_report_event_ring
-	trigger = { original_tag = LTH NOT = {has_global_flag = ring_found}
-					has_global_flag = LTH_offered_shelter
-					date > 3019.5.1 date < 3019.8.20}
+	
+	is_triggered_only = yes
 
-	option = {name = lothlorien.2.a #try to take ring from fellowship
-				add_political_power = -100
+	# take it
+	option = {
+		name = lothlorien.2.a
+		ai_chance = {
+			base = 1
+			modifier = { is_historical_focus_on = yes factor = 0 }
+		}
+
+		add_political_power = -200
+
 		LTH = {complete_national_focus = taketheringfromfrodo}
-			ai_chance = { base = 1 modifier = {is_historical_focus_on = yes 
-								factor = 0} }
 
-			random_list = {
-			10 = { 
-				modifier = {
-					add = 30
-					has_global_flag = fs_gondor_faramir}
-				modifier = {
-					add = 30
-					has_global_flag = fs_mirkwood_tauriel
-				}
-				modifier = {
-					add = 30
-					has_global_flag = fs_erebor_bombur
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_gondor_boromir
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_mirkwood_legolas
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_erebor_gimli
-				}
+		random_list = {
 
-				LTH = { country_event = { days = 1 id = fs.100 } }
-				
-				
+			# Frodo offers the ring up willingly
+			5 = {
+				LTH = { country_event = { days = 7 id = lothlorien.4 } }
 			}
-			30 = {
-				modifier = {
-					add = 60
-					has_global_flag = aragorn_dead
-				}
-				news_event = { hours = 12 id = news.371 }
-		set_global_flag = ring_found
-		LTH = { add_ideas = one_true_ring }
-		set_global_flag = lorien_has_ring
+			# Frodo refuses
+			95 = {
+				LTH = { country_event = { days = 7 id = lothlorien.5 } }
+			}
+		}
+
+		custom_effect_tooltip = lothlorien.2.a.tt
+	}
+	# dont
+	option = {
+		name = lothlorien.2.b # gear up fellowship
+		ai_chance = {base = 1}
 		
-				
-			}
-			}
-			}
-			option = {
-					name = lothlorien.2.b # gear up fellowship
-					ai_chance = {base = 1}
-					custom_effect_tooltip = LTH_GUF
-					LTH = {complete_national_focus = gearupthefellowship}
-					set_global_flag = fs_gearedup_lothlorien
-			}
+		LTH = { country_event = { days = 7 id = lothlorien.6 } }
+	}
 	
 }
 
-# Offer shelter to fellowship
+# Frodo gives ring
 country_event = {
-		id = lothlorien.3
-		title = lothlorien.3.t
-		desc = lothlorien.3.d
-		fire_only_once = yes
+	id = lothlorien.4
+	title = lothlorien.4.t
+	desc = lothlorien.4.d
+	fire_only_once = yes
 
-		trigger = {has_global_flag = fellowship_departed original_tag = LTH NOT = {has_global_flag = ring_found} date > 3019.3.1 date < 3019.5.1}
+	is_triggered_only = yes
 
-		option = {
-			ai_chance = {base = 1}
-			name = lothlorien.3.a
-			set_global_flag = LTH_offered_shelter
-			LTH = {complete_national_focus = offersheltertothefellowship}
+	option = {
+		ai_chance = { base = 1 }
+		name = lothlorien.4.a
+
+		hidden_effect = {
+			news_event = { hours = 12 id = news.371 }
+			ring_seize_ring = yes
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_frodo_gives_ring }
+			ring_trim_eventlog = yes
 		}
-		option = {
-			ai_chance = {base = 1 
-			modifier = {is_historical_focus_on = yes 
-								factor = 0}}
-			name = lothlorien.3.b
+	}
+}
+
+# Frodo refuses
+country_event = {
+	id = lothlorien.5
+	title = lothlorien.5.t
+	desc = lothlorien.5.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# Escalate
+	option = {
+		ai_chance = { base = 1 }
+		name = lothlorien.5.a
+
+		custom_effect_tooltip = lothlorien.5.a.tt
+
+		hidden_effect = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_frodo_refuses }
+			ring_trim_eventlog = yes
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_frodo_refuses_escalate }
+			ring_trim_eventlog = yes
+
+			ring_open_interception_attempt_prompt = yes
 		}
+	}
+	# Doesnt matter
+	option = {
+		ai_chance = { base = 1 }
+		name = lothlorien.5.b
+
+		custom_effect_tooltip = lothlorien.5.b.tt
+
+		hidden_effect = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_frodo_refuses }
+			ring_trim_eventlog = yes
+		}
+
+		LTH = { country_event = { days = 2 id = lothlorien.6 } }
+	}
+}
+
+# Gear up fellowship
+country_event = {
+	id = lothlorien.6
+	title = lothlorien.6.t
+	desc = lothlorien.6.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# Gifts
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.6.a
+
+		custom_effect_tooltip = lothlorien.6.a.tt
+
+		add_timed_idea = {
+    		idea = minor_expense
+    		days = 180
+		}
+
+		hidden_effect = {
+			# Increase attack level of all by 1
+			SHI = {
+				for_each_scope = {
+					array = global.fs_members
+
+					THIS = { add_attack = 1 }
+				}
+			}
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_gifts }
+			ring_trim_eventlog = yes
+		}
+	}
+
+	# Haldir
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = { is_historical_focus_on = yes factor = 0 }
+		}
+		name = lothlorien.6.b
+
+		custom_effect_tooltip = lothlorien.6.b.tt
+
+		LTH_haldir = { retire = yes }
+		hidden_effect = {
+			SHI = { FS_haldir = { ring_add_member_to_fellowship = yes } }
+		}
+	}
+
+	# Nothing
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = { is_historical_focus_on = yes factor = 0 }
+		}
+		name = lothlorien.6.c
+	}
+
+		
+
 }
 
