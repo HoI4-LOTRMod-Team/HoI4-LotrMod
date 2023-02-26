@@ -195,6 +195,116 @@ country_event = {
 			RIV = { country_event = { days = 14 id = rivendell.1 } }
 		}
 
+		# Redhorn Pass encounter
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 66 } }
+
+			# If Saru is bad, let him block this pass
+			if = {
+				limit = { has_global_flag = gandalf_imprisoned }
+				ISE = { country_event = { days = 2 id = isengard.11 } }
+			}
+		}
+
+		# Potential TODOs:
+		# - Custom interception attempt by orcs of moria with (cave-troll)
+		#	Leads to dwarves being able to help/respond if still alive
+		# - Custom shelter offer if dwarves still alive with custom flavour if gimli with fellowship
+
+		# orc-moria encounter
+		else_if = {
+			limit = {
+				check_variable = { global.fs_currentstate = 73 }
+				73 = { is_controlled_by = MOC }
+			}
+
+			# let MOC start interception with a cave troll
+			MOC = { country_event = { days = 3 id = moria.6 } }
+		}
+
+		# East-Moria encounter
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 134 } }
+
+			# Remove oin and ori (These may have joined in the previous state)
+			MOA = {
+				MOA_ori = { ring_remove_member_from_fellowship = yes }
+				MOA_oin = { ring_remove_member_from_fellowship = yes }
+			}
+
+			# TODO: allow dwarves to help out fellowship
+
+			# if balrog is alive
+			if = {
+				limit = {
+					NOT = { MOA = { has_completed_focus = dealwiththebalrog } }
+					NOT = { MOC = { has_completed_focus = dealwiththebalrog } }
+				}
+
+				# gandalf alive => goodbye Gandalf
+				if = {
+					limit = {
+						FS_gandalf = { ring_is_fs_member = yes }
+					}
+					FS_gandalf = { ring_remove_member_from_fellowship_nolog = yes }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter }
+					ring_trim_eventlog = yes
+				}
+				# otherwise goodbye aragorn
+				else_if = {
+					limit = {
+						FS_aragorn = { ring_is_fs_member = yes }
+					}
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter_aragorn }
+					ring_trim_eventlog = yes
+
+					FS_aragorn = { ring_combat_kill_character = yes }
+				}
+				# otherwise, goodbye sam
+				else_if = {
+					limit = {
+						FS_sam = { ring_is_fs_member = yes }
+					}
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter_samwise }
+					ring_trim_eventlog = yes
+
+					FS_sam = { ring_combat_kill_character = yes }
+				}
+			}
+		}
+
+		# Lorien encounter
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 75 } }
+
+			# give LTH option to offer fellowship shelter
+			if = {
+				limit = {
+					75 = { is_controlled_by = LTH }
+					NOT = { LTH = { is_in_faction_with = MOR } }
+				}
+				LTH = { country_event = { days = 3 id = lothlorien.3 } }
+			}
+			else = {
+				# TODO: just keep going (populate pathstack)
+			}
+		}
+
+		# Argonath Encounter / Breakup
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 182 } }
+
+			# TODO: everything
+		}
 		
 		# Move into next state if fellowship still exists
 		if = {
@@ -222,6 +332,9 @@ country_event = {
 			log = "currentState: [?global.fs_currentstate]"
 
 			set_global_flag = fs_started
+
+			# Set path to prelude
+			set_variable = { global.fs_path = 0 }
 
 			# Initial fellowship
 			FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
@@ -376,6 +489,7 @@ country_event = {
 				add_to_array = { global.fs_path_stack = 159 }
 				add_to_array = { global.fs_path_stack = 158 }
 				add_to_array = { global.fs_path_stack = 24 }
+				add_to_array = { global.fs_path_stack = 28 }
 				add_to_array = { global.fs_path_stack = 26 }
 				add_to_array = { global.fs_path_stack = 27 }
 				add_to_array = { global.fs_path_stack = 182 }
@@ -388,3 +502,31 @@ country_event = {
 	}
 }
 
+# Force fellowship through moria
+country_event = {
+	id = fs.1003
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate {
+		# eventlog
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_misty_mountain_path_blocked }
+		ring_trim_eventlog = yes
+
+		# Set path
+		set_variable = { global.fs_path = 2 }
+
+		# re-populate pathstack
+		add_to_array = { global.fs_path_stack = 73 }
+		add_to_array = { global.fs_path_stack = 134 }
+		add_to_array = { global.fs_path_stack = 160 }
+		add_to_array = { global.fs_path_stack = 75 }
+
+		# get going
+		ring_fellowship_begin_move_to_next_state = yes
+		
+	}
+}

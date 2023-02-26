@@ -256,7 +256,6 @@ country_event = {
 }
 
 # Mordor asked to join there faction
-
 country_event = {
 	id = moria.5
 	title = moria.5.t
@@ -275,5 +274,106 @@ country_event = {
 
 	option = {
 		name = moria.5.b
+	}
+}
+
+# ORC-Moria ring interception attempt
+country_event = {
+	id = moria.6
+	title = moria.6.t
+	desc = moria.6.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# ignore
+	option = {
+		name = moria.6.a
+	}
+
+	# attack
+	option = {
+		name = moria.6.b
+
+		custom_effect_tooltip = moria.6.b.tt
+
+		if = {
+			limit = { country_exists = MOA }
+			custom_effect_tooltip = moria.6.tt_dwarf_response
+
+			# First we check how the dwarves respond, then the interception attempt is launched
+			hidden_effect = { MOA = { country_event = moria.7 } }
+		}
+	}
+
+	# attack with cave-troll
+	option = {
+		name = moria.6.c
+
+		custom_effect_tooltip = moria.6.c.tt
+
+		if = {
+			limit = { country_exists = MOA }
+			custom_effect_tooltip = moria.6.tt_dwarf_response
+
+			hidden_effect = {
+				MOC_cavetroll = { ring_add_member_to_hunting_party = yes }
+			}
+
+			# First we check how the dwarves respond, then the interception attempt is launched
+			hidden_effect = { MOA = { country_event = moria.7 } }
+		}
+	}
+}
+
+# Dwarf response to ORC-Moria ring interception attempt
+country_event = {
+	id = moria.7
+	title = moria.7.t
+	desc = moria.7.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# leave fellowship
+	option = {
+		name = moria.7.a
+
+		custom_effect_tooltip = moria.7.a.tt
+
+		add_timed_idea = {
+		    idea = MOA_surprise_attack
+		    days = 30
+		}
+
+		# let orcs intercept
+		hidden_effect = {
+			MOC = {
+				ring_open_interception_attempt_prompt = yes
+			}
+		}
+	}
+
+	# help fellowship
+	option = {
+		name = moria.7.b
+
+		custom_effect_tooltip = moria.7.b.tt
+
+		hidden_effect = {
+			# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_moria_oin_ori }
+			ring_trim_eventlog = yes
+
+			MOA_ori = { ring_add_member_to_fellowship = yes }
+			MOA_oin = { ring_add_member_to_fellowship = yes }
+
+			# let orcs intercept
+			MOC = {
+				ring_open_interception_attempt_prompt = yes
+			}
+		}
 	}
 }
