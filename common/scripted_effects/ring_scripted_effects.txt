@@ -392,6 +392,50 @@ ring_execute_weathertop_encounter = {
 	}
 }
 
+# Special combat if boromir betrays
+ring_execute_boromir_betrayal = {
+	SHI = {
+
+		# Remove boromir from fellowship
+		FS_boromir = { ring_remove_member_from_fellowship_nolog = yes }
+
+		# Add boromir to hunting party
+		ring_clear_hunting_party = yes
+		FS_boromir = { ring_add_member_to_hunting_party = yes }
+
+		# execute combat until either boromir or frodo dies (or max attempts)
+		for_loop_effect = {
+		    end = 6
+		    value = temp_attempt
+
+		    if = {
+				limit = {
+					NOT = {
+						ring_boromir_is_dead = yes
+						ring_frodo_is_dead = yes
+					}
+				}
+
+		    	ring_interception_execute_combat = yes
+	    	}
+		}
+
+		# if frodo dies -> GON seizes ring
+		if = {
+			limit = { ring_frodo_is_dead = yes }
+
+			GON = { country_event = gondor.11 }
+		}
+		# if boromir died -> send event to gondor
+		else = {
+			GON = { country_event = gondor.12 }
+		}
+
+		# trigger isengard event (raid)
+		# TODO
+	}
+}
+
 # Runs a detection check if ROOT can detect the fellowship
 # ARGS: ROOT.fs_hunting_party, global.fs_members
 # RETURN: If the check fails, it sets fs_interception_cancelled to 1
@@ -716,6 +760,9 @@ ring_seize_ring = {
 	ring_trim_eventlog = yes
 
 	# TODO: Actually do something here
+	# TODO: trigger notification event for root
+	# set flags etc.
+	# add/remove ideas
 	log = "RING HAS BEEN SEIZED!"
 }
 
