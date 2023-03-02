@@ -126,12 +126,16 @@ ring_add_member_to_fellowship_nolog = {
 # Removes the current scope from the fellowship
 ring_remove_member_from_fellowship = {
 
-	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
-	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-	add_to_array = { global.fs_eventlog = token:fs_event_member_leaves }
-	ring_trim_eventlog = yes
-	
-	remove_from_array = { global.fs_members = THIS }
+	if = {
+		limit = { ring_is_fs_member = yes }
+
+		add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_member_leaves }
+		ring_trim_eventlog = yes
+		
+		remove_from_array = { global.fs_members = THIS }
+	}
 }
 
 
@@ -433,6 +437,40 @@ ring_execute_boromir_betrayal = {
 
 		# trigger isengard event (raid)
 		# TODO
+	}
+}
+
+ring_execute_argonath_raid = {
+	# if Isengard is bad and exists -> run raid
+	if = {
+		limit = {
+			has_global_flag = gandalf_imprisoned
+			country_exists = ISE
+		}
+		ISE = { country_event = isengard.7 days = 2 }
+	}
+
+	# else if Mordor bad and exists -> run raid
+	else_if = {
+		limit = {
+			country_exists = MOR
+			NOT = { MOR = { is_subject = yes } }
+		}
+		MOR = { country_event = isengard.7 days = 2 }
+	}
+
+	# else flavour event
+	# At least get rid of gandalf, Aragorn, Merry and Pippin, because they are required for other events
+	SHI = {
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_separated }
+		ring_trim_eventlog = yes
+
+		FS_gandalf = { ring_remove_member_from_fellowship = yes }
+		FS_aragorn = { ring_remove_member_from_fellowship = yes }
+		FS_merry = { ring_remove_member_from_fellowship = yes }
+		FS_pippin = { ring_remove_member_from_fellowship = yes }
 	}
 }
 
