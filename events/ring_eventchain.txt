@@ -316,7 +316,49 @@ country_event = {
 				# Trigger Argonath raid
 				ring_execute_argonath_raid = yes
 			}
-			
+		}
+
+		# Gollum joins
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 98 } }
+
+			FS_gollum = { ring_add_member_to_fellowship = yes }
+		}
+
+		# At Black Gate
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 204 } }
+
+			SHI = { country_event = { days = 1 id = fs.1004 } }
+		}
+
+		# Ithilien: Faramir encounter
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 173 } }
+
+			# TODO
+		}
+
+		# Minas Morgul: Gollum leaves and Shelob encounter
+		# Last chance for Mordor
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 5 } }
+
+			# TODO
+		}
+
+		# Shortly before Mt Doom: Last chance for Mordor (if through Black Gate)
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 188 } }
+
+			# TODO
+		}
+
+		# Mount Doom: RING DESTROYED
+		else_if = {
+			limit = { check_variable = { global.fs_currentstate = 10 } }
+
+			# TODO
 		}
 		
 		# Move into next state if fellowship still exists
@@ -435,6 +477,17 @@ country_event = {
 				add_to_array = { global.fs_path_stack = 195 }
 				add_to_array = { global.fs_path_stack = 160 }
 				add_to_array = { global.fs_path_stack = 75 }
+				add_to_array = { global.fs_path_stack = 191 }
+				add_to_array = { global.fs_path_stack = 179 }
+				add_to_array = { global.fs_path_stack = 30 }
+				add_to_array = { global.fs_path_stack = 206 }
+				add_to_array = { global.fs_path_stack = 27 }
+				add_to_array = { global.fs_path_stack = 98 }
+				add_to_array = { global.fs_path_stack = 182 }
+				add_to_array = { global.fs_path_stack = 98 }
+				add_to_array = { global.fs_path_stack = 101 }
+				add_to_array = { global.fs_path_stack = 204 }
+
 			}
 			# Angmar
 			1 = {
@@ -471,6 +524,16 @@ country_event = {
 				add_to_array = { global.fs_path_stack = 199 }
 				add_to_array = { global.fs_path_stack = 72 }
 				add_to_array = { global.fs_path_stack = 75 }
+				add_to_array = { global.fs_path_stack = 191 }
+				add_to_array = { global.fs_path_stack = 179 }
+				add_to_array = { global.fs_path_stack = 30 }
+				add_to_array = { global.fs_path_stack = 206 }
+				add_to_array = { global.fs_path_stack = 27 }
+				add_to_array = { global.fs_path_stack = 98 }
+				add_to_array = { global.fs_path_stack = 182 }
+				add_to_array = { global.fs_path_stack = 98 }
+				add_to_array = { global.fs_path_stack = 101 }
+				add_to_array = { global.fs_path_stack = 204 }
 			}
 			# Isengard
 			1 = {
@@ -506,6 +569,9 @@ country_event = {
 				add_to_array = { global.fs_path_stack = 26 }
 				add_to_array = { global.fs_path_stack = 27 }
 				add_to_array = { global.fs_path_stack = 182 }
+				add_to_array = { global.fs_path_stack = 98 }
+				add_to_array = { global.fs_path_stack = 101 }
+				add_to_array = { global.fs_path_stack = 204 }
 			}
 		}
 
@@ -537,6 +603,80 @@ country_event = {
 		add_to_array = { global.fs_path_stack = 134 }
 		add_to_array = { global.fs_path_stack = 160 }
 		add_to_array = { global.fs_path_stack = 75 }
+		add_to_array = { global.fs_path_stack = 191 }
+		add_to_array = { global.fs_path_stack = 179 }
+		add_to_array = { global.fs_path_stack = 30 }
+		add_to_array = { global.fs_path_stack = 206 }
+		add_to_array = { global.fs_path_stack = 27 }
+		add_to_array = { global.fs_path_stack = 98 }
+		add_to_array = { global.fs_path_stack = 182 }
+		add_to_array = { global.fs_path_stack = 98 }
+		add_to_array = { global.fs_path_stack = 101 }
+		add_to_array = { global.fs_path_stack = 204 }
+
+		# get going
+		ring_fellowship_begin_move_to_next_state = yes
+		
+	}
+}
+
+# Hobbits at black gate deciding where to go
+country_event = {
+	id = fs.1004
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate {
+		random_list = {
+			# Decide to go around through Minas Morgul
+			5 = {
+				modifier = {
+					add = 5
+					204 = { is_controlled_by = MOR }
+				}
+				modifier = {
+					add = 5
+					2 = { is_controlled_by = MOR }
+				}
+				modifier = {
+					add = 5
+					188 = { is_controlled_by = MOR }
+				}
+
+				# eventlog
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_black_gate_decision_mm }
+				ring_trim_eventlog = yes
+
+				# adjust path
+				add_to_variable = { global.fs_path = 20 }
+
+				# pathstack
+				add_to_array = { global.fs_path_stack = 22 }
+				add_to_array = { global.fs_path_stack = 173 }
+				add_to_array = { global.fs_path_stack = 5 }
+				add_to_array = { global.fs_path_stack = 10 }
+			}
+
+			# Decide to yolo slip past the gate
+			2 = {
+				# eventlog
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_black_gate_decision_bg }
+				ring_trim_eventlog = yes
+
+				# adjust path
+				add_to_variable = { global.fs_path = 10 }
+
+				# pathstack
+				add_to_array = { global.fs_path_stack = 2 }
+				add_to_array = { global.fs_path_stack = 188 }
+				add_to_array = { global.fs_path_stack = 10 }
+			}
+		}
 
 		# get going
 		ring_fellowship_begin_move_to_next_state = yes
