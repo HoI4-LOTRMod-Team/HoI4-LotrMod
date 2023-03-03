@@ -1942,29 +1942,81 @@ focus = {
 }
 
 #Focus to invite Angmar
-#focus = {
-#	id = invite_angmar_to_faction
-#	icon = GFX_goal_generic_dangerous_deal
-#	ai_will_do = { factor = 3 }
-#	x = 0
-#	y = 1
-#	relative_position_id = reachouttoangmar
-#	available = {
-#		ANG = {
-#			has_government = belligerent
-#		}
-#	}
-#	prerequisite = { focus = reachouttoangmar}
-#	cost = 10
-#	available_if_capitulated = yes
-#	completion_reward = {
-#		ANG = {
-#			country_event = {
-#				id = angmar.5
-#			}
-#		}
-#	}
-#}
+focus = {
+	id = invite_angmar_to_faction
+	icon = GFX_goal_angmar_unalligned
+	ai_will_do = { factor = 3 }
+	x = 0
+	y = 1
+	relative_position_id = reachouttoangmar
+	available = {
+		ANG = {
+			has_government = belligerent
+		}
+	}
+	prerequisite = { focus = reachouttoangmar}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		ANG = {
+			country_event = {
+				id = angmar.5
+			}
+		}
+	}
+}
+
+#Anti-elves pact
+focus = {
+	id = MOR_anti_elves_pact
+	icon = GFX_assasinateelrond
+	ai_will_do = { factor = 3 }
+	x = 0
+	y = 1
+	relative_position_id = invite_angmar_to_faction
+	available = {
+		is_in_faction = yes
+		has_government = belligerent
+		num_faction_members > 1
+	}
+	prerequisite = { focus = invite_angmar_to_faction focus = invite_isengard_to_faction}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		any_allied_country = {
+			limit = {
+				is_elves = no
+			}
+			country_event = { id = angmar.5 }
+		}
+	}
+}
+
+#Declaring war on the elves
+focus = {
+	id = MOR_together_we_attack
+	icon = GFX_assasinateelrond
+	ai_will_do = { factor = 3 }
+	x = 0
+	y = 1
+	relative_position_id = MOR_anti_elves_pact
+	available = {
+		is_in_faction = yes
+		has_government = belligerent
+		num_faction_members > 1
+	}
+	prerequisite = { focus = MOR_anti_elves_pact }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		any_allied_country = {
+			limit = {
+				is_elves = no
+			}
+			country_event = { id = angmar.5 }
+		}
+	}
+}
 
 focus = {
 	id = demand_alliance
@@ -1981,10 +2033,13 @@ focus = {
 			#}
 		}
 	}
-	x = 0
+	available = {
+		is_faction_leader = yes
+	}
+	x = -2
 	y = 1
-	relative_position_id = reachouttoangmar
-	prerequisite = { focus = reachouttoangmar focus = reach_out_to_isengard }
+	relative_position_id = rallythetroops
+	prerequisite = { focus = rallythetroops }
 	cost = 10
 	search_filters = { FOCUS_FILTER_ANNEXATION }
 	completion_reward = {
