@@ -336,7 +336,22 @@ country_event = {
 		else_if = {
 			limit = { check_variable = { global.fs_currentstate = 173 } }
 
-			# TODO
+			if = {
+				limit = {
+					NOT = { has_global_flag = fs_gondor_faramir }
+					NOT = { has_global_flag = faramir_dead }
+				}
+				random_list = {
+					50 = {
+						add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+						add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+						add_to_array = { global.fs_eventlog = token:fs_event_captured_by_faramir }
+						ring_trim_eventlog = yes
+						GON = { country_event = { days = 3 id = gondor.13 } }
+					}
+					50 = { }
+				}
+			}
 		}
 
 		# Minas Morgul: Gollum leaves and Shelob encounter
@@ -344,7 +359,16 @@ country_event = {
 		else_if = {
 			limit = { check_variable = { global.fs_currentstate = 5 } }
 
-			# TODO
+			FS_gollum = { ring_remove_member_from_fellowship = yes }
+
+			# Shelob ancounter (just flavour for now)
+			if = {
+				limit = { has_global_flag = MOR_allow_shelob }
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_shelob_encounter }
+				ring_trim_eventlog = yes
+			}
 		}
 
 		# Shortly before Mt Doom: Last chance for Mordor (if through Black Gate)
