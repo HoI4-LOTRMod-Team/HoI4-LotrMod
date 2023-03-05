@@ -305,6 +305,14 @@ ring_execute_interception_attempt = {
 		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_escapes }
 		ring_trim_eventlog = yes
 	}
+
+	# break up fellowship if this was the argonath raid
+	if = {
+		check_variable = { is_argonath_raid > 0 }
+		clear_variable = is_argonath_raid
+
+		ring_breakup_fellowship = yes
+	}
 }
 
 
@@ -433,10 +441,10 @@ ring_execute_boromir_betrayal = {
 		# if boromir died -> send event to gondor
 		else = {
 			GON = { country_event = gondor.12 }
-		}
 
-		# trigger isengard event (raid)
-		# TODO
+			# argonath raid
+			ring_execute_argonath_raid = yes
+		}
 	}
 }
 
@@ -459,19 +467,23 @@ ring_execute_argonath_raid = {
 		MOR = { country_event = { id = isengard.7 days = 2 } }
 	}
 
-	# else flavour event
-	# At least get rid of gandalf, Aragorn, Merry and Pippin, because they are required for other events
-	SHI = {
-		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_separated }
-		ring_trim_eventlog = yes
+	else = {
+		SHI = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_fellowship_separated }
+			ring_trim_eventlog = yes
 
-		FS_gandalf = { ring_remove_member_from_fellowship = yes }
-		FS_aragorn = { ring_remove_member_from_fellowship = yes }
-		FS_merry = { ring_remove_member_from_fellowship = yes }
-		FS_pippin = { ring_remove_member_from_fellowship = yes }
+			ring_breakup_fellowship = yes
+		}
 	}
+}
+
+ring_breakup_fellowship = {
+	ring_clear_fellowship_members = yes
+
+	FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+	FS_sam = { ring_add_member_to_fellowship_nolog = yes }
 }
 
 # Runs a detection check if ROOT can detect the fellowship
