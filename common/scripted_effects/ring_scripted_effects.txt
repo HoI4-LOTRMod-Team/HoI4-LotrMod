@@ -245,15 +245,58 @@ ring_daily_update = {
 # Opens up the interception attempt prompt, allowing the country to launch an attempt
 ring_open_interception_attempt_prompt = {
 
-	clr_country_flag = ring_details_view_open
+	# Special case for AI
+	if = {
+		limit = { is_ai = yes }
 
-	# Only one week to select interception group
-	# NOT: do NOT change the 7 day countdown without fixing the GetDayLeftBeforeAutoAbort scripted localization!!
-	set_country_flag = {
-	    flag = ring_interception_form_open
-	    days = 7
-	    value = 1
+		ring_ai_commence_interception_attempt = yes
 	}
+	# the "normal" way
+	else = {
+		clr_country_flag = ring_details_view_open
+
+		# Only one week to select interception group
+		# NOT: do NOT change the 7 day countdown without fixing the GetDayLeftBeforeAutoAbort scripted localization!!
+		set_country_flag = {
+		    flag = ring_interception_form_open
+		    days = 7
+		    value = 1
+		}
+	}
+}
+
+
+# The AI will start an interception attempt, automatically selecting a hunting party etc.
+ring_ai_commence_interception_attempt = {
+	# select hunting party
+	for_each_scope_loop = {
+	    array = army_leaders
+	    if = {
+	        limit = {
+	            check_variable = { ROOT.fs_hunting_party^num < 9 }
+	        }
+	        random_list = {
+	        	90 = {
+	        		ring_add_member_to_hunting_party = yes
+	        	}
+	        	10 = {
+
+	        	}
+	        }
+	    }
+	}
+
+	# set acceptable casualty rate
+	if = {
+		limit = { OR = { tag = ISE tag = MOR } }
+		set_variable = { ROOT.fs_max_casualty_rate = 1.0 }
+	}
+	else = {
+		set_variable = { ROOT.fs_max_casualty_rate = 0.5 }
+	}
+
+	# launch
+	ring_execute_interception_attempt = yes
 }
 
 
@@ -261,7 +304,7 @@ ring_open_interception_attempt_prompt = {
 ring_abort_interception_attempt = {
 	clr_country_flag = ring_interception_form_open
 
-	# TODO: get rid of Cave troll if MOC
+	ring_clear_hunting_party = yes
 }
 
 
@@ -320,6 +363,9 @@ ring_execute_interception_attempt = {
 		add_to_array = { global.fs_eventlog_suffix_targets = ROOT }
 		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_escapes }
 		ring_trim_eventlog = yes
+
+		# send the bad news home
+		ROOT = { country_event = fs.102 }
 	}
 
 	# break up fellowship if this was the argonath raid
