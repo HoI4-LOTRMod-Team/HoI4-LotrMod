@@ -113,9 +113,13 @@ ring_add_member_to_fellowship_nolog = {
 	if = {
 		limit = { check_variable = { global.fs_members^num < 12 } }  # Do not allow more than 12 members. the UI won't work.
 
-		# Set this characters starting vars
-		THIS = { set_variable = { health = army_defense_level } }
-		THIS = { set_variable = { isdead = 0 } }
+		if = {
+			limit = { NOT = { has_variable = health } }
+
+			# Set this characters starting vars
+			THIS = { set_variable = { health = army_defense_level } }
+			THIS = { set_variable = { isdead = 0 } }
+		}
 
 		add_to_array = { global.fs_members = THIS }
 	}
@@ -271,6 +275,18 @@ ring_open_interception_attempt_prompt = {
 
 # The AI will start an interception attempt, automatically selecting a hunting party etc.
 ring_ai_commence_interception_attempt = {
+
+	# If isengard -> make sure Lurtz leads the pack
+	if = {
+		limit = {
+			ROOT = {
+				tag = ISE 
+				ISE_lurtz = { is_army_leader = yes } 
+			}
+		}
+		ISE_lurtz = { ring_add_member_to_hunting_party = yes }
+	}
+
 	# select hunting party
 	for_each_scope_loop = {
 	    array = army_leaders
@@ -587,7 +603,25 @@ ring_interception_detection_check = {
 		}
 		divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
 		# Hunting party gets 200% bonus because this is their home turf
-		multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
+		multiply_temp_variable  = { temp_avg_hp_stealth = 3 }
+
+		# these countries get an additional detection bonus
+		if = {
+			limit = { ROOT = { OR = { tag = MOC tag = ISE } } }
+			multiply_temp_variable  = { temp_avg_hp_stealth = 3 }
+		}
+
+		# ring-catcher bonus
+		if = {
+			limit = { has_idea_with_trait = ring_catcher }
+			multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
+		}
+
+		# cheaty-pete AI bonus
+		if = {
+			limit = { is_ai = yes }
+			multiply_temp_variable  = { temp_avg_hp_stealth = 1.5 }
+		}
 
 		# Check which side wins:
 		random_list = {
@@ -603,17 +637,6 @@ ring_interception_detection_check = {
 			}
 			var:temp_avg_hp_stealth = {
 				# Hunting party wins -> fellowship located -> interception proceeds
-
-				# These countries get detection bonus
-				modifier = {
-					factor = 3
-					ROOT = {
-						OR = {
-							tag = MOC
-							tag = ISE
-						} 
-					}
-				}
 
 				# Add to eventlog
 				add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
@@ -657,7 +680,7 @@ ring_combat_execute_attack = {
 
 		# Dex check
 		random_list = {
-			3 = {
+			4 = {
 				# deal damage (eventlog is taken care of in that function)
 				ring_combat_deal_damage = yes
 			}
