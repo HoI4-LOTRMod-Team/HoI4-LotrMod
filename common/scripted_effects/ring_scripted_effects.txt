@@ -9,11 +9,37 @@ ring_clear_pathstack = {
 
 # Sets the health of all fellowship members to their max-health
 ring_heal_fellowship = {
-	SHI = {
-		for_each_scope_loop = {
+	custom_effect_tooltip = ring_heal_fellowship_tt
+
+	hidden_effect = {
+		SHI = {
+			for_each_scope_loop = {
+			    array = global.fs_members
+			    
+			    ring_heal_fellowship_member = yes
+			}
+		}
+	}
+}
+
+
+# Gives a random fellowship member +2 hp and +2 attack
+ring_gear_up_random_member = {
+	custom_effect_tooltip = ring_gear_up_random_member_tt
+
+	hidden_effect = {
+		random_scope_in_array = {
 		    array = global.fs_members
 		    
-		    ring_heal_fellowship_member = yes
+		    THIS = {
+		    	add_attack = 2
+				add_defense = 2
+		    }
+
+		    add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+			add_to_array = { global.fs_eventlog_suffix_targets = THIS }
+			add_to_array = { global.fs_eventlog = token:fs_event_country_helps_fellowship }
+			ring_trim_eventlog = yes
 		}
 	}
 }
@@ -278,6 +304,8 @@ ring_open_interception_attempt_prompt = {
 
 # The AI will start an interception attempt, automatically selecting a hunting party etc.
 ring_ai_commence_interception_attempt = {
+
+	set_country_flag = fs_has_used_action
 
 	# If isengard -> make sure Lurtz leads the pack
 	if = {

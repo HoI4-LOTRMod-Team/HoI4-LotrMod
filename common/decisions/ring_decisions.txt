@@ -9,26 +9,29 @@ ring_decisions = {
 		cost = 150
 
         available = {
-        	NOT = { has_global_flag = fs_ring_seized }
         	controls_state = var:global.fs_currentstate
+        	NOT = { has_global_flag = fs_ring_seized }
+        	NOT = { has_country_flag = fs_has_used_action }
 
-        	OR = {
-        		has_country_flag = fs_early_interception_unlocked
-        		has_global_flag = fs_arrived_in_rivendell
+        	hidden_trigger = {
+	        	OR = {
+	        		has_country_flag = fs_early_interception_unlocked
+	        		has_global_flag = fs_arrived_in_rivendell
+	        	}
         	}
-
-        	NOT = { tag = RIV }
-        	NOT = { tag = LTH }
-        	NOT = { tag = MOA }
-        	NOT = { tag = MOC }
-        	NOT = { tag = GON }
 
         	check_variable = { army_leaders^num > 0 }
         }
 
 		visible = {
 			has_global_flag = fs_started
-			is_ai = no
+			is_ai = yes
+
+			NOT = { tag = RIV }
+        	NOT = { tag = LTH }
+        	NOT = { tag = MOA }
+        	NOT = { tag = MOC }
+        	NOT = { tag = GON }
 		}
 
 		ai_will_do = {
@@ -50,19 +53,16 @@ ring_decisions = {
 		cost = 0
 
         available = {
-        	NOT = { has_global_flag = fs_ring_seized }
         	controls_state = var:global.fs_currentstate
+        	NOT = { has_global_flag = fs_ring_seized }
+        	NOT = { has_country_flag = fs_has_used_action }
 
-        	OR = {
-        		has_country_flag = fs_early_interception_unlocked
-        		has_global_flag = fs_arrived_in_rivendell
+        	hidden_trigger = {
+	        	OR = {
+	        		has_country_flag = fs_early_interception_unlocked
+	        		has_global_flag = fs_arrived_in_rivendell
+	        	}
         	}
-
-        	NOT = { tag = RIV }
-        	NOT = { tag = LTH }
-        	NOT = { tag = MOA }
-        	NOT = { tag = MOC }
-        	NOT = { tag = GON } # TODO: if Gondor sends neither boro nor fara, they should be able to run interceptions?
 
         	check_variable = { army_leaders^num > 0 }
         }
@@ -70,6 +70,12 @@ ring_decisions = {
 		visible = {
 			has_global_flag = fs_started
 			is_ai = yes
+
+			NOT = { tag = RIV }
+        	NOT = { tag = LTH }
+        	NOT = { tag = MOA }
+        	NOT = { tag = MOC }
+        	NOT = { tag = GON }
 		}
 
 		ai_will_do = {
@@ -90,8 +96,9 @@ ring_decisions = {
 		cost = 100
 
         available = {
+        	controls_state = var:global.fs_currentstate
         	NOT = { has_global_flag = fs_ring_seized }
-			controls_state = var:global.fs_currentstate
+        	NOT = { has_country_flag = fs_has_used_action }
         }
 
 		visible = {
@@ -101,7 +108,18 @@ ring_decisions = {
 		fire_only_once = yes
 
 		complete_effect = {
-			
+			add_timed_idea = {
+		    	idea = minor_expense
+		    	days = 60
+			}
+
+			# random fellowship member gets +1 attack +1 defense
+			ring_gear_up_random_member = yes
+
+			# heal up fellowship
+			ring_heal_fellowship = yes
+
+			set_country_flag = fs_has_used_action
 		}
 	}
 }
