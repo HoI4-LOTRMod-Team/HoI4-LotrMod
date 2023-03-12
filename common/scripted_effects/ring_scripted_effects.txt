@@ -141,7 +141,10 @@ ring_remove_member_from_fellowship = {
 # Removes the current scope from the fellowship, but does NOT log this to the eventlog
 ring_remove_member_from_fellowship_nolog = {
 
-	remove_from_array = { global.fs_members = THIS }
+	if = {
+		limit = { ring_is_fs_member = yes }
+		remove_from_array = { global.fs_members = THIS }
+	}
 }
 
 
@@ -547,6 +550,7 @@ ring_execute_argonath_raid = {
 
 ring_breakup_fellowship = {
 	ring_clear_fellowship_members = yes
+	set_global_flag = fs_fellowship_breakup
 
 	SHI = {
 		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
@@ -559,57 +563,64 @@ ring_breakup_fellowship = {
 # RETURN: If the check fails, it sets fs_interception_cancelled to 1
 ring_interception_detection_check = {
 
-	# Calculate average fellowship stealth skill (planning_skill)
-	set_temp_variable = { temp_avg_fs_stealth = 0 }
-	for_each_scope_loop = {
-	    array = global.fs_members
-	    
-	    add_to_temp_variable = { temp_avg_fs_stealth = planning_level }
-	}
-	divide_temp_variable = { temp_avg_fs_stealth = global.fs_members^num }
-
-	# Calculate the average stealth skill of the hunting party
-	set_temp_variable = { temp_avg_hp_stealth = 0 }
-	for_each_scope_loop = {
-	    array = ROOT.fs_hunting_party
-	    
-	    add_to_temp_variable = { temp_avg_hp_stealth = planning_level }
-	}
-	divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
-	# Hunting party gets 200% bonus because this is their home turf
-	multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
-
-	# Check which side wins:
-	random_list = {
-		var:temp_avg_fs_stealth = {
-			# Fellowship wins -> remains undetected
-			set_temp_variable = { fs_interception_cancelled = 1 }
-
-			# Add to eventlog
-			add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
-			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-			add_to_array = { global.fs_eventlog = token:fs_event_failed_to_locate }
-			ring_trim_eventlog = yes
+	if = {
+		# Argonath raid does not require stealth-check
+		limit = {
+			NOT = { check_variable = { is_argonath_raid > 0 } }
 		}
-		var:temp_avg_hp_stealth = {
-			# Hunting pary wins -> fellowship located -> interception proceeds
 
-			# These countries get detection bonus
-			modifier = {
-				add = 4
-				ROOT = {
-					OR = {
-						tag = MOC
-						tag = ISE
-					} 
-				}
+		# Calculate average fellowship stealth skill (planning_skill)
+		set_temp_variable = { temp_avg_fs_stealth = 0 }
+		for_each_scope_loop = {
+		    array = global.fs_members
+		    
+		    add_to_temp_variable = { temp_avg_fs_stealth = planning_level }
+		}
+		divide_temp_variable = { temp_avg_fs_stealth = global.fs_members^num }
+
+		# Calculate the average stealth skill of the hunting party
+		set_temp_variable = { temp_avg_hp_stealth = 0 }
+		for_each_scope_loop = {
+		    array = ROOT.fs_hunting_party
+		    
+		    add_to_temp_variable = { temp_avg_hp_stealth = planning_level }
+		}
+		divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
+		# Hunting party gets 200% bonus because this is their home turf
+		multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
+
+		# Check which side wins:
+		random_list = {
+			var:temp_avg_fs_stealth = {
+				# Fellowship wins -> remains undetected
+				set_temp_variable = { fs_interception_cancelled = 1 }
+
+				# Add to eventlog
+				add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_failed_to_locate }
+				ring_trim_eventlog = yes
 			}
+			var:temp_avg_hp_stealth = {
+				# Hunting party wins -> fellowship located -> interception proceeds
 
-			# Add to eventlog
-			add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
-			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-			add_to_array = { global.fs_eventlog = token:fs_event_managed_to_locate }
-			ring_trim_eventlog = yes
+				# These countries get detection bonus
+				modifier = {
+					factor = 3
+					ROOT = {
+						OR = {
+							tag = MOC
+							tag = ISE
+						} 
+					}
+				}
+
+				# Add to eventlog
+				add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_managed_to_locate }
+				ring_trim_eventlog = yes
+			}
 		}
 	}
 }
@@ -646,7 +657,7 @@ ring_combat_execute_attack = {
 
 		# Dex check
 		random_list = {
-			2 = {
+			3 = {
 				# deal damage (eventlog is taken care of in that function)
 				ring_combat_deal_damage = yes
 			}

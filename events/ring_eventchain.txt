@@ -266,52 +266,8 @@ country_event = {
 				MOA = { country_event = { days = 4 id = moria.8 } }
 			}
 
-			# if balrog is alive
-			if = {
-				limit = {
-					NOT = { MOA = { has_completed_focus = dealwiththebalrog } }
-					NOT = { MOC = { has_completed_focus = dealwiththebalrog } }
-				}
-
-				# gandalf alive => goodbye Gandalf
-				if = {
-					limit = {
-						FS_gandalf = { ring_is_fs_member = yes }
-					}
-					FS_gandalf = { ring_remove_member_from_fellowship_nolog = yes }
-
-					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-					add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter }
-					ring_trim_eventlog = yes
-				}
-				# otherwise goodbye aragorn
-				else_if = {
-					limit = {
-						FS_aragorn = { ring_is_fs_member = yes }
-					}
-
-					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-					add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter_aragorn }
-					ring_trim_eventlog = yes
-
-					FS_aragorn = { ring_combat_kill_character = yes }
-				}
-				# otherwise, goodbye sam
-				else_if = {
-					limit = {
-						FS_sam = { ring_is_fs_member = yes }
-					}
-
-					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-					add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter_samwise }
-					ring_trim_eventlog = yes
-
-					FS_sam = { ring_combat_kill_character = yes }
-				}
-			}
+			# After some delay, execute the balrog event. (We want to make sure all the stuff above has already happened)
+			country_event = { days = 20 id = fs.1005 }
 		}
 
 		# Lorien encounter
@@ -357,8 +313,11 @@ country_event = {
 		else_if = {
 			limit = { check_variable = { global.fs_currentstate = 98 } }
 
-			FS_gollum = { ring_add_member_to_fellowship = yes }
-			set_global_flag = fs_only_hobbits
+			if = {
+				limit = { has_global_flag = fs_fellowship_breakup }
+				FS_gollum = { ring_add_member_to_fellowship = yes }
+				set_global_flag = fs_only_hobbits
+			}
 		}
 
 		# At Black Gate
@@ -744,6 +703,63 @@ country_event = {
 		# get going
 		ring_fellowship_begin_move_to_next_state = yes
 		
+	}
+}
+
+# balrog encounter
+country_event = {
+	id = fs.1005
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate {
+		# if balrog is alive
+		if = {
+			limit = {
+				NOT = { MOA = { has_completed_focus = dealwiththebalrog } }
+				NOT = { MOC = { has_completed_focus = dealwiththebalrog } }
+			}
+
+			# gandalf alive => goodbye Gandalf
+			if = {
+				limit = {
+					FS_gandalf = { ring_is_fs_member = yes }
+				}
+				FS_gandalf = { ring_remove_member_from_fellowship_nolog = yes }
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter }
+				ring_trim_eventlog = yes
+			}
+			# otherwise goodbye aragorn
+			else_if = {
+				limit = {
+					FS_aragorn = { ring_is_fs_member = yes }
+				}
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter_aragorn }
+				ring_trim_eventlog = yes
+
+				FS_aragorn = { ring_combat_kill_character = yes }
+			}
+			# otherwise, goodbye sam
+			else_if = {
+				limit = {
+					FS_sam = { ring_is_fs_member = yes }
+				}
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter_samwise }
+				ring_trim_eventlog = yes
+
+				FS_sam = { ring_combat_kill_character = yes }
+			}
+		}
 	}
 }
 
