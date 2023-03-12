@@ -111,7 +111,10 @@ ring_add_member_to_hunting_party = {
 ring_add_member_to_fellowship_nolog = {
 
 	if = {
-		limit = { check_variable = { global.fs_members^num < 12 } }  # Do not allow more than 12 members. the UI won't work.
+		limit = {
+			check_variable = { global.fs_members^num < 12 } # Do not allow more than 12 members. the UI won't work.
+			check_variable = { isdead = 0 }					# dont assign dead people
+		}
 
 		if = {
 			limit = { NOT = { has_variable = health } }
@@ -348,7 +351,7 @@ ring_execute_interception_attempt = {
 	ring_interception_detection_check = yes
 
 	for_loop_effect = {
-	    end = 8
+	    end = 10
 	    value = temp_attempt
 
 	    if = {
@@ -554,21 +557,21 @@ ring_execute_argonath_raid = {
 
 	else = {
 		SHI = {
-			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-			add_to_array = { global.fs_eventlog = token:fs_event_fellowship_separated }
-			ring_trim_eventlog = yes
-
 			ring_breakup_fellowship = yes
 		}
 	}
 }
 
 ring_breakup_fellowship = {
-	ring_clear_fellowship_members = yes
-	set_global_flag = fs_fellowship_breakup
-
 	SHI = {
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_separated }
+		ring_trim_eventlog = yes
+
+		ring_clear_fellowship_members = yes
+		set_global_flag = fs_fellowship_breakup
+
 		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
 		FS_sam = { ring_add_member_to_fellowship_nolog = yes }
 	}
@@ -680,7 +683,7 @@ ring_combat_execute_attack = {
 
 		# Dex check
 		random_list = {
-			4 = {
+			5 = {
 				# deal damage (eventlog is taken care of in that function)
 				ring_combat_deal_damage = yes
 			}
