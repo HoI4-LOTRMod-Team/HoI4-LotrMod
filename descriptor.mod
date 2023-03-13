@@ -5,7 +5,7 @@ tags={
 	"Events"
 	"Gameplay"
 }
-name="Lord of the Rings Mod"
+name="Lord of the Rings Mod BETA"
 replace_path="history/states"
 replace_path="history/countries"
 replace_path="history/general"
