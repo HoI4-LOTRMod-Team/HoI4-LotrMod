@@ -389,6 +389,37 @@ ring_execute_interception_attempt = {
     	}
 	}
 
+	# special case: if this is orcs attacking with cave-troll, the troll keeps fighting for a while longer
+	if = {
+		limit = {
+			tag = MOC
+			MOC_cavetroll = { is_in_array = { ROOT.fs_hunting_party = THIS } }
+			MOC_cavetroll = { check_variable = { health > 0 } }
+		}
+
+		log = "Cave-troll extra combat. Health: [?MOC_cavetroll.health]"
+
+		# clear hunting party *except* for the troll
+		set_temp_variable = { temp_ct_hp = var:MOC_cavetroll.health }
+		ring_clear_hunting_party = yes
+		MOC_cavetroll = { ring_add_member_to_hunting_party = yes }
+		MOC_cavetroll = { set_variable = { health = var:temp_ct_hp } }
+
+		log = "Cave-troll extra combat. Health: [?MOC_cavetroll.health]"
+
+		add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_troll_keeps_fighting }
+		ring_trim_eventlog = yes
+
+		for_loop_effect = {
+		    end = 3
+		    value = temp_attempt
+
+		    ring_interception_execute_combat = yes
+		}
+	}
+
 	# eventlog if fellowship killed the entire hunting party
 	if = {
 		limit = {
@@ -534,7 +565,7 @@ ring_execute_boromir_betrayal = {
 
 		# execute combat until either boromir or frodo dies (or max attempts)
 		for_loop_effect = {
-		    end = 6
+		    end = 8
 		    value = temp_attempt
 
 		    if = {
