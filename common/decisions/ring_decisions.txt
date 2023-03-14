@@ -28,17 +28,11 @@ ring_decisions = {
 			has_global_flag = fs_started
 			is_ai = no
 
-			NOT = { tag = RIV }
-        	NOT = { tag = LTH }
-        	NOT = { tag = MOA }
-        	NOT = { tag = MOC }
-        	NOT = { tag = GON }
+			NOT = { ring_has_special_interaction = yes }
 		}
 
 		ai_will_do = {
-			base = 100
-			# TODO: make this semi-random, potentially based on belligerent support etc.
-			# Rohan should avoid doing this
+			base = 0 # AI has a cheary decision that costs no pp, so no point in doing this one
 		}
 
 		fire_only_once = yes
@@ -75,17 +69,37 @@ ring_decisions = {
 			has_global_flag = fs_started
 			is_ai = yes
 
-			NOT = { tag = RIV }
-        	NOT = { tag = LTH }
-        	NOT = { tag = MOA }
-        	NOT = { tag = MOC }
-        	NOT = { tag = GON }
+			NOT = { ring_has_special_interaction = yes }
 		}
 
 		ai_will_do = {
-			base = 100
-			# TODO: make this semi-random, potentially based on belligerent support etc.
-			# Rohan should avoid doing this
+			base = 10
+			modifier = {
+				factor = 10
+				has_country_flag = fs_hostile_attitude
+			}
+			modifier = {
+				factor = 0.1
+				has_country_flag = fs_neutral_attitude
+			}
+			modifier = {
+				factor = 100
+				tag = ISE
+				has_global_flag = gandalf_imprisoned
+			}
+			modifier = {
+				factor = 0
+				tag = ISE
+				has_global_flag = gandalf_saruman_united
+			}
+			modifier = {
+				add = 100
+				tag = MOR
+			}
+			modifier = {
+				factor = 2
+				has_government = belligerent
+			}
 		}
 
 		fire_only_once = yes
@@ -110,6 +124,38 @@ ring_decisions = {
 
 		visible = {
 			has_global_flag = fs_started
+
+			NOT = { ring_has_special_interaction = yes }
+		}
+
+		ai_will_do = {
+			base = 10
+			modifier = {
+				factor = 10
+				has_country_flag = fs_friendly_attitude
+			}
+			modifier = {
+				factor = 0.1
+				has_country_flag = fs_neutral_attitude
+			}
+			modifier = {
+				factor = 0
+				tag = ISE
+				has_global_flag = gandalf_imprisoned
+			}
+			modifier = {
+				factor = 10
+				tag = ISE
+				has_global_flag = gandalf_saruman_united
+			}
+			modifier = {
+				factor = 0
+				tag = MOR
+			}
+			modifier = {
+				factor = 2
+				has_government = cooperative
+			}
 		}
 
 		fire_only_once = yes
@@ -135,8 +181,11 @@ ring_decisions = {
 	corrupt_ring_owner = {
 		icon = generic_civil_support
 
-		visible = {
+		allowed = {
 			original_tag = MOR
+		}
+
+		visible = {
 			NOT = { has_completed_focus = resistsauron }
 			has_global_flag = fs_ring_seized
 			NOT = { ring_has_the_ring = yes }
