@@ -1968,8 +1968,8 @@ focus = {
 
 #Anti-elves pact
 focus = {
-	id = MOR_anti_elves_pact
-	icon = GFX_assasinateelrond
+	id = MOR_anti_elves_pact_invite
+	icon = GFX_goal_take_his_ring
 	ai_will_do = { factor = 3 }
 	x = 0
 	y = 1
@@ -1977,16 +1977,18 @@ focus = {
 	available = {
 		is_in_faction = yes
 		has_government = belligerent
-		num_faction_members > 1
 	}
 	prerequisite = { focus = invite_angmar_to_faction focus = invite_isengard_to_faction}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
+		set_country_flag = MOR_anti_elves_pact
 		every_other_country = {
 			limit = {
 				is_elves = no
-				is_in_faction_with = MOR
+				NOT = {
+					has_government = cooperative
+				}
 			}
 			country_event = { id = mordor.54 }
 		}
@@ -1996,42 +1998,40 @@ focus = {
 #Suggesting declaring war on Mirkwood
 focus = {
 	id = MOR_together_we_attack_mirkwood
-	icon = GFX_assasinateelrond
+	icon = GFX_goal_thranduil
 	ai_will_do = { factor = 3 }
 	x = -2
 	y = 1
-	relative_position_id = MOR_anti_elves_pact
+	relative_position_id = MOR_anti_elves_pact_invite
+	will_lead_to_war_with = MIR
 	available = {
 		is_in_faction = yes
 		has_government = belligerent
-		num_faction_members > 1
-		OR = {
-			any_other_country = {
-				has_country_flag = MOR_anti_elves_pact
-				any_neighbor_country = {
-					original_tag = MIR
-				}
+		MIR = {
+			NOT = { 
+				has_completed_focus = guidanceofthewisest 
+				has_government = revolutionary
 			}
-			MOR = {
-				any_neighbor_country = {
-					original_tag = MIR
-				}
+		}
+		any_other_country = {
+			has_country_flag = MOR_anti_elves_pact
+			any_neighbor_country = {
+				original_tag = MIR
 			}
 		}
 	}
-	prerequisite = { focus = MOR_anti_elves_pact }
+	prerequisite = { focus = MOR_anti_elves_pact_invite }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
 		every_other_country = {
 			limit = {
-				is_elves = no
-				is_in_faction_with = MOR
+				has_country_flag = MOR_anti_elves_pact
 				any_neighbor_country = {
 					original_tag = MIR
 				}
 			}
-			country_event = { id = angmar.5 }
+			country_event = { id = mordor.55 }
 		}
 	}
 }
@@ -2039,41 +2039,69 @@ focus = {
 #Suggesting declaring war on Lothlorien
 focus = {
 	id = MOR_together_we_attack_lothlorien
-	icon = GFX_assasinateelrond
+	icon = GFX_goal_galadriel
 	ai_will_do = { factor = 3 }
 	x = 0
 	y = 1
-	relative_position_id = MOR_anti_elves_pact
+	relative_position_id = MOR_anti_elves_pact_invite
+	will_lead_to_war_with = LTH
 	available = {
 		is_in_faction = yes
 		has_government = belligerent
-		num_faction_members > 1
-		OR = {
-			any_allied_country = {
-				any_neighbor_country = {
-					original_tag = LTH
-				}
-			}
-			MOR = {
-				any_neighbor_country = {
-					original_tag = LTH
-				}
+		any_allied_country = {
+			has_country_flag = MOR_anti_elves_pact
+			any_neighbor_country = {
+				original_tag = LTH
 			}
 		}
 	}
-	prerequisite = { focus = MOR_anti_elves_pact }
+	prerequisite = { focus = MOR_anti_elves_pact_invite }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
 		every_other_country = {
 			limit = {
-				is_elves = no
-				is_in_faction_with = MOR
+				has_country_flag = MOR_anti_elves_pact
 				any_neighbor_country = {
 					original_tag = LTH
 				}
 			}
-			country_event = { id = angmar.5 }
+			country_event = { id = mordor.56 }
+		}
+	}
+}
+
+#Suggesting declaring war on Rivendell
+focus = {
+	id = MOR_together_we_attack_rivendell
+	icon = GFX_goal_elrond
+	ai_will_do = { factor = 3 }
+	x = 1
+	y = 1
+	relative_position_id = MOR_together_we_attack_mirkwood
+	will_lead_to_war_with = LTH
+	available = {
+		is_in_faction = yes
+		has_government = belligerent
+		any_allied_country = {
+			has_country_flag = MOR_anti_elves_pact
+			any_neighbor_country = {
+				original_tag = RIV
+			}
+		}
+	}
+	prerequisite = { focus = MOR_together_we_attack_mirkwood focus = MOR_together_we_attack_lothlorien }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		every_other_country = {
+			limit = {
+				has_country_flag = MOR_anti_elves_pact
+				any_neighbor_country = {
+					original_tag = RIV
+				}
+			}
+			country_event = { id = mordor.56 }
 		}
 	}
 }
@@ -3316,7 +3344,7 @@ focus = {
 
 	focus = {
 		id = core_rohan
-		icon = GFX_goal_rohan
+		icon = GFX_goal_generic_position_armies
 		ai_will_do = { factor = 25 }
 		x = 0
 		y = 1
@@ -3348,49 +3376,6 @@ focus = {
 		}
 		completion_reward = {
 			add_resource = { type = rubber amount = 15 state = 25 }
-		}
-	}
-
-	#Conquest of middle-Earth
-	#Focus for War with Rohan!
-	focus = {
-		id = war_with_everyone
-		icon = GFX_goal_support_belligerent
-		ai_will_do = { factor = 10	}
-		available = {
-			GON = {
-				OR = {
-					exists = no
-					is_puppet_of = MOR
-					has_government = belligerent
-				}
-			}
-			ROH = {
-				OR = {
-					exists = no
-					is_puppet_of = MOR
-					has_government = belligerent
-				}
-			}
-		}
-		x = 2
-		y = 2
-		relative_position_id = war_with_rohan
-		prerequisite = { focus = war_with_rohan focus = war_with_dale focus = MOR_learn_from_the_dwarves}
-		cost = 20
-		available_if_capitulated = yes
-		search_filters = { FOCUS_FILTER_ANNEXATION }
-		completion_reward = {
-			every_country = {
-				limit = {
-					NOT = { has_government = belligerent }
-					NOT = { tag = NEP }
-					NOT = { is_in_faction_with = MOR }
-				}
-				MOR = {
-					create_wargoal = { type = annex_everything target = PREV }
-				}
-			}
 		}
 	}
 }

@@ -25,7 +25,7 @@ focus = {
 	icon = GFX_goal_support_unalligned
 	ai_will_do = { factor = 1 }
 	mutually_exclusive = { focus = thefateofangmar }
-	x = 40
+	x = 45
 	y = 0
 	cost = 5
 	available_if_capitulated = yes
@@ -349,9 +349,116 @@ focus = {
 	prerequisite = { focus = thefateofangmar}
 	cost = 5
 	available_if_capitulated = yes
-	completion_reward = { add_ideas = generic_cooperative }
+	completion_reward = { 
+		add_ideas = generic_cooperative
+	}
 }
 
+focus = {
+	id = ANG_boost_the_industry
+	icon = GFX_focus_generic_industry_1
+	ai_will_do = { factor = 5 }
+	relative_position_id = ANG_stay_true_to_the_people
+	x = 11
+	y = 1
+	prerequisite = { focus = ANG_stay_true_to_the_people focus = ANG_seek_former_glory}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.5
+			uses = 3
+			category = lotr_labour
+		}
+	}
+}
+
+
+#Focus dig out the mountains
+focus = {
+	id = ANG_dig_out_the_mountains
+	icon = GFX_focus_generic_steel
+	ai_will_do = { factor = 5 }
+	relative_position_id = ANG_boost_the_industry
+	x = 1
+	y = 1
+	prerequisite = { focus = ANG_boost_the_industry}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+		60 = {
+			add_resource = {
+                type = steel
+                amount = 7
+            }
+		}
+	}
+}
+
+focus = {
+	id = ANG_boost_the_industry_civilian
+	icon = GFX_focus_generic_industry_2
+	ai_will_do = { factor = 5 }
+	relative_position_id = ANG_boost_the_industry
+	x = -1
+	y = 1
+	prerequisite = { focus = ANG_boost_the_industry}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = ANG_long_term_plan
+	icon = GFX_goal_generic_neutrality_focus
+	ai_will_do = { factor = 5 }
+	relative_position_id = ANG_boost_the_industry_civilian
+	x = 0
+	y = 1
+	prerequisite = { focus = ANG_boost_the_industry_civilian}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+		add_ideas = GON_long_term_economic_plan
+	}
+}
+
+focus = {
+	id = ANG_boost_the_industry_civilian_2
+	icon = GFX_focus_generic_industry_3
+	ai_will_do = { factor = 5 }
+	relative_position_id = ANG_long_term_plan
+	x = 2
+	y = 1
+	prerequisite = { focus = ANG_long_term_plan}
+	prerequisite = { focus = ANG_dig_out_the_mountains }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+		}
+	}
+}
 
 #Focus grow a forest
 focus = {
@@ -361,7 +468,7 @@ focus = {
 	relative_position_id = ANG_stay_true_to_the_people
 	x = 2
 	y = 1
-	prerequisite = { focus = ANG_stay_true_to_the_people}
+	prerequisite = { focus = ANG_stay_true_to_the_people }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { 
@@ -556,33 +663,6 @@ focus = {
 	}
 }
 
-#Focus preempty the threat
-focus = {
-	id = ANG_wargoal_rivendell
-	icon = GFX_goal_generic_major_war
-	ai_will_do = { factor = 8 }
-	available = { 
-		NOT = {
-			RIV = {
-				has_government = cooperative
-			}
-		}
-		any_neighbor_country = {
-			original_tag = RIV
-		}
-	}
-	relative_position_id = ANG_invite_cardolan
-	x = -1
-	y = 1
-	prerequisite = { focus = ANG_invite_cardolan }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		create_wargoal = { target = RIV type = annex_everything }
-	}
-}
-
-
 #Focus invite Arthedain to faction
 focus = {
 	id = ANG_invite_arthedain
@@ -638,12 +718,155 @@ focus = {
 	}
 }
 
+#Focus preempty the threat
 focus = {
-	id = ANG_invest_in_new_arnor
-	icon = GFX_focus_generic_industry_2
+	id = ANG_wargoal_isengard
+	icon = GFX_goal_the_white_hand
+	ai_will_do = { factor = 8 }
+	available = { 
+		NOT = {
+			ISE = {
+				has_government = cooperative
+			}
+		}
+		OR = {
+			any_allied_country = {
+				any_neighbor_country = {
+					original_tag = ISE
+				}
+			}
+			any_neighbor_country = {
+				original_tag = ISE
+			}
+		}
+	}
+	relative_position_id = ANG_request_control_north_arthedain
+	x = 2
+	y = 1
+	prerequisite = { focus = ANG_request_control_north_arthedain }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		create_wargoal = { target = ISE type = annex_everything }
+	}
+}
+
+#Focus enslave the uruk-hai
+focus = {
+	id = ANG_enslave_the_uruk_hai
+	icon = GFX_goal_army_uruk_hai
+	ai_will_do = { factor = 8 }
+	available = { 
+		OR = {
+			controls_state = 31
+			ISE = {
+				is_puppet_of = ANG
+			}
+		}
+	}
+	relative_position_id = ANG_wargoal_isengard
+	x = 0
+	y = 1
+	prerequisite = { focus = ANG_wargoal_isengard }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_ideas = ANG_enslave_the_uruk_hai
+	}
+}
+
+#Focus reinstate orthanc
+focus = {
+	id = ANG_reinstate_orthanc
+	icon = GFX_goal_orthanc_destroyed
+	ai_will_do = { factor = 8 }
+	available = { 
+		OR = {
+			controls_state = 31
+			ISE = {
+				is_puppet_of = ANG
+			}
+		}
+	}
+	mutually_exclusive = { focus = ANG_orthanc_give_back_to_gondor }
+	relative_position_id = ANG_enslave_the_uruk_hai
+	x = 1
+	y = 1
+	prerequisite = { focus = ANG_enslave_the_uruk_hai focus = ANG_saruman_has_betrayed_us }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_state_core = 31
+	}
+}
+
+focus = {
+	id = ANG_orthanc_give_back_to_gondor
+	icon = GFX_goal_gondor
+	ai_will_do = { factor = 8 }
+	available = { 
+		OR = {
+			controls_state = 31
+			ISE = {
+				is_puppet_of = ANG
+			}
+		}
+	}
+	mutually_exclusive = { focus = ANG_reinstate_orthanc}
+	relative_position_id = ANG_enslave_the_uruk_hai
+	x = -1
+	y = 1
+	prerequisite = { focus = ANG_enslave_the_uruk_hai }
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		GON = {
+			country_event = { id = gondor.9 }
+		}
+	}
+}
+
+focus = {
+	id = ANG_intergrate_trade_within_faction
+	icon = GFX_goal_generic_industry_I
+	ai_will_do = { factor = 8 }
+	available = { 
+		has_government = cooperative 
+		is_faction_leader = yes
+		num_faction_members > 1
+	}
+	relative_position_id = ANG_invite_cardolan
+	x = -1
+	y = 1
+	prerequisite = { focus = ANG_invite_cardolan }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		custom_effect_tooltip = "Bonuses are better the more members in the faction there are"
+		152 = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+		59 = {
+			add_extra_state_shared_building_slots = num_faction_members
+			add_building_construction = { type = industrial_complex level = num_faction_members instant_build = yes }
+		}
+		62 = {
+			add_extra_state_shared_building_slots = num_faction_members
+			add_building_construction = { type = arms_factory level = num_faction_members instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = ANG_establish_new_arnor
+	icon = GFX_focus_generic_support_the_left_right
 	ai_will_do = { factor = 8 }
 	available = { has_government = cooperative }
 	relative_position_id = ANG_invite_cardolan
+	x = 1
+	y = 1
 	available = {
 		OR = {
 			ANG = {
@@ -665,9 +888,58 @@ focus = {
 			}
 		}
 	}
-	x = 1
+	prerequisite = { focus = ANG_invite_cardolan focus = ANG_request_control_north_arthedain }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		#TODO make news event
+		set_cosmetic_tag = ANG_new_arnor
+		if = {
+			limit = {
+				controls_state = 62
+				controls_state = 63
+				controls_state = 151
+				controls_state = 64
+			}
+			add_state_core = 62
+			add_state_core = 63
+			add_state_core = 151
+			add_state_core = 64
+		}
+		remove_ideas = ANG_shell_of_a_formor_power
+	}
+}
+
+focus = {
+	id = ANG_invest_in_new_arnor
+	icon = GFX_focus_generic_industry_2
+	ai_will_do = { factor = 8 }
+	available = { has_government = cooperative }
+	relative_position_id = ANG_establish_new_arnor
+	available = {
+		OR = {
+			ANG = {
+				controls_state = 62
+				controls_state = 63
+			}
+			RHD = {
+				is_in_faction_with = ANG
+			}
+		}
+		OR = {
+			ANG = {
+				controls_state = 41
+				controls_state = 147
+				controls_state = 148
+			}
+			ART = {
+				is_in_faction_with = ANG
+			}
+		}
+	}
+	x = 0
 	y = 1
-	prerequisite = { focus = ANG_invite_cardolan focus = ANG_request_control_north_arthedain}
+	prerequisite = { focus = ANG_establish_new_arnor }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -700,109 +972,24 @@ focus = {
 }
 
 focus = {
-	id = ANG_establish_new_arnor
-	icon = GFX_focus_generic_support_the_left_right
-	ai_will_do = { factor = 8 }
-	available = { has_government = cooperative }
-	relative_position_id = ANG_invest_in_new_arnor
-	x = 0
-	y = 1
-	available = {
-		OR = {
-			ANG = {
-				controls_state = 62
-				controls_state = 63
-			}
-			RHD = {
-				is_in_faction_with = ANG
-			}
-		}
-		OR = {
-			ANG = {
-				controls_state = 41
-				controls_state = 147
-				controls_state = 148
-			}
-			ART = {
-				is_in_faction_with = ANG
-			}
-		}
-	}
-	prerequisite = { focus = ANG_invest_in_new_arnor}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		#TODO make news event
-		set_cosmetic_tag = ANG_new_arnor
-		if = {
-			limit = {
-				controls_state = 62
-				controls_state = 63
-				controls_state = 151
-				controls_state = 64
-			}
-			add_state_core = 62
-			add_state_core = 63
-			add_state_core = 151
-			add_state_core = 64
-		}
-		remove_ideas = ANG_shell_of_a_formor_power
-	}
-}
-
-focus = {
 	id = ANG_the_true_arnor
-	icon = GFX_integrateorcsintothegaladhrim
+	icon = GFX_goal_angmar_unalligned
 	ai_will_do = { factor = 10 }
 	available = {
 		ART = {
 			has_country_flag = ART_established_arnor
 		}
 	}
-	relative_position_id = ANG_establish_new_arnor
+	relative_position_id = ANG_invest_in_new_arnor
 	x = 0
 	y = 1
-	prerequisite = { focus = ANG_establish_new_arnor }
+	prerequisite = { focus = ANG_invest_in_new_arnor }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
 		create_wargoal = { target = ART type = annex_everything }
 	}
 }
-
-#Focus preempty the threat
-focus = {
-	id = ANG_wargoal_isengard
-	icon = GFX_integrateorcsintothegaladhrim
-	ai_will_do = { factor = 8 }
-	available = { 
-		NOT = {
-			ISE = {
-				has_government = cooperative
-			}
-		}
-		OR = {
-			any_allied_country = {
-				any_neighbor_country = {
-					original_tag = ISE
-				}
-			}
-			any_neighbor_country = {
-				original_tag = ISE
-			}
-		}
-	}
-	relative_position_id = ANG_establish_new_arnor
-	x = -2
-	y = 1
-	prerequisite = { focus = ANG_establish_new_arnor }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		create_wargoal = { target = ISE type = annex_everything }
-	}
-}
-
 
 #Focus for Denounce the Witch King
 focus = {
@@ -929,7 +1116,7 @@ focus = {
 	icon = GFX_focus_generic_support_the_left_right
 	relative_position_id = thefateofangmar
 	ai_will_do = { factor = 5 }
-	x = 8
+	x = 14
 	y = 1
 	mutually_exclusive = { focus = ANG_stay_true_to_the_people }
 	prerequisite = { focus = thefateofangmar}
@@ -952,26 +1139,6 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { add_ideas = ANG_civil_unrest }
-}
-
-#### Revolionary path
-focus = {
-	id = ANG_a_new_way
-	icon = GFX_goal_support_revolutionary
-	ai_will_do = { factor = 25 }
-	relative_position_id = ANG_civil_unrest
-	x = 3
-	y = 1
-	prerequisite = { focus = ANG_civil_unrest}
-	mutually_exclusive = { focus = ANG_back_to_the_old_ways }
-	cost = 5
-	available_if_capitulated = yes
-	completion_reward = {
-		swap_ideas = {
-			remove_idea = ANG_civil_unrest
-			add_idea = ANG_civil_unrest_2
-		}
-	}
 }
 
 #### Belligerent path
@@ -1208,6 +1375,27 @@ focus = {
 }
 
 focus = {
+	id = ANG_saruman_has_betrayed_us
+	icon = GFX_goal_sauron_is_looking
+	x = -5
+	y = 1
+	relative_position_id = ANG_unite_with_sauron
+	ai_will_do = { factor = 25 }
+	cost = 5
+	prerequisite = { focus = ANG_unite_with_sauron }
+	search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL FOCUS_FILTER_WAR_SUPPORT}
+	available = { 
+		OR = {
+			ISE = { has_global_flag = ISE_united_with_gandalf }
+			ISE = { has_global_flag = ISE_betrayed_sauron }
+		}
+	}
+	completion_reward = {
+		create_wargoal = { target = ISE type = annex_everything }
+	}
+}
+
+focus = {
 	id = ANG_request_investment
 	icon = GFX_goal_mordor
 	x = 2
@@ -1414,7 +1602,7 @@ focus = {
 	relative_position_id = ANG_reclaim_rhudaur
 	x = 0
 	y = 1
-	prerequisite = { focus = ANG_reclaim_rhudaur }
+	prerequisite = { focus = ANG_reclaim_rhudaur focus = ANG_demand_submission_rhudaur }
 	cost = 10
 	completion_reward = {
 		add_state_core = 62
