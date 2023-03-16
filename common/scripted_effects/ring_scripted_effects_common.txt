@@ -1,0 +1,873 @@
+
+
+# Clears the current queue of states the fellowship will travel through (the pathstack)
+ring_clear_pathstack = {
+
+	clear_array = global.fs_path_stack
+}
+
+
+# Sets the health of all fellowship members to their max-health
+ring_heal_fellowship = {
+	custom_effect_tooltip = ring_heal_fellowship_tt
+
+	hidden_effect = {
+		SHI = {
+			for_each_scope_loop = {
+			    array = global.fs_members
+			    
+			    ring_heal_fellowship_member = yes
+			}
+		}
+	}
+}
+
+
+# Gives a random fellowship member +2 hp and +2 attack
+ring_gear_up_random_member = {
+	custom_effect_tooltip = ring_gear_up_random_member_tt
+
+	hidden_effect = {
+		random_scope_in_array = {
+		    array = global.fs_members
+		    
+		    THIS = {
+		    	add_attack = 2
+				add_defense = 2
+		    }
+
+		    add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+			add_to_array = { global.fs_eventlog_suffix_targets = THIS }
+			add_to_array = { global.fs_eventlog = token:fs_event_country_helps_fellowship }
+			ring_trim_eventlog = yes
+		}
+	}
+}
+
+
+# Sets the health of a fellowship member to their max-health
+ring_heal_fellowship_member = {
+	set_variable = { health = army_defense_level }
+}
+
+
+# Opens/Closes the details view
+ring_toggle_details_view = {
+	if = {
+		limit = { has_country_flag = ring_details_view_open }
+		clr_country_flag = ring_details_view_open
+	}
+	# To keep the UI clean and smooth, we won't allow this to open when interception_form is open
+	else_if = {
+		limit = { NOT = { has_country_flag = ring_interception_form_open } }
+		set_country_flag = ring_details_view_open
+	}
+}
+
+
+# Ensures that the evenlog is no longer than 25 entries, removing older entries first
+ring_trim_eventlog = {
+
+	while_loop_effect = {
+	    limit = { check_variable = { global.fs_eventlog_prefix_targets^num > 25 } }
+	    remove_from_array = { array = global.fs_eventlog_prefix_targets index = 0 }
+	}
+
+	while_loop_effect = {
+	    limit = { check_variable = { global.fs_eventlog_suffix_targets^num > 25 } }
+	    remove_from_array = { array = global.fs_eventlog_suffix_targets index = 0 }
+	}
+
+	while_loop_effect = {
+	    limit = { check_variable = { global.fs_eventlog^num > 25 } }
+	    remove_from_array = { array = global.fs_eventlog index = 0 }
+	}
+}
+
+
+# Adds the current scope as a member of the fellowship (logs it to the eventlog as well)
+ring_add_member_to_fellowship = {
+
+	if = {
+		limit = { check_variable = { global.fs_members^num < 12 } } # Do not allow more than 12 members. the UI won't work.
+
+		add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_member_joins }
+		ring_trim_eventlog = yes
+
+		ring_add_member_to_fellowship_nolog = yes
+	}
+}
+
+
+# Adds/Removes the current scope as a member of the hunting party of ROOT
+ring_toggle_member_to_hunting_party = {
+
+	if = {
+		limit = { NOT = { has_character_flag = fs_assigned_to_hunting_party } }
+		ring_add_member_to_hunting_party = yes
+	}
+	else = {
+		ring_remove_member_from_hunting_party = yes
+	}
+}
+
+
+# Adds the current scope as a member of the hunting party of ROOT
+ring_add_member_to_hunting_party = {
+
+	if = {
+		limit = {
+			THIS = { check_variable = { isdead = 0 } }					# dont assign dead people
+			NOT = { has_character_flag = fs_assigned_to_hunting_party } # dont assign twice
+		}
+
+		# Set this characters starting HP
+		THIS = { set_variable = { health = army_defense_level } }
+
+		add_to_array = { ROOT.fs_hunting_party = THIS }
+
+		set_character_flag = fs_assigned_to_hunting_party
+	}
+}
+
+
+# Adds the current scope as a member of the fellowship, but does NOT log this to the eventlog
+ring_add_member_to_fellowship_nolog = {
+
+	if = {
+		limit = {
+			check_variable = { global.fs_members^num < 12 } # Do not allow more than 12 members. the UI won't work.
+			check_variable = { isdead = 0 }					# dont assign dead people
+		}
+
+		if = {
+			limit = { NOT = { has_variable = health } }
+
+			# Set this characters starting vars
+			THIS = { set_variable = { health = army_defense_level } }
+			THIS = { set_variable = { isdead = 0 } }
+		}
+
+		add_to_array = { global.fs_members = THIS }
+	}
+}
+
+
+# Removes the current scope from the fellowship
+ring_remove_member_from_fellowship = {
+
+	if = {
+		limit = { ring_is_fs_member = yes }
+
+		add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_member_leaves }
+		ring_trim_eventlog = yes
+		
+		remove_from_array = { global.fs_members = THIS }
+	}
+}
+
+
+# Removes the current scope from the fellowship, but does NOT log this to the eventlog
+ring_remove_member_from_fellowship_nolog = {
+
+	if = {
+		limit = { ring_is_fs_member = yes }
+		remove_from_array = { global.fs_members = THIS }
+	}
+}
+
+
+# Removes the current scope from the hunting party of ROOT
+ring_remove_member_from_hunting_party = {
+
+	remove_from_array = { ROOT.fs_hunting_party = THIS }
+
+	clr_character_flag = fs_assigned_to_hunting_party
+}
+
+
+# Clears all members from the fellowship, does NOT add an entry to the eventlog
+ring_clear_fellowship_members = {
+
+	clear_array = global.fs_members
+}
+
+
+# Clears the hunting party of ROOT
+ring_clear_hunting_party = {
+
+	clear_array = ROOT.fs_hunting_party
+}
+
+
+# Adds an entry to the eventlog stating that the fellowship has arrived in the current scope
+ring_log_arrived_in_new_state = {
+
+	add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+	add_to_array = { global.fs_eventlog_suffix_targets = THIS }
+	add_to_array = { global.fs_eventlog = token:fs_event_arrive_in_new_state }
+	ring_trim_eventlog = yes
+}
+
+
+# Queues up an event to move into the next state (fs.1000)
+ring_fellowship_begin_move_to_next_state = {
+
+	# horseback-speed
+	if = {
+		limit = { has_global_flag = fs_on_horseback }
+		set_variable = { global.fs_days_left_in_state = 10 }
+	}
+	# river-boat speed
+	else_if = {
+		limit = { has_global_flag = fs_on_boat }
+		set_variable = { global.fs_days_left_in_state = 10 }
+	}
+	# two hobbits on foot, not knowing wtf they're doing
+	else_if = {
+		limit = { has_global_flag = fs_only_hobbits }
+		set_variable = { global.fs_days_left_in_state = 50 }
+	}
+	# base speed
+	else = {
+		set_variable = { global.fs_days_left_in_state = 20 }
+	}
+}
+
+
+# Runs every day. Pls keep as simple as possible for best performance
+# Note to self: Maybe make this a weekly update instead?
+ring_daily_update = {
+
+	if = {
+
+		# Update fs_days_left_in_state
+		limit = { check_variable = { global.fs_days_left_in_state > 0 } }
+		subtract_from_variable = { global.fs_days_left_in_state = 1 }
+
+		# When the timer runs out, move fellowship to the enxt state
+		if = {
+			limit = { check_variable = { global.fs_days_left_in_state = 0 } }
+
+			# This event moves the fellowship to the enxt state
+			log = "FS_STEP"
+			SHI = { execute_fellowship_step = yes }
+		}
+	}
+}
+
+
+# Opens up the interception attempt prompt, allowing the country to launch an attempt
+ring_open_interception_attempt_prompt = {
+
+	# Special case for AI
+	if = {
+		limit = { is_ai = yes }
+
+		ring_ai_commence_interception_attempt = yes
+	}
+	# the "normal" way
+	else = {
+		clr_country_flag = ring_details_view_open
+
+		# Only one week to select interception group
+		# NOT: do NOT change the 7 day countdown without fixing the GetDayLeftBeforeAutoAbort scripted localization!!
+		set_country_flag = {
+		    flag = ring_interception_form_open
+		    days = 7
+		    value = 1
+		}
+	}
+}
+
+
+# The AI will start an interception attempt, automatically selecting a hunting party etc.
+ring_ai_commence_interception_attempt = {
+
+	set_country_flag = fs_has_used_action
+
+	# If isengard -> make sure Lurtz leads the pack
+	if = {
+		limit = {
+			ROOT = {
+				tag = ISE 
+				ISE_lurtz = { is_army_leader = yes } 
+			}
+		}
+		ROOT = {
+			ISE_lurtz = { ring_add_member_to_hunting_party = yes }
+		}
+	}
+
+	# select hunting party
+	for_each_scope_loop = {
+	    array = ROOT.army_leaders
+	    if = {
+	        limit = {
+	            check_variable = { ROOT.fs_hunting_party^num < 9 }
+	        }
+	        random_list = {
+	        	90 = {
+	        		ring_add_member_to_hunting_party = yes
+	        	}
+	        	10 = {
+
+	        	}
+	        }
+	    }
+	}
+
+	# set acceptable casualty rate
+	if = {
+		limit = { OR = { tag = ISE tag = MOR } }
+		set_variable = { ROOT.fs_max_casualty_rate = 1.0 }
+	}
+	else = {
+		set_variable = { ROOT.fs_max_casualty_rate = 0.5 }
+	}
+
+	# launch
+	ring_execute_interception_attempt = yes
+}
+
+
+# Aborts an interception attempt whilst the prompt is open
+ring_abort_interception_attempt = {
+	clr_country_flag = ring_interception_form_open
+
+	ring_clear_hunting_party = yes
+}
+
+
+# Executes an interception attempt by the current scope
+ring_execute_interception_attempt = {
+
+	set_temp_variable = { fs_interception_cancelled = 0 }
+
+	# Maximum amount of casualties before disengaging
+	set_temp_variable = { fs_interception_max_casualties = ROOT.fs_hunting_party^num }
+	multiply_temp_variable = { fs_interception_max_casualties = ROOT.fs_max_casualty_rate }
+
+	# Because its easier to calculate: Min. number of party members to keep fighting
+	set_temp_variable = { fs_interception_min_members = ROOT.fs_hunting_party^num }
+	subtract_from_temp_variable = { fs_interception_min_members = fs_interception_max_casualties }
+
+	add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+	add_to_array = { global.fs_eventlog_suffix_targets = ROOT.fs_hunting_party^0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_tries_to_intercept }
+	ring_trim_eventlog = yes
+
+	ring_interception_detection_check = yes
+
+	for_loop_effect = {
+	    end = 6
+	    value = temp_attempt
+
+	    if = {
+			limit = { check_variable = { fs_interception_cancelled = 0 } }
+
+	    	ring_interception_single_attempt = yes
+    	}
+	}
+
+	# special case: if this is orcs attacking with cave-troll, the troll keeps fighting for a while longer
+	if = {
+		limit = {
+			tag = MOC
+			MOC_cavetroll = { is_in_array = { ROOT.fs_hunting_party = THIS } }
+			MOC_cavetroll = { check_variable = { health > 0 } }
+		}
+
+		log = "Cave-troll extra combat. Health: [?MOC_cavetroll.health]"
+
+		# clear hunting party *except* for the troll
+		set_temp_variable = { temp_ct_hp = var:MOC_cavetroll.health }
+		ring_clear_hunting_party = yes
+		MOC_cavetroll = { ring_add_member_to_hunting_party = yes }
+		MOC_cavetroll = { set_variable = { health = var:temp_ct_hp } }
+
+		log = "Cave-troll extra combat. Health: [?MOC_cavetroll.health]"
+
+		add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_troll_keeps_fighting }
+		ring_trim_eventlog = yes
+
+		for_loop_effect = {
+		    end = 3
+		    value = temp_attempt
+
+		    ring_interception_execute_combat = yes
+		}
+	}
+
+	# eventlog if fellowship killed the entire hunting party
+	if = {
+		limit = {
+			NOT = { ring_frodo_is_dead = yes }
+			check_variable = { ROOT.fs_hunting_party^num < 1 }
+		}
+
+		add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_kills_all_enemies }
+		ring_trim_eventlog = yes
+	}
+
+	# if the for-loop ran to end without cancelling, let the fellowship escape
+	else_if = {
+		limit = {
+			NOT = { ring_frodo_is_dead = yes }
+			check_variable = { fs_interception_cancelled = 0 }
+		}
+
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = ROOT }
+		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_escapes }
+		ring_trim_eventlog = yes
+
+		# send the bad news home
+		ROOT = { country_event = fs.102 }
+	}
+
+	# break up fellowship if this was the argonath raid
+	if = {
+		limit = {
+			check_variable = { is_argonath_raid > 0 }
+			NOT = { has_global_flag = fs_ring_seized }
+		}
+
+		clear_variable = is_argonath_raid
+		ring_breakup_fellowship = yes
+	}
+}
+
+
+# Fills the hunting party with all 9 nazgul that are still alive
+ring_MOR_set_hunting_party_to_nazgul = {
+	MOR = {
+		ring_clear_hunting_party = yes
+
+		MOR_Witch_king		= { ring_add_member_to_hunting_party = yes }
+		MOR_Khamul			= { ring_add_member_to_hunting_party = yes }
+		MOR_Uvantha			= { ring_add_member_to_hunting_party = yes }
+		MOR_Hoarmurath		= { ring_add_member_to_hunting_party = yes }
+		MOR_Dwar			= { ring_add_member_to_hunting_party = yes }
+		MOR_Adunaphel		= { ring_add_member_to_hunting_party = yes }
+		MOR_Akhorahil		= { ring_add_member_to_hunting_party = yes }
+		MOR_Ji_Indur		= { ring_add_member_to_hunting_party = yes }
+		MOR_Ren				= { ring_add_member_to_hunting_party = yes }
+	}
+}
+
+# Runs a detection check if ROOT can detect the fellowship
+# ARGS: ROOT.fs_hunting_party, global.fs_members
+# RETURN: If the check fails, it sets fs_interception_cancelled to 1
+ring_interception_detection_check = {
+
+	if = {
+		# Argonath raid does not require stealth-check
+		limit = {
+			NOT = { check_variable = { is_argonath_raid > 0 } }
+		}
+
+		# Calculate average fellowship stealth skill (planning_skill)
+		set_temp_variable = { temp_avg_fs_stealth = 0 }
+		for_each_scope_loop = {
+		    array = global.fs_members
+		    
+		    add_to_temp_variable = { temp_avg_fs_stealth = planning_level }
+		}
+		divide_temp_variable = { temp_avg_fs_stealth = global.fs_members^num }
+
+		# Calculate the average stealth skill of the hunting party
+		set_temp_variable = { temp_avg_hp_stealth = 0 }
+		for_each_scope_loop = {
+		    array = ROOT.fs_hunting_party
+		    
+		    add_to_temp_variable = { temp_avg_hp_stealth = planning_level }
+		}
+		divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
+		# Hunting party gets 200% bonus because this is their home turf
+		multiply_temp_variable  = { temp_avg_hp_stealth = 3 }
+
+		# these countries get an additional detection bonus
+		if = {
+			limit = { ROOT = { OR = { tag = MOC tag = ISE } } }
+			multiply_temp_variable  = { temp_avg_hp_stealth = 3 }
+		}
+
+		# ring-catcher bonus
+		if = {
+			limit = { has_idea_with_trait = ring_catcher }
+			multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
+		}
+
+		# cheaty-pete AI bonus
+		if = {
+			limit = { is_ai = yes }
+			multiply_temp_variable  = { temp_avg_hp_stealth = 1.5 }
+		}
+
+		# Check which side wins:
+		random_list = {
+			var:temp_avg_fs_stealth = {
+				# Fellowship wins -> remains undetected
+				set_temp_variable = { fs_interception_cancelled = 1 }
+
+				# Add to eventlog
+				add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_failed_to_locate }
+				ring_trim_eventlog = yes
+			}
+			var:temp_avg_hp_stealth = {
+				# Hunting party wins -> fellowship located -> interception proceeds
+
+				# Add to eventlog
+				add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_managed_to_locate }
+				ring_trim_eventlog = yes
+			}
+		}
+	}
+}
+
+
+# Runs a single attempt of ROOT trying to intercept the ring
+# Attempts generally follow this loop: combat -> attempt to seize the ring -> disengage or repeat
+# ARGS: temp_attempt (attempt number), ROOT.fs_hunting_party, global.fs_members
+# RETURN: Sets fs_interception_cancelled to 1 if ring was seized or combat was disengaged
+ring_interception_single_attempt = {
+
+	ring_interception_execute_combat = yes
+
+	ring_interception_disengage_check = yes
+}
+
+
+# Runs a single attack of one character onto another
+# ARGS: temp_attacker, temp_defender (Attacking and defending characters)
+ring_combat_execute_attack = {
+
+	if = {
+		# Dont run this if we fucked up with the parameters somewhere
+		limit = {
+			var:temp_defender = { has_variable = health }
+			var:temp_attacker = { has_variable = health }
+		}
+
+		# Get defender dexterity
+		var:temp_defender = {
+
+			set_temp_variable = { temp_defender_dex = logistics_level }
+		}
+
+		# Dex check
+		random_list = {
+			5 = {
+				# deal damage (eventlog is taken care of in that function)
+				ring_combat_deal_damage = yes
+			}
+			var:temp_defender_dex = {
+				# eventlog: defender dodges attack
+				add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+				add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+				add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_miss }
+				ring_trim_eventlog = yes
+			}
+		}	
+	}
+	else = {
+		log = "Wrong ring_combat_execute_attack args: [?temp_defender.GetName] [?temp_attacker.GetName]"
+	}
+}
+
+
+# One character deals damage to another
+# Lowers the defenders health by the attackers attack_level. If the health reaches <0, kills the defender
+# ARGS: temp_attacker, temp_defender (damage dealer and taker)
+ring_combat_deal_damage = {
+	if = {
+		# Dont run this if we fucked up with the parameters somewhere
+		limit = {
+			var:temp_defender = { has_variable = health }
+			var:temp_attacker = { has_variable = health }
+		}
+
+		# Get attack attack
+		var:temp_attacker = {
+
+			set_temp_variable = { temp_attacker_attack = attack_level }
+		}
+
+		# subtract from health
+		var:temp_defender = {
+
+			subtract_from_variable = { health = temp_attacker_attack }
+
+			# add damage dealt to eventlog
+			if = {
+				limit = { var:temp_attacker = { check_variable = { attack_level = 1 } } }
+				add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+				add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+				add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_1dmg }
+				ring_trim_eventlog = yes
+			}
+			else_if = {
+				limit = { var:temp_attacker = { check_variable = { attack_level = 2 } } }
+				add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+				add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+				add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_2dmg }
+				ring_trim_eventlog = yes
+			}
+			else_if = {
+				limit = { var:temp_attacker = { check_variable = { attack_level = 3 } } }
+				add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+				add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+				add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_3dmg }
+				ring_trim_eventlog = yes
+			}
+			else = {
+				add_to_array = { global.fs_eventlog_prefix_targets = temp_attacker }
+				add_to_array = { global.fs_eventlog_suffix_targets = temp_defender }
+				add_to_array = { global.fs_eventlog = token:fs_event_char_attacks_char_massivedmg }
+				ring_trim_eventlog = yes
+			}
+
+			# check for death
+			if = {
+				limit = {
+					check_variable = { health < 1 }
+				}
+				ring_combat_kill_character = yes
+			}
+		}
+	}
+	else = {
+		log = "Wrong ring_combat_execute_attack args: [?temp_defender.GetName] [?temp_attacker.GetName]"
+	}
+}
+
+
+# Kills the current scope
+# Can be both fellowship or hunting-party member
+ring_combat_kill_character = {
+
+	if = {
+		limit = { THIS = { check_variable = { isdead = 0 } } } # cant kill someone who is already dead
+
+		# eventlog
+		add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_char_dies }
+		ring_trim_eventlog = yes
+
+		set_variable = { THIS.isdead = 1 }
+
+		ring_remove_member_from_hunting_party = yes
+		ring_remove_member_from_fellowship_nolog = yes
+
+		# This makes the character unusable by everyone
+		retire = yes
+
+		# check if frodo is dead
+		ROOT = {
+			ring_try_seize = yes
+		}
+	}
+}
+
+
+# Runs a single combat-instance between fellowship and hunting party
+# A combat instance looks like this: random member of hunting party attacks random member from fellowship,
+# Then a random fellowship member counter-attacks a random member from the hunting party
+# ARGS: ROOT.fs_hunting_party, global.fs_members
+# RETURN: Sets fs_interception_cancelled = 1 if either party is empty
+ring_interception_execute_combat = {
+	
+	# Back-and-forth attack
+	ring_interception_combat_hp_attack_fs = yes
+
+	ring_interception_combat_fs_attack_hp = yes
+}
+
+
+# Executes a single attack of the hunting party onto the fellowship
+ring_interception_combat_hp_attack_fs = {
+	# HUNTING PARTY ATTACK
+	if = {
+		# Only run this if both parties still have people alive
+		limit = {
+			check_variable = { ROOT.fs_hunting_party^num > 0 }
+			check_variable = { global.fs_members^num > 0 }
+		}
+
+		# select random member from hunting party
+	    random_scope_in_array = {
+		    array = ROOT.fs_hunting_party
+		    
+		    set_temp_variable = { temp_attacker = THIS }
+	    }
+
+	    # select random member from fellowship
+	    random_scope_in_array = {
+		    array = global.fs_members
+		    
+		    set_temp_variable = { temp_defender = THIS }
+	    }
+
+	    ring_combat_execute_attack = yes
+    }
+    else = {
+    	set_temp_variable = { fs_interception_cancelled = 1 }
+    }
+}
+
+
+# Executes a single attack of the fellowship onto the hunting party
+ring_interception_combat_fs_attack_hp = {
+	# FELLOWSHIP COUNTER-ATTACK: (Exactly the same as above but reversed)
+    if = {
+		# Only run this if both parties still have people alive
+		limit = {
+			check_variable = { ROOT.fs_hunting_party^num > 0 }
+			check_variable = { global.fs_members^num > 0 }
+		}
+
+	    # select random member from hunting party
+	    random_scope_in_array = {
+		    array = global.fs_members
+		    
+		    set_temp_variable = { temp_attacker = THIS }
+	    }
+
+	    # select random member from fellowship
+	    random_scope_in_array = {
+		    array = ROOT.fs_hunting_party
+		    
+		    set_temp_variable = { temp_defender = THIS }
+	    }
+
+	    ring_combat_execute_attack = yes
+    }
+    else = {
+    	set_temp_variable = { fs_interception_cancelled = 1 }
+    }
+}
+
+
+# Runs a single attempt of the hunting party (ROOT) trying to take the ring
+# Implementation (for now): You only take the ring of Frodo dies
+ring_try_seize = {
+	
+	if = {
+		limit = { ring_frodo_is_dead = yes }
+
+		log = "FRODO IS DEAD. RING SEIZED"
+
+		ring_seize_ring = yes
+	}
+}
+
+
+# Runs a single chance at the hunting party disengaging combat with the fellowship
+# ARGS: temp_attempt (Attempt number at taking ring)
+# RETURN: Sets fs_interception_cancelled = 1 if disengaged
+ring_interception_disengage_check = {
+
+	if = {
+		# Check if we WANT to disengage in the first place
+		limit = { NOT = { check_variable = { ROOT.fs_hunting_party^num > fs_interception_min_members } } }
+
+		random_list = {
+			1 = {
+				# Disengage fails
+			}
+			4 = {
+				# disengage
+				set_temp_variable = { fs_interception_cancelled = 1 }
+
+				# eventlog
+				if = {
+					limit = { check_variable = { ROOT.fs_hunting_party^num > 0 } }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = ROOT.fs_hunting_party^0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_disengages }
+					ring_trim_eventlog = yes
+				}
+			}
+		}
+	}
+}
+
+# THIS gets the ring (NOT ROOT!)
+ring_seize_ring = {
+	log = "RING SEIZED"
+	
+	set_variable = { global.fs_days_left_in_state = 0 }
+
+	# eventlog
+	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_takes_the_ring }
+	ring_trim_eventlog = yes
+
+
+	set_global_flag = fs_ring_seized
+	var:global.fs_ring_owner = {
+		remove_ideas = one_true_ring
+	}
+	THIS = {
+		set_variable = { global.fs_ring_owner = THIS }
+		add_ideas = one_true_ring
+		country_event = fs.101
+	}
+
+	ring_clear_fellowship_members = yes
+	ring_clear_pathstack = yes
+}
+
+
+ring_rivendell_approves = {
+	if = {
+		limit = { RIV = { NOT = { is_ally_with = MOR } } }
+
+		RIV = {
+			add_opinion_modifier = {
+	    		target = ROOT
+	    		modifier = small_increase
+			}
+		}
+	}
+}
+
+ring_rivendell_disapproves = {
+	if = {
+		limit = { RIV = { NOT = { is_ally_with = MOR } } }
+
+		RIV = {
+			add_opinion_modifier = {
+	    		target = ROOT
+	    		modifier = small_decrease
+			}
+		}
+	}
+}
+
+
+ring_set_ring_attitude = {
+	if = {
+		limit = {
+			NOT = { ring_has_special_interaction = yes }
+		}
+
+		# TODO
+	}
+}
