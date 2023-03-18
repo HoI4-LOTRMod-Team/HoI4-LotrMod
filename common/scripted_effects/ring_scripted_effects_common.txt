@@ -203,6 +203,12 @@ ring_clear_fellowship_members = {
 # Clears the hunting party of ROOT
 ring_clear_hunting_party = {
 
+	for_each_scope_loop = {
+    	array = ROOT.fs_hunting_party
+	    
+	    clr_character_flag = fs_assigned_to_hunting_party
+	}
+
 	clear_array = ROOT.fs_hunting_party
 }
 
@@ -329,6 +335,10 @@ ring_ai_commence_interception_attempt = {
 		limit = { OR = { tag = ISE tag = MOR } }
 		set_variable = { ROOT.fs_max_casualty_rate = 1.0 }
 	}
+	else_if = {
+		limit = { OR = { tag = MOC } }
+		set_variable = { ROOT.fs_max_casualty_rate = 0.4 } # MOC has few generals + cave troll. This is lower in order to try to keep Gulthurg alive lol
+	}
 	else = {
 		set_variable = { ROOT.fs_max_casualty_rate = 0.5 }
 	}
@@ -381,24 +391,25 @@ ring_execute_interception_attempt = {
 	if = {
 		limit = {
 			tag = MOC
+			NOT = { ring_frodo_is_dead = yes }
 			MOC_cavetroll = { is_in_array = { ROOT.fs_hunting_party = THIS } }
 			MOC_cavetroll = { check_variable = { health > 0 } }
 		}
 
-		log = "Cave-troll extra combat. Health: [?MOC_cavetroll.health]"
-
 		# clear hunting party *except* for the troll
-		set_temp_variable = { temp_ct_hp = var:MOC_cavetroll.health }
-		ring_clear_hunting_party = yes
-		MOC_cavetroll = { ring_add_member_to_hunting_party = yes }
-		MOC_cavetroll = { set_variable = { health = var:temp_ct_hp } }
-
-		log = "Cave-troll extra combat. Health: [?MOC_cavetroll.health]"
+		MOC_cavetroll = {
+			set_temp_variable = { temp_ct_hp = health }	
+			ring_clear_hunting_party = yes
+			ring_add_member_to_hunting_party = yes
+			set_variable = { health = var:temp_ct_hp }
+		}
 
 		add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
 		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_troll_keeps_fighting }
 		ring_trim_eventlog = yes
+
+		set_temp_variable = { fs_interception_cancelled = 0 }
 
 		for_loop_effect = {
 		    end = 3
@@ -786,7 +797,9 @@ ring_interception_disengage_check = {
 
 	if = {
 		# Check if we WANT to disengage in the first place
-		limit = { NOT = { check_variable = { ROOT.fs_hunting_party^num > fs_interception_min_members } } }
+		limit = { 
+			NOT = { check_variable = { ROOT.fs_hunting_party^num > fs_interception_min_members } }
+		}
 
 		random_list = {
 			1 = {
@@ -798,7 +811,14 @@ ring_interception_disengage_check = {
 
 				# eventlog
 				if = {
-					limit = { check_variable = { ROOT.fs_hunting_party^num > 0 } }
+					limit = {
+						check_variable = { ROOT.fs_hunting_party^num > 0 }
+						# dont display this message with cave troll
+						NOT = { AND = {
+							tag = MOC
+							MOC_cavetroll = { is_in_array = { ROOT.fs_hunting_party = THIS } }
+						} }
+					}
 
 					add_to_array = { global.fs_eventlog_prefix_targets = ROOT.fs_hunting_party^0 }
 					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
@@ -874,7 +894,7 @@ ring_set_ring_attitude = {
 		random_list = {
 			10 = {
 				modifier = {
-					factor = 2
+					factor = 3
 					is_historical_focus_on = yes
 				}
 				set_country_flag = fs_neutral_attitude
