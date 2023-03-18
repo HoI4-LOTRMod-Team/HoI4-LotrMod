@@ -119,7 +119,11 @@ ring_add_member_to_hunting_party = {
 
 	if = {
 		limit = {
-			THIS = { check_variable = { isdead = 0 } }					# dont assign dead people
+			# dont assign dead people
+			OR = {
+				NOT = { has_variable = isdead }
+				NOT = { check_variable = { isdead = 1 } }
+			}
 			NOT = { has_character_flag = fs_assigned_to_hunting_party } # dont assign twice
 		}
 
@@ -307,9 +311,10 @@ ring_ai_commence_interception_attempt = {
 				ISE_lurtz = { is_army_leader = yes } 
 			}
 		}
-		ROOT = {
-			ISE_lurtz = { ring_add_member_to_hunting_party = yes }
+		ISE_lurtz = {
+			ring_add_member_to_hunting_party = yes
 		}
+
 	}
 
 	# select hunting party
@@ -323,8 +328,32 @@ ring_ai_commence_interception_attempt = {
 	        	90 = {
 	        		ring_add_member_to_hunting_party = yes
 	        	}
-	        	10 = {
-
+	        	15 = {
+	        		# Filter out a couple of important figures like Theodred, the Ferny bros etc.
+	        		modifier = {
+	        			is_character = ISE_ferny
+	        			factor = 10
+	        		}
+	        		modifier = {
+	        			is_character = ISE_fernysr
+	        			factor = 10
+	        		}
+	        		modifier = {
+	        			is_character = ROH_theodred
+	        			factor = 20
+	        		}
+	        		modifier = {
+	        			is_character = ROH_eomer
+	        			factor = 20
+	        		}
+	        		modifier = {
+	        			is_character = MIR_thranduil
+	        			factor = 10
+	        		}
+	        		modifier = {
+	        			is_character = MOC_gulthurg
+	        			factor = 3
+	        		}
 	        	}
 	        }
 	    }
