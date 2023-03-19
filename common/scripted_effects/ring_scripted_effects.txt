@@ -88,6 +88,8 @@ execute_fellowship_step = {
 
 			CAR = {country_event = { days = 5 id = cardolan.1 } }
 			MOR = { country_event = { days = 5 id = mordor.54 } }
+			RIV = { country_event = { days = 5 id = rivendell.15 } }
+
 		}
 		else = {
 			CAR = {country_event = { days = 5 id = fs.103 } }
@@ -104,7 +106,8 @@ execute_fellowship_step = {
 			MOR = { country_event = { days = 7 id = mordor.55 } }
 		}
 		# No nazgul -> the whole group moves towards rivendell on foot
-		else = {
+		else_if = {
+			limit = { has_global_flag = fs_arwen_sent }
 			# Arwen joins because why not
 			FS_arwen = { ring_add_member_to_fellowship = yes }
 		}
@@ -129,20 +132,27 @@ execute_fellowship_step = {
 				}
 				# Arwen summons flood-waters that sweep the Nazgul away
 				68 = {
-					# Eventlog
-					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-					add_to_array = { global.fs_eventlog = token:fs_event_bruinen_nazgul_wave }
-					ring_trim_eventlog = yes
+					if = {
+						limit = { has_global_flag = fs_arwen_sent }
 
-					# one of these nazgul die because of the water
-					MOR = {
-						random_list = {
-							1 = { MOR_Akhorahil = { ring_combat_kill_character = yes } }
-							1 = { MOR_Ji_Indur = { ring_combat_kill_character = yes } }
-							1 = { MOR_Ren = { ring_combat_kill_character = yes } }
+						# Eventlog
+						add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+						add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+						add_to_array = { global.fs_eventlog = token:fs_event_bruinen_nazgul_wave }
+						ring_trim_eventlog = yes
+
+						# one of these nazgul die because of the water
+						MOR = {
+							random_list = {
+								1 = { MOR_Akhorahil = { ring_combat_kill_character = yes } }
+								1 = { MOR_Ji_Indur = { ring_combat_kill_character = yes } }
+								1 = { MOR_Ren = { ring_combat_kill_character = yes } }
+							}
+							country_event = { days = 0 id = mordor.59 }
 						}
-						country_event = { days = 0 id = mordor.59 }
+					}
+					else = {
+						MOR = { country_event = { days = 0 id = mordor.58 } }
 					}
 				}
 			}
@@ -771,7 +781,10 @@ ring_execute_weathertop_encounter = {
 
 	# Post-combat:
 	if = {
-		limit = { NOT = { ring_frodo_is_dead = yes } }
+		limit = {
+			NOT = { ring_frodo_is_dead = yes }
+			has_global_flag = fs_arwen_sent
+		}
 
 		SHI = {
 			# Only Frodo and Arwen press on
@@ -790,6 +803,12 @@ ring_execute_weathertop_encounter = {
 			# Send Sauron the bad news
 			MOR = { country_event = { days = 3 id = mordor.56 } }
 		}
+	}
+	else_if = {
+		limit = {
+			NOT = { ring_frodo_is_dead = yes }
+		}
+		MOR = { country_event = { days = 3 id = mordor.56 } }
 	}
 }
 

@@ -25,6 +25,7 @@ ring_decisions = {
         	NOT = { has_global_flag = fs_ring_seized }
         	NOT = { has_global_flag = fs_ring_destroyed }
         	NOT = { has_country_flag = fs_has_used_action }
+        	NOT = { has_country_flag = fs_interceptions_disabled }
 
         	check_variable = { army_leaders^num > 0 }
         }
@@ -44,6 +45,8 @@ ring_decisions = {
 
 		complete_effect = {
 			ring_rivendell_disapproves = yes
+
+			custom_effect_tooltip = ring_launch_interception_tt
 
 			ring_open_interception_attempt_prompt = yes
 		}
@@ -71,6 +74,7 @@ ring_decisions = {
         	NOT = { has_global_flag = fs_ring_seized }
         	NOT = { has_country_flag = fs_has_used_action }
         	NOT = { has_global_flag = fs_ring_destroyed }
+        	NOT = { has_country_flag = fs_interceptions_disabled }
 
         	check_variable = { army_leaders^num > 0 }
         }
@@ -96,7 +100,7 @@ ring_decisions = {
 				}
 			}
 			modifier = {
-				factor = 100
+				add = 100
 				tag = ISE
 				has_global_flag = gandalf_imprisoned
 			}
@@ -179,7 +183,7 @@ ring_decisions = {
 				has_global_flag = gandalf_imprisoned
 			}
 			modifier = {
-				factor = 2
+				add = 10
 				tag = ISE
 				has_global_flag = gandalf_saruman_united
 			}
@@ -217,6 +221,7 @@ ring_decisions = {
 	}
 
 	corrupt_ring_owner = {
+		# TODO: should have saurons eye as icon
 		icon = generic_civil_support
 
 		allowed = {
@@ -258,7 +263,7 @@ ring_decisions = {
 	}
 
 	strike_a_deal_with_sauron = {
-		icon = GFX_decision_generic_operation
+		#icon = GFX_decision_generic_operation
 		cost = 150
 
 		ai_will_do = {
@@ -301,5 +306,103 @@ ring_decisions = {
 				MOR = { ring_seize_ring = yes }
 			}
 		}
+	}
+
+	gather_support_for_fellowship = {
+		allowed = {
+			tag = RIV
+		}
+
+		visible = {
+			#has_global_flag = fs_arrived_in_rivendell
+			#NOT = { has_global_flag = fs_ring_seized }
+			#NOT = { has_global_flag = fs_ring_destroyed }
+			always = yes
+		}
+
+		available = {
+			OR = {
+				has_government = unaligned
+				has_government = cooperative
+			}
+			NOT = { has_war_with = FROM }
+			NOT = { FROM = { has_country_flag = fs_has_used_action } }
+		}
+
+	    targets = { ENE VAL ROH MIR RHD CAR ANG }
+	    targets_dynamic = yes
+
+	    fire_only_once = yes
+
+	    icon = GFX_decision_political_discourse
+	    cost = 150
+
+	    ai_will_do = {
+			base = 0
+			modifier = {
+				add = 15
+				check_variable = { global.fs_path = 1 }
+				FROM = {
+					OR = {
+						tag = ROH
+						tag = MIR
+					}
+				}
+			}
+			modifier = {
+				add = 15
+				check_variable = { global.fs_path = 2 }
+				FROM = {
+					OR = {
+						tag = ROH
+						tag = MIR
+					}
+				}
+			}
+			modifier = {
+				add = 15
+				check_variable = { global.fs_path = 3 }
+				FROM = {
+					OR = {
+						tag = VAL
+						tag = ANG
+					}
+				}
+			}
+			modifier = {
+				add = 15
+				check_variable = { global.fs_path = 4 }
+				FROM = {
+					OR = {
+						tag = ROH
+						tag = ENE
+						tag = CAR
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = ai_gathered_support
+			}
+		}
+
+	    complete_effect = {
+	        custom_effect_tooltip = gather_support_for_fellowship_tt
+
+	        hidden_effect = {
+	        	FROM = {
+	        		country_event = { id = rivendell.16 days = 5 }
+	        	}
+
+	        	random_list = {
+	        		60 = {
+	        			set_country_flag = ai_gathered_support
+	        		}
+	        		30 = {
+
+	        		}
+	        	}
+	        }
+	    }
 	}
 }
