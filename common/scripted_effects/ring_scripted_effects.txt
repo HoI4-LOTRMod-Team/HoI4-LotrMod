@@ -445,7 +445,7 @@ execute_fs_commence = {
 
 # Checks if all three (MIR, ERE, GON) have responded and the fellowship has fully formed
 # If yes, it will call event fs.1002
-ring_check_if_council_of_elrond_concluded = {
+ring_check_if_council_of_elrond_started = {
 
 	if = {
 		limit = {
@@ -453,16 +453,55 @@ ring_check_if_council_of_elrond_concluded = {
 			has_global_flag = fs_gondor_responded
 			has_global_flag = fs_erebor_responded
 		}
+		SHI = { execute_start_council_of_elrond = yes }
+	}
+}
+
+ring_check_if_council_of_elrond_concluded = {
+
+	if = {
+		limit = {
+			has_global_flag = fs_mirkwood_responded
+			has_global_flag = fs_gondor_responded
+			has_global_flag = fs_erebor_responded
+			has_global_flag = fs_rivendell_responded
+		}
 		SHI = { execute_conclude_council_of_elrond = yes }
 	}
 }
 
-execute_conclude_council_of_elrond = {
+execute_start_council_of_elrond = {
 	# clear the temporary flags
 	clr_global_flag = fs_mirkwood_responded
 	clr_global_flag = fs_erebor_responded
 	clr_global_flag = fs_gondor_responded
 
+	# Let the members vote on the fellowships path
+	RIV = { country_event = { id = rivendell.19 days = 4 } }
+	if = {
+		limit = { NOT = { has_global_flag = fs_gondor_noone } }
+		GON = { country_event = { id = rivendell.19 days = 4 } }
+	}
+	else = {
+		set_global_flag = fs_gondor_responded
+	}
+	if = {
+		limit = { NOT = { has_global_flag = fs_erebor_noone } }
+		ERE = { country_event = { id = rivendell.19 days = 4 } }
+	}
+	else = {
+		set_global_flag = fs_erebor_responded
+	}
+	if = {
+		limit = { NOT = { has_global_flag = fs_mirkwood_noone } }
+		MIR = { country_event = { id = rivendell.19 days = 4 } }
+	}
+	else = {
+		set_global_flag = fs_mirkwood_responded
+	}
+}
+
+execute_conclude_council_of_elrond = {
 	# eventlog
 	add_to_array = { global.fs_eventlog_prefix_targets = 0 }
 	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
@@ -476,10 +515,18 @@ execute_conclude_council_of_elrond = {
 	FS_merry = { ring_add_member_to_fellowship_nolog = yes }
 	FS_pippin = { ring_add_member_to_fellowship_nolog = yes }
 
-	# Decision of which path to take
 	random_list = {
-		# Cross mountains
-		3 = {
+
+		# Redhorn Pass
+		1 = {
+			modifier = {
+				factor = 0
+				OR = {
+					check_variable = { global.fs_council_vote_isengard > var:global.fs_council_vote_redhorn }
+					check_variable = { global.fs_council_vote_angmar > var:global.fs_council_vote_redhorn }
+				}
+			}
+
 			# set pathid
 			set_variable = { global.fs_path = 1 }
 
@@ -505,23 +552,19 @@ execute_conclude_council_of_elrond = {
 			add_to_array = { global.fs_path_stack = 98 }
 			add_to_array = { global.fs_path_stack = 101 }
 			add_to_array = { global.fs_path_stack = 204 }
-
 		}
+
 		# Angmar
 		1 = {
 			modifier = {
-        		factor = 2
-        		ANG = { has_completed_focus = staytruetogondor }
-    		}
-    		modifier = {
-        		factor = 2
-        		ANG = { is_ai = no }
-    		}
-    		modifier = {
-        		factor = 0
-        		is_historical_focus_on = yes
-    		}
-    		# set pathid
+				factor = 0
+				OR = {
+					check_variable = { global.fs_council_vote_isengard > var:global.fs_council_vote_angmar }
+					check_variable = { global.fs_council_vote_redhorn > var:global.fs_council_vote_angmar }
+				}
+			}
+
+			# set pathid
     		set_variable = { global.fs_path = 3 }
 
     		# eventlog
@@ -554,17 +597,18 @@ execute_conclude_council_of_elrond = {
 			add_to_array = { global.fs_path_stack = 101 }
 			add_to_array = { global.fs_path_stack = 204 }
 		}
+
 		# Isengard
 		1 = {
 			modifier = {
-        		factor = 2
-        		has_global_flag = gandalf_saruman_united
-    		}
-    		modifier = {
-        		factor = 0
-        		is_historical_focus_on = yes
-    		}
-    		# set pathid
+				factor = 0
+				OR = {
+					check_variable = { global.fs_council_vote_redhorn > var:global.fs_council_vote_isengard }
+					check_variable = { global.fs_council_vote_angmar > var:global.fs_council_vote_isengard }
+				}
+			}
+
+			# set pathid
     		set_variable = { global.fs_path = 4 }
 
     		# eventlog
@@ -594,6 +638,14 @@ execute_conclude_council_of_elrond = {
 			add_to_array = { global.fs_path_stack = 204 }
 		}
 	}
+
+	# Clean up
+	clr_global_flag = fs_mirkwood_responded
+	clr_global_flag = fs_erebor_responded
+	clr_global_flag = fs_gondor_responded
+	clear_variable = global.fs_council_vote_redhorn
+	clear_variable = global.fs_council_vote_angmar
+	clear_variable = global.fs_council_vote_isengard
 
 	# get going
 	ring_fellowship_begin_move_to_next_state = yes

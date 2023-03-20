@@ -59,7 +59,7 @@ country_event = {
 
 		hidden_effect = { SHI = { FS_legolas = { ring_add_member_to_fellowship = yes } } }
 
-		ring_check_if_council_of_elrond_concluded = yes
+		ring_check_if_council_of_elrond_started = yes
 	}
 	#Tauriel
 	option = {
@@ -78,7 +78,7 @@ country_event = {
 
 		hidden_effect = { SHI = { FS_tauriel = { ring_add_member_to_fellowship = yes } } }
 
-		ring_check_if_council_of_elrond_concluded = yes
+		ring_check_if_council_of_elrond_started = yes
 	}
 	#Noone
 	option = {
@@ -94,7 +94,7 @@ country_event = {
 		set_global_flag = fs_mirkwood_noone
 		set_global_flag = fs_mirkwood_responded
 
-		ring_check_if_council_of_elrond_concluded = yes
+		ring_check_if_council_of_elrond_started = yes
 	}
 }
 
@@ -121,7 +121,7 @@ country_event = {
 		hidden_effect = { SHI = { FS_gimli = { ring_add_member_to_fellowship = yes } } }
 
 		set_global_flag = fs_erebor_responded
-		ring_check_if_council_of_elrond_concluded = yes
+		ring_check_if_council_of_elrond_started = yes
 	}
 	option = { #Bombur
 		name = rivendell.3.b
@@ -139,7 +139,7 @@ country_event = {
 		hidden_effect = { SHI = { FS_bombur = { ring_add_member_to_fellowship = yes } } }
 
 		set_global_flag = fs_erebor_responded
-		ring_check_if_council_of_elrond_concluded = yes
+		ring_check_if_council_of_elrond_started = yes
 	}
 	option = { #Noone
 		name = rivendell.3.c
@@ -154,7 +154,7 @@ country_event = {
 		set_global_flag = fs_erebor_noone
 
 		set_global_flag = fs_erebor_responded
-		ring_check_if_council_of_elrond_concluded = yes
+		ring_check_if_council_of_elrond_started = yes
 	}
 }
 
@@ -181,7 +181,7 @@ country_event = {
 		hidden_effect = { SHI = { FS_boromir = { ring_add_member_to_fellowship = yes } } }
 
 		set_global_flag = fs_gondor_responded
-		ring_check_if_council_of_elrond_concluded = yes
+		ring_check_if_council_of_elrond_started = yes
 	}
 	option = { #Faramir
 		name = rivendell.4.b
@@ -199,7 +199,7 @@ country_event = {
 		hidden_effect = { SHI = { FS_faramir = { ring_add_member_to_fellowship = yes } } }
 
 		set_global_flag = fs_gondor_responded
-		ring_check_if_council_of_elrond_concluded = yes
+		ring_check_if_council_of_elrond_started = yes
 	}
 	option = { #Noone
 		name = rivendell.4.c
@@ -214,7 +214,7 @@ country_event = {
 		set_global_flag = fs_gondor_noone
 
 		set_global_flag = fs_gondor_responded
-		ring_check_if_council_of_elrond_concluded = yes
+		ring_check_if_council_of_elrond_started = yes
 	}
 }
 
@@ -698,4 +698,156 @@ country_event = {
 		}
 	}
 }
+
+# Vote on the fellowship's path
+country_event = {
+	id = rivendell.19
+	title = rivendell.19.t
+	desc = rivendell.19.desc
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# through the redhorn pass
+	option = {
+		name = rivendell.19.a
+		ai_chance = {
+			base = 3
+		}
+
+		add_to_variable = {
+    		var = global.fs_council_vote_redhorn
+    		value = 1
+		}
+
+		if = {
+			limit = { tag = RIV }
+			set_global_flag = fs_rivendell_responded
+		}
+		else_if = {
+			limit = { tag = ERE }
+			set_global_flag = fs_erebor_responded
+		}
+		else_if = {
+			limit = { tag = GON }
+			set_global_flag = fs_gondor_responded
+		}
+		else_if = {
+			limit = { tag = MIR }
+			set_global_flag = fs_mirkwood_responded
+		}
+
+		ring_check_if_council_of_elrond_concluded = yes
+	}
+	# past isengard
+	option = {
+		name = rivendell.19.b
+		ai_chance = {
+			base = 1
+			modifier = {
+	    		factor = 2
+	    		has_global_flag = gandalf_saruman_united
+			}
+			modifier = {
+	    		factor = 0
+	    		is_historical_focus_on = yes
+			}
+		}
+
+		add_to_variable = {
+    		var = global.fs_council_vote_isengard
+    		value = 1
+		}
+
+		if = {
+			limit = { tag = RIV }
+			set_global_flag = fs_rivendell_responded
+		}
+		else_if = {
+			limit = { tag = ERE }
+			set_global_flag = fs_erebor_responded
+		}
+		else_if = {
+			limit = { tag = GON }
+			set_global_flag = fs_gondor_responded
+		}
+		else_if = {
+			limit = { tag = MIR }
+			set_global_flag = fs_mirkwood_responded
+		}
+
+		ring_check_if_council_of_elrond_concluded = yes
+	}
+	# past gundabad
+	option = {
+		name = rivendell.19.c
+		ai_chance = {
+			base = 1
+			modifier = {
+        		factor = 2
+        		ANG = { has_completed_focus = staytruetogondor }
+    		}
+    		modifier = {
+        		factor = 2
+        		ANG = { is_ai = no }
+    		}
+    		modifier = {
+        		factor = 0
+        		is_historical_focus_on = yes
+    		}
+		}
+
+		add_to_variable = {
+    		var = global.fs_council_vote_angmar
+    		value = 1
+		}
+
+		if = {
+			limit = { tag = RIV }
+			set_global_flag = fs_rivendell_responded
+		}
+		else_if = {
+			limit = { tag = ERE }
+			set_global_flag = fs_erebor_responded
+		}
+		else_if = {
+			limit = { tag = GON }
+			set_global_flag = fs_gondor_responded
+		}
+		else_if = {
+			limit = { tag = MIR }
+			set_global_flag = fs_mirkwood_responded
+		}
+
+		ring_check_if_council_of_elrond_concluded = yes
+	}
+	# neutral vote / dont care
+	option = {
+		name = rivendell.19.d
+		ai_chance = {
+			base = 0
+		}
+
+		if = {
+			limit = { tag = RIV }
+			set_global_flag = fs_rivendell_responded
+		}
+		else_if = {
+			limit = { tag = ERE }
+			set_global_flag = fs_erebor_responded
+		}
+		else_if = {
+			limit = { tag = GON }
+			set_global_flag = fs_gondor_responded
+		}
+		else_if = {
+			limit = { tag = MIR }
+			set_global_flag = fs_mirkwood_responded
+		}
+
+		ring_check_if_council_of_elrond_concluded = yes
+	}
+}
+
+
 
