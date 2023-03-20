@@ -878,29 +878,34 @@ ring_interception_disengage_check = {
 
 # THIS gets the ring (NOT ROOT!)
 ring_seize_ring = {
-	log = "RING SEIZED"
-	
-	set_variable = { global.fs_days_left_in_state = 0 }
 
-	# eventlog
-	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
-	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-	add_to_array = { global.fs_eventlog = token:fs_event_takes_the_ring }
-	ring_trim_eventlog = yes
+	hidden_effect = {
+		log = "RING SEIZED"
+		
+		set_variable = { global.fs_days_left_in_state = 0 }
+
+		# eventlog
+		add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_takes_the_ring }
+		ring_trim_eventlog = yes
 
 
-	set_global_flag = fs_ring_seized
-	var:global.fs_ring_owner = {
-		remove_ideas = one_true_ring
+		set_global_flag = fs_ring_seized
+		var:global.fs_ring_owner = {
+			remove_ideas = one_true_ring
+		}
+		THIS = {
+			set_variable = { global.fs_ring_owner = THIS }
+			add_ideas = one_true_ring
+		}
+
+		ring_clear_fellowship_members = yes
+		ring_clear_pathstack = yes
 	}
 	THIS = {
-		set_variable = { global.fs_ring_owner = THIS }
-		add_ideas = one_true_ring
 		country_event = fs.101
 	}
-
-	ring_clear_fellowship_members = yes
-	ring_clear_pathstack = yes
 }
 
 
