@@ -20,6 +20,10 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
+		ai_will_do = {
+			factor = 5
+		}
+
 		completion_reward = {
 			add_political_power = 120
 		}
@@ -56,6 +60,10 @@ focus_tree = {
 					}
 					has_idea = unaligned_idea
 				}
+			}
+			modifier = {
+				factor = 0 #Making sure Dagorlad doesnt go down this path
+				original_tag = DAG
 			}
 		}
 
@@ -322,7 +330,7 @@ focus_tree = {
 
 	focus = {
 		id = liberty_ethos
-		icon = GFX_goal_support_democracy
+		icon = GFX_goal_support_cooperative
 		prerequisite = { focus = political_effort }
 		mutually_exclusive = { focus = collectivist_ethos }
 		available = {
@@ -342,6 +350,10 @@ focus_tree = {
 		ai_will_do = {
 			factor = 95
 			modifier = {
+				add = 50
+				original_tag = LIN
+			}
+			modifier = {
 				factor = 0.1
 				any_neighbor_country = {
 					is_major = yes
@@ -357,6 +369,10 @@ focus_tree = {
 					}
 				}
 			}
+			modifier = {
+				factor = 0 #Making sure Dagorlad doesnt go down this path
+				original_tag = DAG
+			}
 		}
 
 		completion_reward = {
@@ -368,11 +384,18 @@ focus_tree = {
 ### Neutrality Path
 
 	focus = {
-		id = unaligned_focus
-		icon = GFX_goal_generic_unaligned_focus
+		id = generic_unaligned_focus
+		icon = GFX_goal_support_unalligned
 		prerequisite = { focus = generic_pick_a_path }
 		mutually_exclusive = { focus = generic_draw_closer_to_gondor focus = generic_draw_closer_to_erebor focus = generic_draw_closer_to_mordor focus = interventionism_focus }
 		relative_position_id = liberty_ethos
+		ai_will_do = {
+			factor = 15
+			modifier = {
+				add = 50
+				original_tag = LIN
+			}
+		}
 		x = 2
 		y = 1
 		cost = 10
@@ -393,12 +416,16 @@ focus_tree = {
 		id = deterrence
 		icon = GFX_goal_generic_defence
 
-		prerequisite = { focus = unaligned_focus }
-		relative_position_id = unaligned_focus
+		prerequisite = { focus = generic_unaligned_focus }
+		relative_position_id = generic_unaligned_focus
 		x = 0
 		y = 1
 
 		cost = 10
+
+		ai_will_do = {
+			factor = 5
+		}
 
 		available_if_capitulated = yes
 
@@ -492,12 +519,11 @@ focus_tree = {
 		id = interventionism_focus
 		icon = GFX_goal_generic_political_pressure
 		prerequisite = { focus = liberty_ethos }
-		mutually_exclusive = { focus = unaligned_focus }
+		mutually_exclusive = { focus = generic_unaligned_focus }
 		relative_position_id = liberty_ethos
 		x = 0
 		y = 1
 		cost = 10
-
 		available_if_capitulated = yes
 
 
@@ -661,19 +687,19 @@ focus_tree = {
 #Focus for Draw closer to Erebor
 	 focus = {
 	 id = generic_draw_closer_to_erebor
-	 icon = GFX_blamethedwarves
+	 icon = GFX_goal_army_dwarves
 	 available = { is_in_faction = no ERE = { is_faction_leader = yes } }
 	 ai_will_do = {
 	 	factor = 1
-	 	modifier = {
-	 		factor = 0
-	 		original_tag = DAG
-	 	}
+		modifier = {
+			factor = 0 #Making sure Dagorlad doesnt go down this path
+			original_tag = DAG
+		}
  	}
 	 relative_position_id = generic_pick_a_path
 	 x = -1
 	 y = 1
-	 mutually_exclusive = { focus = generic_draw_closer_to_gondor focus = unaligned_focus focus = generic_draw_closer_to_mordor }
+	 mutually_exclusive = { focus = generic_draw_closer_to_gondor focus = generic_unaligned_focus focus = generic_draw_closer_to_mordor }
 	 prerequisite = { focus = generic_pick_a_path}
 	 cost = 5
 	 available_if_capitulated = yes
@@ -686,7 +712,7 @@ focus_tree = {
 #Focus for Unite with Erebor
 focus = {
 	 id = generic_unite_with_erebor
-	 icon = GFX_blamethedwarves
+	 icon = GFX_goal_erebor
 	 ai_will_do = { factor = 7 }
 	 available = { is_in_faction = no ERE = { is_faction_leader = yes } }
 	 relative_position_id = generic_draw_closer_to_erebor
@@ -729,18 +755,18 @@ focus = {
 #Focus for Draw closer to Gondor
 	 focus = {
 	 id = generic_draw_closer_to_gondor
-	 icon = GFX_focus_generic_the_giant_wakes
+	 icon = GFX_goal_generic_intelligence_exchange
 	 relative_position_id = generic_pick_a_path
 	 x =1
 	 y =1
 	 ai_will_do = {
 	 	factor = 1
-	 	modifier = {
-	 		factor = 0
-	 		original_tag = DAG
-	 	}
+		modifier = {
+			factor = 0 #Making sure Dagorlad doesnt go down this path
+			original_tag = DAG
+		}
  	}
-	 mutually_exclusive = { focus = generic_draw_closer_to_erebor focus = unaligned_focus focus = generic_draw_closer_to_mordor }
+	 mutually_exclusive = { focus = generic_draw_closer_to_erebor focus = generic_unaligned_focus focus = generic_draw_closer_to_mordor }
 	 prerequisite = { focus = generic_pick_a_path }
 	 available = { has_government = cooperative is_in_faction = no GON = { is_faction_leader = yes has_government = cooperative } }
 	 cost = 5
@@ -754,11 +780,12 @@ focus = {
 #Focus for Unite with Gondor
 	focus = {
 		id = generic_unite_with_gondor
-		icon = GFX_sabotagegondor
+		icon = GFX_goal_gondor
 		ai_will_do = { factor = 8 }
 		available = { 
 			is_in_faction = no 
 			GON = { is_faction_leader = yes } 
+			threat > 0.35
 		}
 		relative_position_id = generic_draw_closer_to_gondor
 		x = 0
@@ -800,18 +827,18 @@ focus = {
 	#Focus for Draw closer to Mordor
 	 focus = {
 	 id = generic_draw_closer_to_mordor
-	 icon = GFX_focus_generic_strike_at_democracy1
+	 icon = GFX_goal_mordor
 	 relative_position_id = generic_pick_a_path
 	 x = 3
 	 y = 1
 	 ai_will_do = {
 	 	factor = 1
-	 	modifier = {
-	 		factor = 0
-	 		original_tag = DAG
-	 	}
+		modifier = {
+			factor = 0 #Making sure Dagorlad doesnt go down this path
+			original_tag = DAG
+		}
  	}
-	 mutually_exclusive = { focus = generic_draw_closer_to_erebor focus = unaligned_focus focus = generic_draw_closer_to_gondor}
+	 mutually_exclusive = { focus = generic_draw_closer_to_erebor focus = generic_unaligned_focus focus = generic_draw_closer_to_gondor}
 	 prerequisite = { focus = generic_pick_a_path }
 	 available = { has_government = belligerent is_in_faction = no GON = { is_faction_leader = yes has_government = cooperative } }
 	 cost = 5
@@ -841,7 +868,7 @@ focus = {
 	#Focus for Unite with Sauron
 focus = {
 	id = generic_unite_with_mordor
-	icon = GFX_unitewithsauron
+	icon = GFX_goal_sauron_eye
 	ai_will_do = { 
 		factor = 6 
 		modifier = {
@@ -856,6 +883,7 @@ focus = {
 			has_government = belligerent 
 			is_faction_leader = yes 
 		}
+		threat > 0.25
 	}
 	bypass = { 
 		any_country = { 

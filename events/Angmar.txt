@@ -5,7 +5,7 @@
 add_namespace = angmar
 
 
-# Angmar Demands Independence
+#
 country_event = {
 	id = angmar.1
 	title = angmar.1.t
@@ -16,38 +16,11 @@ country_event = {
 	
 	option = { #Accept
 		name = angmar.1.a
-		ai_chance = {
-			base = 50
-			modifier = {
-				has_opinion = { target = ANG value > 0 }
-				add = 20
-			}
-			modifier = {
-				has_war = yes
-				add = 100
-			}
-		}
-		GON = { end_puppet = ANG }
+		
 	}
 	option = { #Refuse
 		name = angmar.1.b
-		ai_chance = {
-			base = 50
-			modifier = {
-				add = 200
-				has_government = belligerent
-			}
-			modifier = {
-				add = 30
-				strength_ratio = { tag = ANG ratio > 1.0 }
-			}
-			modifier = {
-				add = 50
-				has_government = cooperative
-			}
-		}
-		GON = { end_puppet = ANG }
-		GON = { declare_war_on = { target = ANG type = annex_everything } }
+		
 	}
 }
 
@@ -179,5 +152,318 @@ country_event = {
 
 	option = {
 		name = angmar.5.b
+	}
+}
+
+# Sauron arrived
+country_event = {
+	id = angmar.6
+	title = angmar.6.t
+	desc = angmar.6.d
+	picture = GFX_report_event_ring
+
+	trigger = {
+		ANG = {
+			has_completed_focus = ANG_strengthen_the_new_goverment
+			has_government = belligerent
+		}
+		MOR = {
+			has_completed_focus = arealmoforcs
+			has_government = revolutionary
+		}
+	}
+
+	option = { #agree
+		name = angmar.6.a
+		ai_chance = {
+			base = 50
+		}
+		custom_effect_tooltip = ANG_get_sauron
+		set_global_flag = ANG_has_sauron
+	}
+
+	option = { #decline
+		name = angmar.6.b
+		ai_chance = {
+			base = 0
+		}
+		#Maybe add something in the future
+	}
+}
+
+#COUNTRY NAME asked to join faction cooperative
+country_event = {
+	id = angmar.7
+	title = angmar.7.t
+	desc = angmar.7.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = angmar.7.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = ANG
+					value > 75
+				}
+			}
+			modifier = {
+				add = 5
+				has_non_aggression_pact_with = ANG
+			}
+			modifier = {
+				add = 10
+				has_war = yes
+			}
+			modifier = {
+				add = -999
+				is_puppet = yes
+			}
+		}
+		ANG = {
+			add_to_faction = ROOT
+		}
+	}
+
+	option = {
+		name = angmar.7.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = ANG
+					value < 10
+				}
+			}
+		}
+		add_political_power = -50
+	}
+}
+
+#Request control of north Arthedain
+country_event = {
+	id = angmar.8
+	title = angmar.8.t
+	desc = angmar.8.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #accept
+		name = angmar.8.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = ANG
+					value > 75
+				}
+			}
+			modifier = {
+				add = 15
+				is_in_faction_with = ANG
+			}
+			modifier = {
+				add = -999
+				has_war_with_non_exiled_country = ANG
+			}
+		}
+		ANG = {
+			add_opinion_modifier = { target = RHD modifier = medium_increase }
+			transfer_state = 41
+			transfer_state = 147
+			transfer_state = 148
+		}
+	}
+
+	option = { #deny
+		name = angmar.8.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = -5
+				has_war = yes
+			}
+		}
+		add_political_power = -100
+		ANG = {
+			add_opinion_modifier = { target = ART modifier = medium_decrease }
+			add_state_claim = 41
+			add_state_claim = 147
+			add_state_claim = 148
+		}
+	}
+}
+
+#COUNTRY NAME ask for a non-agression pack
+country_event = {
+	id = angmar.9
+	title = angmar.9.t
+	desc = angmar.9.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = angmar.9.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = ANG
+					value > 75
+				}
+			}
+		}
+		
+	}
+
+	option = {
+		name = angmar.9.b
+		ai_chance = {
+			base = 10
+		}
+		add_political_power = -50
+	}
+}
+
+
+#COUNTRY NAME ask for investment
+country_event = {
+	id = angmar.10
+	title = angmar.10.t
+	desc = angmar.10.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	#Accept
+	option = {
+		name = angmar.10.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = ANG
+					value > 75
+				}
+			}
+			modifier = {
+				add = 15
+				is_in_faction_with = ANG
+			}
+			modifier = {
+				add = 5
+				has_non_aggression_pact_with = ANG
+			}
+		}
+		ANG = {
+			add_timed_idea = { idea = ANG_investment days = 267 }
+			add_opinion_modifier = { target = ROOT modifier = medium_increase }
+		}
+		add_timed_idea = { idea = generic_investment_in_angmar days = 267 }
+	}
+
+	#Deny
+	option = {
+		name = angmar.10.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = -5
+				has_opinion = {
+					target = ANG
+					value < 25
+				}
+			}
+			modifier = {
+				add = -999
+				has_war_with_non_exiled_country = ANG
+			}
+		}
+		add_political_power = -50
+		ANG = {
+			add_opinion_modifier = { target = ROOT modifier = medium_decrease }
+		}
+	}
+}
+
+# Invite COUNTRY to faction
+country_event = {
+	id = angmar.11
+	title = angmar.11.t
+	desc = angmar.11.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = angmar.11.a
+		ai_chance = {
+			base = 40
+			modifier = {
+				add = 20
+				has_opinion = {
+					target = ANG
+					value > 75
+				}
+			}
+		}
+		ANG = {
+			add_to_faction = ROOT
+		}
+	}
+
+	option = { #no
+		name = angmar.11.b
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+
+# Demand Gundabad to join The Dark Pact Belligerent
+country_event = {
+	id = angmar.12
+	title = angmar.12.t
+	desc = angmar.12.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = angmar.12.a
+		ai_chance = {
+			base = 40
+			modifier = {
+				add = 20
+				has_opinion = {
+					target = ANG
+					value > 75
+				}
+			}
+		}
+		ANG = {
+			add_to_faction = GUN
+		}
+	}
+
+	option = { #no
+		name = angmar.12.b
+		ai_chance = {
+			base = 10
+		}
+		ANG = {
+			create_wargoal = { target = GUN type = annex_everything }
+		}
 	}
 }
