@@ -256,7 +256,6 @@ country_event = {
 }
 
 # Mordor asked to join there faction
-
 country_event = {
 	id = moria.5
 	title = moria.5.t
@@ -275,5 +274,246 @@ country_event = {
 
 	option = {
 		name = moria.5.b
+	}
+}
+
+# ORC-Moria ring interception attempt
+country_event = {
+	id = moria.6
+	title = moria.6.t
+	desc = moria.6.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# ignore
+	option = {
+		name = moria.6.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+	}
+
+	# attack
+	option = {
+		name = moria.6.b
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+
+		add_political_power = -100
+
+		custom_effect_tooltip = moria.6.b.tt
+
+		if = {
+			limit = { country_exists = MOA }
+			custom_effect_tooltip = moria.6.tt_dwarf_response
+
+			# First we check how the dwarves respond, then the interception attempt is launched
+			hidden_effect = { MOA = { country_event = moria.7 } }
+		}
+		else = {
+			hidden_effect = {
+				ring_open_interception_attempt_prompt = yes
+			}
+		}
+	}
+
+	# attack with cave-troll
+	option = {
+		name = moria.6.c
+		ai_chance = {
+			base = 3
+		}
+
+		add_political_power = -200
+
+		custom_effect_tooltip = moria.6.c.tt
+
+		if = {
+			limit = { country_exists = MOA }
+			custom_effect_tooltip = moria.6.tt_dwarf_response
+
+			hidden_effect = {
+				MOC_cavetroll = { ring_add_member_to_hunting_party = yes }
+			}
+
+			# First we check how the dwarves respond, then the interception attempt is launched
+			hidden_effect = { MOA = { country_event = moria.7 } }
+		}
+		else = {
+			hidden_effect = {
+				MOC_cavetroll = { ring_add_member_to_hunting_party = yes }
+				ring_open_interception_attempt_prompt = yes
+			}
+		}
+	}
+}
+
+# Dwarf response to ORC-Moria ring interception attempt
+country_event = {
+	id = moria.7
+	title = moria.7.t
+	desc = moria.7.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# leave fellowship
+	option = {
+		name = moria.7.a
+		ai_chance = {
+			base = 1
+		}
+
+		custom_effect_tooltip = moria.7.a.tt
+
+		ring_rivendell_disapproves = yes
+
+		add_timed_idea = {
+		    idea = MOA_surprise_attack
+		    days = 30
+		}
+
+		# let orcs intercept
+		hidden_effect = {
+			MOC = { country_event = fs.1006 }
+		}
+	}
+
+	# help fellowship
+	option = {
+		name = moria.7.b
+		ai_chance = {
+			base = 1
+		}
+
+		custom_effect_tooltip = moria.7.b.tt
+
+		ring_rivendell_approves = yes
+
+		hidden_effect = {
+			# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_moria_oin_ori }
+			ring_trim_eventlog = yes
+
+			MOA_ori = { ring_add_member_to_fellowship = yes }
+			MOA_oin = { ring_add_member_to_fellowship = yes }
+
+			# let orcs intercept
+			MOC = { country_event = fs.1006 }
+		}
+	}
+}
+
+# Dwarves: fellowship arrives in our territory, offer help?
+country_event = {
+	id = moria.8
+	title = moria.8.t
+	desc = moria.8.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# help fellowship
+	option = {
+		name = moria.8.a
+		ai_chance = {
+			base = 1
+		}
+
+		custom_effect_tooltip = moria.8.a.tt
+
+		hidden_effect = {
+			ring_heal_fellowship = yes
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_moria_help }
+			ring_trim_eventlog = yes
+		}
+	}
+
+	# no help
+	option = {
+		name = moria.8.b
+		ai_chance = {
+			base = 1
+		}
+
+		custom_effect_tooltip = moria.8.b.tt
+
+		hidden_effect = {
+			
+		}
+	}
+
+	# Ask gimli to stay behind
+	option = {
+		name = moria.8.c
+		trigger = {
+			SHI = { FS_gimli = { ring_is_fs_member = yes } }
+			country_exists = MOC
+		}
+		ai_chance = {
+			base = 2
+		}
+
+		add_political_power = -100
+
+		random_list = {
+			# Gimli stays in Moria
+			50 = {
+				custom_effect_tooltip = moria.8.c.gimli_stays
+
+				hidden_effect = {
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_moria_gimli_stays }
+					ring_trim_eventlog = yes
+
+					SHI = { FS_gimli = { ring_remove_member_from_fellowship_nolog = yes } }
+					add_corps_commander_role = {
+					    Character = MOA_gimli
+					    traits={ trait_mountaineer hill_fighter }
+						skill=6
+						attack_skill=6
+						defense_skill=4
+						planning_skill=2
+						logistics_skill=3
+					}
+					add_advisor_role = {
+					    character = MOA_gimli
+					    advisor = {
+							idea_token = MOA_gimli
+							slot = army_chief
+							cost = 150
+							traits = { army_chief_organizational_2 }
+						}
+					}
+				}
+			}
+			# Gimli stays with fellowship
+			50 = {
+				custom_effect_tooltip = moria.8.c.gimli_leaves
+
+				hidden_effect = {
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_moria_gimli_leaves }
+					ring_trim_eventlog = yes
+				}
+			}
+		}
 	}
 }

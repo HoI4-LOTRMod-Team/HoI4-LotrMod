@@ -525,107 +525,6 @@ country_event = {
 	}
 }
 
-
-
-country_event = {
-	id = mordor.11
-	title = mordor.11.t
-	desc = mordor.11.d
-	fire_only_once = yes
-	picture = GFX_report_event_ring
-	trigger = { original_tag = MOR
-		NOT= {has_global_flag = ring_found} has_government = belligerent date>3022.5.1 date<3022.11.1
-		has_completed_focus = searchtheshireforthering
-	}
-
-
-	option = {
-		name = mordor.11.a
-		add_political_power = -100
-		MOR = {complete_national_focus = intercepttheringatthedeadmarshes}
-		ai_chance = { base = 100}
-
-		random_list = {
-			60 = {
-
-				modifier = {
-					add = 30
-					has_global_flag = fs_gearedup_lothlorien
-				}
-
-
-				MOR = { country_event = { days = 0 id = fs.100 } }
-
-			}
-			20 = {
-				modifier = {
-					add = 15
-					MOR = { has_idea_with_trait = ring_catcher }
-				}
-
-				MOR = { country_event = { days = 0 id = mordor.42 } }
-				news_event = { hours = 12 id = news.375 }
-
-
-			}
-
-		}
-	}
-
-
-	option = {name = mordor.11.b
-				ai_chance = { base = 100
-				modifier = { is_historical_focus_on = yes factor = 0}}}
-}
-
-
-country_event = {
-	id = mordor.12
-	title = mordor.12.t
-	desc = mordor.12.d
-	fire_only_once = yes
-	picture = GFX_report_event_ring
-	trigger = { original_tag = MOR
-		NOT = { has_global_flag = ring_found }
-		NOT = { has_global_flag = fellowship_departed }
-		has_completed_focus = gatherthenazgl
-		has_completed_focus = torturegollum
-		date>3018.4.1
-	}
-
-
-	option = {
-		name = mordor.12.a
-		add_political_power = -100
-		MOR = {complete_national_focus = searchtheshireforthering}
-		ai_chance = { base = 100}
-
-		random_list = {
-			30 = {
-				MOR = { country_event = { days = 0 id = fs.100 } }
-
-			}
-			1 = {
-				modifier = {
-					add = 1
-					MOR = { has_idea_with_trait = ring_catcher }
-				}
-				country_event = mordor.42
-				news_event = { hours = 12 id = news.370 }
-			}
-
-		}
-	}
-
-
-	option = {
-		name = mordor.12.b
-		ai_chance = { base = 100
-			modifier = { is_historical_focus_on = yes factor = 0}
-		}
-	}
-}
-
 #Ring Found!
 country_event = {
 	id = mordor.42
@@ -785,7 +684,7 @@ country_event = {
 				has_idea = RHU_alone_we_will_fight
 			}
 			modifier = { # decreasing change of majors joining
-				add = -25
+				add = -10
 				OR = {
 					original_tag = ERE
 					original_tag = GON
@@ -960,7 +859,7 @@ country_event = {
 	}
 }
 
-#Angmar requests investment
+# Gollum Tortured
 country_event = {
 	id = mordor.53
 	title = mordor.53.t
@@ -969,44 +868,31 @@ country_event = {
 
 	is_triggered_only = yes
 
-	#Accept
+	# send nazgul
 	option = {
 		name = mordor.53.a
 		ai_chance = {
-			base = 30
-			modifier = {
-				factor = 2
-				has_opinion = {
-					target = ANG
-					value > 50
-				}
-			}
-			modifier = {
-				factor = -1
-				has_war = yes
-			}
+			base = 10
 		}
-		ANG = {
-			add_timed_idea = { idea = ANG_investment  days = 200 }
-			add_opinion_modifier = { target = MOR modifier = medium_increase }
-			add_popularity = { ideology = belligerent popularity = 0.05 } 
-		}
-		add_timed_idea = { idea = MOR_angmar_investment  days = 200 }	
+		custom_effect_tooltip = mordor.53.a_tooltip
+		set_global_flag = fs_nazgul_sent_to_shire
 	}
 
-	#Deny
+	# who cares
 	option = {
 		name = mordor.53.b
 		ai_chance = {
-			base = 10
+			base = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
 		}
-		ANG = {
-			add_opinion_modifier = { target = MOR modifier = medium_decrease }
-		}
+		
 	}
 }
 
-#COUNTRY NAME invited to join the anti-elves pact
+# Bree Ring Hunt
 country_event = {
 	id = mordor.54
 	title = mordor.54.t
@@ -1018,58 +904,12 @@ country_event = {
 	option = {
 		name = mordor.54.a
 		ai_chance = {
-			base = 25
-			modifier = {
-				has_government = belligerent
-				add = 10
-			}
-			modifier = {
-				is_historical_focus_on = yes
-				NOT = {
-					original_tag = HAR
-					original_tag = RUH
-				}
-				add = -50
-			}
-			modifier = {
-				is_orcs = yes
-				add = 15
-			}
-		}
-		set_country_flag = MOR_anti_elves_pact
-		add_war_support = 0.10
-		add_opinion_modifier = { target = MOR modifier = medium_increase }
-		MOR = {
-			add_opinion_modifier = { target = PREV modifier = medium_increase }
-		}
-		every_other_country = {
-			limit = {
-				is_elves = yes
-			}
-			add_opinion_modifier = { target = PREV modifier = medium_decrease }
+			base = 50
 		}
 	}
-
-	option = {
-		name = mordor.54.b
-		ai_chance = {
-			base = 15
-			modifier = {
-				any_neighbor_country = {
-					is_elves = yes
-					add = -10
-				}
-			}
-		}
-		every_other_country = {
-			limit = {
-				is_elves = yes
-			}
-			add_opinion_modifier = { target = PREV modifier = small_increase }
-		}
 }
 
-#COUNTRY NAME invited to join a war against Mirkwood
+# Weathertop ambush
 country_event = {
 	id = mordor.55
 	title = mordor.55.t
@@ -1081,63 +921,75 @@ country_event = {
 	option = {
 		name = mordor.55.a
 		ai_chance = {
-			base = 50
+			base = 10
 		}
-		add_war_support = 0.10
-		create_wargoal = { type = annex_everything target = MIR }
-		MOR = {
-			add_opinion_modifier = { target = PREV modifier = medium_increase }
-		}
-	}
 
+		hidden_effect = {
+			ring_execute_weathertop_encounter = yes
+		}
+
+		custom_effect_tooltip = ring_execute_weathertop_encounter_tooltip
+	}
+	# who cares
 	option = {
 		name = mordor.55.b
 		ai_chance = {
-			base = 10
+			base = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
 		}
-		add_political_power = -100
-		add_war_support = -0.10
-		MOR = {
-			add_opinion_modifier = { target = PREV modifier = medium_decrease }
-		}
+		custom_effect_tooltip = recall_nazgul_from_shire_tooltip
+		clr_global_flag = fs_nazgul_sent_to_shire
 	}
 }
 
-#COUNTRY NAME invited to join a war against Lothlorien
+# Weathertop ambush failed
 country_event = {
 	id = mordor.56
 	title = mordor.56.t
-	desc = mordor.56.d
+
+	desc = {
+		text = mordor.56.d
+		trigger = {
+			has_global_flag = fs_arwen_sent
+		}
+	}
+	desc = {
+		text = mordor.56.d.noarwen
+	}
+
 	picture = GFX_report_event_ring
 
 	is_triggered_only = yes
 
+	# pursue
 	option = {
 		name = mordor.56.a
 		ai_chance = {
 			base = 50
 		}
-				add_war_support = 0.10
-		create_wargoal = { type = annex_everything target = LTH }
-		MOR = {
-			add_opinion_modifier = { target = PREV modifier = medium_increase }
-		}
-	}
 
+		custom_effect_tooltip = ring_pursue_arwen_tooltip
+	}
+	# pull back
 	option = {
 		name = mordor.56.b
 		ai_chance = {
-			base = 10
+			base = 30
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
 		}
-		add_political_power = -100
-		add_war_support = -0.10
-		MOR = {
-			add_opinion_modifier = { target = PREV modifier = medium_decrease }
-		}
+
+		custom_effect_tooltip = recall_nazgul_from_shire_tooltip
+		clr_global_flag = fs_nazgul_sent_to_shire
 	}
 }
 
-#COUNTRY NAME invited to join a war against Rivendell
+# Bruinen encounter success
 country_event = {
 	id = mordor.57
 	title = mordor.57.t
@@ -1151,22 +1003,51 @@ country_event = {
 		ai_chance = {
 			base = 50
 		}
-				add_war_support = 0.10
-		create_wargoal = { type = annex_everything target = RIV }
-		MOR = {
-			add_opinion_modifier = { target = PREV modifier = medium_increase }
-		}
+
+		custom_effect_tooltip = recall_nazgul_from_shire_tooltip
+		clr_global_flag = fs_nazgul_sent_to_shire
+
+		FS_arwen = { ring_combat_kill_character = yes }
+		FS_frodo = { ring_combat_kill_character = yes } # This should auto-seize the ring
+		ring_seize_ring = yes
 	}
+}
+
+# Bruinen encounter could not catch up
+country_event = {
+	id = mordor.58
+	title = mordor.58.t
+	desc = mordor.58.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
 
 	option = {
-		name = mordor.57.b
+		name = mordor.58.a
 		ai_chance = {
-			base = 10
+			base = 50
 		}
-		add_political_power = -100
-		add_war_support = -0.10
-		MOR = {
-			add_opinion_modifier = { target = PREV modifier = medium_decrease }
+		custom_effect_tooltip = recall_nazgul_from_shire_tooltip
+		clr_global_flag = fs_nazgul_sent_to_shire
+	}
+}
+
+# Bruinen encounter arwen 
+country_event = {
+	id = mordor.59
+	title = mordor.59.t
+	desc = mordor.59.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.59.a
+		ai_chance = {
+			base = 50
 		}
+
+		custom_effect_tooltip = recall_nazgul_from_shire_tooltip
+		clr_global_flag = fs_nazgul_sent_to_shire
 	}
 }

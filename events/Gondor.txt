@@ -66,8 +66,8 @@ country_event = {
 		22 = { is_controlled_by = MOR }
 		GON = { has_war_with = MOR }
 		OR = { NOT = { has_global_flag = faramir_dead } NOT = { has_global_flag = boromir_dead } }
-		OR = { NOT = { has_global_flag = fs_gondor_1 } NOT = { has_global_flag = fs_gondor_2 } }
-		NOT = { has_global_flag = fs_gondor_0 } #both at Osgiliath, noone dies.
+		OR = { NOT = { has_global_flag = fs_gondor_faramir } NOT = { has_global_flag = fs_gondor_boromir } }
+		NOT = { has_global_flag = fs_gondor_noone } #both at Osgiliath, noone dies.
 	}
 
 	mean_time_to_happen = {
@@ -80,8 +80,8 @@ country_event = {
 		name = gondor.2.a
 		random_list = {
 			50 = {
-				if = { limit = { NOT = { has_global_flag = fs_gondor_2 } NOT = { has_global_flag = boromir_dead } } GON_boromir = { retire = yes } set_global_flag = boromir_dead news_event = { hours = 12 id = news.379 } }
-				if = { limit = { NOT = { has_global_flag = fs_gondor_1 } NOT = { has_global_flag = faramir_dead } } GON_faramir = { retire = yes } set_global_flag = faramir_dead news_event = { hours = 12 id = news.380 } }
+				if = { limit = { NOT = { has_global_flag = fs_gondor_boromir } NOT = { has_global_flag = boromir_dead } } GON_boromir = { retire = yes } set_global_flag = boromir_dead news_event = { hours = 12 id = news.379 } }
+				if = { limit = { NOT = { has_global_flag = fs_gondor_faramir } NOT = { has_global_flag = faramir_dead } } GON_faramir = { retire = yes } set_global_flag = faramir_dead news_event = { hours = 12 id = news.380 } }
 			}
 			50 = { }
 		}
@@ -121,71 +121,127 @@ country_event = {
 }
 
 
+# Have Boromir steal ring?
 country_event = {
 	id = gondor.4
 	title = gondor.4.t
 	desc = gondor.4.d
 	fire_only_once = yes
 	picture = GFX_report_event_ring
-	trigger = {
-		NOT= {has_global_flag = boromir_dead} NOT= {has_global_flag = ring_found} date>3020.3.1 date<3020.6.1
-		has_completed_focus = sendboromirwiththefellowship
-		original_tag = GON
-	}
+	
+	is_triggered_only = yes
 
 
-			option = {name = gondor.4.a
-			add_political_power = -100
-			GON = {complete_national_focus = haveboromirstealthering}
-			ai_chance = { base = 100}
+	option = {
+		name = gondor.4.a
+		add_political_power = -150
+		GON = {complete_national_focus = haveboromirstealthering}
+		ai_chance = {
+			base = 100
+		}
 
-			random_list = {
+		ring_rivendell_disapproves = yes
+
+		random_list = {
+			# Fails outright / Bormomir doesn't listen
+			15 = {
+				modifier = {
+					add = 10
+					ring_aragorn_in_fellowship = yes
+				}
+				modifier = {
+					add = 10
+					ring_gandalf_in_fellowship = yes
+				}
+				modifier = {
+					factor = 0.1
+					is_historical_focus_on = yes
+				}
+
+				# response event
+				GON = { country_event = { id = gondor.9 days = 4 } }
+			}
+
+			# Fails, but with opportunity to escalate
 			20 = {
 
 				modifier = {
-					add = 50
-					has_global_flag = fs_mirkwood_1
+					add = 10
+					ring_aragorn_in_fellowship = yes
 				}
 				modifier = {
-					add = 50
-					has_global_flag = fs_erebor_1
+					add = 10
+					ring_gandalf_in_fellowship = yes
 				}
 				modifier = {
-					add = 100
-					has_global_flag = fs_mirkwood_2
+					add = 5
+					ring_sam_in_fellowship = yes
 				}
 				modifier = {
-					add = 100
-					has_global_flag = fs_erebor_2
+					factor = 0
+					check_variable = { global.fs_members^num < 3 }
 				}
-				if = {
-			limit = { NOT = { has_global_flag = boromir_dead } }
-			news_event = { hours = 48 id = news.343 }
-		}
-		set_global_flag = boromir_dead
-		GON_boromir = { retire = yes }
- 		GON = { country_event = { days = 0 id = fs.100 } }
+				modifier = {
+					factor = 2
+					is_historical_focus_on = yes
+				}
 
+				# response event
+				GON = { country_event = { id = gondor.10 days = 3 } }
 			}
-			60 = {
+
+			# Success
+			5 = {
+				# Only Boromir and Frodo even alive
 				modifier = {
-					add = 60
-					has_global_flag = aragorn_dead
+					add = 100
+					check_variable = { global.fs_members^num < 3 }
 				}
+				modifier = {
+					add = 50
+					check_variable = { global.fs_members^num < 4 }
+				}
+				modifier = {
+					add = 35
+					check_variable = { global.fs_members^num < 5 }
+				}
+				modifier = {
+					add = 15
+					check_variable = { global.fs_members^num < 6 }
+				}
+				modifier = {
+					factor = 0.1
+					is_historical_focus_on = yes
+				}
+
+				# eventlog
+				hidden_effect = {
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_boromir_takes_ring }
+					ring_trim_eventlog = yes
+				}
+
 				news_event = { hours = 12 id = news.374 }
-				set_global_flag = ring_found
-				set_global_flag = gondor_has_ring
-
-
+				ring_seize_ring = yes
 			}
+		}
+	}
 
+
+	option = {
+		name = gondor.4.b
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 0.1
+				is_historical_focus_on = yes
 			}
-			}
-
-
-	option = {name = gondor.4.b
-				ai_chance = { base = 100
-				modifier = { is_historical_focus_on = yes factor = 0}}}
+		}
+		hidden_effect = {
+			ring_execute_argonath_raid = yes
+		}
+	}
 }
 
 
@@ -297,123 +353,228 @@ country_event = {
 	}
 }
 
-#Angmar preposes to return Orthanc in return of a payment
+# Boromir refuses to steal ring
 country_event = {
 	id = gondor.9
 	title = gondor.9.t
 	desc = gondor.9.d
+	fire_only_once = yes
 	picture = GFX_report_event_ring
-
+	
 	is_triggered_only = yes
 
 	option = {
 		name = gondor.9.a
 		ai_chance = {
-			base = 50
-		}
-		transfer_state = 31
-		add_state_core = 31
-		add_timed_idea = { idea = GON_orthanc_payment days = 365 }
-		add_opinion_modifier = { target = ANG modifier = small_increase }
-		ANG = {
-			add_opinion_modifier = { target = GON modifier = small_increase }
-			add_timed_idea = { idea = ANG_orthanc_payment days = 365 }
-		}
-	}
-
-	option = {
-		name = gondor.9.b
-		ai_chance = {
 			base = 10
 		}
-		add_political_power = -50
-		ANG = {
-			add_opinion_modifier = { target = GON modifier = small_decrease }
+		hidden_effect = {
+			ring_execute_argonath_raid = yes
 		}
 	}
 }
 
-#Angmar preposes navel trade route
+# Fellowship stops Boromir from taking ring. Escalate?
 country_event = {
 	id = gondor.10
 	title = gondor.10.t
 	desc = gondor.10.d
+	fire_only_once = yes
 	picture = GFX_report_event_ring
-
+	
 	is_triggered_only = yes
 
+	# yes
 	option = {
 		name = gondor.10.a
 		ai_chance = {
-			base = 50
-		}
-		GON = {
-			add_ideas = GON_trade_agremeent
-			136 = {
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = dockyard
-					level = 1
-					instant_build = yes
-				}
+			base = 10
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
 			}
 		}
-		ANG = {
-			add_ideas = ANG_trade_agremeent
-			57 = {
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = dockyard
-					level = 1
-					instant_build = yes
-				}
-			}
+		add_political_power = -100
+		custom_effect_tooltip = gondor.10.a.tt
+
+		ring_rivendell_disapproves = yes
+
+		# eventlog
+		hidden_effect = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_boromir_takes_ring_escalate }
+			ring_trim_eventlog = yes
+		}
+
+		hidden_effect = {
+			ring_execute_boromir_betrayal = yes
 		}
 	}
 
+	# no
 	option = {
 		name = gondor.10.b
 		ai_chance = {
 			base = 10
 		}
-		add_political_power = -50
-		ANG = {
-			add_opinion_modifier = { target = GON modifier = small_decrease }
+		custom_effect_tooltip = gondor.10.b.tt
+		hidden_effect = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_boromir_takes_ring_back_down }
+			ring_trim_eventlog = yes
+
+			ring_execute_argonath_raid = yes
 		}
 	}
 }
 
-
-#Angmar requests outpost near Gondor
+# Boromir manages to beat fellowship
 country_event = {
 	id = gondor.11
 	title = gondor.11.t
 	desc = gondor.11.d
+	fire_only_once = yes
 	picture = GFX_report_event_ring
-
+	
 	is_triggered_only = yes
 
 	option = {
 		name = gondor.11.a
 		ai_chance = {
-			base = 50
+			base = 10
 		}
-		transfer_state = 14
-		add_state_core = 14
-		add_opinion_modifier = { target = ANG modifier = small_increase }
-		ANG = {
-			add_opinion_modifier = { target = GON modifier = small_increase }
+		# eventlog
+		hidden_effect = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_boromir_takes_ring }
+			ring_trim_eventlog = yes
 		}
+
+		ring_seize_ring = yes
 	}
+}
+
+# Boromir dies fighting fellowship
+country_event = {
+	id = gondor.12
+	title = gondor.12.t
+	desc = gondor.12.d
+	fire_only_once = yes
+	picture = GFX_report_event_ring
+	
+	is_triggered_only = yes
 
 	option = {
-		name = gondor.11.b
+		name = gondor.12.a
 		ai_chance = {
 			base = 10
 		}
-		add_political_power = -50
-		ANG = {
-			add_opinion_modifier = { target = GON modifier = small_decrease }
+		hidden_effect = {
+			news_event = { hours = 48 id = news.343 }
+		}
+		hidden_effect = {
+			ring_execute_argonath_raid = yes
+		}
+	}
+}
+
+# Faramir finds hobbits with ring moving towards Minas Morgul
+country_event = {
+	id = gondor.13
+	title = gondor.13.t
+	desc = gondor.13.d
+	fire_only_once = yes
+	picture = GFX_report_event_ring
+	
+	is_triggered_only = yes
+
+	# Let them go
+	option = {
+		name = gondor.13.a
+		ai_chance = {
+			base = 10
+		}
+
+		hidden_effect = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_captured_by_faramir_released }
+			ring_trim_eventlog = yes
+		}
+	}
+	# Bring the Ring to Gondor!
+	option = {
+		name = gondor.13.b
+		ai_chance = {
+			base = 10
+		}
+
+		ring_rivendell_disapproves = yes
+
+		random_list = {
+			# Faramir refuses
+			15 = {
+				country_event = gondor.14
+				hidden_effect = {
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_captured_by_faramir_released }
+					ring_trim_eventlog = yes
+				}
+			}
+			# Fellowship escapes
+			10 = {
+				country_event = gondor.15
+					hidden_effect = {
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_captured_by_faramir_escaped }
+					ring_trim_eventlog = yes
+				}
+			}
+			# Actually works
+			5 = {
+				ring_seize_ring = yes
+			}
+		}
+	}
+}
+
+# Faramir refuses
+country_event = {
+	id = gondor.14
+	title = gondor.14.t
+	desc = gondor.14.d
+	fire_only_once = yes
+	picture = GFX_report_event_ring
+	
+	is_triggered_only = yes
+
+	option = {
+		name = gondor.14.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+# Fellowship escapes
+country_event = {
+	id = gondor.15
+	title = gondor.15.t
+	desc = gondor.15.d
+	fire_only_once = yes
+	picture = GFX_report_event_ring
+	
+	is_triggered_only = yes
+
+	option = {
+		name = gondor.15.a
+		ai_chance = {
+			base = 10
 		}
 	}
 }

@@ -1,0 +1,1208 @@
+execute_fellowship_step = {
+	# pop stack
+	set_variable = { global.fs_currentstate = global.fs_path_stack^0 }
+	add_to_variable = { global.fs_steps = 1 }
+	remove_from_array = { array = global.fs_path_stack index = 0 }
+	#log = "currentState: [?global.fs_currentstate]"
+
+	# add to eventlog
+	var:global.fs_currentstate = { ring_log_arrived_in_new_state = yes }
+
+	# send event to state controller
+	if = {
+		# These tags have special interactions
+		limit = {
+			var:global.fs_currentstate = {
+				controller = {
+					NOT = { tag = RIV }
+					NOT = { tag = SHI }
+					NOT = { tag = LTH }
+					NOT = { tag = MOA }
+					NOT = { tag = MOC }
+					NOT = { tag = CAR }
+					NOT = { has_country_flag = fs_country_notified }
+				}
+			}
+		}
+		var:global.fs_currentstate = {
+			controller = {
+				set_country_flag = fs_country_notified
+				country_event = fs.103
+			}
+		}
+	}
+
+	# unique state-based encounters
+
+	# Old forest encounter
+	if = {
+		limit = { check_variable = { global.fs_currentstate = 150 } }
+
+		# Add Merry and Pippin
+		FS_merry = { ring_add_member_to_fellowship_nolog = yes }
+		FS_pippin = { ring_add_member_to_fellowship_nolog = yes }
+
+		# eventlog
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_merry_pippin_join }
+		ring_trim_eventlog = yes
+
+		# flavour
+		if = {
+			limit = { has_global_flag = fs_nazgul_sent_to_shire }
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_old_forest_nazgul }
+			ring_trim_eventlog = yes
+		}
+	}
+
+	# Bree encounter
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 149 } }
+
+		# Add 'Strider'
+		FS_aragorn = { ring_add_member_to_fellowship_nolog = yes }
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_aragorn_in_bree }
+		ring_trim_eventlog = yes
+
+		# Gandalf not imprisoned -> he is in Bree
+		if = {
+			limit = { has_global_flag = gandalf_saruman_united }
+
+			FS_gandalf = { ring_add_member_to_fellowship_nolog = yes }
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_gandalf_in_bree }
+			ring_trim_eventlog = yes
+		}
+
+		# Nazgul encounter
+		if = {
+			limit = { has_global_flag = fs_nazgul_sent_to_shire }
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_bree_nazgul }
+			ring_trim_eventlog = yes
+
+			CAR = {country_event = { days = 5 id = cardolan.1 } }
+			MOR = { country_event = { days = 5 id = mordor.54 } }
+			RIV = { country_event = { days = 5 id = rivendell.15 } }
+
+		}
+		else = {
+			CAR = {country_event = { days = 5 id = fs.103 } }
+		}
+	}
+
+	# Weathertop encounter
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 145 } }
+
+		if = {
+			limit = { has_global_flag = fs_nazgul_sent_to_shire }
+
+			MOR = { country_event = { days = 7 id = mordor.55 } }
+		}
+		# No nazgul -> the whole group moves towards rivendell on foot
+		else_if = {
+			limit = { has_global_flag = fs_arwen_sent }
+			# Arwen joins because why not
+			FS_arwen = { ring_add_member_to_fellowship = yes }
+		}
+	}
+
+	# Bruinen Encounter
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 200 } }
+
+		# Nazgul (try to) catch up to Arwen on horseback
+		if = {
+			limit = { has_global_flag = fs_nazgul_sent_to_shire }
+
+			random_list = {
+				# Ring seized!
+				2 = {
+					MOR = { country_event = { days = 0 id = mordor.57 } }
+				}
+				# Nazgul couldnt catch up
+				30 = {
+					MOR = { country_event = { days = 0 id = mordor.58 } }
+				}
+				# Arwen summons flood-waters that sweep the Nazgul away
+				68 = {
+					if = {
+						limit = { has_global_flag = fs_arwen_sent }
+
+						# Eventlog
+						add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+						add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+						add_to_array = { global.fs_eventlog = token:fs_event_bruinen_nazgul_wave }
+						ring_trim_eventlog = yes
+
+						# one of these nazgul die because of the water
+						MOR = {
+							random_list = {
+								1 = { MOR_Akhorahil = { ring_combat_kill_character = yes } }
+								1 = { MOR_Ji_Indur = { ring_combat_kill_character = yes } }
+								1 = { MOR_Ren = { ring_combat_kill_character = yes } }
+							}
+							country_event = { days = 0 id = mordor.59 }
+						}
+					}
+					else = {
+						MOR = { country_event = { days = 0 id = mordor.58 } }
+					}
+				}
+			}
+		}
+	}
+
+	# Rivendell
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 65 } }
+
+		set_global_flag = fs_arrived_in_rivendell
+
+		clr_global_flag = fs_on_horseback
+
+		# bypass torturegollum focus if not completed
+		MOR = {
+			if = {
+				limit = { has_completed_focus = submittosauron }
+			}
+			unlock_national_focus = torturegollum
+		}
+		
+
+		# Eventlog
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_ring_arrives_in_rivendell }
+		ring_trim_eventlog = yes
+
+		# Gandalf arrives in Rivendell after escaping Saruman
+		if = {
+			limit = { has_global_flag = gandalf_imprisoned }
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_gandalf_arrives_in_rivendell }
+			ring_trim_eventlog = yes
+		}
+
+		# Chance of Bilbo giving frodo a sword and mithril armor
+		random_list = {
+			5 = {
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_bilbo_gifts }
+				ring_trim_eventlog = yes
+
+				FS_frodo = {
+					add_attack = 1
+					add_defense = 2
+				}
+			}
+			1 = {
+				# no gifts lol
+			}
+		}
+
+		ring_clear_fellowship_members = yes
+
+		# Create base fellowship 
+		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+		FS_sam = { ring_add_member_to_fellowship_nolog = yes }
+		FS_aragorn = { ring_add_member_to_fellowship_nolog = yes }
+		FS_gandalf = { ring_add_member_to_fellowship = yes }
+		ring_heal_fellowship = yes
+
+		# Hold Council of Elrond:
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_rivendell_council_invoked }
+		ring_trim_eventlog = yes
+		RIV = { country_event = { days = 14 id = rivendell.1 } }
+	}
+
+	# Redhorn Pass encounter
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 66 } }
+
+		# If Saru is bad, let him block this pass
+		if = {
+			limit = { has_global_flag = gandalf_imprisoned }
+			ISE = { country_event = { days = 10 id = isengard.11 } }
+		}
+	}
+
+	# orc-moria encounter
+	else_if = {
+		limit = {
+			check_variable = { global.fs_currentstate = 73 }
+			73 = { is_controlled_by = MOC }
+		}
+
+		# let MOC start interception with a cave troll
+		MOC = { country_event = { days = 3 id = moria.6 } }
+	}
+
+	# East-Moria encounter
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 134 } }
+
+		# Remove oin and ori (These may have joined in the previous state)
+		MOA = {
+			MOA_ori = { ring_remove_member_from_fellowship = yes }
+			MOA_oin = { ring_remove_member_from_fellowship = yes }
+		}
+
+		if = {
+			limit = { 134 = { is_controlled_by = MOA } }
+			# Allow dwarves to help out fellowship
+			MOA = { country_event = { days = 4 id = moria.8 } }
+		}
+
+		# After some delay, execute the balrog event. (We want to make sure all the stuff above has already happened)
+		134 = { controller = { country_event = { days = 20 id = fs.1005 } } }
+	}
+
+	# Lorien encounter
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 75 } }
+
+		# give LTH option to offer fellowship shelter
+		if = {
+			limit = {
+				75 = { is_controlled_by = LTH }
+				NOT = { LTH = { is_in_faction_with = MOR } }
+			}
+			LTH = { country_event = { days = 1 id = lothlorien.3 } }
+		}
+
+		set_global_flag = fs_on_boat
+	}
+
+	# Fellowship arrives at Gundabad -> continue on boat
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 69 } }
+
+		set_global_flag = fs_on_boat
+	}
+
+	# Argonath Encounter / Breakup
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 182 } }
+
+		if = {
+			limit = { ring_boromir_in_fellowship = yes }
+
+			# Boromir incident:
+			GON = { country_event = gondor.4 }
+		}
+		else = {
+			# Trigger Argonath raid
+			ring_execute_argonath_raid = yes
+		}
+	}
+
+	# Gollum joins
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 98 } }
+
+		if = {
+			limit = { has_global_flag = fs_fellowship_breakup }
+			FS_gollum = { ring_add_member_to_fellowship = yes }
+			set_global_flag = fs_only_hobbits
+			clr_global_flag = fs_on_boat
+			clr_global_flag = fs_on_horseback
+		}
+	}
+
+	# At Black Gate
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 204 } }
+
+		SHI = { execute_black_gate_decision = yes }
+	}
+
+	# Ithilien: Faramir encounter
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 173 } }
+
+		if = {
+			limit = {
+				NOT = { has_global_flag = fs_gondor_faramir }
+				NOT = { has_global_flag = faramir_dead }
+			}
+			random_list = {
+				75 = {
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_captured_by_faramir }
+					ring_trim_eventlog = yes
+					GON = { country_event = { days = 3 id = gondor.13 } }
+				}
+				25 = {
+					modifier = {
+						factor = 0
+						is_historical_focus_on = yes
+						GON = { is_ai = yes }
+					}
+				}
+			}
+		}
+	}
+
+	# Minas Morgul: Gollum leaves and Shelob encounter
+	# Last chance for Mordor
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 5 } }
+
+		FS_gollum = { ring_remove_member_from_fellowship = yes }
+
+		# Shelob ancounter (just flavour for now)
+		if = {
+			limit = { has_global_flag = MOR_allow_shelob }
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_shelob_encounter }
+			ring_trim_eventlog = yes
+		}
+	}
+
+	# Mount Doom: RING DESTROYED
+	else_if = {
+		limit = { check_variable = { global.fs_currentstate = 10 } }
+
+		MOR = { country_event = { days = 12 id = fs.106 } }
+	}
+	
+	# Move into next state if fellowship still exists
+	if = {
+		limit = { check_variable = { global.fs_path_stack^num > 0 } }
+		ring_fellowship_begin_move_to_next_state = yes
+	}
+}
+
+# starting-event
+execute_fs_commence = {
+	SHI = {
+
+		# set variables
+		set_variable = { global.fs_currentstate = 42 }
+		set_variable = { global.fs_steps = 1 }
+		log = "currentState: [?global.fs_currentstate]"
+
+		set_global_flag = fs_started
+
+		# Set path to prelude
+		set_variable = { global.fs_path = 0 }
+
+		# Initial fellowship
+		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+		FS_sam = { ring_add_member_to_fellowship_nolog = yes }
+
+		if = {
+			limit = { has_global_flag = fs_nazgul_sent_to_shire }
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_start }
+			ring_trim_eventlog = yes
+		}
+		else = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_start_nazgul }
+			ring_trim_eventlog = yes
+		}
+
+		# Gandalf goes to meet Saruman
+		ISE = { country_event = { days = 16 id = isengard.1 } }
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_gandalf_goes_to_saruman }
+		ring_trim_eventlog = yes
+
+		# starting pathstack (Shire to Rivendell)
+		add_to_array = { global.fs_path_stack = 150 }
+		add_to_array = { global.fs_path_stack = 149 }
+		add_to_array = { global.fs_path_stack = 145 }
+		add_to_array = { global.fs_path_stack = 64 }
+		add_to_array = { global.fs_path_stack = 200 }
+		add_to_array = { global.fs_path_stack = 202 }
+		add_to_array = { global.fs_path_stack = 65 }
+
+		ring_fellowship_begin_move_to_next_state = yes
+
+	}
+}
+
+# Checks if all three (MIR, ERE, GON) have responded and the fellowship has fully formed
+# If yes, it will call event fs.1002
+ring_check_if_council_of_elrond_started = {
+
+	if = {
+		limit = {
+			has_global_flag = fs_mirkwood_responded
+			has_global_flag = fs_gondor_responded
+			has_global_flag = fs_erebor_responded
+		}
+		SHI = { execute_start_council_of_elrond = yes }
+	}
+}
+
+ring_check_if_council_of_elrond_concluded = {
+
+	if = {
+		limit = {
+			has_global_flag = fs_mirkwood_responded
+			has_global_flag = fs_gondor_responded
+			has_global_flag = fs_erebor_responded
+			has_global_flag = fs_rivendell_responded
+		}
+		SHI = { execute_conclude_council_of_elrond = yes }
+	}
+}
+
+execute_start_council_of_elrond = {
+	# clear the temporary flags
+	clr_global_flag = fs_mirkwood_responded
+	clr_global_flag = fs_erebor_responded
+	clr_global_flag = fs_gondor_responded
+
+	# Let the members vote on the fellowships path
+	RIV = { country_event = { id = rivendell.19 days = 4 } }
+	if = {
+		limit = { NOT = { has_global_flag = fs_gondor_noone } }
+		GON = { country_event = { id = rivendell.19 days = 4 } }
+	}
+	else = {
+		set_global_flag = fs_gondor_responded
+	}
+	if = {
+		limit = { NOT = { has_global_flag = fs_erebor_noone } }
+		ERE = { country_event = { id = rivendell.19 days = 4 } }
+	}
+	else = {
+		set_global_flag = fs_erebor_responded
+	}
+	if = {
+		limit = { NOT = { has_global_flag = fs_mirkwood_noone } }
+		MIR = { country_event = { id = rivendell.19 days = 4 } }
+	}
+	else = {
+		set_global_flag = fs_mirkwood_responded
+	}
+}
+
+execute_conclude_council_of_elrond = {
+	# eventlog
+	add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_rivendell_council_concluded }
+	ring_trim_eventlog = yes
+
+	set_global_flag = fs_fellowship_departed
+
+	# newspaper event
+	ring_execute_fellowship_newspaper_event = yes
+
+	# Add Merry and Pippin
+	FS_merry = { ring_add_member_to_fellowship_nolog = yes }
+	FS_pippin = { ring_add_member_to_fellowship_nolog = yes }
+
+	random_list = {
+
+		# Redhorn Pass
+		1 = {
+			modifier = {
+				factor = 0
+				OR = {
+					check_variable = { global.fs_council_vote_isengard > var:global.fs_council_vote_redhorn }
+					check_variable = { global.fs_council_vote_angmar > var:global.fs_council_vote_redhorn }
+				}
+			}
+
+			# set pathid
+			set_variable = { global.fs_path = 1 }
+
+			# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_path_choice_mountains }
+			ring_trim_eventlog = yes
+
+			# populate pathstack
+			add_to_array = { global.fs_path_stack = 202 }
+			add_to_array = { global.fs_path_stack = 66 }
+			add_to_array = { global.fs_path_stack = 195 }
+			add_to_array = { global.fs_path_stack = 160 }
+			add_to_array = { global.fs_path_stack = 75 }
+			add_to_array = { global.fs_path_stack = 191 }
+			add_to_array = { global.fs_path_stack = 179 }
+			add_to_array = { global.fs_path_stack = 30 }
+			add_to_array = { global.fs_path_stack = 206 }
+			add_to_array = { global.fs_path_stack = 27 }
+			add_to_array = { global.fs_path_stack = 98 }
+			add_to_array = { global.fs_path_stack = 182 }
+			add_to_array = { global.fs_path_stack = 98 }
+			add_to_array = { global.fs_path_stack = 101 }
+			add_to_array = { global.fs_path_stack = 204 }
+		}
+
+		# Angmar
+		1 = {
+			modifier = {
+				factor = 0
+				OR = {
+					check_variable = { global.fs_council_vote_isengard > var:global.fs_council_vote_angmar }
+					check_variable = { global.fs_council_vote_redhorn > var:global.fs_council_vote_angmar }
+				}
+			}
+
+			# set pathid
+    		set_variable = { global.fs_path = 3 }
+
+    		# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_path_choice_angmar }
+			ring_trim_eventlog = yes
+
+			# populate pathstack
+			add_to_array = { global.fs_path_stack = 151 }
+			add_to_array = { global.fs_path_stack = 62 }
+			add_to_array = { global.fs_path_stack = 153 }
+			add_to_array = { global.fs_path_stack = 69 }
+			add_to_array = { global.fs_path_stack = 196 }
+			add_to_array = { global.fs_path_stack = 197 }
+			add_to_array = { global.fs_path_stack = 71 }
+			add_to_array = { global.fs_path_stack = 70 }
+			add_to_array = { global.fs_path_stack = 199 }
+			add_to_array = { global.fs_path_stack = 198 }
+			add_to_array = { global.fs_path_stack = 72 }
+			add_to_array = { global.fs_path_stack = 75 }
+			add_to_array = { global.fs_path_stack = 191 }
+			add_to_array = { global.fs_path_stack = 179 }
+			add_to_array = { global.fs_path_stack = 30 }
+			add_to_array = { global.fs_path_stack = 206 }
+			add_to_array = { global.fs_path_stack = 27 }
+			add_to_array = { global.fs_path_stack = 98 }
+			add_to_array = { global.fs_path_stack = 182 }
+			add_to_array = { global.fs_path_stack = 98 }
+			add_to_array = { global.fs_path_stack = 101 }
+			add_to_array = { global.fs_path_stack = 204 }
+		}
+
+		# Isengard
+		1 = {
+			modifier = {
+				factor = 0
+				OR = {
+					check_variable = { global.fs_council_vote_redhorn > var:global.fs_council_vote_isengard }
+					check_variable = { global.fs_council_vote_angmar > var:global.fs_council_vote_isengard }
+				}
+			}
+
+			# set pathid
+    		set_variable = { global.fs_path = 4 }
+
+    		# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_path_choice_isengard }
+			ring_trim_eventlog = yes
+
+			# populate pathstack
+			add_to_array = { global.fs_path_stack = 202 }
+			add_to_array = { global.fs_path_stack = 200 }
+			add_to_array = { global.fs_path_stack = 201 }
+			add_to_array = { global.fs_path_stack = 37 }
+			add_to_array = { global.fs_path_stack = 157 }
+			add_to_array = { global.fs_path_stack = 79 }
+			add_to_array = { global.fs_path_stack = 78 }
+			add_to_array = { global.fs_path_stack = 77 }
+			add_to_array = { global.fs_path_stack = 159 }
+			add_to_array = { global.fs_path_stack = 158 }
+			add_to_array = { global.fs_path_stack = 24 }
+			add_to_array = { global.fs_path_stack = 28 }
+			add_to_array = { global.fs_path_stack = 26 }
+			add_to_array = { global.fs_path_stack = 27 }
+			add_to_array = { global.fs_path_stack = 182 }
+			add_to_array = { global.fs_path_stack = 98 }
+			add_to_array = { global.fs_path_stack = 101 }
+			add_to_array = { global.fs_path_stack = 204 }
+		}
+	}
+
+	# Clean up
+	clr_global_flag = fs_mirkwood_responded
+	clr_global_flag = fs_erebor_responded
+	clr_global_flag = fs_gondor_responded
+	clear_variable = global.fs_council_vote_redhorn
+	clear_variable = global.fs_council_vote_angmar
+	clear_variable = global.fs_council_vote_isengard
+
+	# get going
+	ring_fellowship_begin_move_to_next_state = yes
+}
+
+execute_balrog_encounter = {
+	# if balrog is alive
+	if = {
+		limit = {
+			NOT = { MOA = { has_completed_focus = dealwiththebalrog } }
+			NOT = { MOC = { has_completed_focus = dealwiththebalrog } }
+		}
+
+		# gandalf alive => goodbye Gandalf
+		if = {
+			limit = {
+				FS_gandalf = { ring_is_fs_member = yes }
+			}
+			FS_gandalf = { ring_remove_member_from_fellowship_nolog = yes }
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter }
+			ring_trim_eventlog = yes
+
+			set_global_flag = fs_gandalf_left_fellowship
+		}
+		# otherwise goodbye aragorn
+		else_if = {
+			limit = {
+				FS_aragorn = { ring_is_fs_member = yes }
+			}
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter_aragorn }
+			ring_trim_eventlog = yes
+
+			FS_aragorn = { ring_combat_kill_character = yes }
+		}
+		# otherwise, goodbye sam
+		else_if = {
+			limit = {
+				FS_sam = { ring_is_fs_member = yes }
+			}
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_balrog_encounter_samwise }
+			ring_trim_eventlog = yes
+
+			FS_sam = { ring_combat_kill_character = yes }
+		}
+	}
+}
+
+execute_black_gate_decision = {
+	random_list = {
+		# Decide to go around through Minas Morgul
+		5 = {
+			modifier = {
+				add = 5
+				204 = { is_controlled_by = MOR }
+			}
+			modifier = {
+				add = 5
+				2 = { is_controlled_by = MOR }
+			}
+			modifier = {
+				add = 5
+				188 = { is_controlled_by = MOR }
+			}
+
+			# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_black_gate_decision_mm }
+			ring_trim_eventlog = yes
+
+			# adjust path
+			add_to_variable = { global.fs_path = 20 }
+
+			# pathstack
+			add_to_array = { global.fs_path_stack = 22 }
+			add_to_array = { global.fs_path_stack = 173 }
+			add_to_array = { global.fs_path_stack = 5 }
+			add_to_array = { global.fs_path_stack = 10 }
+		}
+
+		# Decide to yolo slip past the gate
+		2 = {
+			# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_black_gate_decision_bg }
+			ring_trim_eventlog = yes
+
+			# adjust path
+			add_to_variable = { global.fs_path = 10 }
+
+			# pathstack
+			add_to_array = { global.fs_path_stack = 2 }
+			add_to_array = { global.fs_path_stack = 188 }
+			add_to_array = { global.fs_path_stack = 10 }
+		}
+	}
+
+	# get going
+	ring_fellowship_begin_move_to_next_state = yes	
+}
+
+execute_force_fellowship_through_moria = {
+	# eventlog
+	add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_misty_mountain_path_blocked }
+	ring_trim_eventlog = yes
+
+	news_event = { id = news.390 days = 4 }
+
+	# Set path
+	set_variable = { global.fs_path = 2 }
+
+	# re-populate pathstack
+	ring_clear_pathstack = yes
+	add_to_array = { global.fs_path_stack = 67 }
+	add_to_array = { global.fs_path_stack = 73 }
+	add_to_array = { global.fs_path_stack = 134 }
+	add_to_array = { global.fs_path_stack = 160 }
+	add_to_array = { global.fs_path_stack = 75 }
+	add_to_array = { global.fs_path_stack = 191 }
+	add_to_array = { global.fs_path_stack = 179 }
+	add_to_array = { global.fs_path_stack = 30 }
+	add_to_array = { global.fs_path_stack = 206 }
+	add_to_array = { global.fs_path_stack = 27 }
+	add_to_array = { global.fs_path_stack = 98 }
+	add_to_array = { global.fs_path_stack = 182 }
+	add_to_array = { global.fs_path_stack = 98 }
+	add_to_array = { global.fs_path_stack = 101 }
+	add_to_array = { global.fs_path_stack = 204 }
+
+	# get going
+	ring_fellowship_begin_move_to_next_state = yes
+}
+
+# Special combat atop the weathertop
+ring_execute_weathertop_encounter = {
+
+	# Only Nazgul allowed
+	ring_MOR_set_hunting_party_to_nazgul = yes
+
+	add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_weathertop_encounter }
+	ring_trim_eventlog = yes
+
+	# Nazgul attack once:
+	ring_interception_combat_hp_attack_fs = yes
+
+	# Aragorn gets to attack 3-4 times
+    SHI = { FS_aragorn = { set_temp_variable = { temp_attacker = THIS } } }
+	random_list = {
+		1 = {
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+		}
+		1 = {
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+			random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+			ring_combat_execute_attack = yes
+		}
+	}
+
+	# If Gandalf is with fellowship, he attacks once as well
+	if = {
+		limit = { SHI = { FS_gandalf = { is_in_array = { global.fs_members = THIS } } } }
+		SHI = { FS_gandalf = { set_temp_variable = { temp_attacker = THIS } } }
+		random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+		ring_combat_execute_attack = yes
+	}
+
+	# Nazgul attack one more time:
+	ring_interception_combat_hp_attack_fs = yes
+
+	# Post-combat:
+	if = {
+		limit = {
+			NOT = { ring_frodo_is_dead = yes }
+			has_global_flag = fs_arwen_sent
+		}
+
+		SHI = {
+			# Only Frodo and Arwen press on
+			ring_clear_fellowship_members = yes
+			FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+			FS_arwen = { ring_add_member_to_fellowship_nolog = yes }
+
+			set_global_flag = fs_on_horseback
+
+			# eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_arwen_ride }
+			ring_trim_eventlog = yes
+
+			# Send Sauron the bad news
+			MOR = { country_event = { days = 3 id = mordor.56 } }
+		}
+	}
+	else_if = {
+		limit = {
+			NOT = { ring_frodo_is_dead = yes }
+		}
+		MOR = { country_event = { days = 3 id = mordor.56 } }
+	}
+}
+
+# Special combat if boromir betrays
+ring_execute_boromir_betrayal = {
+	SHI = {
+
+		# Remove boromir from fellowship
+		FS_boromir = { ring_remove_member_from_fellowship_nolog = yes }
+
+		# Add boromir to hunting party
+		ring_clear_hunting_party = yes
+		FS_boromir = { ring_add_member_to_hunting_party = yes }
+
+		# execute combat until either boromir or frodo dies (or max attempts)
+		for_loop_effect = {
+		    end = 8
+		    value = temp_attempt
+
+		    if = {
+				limit = {
+					NOT = {
+						ring_boromir_is_dead = yes
+						ring_frodo_is_dead = yes
+					}
+				}
+
+		    	ring_interception_execute_combat = yes
+	    	}
+		}
+
+		# if frodo dies -> GON seizes ring
+		if = {
+			limit = { ring_frodo_is_dead = yes }
+
+			GON = { country_event = gondor.11 }
+		}
+		# if boromir died -> send event to gondor
+		else = {
+			GON = { country_event = gondor.12 }
+
+			# argonath raid
+			ring_execute_argonath_raid = yes
+		}
+	}
+}
+
+ring_execute_argonath_raid = {
+	# if Isengard is bad and exists -> run raid
+	if = {
+		limit = {
+			has_global_flag = gandalf_imprisoned
+			country_exists = ISE
+		}
+		ISE = { country_event = { id = isengard.7 days = 2 } }
+	}
+
+	# else if Mordor bad and exists -> run raid
+	else_if = {
+		limit = {
+			country_exists = MOR
+			NOT = { MOR = { is_subject = yes } }
+		}
+		MOR = { country_event = { id = isengard.7 days = 2 } }
+	}
+
+	else = {
+		SHI = {
+			ring_breakup_fellowship = yes
+		}
+	}
+}
+
+ring_breakup_fellowship = {
+	SHI = {
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_separated }
+		ring_trim_eventlog = yes
+
+		ring_clear_fellowship_members = yes
+		set_global_flag = fs_fellowship_breakup
+
+		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+		FS_sam = { ring_add_member_to_fellowship_nolog = yes }
+
+		set_global_flag = fs_gandalf_left_fellowship
+	}
+}
+
+# Runs the approprate news event after the fellowship is formed in the council of elrond
+ring_execute_fellowship_newspaper_event = {
+	if = {
+		limit = {
+			has_global_flag = fs_gondor_noone
+			has_global_flag = fs_mirkwood_noone
+			has_global_flag = fs_erebor_noone
+		}
+		news_event = { id = news.1000 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_noone
+			has_global_flag = fs_mirkwood_noone
+			has_global_flag = fs_erebor_bombur
+		}
+		news_event = { id = news.1001 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_noone
+			has_global_flag = fs_mirkwood_noone
+			has_global_flag = fs_erebor_gimli
+		}
+		news_event = { id = news.1002 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_noone
+			has_global_flag = fs_mirkwood_tauriel
+			has_global_flag = fs_erebor_noone
+		}
+		news_event = { id = news.1010 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_noone
+			has_global_flag = fs_mirkwood_tauriel
+			has_global_flag = fs_erebor_bombur
+		}
+		news_event = { id = news.1011 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_noone
+			has_global_flag = fs_mirkwood_tauriel
+			has_global_flag = fs_erebor_gimli
+		}
+		news_event = { id = news.1012 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_noone
+			has_global_flag = fs_mirkwood_legolas
+			has_global_flag = fs_erebor_noone
+		}
+		news_event = { id = news.1020 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_noone
+			has_global_flag = fs_mirkwood_legolas
+			has_global_flag = fs_erebor_bombur
+		}
+		news_event = { id = news.1021 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_noone
+			has_global_flag = fs_mirkwood_legolas
+			has_global_flag = fs_erebor_gimli
+		}
+		news_event = { id = news.1022 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_faramir
+			has_global_flag = fs_mirkwood_noone
+			has_global_flag = fs_erebor_noone
+		}
+		news_event = { id = news.1100 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_faramir
+			has_global_flag = fs_mirkwood_noone
+			has_global_flag = fs_erebor_bombur
+		}
+		news_event = { id = news.1101 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_faramir
+			has_global_flag = fs_mirkwood_noone
+			has_global_flag = fs_erebor_gimli
+		}
+		news_event = { id = news.1102 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_faramir
+			has_global_flag = fs_mirkwood_tauriel
+			has_global_flag = fs_erebor_noone
+		}
+		news_event = { id = news.1110 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_faramir
+			has_global_flag = fs_mirkwood_tauriel
+			has_global_flag = fs_erebor_bombur
+		}
+		news_event = { id = news.1111 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_faramir
+			has_global_flag = fs_mirkwood_tauriel
+			has_global_flag = fs_erebor_gimli
+		}
+		news_event = { id = news.1112 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_faramir
+			has_global_flag = fs_mirkwood_legolas
+			has_global_flag = fs_erebor_noone
+		}
+		news_event = { id = news.1120 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_faramir
+			has_global_flag = fs_mirkwood_legolas
+			has_global_flag = fs_erebor_bombur
+		}
+		news_event = { id = news.1121 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_faramir
+			has_global_flag = fs_mirkwood_legolas
+			has_global_flag = fs_erebor_gimli
+		}
+		news_event = { id = news.1122 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_boromir
+			has_global_flag = fs_mirkwood_noone
+			has_global_flag = fs_erebor_noone
+		}
+		news_event = { id = news.1200 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_boromir
+			has_global_flag = fs_mirkwood_noone
+			has_global_flag = fs_erebor_bombur
+		}
+		news_event = { id = news.1201 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_boromir
+			has_global_flag = fs_mirkwood_noone
+			has_global_flag = fs_erebor_gimli
+		}
+		news_event = { id = news.1202 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_boromir
+			has_global_flag = fs_mirkwood_tauriel
+			has_global_flag = fs_erebor_noone
+		}
+		news_event = { id = news.1210 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_boromir
+			has_global_flag = fs_mirkwood_tauriel
+			has_global_flag = fs_erebor_bombur
+		}
+		news_event = { id = news.1211 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_boromir
+			has_global_flag = fs_mirkwood_tauriel
+			has_global_flag = fs_erebor_gimli
+		}
+		news_event = { id = news.1212 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_boromir
+			has_global_flag = fs_mirkwood_legolas
+			has_global_flag = fs_erebor_noone
+		}
+		news_event = { id = news.1220 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_boromir
+			has_global_flag = fs_mirkwood_legolas
+			has_global_flag = fs_erebor_bombur
+		}
+		news_event = { id = news.1221 }
+	}
+
+	else_if = {
+		limit = {
+			has_global_flag = fs_gondor_boromir
+			has_global_flag = fs_mirkwood_legolas
+			has_global_flag = fs_erebor_gimli
+		}
+		news_event = { id = news.1222 }
+	}
+}

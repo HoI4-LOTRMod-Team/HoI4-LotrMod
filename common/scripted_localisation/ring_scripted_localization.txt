@@ -1,0 +1,327 @@
+##### TODO: unfinished
+
+defined_text = {
+	name = DisplayRingEventLog
+	text = {
+		trigger = {
+			if = {
+				limit = { has_variable = temp_event_index }
+				add_to_temp_variable = { temp_event_index = 1 }
+			}
+			else = {
+				set_temp_variable = { temp_event_index = 0 }
+			}
+
+			# upper limit for lines in event-log
+			# NOTE: There is a recursion-depth limit to this, please ensure that global.fs_eventlog^num is always under a certain number
+			# You can use ring_trim_eventlog = yes (whenever you add to the eventlog) for this.
+			check_variable = { temp_event_index < global.fs_eventlog^num }
+		}
+		localization_key = "ring_event_log_recruse"
+	}
+}
+
+
+
+defined_text = {
+	name = DisplayRingEvent
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^temp_event_index = token:fs_event_char_attacks_char_miss }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetName] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey][?global.fs_eventlog_suffix_targets^temp_event_index.GetName], but the attack misses."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^temp_event_index = token:fs_event_char_attacks_char_1dmg }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetName] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey][?global.fs_eventlog_suffix_targets^temp_event_index.GetName] for 1 damage."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^temp_event_index = token:fs_event_char_attacks_char_2dmg }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetName] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey][?global.fs_eventlog_suffix_targets^temp_event_index.GetName], dealing 2 damage."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^temp_event_index = token:fs_event_char_attacks_char_3dmg }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetName] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey][?global.fs_eventlog_suffix_targets^temp_event_index.GetName], inflicting 3 damage."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^temp_event_index = token:fs_event_char_attacks_char_massivedmg }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetName] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey][?global.fs_eventlog_suffix_targets^temp_event_index.GetName], inflicting massive damage."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^temp_event_index = token:fs_event_tries_to_intercept }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetNameWithFlag] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey][?global.fs_eventlog_suffix_targets^temp_event_index.GetName]."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^temp_event_index = token:fs_event_tries_to_intercept }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetNameWithFlag] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey][?global.fs_eventlog_suffix_targets^temp_event_index.GetName]."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^num > temp_event_index }
+			NOT = { check_variable = { global.fs_eventlog_prefix_targets^temp_event_index = 0 } }
+			NOT = { check_variable = { global.fs_eventlog_suffix_targets^temp_event_index = 0 } }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetName] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey] [?global.fs_eventlog_suffix_targets^temp_event_index.GetName]."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^num > temp_event_index }
+			NOT = { check_variable = { global.fs_eventlog_prefix_targets^temp_event_index = 0 } }
+		}
+		localization_key = "[?global.fs_eventlog_prefix_targets^temp_event_index.GetName] [?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey]."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^num > temp_event_index }
+			NOT = { check_variable = { global.fs_eventlog_suffix_targets^temp_event_index = 0 } }
+		}
+		localization_key = "[?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey] [?global.fs_eventlog_suffix_targets^temp_event_index.GetName]."
+	}
+	text = {
+		trigger = {
+			check_variable = { global.fs_eventlog^num > temp_event_index }
+		}
+		localization_key = "[?global.fs_eventlog^temp_event_index.GetTokenLocalizedKey]."
+	}
+}
+
+
+
+defined_text = {
+	name = DisplayHuntingParty
+	text = {
+		trigger = {
+			if = {
+				limit = { has_variable = temp_hp_index }
+				add_to_temp_variable = { temp_hp_index = 1 }
+			}
+			else = {
+				set_temp_variable = { temp_hp_index = 0 }
+			}
+
+			check_variable = { temp_hp_index < 12 } # upper limit for lines in event-log
+			check_variable = { temp_hp_index < ROOT.fs_hunting_party^num }
+		}
+		localization_key = "ring_hunting_party_recruse"
+	}
+}
+
+defined_text = {
+	name = DisplayFellowship
+	text = {
+		trigger = {
+			if = {
+				limit = { has_variable = temp_fs_index }
+				add_to_temp_variable = { temp_fs_index = 1 }
+			}
+			else = {
+				set_temp_variable = { temp_fs_index = 0 }
+			}
+
+			check_variable = { temp_fs_index < 12 } # upper limit for lines in event-log
+			check_variable = { temp_fs_index < global.fs_members^num }
+		}
+		localization_key = "ring_fellowship_recruse"
+	}
+}
+
+defined_text = {
+	name = DisplayHuntingPartyStats
+	text = {
+		trigger = {
+			if = {
+				limit = { has_variable = temp_hps_index }
+				add_to_temp_variable = { temp_hps_index = 1 }
+			}
+			else = {
+				set_temp_variable = { temp_hps_index = 0 }
+			}
+
+			check_variable = { temp_hps_index < 12 } # upper limit for lines in event-log
+			check_variable = { temp_hps_index < ROOT.fs_hunting_party^num }
+		}
+		localization_key = "ring_hunting_party_stats_recruse"
+	}
+}
+
+defined_text = {
+	name = GetNameAndStats
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "fs_character_namestats"
+	}
+}
+
+defined_text = {
+	name = GetHP
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "[GetHPSymbol] [?health]/[?defense_level]"
+	}
+}
+
+defined_text = {
+	name = GetMaxHP
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "[GetHPSymbol] [?defense_level]"
+	}
+}
+
+defined_text = {
+	name = GetHPSymbol
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "fs_hp_symbol"
+	}
+}
+
+defined_text = {
+	name = GetAD
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "[GetADSymbol] [?attack_level]"
+	}
+}
+
+defined_text = {
+	name = GetADSymbol
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "fs_ad_symbol"
+	}
+}
+
+defined_text = {
+	name = GetDEX
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "[GetDEXSymbol] [?logistics_level]"
+	}
+}
+
+defined_text = {
+	name = GetDEXSymbol
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "fs_dex_symbol"
+	}
+}
+
+defined_text = {
+	name = GetSTEALTH
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "[GetSTEALTHSymbol] [?planning_level]"
+	}
+}
+
+defined_text = {
+	name = GetSTEALTHSymbol
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "fs_stealth_symbol"
+	}
+}
+
+# This is very dodgy way to get the countdown to work.
+# This only works on the assumption that it is always set to only last 7 days.
+defined_text = {
+	name = GetDayLeftBeforeAutoAbort
+	text = {
+		trigger = {
+			has_country_flag = { flag = ring_interception_form_open days < 1 }
+		}
+		localization_key = "ring_interception_form_7_day_left"
+	}
+	text = {
+		trigger = {
+			has_country_flag = { flag = ring_interception_form_open days < 2 }
+		}
+		localization_key = "ring_interception_form_6_day_left"
+	}
+	text = {
+		trigger = {
+			has_country_flag = { flag = ring_interception_form_open days < 3 }
+		}
+		localization_key = "ring_interception_form_5_day_left"
+	}
+	text = {
+		trigger = {
+			has_country_flag = { flag = ring_interception_form_open days < 4 }
+		}
+		localization_key = "ring_interception_form_4_day_left"
+	}
+	text = {
+		trigger = {
+			has_country_flag = { flag = ring_interception_form_open days < 5 }
+		}
+		localization_key = "ring_interception_form_3_day_left"
+	}
+	text = {
+		trigger = {
+			has_country_flag = { flag = ring_interception_form_open days < 6 }
+		}
+		localization_key = "ring_interception_form_2_day_left"
+	}
+	text = {
+		trigger = {
+			has_country_flag = { flag = ring_interception_form_open days < 7 }
+		}
+		localization_key = "ring_interception_form_1_day_left"
+	}
+	text = {
+		trigger = {
+			always = yes
+		}
+		localization_key = "ring_interception_form_0_day_left"
+	}
+}
+
+defined_text = {
+	name = GetFSOverlayMessage
+	text = {
+		trigger = {
+			has_global_flag = fs_ring_destroyed
+		}
+		localization_key = "fs_ring_destroyed_message"
+	}
+	text = {
+		trigger = {
+			has_global_flag = fs_ring_seized
+		}
+		localization_key = "fs_ring_seized_message"
+	}
+}
