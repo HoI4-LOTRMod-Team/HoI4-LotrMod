@@ -9,4 +9,4 @@ and put them inside a gfx/leaders/some_folder/small
 The output of the script will correspond to a .gfx file that includes all the definitions.
 You can use a redirection/pipe operator to write this directly into the correct file. Example:
 
-python.exe .\convert_to_small.py Elves | Out-File ../../../interface/lotr_characters.gfx -Encoding ASCII
+python.exe .\convert_to_small.py 0_generic_Men | Out-File ../../../interface/leaders/lotr_leaders_men.gfx -Encoding ASCII

@@ -1,0 +1,80 @@
+###########################
+# Angmar Events
+###########################
+
+add_namespace = gundabad
+
+#Angmar warns us
+country_event = {
+	id = gundabad.1
+	title = gundabad.1.t
+	desc = gundabad.1.d
+	picture = GFX_report_event_paper
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = gundabad.1.a
+		add_timed_idea = {
+            idea =  generic_cooperative
+            days = 365
+        }
+        ANG = {
+            add_opinion_modifier = { target = GUN modifier = small_increase }
+        }
+	}
+	option = { #Refuse
+		name = gundabad.1.b
+		ANG = {
+            add_opinion_modifier = { target = GUN modifier = medium_decrease }
+        }
+	}
+}
+
+# Angmar demands us to join there faction
+country_event = {
+	id = gundabad.2
+	title = gundabad.2.t
+	desc = gundabad.2.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = gundabad.2.a
+		ai_chance = {
+			base = 40
+			modifier = {
+				add = 20
+				has_opinion = {
+					target = ANG
+					value > 75
+				}
+			}
+			modifier = {
+				add = 10
+				has_non_aggression_pact_with = ANG
+			}
+		}
+		MOR = {
+			add_to_faction = GUN
+		}
+	}
+
+	option = { #no
+		name = gundabad.2.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = -10
+				has_opinion = {
+					target = ANG
+					value < 25
+				}
+			}
+		}
+		ANG = {
+			create_wargoal = { target = GUN type = annex_everything }
+		}
+	}
+}
