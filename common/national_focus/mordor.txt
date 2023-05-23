@@ -1020,7 +1020,7 @@ focus = {
 	id = militaryeffort
 	icon = GFX_goal_generic_army_doctrines
 	ai_will_do = { factor = 3 }
-	x = 56
+	x = 58
 	y = 0
 	search_filters = { FOCUS_FILTER_ARMY_XP }
 	cost = 5
@@ -1028,32 +1028,12 @@ focus = {
 	completion_reward = { army_experience = 25 }
  }
 
-focus = {
-	id = breed_the_trolls
-	icon = GFX_trolls
-	ai_will_do = { factor = 1 }
-	x = 4
-	y = 1
-	relative_position_id = militaryeffort
-	prerequisite = { focus = militaryeffort}
-	cost = 10
-	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_RESEARCH }
-	completion_reward = {
-		add_tech_bonus = {
-			name = special_bonus
-			bonus = 0.5
-			uses = 1
-			technology = troll
-		}
-	}
-}
  #Focus for Minimized Death Toll
 focus = {
 	id = minimizeddeathtoll
 	icon = GFX_goal_meats_back_on_the_menu
 	ai_will_do = { factor = 2 }
-	x = -2
+	x = -3
 	y = 1
 	relative_position_id = militaryeffort
 	mutually_exclusive = { focus = nopricetoohigh }
@@ -1066,16 +1046,44 @@ focus = {
 	}
 }
 
+ #Focus for Taking care of the wounded
+focus = {
+	id = MOR_take_care_of_the_wounded
+	icon = GFX_goal_meats_back_on_the_menu
+	ai_will_do = { factor = 2 }
+	x = 0
+	y = 1
+	relative_position_id = minimizeddeathtoll
+	prerequisite = { focus = minimizeddeathtoll}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_STABILITY }
+	completion_reward = {
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.5
+			uses = 1
+			category = hospital_tech
+		}
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 1
+			uses = 1
+			technology = tech_field_hospital
+		}
+	}
+}
+
  #Focus for Specialized Units
 focus = {
 	id = specializedunits
 	icon = GFX_goal_azog
 	ai_will_do = { factor = 1 }
-	x = -1
+	x = 1
 	y = 1
-	relative_position_id = minimizeddeathtoll
+	relative_position_id = militaryeffort
 	mutually_exclusive = { focus = calvary_units }
-	prerequisite = { focus = minimizeddeathtoll}
+	prerequisite = { focus = militaryeffort}
 	cost = 10
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_RESEARCH }
@@ -1095,16 +1103,53 @@ focus = {
 	}
 }
 
+focus = {
+	id = breed_the_trolls
+	icon = GFX_trolls
+	ai_will_do = { factor = 1 }
+	x = 0
+	y = 1
+	relative_position_id = specializedunits
+	prerequisite = { focus = specializedunits}
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.5
+			uses = 1
+			technology = troll
+		}
+	}
+}
+
+focus = {
+	id = MOR_specialized_high_command
+	icon = GFX_trolls
+	ai_will_do = { factor = 1 }
+	x = 0
+	y = 1
+	relative_position_id = breed_the_trolls
+	prerequisite = { focus = breed_the_trolls}
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		
+	}
+}
+
  #Focus for Armored Units
 focus = {
 	id = calvary_units
 	icon = GFX_goal_azog
 	ai_will_do = { factor = 1 }
-	x = 1
+	x = 3
 	y = 1
-	relative_position_id = minimizeddeathtoll
+	relative_position_id = militaryeffort
 	mutually_exclusive = { focus = specializedunits }
-	prerequisite = { focus = minimizeddeathtoll}
+	prerequisite = { focus = militaryeffort}
 	cost = 10
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_RESEARCH }
@@ -1158,7 +1203,7 @@ focus = {
 	id = nopricetoohigh
 	icon = GFX_goal_generic_political_pressure
 	ai_will_do = { factor = 4 }
-	x = 2
+	x = -1
 	y = 1
 	relative_position_id = militaryeffort
 	mutually_exclusive = { focus = minimizeddeathtoll }
@@ -1179,7 +1224,7 @@ focus = {
 	relative_position_id = nopricetoohigh
 	mutually_exclusive = { }
 	prerequisite = { focus = nopricetoohigh}
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_MANPOWER }
 	completion_reward = {
@@ -1287,7 +1332,7 @@ focus = {
 	icon = GFX_focus_generic_industry_1
 	ai_will_do = { factor = 3 }
 	available = { 11 = { is_controlled_by = ROOT } 9 = { is_controlled_by = ROOT } 2 = { is_controlled_by = ROOT } 3 = { is_controlled_by = ROOT } 7 = { is_controlled_by = ROOT } }
-	x = 46
+	x = 48
 	y = 0
 	mutually_exclusive = { focus = centralizedindustry }
 	prerequisite = { }
@@ -1305,6 +1350,59 @@ focus = {
 			3 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
 	}
  }
+
+#Focus for Decentralized Industry
+focus = {
+	id = MOR_build_animal_farms
+	icon = GFX_goal_generic_construct_civ_factory
+	ai_will_do = { factor = 9 }
+	available = { 187 = { is_controlled_by = ROOT } 9 = { is_controlled_by = ROOT } }
+	x = 4
+	y = 1
+	relative_position_id = centralizedindustry
+	prerequisite = { focus =  decentralizedindustry focus = centralizedindustry }
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		187 = {
+			add_resource = {
+                type = rubber
+                amount = 5
+            }
+		}
+		9 = {
+			add_resource = {
+                type = rubber
+                amount = 5
+            }
+		}
+
+	}
+}
+
+#Focus for Decentralized Industry
+focus = {
+	id = MOR_expand_the_sawmill_industry
+	icon = GFX_goal_resource_wood
+	ai_will_do = { factor = 9 }
+	available = { 120 = { is_controlled_by = ROOT } }
+	x = 0
+	y = 1
+	relative_position_id = MOR_build_animal_farms
+	prerequisite = { focus =  MOR_build_animal_farms }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		120 = {
+			add_resource = {
+                type = chromium
+                amount = 12
+            }
+		}
+	}
+}
 
  #Focus for Global Rail network
 focus = {
@@ -1496,11 +1594,10 @@ focus = {
 		id = mor_extraresearchslot
 		icon = GFX_focus_research
 		ai_will_do = { factor = 15 }
- 		x = 2
+ 		x = 3
  		y = 1
 		relative_position_id = centralizedmilitirization
- 		prerequisite = { focus = decentralizedmilitirization focus = centralizedmilitirization }
-		prerequisite = { focus = infrastructure_to_the_east }
+ 		prerequisite = { focus = decentralizedmilitirization focus = centralizedmilitirization focus = infrastructure_to_the_east }
  		cost = 10
   		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_RESEARCH }
@@ -1532,7 +1629,7 @@ focus = {
 		id = wrathofthefellbeasts
 		icon = GFX_goal_generic_build_airforce
 		ai_will_do = { factor = 2 }
- 		x = 50
+ 		x = 51
  		y = 0
  		mutually_exclusive = { }
  		prerequisite = { }
