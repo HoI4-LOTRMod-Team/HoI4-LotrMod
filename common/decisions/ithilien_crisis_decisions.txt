@@ -4,7 +4,11 @@
 
 ithilien_crisis_decisions_category = {
 
-	ithilien_crisis_increase_orc_influence = {
+	###
+	### SUBTERFUGE
+	###
+
+	ithc_counter_subterfuge_operation_testeroo = {
 		icon = mission_icon
 
 		cost = 75
@@ -26,12 +30,14 @@ ithilien_crisis_decisions_category = {
 
 	    available = {
 	    	# TODO?
-	    	always = yes
+	    	#always = yes
+	    	FROM = { has_state_flag = ithc_subterfuge_operation }
 	    }
 
 	    cancel_trigger = {
 	    	# TODO: war breaks out etc.
     		always = no
+    		#FROM = { has_state_flag = ithc_subterfuge_operation }
 	    }
 
 	    ai_will_do = {
@@ -39,19 +45,17 @@ ithilien_crisis_decisions_category = {
 		}
 
         remove_effect = {
-        	FROM = {
-	        	add_dynamic_modifier = {
-				    modifier = orc_raiding_0
-				    scope = FROM
-				    days = 14
-				}
-			}
+        	
         }
-	}
 
-	###
-	### SUBTERFUGE
-	###
+        cancel_effect = {
+
+        }
+
+        complete_effect = {
+        	FROM = { clr_state_flag = ithc_subterfuge_operation }
+    	}
+	}
 
 	ithc_subterfuge_sabotage_infrastructure = {
 		icon = mission_icon
@@ -61,7 +65,7 @@ ithilien_crisis_decisions_category = {
 		targets = { 22 175 173 135 }
 		is_good = yes
 	    selectable_mission = yes
-	    days_remove = 1
+	    days_remove = 10
 
 	    target_root_trigger = {
 	        # TODO: only show when correct focus taken or whatever
@@ -80,7 +84,8 @@ ithilien_crisis_decisions_category = {
 
 	    cancel_trigger = {
 	    	# TODO: war breaks out etc.
-    		always = no
+    		#always = no
+    		FROM = { NOT = { has_state_flag = ithc_subterfuge_operation } }
 	    }
 
 	    ai_will_do = {
@@ -88,9 +93,18 @@ ithilien_crisis_decisions_category = {
 		}
 
         remove_effect = {
-        	# disable strat-redeployment, lower movement speed
-        	# On war start, lower movement speed even more
+        	FROM = {
+        		set_state_flag = ithc_infrastructure_sabotaged
+        	}
         }
+
+        cancel_effect = {
+
+        }
+
+        complete_effect = {
+        	FROM = { set_state_flag = ithc_subterfuge_operation }
+    	}
 	}
 
 	ithc_subterfuge_locate_defenses = {
@@ -128,7 +142,9 @@ ithilien_crisis_decisions_category = {
 		}
 
         remove_effect = {
-        	# On war start, decrease enemy defense and entrenchment, increase attack
+        	FROM = {
+        		set_state_flag = ithc_defenses_located
+        	}
         }
 	}
 
@@ -207,6 +223,9 @@ ithilien_crisis_decisions_category = {
 
         remove_effect = {
         	# On war start +supplies and -encirclement penalty for MOR
+        	FROM = {
+        		set_state_flag = ithc_hidden_weapon_caches
+        	}
         }
 	}
 
@@ -246,6 +265,9 @@ ithilien_crisis_decisions_category = {
 
         remove_effect = {
         	# on war start: spawn divisions
+        	FROM = {
+        		set_state_flag = ithc_sleeper_cells_planted
+        	}
         }
 	}
 
