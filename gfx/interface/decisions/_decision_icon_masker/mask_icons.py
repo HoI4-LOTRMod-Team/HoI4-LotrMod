@@ -31,7 +31,7 @@ for file in glob.glob("../unmasked/*.dds"):
 	convert_image(file, newfile)
 
 	gfx_id = str.lower(filename[0:len(filename)-4])
-	print("\tspriteType = { name = \"GFX_"+gfx_id+"\" texturefile = \"gfx/interface/decisions/"+filename+"\" noOfFrames = 2 }")
+	print("\tspriteType = { name = \"GFX_"+gfx_id+"\" texturefile = \"gfx/interface/decisions/"+filename+"\" }")
 
 print("}")
 exit(0)
