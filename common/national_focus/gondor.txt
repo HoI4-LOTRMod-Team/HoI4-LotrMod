@@ -99,7 +99,7 @@ focus = {
 
  focus = {
 	id = GON_prepare_for_the_kings_return
-	icon = GFX_focus_hun_elect_a_king
+	icon = GFX_goal_generic_national_unity
 	ai_will_do = { factor = 15 }
 	relative_position_id = GON_honor_isildurs_legacy
 	x = 0
@@ -122,7 +122,7 @@ focus = {
 
  focus = {
 	id = GON_limit_denethor_militair_power
-	icon = GFX_focus_hun_elect_a_king
+	icon = GFX_goal_generic_allies_build_infantry
 	ai_will_do = { factor = 15 }
 	relative_position_id = GON_prepare_for_the_kings_return
 	x = -1
@@ -132,7 +132,7 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = {
 		denethor_gets_less_paranoid = yes
-		add_war_support = -0.05
+		add_timed_idea = { idea = GON_restructure_the_army  days = 100 }
 	}
  }
  
@@ -146,14 +146,43 @@ focus = {
 	prerequisite = { focus = GON_limit_denethor_militair_power }
 	cost = 10
 	available_if_capitulated = yes
+	available = {
+		RIV = {
+			has_global_flag = fs_fellowship_departed
+		}
+		custom_trigger_tooltip = {
+			tooltip = fs_aragorn_in_fellowship	
+			ring_aragorn_in_fellowship = yes
+		}
+	}
 	completion_reward = {
-		
+		random_list = {
+			65 = {
+				SHI = {
+					if = {
+						limit = {
+							FS_aragorn = { ring_is_fs_member = yes }
+						}
+
+						add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+						add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+						ring_trim_eventlog = yes
+
+						FS_aragorn = { ring_remove_member_from_fellowship = yes }
+					}
+				}
+				custom_effect_tooltip = GON_aragorn_leaves_the_fellowship
+			}
+			35 = {
+				add_political_power = -100
+			}
+		}
 	}
  }
 
  focus = {
 	id = GON_limit_denethor_political_power
-	icon = GFX_focus_hun_elect_a_king
+	icon = GFX_goal_generic_propaganda
 	ai_will_do = { factor = 15 }
 	relative_position_id = GON_prepare_for_the_kings_return
 	x = 1
@@ -177,8 +206,27 @@ focus = {
 	prerequisite = { focus = GON_limit_denethor_political_power }
 	cost = 5
 	available_if_capitulated = yes
+	available = {
+		RIV = {
+			has_global_flag = fs_fellowship_departed
+		}
+		custom_trigger_tooltip = {
+			tooltip = fs_aragorn_in_fellowship	
+			ring_aragorn_in_fellowship = yes
+		}
+	}
 	completion_reward = {
-		
+		if = {
+			limit = {
+				ring_aragorn_in_fellowship = yes
+			}
+			custom_effect_tooltip = GON_send_help_towards_aragorn_tooltip
+			SHI = {
+				FS_aragorn = {
+					ring_heal_fellowship_member = yes
+				}
+			}
+		}
 	}
  }
 
@@ -190,17 +238,35 @@ focus = {
 	relative_position_id = GON_limit_denethor_militair_power
 	x = 1
 	y = 1
+	available = {
+		RIV = {
+			has_global_flag = fs_fellowship_departed
+		}
+		Or = {
+			custom_trigger_tooltip = {
+				tooltip = fs_has_breakup	
+				SHI = { has_global_flag = fs_fellowship_breakup }
+			}
+			custom_trigger_tooltip = {
+				tooltip = fs_aragorn_isnt_in_fellowship	
+				ring_aragorn_in_fellowship = no
+			}
+		}
+	}
 	prerequisite = { focus = GON_limit_denethor_militair_power}
   	prerequisite = { focus = GON_limit_denethor_political_power}
 	cost = 5
   	available_if_capitulated = yes
-	completion_reward = {  }
+	completion_reward = { 
+		add_stability = 0.10
+		add_political_power = 100
+	}
  }
 
  #Focus for Crown Aragorn King of Gondor
 focus = {
 	id = GON_crown_aragorn_king
-	icon = GFX_focus_generic_home_defense
+	icon = GFX_goal_king_aragorn
 	ai_will_do = { factor = 30 }
 	relative_position_id = GON_invite_aragorn_to_minas_tirith
 	x = 0
@@ -233,7 +299,7 @@ focus = {
 
 focus = {
 	id = GON_give_Denethor_a_role_in_the_goverment
-	icon = GFX_focus_generic_home_defense
+	icon = GFX_goal_denethor
 	ai_will_do = { factor = 30 }
 	relative_position_id = GON_crown_aragorn_king
 	x = -1
