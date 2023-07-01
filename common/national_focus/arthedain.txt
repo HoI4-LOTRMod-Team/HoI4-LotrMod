@@ -17,47 +17,283 @@ shared_focus = army_effort
 shared_focus = aviation_effort
 shared_focus = naval_effort
 shared_focus = industrial_effort
-	
-	#Custom focuses start here
-	#Focus for The Fate of Arthedain
-	focus = {
-		id = thefateofarthedain
-		icon = GFX_goal_generic_CAS
-		ai_will_do = { factor = 5 }
-		x = 22
-		y = 0
-		mutually_exclusive = { }
-		prerequisite = { }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { add_political_power = 100 }
-	 }
 
-	#Focus for Support the monarchists
- 			focus = {
- 			id = supportthemonarchists
- 			icon = GFX_focus_rom_royal_dictatorship
- 			ai_will_do = { factor = 3 }
-			relative_position_id = thefateofarthedain
- 	 		x =-2
- 	 		y =1
- 	 		mutually_exclusive = { focus = forgeanewpath focus = lettherangersprevail}
- 	 		prerequisite = { focus = thefateofarthedain}
- 	 		cost = 10
- 	  	available_if_capitulated = yes
- 			completion_reward = { add_ideas = generic_cooperative }
- 	 }
+#Custom focuses start here
+#Focus for The Fate of Arthedain
+focus = {
+	id = ART_the_fate_of_arthedain
+	icon = GFX_goal_generic_CAS
+	ai_will_do = { factor = 5 }
+	x = 22
+	y = 0
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { add_political_power = 100 }
+}
+
+#Focus for Support the monarchists
+focus = {
+	id = ART_support_the_monarchists
+	icon = GFX_focus_rom_royal_dictatorship
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_the_fate_of_arthedain
+	x = -2
+	y = 1
+	mutually_exclusive = { focus = forgeanewpath focus = lettherangersprevail}
+	prerequisite = { focus = ART_the_fate_of_arthedain}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { add_ideas = generic_cooperative }
+}
+
+#Focus for Unite the country
+focus = {
+	id = ART_unite_the_country
+	icon = GFX_goal_generic_demand_territory
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_support_the_monarchists
+	x = -1
+	y = 1
+	prerequisite = { focus = ART_support_the_monarchists}
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = { add_ideas = generic_cooperative }
+}
+
+#Focus for Convince the rangers
+focus = {
+	id = ART_convince_the_rangers
+	icon = GFX_goal_rangers_of_the_north
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_support_the_monarchists
+	x = 1
+	y = 1
+	prerequisite = { focus = ART_support_the_monarchists}
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = { add_ideas = generic_cooperative }
+}
+
+#Focus for reinstate the monarchy
+focus = {
+	id = ART_reinstate_monarchy
+	icon = GFX_focus_hol_the_foundations_of_defense
+	ai_will_do = { factor = 5 }
+	bypass = { has_government = cooperative }
+	available = { cooperative > 0.5 }
+	relative_position_id = ART_convince_the_rangers
+	x = -1
+	y = 1
+	prerequisite = { focus = ART_convince_the_rangers focus = ART_unite_the_country}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { set_politics = { ruling_party = cooperative elections_allowed = no } }
+}
+
+focus = {
+	id = ART_inforce_control_over_the_shire
+	icon = GFX_goal_generic_forceful_treaty
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_reinstate_monarchy
+	x = 2
+	y = 1
+	prerequisite = { focus = ART_reinstate_monarchy }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+
+	}
+}
+
+focus = {
+	id = ART_annex_the_shire
+	icon = GFX_goal_generic_territory_or_war
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_inforce_control_over_the_shire
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_inforce_control_over_the_shire }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		
+	}
+}
+
+focus = {
+	id = ART_recover_the_army_industry
+	icon = GFX_goal_generic_construct_mil_factory
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_reinstate_monarchy
+	x = 5
+	y = 1
+	prerequisite = { focus = ART_reinstate_monarchy focus = banrevolutionary focus = banbelligerent }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		
+	}
+}
+
+focus = {
+	id = ART_recover_the_civilian_industry
+	icon = GFX_focus_generic_industry_2
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_reinstate_monarchy
+	x = 7
+	y = 1
+	prerequisite = { focus = ART_reinstate_monarchy focus = banrevolutionary focus = banbelligerent }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		
+	}
+}
+
+focus = {
+	id = ART_expand_the_mines_of_evendium
+	icon = GFX_focus_generic_steel
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_recover_the_civilian_industry
+	x = -1
+	y = 1
+	prerequisite = { focus = ART_recover_the_army_industry focus = ART_recover_the_civilian_industry }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		
+	}
+}
+#Focus for Improve Arnorian Relations
+focus = {
+	id = ART_improve_arnorian_relations
+	icon = GFX_goal_generic_improve_relations
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_reinstate_monarchy
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_reinstate_monarchy }
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		CAR = { add_opinion_modifier = { target = ART modifier = large_increase } }
+		RHD = { add_opinion_modifier = { target = ART modifier = large_increase } }
+		ART = { add_opinion_modifier = { target = RHD modifier = large_increase } }
+		ART = { add_opinion_modifier = { target = CAR modifier = large_increase } }
+	}
+}
+
+#Focus for Mutual Defense Pact
+focus = {
+	id = ART_mutual_defense_pact
+	icon = GFX_goal_generic_defence
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_improve_arnorian_relations
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_improve_arnorian_relations}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		CAR = { country_event = { days = 1 id = arthedain.1 } }
+		RHD = { country_event = { days = 1 id = arthedain.1 } }
+	}
+}
+
+#Focus for Form an Alliance
+focus = {
+	id = ART_form_an_alliance
+	icon = GFX_goal_generic_national_unity
+	ai_will_do = { factor = 5 }
+	relative_position_id = ART_mutual_defense_pact
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_mutual_defense_pact}
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		create_faction = "arnor_coalition"
+		add_political_power = 50
+	}
+}
+
+#Focus for Ask Rhudaur to join
+focus = {
+	id = ART_ask_rhudaur_to_join
+	icon = GFX_goal_generic_improve_relations
+	ai_will_do = { factor = 2 }
+	relative_position_id = ART_form_an_alliance
+	x = -1
+	y = 1
+	prerequisite = { focus = ART_form_an_alliance}
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		RHD = { country_event = { days = 1 id = arthedain.3 } }
+	}
+}
+
+#Focus for Ask Cardolan to join
+focus = {
+	id = ART_ask_cardolan_to_join
+	icon = GFX_goal_generic_improve_relations
+	ai_will_do = { factor = 3 }
+	relative_position_id = ART_form_an_alliance
+	x = 1
+	y = 1
+	prerequisite = { focus = ART_form_an_alliance}
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		CAR = { country_event = { days = 1 id = arthedain.3 } }
+	}
+}
+
+#Focus for Unite the Kingdom of Arnor
+focus = {
+	id = ART_unite_the_kingdom_of_arnor
+	icon = GFX_focus_rom_royal_dictatorship
+	ai_will_do = { factor = 8 }
+	relative_position_id = ART_ask_cardolan_to_join
+	x = -1
+	y = 1
+	prerequisite = { focus = ART_ask_rhudaur_to_join}
+	prerequisite = { focus =ART_ask_cardolan_to_join}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		news_event = { hours = 48 id = news.353 }
+		set_cosmetic_tag = ARN
+		set_country_flag = ART_established_arnor
+		if = {
+			limit = {
+				RHD = {
+					is_puppet = no
+				}
+			}
+			RHD = { 
+				country_event = { days = 1 id = arthedain.4 } 
+			}
+		} else = {
+			create_wargoal = {
+				type = annex_everything target = RHD
+			}
+		}
+		CAR = { country_event = { days = 1 id = arthedain.4 } }
+		SHI = { country_event = { days = 1 id = arthedain.4 } }
+	}
+}
 
 	 #Focus for Let the Rangers Prevail
  			focus = {
  			id = lettherangersprevail
  			icon = GFX_goal_rangers_of_the_north
  			ai_will_do = { factor = 3 }
-			relative_position_id = thefateofarthedain
- 	 		x =0
+			relative_position_id = ART_the_fate_of_arthedain
+ 	 		x =4
  	 		y =1
- 	 		mutually_exclusive = { focus = forgeanewpath focus=supportthemonarchists}
- 	 		prerequisite = { focus = thefateofarthedain}
+ 	 		mutually_exclusive = { focus = forgeanewpath focus=ART_support_the_monarchists}
+ 	 		prerequisite = { focus = ART_the_fate_of_arthedain}
  	 		cost = 10
  	  	available_if_capitulated = yes
  			completion_reward = { add_ideas = generic_unaligned }
@@ -68,32 +304,15 @@ shared_focus = industrial_effort
 			id = forgeanewpath
 			icon = GFX_goal_generic_demand_territory
 			ai_will_do = { factor = 3 }
-			relative_position_id = thefateofarthedain
-	 		x =2
+			relative_position_id = ART_the_fate_of_arthedain
+	 		x =10
 	 		y =1
-	 		mutually_exclusive = { focus = supportthemonarchists focus = lettherangersprevail}
-	 		prerequisite = { focus = thefateofarthedain}
+	 		mutually_exclusive = { focus = ART_support_the_monarchists focus = lettherangersprevail}
+	 		prerequisite = { focus = ART_the_fate_of_arthedain}
 	 		cost = 10
 	  	available_if_capitulated = yes
 			completion_reward = { add_ideas = generic_belligerent_intermediate add_ideas = generic_revolutionary_intermediate }
 	 }
-
-	 #Focus for Reform the Kingdom
-			 focus = {
-			 id = reformthekingdom
-			 icon = GFX_focus_rom_royal_dictatorship
-			 ai_will_do = { factor = 5 }
-			 bypass = { has_government = cooperative }
-			 available = { cooperative > 0.5 }
-			relative_position_id = supportthemonarchists
-			 x =0
-			 y =1
-			 mutually_exclusive = { }
-			 prerequisite = { focus = supportthemonarchists}
-			 cost = 10
-			 available_if_capitulated = yes
-			 completion_reward = { set_politics = { ruling_party = cooperative elections_allowed = no } }
-		}
 
 	 #Focus for Arthedain Nationalism
 			focus = {
@@ -133,26 +352,6 @@ shared_focus = industrial_effort
 			completion_reward = { set_politics = { ruling_party = revolutionary elections_allowed = no } remove_ideas = generic_belligerent_intermediate }
 	 }
 
-	 #Focus for Improve Arnorian Relations
-			focus = {
-			id = improvearnorianrelations
-			icon = GFX_goal_generic_improve_relations
-			ai_will_do = { factor = 3 }
-			relative_position_id = reformthekingdom
-	 		x =0
-	 		y =1
-	 		mutually_exclusive = { }
-	 		prerequisite = { focus = reformthekingdom}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				CAR = { add_opinion_modifier = { target = ART modifier = large_increase } }
-				RHD = { add_opinion_modifier = { target = ART modifier = large_increase } }
-				ART = { add_opinion_modifier = { target = RHD modifier = large_increase } }
-				ART = { add_opinion_modifier = { target = CAR modifier = large_increase } }
-			}
-	 }
-
 	 #Focus for Ban Communism
 			focus = {
 			id = banrevolutionary
@@ -190,41 +389,6 @@ shared_focus = industrial_effort
 				 add_threat = 1
 			 }
 		}
-
-	 #Focus for Mutual Defense Pact
-			focus = {
-			id = mutualdefensepact
-			icon = GFX_goal_generic_military_sphere
-			ai_will_do = { factor = 3 }
-			relative_position_id = improvearnorianrelations
-	 		x =0
-	 		y =1
-	 		mutually_exclusive = { }
-	 		prerequisite = { focus = improvearnorianrelations}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				CAR = { country_event = { days = 1 id = arthedain.1 } }
-				RHD = { country_event = { days = 1 id = arthedain.1 } }
-			}
-	 }
-
-	 #Focus for Form an Alliance
-			focus = {
-			id = formanalliance
-			icon = GFX_goal_generic_national_unity
-			ai_will_do = { factor = 5 }
-			relative_position_id = mutualdefensepact
-	 		x =0
-	 		y =1
-	 		mutually_exclusive = { }
-	 		prerequisite = { focus = mutualdefensepact}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				create_faction = "arnor_coalition"
-			}
-	 }
 
 	 #Focus for Conquer the Realm of Arnor
 			focus = {
@@ -273,40 +437,6 @@ shared_focus = industrial_effort
 			}
 	 }
 
-	 #Focus for Ask Rhudaur to join
-			focus = {
-			id = askrhudaurtojoin
-			icon = GFX_goal_generic_improve_relations
-			ai_will_do = { factor = 2 }
-			relative_position_id = formanalliance
-	 		x =-1
-	 		y =1
-	 		mutually_exclusive = { }
-	 		prerequisite = { focus = formanalliance}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				RHD = { country_event = { days = 1 id = arthedain.3 } }
-			}
-	 }
-
-	 #Focus for Ask Cardolan to join
-			focus = {
-			id = askcardolantojoin
-			icon = GFX_goal_generic_improve_relations
-			ai_will_do = { factor = 3 }
-			relative_position_id = formanalliance
-	 		x =1
-	 		y =1
-	 		mutually_exclusive = { }
-	 		prerequisite = { focus = formanalliance}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				CAR = { country_event = { days = 1 id = arthedain.3 } }
-			}
-	 }
-
 	 #Focus for Demand Rhudaur
 			focus = {
 			id = arg_demandrhudaur
@@ -322,62 +452,6 @@ shared_focus = industrial_effort
 			completion_reward = {
 				RHD = { country_event = { days = 1 id = arthedain.2 } }
 				add_threat = 2
-			}
-	 }
-
-	 #Focus for Technology Sharing
-			focus = {
-			id = ART_technologysharing
-			icon = GFX_goal_tfv_generic_tech_sharing
-			ai_will_do = { factor = 8 }
-			relative_position_id = askrhudaurtojoin
-	 		x =0
-	 		y =1
-	 		mutually_exclusive = { focus = unitethekingdomofarnor}
-	 		prerequisite = { focus = askrhudaurtojoin}
-	  	prerequisite = { focus =askcardolantojoin}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				ART = { add_research_slot = 1 }
-				CAR = { add_research_slot = 1 }
-				RHD = { add_research_slot = 1 }
-			}
-	 }
-
-	 #Focus for Unite the Kingdom of Arnor
-			focus = {
-			id = unitethekingdomofarnor
-			icon = GFX_focus_rom_royal_dictatorship
-			ai_will_do = { factor = 8 }
-			relative_position_id = askcardolantojoin
-	 		x =0
-	 		y =1
-	 		mutually_exclusive = { focus = ART_technologysharing}
-	 		prerequisite = { focus = askrhudaurtojoin}
-	  	prerequisite = { focus =askcardolantojoin}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				news_event = { hours = 48 id = news.353 }
-				set_cosmetic_tag = ARN
-				set_country_flag = ART_established_arnor
-				if = {
-					limit = {
-						RHD = {
-							is_puppet = no
-						}
-					}
-					RHD = { 
-						country_event = { days = 1 id = arthedain.4 } 
-					}
-				} else = {
-					create_wargoal = {
-						type = annex_everything target = RHD
-					}
-				}
-				CAR = { country_event = { days = 1 id = arthedain.4 } }
-				SHI = { country_event = { days = 1 id = arthedain.4 } }
 			}
 	 }
 
