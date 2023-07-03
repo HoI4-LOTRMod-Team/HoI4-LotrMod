@@ -26,7 +26,7 @@ focus = {
 	ai_will_do = { factor = 5 }
 	x = 22
 	y = 0
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	completion_reward = { add_political_power = 100 }
 }
@@ -41,7 +41,7 @@ focus = {
 	y = 1
 	mutually_exclusive = { focus = forgeanewpath focus = lettherangersprevail}
 	prerequisite = { focus = ART_the_fate_of_arthedain}
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	completion_reward = { add_ideas = generic_cooperative }
 }
@@ -97,16 +97,25 @@ focus = {
 	relative_position_id = ART_convince_the_rangers
 	x = -1
 	y = 1
-	prerequisite = { focus = ART_convince_the_rangers focus = ART_unite_the_country}
+	prerequisite = { focus = ART_convince_the_rangers }
+	prerequisite = { focus = ART_unite_the_country }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { set_politics = { ruling_party = cooperative elections_allowed = no } }
 }
 
 focus = {
-	id = ART_inforce_control_over_the_shire
+	id = ART_enforce_control_over_the_shire
 	icon = GFX_goal_generic_forceful_treaty
 	ai_will_do = { factor = 3 }
+	available = {
+		SHI = {
+			OR = {
+				is_subject_of = ART
+				is_puppet_of = ART
+			}
+		}
+	}
 	relative_position_id = ART_reinstate_monarchy
 	x = 2
 	y = 1
@@ -114,7 +123,13 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-
+		add_opinion_modifier = { target = SHI modifier = small_increase }
+		SHI = {
+			add_opinion_modifier = { target = ART modifier = large_increase }
+			add_autonomy_ratio = {
+				value = 0.25
+			}
+		}
 	}
 }
 
@@ -122,14 +137,19 @@ focus = {
 	id = ART_annex_the_shire
 	icon = GFX_goal_generic_territory_or_war
 	ai_will_do = { factor = 3 }
-	relative_position_id = ART_inforce_control_over_the_shire
+	available = {
+	}
+	relative_position_id = ART_enforce_control_over_the_shire
 	x = 0
 	y = 1
-	prerequisite = { focus = ART_inforce_control_over_the_shire }
+	prerequisite = { focus = ART_enforce_control_over_the_shire }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		
+		annex_country = {
+			target = SHI
+			transfer_troops = yes
+		}
 	}
 }
 
@@ -311,8 +331,34 @@ focus = {
 				type = annex_everything target = RHD
 			}
 		}
-		CAR = { country_event = { days = 1 id = arthedain.4 } }
-		SHI = { country_event = { days = 1 id = arthedain.4 } }
+		if = {
+			limit = {
+				CAR = {
+					is_puppet = no
+				}
+			}
+			CAR = { 
+				country_event = { days = 1 id = arthedain.4 } 
+			}
+		} else = {
+			create_wargoal = {
+				type = annex_everything target = CAR
+			}
+		}
+		if = {
+			limit = {
+				SHI = {
+					is_puppet = no
+				}
+			}
+			SHI = { 
+				country_event = { days = 1 id = arthedain.4 } 
+			}
+		} else = {
+			create_wargoal = {
+				type = annex_everything target = SHI
+			}
+		}
 	}
 }
 
