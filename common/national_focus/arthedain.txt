@@ -127,15 +127,15 @@ focus = {
 		SHI = {
 			add_opinion_modifier = { target = ART modifier = large_increase }
 			add_autonomy_ratio = {
-				value = 0.25
+				value = -0.25
 			}
 		}
 	}
 }
 
 focus = {
-	id = ART_annex_the_shire
-	icon = GFX_goal_generic_territory_or_war
+	id = ART_assign_loyalists
+	icon = GFX_goal_generic_intelligence_exchange
 	ai_will_do = { factor = 3 }
 	available = {
 	}
@@ -146,9 +146,11 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		annex_country = {
-			target = SHI
-			transfer_troops = yes
+		SHI = {
+			add_opinion_modifier = { target = ART modifier = large_increase }
+			add_autonomy_ratio = {
+				value = -0.5
+			}
 		}
 	}
 }
@@ -362,6 +364,84 @@ focus = {
 	}
 }
 
+focus = {
+	id = ART_unite_by_force
+	icon = GFX_goal_generic_more_territorial_claims
+	ai_will_do = { factor = 3 }
+	available = {
+		OR = {
+			CAR = {
+				exists = yes
+				NOT = {
+					is_puppet_of = ART
+					is_in_faction_with = ART
+				}
+			}
+			RHD = {
+				exists = yes
+				NOT = {
+					is_puppet_of = ART
+					is_in_faction_with = ART
+				}
+			}
+		}
+	}
+	prerequisite = { focus = ART_unite_the_kingdom_of_arnor }
+	relative_position_id = ART_unite_the_kingdom_of_arnor
+	x = -1
+	y = 1
+	cost = 10
+	available_if_capitulated = no
+	completion_reward = {
+		if = {
+			limit = {
+				RHD = {
+					exists = yes
+					NOT = {
+						is_puppet_of = ART
+						is_in_faction_with = ART
+					}
+				}
+			}
+			create_wargoal = { target = RHD type = annex_everything }
+		}
+		if = {
+			limit = {
+				CAR = {
+					exists = yes
+					NOT = {
+						is_puppet_of = ART
+						is_in_faction_with = ART
+					}
+				}
+			}
+			create_wargoal = { target = CAR type = annex_everything }
+		}
+	}
+}
+
+focus = {
+	id = ART_revenge_against_angmar
+	icon = GFX_goal_generic_major_war
+	ai_will_do = { factor = 3 }
+	available = {
+		ANG = {
+			NOT = {
+				has_government = cooperative
+			}
+		}
+	}
+	prerequisite = { focus = ART_unite_the_kingdom_of_arnor }
+	relative_position_id = ART_unite_the_kingdom_of_arnor
+	will_lead_to_war_with = ANG
+	x = 1
+	y = 1
+	cost = 10
+	available_if_capitulated = no
+	completion_reward = {
+		create_wargoal = { target = ANG type = annex_everything }
+	}
+}
 	 #Focus for Let the Rangers Prevail
  			focus = {
  			id = lettherangersprevail
