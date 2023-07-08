@@ -5,14 +5,14 @@
 ithilien_crisis_decisions_category = {
 
 	ithc_contest_state_MOR = {
-		icon = GFX_decision_orcs_3
+		icon = GFX_decision_sauron_eye
 
 		cost = 75
 		state_target = yes
 		targets = { 22 175 173 135 }
 		is_good = yes
 	    selectable_mission = yes
-	    days_remove = 1
+	    days_remove = 10
 
 	    fire_only_once = yes
 
@@ -23,10 +23,11 @@ ithilien_crisis_decisions_category = {
 	    target_root_trigger = {
 	        # TODO: only show when correct focus taken or whatever
 	        always = yes
+			ithc_crisis_is_active = yes
 	    }
 
 	    target_trigger = {
-	    	ithc_crisis_active = yes
+			FROM = { NOT = { has_state_flag = ithc_contested } }
 	    }
 
 	    available = {
@@ -36,8 +37,8 @@ ithilien_crisis_decisions_category = {
 
 	    cancel_trigger = {
 	    	NOT = {
-	    		ithc_crisis_active = yes
-	    		ithc_state_available_to_contest = yes
+	    		ithc_crisis_is_active = yes
+	    		FROM = { ithc_state_available_to_contest = yes} 
 	    	}
 	    }
 
@@ -46,8 +47,10 @@ ithilien_crisis_decisions_category = {
 		}
 
         remove_effect = {
-        	FROM = { ithc_contest_state = yes }
-			clr_country_flag = ithc_is_contesting_state
+			FROM = { ithc_contest_state = yes }
+			hidden_effect = {
+				clr_country_flag = ithc_is_contesting_state	
+			}
         }
 
         cancel_effect = {
@@ -55,42 +58,46 @@ ithilien_crisis_decisions_category = {
         }
 
         complete_effect = {
-        	set_country_flag = ithc_is_contesting_state
+			hidden_effect = {
+				set_country_flag = ithc_is_contesting_state
 
-			GON = { 
-				activate_targeted_decision = {
-    				target = FROM
-    				decision = ithc_contest_state_GON
-				}
+				GON = { 
+					activate_targeted_decision = {
+						target = FROM
+						decision = ithc_contest_state_GON
+					}
+				}	
 			}
     	}
 	}
 
 	ithc_contest_state_GON = {
-		icon = GFX_decision_orcs_3
+		icon = GFX_decision_sauron_eye
 
 		state_target = yes
 		targets = { 22 175 173 135 }
-		is_good = no
-	    days_remove = 1
-
-	    fire_only_once = yes
-
-	    allowed = {
+		
+		allowed = {
+			always = no
+		}
+		activation = {
+			always = yes
+		}
+		cancel_trigger = {
+			always = no
+		}
+		available = {
 	    	always = no
 	    }
-
-        remove_effect = {
-        	# TODO
-        }
-
-        cancel_effect = {
-
-        }
-
-        complete_effect = {
-        	
-    	}
+		
+		is_good = no
+		days_mission_timeout = 10
+		selectable_mission = no
+		fire_only_once = yes
+		
+		timeout_effect = {
+			custom_effect_tooltip = ithc_contest_state_GON_tt
+		}
 	}
 
 
@@ -101,7 +108,7 @@ ithilien_crisis_decisions_category = {
 	###
 
 	ithc_subterfuge_sabotage_infrastructure = {
-		icon = mission_icon
+		icon = GFX_decision_orcs_2
 
 		cost = 75
 		state_target = yes
@@ -155,7 +162,7 @@ ithilien_crisis_decisions_category = {
 	}
 
 	ithc_subterfuge_locate_defenses = {
-		icon = mission_icon
+		icon = GFX_decision_orcs_2
 
 		cost = 75
 		state_target = yes
@@ -204,7 +211,7 @@ ithilien_crisis_decisions_category = {
 	}
 
 	ithc_subterfuge_gather_intelligence = {
-		icon = mission_icon
+		icon = GFX_decision_orcs_2
 
 		cost = 75
 		state_target = yes
@@ -253,7 +260,7 @@ ithilien_crisis_decisions_category = {
 	}
 
 	ithc_subterfuge_hide_weapon_caches = {
-		icon = mission_icon
+		icon = GFX_decision_orcs_2
 
 		cost = 75
 		state_target = yes
@@ -303,7 +310,7 @@ ithilien_crisis_decisions_category = {
 	}
 
 	ithc_subterfuge_plant_sleeper_cells = {
-		icon = mission_icon
+		icon = GFX_decision_orcs_2
 
 		cost = 75
 		state_target = yes
@@ -358,7 +365,7 @@ ithilien_crisis_decisions_category = {
 	###
 
 	ithc_pillage_ambush_the_garrison = {
-		icon = mission_icon
+		icon = GFX_decision_orcs
 
 		cost = 75
 		state_target = yes
@@ -407,7 +414,7 @@ ithilien_crisis_decisions_category = {
 	}
 
 	ithc_pillage_massacre_the_population = {
-		icon = mission_icon
+		icon = GFX_decision_orcs
 
 		cost = 75
 		state_target = yes
@@ -456,7 +463,7 @@ ithilien_crisis_decisions_category = {
 	}
 
 	ithc_pillage_lay_waste = {
-		icon = mission_icon
+		icon = GFX_decision_orcs
 
 		cost = 75
 		state_target = yes
@@ -506,7 +513,7 @@ ithilien_crisis_decisions_category = {
 	}
 
 	ithc_pillage_plunder = {
-		icon = mission_icon
+		icon = GFX_decision_orcs
 
 		cost = 75
 		state_target = yes
@@ -555,7 +562,7 @@ ithilien_crisis_decisions_category = {
 	}
 
 	ithc_pillage_burn_and_sear_the_fields = {
-		icon = mission_icon
+		icon = GFX_decision_orcs
 
 		cost = 75
 		state_target = yes
@@ -625,7 +632,8 @@ ithilien_crisis_decisions_category = {
 
 	    target_trigger = {
 	    	# TODO: only show this for states MOR doesnt own and stuff
-	        tag = GON
+	        #tag = GON
+			always = no
 	    }
 
 	    available = {
