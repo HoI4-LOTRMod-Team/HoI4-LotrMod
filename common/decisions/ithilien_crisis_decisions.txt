@@ -523,6 +523,7 @@ ithilien_crisis_decisions_category = {
 	    available = {
 	    	# TODO?
 	    	always = yes
+			NOT = { has_country_flag = ithc_subterfuge_counter }
 	    }
 
 	    cancel_trigger = {
@@ -539,9 +540,51 @@ ithilien_crisis_decisions_category = {
         	FROM = {
 				# TODO:
 				# Remove one of the state modifiers if one exists, otherwise just lower the level
+				if = {
+					limit = {
+						OR = {
+							has_dynamic_modifier = { modifier = ithc_sabotaged_infrastructure_prewar_modifier }
+							has_dynamic_modifier = { modifier = ithc_defenses_located_prewar_modifier }
+							has_dynamic_modifier = { modifier = ithc_weapon_caches_prewar_modifier }
+							has_dynamic_modifier = { modifier = ithc_sleeper_cells_planted_prewar_modifier }
+						}
+					}
+					random_list = {
+						10 = {
+							modifier = {
+								factor = 0
+								has_dynamic_modifier = { modifier = ithc_sabotaged_infrastructure_prewar_modifier }
+							}
+							remove_dynamic_modifier = { modifier = ithc_sabotaged_infrastructure_prewar_modifier }
+						}
+						10 = {
+							modifier = {
+								factor = 0
+								has_dynamic_modifier = { modifier = ithc_defenses_located_prewar_modifier }
+							}
+							remove_dynamic_modifier = { modifier = ithc_defenses_located_prewar_modifier }
+						}
+						10 = {
+							modifier = {
+								factor = 0
+								has_dynamic_modifier = { modifier = ithc_weapon_caches_prewar_modifier }
+							}
+							remove_dynamic_modifier = { modifier = ithc_weapon_caches_prewar_modifier }
+						}
+						10 = {
+							modifier = {
+								factor = 0
+								has_dynamic_modifier = { modifier = ithc_sleeper_cells_planted_prewar_modifier }
+							}
+							remove_dynamic_modifier = { modifier = ithc_sleeper_cells_planted_prewar_modifier }
+						}
+					}
+				}
 
-        		ithc_end_subterfuge_decision = yes
+				add_to_variable  = { ithc_subterfuge_level = -1 }
     		}
+
+			clr_country_flag = ithc_subterfuge_counter
         }
 
         cancel_effect = {
@@ -549,7 +592,7 @@ ithilien_crisis_decisions_category = {
         }
 
         complete_effect = {
-        	FROM = { ithc_begin_subterfuge_decision = yes }
+        	set_country_flag = ithc_subterfuge_counter
     	}
 	}
 
