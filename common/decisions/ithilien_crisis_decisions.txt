@@ -477,6 +477,82 @@ ithilien_crisis_decisions_category = {
     	}
 	}
 
+	ithc_subterfuge_counter = {
+
+		icon = {
+			key = GFX_decision_subterfuge_0
+			trigger = {
+				FROM = { check_variable = { ithc_subterfuge_level < 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_subterfuge_1
+			trigger = {
+				FROM = { check_variable = { ithc_subterfuge_level = 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_subterfuge_2
+			trigger = {
+				FROM = { check_variable = { ithc_subterfuge_level = 2 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_subterfuge_3
+			trigger = {
+				FROM = { check_variable = { ithc_subterfuge_level > 2 } }
+			}
+		}
+
+		cost = var:ithc_subterfuge_decision_cost_pp
+		state_target = yes
+		targets = { 22 175 173 135 }
+		is_good = yes
+	    selectable_mission = yes
+	    days_remove = var:ithc_subterfuge_decision_cost_days
+
+	    target_root_trigger = {
+	        # TODO: only show when correct focus taken or whatever
+	        tag = GON
+	    }
+
+	    target_trigger = {
+	    	FROM = { check_variable = { ithc_subterfuge_level > 0 } }
+	    }
+
+	    available = {
+	    	# TODO?
+	    	always = yes
+	    }
+
+	    cancel_trigger = {
+	    	# TODO: war breaks out etc.
+    		#always = no
+    		#FROM = { NOT = { has_state_flag = ithc_subterfuge_operation } }
+	    }
+
+	    ai_will_do = {
+		    base = 10
+		}
+
+        remove_effect = {
+        	FROM = {
+				# TODO:
+				# Remove one of the state modifiers if one exists, otherwise just lower the level
+
+        		ithc_end_subterfuge_decision = yes
+    		}
+        }
+
+        cancel_effect = {
+
+        }
+
+        complete_effect = {
+        	FROM = { ithc_begin_subterfuge_decision = yes }
+    	}
+	}
+
 
 	###
 	### PILLAGE
@@ -842,43 +918,55 @@ ithilien_crisis_decisions_category = {
     	}
 	}
 
+	ithc_pillage_counter = {
+		icon = {
+			key = GFX_decision_pillage_0
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level < 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_pillage_1
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level = 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_pillage_2
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level = 2 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_pillage_3
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level > 2 } }
+			}
+		}
 
-
-	###
-	### COUNTERS
-	###
-
-	ithc_counter_subterfuge_operation_testeroo = {
-		icon = mission_icon
-
-		cost = 75
+		cost = var:ithc_pillage_decision_cost_pp
 		state_target = yes
 		targets = { 22 175 173 135 }
 		is_good = yes
 	    selectable_mission = yes
-	    days_remove = 1
+	    days_remove = var:ithc_pillage_decision_cost_days
 
 	    target_root_trigger = {
-	        # TODO: only show when correct focus taken or whatever
-	        tag = GON
+	    	tag = GON
 	    }
 
 	    target_trigger = {
-	    	# TODO: only show this for states MOR doesnt own and stuff
-	        #tag = GON
-			always = no
+	    	FROM = { has_state_flag = ithc_pillage_operation }
 	    }
 
 	    available = {
 	    	# TODO?
-	    	#always = yes
-	    	FROM = { has_state_flag = ithc_subterfuge_operation }
+	    	always = yes
 	    }
 
 	    cancel_trigger = {
 	    	# TODO: war breaks out etc.
     		always = no
-    		#FROM = { has_state_flag = ithc_subterfuge_operation }
 	    }
 
 	    ai_will_do = {
@@ -886,15 +974,14 @@ ithilien_crisis_decisions_category = {
 		}
 
         remove_effect = {
-        	
-        }
-
-        cancel_effect = {
-
+        	# remove food, add damage, other stuff
+        	FROM = {
+        		clr_state_flag = ithc_pillage_operation
+    		}
         }
 
         complete_effect = {
-        	FROM = { clr_state_flag = ithc_subterfuge_operation }
+        	
     	}
 	}
 }
