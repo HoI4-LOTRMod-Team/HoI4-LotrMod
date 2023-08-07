@@ -1,0 +1,1 @@
+python.exe .\gfx_goals.py | Out-File ../../../../interface/goals/lotr_goals_lth.gfx -Encoding ASCII
