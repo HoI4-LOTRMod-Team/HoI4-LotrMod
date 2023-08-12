@@ -43,6 +43,10 @@ focus_tree = {
 			add_political_power = 120
 			# change from isolationist to vigilant
 			set_country_leader_ideology = vigilant
+			add_opinion_modifier = {
+    			target = MOR
+				modifier = small_decrease
+			}
 		}
 	}
 
@@ -66,6 +70,7 @@ focus_tree = {
 			remove_ideas = LTH_celeborn_and_galadriel
 			# Begin the great schism
 			add_ideas = LTH_great_schism
+			add_popularity = { ideology = unaligned popularity = -0.1 }
 		}
 	}
 
@@ -578,7 +583,12 @@ focus_tree = {
 			# increase noldor influence
 			lthi_increase_influence_noldor_minor = yes
 			# Add knowldege research bonus
-			# Add a bonus to research speed
+			add_tech_bonus = {
+				name = special_bonus
+				bonus = 0.3
+				uses = 2
+				category = lotr_knowledge
+			}
 		}
 	}
 
@@ -599,7 +609,12 @@ focus_tree = {
 			# Reaffirming its validity will extend our animosity towards Morgoth and all his acursed followers.
 
 			# Increase animosity towards Mordor
+			add_relation_modifier = {
+				target = MOR
+				modifier = oath_of_feanor
+			}
 			# Increase Noldor influence
+			lthi_increase_influence_noldor_major = yes
 		}
 	}
 
@@ -616,7 +631,13 @@ focus_tree = {
 		prerequisite = { focus = lth_legacyofthenoldor }
 		completion_reward = {
 			# increase noldor influence
-			# increase noldor attack bonus 
+			lthi_increase_influence_noldor_intermediate = yes
+			# add breakthrough bonus
+			add_to_variable = {
+    			var = lthi_noldor_bonus_breakthrough_base
+    			value = 0.1
+			}
+			custom_effect_tooltip = lth_greatestofwarriors_tt
 		}
 	}
 
@@ -633,7 +654,13 @@ focus_tree = {
 		prerequisite = { focus = lth_legacyofthenoldor }
 		completion_reward = {
 			# increase noldor influence
-			# Add noldor bonus that grants extra factory output
+			lthi_increase_influence_noldor_intermediate = yes
+			# add factory output bonus
+			add_to_variable = {
+    			var = lthi_noldor_bonus_factoryoutput_base
+    			value = 0.1
+			}
+			custom_effect_tooltip = lth_metalworkandjewellery_tt
 		}
 	}
 
@@ -652,7 +679,9 @@ focus_tree = {
 			# By the oath of Feanor, the Silmarils belong to the Noldor. As prohpesized by Mandor, the silmarils are now embedded into the three elements of sky, soil and water. The oath of feanor still stands, the three elements belong to the Noldor!
 
 			# increase noldor influence
+			lthi_increase_influence_noldor_intermediate = yes
 			# Increase terrain penalties or smth
+			add_ideas = LTH_sky_soil_and_water
 		}
 	}
 
@@ -669,7 +698,9 @@ focus_tree = {
 		prerequisite = { focus = lth_legacyofthenoldor }
 		completion_reward = {
 			# increase noldor influence
-			# TODO: PP?
+			country_event = lothlorien.11
+			lthi_increase_influence_noldor_intermediate = yes
+			add_political_power = 100
 		}
 	}
 
@@ -686,8 +717,14 @@ focus_tree = {
 		prerequisite = { focus = lth_legacyofthenoldor focus = lth_elvensupremacy }
 		completion_reward = {
 			# increase noldor influence
+			lthi_increase_influence_noldor_major = yes
 			# Double all Noldor bonuses
-			# Other option: Noldor bonus is 100%, no matter the influence
+			multiply_variable = { lthi_noldor_bonus_attack_base = 2.0 }
+			multiply_variable = { lthi_noldor_bonus_breakthrough_base = 2.0 }
+			multiply_variable = { lthi_noldor_bonus_factoryoutput_base = 2.0 }
+
+			custom_effect_tooltip = lth_thereawakening_tt
+			
 		}
 	}
 
@@ -720,6 +757,7 @@ focus_tree = {
 		prerequisite = { focus = lth_thecallofvalinor }
 		completion_reward = {
 			# Give 100% stability
+			add_stability = 1.0
 		}
 	}
 
@@ -736,6 +774,7 @@ focus_tree = {
 		prerequisite = { focus = lth_thecallofvalinor }
 		completion_reward = {
 			# Add a very epic idea
+			add_ideas = LTH_the_last_eldar
 		}
 	}
 
@@ -783,7 +822,13 @@ focus_tree = {
 		prerequisite = { }
 		completion_reward = {
 			# increase nandor influence
+			lthi_increase_influence_nandor_intermediate = yes
 			# add doctrine bonus for guerrilla warfare?
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 2
+				category = land_doctrine
+			}
 		}
 	}
 
@@ -800,7 +845,11 @@ focus_tree = {
 		prerequisite = { focus = lth_wanderersofnandor }
 		completion_reward = {
 			# increase nandor influence
-			# TODO
+			lthi_increase_influence_nandor_intermediate = yes
+			# Increase all bonuses by 50%
+			multiply_variable = { lthi_nandor_bonus_organization_base = 1.5 }
+			multiply_variable = { lthi_nandor_bonus_conscription_base = 1.5 }
+			multiply_variable = { lthi_nandor_bonus_speed_base = 1.5 }
 		}
 	}
 
@@ -817,7 +866,9 @@ focus_tree = {
 		prerequisite = { focus = lth_wanderersofnandor }
 		completion_reward = {
 			# increase nandor influence
-			# TODO
+			lthi_increase_influence_nandor_intermediate = yes
+			# Add speed bonus to nandor faction
+			add_to_variable = { lthi_nandor_bonus_speed_base = 0.1 }
 		}
 	}
 
@@ -836,7 +887,9 @@ focus_tree = {
 			# Send scouts and emissaries to explore and establish connections with other secluded elven realms.
 
 			# increase nandor influence
-			# Add recruitable population bonus to Nandor
+			lthi_increase_influence_nandor_intermediate = yes
+			# Increase recruitable population bonus to Nandor
+			add_to_variable = { lthi_nandor_bonus_conscription_base = 0.02 }
 		}
 	}
 
@@ -852,10 +905,20 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_wanderersofnandor }
 		completion_reward = {
-			# increase nandor influence
 			# Haldir is promoted to field marshal
 			# Haldir gains extra stats
 			# Add Haldir as chief advisor, make him non-fireable
+			activate_advisor = LTH_haldir_chiefadvisor
+
+			LTH_haldir = {
+				promote_leader = yes
+				add_skill_level = 1
+
+				set_can_be_fired_in_advisor_role = {
+					slot = chief_advisor
+					value = no
+				}
+			}
 		}
 	}
 
@@ -871,7 +934,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_wanderersofnandor }
 		completion_reward = {
-			# TODO
+			lthi_increase_influence_nandor_intermediate = yes
+			add_to_variable = { lthi_nandor_bonus_organization_base = 0.1 }
 		}
 	}
 
@@ -887,7 +951,14 @@ focus_tree = {
 		prerequisite = { }
 		completion_reward = {
 			# Give construction research bonus
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_labour_construction
+				bonus = 0.5
+    			uses = 1
+			}
 			# Add idea
+			add_ideas = LTH_the_sacred_trees
 		}
 	}
 
@@ -904,6 +975,7 @@ focus_tree = {
 		prerequisite = { focus = lth_sacredtreesofthenhail }
 		completion_reward = {
 			# Add state modifier to caras galadhom that gives bonus slots and construction speed
+			75 = { add_dynamic_modifier = { modifier = lth_consecrated_land } }
 		}
 	}
 
@@ -920,6 +992,7 @@ focus_tree = {
 		prerequisite = { focus = lth_sacredtreesofthenhail }
 		completion_reward = {
 			# Add state modifier to cerin amroth that gives bonus slots and construction speed
+			222 = { add_dynamic_modifier = { modifier = lth_consecrated_land } }
 		}
 	}
 
@@ -936,7 +1009,18 @@ focus_tree = {
 		prerequisite = { focus = lth_sacredtreesofthenhail }
 		completion_reward = {
 			# add construction research boost
+			# Give construction research bonus
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_labour_construction
+				bonus = 0.5
+    			uses = 1
+			}
 			# improve the idea added in sacred trees
+			swap_ideas = {
+				remove_idea = LTH_the_sacred_trees
+				add_idea = LTH_the_sacred_trees_2
+			}
 		}
 	}
 
@@ -952,7 +1036,20 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_mallorntreearchiotecture focus = lth_conscecratecerinamroth focus = lth_conscecratecarasgaladhon }
 		completion_reward = {
-			# Add some mils, civs and infra
+			# Adds 50% of civs in caras to cerin, and 50% mils in cerin to caras
+
+			75 = { set_temp_variable = { civs_in_caras = industrial_complex_level } }
+			222 = { set_temp_variable = { mils_in_cerin = arms_factory_level } }
+
+			multiply_variable = { civs_in_caras = 0.5 }
+			multiply_variable = { mils_in_cerin = 0.5 }
+
+			75 = {
+				add_building_construction = { type = arms_factory level = var:mils_in_cerin instant_build = yes }
+			}
+			222 = {
+				add_building_construction = { type = industrial_complex level = var:civs_in_caras instant_build = yes }
+			}
 		}
 	}
 
@@ -1031,7 +1128,9 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_immortalendurance }
 		completion_reward = {
-			# Research boost to knowledge or somth
+			# Add modifier that gives 1% extra research every year. Starts at 2
+			add_dynamic_modifier = { modifier = lth_preservationofknowledge_modifier }
+			set_variable = { lth_preservationofknowledge_bonus = 2.0 }
 		}
 	}
 
@@ -1048,6 +1147,7 @@ focus_tree = {
 		prerequisite = { focus = lth_immortalendurance }
 		completion_reward = {
 			# Extra research slot
+			add_research_slot = 1
 		}
 	}
 
@@ -1095,6 +1195,12 @@ focus_tree = {
 		prerequisite = {  }
 		completion_reward = {
 			# Infrantry equip research boost
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_infantry
+				uses = 3
+				bonus = 0.25
+			}
 		}
 	}
 
@@ -1111,6 +1217,12 @@ focus_tree = {
 		prerequisite = { focus = lth_elvenweaponry }
 		completion_reward = {
 			# Forging research boost
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_labour_metalworking
+				uses = 1
+				bonus = 0.5
+			}
 		}
 	}
 
@@ -1127,6 +1239,7 @@ focus_tree = {
 		prerequisite = { focus = lth_elvenweaponry }
 		completion_reward = {
 			# give more attack against orcs or smth
+			add_ideas = LTH_blades_of_the_eldar
 		}
 	}
 
@@ -1143,6 +1256,12 @@ focus_tree = {
 		prerequisite = { focus = lth_elvenweaponry }
 		completion_reward = {
 			# cav research boost
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_cavalry
+				bonus = 1
+				uses = 1
+			}
 		}
 	}
 
@@ -1158,7 +1277,26 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_elvenweaponry }
 		completion_reward = {
+			# Will research the enxt level of arty (up to level 3)
+			if = {
+				limit = { can_research = artillery1 }
+				set_technology = { artillery1 = 1 }
+			}
+			else_if = {
+				limit = { can_research = artillery2 }
+				set_technology = { artillery2 = 1 }
+			}
+			else_if = {
+				limit = { can_research = artillery3 }
+				set_technology = { artillery3 = 1 }
+			}
 			# Archery research boost, unlock advanced bow if it is available
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_infantry_archery_bow
+				bonus = 0.5
+				uses = 1
+			}
 		}
 	}
 
@@ -1175,6 +1313,7 @@ focus_tree = {
 		prerequisite = { focus = lth_elvenweaponry }
 		completion_reward = {
 			# More soft attack on bows n shit
+			add_ideas = LTH_silverthorn_arrows
 		}
 	}
 
@@ -1182,7 +1321,7 @@ focus_tree = {
 		id = lth_silvanelitewarriors
 		icon = GFX_goal_lth_silvanelitewarriors
 		
-		x =15
+		x =16
 		y =18
 
 		cost = 10
@@ -1190,6 +1329,13 @@ focus_tree = {
 		prerequisite = {  }
 		completion_reward = {
 			# Increase special forces cap + speacial forces research boost
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_infantry_specialforces
+				bonus = 0.5
+				uses = 2
+			}
+			add_ideas = LTH_silvan_elite_warriors
 		}
 	}
 
@@ -1198,7 +1344,7 @@ focus_tree = {
 		icon = GFX_goal_lth_sindarpathstalkers
 		
 		relative_position_id = lth_silvanelitewarriors
-		x =-3
+		x =0
 		y =1
 
 		cost = 10
@@ -1214,7 +1360,7 @@ focus_tree = {
 		icon = GFX_goal_lth_ridersofthenaith
 		
 		relative_position_id = lth_silvanelitewarriors
-		x =-1
+		x =-2
 		y =1
 
 		cost = 10
@@ -1231,13 +1377,13 @@ focus_tree = {
 		
 		relative_position_id = lth_silvanelitewarriors
 		x =1
-		y =1
+		y =2
 
 		cost = 10
 		ai_will_do = { factor = 1 }
-		prerequisite = { focus = lth_silvanelitewarriors focus = lth_silverthornarrows }
+		prerequisite = { focus = lth_marchwardensoflothlorien focus = lth_sindarpathstalkers }
 		completion_reward = {
-			# Spawn a bunch of elite, well equipped divions
+			# Spawn a bunch of elite divs with marchwardens and pathstalkers in them
 		}
 	}
 
@@ -1246,12 +1392,12 @@ focus_tree = {
 		icon = GFX_goal_lth_marchwardensoflothlorien
 		
 		relative_position_id = lth_silvanelitewarriors
-		x =3
+		x =2
 		y =1
 
 		cost = 10
 		ai_will_do = { factor = 1 }
-		prerequisite = { focus = lth_silvanelitewarriors focus = lth_thenandorheritage }
+		prerequisite = { focus = lth_silvanelitewarriors focus = lth_thenandorheritage focus = lth_silverthornarrows }
 		completion_reward = {
 			# Add new special forces type, similar to rangers
 			# increase nandor influence
