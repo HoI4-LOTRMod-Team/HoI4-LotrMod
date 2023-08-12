@@ -7,30 +7,102 @@ lthi_initialize_values = {
 	set_variable = { lthi_base_sindar_influence = 20 }
 	set_variable = { lthi_base_halfelves_influence = 5 }
 
-	lthi_update_values = yes
+	force_update_dynamic_modifier = yes
 
 	add_dynamic_modifier = {
 		modifier = lothlorien_base_influences
 	}
+	add_dynamic_modifier = {
+		modifier = lthi_influence_bonuses
+	}
+
+	# Bonus variables
+	set_variable = { lthi_nandor_bonus_conscription = 0 }
+	set_variable = { lthi_nandor_bonus_speed = 0 }
+	set_variable = { lthi_nandor_bonus_organization = 0 }
+
+	set_variable = { lthi_noldor_bonus_attack = 0 }
+	set_variable = { lthi_noldor_bonus_breakthrough = 0 }
+	set_variable = { lthi_noldor_bonus_factoryoutput = 0 }
+
+	set_variable = { lthi_sindar_bonus_constructionspeed = 0 }
+	set_variable = { lthi_sindar_bonus_supply = 0 }
+	set_variable = { lthi_sindar_bonus_research = 0 }
+
+	set_variable = { lthi_halfelves_bonus_experiencegain = 0 }
+	set_variable = { lthi_halfelves_bonus_stability = 0 }
+	set_variable = { lthi_halfelves_bonus_consumergoods = 0 }
+
+	# max bonus vars
+	set_variable = { lthi_nandor_bonus_conscription_base = 0.1 }
+	set_variable = { lthi_nandor_bonus_speed_base = 0 }
+	set_variable = { lthi_nandor_bonus_organization_base = 0 }
+
+	set_variable = { lthi_noldor_bonus_attack_base = 0.1 }
+	set_variable = { lthi_noldor_bonus_breakthrough_base = 0 }
+	set_variable = { lthi_noldor_bonus_factoryoutput_base = 0 }
+
+	set_variable = { lthi_sindar_bonus_constructionspeed_base = 0.1 }
+	set_variable = { lthi_sindar_bonus_supply_base = 0 }
+	set_variable = { lthi_sindar_bonus_research_base = 0 }
+
+	set_variable = { lthi_halfelves_bonus_experiencegain_base = 0.1 }
+	set_variable = { lthi_halfelves_bonus_stability_base = 0 }
+	set_variable = { lthi_halfelves_bonus_consumergoods_base = 0 }
+
+	lthi_update_values = yes
 }
 
 
 # Call this every time one of the influence vars is changed
 lthi_update_values = {
-	set_temp_variable = { lthi_influence_sum = lthi_base_nandor_influence }
-	add_to_temp_variable = { lthi_influence_sum = lthi_base_noldor_influence }
-	add_to_temp_variable = { lthi_influence_sum = lthi_base_sindar_influence }
-	add_to_temp_variable = { lthi_influence_sum = lthi_base_halfelves_influence }
+	# Calculate sum
+	set_variable = { lthi_influence_sum = modifier@nandor_influence }
+	add_to_variable = { lthi_influence_sum = modifier@noldor_influence }
+	add_to_variable = { lthi_influence_sum = modifier@sindar_influence }
+	add_to_variable = { lthi_influence_sum = modifier@halfelves_influence }
 
-	set_variable = { lthi_base_nandor_influence_fraction = lthi_base_nandor_influence }
-	set_variable = { lthi_base_noldor_influence_fraction = lthi_base_noldor_influence }
-	set_variable = { lthi_base_sindar_influence_fraction = lthi_base_sindar_influence }
-	set_variable = { lthi_base_halfelves_influence_fraction = lthi_base_halfelves_influence }
+	# Calculate fractions
+	set_variable = { lthi_nandor_influence_fraction = modifier@nandor_influence }
+	set_variable = { lthi_noldor_influence_fraction = modifier@noldor_influence }
+	set_variable = { lthi_sindar_influence_fraction = modifier@sindar_influence }
+	set_variable = { lthi_halfelves_influence_fraction = modifier@halfelves_influence }
+	divide_variable = { lthi_nandor_influence_fraction = lthi_influence_sum }
+	divide_variable = { lthi_noldor_influence_fraction = lthi_influence_sum }
+	divide_variable = { lthi_sindar_influence_fraction = lthi_influence_sum }
+	divide_variable = { lthi_halfelves_influence_fraction = lthi_influence_sum }
 
-	divide_variable = { lthi_base_nandor_influence_fraction = lthi_influence_sum }
-	divide_variable = { lthi_base_noldor_influence_fraction = lthi_influence_sum }
-	divide_variable = { lthi_base_sindar_influence_fraction = lthi_influence_sum }
-	divide_variable = { lthi_base_halfelves_influence_fraction = lthi_influence_sum }
+	# Set bonus nandor
+	set_variable = { lthi_nandor_bonus_conscription = lthi_nandor_bonus_conscription_base }
+	set_variable = { lthi_nandor_bonus_speed = lthi_nandor_bonus_speed_base }
+	set_variable = { lthi_nandor_bonus_organization = lthi_nandor_bonus_organization_base }
+	multiply_variable = { lthi_nandor_bonus_conscription = lthi_nandor_influence_fraction }
+	multiply_variable = { lthi_nandor_bonus_speed = lthi_nandor_influence_fraction }
+	multiply_variable = { lthi_nandor_bonus_organization = lthi_nandor_influence_fraction }
+		
+	# Set bonus noldor
+	set_variable = { lthi_noldor_bonus_attack = lthi_noldor_bonus_attack_base }
+	set_variable = { lthi_noldor_bonus_breakthrough = lthi_noldor_bonus_breakthrough_base }
+	set_variable = { lthi_noldor_bonus_factoryoutput = lthi_noldor_bonus_factoryoutput_base }
+	multiply_variable = { lthi_noldor_bonus_attack = lthi_noldor_influence_fraction }
+	multiply_variable = { lthi_noldor_bonus_breakthrough = lthi_noldor_influence_fraction }
+	multiply_variable = { lthi_noldor_bonus_factoryoutput = lthi_noldor_influence_fraction }
+
+	# Set bonus sindar
+	set_variable = { lthi_sindar_bonus_constructionspeed = lthi_sindar_bonus_constructionspeed_base }
+	set_variable = { lthi_sindar_bonus_supply = lthi_sindar_bonus_supply_base }
+	set_variable = { lthi_sindar_bonus_research = lthi_sindar_bonus_research_base }
+	multiply_variable = { lthi_sindar_bonus_constructionspeed = lthi_sindar_influence_fraction }
+	multiply_variable = { lthi_sindar_bonus_supply = lthi_sindar_influence_fraction }
+	multiply_variable = { lthi_sindar_bonus_research = lthi_sindar_influence_fraction }
+
+	# Set bonus halfelves
+	set_variable = { lthi_halfelves_bonus_experiencegain = lthi_halfelves_bonus_experiencegain_base }
+	set_variable = { lthi_halfelves_bonus_stability = lthi_halfelves_bonus_stability_base }
+	set_variable = { lthi_halfelves_bonus_consumergoods = lthi_halfelves_bonus_consumergoods_base }
+	multiply_variable = { lthi_halfelves_bonus_experiencegain = lthi_halfelves_influence_fraction }
+	multiply_variable = { lthi_halfelves_bonus_stability = lthi_halfelves_influence_fraction }
+	multiply_variable = { lthi_halfelves_bonus_consumergoods = lthi_halfelves_influence_fraction }
 }
 
 
