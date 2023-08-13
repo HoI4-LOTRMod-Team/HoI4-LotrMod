@@ -205,10 +205,15 @@ focus_tree = {
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_acknowledgethemordorthreat }
+		mutually_exclusive = { focus = lth_thegreatschism focus = lth_beaconofhope }
 		completion_reward = {
 			# Switch ideology back to isolationist
 			set_country_leader_ideology = isolationist
-			# TODO
+			# Add idea that grants growing bonuses over time
+			set_variable = { lth_immortal_endurance_bonus = 0.03 }
+			add_dynamic_modifier = {
+				modifier = lth_immortal_endurance_modifier
+			}
 		}
 	}
 
@@ -223,10 +228,12 @@ focus_tree = {
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_immortalendurance }
+		mutually_exclusive = { focus = lth_limitedintervention }
 		completion_reward = {
 			# Switch to survivalist
 			set_country_leader_ideology = survivalist
-			# TODO
+			# Add idea that gives bonuses but also isolates us
+			add_ideas = LTH_total_isolation_idea
 		}
 	}
 
@@ -242,7 +249,9 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_totalisoltation }
 		completion_reward = {
-			# TODO
+			# close trade
+			add_ideas = closed_economy
+			add_ideas = LTH_borders_sealed
 		}
 	}
 
@@ -258,7 +267,12 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_totalisoltation }
 		completion_reward = {
-			# TODO
+			# add idea that removes enemy intel, increases justification time, adds defense etc.
+			swap_ideas = {
+				remove_idea = LTH_borders_sealed
+				add_idea = LTH_hidden_realm
+			}
+
 		}
 	}
 
@@ -274,7 +288,7 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_totalisoltation }
 		completion_reward = {
-			# TODO
+			add_ideas = LTH_unflinching_defender
 		}
 	}
 
@@ -290,7 +304,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_totalisoltation }
 		completion_reward = {
-			# TODO
+			# Increase the maximum cap of immortal endurance to 50% and make it grow at 5% per year, instead of 3%
+			# NOTE: This is taken care of automatically in scripted effects
 		}
 	}
 
@@ -306,7 +321,9 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_totalisoltation }
 		completion_reward = {
-			# TODO
+			# Can only be taken when at war
+			# Give a ton of core defence and core attack
+			add_ideas = LTH_the_last_stand
 		}
 	}
 
@@ -321,8 +338,9 @@ focus_tree = {
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_immortalendurance }
+		mutually_exclusive = { focus = lth_totalisoltation }
 		completion_reward = {
-			# TODO
+			add_ideas = LTH_limited_intervention_idea
 		}
 	}
 
@@ -331,14 +349,14 @@ focus_tree = {
 		icon = GFX_goal_lth_aegisoflight
 		
 		relative_position_id = lth_limitedintervention
-		x =-1
-		y =1
+		x =0
+		y =2
 
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_limitedintervention }
 		completion_reward = {
-			# TODO
+			add_ideas = LTH_aegis_of_light
 		}
 	}
 
@@ -347,14 +365,14 @@ focus_tree = {
 		icon = GFX_goal_lth_deterrence
 		
 		relative_position_id = lth_limitedintervention
-		x =-1
-		y =3
+		x =0
+		y =4
 
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_aegisoflight }
 		completion_reward = {
-			# Probably grant extra justification time for enemies
+			add_ideas = deterrence
 		}
 	}
 
@@ -364,7 +382,7 @@ focus_tree = {
 		
 		relative_position_id = lth_limitedintervention
 		x =1
-		y =1
+		y =3
 
 		cost = 10
 		ai_will_do = { factor = 1 }
@@ -375,7 +393,13 @@ focus_tree = {
 				add_resource = {
 					type = oil
 					amount = 15
-					state = THIS
+				}
+			}
+			# build a bunch of fuel silos
+			random_core_state = {
+				add_building_construction = {
+					type = fuel_silo
+					level = 5
 				}
 			}
 		}
@@ -387,13 +411,15 @@ focus_tree = {
 		
 		relative_position_id = lth_limitedintervention
 		x =1
-		y =3
+		y =1
 
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_limitedintervention }
 		completion_reward = {
-			# TODO
+			# decreases the cost of pedantic_organizer, long-term planner (and others?) to 50pp
+			lotr_advisors_improve_long_term_planner = yes
+			lotr_advisors_improve_pedantic_organizer = yes
 		}
 	}
 
@@ -409,7 +435,7 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_limitedintervention }
 		completion_reward = {
-			# TODO
+			country_event = lothlorien.18
 		}
 	}
 
@@ -465,7 +491,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_maintainstabilityinthewest }
 		completion_reward = {
-			# TODO
+			# Unlocks decisions to send help to countries at war with Mordor
+			# NOTE: dealt with automatically
 		}
 	}
 
@@ -481,7 +508,9 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_immortalendurance }
 		completion_reward = {
-			# TODO
+			every_unit_leader = {
+				add_trait = { trait = galadriels_blessing_trait }
+			}
 		}
 	}
 
@@ -733,8 +762,8 @@ focus_tree = {
 		icon = GFX_goal_generic_CAS
 		
 		relative_position_id = lth_immortalendurance
-		x =2
-		y =6
+		x =1
+		y =7
 
 		cost = 10
 		ai_will_do = { factor = 1 }
@@ -1128,9 +1157,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_immortalendurance }
 		completion_reward = {
-			# Add modifier that gives 1% extra research every year. Starts at 2
-			add_dynamic_modifier = { modifier = lth_preservationofknowledge_modifier }
-			set_variable = { lth_preservationofknowledge_bonus = 2.0 }
+			# Buff immortal endurance modifier to include research
+			# NOTE: taken care of automatically in effects
 		}
 	}
 
@@ -1163,12 +1191,50 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_immortalendurance focus = lth_thetwinheartsoflothlorien }
 		completion_reward = {
-			# More forts or state modifers
+			# Maxed out forts for both cities
+			75 = {
+				add_building_construction = { type = bunker level = 10 province = 5094 }
+				add_province_modifier = {
+					static_modifiers = { impregnable_fortress }
+					province = { id = 5094 }
+				}
+			}
+			222 = {
+				add_building_construction = { type = bunker level = 8 province = 3125 }
+			}
 		}
 	}
 
 	focus = {
-		id = lth_theswanknightswatch
+		id = lth_resourcestorage
+		icon = GFX_goal_generic_CAS
+		
+		relative_position_id = lth_immortalendurance
+		x =1
+		y =12
+
+		cost = 10
+		ai_will_do = { factor = 1 }
+		prerequisite = { focus = lth_impregnablefortresses }
+		completion_reward = {
+			add_resource = { type = steel amount = 25 state = 75 }
+			add_resource = { type = oil amount = 25 state = 75 }
+			add_resource = { type = rubber amount = 25 state = 222 }
+			add_resource = { type = steel amount = 25 state = 222 }
+			add_resource = { type = chromium amount = 25 state = 75 }
+			75 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = industrial_complex
+					level = 3
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = lth_defensiveperimeter
 		icon = GFX_goal_generic_CAS
 		
 		relative_position_id = lth_immortalendurance
@@ -1179,7 +1245,41 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_immortalendurance focus = lth_strengthenfortifications }
 		completion_reward = {
-			# TODO
+			every_core_state = { add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	} }
+
+			75 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 2202 } }
+			75 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 3538 } }
+			75 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 6366 } }
+	 		75 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 3335 } }
+			75 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 6451 } }
+			75 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 6455 } }
+			75 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 3414 } }
+
+			222 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 6445 } }
+			222 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 3438 } }
+			222 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 5083 } }
+
+			74 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 6417 } }
+			74 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 3285 } }
+			74 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 6410 } }
+			74 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 3198 } }
+			74 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 4812 } }
+			74 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 2191 } }
+			74 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 6396 } }
+			74 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 3440 } }
+			74 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 5248 } }
+
+			76 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 4413 } }
+			76 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 2736 } }
+			76 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 2089 } }
+			76 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 4082 } }
+			76 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 4439 } }
+
+			160 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 2616 } }
+			160 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 6627 } }
+			160 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 4220 } }
+			160 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 4061 } }
+			160 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 3149 } }
 		}
 	}
 
@@ -1899,7 +1999,7 @@ focus_tree = {
 		icon = GFX_goal_generic_CAS
 		
 		relative_position_id = lth_elrondtheperedhil
-		x =2
+		x =4
 		y =3
 
 		cost = 10
@@ -2552,8 +2652,8 @@ focus_tree = {
 		icon = GFX_goal_lth_theelvenalliance
 		
 		relative_position_id = lth_forgealliances
-		x =-7
-		y =17
+		x =-5
+		y =10
 
 		cost = 10
 		ai_will_do = { factor = 1 }
