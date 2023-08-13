@@ -71,6 +71,7 @@ focus_tree = {
 			# Begin the great schism
 			add_ideas = LTH_great_schism
 			add_popularity = { ideology = unaligned popularity = -0.1 }
+			lth_lower_isolationist_reservations = yes
 		}
 	}
 
@@ -234,6 +235,25 @@ focus_tree = {
 			set_country_leader_ideology = survivalist
 			# Add idea that gives bonuses but also isolates us
 			add_ideas = LTH_total_isolation_idea
+
+			if = {
+				limit = { has_idea = LTH_isolationist_reservations_3 }
+				swap_ideas = {
+					remove_idea = LTH_isolationist_reservations_3
+					add_idea = LTH_isolationist_reservations_total_isolation
+				}
+			}
+			else_if = {
+				limit = { has_idea = LTH_isolationist_reservations_2 }
+				swap_ideas = {
+					remove_idea = LTH_isolationist_reservations_2
+					add_idea = LTH_isolationist_reservations_total_isolation
+				}
+			}
+			else_if = {
+				limit = { has_idea = LTH_isolationist_reservations_1 }
+				remove_ideas = LTH_isolationist_reservations_total_isolation
+			}
 		}
 	}
 
@@ -436,6 +456,7 @@ focus_tree = {
 		prerequisite = { focus = lth_limitedintervention }
 		completion_reward = {
 			country_event = lothlorien.18
+			lth_lower_isolationist_reservations = yes
 		}
 	}
 
@@ -493,6 +514,7 @@ focus_tree = {
 		completion_reward = {
 			# Unlocks decisions to send help to countries at war with Mordor
 			# NOTE: dealt with automatically
+			lth_lower_isolationist_reservations = yes
 		}
 	}
 
@@ -1113,8 +1135,8 @@ focus_tree = {
 		icon = GFX_goal_lth_patrolsandriverwardens
 		
 		relative_position_id = lth_guardiansoftheriveranduin
-		x =2
-		y =1
+		x =0
+		y =2
 
 		cost = 10
 		ai_will_do = { factor = 1 }
@@ -1567,6 +1589,7 @@ focus_tree = {
 		completion_reward = {
 			# change from expansionist to supremacist
 			set_country_leader_ideology = supremacist
+			lth_lower_isolationist_reservations = yes
 			# TODO: something else
 		}
 	}
@@ -2073,6 +2096,7 @@ focus_tree = {
 		prerequisite = { focus = lth_beaconofhope }
 		completion_reward = {
 			# TODO
+			lth_lower_isolationist_reservations = yes
 		}
 	}
 
@@ -2301,6 +2325,7 @@ focus_tree = {
 		prerequisite = { focus = lth_beaconofhope }
 		completion_reward = {
 			# TODO
+			lth_lower_isolationist_reservations = yes
 		}
 	}
 
@@ -3153,6 +3178,7 @@ focus_tree = {
 		prerequisite = { focus = lth_celebornsascendancy }
 		completion_reward = {
 			# TODO
+			lth_lower_isolationist_reservations = yes
 		}
 	}
 
@@ -3539,7 +3565,7 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = {  }
 		completion_reward = {
-			# TODO
+			lth_lower_isolationist_reservations = yes
 		}
 	}
 
@@ -3555,7 +3581,7 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_preemptivemeasures }
 		completion_reward = {
-			# TODO
+			# build new supply base to anduin and stuff
 		}
 	}
 
@@ -3635,7 +3661,7 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_preemptivemeasures }
 		completion_reward = {
-			# TODO
+			# build new supply base to moria and stuff
 		}
 	}
 
@@ -3652,6 +3678,10 @@ focus_tree = {
 		prerequisite = { focus = lth_preemptivemeasures }
 		completion_reward = {
 			# Gain wargoal on orc moria
+			create_wargoal = {
+				type = puppet_wargoal_focus
+				target = MOC
+			}
 		}
 	}
 
@@ -3668,6 +3698,7 @@ focus_tree = {
 		prerequisite = { focus = lth_preemptivemeasures }
 		completion_reward = {
 			# Get event on what to do with durins bane
+			country_event = lothlorien.21
 		}
 	}
 
@@ -3699,7 +3730,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thefortressofdolguldur }
 		completion_reward = {
-			# Help mirkwood with DGU
+			# If DGU is released: send MIR an event proposing a joint war declaration
+			# If DGU is not released yet: Send MIR an event that increases compliance
 		}
 	}
 
@@ -3715,7 +3747,12 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thefortressofdolguldur }
 		completion_reward = {
+			# NOTE: This should not be doable if MIR accepts the joint war offer
 			# Gainw argoal on DGU
+			create_wargoal = {
+				type = puppet_wargoal_focus
+				target = DGU
+			}
 		}
 	}
 
