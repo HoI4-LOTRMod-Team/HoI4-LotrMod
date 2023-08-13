@@ -666,86 +666,6 @@ country_event = {
 	}
 }
 
-# elrosofnumenor - event to gondor
-country_event = {
-	id = lothlorien.14
-	title = lothlorien.14.t
-	desc = lothlorien.14.d
-	fire_only_once = yes
-
-	is_triggered_only = yes
-
-	# Remind them of the great warriors the numenorians were
-	option = {
-		ai_chance = {
-			base = 1
-		}
-		name = lothlorien.14.a
-
-		# Increase half-elf army xp
-
-		set_global_flag = {
-			flag = lothlorien_14_response_a
-			days = 60
-		}
-
-		LTH = { country_event = { id = lothlorien.15 days = 7 } }
-	}
-
-	# Give general support
-	option = {
-		ai_chance = {
-			base = 1
-		}
-		name = lothlorien.14.b
-
-		# Give PP
-
-		set_global_flag = {
-			flag = lothlorien_14_response_b
-			days = 60
-		}
-
-		LTH = { country_event = { id = lothlorien.15 days = 7 } }
-	}
-}
-
-# elrosofnumenor - event to gondor - response
-country_event = {
-	id = lothlorien.15
-	title = lothlorien.15.t
-	desc = lothlorien.15.d
-	fire_only_once = yes
-
-	is_triggered_only = yes
-
-	# Find an old tome of war-stories and send it to them
-	option = {
-		ai_chance = {
-			base = 1
-		}
-		trigger = {
-			has_global_flag = lothlorien_14_response_a
-		}
-		name = lothlorien.15.a
-
-		# Increase half-elf army xp
-	}
-
-	# Give their messengers common curesies, then send them back
-	option = {
-		ai_chance = {
-			base = 1
-		}
-		trigger = {
-			has_global_flag = lothlorien_14_response_b
-		}
-		name = lothlorien.15.b
-
-		# Give PP
-	}
-}
-
 # elrondtheperedhil - event to rivendell
 country_event = {
 	id = lothlorien.16
@@ -823,6 +743,67 @@ country_event = {
 		name = lothlorien.17.b
 
 		# Increase army xp bonus
+	}
+}
+
+# maintain stability in the west event
+country_event = {
+	id = lothlorien.18
+	title = lothlorien.18.t
+	desc = lothlorien.18.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# Stability is imperative, guarantee everyone
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		name = lothlorien.18.a
+
+		every_country = {
+			limit = {
+				is_men = yes
+				NOT = { tag = NEP }
+				NOT = { belligerent > 0.45 }
+				NOT = { revolutionary > 0.45 }
+				NOT = { has_government = belligerent }
+				NOT = { has_government = revolutionary }
+				NOT = { is_in_faction = yes }
+				NOT = { is_puppet = yes }
+			}
+			LTH = { give_guarantee = PREV }
+		}
+	}
+
+	# opinion is enough
+	option = {
+		ai_chance = {
+			base = 3
+		}
+		name = lothlorien.18.b
+
+		every_country = {
+			limit = {
+				is_men = yes
+				NOT = { tag = NEP }
+				NOT = { belligerent > 0.45 }
+				NOT = { revolutionary > 0.45 }
+				NOT = { has_government = belligerent }
+				NOT = { has_government = revolutionary }
+				NOT = { is_in_faction = yes }
+				NOT = { is_puppet = yes }
+			}
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_increase
+			}
+		}
 	}
 }
 
