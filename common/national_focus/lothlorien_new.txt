@@ -1,4 +1,5 @@
 focus_tree = {
+	id = lothlorien
 	country = {
 		factor=0
 
@@ -1144,7 +1145,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_guardiansoftheriveranduin }
 		completion_reward = {
-			# TODO
+			# Lower the chances of orc raids from Dol Guldur succeeding
+			# (Taken care of automatically in the raid decision
 		}
 	}
 
@@ -3585,6 +3587,7 @@ focus_tree = {
 		prerequisite = { focus = lth_territorialadministration  }
 		completion_reward = {
 			lth_lower_isolationist_reservations = yes
+			add_political_power = 100
 		}
 	}
 
@@ -3601,6 +3604,18 @@ focus_tree = {
 		prerequisite = { focus = lth_preemptivemeasures }
 		completion_reward = {
 			# build new supply base to anduin and stuff
+			build_railway = {
+				level = 2
+				path = { 2211 4619 2089 }
+			}
+			76 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 2089
+				}
+			}
 		}
 	}
 
@@ -3615,8 +3630,10 @@ focus_tree = {
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_valesofanduin }
+		mutually_exclusive = { focus = lth_agestureofgoodwill }
 		completion_reward = {
 			# Offer anduin puppetry
+			VAL = { country_event = { id = lothlorien.28 days = 3 } }
 		}
 	}
 
@@ -3633,6 +3650,10 @@ focus_tree = {
 		prerequisite = { focus = lth_amostgenerousoffer }
 		completion_reward = {
 			# Gain wargoal if they decline
+			create_wargoal = {
+				target = VAL
+				type = puppet_wargoal_focus
+			}
 		}
 	}
 
@@ -3647,8 +3668,10 @@ focus_tree = {
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_valesofanduin }
+		mutually_exclusive = { focus = lth_amostgenerousoffer }
 		completion_reward = {
 			# Get event to choose what to send anduin
+			country_event = lothlorien.30
 		}
 	}
 
@@ -3665,11 +3688,97 @@ focus_tree = {
 		prerequisite = { focus = lth_agestureofgoodwill }
 		completion_reward = {
 			# Better relations with anduin
+			if = {
+				limit = { has_country_flag = lth_anduin_gift_guarantee }
+				add_opinion_modifier = {
+					target = VAL
+					modifier = large_increase
+				}
+				army_experience = 100
+				random_state = {
+					add_extra_state_shared_building_slots = 3
+					add_building_construction = {
+						type = industrial_complex
+						level = 3
+					}
+				}
+				VAL = {
+					add_opinion_modifier = {
+						target = LTH
+						modifier = large_increase
+					}
+					army_experience = 100
+					random_state = {
+						add_extra_state_shared_building_slots = 3
+						add_building_construction = {
+							type = industrial_complex
+							level = 3
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = { has_country_flag = lth_anduin_gift_equipment }
+				add_opinion_modifier = {
+					target = VAL
+					modifier = medium_increase
+				}
+				army_experience = 50
+				random_state = {
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = {
+						type = industrial_complex
+						level = 2
+					}
+				}
+				VAL = {
+					add_opinion_modifier = {
+						target = LTH
+						modifier = medium_increase
+					}
+					army_experience = 50
+					random_state = {
+						add_extra_state_shared_building_slots = 2
+						add_building_construction = {
+							type = industrial_complex
+							level = 2
+						}
+					}
+				}
+			}
+			else = {
+				add_opinion_modifier = {
+					target = VAL
+					modifier = small_increase
+				}
+				army_experience = 25
+				random_state = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+					}
+				}
+				VAL = {
+					add_opinion_modifier = {
+						target = LTH
+						modifier = small_increase
+					}
+					army_experience = 25
+					random_state = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = industrial_complex
+							level = 1
+						}
+					}
+				}
+			}
 		}
 	}
 
 	focus = {
-		id = lthh_theminesofmoria
+		id = lth_theminesofmoria
 		icon = GFX_goal_lthh_theminesofmoria
 		
 		relative_position_id = lth_preemptivemeasures
@@ -3681,6 +3790,18 @@ focus_tree = {
 		prerequisite = { focus = lth_preemptivemeasures }
 		completion_reward = {
 			# build new supply base to moria and stuff
+			# if MOA exists: choose if we want to help MOA
+			160 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 6252
+				}
+			}
+
+			# Slightly lowers the chances of orc raids from MOC succeeding
+			# (Taken care of automatically in the raid decision)
 		}
 	}
 
@@ -3733,12 +3854,15 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_preemptivemeasures focus = lth_guardiansoftheriveranduin }
 		completion_reward = {
-			# TODO
+			# Slightly lowers the chances of orc raids from Dol Guldur succeeding
+			# (Taken care of automatically in the raid decision)
+
+			# TODO: Something else
 		}
 	}
 
 	focus = {
-		id = lth_cooperatewithmirkwood
+		id = lth_helpmirkwoodwithcontainment
 		icon = GFX_goal_lth_cooperatewithmirkwood
 		
 		relative_position_id = lth_thefortressofdolguldur
@@ -3749,13 +3873,22 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thefortressofdolguldur }
 		completion_reward = {
-			# If DGU is released: send MIR an event proposing a joint war declaration
-			# If DGU is not released yet: Send MIR an event that increases compliance
+			# Can only be taken whilst DGU isn't released yet
+
+			# Send Mirkwood an event that increases compliance and lowers resistance in DGU
+			MIR = {
+				country_event = lothlorien.23
+
+				add_opinion_modifier = {
+    				target = LTH
+					modifier = medium_increase
+				}
+			}
 		}
 	}
 
 	focus = {
-		id = lth_seizethefortress
+		id = lth_forcetheissue
 		icon = GFX_goal_lth_seizethefortress
 		
 		relative_position_id = lth_thefortressofdolguldur
@@ -3766,12 +3899,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thefortressofdolguldur }
 		completion_reward = {
-			# NOTE: This should not be doable if MIR accepts the joint war offer
-			# Gainw argoal on DGU
-			create_wargoal = {
-				type = puppet_wargoal_focus
-				target = DGU
-			}
+			# Choose one of three options to offer Mirkwood
+			country_event = lothlorien.24
 		}
 	}
 
@@ -3787,6 +3916,7 @@ focus_tree = {
 		prerequisite = { }
 		completion_reward = {
 			# Unlock access to the ring mechanic decisions
+			set_country_flag = lth_ring_mechanic_unlocked
 		}
 	}
 
@@ -3802,7 +3932,10 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_theonering }
 		completion_reward = {
+			# TODO: Only available before fellowship reaches rivendell
+
 			# Send RIV request for seat
+			RIV = { country_event = lothlorien.27 }
 		}
 	}
 
@@ -3818,7 +3951,7 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_theonering }
 		completion_reward = {
-			# Autocomplete and get ring
+			# TODO: Autocomplete when we get the ring
 		}
 	}
 
@@ -3850,7 +3983,7 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_theonering }
 		completion_reward = {
-			# Autocomplete when you help
+			# TODO: Autocomplete when you help
 		}
 	}
 
@@ -3930,6 +4063,7 @@ focus_tree = {
 		prerequisite = { focus = lth_echoesoftheeldendays }
 		completion_reward = {
 			# Add research slot
+			add_research_slot = 1
 		}
 	}
 
