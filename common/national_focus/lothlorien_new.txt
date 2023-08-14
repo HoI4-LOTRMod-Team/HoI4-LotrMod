@@ -3297,7 +3297,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thereawakening focus = lth_celeborngaladrielaccord }
 		completion_reward = {
-			# TODO
+			# Unlocks "Elven Imperial Rule" Occupation law
+			# Automatically done through focus and triggers
 		}
 	}
 
@@ -3313,7 +3314,21 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_atasteofempire }
 		completion_reward = {
-			# TODO
+			army_experience = 100
+			# Every unit leader of skill level 1 will be dismissed
+			every_unit_leader = {
+				limit = {
+					check_variable = { skill_level < 2 }
+				}
+				retire = yes
+			}
+			# All other unit leaders gain an additional skill level
+			every_unit_leader = {
+				limit = {
+					check_variable = { skill_level > 1 }
+				}
+				add_skill_level = 1
+			}
 		}
 	}
 
@@ -3329,7 +3344,10 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_atasteofempire }
 		completion_reward = {
-			# TODO
+			# Give targeted modifer against some realms of men
+			war_support_factor = 0.2
+			add_threat = 0.15
+			add_idea = LTH_tha_fate_of_mortals
 		}
 	}
 
@@ -3346,6 +3364,13 @@ focus_tree = {
 		prerequisite = { focus = lth_thefateofmortals }
 		completion_reward = {
 			# Send events to dwarves
+			every_country = {
+				limit = {
+					is_dwarves = yes
+					ic_ratio = { tag = THIS ratio < 1.3 }
+				}
+				country_event = lothlorien.31
+			}
 		}
 	}
 
@@ -3361,7 +3386,18 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thefateofmortals }
 		completion_reward = {
-			# Wargoals on dwarves
+			# Wargoals on dwarves who declined
+			# Send events to dwarves
+			every_country = {
+				limit = {
+					is_dwarves = yes
+					has_country_flag = lth_refused_subjugation
+				}
+				create_wargoal = {
+					target = THIS
+					type = annex_everything
+				}
+			}
 		}
 	}
 
@@ -3377,7 +3413,14 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thefateofmortals }
 		completion_reward = {
-			# Send events to men
+			# Send events to men whith less factories
+			every_country = {
+				limit = {
+					is_men = yes
+					ic_ratio = { tag = THIS ratio < 1.3 }
+				}
+				country_event = lothlorien.31
+			}
 		}
 	}
 
@@ -3393,7 +3436,17 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thefateofmortals }
 		completion_reward = {
-			# Wargoals on men
+			# Wargoals on men who declined
+			every_country = {
+				limit = {
+					is_men = yes
+					has_country_flag = lth_refused_subjugation
+				}
+				create_wargoal = {
+					target = THIS
+					type = annex_everything
+				}
+			}
 		}
 	}
 
@@ -3409,7 +3462,17 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_atasteofempire }
 		completion_reward = {
-			# TODO
+			# Add collaboration for all elven states
+			every_country = {
+				limit = {
+					is_elves = yes
+					NOT = { tag = ROOT }
+				}
+				add_collaboration = {
+    				target = THIS
+    				value = 0.25
+				}
+			}
 		}
 	}
 
@@ -3419,13 +3482,16 @@ focus_tree = {
 		
 		relative_position_id = lth_safeguardtheelves
 		x =-1
-		y =1
+		y =2
 
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_safeguardtheelves }
 		completion_reward = {
 			# Event to rivendell
+			RIV = {
+				country_event = lothlorien.33
+			}
 		}
 	}
 	
@@ -3435,13 +3501,16 @@ focus_tree = {
 		
 		relative_position_id = lth_safeguardtheelves
 		x =0
-		y =2
+		y =1
 
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_safeguardtheelves }
 		completion_reward = {
 			# Event to mirkwood
+			MIR = {
+				country_event = lothlorien.33
+			}
 		}
 	}
 
@@ -3451,13 +3520,16 @@ focus_tree = {
 		
 		relative_position_id = lth_safeguardtheelves
 		x =1
-		y =1
+		y =2
 
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_safeguardtheelves }
 		completion_reward = {
 			# Event to lindon
+			LIN = {
+				country_event = lothlorien.33
+			}
 		}
 	}
 
@@ -3474,6 +3546,16 @@ focus_tree = {
 		prerequisite = { focus = lth_turnlindon focus = lth_turnmirkwood focus = lth_turnrivendell }
 		completion_reward = {
 			# Get wargoals on all thos who declined
+			every_country = {
+				limit = {
+					is_elves = yes
+					has_country_flag = lth_refused_subjugation
+				}
+				create_wargoal = {
+					target = THIS
+					type = puppet_wargoal_focus
+				}
+			}
 		}
 	}
 
