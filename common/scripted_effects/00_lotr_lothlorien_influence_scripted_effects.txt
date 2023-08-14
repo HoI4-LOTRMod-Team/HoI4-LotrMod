@@ -125,6 +125,43 @@ lthi_update_values = {
 	# Set bonus orcs
 	set_variable = { lthi_orcs_bonus_strength = lthi_orcs_bonus_strength_base }
 	multiply_variable = { lthi_orcs_bonus_strength = lthi_orcs_influence_fraction }
+
+	# If we have the unity_in_division modifer we need to find out how "evened out" the influence is
+	# For this, we fing the highest and lowest values
+	if = {
+		limit = { has_dynamic_modifier = lth_unity_in_division_modifier }
+
+		add_to_temp_array = { temp_infl = modifier@nandor_influence }
+		add_to_temp_array = { temp_infl = modifier@noldor_influence }
+		add_to_temp_array = { temp_infl = modifier@sindar_influence }
+		add_to_temp_array = { temp_infl = modifier@halfelves_influence }
+		if = {
+			limit = { check_variable = { modifier@nonelves_influence > 0 } }
+			add_to_temp_array = { temp_infl = modifier@nonelves_influence }
+		}
+		if = {
+			limit = { check_variable = { modifier@orcs_influence > 0 } }
+			add_to_temp_array = { temp_infl = modifier@orcs_influence }
+		}
+
+		find_highest_in_array = {
+    		array = temp_infl
+			value = temp_highest_influence
+		}
+
+		find_lowest_in_array = {
+    		array = temp_infl
+			value = temp_lowest_influence
+		}
+
+		# We subtract from 1 the difference between highest and lowest
+		subtract_from_temp_variable = { temp_highest_influence = temp_lowest_influence }
+		set_variable = { lth_influence_spread_bonus = 1 }
+		subtract_from_variable = { lth_influence_spread_bonus = temp_highest_influence }
+
+		# Multiply with base value (maximum bonus)
+		multiply_variable = { lth_influence_spread_bonus = 0.15 }
+	}
 }
 
 
