@@ -3150,6 +3150,15 @@ focus_tree = {
 		prerequisite = { focus = lth_galadrielsfarewell }
 		completion_reward = {
 			# Cele becomes a field marshal
+			add_field_marshal_role = {
+				character = LTH_celeborn
+				traits={ inspirational_leader }
+				skill=5
+				attack_skill=4
+				defense_skill=4
+				planning_skill=3
+				logistics_skill=5
+			}
 		}
 	}
 
@@ -3166,6 +3175,11 @@ focus_tree = {
 		prerequisite = { focus = lth_celebornsreforms focus = lth_thesupremeleader }
 		completion_reward = {
 			# grant bonuses based on how evened out the influence among races is
+			# Max bonus is 15%
+			add_dynamic_modifier = {
+				modifier = lth_unity_in_division_modifier
+			}
+			lthi_update_values = yes
 		}
 	}
 
@@ -3234,6 +3248,9 @@ focus_tree = {
 		prerequisite = { focus = lth_theuntreadedpath }
 		completion_reward = {
 			# Extra traits for Cele
+			LTH_celeborn = {
+				add_trait = supreme_leader
+			}
 		}
 	}
 
@@ -3588,6 +3605,7 @@ focus_tree = {
 		prerequisite = { focus = lth_celebornsreforms }
 		completion_reward = {
 			# Remove decadent nobility idea
+			remove_idea = LTH_decadent_nobility
 		}
 	}
 
@@ -3603,7 +3621,14 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thedissolutionoftheelvennobility }
 		completion_reward = {
-			# TODO
+			# Add an idea that gives nice bonuses, but doesn't allow us to go to high taxes
+
+			if = {
+				limit = { has_idea = high_taxes }
+				add_idea = medium_taxes
+			}
+
+			add_idea = LTH_peasant_assembly
 		}
 	}
 
@@ -3619,8 +3644,22 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thedissolutionoftheelvennobility }
 		completion_reward = {
-			# build a bunch of food storage n shit
+			# Add food production
+			random_core_state = {
+				add_resource = {
+					type = oil
+					amount = 8
+				}
+			}
+			# build a bunch of fuel silos
+			random_core_state = {
+				add_building_construction = {
+					type = fuel_silo
+					level = 4
+				}
+			}
 			# + stability
+			add_stability = 0.15
 		}
 	}
 
@@ -3637,6 +3676,7 @@ focus_tree = {
 		prerequisite = { focus = lth_thedissolutionoftheelvennobility }
 		completion_reward = {
 			# better starter level for leaders and stuff
+			add_idea = LTH_merit_based_advancement
 		}
 	}
 
@@ -3652,7 +3692,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thedissolutionoftheelvennobility focus = lth_thepeasantassembly focus = lth_establishagraindole }
 		completion_reward = {
-			# TODO
+			# If we are on low/no taxes and low centralization or lower, We get a bunch of bonuses
+			add_dynamic_modifier = lead_by_example
 		}
 	}
 
