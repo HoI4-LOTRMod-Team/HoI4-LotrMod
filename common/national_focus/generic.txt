@@ -34,13 +34,6 @@ focus_tree = {
 		icon = GFX_goal_generic_national_unity #icon = GFX_goal_tripartite_pact
 		prerequisite = { focus = political_effort }
 		mutually_exclusive = { focus = liberty_ethos}
-		available = {
-			OR = {
-				has_government = belligerent
-				has_government = revolutionary
-				has_government = unaligned
-			}
-		}
 		relative_position_id = political_effort
 		x = -1
 		y = 1
@@ -51,16 +44,6 @@ focus_tree = {
 
 		ai_will_do = {
 			factor = 5
-			modifier = {
-				factor = 0
-				OR = {
-					AND = {
-						is_historical_focus_on = yes
-						has_government = unaligned
-					}
-					has_idea = unaligned_idea
-				}
-			}
 			modifier = {
 				factor = 0 #Making sure Dagorlad doesnt go down this path
 				original_tag = DAG
@@ -79,12 +62,6 @@ focus_tree = {
 		icon = GFX_goal_support_belligerent #icon = GFX_goal_tripartite_pact
 		prerequisite = { focus = collectivist_ethos }
 		mutually_exclusive = { focus = internationalism_focus }
-		available = {
-			OR = {
-				has_government = belligerent
-				has_government = unaligned
-			}
-		}
 		relative_position_id = collectivist_ethos
 		x = -2
 		y = 1
@@ -113,6 +90,7 @@ focus_tree = {
 
 		completion_reward = {
 			add_ideas = nationalism
+			set_country_flag = path_going_belligerent
 		}
 	}
 
@@ -124,6 +102,10 @@ focus_tree = {
 		x = 0
 		y = 1
 		cost = 10
+
+		available = {
+			has_government = belligerent
+		}
 
 		available_if_capitulated = yes
 
@@ -191,9 +173,6 @@ focus_tree = {
 		icon = GFX_goal_support_revolutionary #icon = GFX_goal_tripartite_pact
 		prerequisite = { focus = collectivist_ethos }
 		mutually_exclusive = { focus = nationalism_focus }
-		available = {
-			always = yes
-		}
 		relative_position_id = collectivist_ethos
 		x = 0
 		y = 1
@@ -222,6 +201,7 @@ focus_tree = {
 
 		completion_reward = {
 			add_ideas = internationalism
+			set_country_flag = path_going_revolutionary
 		}
 	}
 
@@ -233,6 +213,10 @@ focus_tree = {
 		x = 0
 		y = 1
 		cost = 10
+
+		available = {
+			has_government = revolutionary
+		}
 
 		available_if_capitulated = yes
 
@@ -324,12 +308,6 @@ focus_tree = {
 		icon = GFX_goal_support_cooperative
 		prerequisite = { focus = political_effort }
 		mutually_exclusive = { focus = collectivist_ethos }
-		available = {
-			OR = {
-				has_government = cooperative
-				has_government = unaligned
-			}
-		}
 		relative_position_id = political_effort
 		x = 1
 		y = 1
@@ -337,29 +315,8 @@ focus_tree = {
 
 		available_if_capitulated = yes
 
-
 		ai_will_do = {
-			factor = 15
-			modifier = {
-				add = 50
-				original_tag = LIN
-			}
-			modifier = {
-				factor = 0.1
-				any_neighbor_country = {
-					is_major = yes
-					OR = {
-						has_government = revolutionary
-						has_government = belligerent
-					}
-				}
-				NOT = {
-					any_neighbor_country = {
-						is_major = yes
-						has_government = cooperative
-					}
-				}
-			}
+			factor = 5
 			modifier = {
 				factor = 0 #Making sure Dagorlad doesnt go down this path
 				original_tag = DAG
@@ -367,8 +324,18 @@ focus_tree = {
 		}
 
 		completion_reward = {
-			add_ideas = liberty_ethos_focus
 			add_ideas = generic_cooperative
+			add_ideas = liberty_ethos_focus
+			hidden_effect = {
+				random_list = {
+					75 = {
+						set_country_flag = path_going_cooperative
+					}
+					25 = {
+						set_country_flag = path_going_unaligned
+					}
+				}
+			}
 		}
 	}
 
@@ -517,6 +484,12 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 
+		available = {
+			OR = {
+				has_government = cooperative
+				has_government = unaligned
+			}
+		}
 
 		ai_will_do = {
 			factor = 2
@@ -667,6 +640,17 @@ focus_tree = {
 		x = 6
 		y = 1
 		cost = 5
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 10
+				OR = {
+					has_completed_focus = collectivist_ethos
+					has_completed_focus = liberty_ethos
+				}
+			}
+		}
 
 		available_if_capitulated = yes
 
