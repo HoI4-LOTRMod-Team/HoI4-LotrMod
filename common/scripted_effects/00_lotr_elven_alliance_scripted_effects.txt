@@ -1,13 +1,26 @@
 
 
 elven_alliance_join = {
-	set_country_flag = is_elven_alliance_member
+	# Add all the existing ideas to the new member
+	ea_resolution_alliance_add_to_new_member = yes
+	ea_resolution_industry_add_to_new_member = yes
+	ea_resolution_expansion_add_to_new_member = yes
 
-	# TODO: Add all the ideas
+	ea_resolution_trade_add_to_new_member = yes
+	ea_resolution_peace_add_to_new_member = yes
+	ea_resolution_research_add_to_new_member = yes
+	
+	ea_resolution_hegemony_add_to_new_member = yes
+	ea_resolution_martial_add_to_new_member = yes
+	ea_resolution_union_add_to_new_member = yes
+
+	set_country_flag = is_elven_alliance_member
 }
 
 elven_alliance_leave = {
-	# TODO
+	clr = is_elven_alliance_member
+
+	# Ideas get removed automatically through the cancel trigger
 }
 
 
@@ -51,11 +64,25 @@ elven_alliance_abstain = {
 
 
 
-
+# The effect that the current vote will have
 elven_alliance_vote_effect = {
-	# Add tooltip if vote is currently passing or not
+	if = {
+		limit = { check_variable = { global.elven_alliance_members_in_favour^num > global.elven_alliance_members_against^num }
 
-	# Then comes the tooltip of the effect.
+		custom_effect_tooltip = elven_alliance_vote_passing_tt
+		elven_alliance_vote_passed_effect = yes
+	}
+	else = {
+		custom_effect_tooltip = elven_alliance_vote_failing_tt
+		effect_tooltip = {
+			elven_alliance_vote_passed_effect = yes
+		}
+	}
+}
+
+
+# The effect that the current vote will have if it passes
+elven_alliance_vote_passed_effect = {
 
 	if = {
 		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_alliance } }
@@ -81,209 +108,16 @@ elven_alliance_vote_effect = {
 		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_research } }
 		ea_resolution_research_effect = yes
 	}
-}
-
-
-ea_resolution_alliance_effect = {
-
-	if = {
-		limit = { has_idea = ea_resolution_alliance_idea_1 }
-		swap_ideas = { remove_idea = ea_resolution_alliance_idea_1 add_idea = ea_resolution_alliance_idea_2 }
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_union } }
+		ea_resolution_union_effect = yes
 	}
 	else_if = {
-		limit = { has_idea = ea_resolution_alliance_idea_2 }
-		swap_ideas = { remove_idea = ea_resolution_alliance_idea_2 add_idea = ea_resolution_alliance_idea_3 }
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_martial } }
+		ea_resolution_martial_effect = yes
 	}
 	else_if = {
-		limit = { has_idea = ea_resolution_alliance_idea_3 }
-		swap_ideas = { remove_idea = ea_resolution_alliance_idea_3 add_idea = ea_resolution_alliance_idea_4 }
-	}
-	else_if = {
-		limit = { has_idea = ea_resolution_alliance_idea_4 }
-		swap_ideas = { remove_idea = ea_resolution_alliance_idea_4 add_idea = ea_resolution_alliance_idea_5 }
-	}
-	else = {
-		add_ideas = ea_resolution_alliance_idea_1
-	}
-}
-
-ea_resolution_alliance_current_tteffect = {
-
-	custom_effect_tooltip = ea_resolution_current_tt
-
-	if = {
-		limit = { has_idea = ea_resolution_alliance_idea_1 }
-		show_ideas_tooltip = ea_resolution_alliance_idea_1
-	}
-	else_if = {
-		limit = { has_idea = ea_resolution_alliance_idea_2 }
-		show_ideas_tooltip = ea_resolution_alliance_idea_2
-	}
-	else_if = {
-		limit = { has_idea = ea_resolution_alliance_idea_3 }
-		show_ideas_tooltip = ea_resolution_alliance_idea_3
-	}
-	else_if = {
-		limit = { has_idea = ea_resolution_alliance_idea_4 }
-		show_ideas_tooltip = ea_resolution_alliance_idea_4
-	}
-	else = {
-		custom_effect_tooltip = ea_resolution_none_tt
-	}
-}
-
-ea_resolution_alliance_next_tteffect = {
-
-	custom_effect_tooltip = ea_resolution_next_tt
-
-	if = {
-		limit = { has_idea = ea_resolution_alliance_idea_1 }
-		show_ideas_tooltip = ea_resolution_alliance_idea_2
-	}
-	else_if = {
-		limit = { has_idea = ea_resolution_alliance_idea_2 }
-		show_ideas_tooltip = ea_resolution_alliance_idea_3
-	}
-	else_if = {
-		limit = { has_idea = ea_resolution_alliance_idea_3 }
-		show_ideas_tooltip = ea_resolution_alliance_idea_4
-	}
-	else = {
-		add_ideas = ea_resolution_alliance_idea_1
-	}
-}
-
-ea_resolution_industry_effect = {
-	
-	# upgrade this resolutions tier
-	add_to_variable = { global.ea_resolution_alliance_tier = 1 }
-
-	if = {
-		limit = { check_variable = { global.ea_resolution_alliance_tier = 1 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_alliance_tier = 2 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_alliance_tier = 3 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_alliance_tier = 4 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_alliance_tier = 5 } }
-		# TODO
-	}
-}
-
-ea_resolution_trade_effect = {
-	
-	# upgrade this resolutions tier
-	add_to_variable = { global.ea_resolution_trade_tier = 1 }
-
-	if = {
-		limit = { check_variable = { global.ea_resolution_trade_tier = 1 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_trade_tier = 2 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_trade_tier = 3 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_trade_tier = 4 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_trade_tier = 5 } }
-		# TODO
-	}
-}
-
-ea_resolution_expansion_effect = {
-	
-	# upgrade this resolutions tier
-	add_to_variable = { global.ea_resolution_expansion_tier = 1 }
-
-	if = {
-		limit = { check_variable = { global.ea_resolution_expansion_tier = 1 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_expansion_tier = 2 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_expansion_tier = 3 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_expansion_tier = 4 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_expansion_tier = 5 } }
-		# TODO
-	}
-}
-
-ea_resolution_peace_effect = {
-	
-	# upgrade this resolutions tier
-	add_to_variable = { global.ea_resolution_peace_tier = 1 }
-
-	if = {
-		limit = { check_variable = { global.ea_resolution_peace_tier = 1 } }
-		# Allow members that have declared a war of aggression against a member to be kicked
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_peace_tier = 2 } }
-		# give consumer goods, but increase tension to declare war
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_peace_tier = 3 } }
-		# Everyone guarantees each-other
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_peace_tier = 4 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_peace_tier = 5 } }
-		# TODO
-	}
-}
-
-ea_resolution_research_effect = {
-	
-	# upgrade this resolutions tier
-	add_to_variable = { global.ea_resolution_research_tier = 1 }
-
-	if = {
-		limit = { check_variable = { global.ea_resolution_research_tier = 1 } }
-		# Lower cost for research advisors
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_research_tier = 2 } }
-		# Give minor research boost
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_research_tier = 3 } }
-		# TODO
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_research_tier = 4 } }
-		# All members enter a research group
-	}
-	else_if = {
-		limit = { check_variable = { global.ea_resolution_research_tier = 5 } }
-		# TODO
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_hegemony } }
+		ea_resolution_hegemony_effect = yes
 	}
 }
