@@ -77,8 +77,8 @@ ea_resolution_$NAME$_next_tteffect = {
 # Adds the current $NAME$ resolution to a country
 ea_resolution_$NAME$_add_to_new_member = {
 
-	any_country = {
-		limit = { has_country_flag = is_elven_$NAME$_member }
+	random_country = {
+		limit = { has_country_flag = is_elven_alliance_member }
 
 		if = {
 			limit = { has_idea = ea_resolution_$NAME$_idea_1 }
