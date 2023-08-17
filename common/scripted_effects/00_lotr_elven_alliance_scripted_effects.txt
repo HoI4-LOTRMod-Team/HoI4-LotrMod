@@ -9,7 +9,7 @@ elven_alliance_join = {
 	ea_resolution_trade_add_to_new_member = yes
 	ea_resolution_peace_add_to_new_member = yes
 	ea_resolution_research_add_to_new_member = yes
-	
+
 	ea_resolution_hegemony_add_to_new_member = yes
 	ea_resolution_martial_add_to_new_member = yes
 	ea_resolution_union_add_to_new_member = yes
@@ -18,7 +18,7 @@ elven_alliance_join = {
 }
 
 elven_alliance_leave = {
-	clr = is_elven_alliance_member
+	clr_country_flag = is_elven_alliance_member
 
 	# Ideas get removed automatically through the cancel trigger
 }
@@ -67,7 +67,7 @@ elven_alliance_abstain = {
 # The effect that the current vote will have
 elven_alliance_vote_effect = {
 	if = {
-		limit = { check_variable = { global.elven_alliance_members_in_favour^num > global.elven_alliance_members_against^num }
+		limit = { check_variable = { global.elven_alliance_members_in_favour^num > global.elven_alliance_members_against^num } }
 
 		custom_effect_tooltip = elven_alliance_vote_passing_tt
 		elven_alliance_vote_passed_effect = yes
@@ -119,5 +119,127 @@ elven_alliance_vote_passed_effect = {
 	else_if = {
 		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_hegemony } }
 		ea_resolution_hegemony_effect = yes
+	}
+}
+
+
+elven_alliance_ai_vote = {
+	random_list = {
+		# Vote YES
+		10 = {
+			# If we're a puppet -> vote like our master
+			modifier = {
+				is_puppet = yes
+				THIS.overlord = { ea_is_voting_yes = yes }
+				factor = 30
+			}
+			# Hegemony leaders are always going to vote for themselves
+			modifier = {
+				ea_is_hegemony_leader = yes
+				global.ea_current_resolution = token:ea_resolution_hegemony
+				factor = 100
+			}
+			# You literally proposed it, now vote for it.
+			modifier = {
+				ea_is_resolution_proposer = yes
+				factor = 100
+			}
+			# Cooperative/Commie -> wants to expand more
+			modifier = {
+				OR = {
+					has_government = cooperative
+					has_government = revolutionary
+				}
+				global.ea_current_resolution = token:ea_resolution_expansion
+				factor = 2
+			}
+			# Federatives likes expanding even more
+			modifier = {
+				global.ea_current_resolution = token:ea_resolution_expansion
+				has_country_leader_ideology = federative
+				factor = 2
+			}
+			# Unaligned -> loves peace and stability
+			modifier = {
+				global.ea_current_resolution = token:ea_resolution_peace
+				has_government = unaligned
+				factor = 3
+			}
+			# Mercantile -> loves trade resolutions
+			modifier = {
+				global.ea_current_resolution = token:ea_resolution_trade
+				has_country_leader_ideology = mercantile
+				factor = 10
+			}
+			# Martial makes sense when at war
+			modifier = {
+				global.ea_current_resolution = token:ea_resolution_martial
+				has_war = yes
+				factor = 4
+			}
+			# Federatives LOVES unions
+			modifier = {
+				global.ea_current_resolution = token:ea_resolution_union
+				has_country_leader_ideology = federative
+				factor = 10
+			}
+			elven_alliance_vote_in_favour = yes
+		}
+
+		# VOTE NO
+		10 = {
+			# If we're a puppet -> vote like our master
+			modifier = {
+				is_puppet = yes
+				THIS.overlord = { ea_is_voting_no = yes }
+				factor = 30
+			}
+			# Belli/Unaligned -> Doesn't want to expand more
+			modifier = {
+				OR = {
+					has_government = unaligned
+					has_government = belligerent
+				}
+				global.ea_current_resolution = token:ea_resolution_expansion
+				factor = 2
+			}
+			# Already at war -> fuck peace
+			modifier = {
+				global.ea_current_resolution = token:ea_resolution_peace
+				has_war = yes
+				factor = 2
+			}
+			# Cooperative and commie doesnt like hegemony
+			modifier = {
+				global.ea_current_resolution = token:ea_resolution_hegemony
+				OR = {
+					has_government = cooperative
+					has_government = revolutionary
+				}
+				factor = 2
+			}
+			# Martial makes no sense when chilling at peace
+			modifier = {
+				global.ea_current_resolution = token:ea_resolution_martial
+				has_war = no
+				OR = {
+					has_government = cooperative
+					has_government = unaligned
+				}
+				factor = 2
+			}
+			elven_alliance_vote_against = yes
+		}
+
+		# ABSTAIN
+		30 = {
+			# If we're a puppet -> vote like our master
+			modifier = {
+				is_puppet = yes
+				THIS.overlord = { ea_is_abstaining = yes }
+				factor = 30
+			}
+			elven_alliance_abstain = yes
+		}
 	}
 }
