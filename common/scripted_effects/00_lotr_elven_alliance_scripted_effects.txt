@@ -31,11 +31,19 @@ elven_alliance_join = {
 	ea_resolution_martial_add_to_new_member = yes
 	ea_resolution_union_add_to_new_member = yes
 
+	add_to_array = {
+		global.elven_alliance_members = THIS
+	}
+
 	set_country_flag = is_elven_alliance_member
 }
 
 elven_alliance_leave = {
 	clr_country_flag = is_elven_alliance_member
+
+	remove_from_array = {
+		global.elven_alliance_members = THIS
+	}
 
 	# Ideas get removed automatically through the cancel trigger
 }
@@ -59,24 +67,48 @@ elven_alliance_clear_votes = {
 
 
 elven_alliance_vote_in_favour = {
-	remove_from_array = { global.elven_alliance_members_against = THIS }
-	remove_from_array = { global.elven_alliance_members_abstain = THIS }
-	remove_from_array = { global.elven_alliance_members_in_favour = THIS }
-	add_to_array = { global.elven_alliance_members_in_favour = THIS }
+	if = {
+		limit = { is_in_array = { global.elven_alliance_members_against = THIS } }
+		remove_from_array = { global.elven_alliance_members_against = THIS }
+	}
+	else_if = {
+		limit = { is_in_array = { global.elven_alliance_members_abstain = THIS } }
+		remove_from_array = { global.elven_alliance_members_abstain = THIS }
+	}
+	if = {
+		limit = { NOT = { is_in_array = { global.elven_alliance_members_in_favour = THIS } } }
+		add_to_array = { global.elven_alliance_members_in_favour = THIS }
+	}
 }
 
 elven_alliance_vote_against = {
-	remove_from_array = { global.elven_alliance_members_in_favour = THIS }
-	remove_from_array = { global.elven_alliance_members_abstain = THIS }
-	remove_from_array = { global.elven_alliance_members_against = THIS }
-	add_to_array = { global.elven_alliance_members_against = THIS }
+	if = {
+		limit = { is_in_array = { global.elven_alliance_members_in_favour = THIS } }
+		remove_from_array = { global.elven_alliance_members_in_favour = THIS }
+	}
+	else_if = {
+		limit = { is_in_array = { global.elven_alliance_members_abstain = THIS } }
+		remove_from_array = { global.elven_alliance_members_abstain = THIS }
+	}
+	if = {
+		limit = { NOT = { is_in_array = { global.elven_alliance_members_against = THIS } } }
+		add_to_array = { global.elven_alliance_members_against = THIS }
+	}
 }
 
 elven_alliance_abstain = {
-	remove_from_array = { global.elven_alliance_members_against = THIS }
-	remove_from_array = { global.elven_alliance_members_in_favour = THIS }
-	remove_from_array = { global.elven_alliance_members_abstain = THIS }
-	add_to_array = { global.elven_alliance_members_abstain = THIS }
+	if = {
+		limit = { is_in_array = { global.elven_alliance_members_against = THIS } }
+		remove_from_array = { global.elven_alliance_members_against = THIS }
+	}
+	else_if = {
+		limit = { is_in_array = { global.elven_alliance_members_in_favour = THIS } }
+		remove_from_array = { global.elven_alliance_members_in_favour = THIS }
+	}
+	if = {
+		limit = { NOT = { is_in_array = { global.elven_alliance_members_abstain = THIS } } }
+		add_to_array = { global.elven_alliance_members_abstain = THIS }
+	}
 }
 
 
