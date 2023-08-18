@@ -381,8 +381,16 @@ execute_fellowship_step = {
 	# Mount Doom: RING DESTROYED
 	else_if = {
 		limit = { check_variable = { global.fs_currentstate = 10 } }
-
-		MOR = { country_event = { days = 12 id = fs.106 } }
+		if = {
+			limit = { MOR = { has_government = belligerent } }
+			MOR = { country_event = { days = 12 id = fs.106 } }
+		}
+		else = {
+			set_global_flag = fs_ring_destroyed
+			ring_clear_pathstack = yes
+			ring_clear_fellowship_members = yes
+			news_event = { hours = 12 id = news.376 }
+		}
 	}
 	
 	# Move into next state if fellowship still exists
@@ -405,6 +413,9 @@ execute_fs_commence = {
 
 		# Set path to prelude
 		set_variable = { global.fs_path = 0 }
+
+		# Set mordor max attempts
+		set_variable = { global.ring_mor_max_attempts = 1 }
 
 		# Initial fellowship
 		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
