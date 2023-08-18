@@ -91,6 +91,7 @@ default = no
 	 available_if_capitulated = yes
 	 search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
 	 completion_reward = {
+		set_country_flag = path_going_revolutionary
 		add_political_power = -50
 		add_stability = -0.05
 		add_ideas = MOR_orc_resistance
@@ -1019,7 +1020,21 @@ focus = {
 focus = {
 	id = militaryeffort
 	icon = GFX_goal_generic_army_doctrines
-	ai_will_do = { factor = 3 }
+	ai_will_do = { 
+		factor = 3 
+		modifier = {
+			add = 10
+			if = {
+				limit = {
+					has_idea = MOR_regaining_power_0
+				}
+			} else_if = {
+				limit = {
+					has_idea = MOR_regaining_power_1
+				}
+			}
+		}
+	}
 	x = 58
 	y = 0
 	search_filters = { FOCUS_FILTER_ARMY_XP }
@@ -1782,6 +1797,7 @@ focus = {
 	 available_if_capitulated = yes
 	 search_filters = { FOCUS_FILTER_STABILITY }
 	 completion_reward = {
+		set_country_flag = path_going_belligerent
 		add_ideas = MOR_enslaved_nation add_threat = 2
 		mark_focus_tree_layout_dirty = yes
 		if = {
@@ -2231,6 +2247,9 @@ focus = {
 			}
 		}
 	}
+	bypass = {
+		has_war_with = MIR
+	}
 	prerequisite = { focus = MOR_anti_elves_pact_invite }
 	cost = 10
 	available_if_capitulated = yes
@@ -2278,6 +2297,9 @@ focus = {
 			}
 		}
 	}
+	bypass = {
+		has_war_with = LTH
+	}
 	prerequisite = { focus = MOR_anti_elves_pact_invite }
 	cost = 10
 	available_if_capitulated = yes
@@ -2324,6 +2346,9 @@ focus = {
 				original_tag = RIV
 			}
 		}
+	}
+	bypass = {
+		has_war_with = RIV 
 	}
 	prerequisite = { focus = MOR_together_we_attack_mirkwood focus = MOR_together_we_attack_lothlorien }
 	cost = 10
@@ -2484,6 +2509,9 @@ focus = {
 				type = annex_everything target = DGU
 			}
 		}
+		hidden_effect = {
+			add_named_threat = { threat = 3 name = "Dol Guldur seized by orcs" }
+		}
 	}
 }
 
@@ -2561,10 +2589,12 @@ focus = {
 	y = 1
 	prerequisite = { focus = reaforce_dol_guldur focus = annex_dol_guldur }
 	available = {
-		DAG = {
-			exists = yes
-			NOT = {
-				is_puppet_of = MOR
+		OR = {
+			DAG = {
+				exists = yes
+				NOT = {
+					is_in_faction_with = MOR
+				}
 			}
 		}
 		OR = {
@@ -2577,6 +2607,15 @@ focus = {
 			}
 		}
 		controls_state = 204
+	}
+	bypass = {
+		DAG = {
+			OR = {
+				exists = no
+				is_puppet_of = MOR
+				is_in_faction_with = MOR
+			}
+		}
 	}
 	cost = 10
 	search_filters = { FOCUS_FILTER_ANNEXATION }
@@ -2957,6 +2996,7 @@ focus = {
 	search_filters = { FOCUS_FILTER_ARMY_XP }
 	completion_reward = {
 		army_experience = 10
+		add_named_threat = { threat = 1 name = "Nazguls gathered once more in Minas Morgul" }
 		custom_effect_tooltip = MOR_gather_the_nazgul
 	}
  }
@@ -2995,6 +3035,7 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = {
 		retire_character = MOR_sauron_eye
+		add_named_threat = { threat = 25 name = "Sauron obtained the ring" }
 		create_country_leader = {
 			name = "Sauron"
 			picture = "gfx/leaders/MOR/Portrait_Mordor_Sauron.dds"
@@ -3146,19 +3187,11 @@ focus = {
 	id = demand_alliance
 	icon = GFX_goal_skull_treaty
 	ai_will_do = {
-		base = 0
-		modifier = {
-			#every_country = {
-			#	limit = {
-			#		has_government = belligerent
-			#		NOT = { is_in_faction_with = MOR }
-			#	}
-			#	add = 10
-			#}
-		}
+		base = 3
 	}
 	available = {
 		is_faction_leader = yes
+		threat > 0.5
 	}
 	x = -2
 	y = 1
@@ -3204,8 +3237,7 @@ focus = {
 		} else = {
 			204 = { add_compliance = 50 }
 		}
-		
-		add_threat = 1
+		add_named_threat = { threat = 3 name = "Mordor claimed Black Gate" }
 		GON = {
 			add_opinion_modifier = { target = MOR modifier = small_decrease }
 		}

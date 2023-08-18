@@ -138,6 +138,51 @@ ring_decisions = {
 		}
 	}
 
+	# Mordor is a special snowflake
+	launch_interception_attempt_MOR = {
+        icon = GFX_decision_infiltrate_state
+		cost = 150
+
+		allowed = {
+			tag = MOR
+		}
+
+        available = {
+        	custom_trigger_tooltip = {
+    			tooltip = fs_controls_currentstate_tt
+        		controls_state = var:global.fs_currentstate
+    		}
+
+    		has_global_flag = fs_arrived_in_rivendell
+
+        	NOT = { has_global_flag = fs_ring_seized }
+        	NOT = { has_global_flag = fs_ring_destroyed }
+
+        	check_variable = { army_leaders^num > 0 }
+
+			check_variable = { global.ring_mor_attempts_made < global.ring_mor_max_attempts }
+        }
+
+		visible = {
+			has_global_flag = fs_started
+			tag = MOR
+		}
+
+		ai_will_do = {
+			base = 200
+		}
+
+		complete_effect = {
+			add_to_variable = { global.ring_mor_attempts_made = 1 }
+
+			custom_effect_tooltip = ring_launch_interception_tt
+
+			custom_effect_tooltip = ring_launch_interception_mordor_tt
+
+			ring_open_interception_attempt_prompt = yes
+		}
+	}
+
 	help_the_fellowship = {
         icon = GFX_decision_generic_operation
 		cost = 150
