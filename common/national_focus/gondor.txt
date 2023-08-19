@@ -378,6 +378,15 @@ continuous_focus_position = { x = 50 y = 2000 }
 			has_global_flag = fs_fellowship_departed
 			has_completed_focus = restorethekingdom
 		}
+		bypass = {
+			OR = {
+				hidden_trigger = {
+					ring_aragorn_is_dead = yes	
+				}
+				has_global_flag = fs_ring_destroyed
+				has_global_flag = fs_ring_seized
+			}
+		}
  		x =5
  		y =3
  		mutually_exclusive = { }
@@ -652,13 +661,20 @@ continuous_focus_position = { x = 50 y = 2000 }
  		x =6
  		y =5
  		mutually_exclusive = { }
+		dynamic = yes
  		prerequisite = { focus = invitearagornintominastirith}
  		cost = 10
   	available_if_capitulated = yes
 		completion_reward = {
 			remove_ideas = GON_kingdom_without_king
-			news_event = { hours = 12 id = news.366 }
-			create_country_leader = { name = "King Aragorn" picture = "Portrait_Gondor_Aragorn.dds" expire = "3080.1.1" ideology = protective traits = { patriot_king GON_isildur_heir } }
+			if = {
+				limit = { NOT = { ring_aragorn_is_dead = yes } }
+				news_event = { hours = 12 id = news.366 }
+				create_country_leader = { name = "King Aragorn" picture = "Portrait_Gondor_Aragorn.dds" expire = "3080.1.1" ideology = protective traits = { patriot_king GON_isildur_heir } }
+			}
+			else = {
+				add_ideas = GON_restored_monarchy
+			}
 		}
  }
 
