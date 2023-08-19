@@ -1,0 +1,1043 @@
+belligerent_major_scorer = { #Finds biggest Fascist
+    # Valid example of mission scorer:
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				tag = MOR # If Mordor is still belligerent, they are something to be vary about - always 
+				factor = 2.0
+			}
+			modifier = { # Angmar and Isengard should have preference, but not as much as Germany  
+				OR = {
+					tag = ANG
+					tag = ISE
+				}  
+				factor = 1.3
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = belligerent }
+				factor = 0 
+			}
+		}
+	}
+}
+cooperative_major_scorer = { # Finds biggest Democratic Nation
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				tag = GON # If the Gon is still cooperative, they should have preference
+				factor = 2.0
+			}
+			modifier = { # Roh and Riv should have preference, but not as much as the UK   
+				OR = {
+					tag = ROH
+					tag = RIV
+				}
+				factor = 1.3
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = cooperative }
+				factor = 0 
+			}
+		}
+	}
+}
+
+revolutionary_major_scorer = { # Finds biggest Communist
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				tag = MOR # If the MOR is revolutionary, they are something to be vary about - always 
+				factor = 1.5
+			}
+			modifier = {
+				tag = GON # If the GON is revolutionary, they are something to be vary about - always 
+				factor = 1.5
+			}
+			modifier = { # MOC should have preference, but not as much as SOV  
+				tag = MOC
+				factor = 1.3
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = revolutionary }
+				factor = 0 
+			}
+		}
+	}
+}
+
+unaligned_major_scorer = { # Finds biggest Non-Aligned
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = unaligned }
+				factor = 0 
+			}
+		}
+	}
+}
+
+local_belligerent_country = {
+	# Valid example of mission scorer:
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			
+			modifier = {
+				is_major = yes
+				factor = 10
+			}
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}
+			# Add total number of Divisions 
+			modifier = {
+				always = yes
+				add = num_armies 
+			}
+			modifier = {
+				tag = GER # If Germany is still belligerent, they are something to be vary about - always 
+				factor = 1.8
+			}
+			# If neighbor, more scary
+			modifier = {
+				is_neighbor_of = FROM
+				factor = 2
+			}
+			# Same continent also more scary
+			modifier = {
+				OR = {
+					AND = {
+						THIS.capital_scope = { is_on_continent = eriador }
+						FROM.capital_scope = { is_on_continent = eriador }
+					}
+					AND = {
+						THIS.capital_scope = { is_on_continent = rhovanion }
+						FROM.capital_scope = { is_on_continent = rhovanion }
+					}
+					AND = {
+						OR = {
+							THIS.capital_scope = { is_on_continent = erebor }
+							THIS.capital_scope = { is_on_continent = erebor }
+						}
+						OR = {
+							FROM.capital_scope = { is_on_continent = rhun }
+							FROM.capital_scope = { is_on_continent = rhun }
+						}
+					}
+					AND = {
+						THIS.capital_scope = { is_on_continent = gondor }
+						FROM.capital_scope = { is_on_continent = gondor }
+					}
+					AND = {
+						THIS.capital_scope = { is_on_continent = rohan }
+						FROM.capital_scope = { is_on_continent = rohan }
+					}
+				}
+				factor = 3
+			}
+			modifier = {
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				NOT = { has_government = belligerent }
+				factor = 0 
+			}
+		}
+	}
+}
+
+belligerent_bully_scorer = { #Finds meanest belligerent
+    # Valid example of mission scorer:
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}
+			modifier = {
+				tag = MOR # If Mordor is still belligerent, they are something to be vary about - always 
+				factor = 1.5
+			}
+			modifier = { # ISE and ANG should have preference, but not as much as Germany  
+				OR = {
+					tag = ANG
+					tag = ISE
+				}  
+				factor = 1.3
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 100
+			}
+			modifier = {
+				NOT = { has_government = belligerent }
+				factor = 0 
+			}
+		}
+	}
+}
+cooperative_faction_leader_scorer = { # Finds biggest Democratic Nation
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				tag = GON # If the UK is still cooperative, they should have preference
+				factor = 1.5
+			}
+			modifier = { # France and USA should have preference, but not as much as the UK   
+				OR = {
+					tag = RIV
+					tag = ROH
+				}
+				factor = 1.2
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = no 
+				factor = 0.1
+			}
+			modifier = {
+				NOT = { has_government = cooperative }
+				factor = 0 
+			}
+		}
+	}
+}
+
+cooperative_sleeping_giant_scorer = { #Finds the least armed big cooperative country. 
+ 	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			# Add total number of Divisions 
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				always = yes 
+				add = -num_armies
+			}
+			modifier = {
+				always = yes 
+				add = -has_added_tension_amount
+			}        
+			modifier = {
+				tag = GON # If the US is still cooperative, they should have preference
+				factor = 1.5
+			}
+			modifier = { # France and UK should have preference, but not as much as the UK   
+				OR = {
+					tag = LTH
+					tag = RIV
+				}
+				factor = 1.2
+			}
+			modifier = {
+				is_major = yes
+				add = 30
+			}
+			modifier = {
+				is_faction_leader = yes 
+				factor = 0.5
+			}
+			modifier = {
+				NOT = { has_government = cooperative }
+				factor = 0 
+			}
+		}
+	}   
+}
+
+
+###################################################
+###########       BY CONTINTENT     ###############
+###################################################
+
+western_belligerent_major_scorer = { #Finds biggest Fascist in West
+    # Valid example of mission scorer:
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				tag = MOR # If Mordor is still belligerent, they are something to be vary about - always 
+				factor = 1.5
+			}
+			modifier = { # Isengard should have preference, but not as much as Germany  
+					tag = ISE
+				factor = 1.3
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = belligerent }
+				factor = 0 
+			}
+			modifier = {
+				NOT = { THIS.capital_scope = { is_on_continent = europe } }
+			}
+		}
+	}
+}
+
+western_cooperative_major_scorer = { # Finds biggest Democratic Nation in the west
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				tag = ENG # If the UK is still cooperative, they should have preference
+				factor = 1.5
+			}
+			modifier = { # France should have preference, but not as much as the UK   
+				tag = FRA				
+				factor = 1.3
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = cooperative }
+				factor = 0 
+			}
+			modifier = {
+				is_western = yes
+				factor = 0
+			}
+		}
+	}
+}
+
+western_revolutionary_major_scorer = { # Finds biggest Communist in the west
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				tag = SOV # If the Soviet Union is still revolutionary, they are something to be vary about - always 
+				factor = 1.5
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = revolutionary }
+				factor = 0 
+			}
+			modifier = {
+				is_western = yes
+				factor = 0 
+			}
+		}
+	}
+}
+
+western_unaligned_major_scorer = { # Finds biggest Non-Aligned in the west
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = unaligned }
+				factor = 0 
+			}
+			modifier = {
+				is_western = yes
+				factor = 0 
+			}
+		}
+	}
+}
+
+eastern_belligerent_major_scorer = { #Finds biggest Fascist in East
+    # Valid example of mission scorer:
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				tag = JAP # If Japan is still belligerent, they are something to be vary about - always 
+				factor = 1.5
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = belligerent }
+				factor = 0 
+			}
+			modifier = {
+				is_eastern = yes
+				factor = 0
+			}
+		}
+	}
+}
+
+eastern_cooperative_major_scorer = { # Finds biggest Democratic Nation in East
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = cooperative }
+				factor = 0 
+			}
+			modifier = {
+				is_eastern = yes
+				factor = 0
+			}
+		}
+	}
+}
+
+eastern_revolutionary_major_scorer = { # Finds biggest Communist in East
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				tag = PRC # If Communist China is still revolutionary, they should have preference 
+				factor = 1.5
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = revolutionary }
+				factor = 0 
+			}
+			modifier = {
+				is_eastern = yes
+				factor = 0
+			}
+		}
+	}
+}
+
+eastern_unaligned_major_scorer = { # Finds biggest Non-Aligned in East
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = unaligned }
+				factor = 0 
+			}
+			modifier = {
+				is_eastern = yes
+				factor = 0
+			}
+		}
+	}
+}
+
+central_belligerent_major_scorer = { #Finds biggest Fascist in the Center
+    # Valid example of mission scorer:
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				is_faction_leader = yes 
+				add = 50
+			}
+			modifier = {
+				NOT = { has_government = belligerent }
+				factor = 0 
+			}
+			modifier = {
+				is_center = yes
+				factor = 0
+			}
+		}
+	}
+}
+
+central_cooperative_major_scorer = { # Finds biggest Democratic Nation in the Center
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = { # If the US is still cooperative, it shuld prefer it 
+				tag = USA
+				factor = 1.5
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				NOT = { has_government = cooperative }
+				factor = 0 
+			}
+			modifier = {
+				is_center = yes
+				factor = 0 
+			}
+		}
+	}
+}
+
+central_revolutionary_major_scorer = { # Finds biggest Communist in the Center
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				NOT = { has_government = revolutionary }
+				factor = 0 
+			}
+			modifier = {
+				is_center = yes
+				factor = 0
+			}
+		}
+	}
+}
+
+central_unaligned_major_scorer = { # Finds biggest Non-Aligned in The Center
+	targets = {
+		# describe the target to consider
+		targets_dynamic = no
+		target_non_existing = no
+		#target_array = global.majors
+		target_array = global.countries
+		# MTTH like score description
+		# THIS is a target
+		# FROM is the initiator
+		score = {
+			base = 1
+			# Add tension added by country
+			modifier = {
+				always = yes 
+				add = has_added_tension_amount
+			}        
+			# Add total number of Divisions 
+			modifier = {
+				always = yes 
+				add = num_armies
+			}
+			# add factories
+			modifier = {
+				always = yes 
+				add = num_of_factories
+			}
+			modifier = {
+				is_major = yes
+				add = 100
+			}
+			modifier = {
+				NOT = { has_government = unaligned }
+				factor = 0 
+			}
+			modifier = {
+				is_center = yes
+				factor = 0
+			}
+		}
+	}
+}
