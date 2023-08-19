@@ -270,10 +270,30 @@ ring_fellowship_begin_move_to_next_state = {
 }
 
 
+ring_destroy_ring = {
+	# Remove BOPs
+	var:global.fs_ring_owner = {
+		if = {
+			limit = { has_power_balance = { id = ring_corruption_balance } }
+			remove_power_balance = { id = ring_corruption_balance }
+		}
+	}
+
+	if = {
+		limit = { MOR = { has_government = belligerent } }
+		MOR = { country_event = { days = 12 id = fs.106 } }
+	}
+
+	set_global_flag = fs_ring_destroyed
+	ring_clear_pathstack = yes
+	ring_clear_fellowship_members = yes
+	news_event = { hours = 12 id = news.376 }
+}
+
+
 # Runs every day. Pls keep as simple as possible for best performance
 # Note to self: Maybe make this a weekly update instead?
 ring_daily_update = {
-
 	if = {
 
 		# Update fs_days_left_in_state
@@ -925,6 +945,19 @@ ring_seize_ring = {
 		add_to_array = { global.fs_eventlog = token:fs_event_takes_the_ring }
 		ring_trim_eventlog = yes
 
+		# BOP-related stuff
+		# If there was a previous owner -> remove BOP
+		if = {
+			limit = { has_variable = global.fs_ring_owner }
+			var:global.fs_ring_owner = { remove_power_balance = { id = ring_corruption_balance } }
+		}
+		# Otherwise add BOP to new owner
+		else = {
+			set_power_balance = {
+				id = ring_corruption_balance
+				set_default = yes
+			}
+		}
 
 		set_global_flag = fs_ring_seized
 		var:global.fs_ring_owner = {
@@ -937,9 +970,6 @@ ring_seize_ring = {
 
 		ring_clear_fellowship_members = yes
 		ring_clear_pathstack = yes
-	}
-	THIS = {
-		country_event = fs.101
 	}
 }
 
