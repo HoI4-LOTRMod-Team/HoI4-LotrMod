@@ -29,6 +29,7 @@ ring_decisions = {
         }
 
 		visible = {
+			always = yes
 			has_global_flag = fs_started
 			is_ai = no
 
@@ -38,7 +39,7 @@ ring_decisions = {
 		}
 
 		ai_will_do = {
-			base = 0 # AI has a cheary decision that costs no pp, so no point in doing this one
+			base = 0 # AI has a cheaty decision that costs no pp, so no point in doing this one
 		}
 
 		fire_only_once = yes
@@ -270,135 +271,6 @@ ring_decisions = {
 		}
 	}
 
-	corrupt_ring_owner = {
-		icon = GFX_decision_sauron_eye
-
-		allowed = {
-			original_tag = MOR
-		}
-
-		visible = {
-			NOT = { has_completed_focus = resistsauron }
-			has_global_flag = fs_ring_seized
-			NOT = { ring_has_the_ring = yes }
-			NOT = { has_global_flag = fs_ring_destroyed }
-		}
-
-		available = {
-			NOT = { has_country_flag = fs_disable_corruption_decision }
-		}
-
-		cancel_trigger = {
-			hidden_trigger = {
-				ring_has_the_ring = yes
-			}
-		}
-
-		fire_only_once = no
-
-		cost = 50
-
-		days_remove = 120
-
-		complete_effect = {
-			var:global.fs_ring_owner = {
-				add_timed_idea = {
-		    		idea = MOR_sauron_influence
-		    		days = 120
-				}
-			}
-		}
-
-		# why not
-		ai_will_do = {
-			factor = 5
-		}
-	}
-
-	strike_a_deal_with_sauron = {
-		icon = GFX_decision_sauron_eye
-		cost = 150
-
-		ai_will_do = {
-			base = 0
-			modifier = {
-				add = 50
-				is_subject_of = MOR
-			}
-		}
-
-		visible = {
-			has_global_flag = fs_ring_seized
-			ring_has_the_ring = yes
-			NOT = { original_tag = MOR }
-		}
-
-        available = {
-        	
-        }
-
-		fire_only_once = yes
-
-		complete_effect = {
-			ring_rivendell_disapproves = yes
-
-			if = {
-				limit = { has_war_with = MOR }
-				white_peace = MOR
-			}
-
-			diplomatic_relation = {
-			    country = MOR
-			    relation = non_aggression_pact
-			    active = yes
-			}
-
-			custom_effect_tooltip = strike_a_deal_with_sauron_tt
-
-			hidden_effect = {
-				MOR = { ring_seize_ring = yes }
-			}
-		}
-	}
-
-	destroy_the_ring = {
-		icon = GFX_decision_ring
-		cost = 150
-
-		ai_will_do = {
-			base = 0
-		}
-
-		visible = {
-			has_global_flag = fs_ring_seized
-			ring_has_the_ring = yes
-			NOT = { original_tag = MOR }
-		}
-
-        available = {
-        	NOT = { is_subject_of = MOR }
-        	NOT = { is_in_faction_with = MOR }
-        	controls_province = 5097
-			NOT = { has_country_flag = fs_disable_ring_destruction }
-        }
-
-		fire_only_once = yes
-
-		complete_effect = {
-			if = {
-				limit = { has_idea = MOR_sauron_influence }
-
-				add_political_power = -300
-			}
-
-			ring_rivendell_approves = yes
-
-			remove_ideas = one_true_ring
-
-			MOR = { country_event = fs.106 }
-		}
-	}
-
 	gather_support_for_fellowship = {
 		allowed = {
 			tag = RIV
@@ -500,3 +372,391 @@ ring_decisions = {
 	    }
 	}
 }
+
+ring_corruption_decisions = {
+
+	ring_bop_casualties_MOR = {
+		icon = GFX_decision_sauron_eye
+
+		visible = {
+			NOT = { has_completed_focus = resistsauron }
+			has_global_flag = fs_ring_seized
+			NOT = { has_global_flag = fs_ring_destroyed }
+			NOT = { ring_has_the_ring = yes }
+		}
+
+		available = {
+			# target country has taken 15k casualties since last time we took this decision
+			var:global.fs_ring_owner = {
+				custom_trigger_tooltip = {
+					tooltip = ring_bop_casualties_mor_trigger_tt		
+					check_variable = {
+						ring_bop_casualties_diff > 15.0
+					}
+				}
+			}
+		}
+
+		cancel_trigger = {
+			hidden_trigger = {
+				ring_has_the_ring = yes
+			}
+		}
+
+		fire_only_once = no
+
+		cost = 50
+
+		days_remove = 30
+
+		complete_effect = {
+			var:global.fs_ring_owner = {
+				set_variable = { ring_bop_casualties = casualties_k }
+
+				add_power_balance_value = {
+					id = ring_corruption_balance
+					value = 0.1
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 50
+		}
+	}
+
+	ring_bop_stability_MOR = {
+		icon = GFX_decision_orcs_3
+
+		visible = {
+			NOT = { has_completed_focus = resistsauron }
+			has_global_flag = fs_ring_seized
+			NOT = { has_global_flag = fs_ring_destroyed }
+			NOT = { ring_has_the_ring = yes }
+		}
+
+		available = {
+			# target country has lost 10% stability
+			var:global.fs_ring_owner = {
+				custom_trigger_tooltip = {
+					tooltip = ring_bop_stability_mor_trigger_tt		
+					check_variable = {
+						ring_bop_stability_diff > 0.1
+					}
+				}
+			}
+		}
+
+		cancel_trigger = {
+			hidden_trigger = {
+				ring_has_the_ring = yes
+			}
+		}
+
+		fire_only_once = no
+
+		cost = 50
+
+		days_remove = 30
+
+		complete_effect = {
+			var:global.fs_ring_owner = {
+				set_variable = { ring_bop_stability = stability }
+
+				add_power_balance_value = {
+					id = ring_corruption_balance
+					value = 0.1
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 50
+		}
+	}
+
+	ring_bop_warsupport_MOR = {
+		icon = GFX_decision_orcs_2
+
+		visible = {
+			NOT = { has_completed_focus = resistsauron }
+			has_global_flag = fs_ring_seized
+			NOT = { has_global_flag = fs_ring_destroyed }
+			NOT = { ring_has_the_ring = yes }
+		}
+
+		available = {
+			# target country has lost 10% warsupport
+			var:global.fs_ring_owner = {
+				custom_trigger_tooltip = {
+					tooltip = ring_bop_warsupport_mor_trigger_tt		
+					check_variable = {
+						ring_bop_warsupport_diff > 0.1
+					}
+				}
+			}
+		}
+
+		cancel_trigger = {
+			hidden_trigger = {
+				ring_has_the_ring = yes
+			}
+		}
+
+		fire_only_once = no
+
+		cost = 50
+
+		days_remove = 30
+
+		complete_effect = {
+			var:global.fs_ring_owner = {
+				set_variable = { ring_bop_warsupport = has_war_support }
+
+				add_power_balance_value = {
+					id = ring_corruption_balance
+					value = 0.1
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 50
+		}
+	}
+}
+
+ring_corruption_decisions_bop = {
+
+	strike_a_deal_with_sauron = {
+		icon = GFX_decision_sauron_eye
+		cost = 150
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 50
+				is_subject_of = MOR
+			}
+		}
+
+		visible = {
+			has_global_flag = fs_ring_seized
+			ring_has_the_ring = yes
+			NOT = { original_tag = MOR }
+		}
+
+        available = {
+        	
+        }
+
+		fire_only_once = yes
+
+		complete_effect = {
+			ring_rivendell_disapproves = yes
+
+			if = {
+				limit = { has_war_with = MOR }
+				white_peace = MOR
+			}
+
+			diplomatic_relation = {
+			    country = MOR
+			    relation = non_aggression_pact
+			    active = yes
+			}
+
+			custom_effect_tooltip = strike_a_deal_with_sauron_tt
+
+			hidden_effect = {
+				MOR = { ring_seize_ring = yes }
+			}
+		}
+	}
+
+	destroy_the_ring = {
+		icon = GFX_decision_ring
+		cost = 150
+
+		ai_will_do = {
+			base = 0
+		}
+
+		visible = {
+			has_global_flag = fs_ring_seized
+			ring_has_the_ring = yes
+			NOT = { original_tag = MOR }
+		}
+
+        available = {
+        	NOT = { is_subject_of = MOR }
+        	NOT = { is_in_faction_with = MOR }
+        	controls_province = 5097
+			NOT = { has_country_flag = fs_disable_ring_destruction }
+        }
+
+		fire_only_once = yes
+
+		complete_effect = {
+			if = {
+				limit = { has_idea = MOR_sauron_influence }
+
+				add_political_power = -300
+			}
+
+			ring_rivendell_approves = yes
+
+			remove_ideas = one_true_ring
+
+			MOR = { country_event = fs.106 }
+		}
+	}
+
+	ring_bop_casualties = {
+		icon = GFX_decision_generic_army_1
+
+		visible = {
+			has_global_flag = fs_ring_seized
+			NOT = { has_global_flag = fs_ring_destroyed }
+			ring_has_the_ring = yes
+			NOT = { tag = MOR }
+		}
+
+		available = {
+			# target country has taken 20k casualties since last time we took this decision
+			MOR = {
+				custom_trigger_tooltip = {
+					tooltip = ring_bop_casualties_trigger_tt		
+					check_variable = {
+						ring_bop_casualties_diff > 20.0
+					}
+				}
+			}
+		}
+
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { ring_has_the_ring = yes }
+			}
+		}
+
+		fire_only_once = no
+
+		cost = 50
+
+		days_remove = 30
+
+		complete_effect = {
+			MOR = {
+				set_variable = { ring_bop_casualties = casualties_k }
+			}
+			add_power_balance_value = {
+				id = ring_corruption_balance
+				value = 0.1
+			}
+		}
+
+		ai_will_do = {
+			factor = 50
+		}
+	}
+
+	ring_bop_stability = {
+		icon = GFX_decision_generic_5
+
+		visible = {
+			has_global_flag = fs_ring_seized
+			NOT = { has_global_flag = fs_ring_destroyed }
+			ring_has_the_ring = yes
+			NOT = { tag = MOR }
+		}
+
+		available = {
+			# target country has lost 10% stability
+			MOR = {
+				custom_trigger_tooltip = {
+					tooltip = ring_bop_stability_trigger_tt		
+					check_variable = {
+						ring_bop_stability_diff > 0.1
+					}
+				}
+			}
+		}
+
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { ring_has_the_ring = yes }
+			}
+		}
+
+		fire_only_once = no
+
+		cost = 50
+
+		days_remove = 30
+
+		complete_effect = {
+			MOR = {
+				set_variable = { ring_bop_stability = stability }
+			}
+			add_power_balance_value = {
+				id = ring_corruption_balance
+				value = 0.1
+			}
+		}
+
+		ai_will_do = {
+			factor = 50
+		}
+	}
+
+	ring_bop_warsupport = {
+		icon = GFX_decision_generic_army_3
+
+		visible = {
+			has_global_flag = fs_ring_seized
+			NOT = { has_global_flag = fs_ring_destroyed }
+			ring_has_the_ring = yes
+			NOT = { tag = MOR }
+		}
+
+		available = {
+			# target country has lost 10% warsupport
+			MOR = {
+				custom_trigger_tooltip = {
+					tooltip = ring_bop_warsupport_trigger_tt		
+					check_variable = {
+						ring_bop_warsupport_diff > 0.1
+					}
+				}
+			}
+		}
+
+		cancel_trigger = {
+			hidden_trigger = {
+				NOT = { ring_has_the_ring = yes }
+			}
+		}
+
+		fire_only_once = no
+
+		cost = 50
+
+		days_remove = 30
+
+		complete_effect = {
+			MOR = {
+				set_variable = { ring_bop_warsupport = has_war_support }
+			}
+			add_power_balance_value = {
+				id = ring_corruption_balance
+				value = 0.1
+			}
+		}
+
+		ai_will_do = {
+			factor = 50
+		}
+	}
+}
+

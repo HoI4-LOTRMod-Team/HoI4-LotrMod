@@ -291,11 +291,49 @@ ring_destroy_ring = {
 }
 
 
+# Update variables used for the ring corruption BOP
+ring_update_bop_values = {
+	if = {
+		limit = { NOT = { has_variable = ring_bop_casualties } }
+		set_variable = { ring_bop_casualties = casualties_k }
+	}
+	set_variable = { ring_bop_casualties_diff = casualties_k }
+	subtract_from_variable = { ring_bop_casualties_diff = ring_bop_casualties }
+
+	if = {
+		limit = { NOT = { has_variable = ring_bop_stability } }
+		set_variable = { ring_bop_stability = stability }
+	}
+	set_variable = { ring_bop_stability_diff = stability }
+	subtract_from_variable = { ring_bop_stability_diff = ring_bop_stability }
+
+	if = {
+		limit = { NOT = { has_variable = ring_bop_warsupport } }
+		set_variable = { ring_bop_warsupport = has_war_support }
+	}
+	set_variable = { ring_bop_warsupport_diff = has_war_support }
+	subtract_from_variable = { ring_bop_warsupport_diff = ring_bop_warsupport }
+}
+
+
 # Runs every day. Pls keep as simple as possible for best performance
 # Note to self: Maybe make this a weekly update instead?
 ring_daily_update = {
 	if = {
+		limit = {
+			has_global_flag = fs_ring_seized
+			NOT = { has_global_flag = fs_ring_destroyed }
+			var:global.fs_ring_owner = { NOT = { tag = MOR } }
+		}
+		var:global.fs_ring_owner = {
+			ring_update_bop_values = yes
+		}
+		MOR = {
+			ring_update_bop_values = yes
+		}
+	}
 
+	if = {
 		# Update fs_days_left_in_state
 		limit = { check_variable = { global.fs_days_left_in_state > 0 } }
 		subtract_from_variable = { global.fs_days_left_in_state = 1 }
@@ -957,6 +995,10 @@ ring_seize_ring = {
 				id = ring_corruption_balance
 				set_default = yes
 			}
+		}
+		ring_update_bop_values = yes
+		MOR = {
+			ring_update_bop_values = yes
 		}
 
 		set_global_flag = fs_ring_seized
