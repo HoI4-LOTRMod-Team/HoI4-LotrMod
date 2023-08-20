@@ -38,9 +38,14 @@ mirror_end_storyline = {
 		limit = { has_country_flag = m_storyline_illness }
 		set_country_flag = m_storyline_illness_completed
 	}
+	if = {
+		limit = { has_country_flag = m_storyline_giant }
+		set_country_flag = m_storyline_giant_completed
+	}
 
 	clr_country_flag = m_storyline_ritual
 	clr_country_flag = m_storyline_illness
+	clr_country_flag = m_storyline_giant
 	clr_country_flag = m_has_storyline
 }
 
@@ -58,6 +63,7 @@ mirror_storyline_ritual_look = {
 				factor = 0
 				has_country_flag = m_storyline_ritual_has_given_name
 			}
+			set_country_flag = m_storyline_ritual_has_given_name
 			country_event = mirror.26
 		}
 		# Visions of rune
@@ -66,6 +72,7 @@ mirror_storyline_ritual_look = {
 				factor = 0
 				has_country_flag = m_storyline_ritual_rune_found
 			}
+			set_country_flag = m_storyline_ritual_rune_found
 			country_event = mirror.34
 		}
 		# Visions of ancient ritual
@@ -74,6 +81,7 @@ mirror_storyline_ritual_look = {
 				factor = 0
 				has_country_flag = m_storyline_ritual_knows_about_ritual
 			}
+			set_country_flag = m_storyline_ritual_knows_about_ritual
 			country_event = mirror.25
 		}
 	}
@@ -118,7 +126,7 @@ mirror_storyline_illness_look = {
 
 	random_list = {
 		# Run some generic event, but secretely begin illness storyline
-		20 = {
+		30 = {
 			modifier = {
 				factor = 0
 				has_country_flag = m_storyline_illness_started
@@ -143,6 +151,7 @@ mirror_storyline_illness_look = {
 				factor = 0
 				has_country_flag = m_storyline_illness_knows_about_rift
 			}
+			set_country_flag = m_storyline_illness_knows_about_rift
 			country_event = mirror.23
 		}
 	}
@@ -150,20 +159,58 @@ mirror_storyline_illness_look = {
 
 mirror_begin_illness_storyline = {
 	set_country_flag = m_has_storyline
-	set_country_flag = m_storyline_ritual
+	set_country_flag = m_storyline_illness
+}
 
-	random_unit_leader = {
-		set_variable = { m_storyline_ritual_spoken_name1 = THIS }
+mirror_storyline_giant_look = {
+	if = {
+		limit = { NOT = { has_country_flag = m_storyline_giant_completed } }
+		mirror_begin_giant_storyline = yes
 	}
-	random_unit_leader = {
-		limit = { NOT = { is_character = var:m_storyline_ritual_spoken_name1 } }
-		set_variable = { m_storyline_ritual_spoken_name2 = THIS }
-	}
-	random_unit_leader = {
-		limit = {
-			NOT = { is_character = var:m_storyline_ritual_spoken_name1 }
-			NOT = { is_character = var:m_storyline_ritual_spoken_name2 }
+
+	random_list = {
+		# Run some generic event, but secretely begin giant storyline
+		50 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_giant_started
+			}
+			set_country_flag = m_storyline_giant_started # only start this once
+			mirror_run_some_generic_shit_TODO = yes
+			# Scouts missing
+			country_event = { id = mirror.41 days = 60 random_days = 90 }
 		}
-		set_variable = { m_storyline_ritual_spoken_name3 = THIS }
+		# Visions of mound
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_giant_knows_about_mound
+			}
+			set_country_flag = m_storyline_giant_knows_about_mound
+			country_event = mirror.20
+		}
+		# Visions of giant
+		20 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_giant_knows_about_giant
+			}
+			set_country_flag = m_storyline_giant_knows_about_giant
+			country_event = mirror.21
+		}
+		# Visions of researcher
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_giant_knows_about_researcher
+			}
+			set_country_flag = m_storyline_giant_knows_about_researcher
+			country_event = mirror.22
+		}
 	}
+}
+
+mirror_begin_giant_storyline = {
+	set_country_flag = m_has_storyline
+	set_country_flag = m_storyline_giant
 }
