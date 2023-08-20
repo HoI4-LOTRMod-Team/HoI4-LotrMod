@@ -520,7 +520,20 @@ country_event = {
 	# It is this rift what is causing the trees to fade. We must seal it as soon as possible.
 	option = {
 		name = mirror.23.a
-		# TODO
+		trigger = {
+			NOT = { has_country_flag = m_storyline_illness_knows_about_historian }
+		}
+		set_country_flag = m_storyline_illness_knows_about_rift
+	}
+
+	# Ask historian
+	option = {
+		name = mirror.23.b
+		trigger = {
+			has_country_flag = m_storyline_illness_knows_about_historian
+		}
+		set_country_flag = m_storyline_illness_knows_about_rift
+		country_event = { id = mirror.39 days = 10 random_days = 10 }
 	}
 	
 }
@@ -538,7 +551,10 @@ country_event = {
 	# Seek out this historian. He may be able to help us.
 	option = {
 		name = mirror.24.a
-		# TODO
+		if = {
+			limit = { has_country_flag = m_storyline_illness_knows_about_rift }
+			hidden_effect = { country_event = { id = mirror.39 days = 10 random_days = 20 } }
+		}
 	}
 	
 }
@@ -556,13 +572,16 @@ country_event = {
 	# This ritual might be useful. Search the archives for information.
 	option = {
 		name = mirror.25.a
-		# TODO
+		hidden_effect = { country_event = { id = mirror.33 days = 90 random_days = 60 } }
+		add_timed_idea = { idea = minor_research_expense days = 60 }
+		custom_effect_tooltip = mirror.25.a_tt
+		set_country_flag = m_storyline_ritual_knows_about_ritual
 	}
 	
 	# What a waste of time.
 	option = {
 		name = mirror.25.b
-		# TODO
+		mirror_end_storyline = yes
 	}
 	
 
@@ -581,25 +600,31 @@ country_event = {
 	# Name1
 	option = {
 		name = mirror.26.a
-		# TODO
+		set_variable = { m_storyline_ritual_chosen = var:m_storyline_ritual_spoken_name1 }
+		hidden_effect = { country_event = { id = mirror.30 days = 1 } }
+		set_country_flag = m_storyline_ritual_has_given_name
 	}
 	
 	# Name2
 	option = {
 		name = mirror.26.b
-		# TODO
+		set_variable = { m_storyline_ritual_chosen = var:m_storyline_ritual_spoken_name2 }
+		hidden_effect = { country_event = { id = mirror.30 days = 1 } }
+		set_country_flag = m_storyline_ritual_has_given_name
 	}
 	
 	# Name3
 	option = {
 		name = mirror.26.c
-		# TODO
+		set_variable = { m_storyline_ritual_chosen = var:m_storyline_ritual_spoken_name3 }
+		hidden_effect = { country_event = { id = mirror.30 days = 1 } }
+		set_country_flag = m_storyline_ritual_has_given_name
 	}
 	
 	# We will name nobody.
 	option = {
 		name = mirror.26.d
-		# TODO
+		set_country_flag = m_storyline_ritual_has_given_name
 	}
 
 
@@ -673,7 +698,14 @@ country_event = {
 	# Strange.
 	option = {
 		name = mirror.30.a
-		# TODO
+		random_list = {
+			10 = {
+				hidden_effect = { country_event = { id = mirror.31 days = 30 random_days = 30 } }
+			}
+			10 = {
+				hidden_effect = { country_event = { id = mirror.32 days = 30 random_days = 30 } }
+			}
+		}
 	}
 	
 }
@@ -691,7 +723,9 @@ country_event = {
 	# It couldn't have been... the mirror?
 	option = {
 		name = mirror.31.a
-		# TODO
+		var:m_storyline_ritual_chosen = {
+			mirror_storyline_ritual_kill = yes
+		}
 	}
 	
 }
@@ -709,7 +743,9 @@ country_event = {
 	# The mirror's blessing.
 	option = {
 		name = mirror.32.a
-		# TODO
+		var:m_storyline_ritual_chosen = {
+			mirror_storyline_ritual_give_buff = yes
+		}
 	}
 	
 }
@@ -727,19 +763,30 @@ country_event = {
 	# Begin searching for this rune.
 	option = {
 		name = mirror.33.a
-		# TODO
+		trigger = {
+			NOT = { has_country_flag = m_storyline_ritual_rune_found }
+		}
+		hidden_effect = { country_event = { id = mirror.35 days = 90 random_days = 60 } }
+		add_timed_idea = { idea = minor_expense days = 60 }
+		custom_effect_tooltip = mirror.33.a_tt
+		set_country_flag = m_storyline_ritual_knows_about_rune
 	}
 
 	# We already have this rune. Let's start the ritual
 	option = {
 		name = mirror.33.b
-		# TODO
+		trigger = {
+			has_country_flag = m_storyline_ritual_rune_found
+		}
+		country_event = { id = mirror.36 days = 5 }
+		set_country_flag = m_storyline_ritual_knows_about_rune
 	}
 	
 	# We have no need of ancient rituals
 	option = {
 		name = mirror.33.c
-		# TODO
+		mirror_end_storyline = yes
+		set_country_flag = m_storyline_ritual_knows_about_rune
 	}
 	
 
@@ -758,13 +805,21 @@ country_event = {
 	# That's the rune we've been looking for.
 	option = {
 		name = mirror.34.a
-		# TODO
+		trigger = {
+			has_country_flag = m_storyline_ritual_knows_about_rune
+		}
+		set_country_flag = m_storyline_ritual_knows_about_rune
+		country_event = { id = mirror.35 days = 1 }
 	}
 	
 	# We should retrieve this rune. It could be of use.
 	option = {
 		name = mirror.34.b
-		# TODO
+		trigger = {
+			NOT = { has_country_flag = m_storyline_ritual_knows_about_rune }
+		}
+		set_country_flag = m_storyline_ritual_knows_about_rune
+		country_event = { id = mirror.35 days = 14 }
 	}
 	
 
@@ -779,11 +834,13 @@ country_event = {
 	picture = GFX_event_mirror
 
 	is_triggered_only = yes
+	fire_only_once = yes
 
 	# Great! Let's begin, then.
 	option = {
 		name = mirror.35.a
-		# TODO
+		country_event = { id = mirror.36 days = 14 }
+		set_country_flag = m_storyline_ritual_rune_found
 	}
 	
 }
@@ -801,29 +858,69 @@ country_event = {
 	# [Previously Chosen Guy .GetName]
 	option = {
 		name = mirror.36.a
-		# TODO
+		trigger = {
+			has_country_flag = m_storyline_ritual_chosen_buffed
+		}
+		random_list = {
+			50 = {
+				var:m_storyline_ritual_chosen = {
+					mirror_storyline_ritual_give_buff = yes
+				}
+			}
+			30 = {
+				var:m_storyline_ritual_chosen = {
+					mirror_storyline_ritual_kill = yes
+				}
+			}
+		}
+		mirror_end_storyline = yes
 	}
 	
-	# [Someone Else.GetName]
+	# Find someone else
 	option = {
 		name = mirror.36.b
-		# TODO
+		trigger = {
+			has_country_flag = m_storyline_ritual_chosen_buffed
+		}
+		random_unit_leader = {
+			limit = { NOT = { is_character = var:m_storyline_ritual_chosen } }
+			random_list = {
+				50 = {
+					mirror_storyline_ritual_give_buff = yes
+				}
+				30 = {
+					mirror_storyline_ritual_kill = yes
+				}
+			}
+		}
+		mirror_end_storyline = yes
 	}
 	
-	# [Someone Else.GetName]
+	# find a volunteer
 	option = {
 		name = mirror.36.c
-		# TODO
+		trigger = {
+			NOT = { has_country_flag = m_storyline_ritual_chosen_buffed }
+		}
+		random_unit_leader = {
+			limit = { NOT = { is_character = var:m_storyline_ritual_chosen } }
+			random_list = {
+				50 = {
+					mirror_storyline_ritual_give_buff = yes
+				}
+				10 = {
+					mirror_storyline_ritual_kill = yes
+				}
+			}
+		}
+		mirror_end_storyline = yes
 	}
 	
 	# On a second thought, this ritual is too dangerous.
 	option = {
 		name = mirror.36.d
-		# TODO
+		mirror_end_storyline = yes
 	}
-
-
-
 }
 
 # Fading of the Mallorn Trees
@@ -836,10 +933,16 @@ country_event = {
 
 	is_triggered_only = yes
 
+	trigger = {
+		NOT = { has_country_flag = m_storyline_illness_completed }
+	}
+
 	# We should consult the mirror on this.
 	option = {
 		name = mirror.37.a
-		# TODO
+		add_ideas = LTH_fading_trees
+		hidden_effect = { country_event = mirror.38 days = 90 random_days = 60 }
+		set_country_flag = m_storyline_illness_knows_about_illness
 	}
 	
 }
@@ -854,16 +957,32 @@ country_event = {
 
 	is_triggered_only = yes
 
+	trigger = {
+		NOT = { has_country_flag = m_storyline_illness_completed }
+	}
+
 	# It's the fading of the Mallorn trees. We need to seal the rift soon.
 	option = {
+		trigger = {
+			has_country_flag = m_storyline_illness_knows_about_rift
+		}
 		name = mirror.38.a
-		# TODO
+		swap_ideas = {
+			remove_idea = LTH_fading_trees
+			add_idea = LTH_fading_trees_2
+		}
 	}
 	
 	# This is beginning to be very serious. We should consult the mirror on this matter.
 	option = {
+		trigger = {
+			NOT = { has_country_flag = m_storyline_illness_knows_about_rift }
+		}
 		name = mirror.38.b
-		# TODO
+		swap_ideas = {
+			remove_idea = LTH_fading_trees
+			add_idea = LTH_fading_trees_2
+		}
 	}
 	
 
@@ -882,38 +1001,32 @@ country_event = {
 	# Sealing it is sufficient
 	option = {
 		name = mirror.39.a
-		# TODO
+		add_ideas = reclusive_historian_idea
+		if = {
+			limit = { has_idea = LTH_fading_trees_2 }
+			remove_ideas = LTH_fading_trees_2
+		}
+		if = {
+			limit = { has_idea = LTH_fading_trees }
+			remove_ideas = LTH_fading_trees
+		}
+		mirror_end_storyline = yes
 	}
 	
 	# We can never have enough protective enchantments.
 	option = {
 		name = mirror.39.b
-		# TODO
-	}
-	
-
-}
-
-# Sealing the rift
-country_event = {
-	id = mirror.40
-	title = mirror.40.t
-	desc = mirror.40.d
-
-	picture = GFX_event_mirror
-
-	is_triggered_only = yes
-
-	# Send word to Moria. Ask them for help.
-	option = {
-		name = mirror.40.a
-		# TODO
-	}
-	
-	# We will find a different way.
-	option = {
-		name = mirror.40.b
-		# TODO
+		add_political_power = -200
+		if = {
+			limit = { has_idea = LTH_fading_trees_2 }
+			remove_ideas = LTH_fading_trees_2
+		}
+		if = {
+			limit = { has_idea = LTH_fading_trees }
+			remove_ideas = LTH_fading_trees
+		}
+		add_ideas = LTH_fading_trees_protective_enchantment
+		mirror_end_storyline = yes
 	}
 	
 

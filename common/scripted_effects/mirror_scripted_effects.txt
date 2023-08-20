@@ -22,3 +22,148 @@ mirror_sample = {
 
 }
 
+
+mirror_run_some_generic_shit_TODO = {
+	# TODO TODO TODO This is used below
+}
+
+
+
+mirror_end_storyline = {
+	if = {
+		limit = { has_country_flag = m_storyline_ritual }
+		set_country_flag = m_storyline_ritual_completed
+	}
+	if = {
+		limit = { has_country_flag = m_storyline_illness }
+		set_country_flag = m_storyline_illness_completed
+	}
+
+	clr_country_flag = m_storyline_ritual
+	clr_country_flag = m_storyline_illness
+	clr_country_flag = m_has_storyline
+}
+
+
+mirror_storyline_ritual_look = {
+	if = {
+		limit = { NOT = { has_country_flag = m_storyline_ritual_completed } }
+		mirror_begin_ritual_storyline = yes
+	}
+
+	random_list = {
+		# Asks for a name
+		20 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_ritual_has_given_name
+			}
+			country_event = mirror.26
+		}
+		# Visions of rune
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_ritual_rune_found
+			}
+			country_event = mirror.34
+		}
+		# Visions of ancient ritual
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_ritual_knows_about_ritual
+			}
+			country_event = mirror.25
+		}
+	}
+}
+
+
+mirror_begin_ritual_storyline = {
+	set_country_flag = m_has_storyline
+	set_country_flag = m_storyline_ritual
+
+	random_unit_leader = {
+		set_variable = { m_storyline_ritual_spoken_name1 = THIS }
+	}
+	random_unit_leader = {
+		limit = { NOT = { is_character = var:m_storyline_ritual_spoken_name1 } }
+		set_variable = { m_storyline_ritual_spoken_name2 = THIS }
+	}
+	random_unit_leader = {
+		limit = {
+			NOT = { is_character = var:m_storyline_ritual_spoken_name1 }
+			NOT = { is_character = var:m_storyline_ritual_spoken_name2 }
+		}
+		set_variable = { m_storyline_ritual_spoken_name3 = THIS }
+	}
+}
+
+mirror_storyline_ritual_give_buff = {
+	# TODO
+	# NOTE: A lot of risk and cost incurred, this should be substantial.
+}
+
+mirror_storyline_ritual_kill = {
+	# TODO
+}
+
+
+mirror_storyline_illness_look = {
+	if = {
+		limit = { NOT = { has_country_flag = m_storyline_illness_completed } }
+		mirror_begin_illness_storyline = yes
+	}
+
+	random_list = {
+		# Run some generic event, but secretely begin illness storyline
+		20 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_illness_started
+			}
+			set_country_flag = m_storyline_illness_started # only start this once
+			mirror_run_some_generic_shit_TODO = yes
+			# Mallorn trees fading
+			country_event = { id = mirror.37 days = 60 random_days = 90 }
+		}
+		# Visions of historian
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_illness_knows_about_historian
+			}
+			set_country_flag = m_storyline_illness_knows_about_historian
+			country_event = mirror.24
+		}
+		# Visions of rift
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_illness_knows_about_rift
+			}
+			country_event = mirror.23
+		}
+	}
+}
+
+mirror_begin_illness_storyline = {
+	set_country_flag = m_has_storyline
+	set_country_flag = m_storyline_ritual
+
+	random_unit_leader = {
+		set_variable = { m_storyline_ritual_spoken_name1 = THIS }
+	}
+	random_unit_leader = {
+		limit = { NOT = { is_character = var:m_storyline_ritual_spoken_name1 } }
+		set_variable = { m_storyline_ritual_spoken_name2 = THIS }
+	}
+	random_unit_leader = {
+		limit = {
+			NOT = { is_character = var:m_storyline_ritual_spoken_name1 }
+			NOT = { is_character = var:m_storyline_ritual_spoken_name2 }
+		}
+		set_variable = { m_storyline_ritual_spoken_name3 = THIS }
+	}
+}
