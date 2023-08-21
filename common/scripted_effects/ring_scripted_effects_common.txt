@@ -22,6 +22,57 @@ ring_heal_fellowship = {
 	}
 }
 
+# Gives ringbearer 1 extra HP
+ring_bless_ringbearer = {
+	custom_effect_tooltip = ring_bless_ringbearer_tt
+
+	hidden_effect = {
+		SHI = {
+			add_to_variable = { global.fs_members^0.health = 1 }
+
+			add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_country_ringbearer_blessed_member }
+			ring_trim_eventlog = yes
+		}
+	}
+}
+
+# Reduces the health and dexterity of a random member
+ring_curse_random_fellowship_member = {
+	custom_effect_tooltip = ring_curse_random_fellowship_member_tt
+
+	hidden_effect = {
+		SHI = {
+			random_scope_in_array = {
+				array = global.fs_members
+				limit = {
+					check_variable = { defense_level > 1 }
+					check_variable = { logistics_level > 1 }
+				}
+				
+				THIS = { ring_curse_member = yes }
+			}
+		}
+	}
+}
+
+# Reduces the health and dexterity
+ring_curse_member = {
+	add_logistics = -1
+	add_defense = -1
+
+	if = {
+		limit = { check_variable = { health > 1 } }
+		subtract_from_variable = { health = 1 }
+	}
+
+	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_country_curse_fellowship_member }
+	ring_trim_eventlog = yes
+}
+
 
 # Gives a random fellowship member +2 hp and +2 attack
 ring_gear_up_random_member = {
@@ -966,6 +1017,35 @@ ring_interception_disengage_check = {
 				}
 			}
 		}
+	}
+}
+
+
+ring_increase_corruption = {
+	add_power_balance_value = {
+		id = ring_corruption_balance
+		value = 0.1
+	}
+}
+
+ring_increase_corruption_2 = {
+	add_power_balance_value = {
+		id = ring_corruption_balance
+		value = 0.2
+	}
+}
+
+ring_decrease_corruption = {
+	add_power_balance_value = {
+		id = ring_corruption_balance
+		value = 0.1
+	}
+}
+
+ring_decrease_corruption_2 = {
+	add_power_balance_value = {
+		id = ring_corruption_balance
+		value = 0.2
 	}
 }
 
