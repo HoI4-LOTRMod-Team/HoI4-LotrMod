@@ -1,30 +1,260 @@
 
 
 
-# FLAGS:
-# m_secret_plot_active
-# m_mirrors_chosen_active
-# m_mirrors_doomed_active
-# m_warriors_active
-# m_mysterious_figure_active
-# m_spoken_name_active
-# m_ancient_artifacts_active
-# m_ancient_ritual_active
-# m_enigmatic_rune_active
-
-# m_mirrors_cult_active
-# 
 
 
 
+mirror_look_into_mirror = {
+	random_list = {
 
-mirror_sample = {
+		# start storyline
+		20 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_has_storyline
+			}
+			modifier = {
+				factor = 0.25
+				has_country_flag = mirror_has_had_storyline
+			}
+			mirror_start_storyline = yes
+		}
+
+		# continue storyline
+		200 = {
+			modifier = {
+				factor = 0
+				NOT = { mirror_can_continue_storyline = yes }
+			}
+			mirror_continue_storyline = yes
+		}
+
+		# Fellowship
+		10 = {
+			# Only show once
+			modifier = {
+				factor = 0
+				has_country_flag = mirror_has_had_fellowship_vision
+			}
+			# Only show when fellowship started
+			modifier = {
+				factor = 0
+				NOT = { has_global_flag = fs_started  }
+			}
+			set_country_flag = mirror_has_had_fellowship_vision
+			# Fall of fellowship
+			if = {
+				limit = { has_global_flag = fs_ring_seized }
+				country_event = mirror.4
+			}
+			# frodo and the ring
+			else_if = {
+				limit = { has_global_flag = fs_only_hobbits }
+				country_event = mirror.3
+			}
+			# fellowship generic
+			else = {
+				country_event = mirror.2
+			}
+		}
+
+		# influence to faction
+		10 = {
+			modifier = {
+				factor = 0.5
+				has_country_flag = mirror_has_had_influence_vision
+			}
+			random_list = {
+				10 = { country_event = mirror.5 }
+				10 = { country_event = mirror.6 }
+				10 = { country_event = mirror.7 }
+				10 = { country_event = mirror.8 }
+			}
+		}
+
+		# ring-related visions
+		50 = {
+			modifier = {
+				factor = 0
+				NOT = { ring_has_the_ring = yes }
+			}
+			random_list = {
+				10 = { country_event = mirror.9 }
+				10 = { country_event = mirror.10 }
+			}
+		}
+
+		# Generic
+		20 = {
+			random_list = {
+				10 = { country_event = mirror.1 }
+				10 = { country_event = mirror.16 }
+				10 = { country_event = mirror.17 }
+				10 = { country_event = mirror.18 }
+			}
+		}
+
+		# Visions of a place
+		10 = {
+			modifier = {
+				factor = 0.8
+				has_country_flag = mirror_has_had_place_vision
+			}
+			random_list = {
+				10 = { country_event = mirror.11 }
+				10 = { country_event = mirror.12 }
+				10 = { country_event = mirror.13 }
+				10 = { country_event = mirror.14 }
+			}
+		}
+
+		# visions of the fall of a country
+		10 = {
+			modifier = {
+				factor = 0.0
+				NOT = { any_country = { has_capitulated = yes } }
+			}
+			modifier = {
+				factor = 0.0
+				has_country_flag = mirror_has_had_fall_vision
+			}
+			country_event = mirror.19
+		}
+
+		# Nothing
+		10 = {
+			country_event = mirror.15
+		}
+	}
 
 }
 
 
-mirror_run_some_generic_shit_TODO = {
-	# TODO TODO TODO This is used below
+# Same as above, but no storyline or fellowship
+mirror_run_generic_mirror_event = {
+	random_list = {
+
+		# influence to faction
+		10 = {
+			modifier = {
+				factor = 0.5
+				has_country_flag = mirror_has_had_influence_vision
+			}
+			random_list = {
+				10 = { country_event = mirror.5 }
+				10 = { country_event = mirror.6 }
+				10 = { country_event = mirror.7 }
+				10 = { country_event = mirror.8 }
+			}
+		}
+
+		# ring-related visions
+		50 = {
+			modifier = {
+				factor = 0
+				NOT = { ring_has_the_ring = yes }
+			}
+			random_list = {
+				10 = { country_event = mirror.9 }
+				10 = { country_event = mirror.10 }
+			}
+		}
+
+		# Generic
+		20 = {
+			random_list = {
+				10 = { country_event = mirror.1 }
+				10 = { country_event = mirror.16 }
+				10 = { country_event = mirror.17 }
+				10 = { country_event = mirror.18 }
+			}
+		}
+
+		# Visions of a place
+		10 = {
+			modifier = {
+				factor = 0.8
+				has_country_flag = mirror_has_had_place_vision
+			}
+			random_list = {
+				10 = { country_event = mirror.11 }
+				10 = { country_event = mirror.12 }
+				10 = { country_event = mirror.13 }
+				10 = { country_event = mirror.14 }
+			}
+		}
+
+		# visions of the fall of a country
+		10 = {
+			modifier = {
+				factor = 0.0
+				NOT = { any_country = { has_capitulated = yes } }
+			}
+			modifier = {
+				factor = 0.0
+				has_country_flag = mirror_has_had_fall_vision
+			}
+			country_event = mirror.19
+		}
+
+		# Nothing
+		10 = {
+			country_event = mirror.15
+		}
+	}
+}
+
+
+mirror_continue_storyline = {
+	if = {
+		limit = { has_country_flag = m_storyline_ritual }
+		mirror_storyline_ritual_look = yes
+	}
+	if = {
+		limit = { has_country_flag = m_storyline_illness }
+		mirror_storyline_illness_look = yes
+	}
+	if = {
+		limit = { has_country_flag = m_storyline_giant }
+		mirror_storyline_giant_look = yes
+	}
+	if = {
+		limit = { has_country_flag = m_storyline_plot }
+		mirror_storyline_plot_look = yes
+	}
+}
+
+mirror_start_storyline = {
+	random_list = {
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_ritual_completed
+			}
+			mirror_storyline_ritual_look = yes
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_illness_completed
+			}
+			mirror_storyline_illness_look = yes
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_giant_completed
+			}
+			mirror_storyline_giant_look = yes
+		}
+		10 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_plot_completed
+			}
+			mirror_storyline_plot_look = yes
+		}
+	}
 }
 
 
@@ -42,18 +272,40 @@ mirror_end_storyline = {
 		limit = { has_country_flag = m_storyline_giant }
 		set_country_flag = m_storyline_giant_completed
 	}
+	if = {
+		limit = { has_country_flag = m_storyline_plot }
+		set_country_flag = m_storyline_plot_completed
+	}
 
 	clr_country_flag = m_storyline_ritual
 	clr_country_flag = m_storyline_illness
 	clr_country_flag = m_storyline_giant
+	clr_country_flag = m_storyline_plot
 	clr_country_flag = m_has_storyline
 }
 
 
 mirror_storyline_ritual_look = {
+	# Start
 	if = {
-		limit = { NOT = { has_country_flag = m_storyline_ritual_completed } }
-		mirror_begin_ritual_storyline = yes
+		limit = { NOT = { has_country_flag = m_storyline_ritual } }
+		set_country_flag = m_has_storyline
+		set_country_flag = m_storyline_ritual
+
+		random_unit_leader = {
+			set_variable = { LTH.m_storyline_ritual_spoken_name1 = THIS }
+		}
+		random_unit_leader = {
+			limit = { NOT = { is_character = var:LTH.m_storyline_ritual_spoken_name1 } }
+			set_variable = { LTH.m_storyline_ritual_spoken_name2 = THIS }
+		}
+		random_unit_leader = {
+			limit = {
+				NOT = { is_character = var:LTH.m_storyline_ritual_spoken_name1 }
+				NOT = { is_character = var:LTH.m_storyline_ritual_spoken_name2 }
+			}
+			set_variable = { LTH.m_storyline_ritual_spoken_name3 = THIS }
+		}
 	}
 
 	random_list = {
@@ -88,26 +340,6 @@ mirror_storyline_ritual_look = {
 }
 
 
-mirror_begin_ritual_storyline = {
-	set_country_flag = m_has_storyline
-	set_country_flag = m_storyline_ritual
-
-	random_unit_leader = {
-		set_variable = { m_storyline_ritual_spoken_name1 = THIS }
-	}
-	random_unit_leader = {
-		limit = { NOT = { is_character = var:m_storyline_ritual_spoken_name1 } }
-		set_variable = { m_storyline_ritual_spoken_name2 = THIS }
-	}
-	random_unit_leader = {
-		limit = {
-			NOT = { is_character = var:m_storyline_ritual_spoken_name1 }
-			NOT = { is_character = var:m_storyline_ritual_spoken_name2 }
-		}
-		set_variable = { m_storyline_ritual_spoken_name3 = THIS }
-	}
-}
-
 mirror_storyline_ritual_give_buff = {
 	# TODO
 	# NOTE: A lot of risk and cost incurred, this should be substantial.
@@ -120,8 +352,9 @@ mirror_storyline_ritual_kill = {
 
 mirror_storyline_illness_look = {
 	if = {
-		limit = { NOT = { has_country_flag = m_storyline_illness_completed } }
-		mirror_begin_illness_storyline = yes
+		limit = { NOT = { has_country_flag = m_storyline_illness } }
+		set_country_flag = m_has_storyline
+		set_country_flag = m_storyline_illness
 	}
 
 	random_list = {
@@ -132,7 +365,7 @@ mirror_storyline_illness_look = {
 				has_country_flag = m_storyline_illness_started
 			}
 			set_country_flag = m_storyline_illness_started # only start this once
-			mirror_run_some_generic_shit_TODO = yes
+			mirror_run_generic_mirror_event = yes
 			# Mallorn trees fading
 			country_event = { id = mirror.37 days = 60 random_days = 90 }
 		}
@@ -157,15 +390,12 @@ mirror_storyline_illness_look = {
 	}
 }
 
-mirror_begin_illness_storyline = {
-	set_country_flag = m_has_storyline
-	set_country_flag = m_storyline_illness
-}
 
 mirror_storyline_giant_look = {
 	if = {
-		limit = { NOT = { has_country_flag = m_storyline_giant_completed } }
-		mirror_begin_giant_storyline = yes
+		limit = { NOT = { has_country_flag = m_storyline_giant } }
+		set_country_flag = m_has_storyline
+		set_country_flag = m_storyline_giant
 	}
 
 	random_list = {
@@ -176,7 +406,7 @@ mirror_storyline_giant_look = {
 				has_country_flag = m_storyline_giant_started
 			}
 			set_country_flag = m_storyline_giant_started # only start this once
-			mirror_run_some_generic_shit_TODO = yes
+			mirror_run_generic_mirror_event = yes
 			# Scouts missing
 			country_event = { id = mirror.41 days = 60 random_days = 90 }
 		}
@@ -210,7 +440,49 @@ mirror_storyline_giant_look = {
 	}
 }
 
-mirror_begin_giant_storyline = {
-	set_country_flag = m_has_storyline
-	set_country_flag = m_storyline_giant
+
+mirror_storyline_plot_look = {
+	if = {
+		limit = { NOT = { has_country_flag = m_storyline_plot } }
+		set_country_flag = m_has_storyline
+		set_country_flag = m_storyline_plot
+
+		random_unit_leader = {
+			set_variable = { LTH.m_storyline_pot_mirrors_chosen = THIS }
+		}
+		random_unit_leader = {
+			limit = { NOT = { is_character = var:LTH.m_storyline_pot_mirrors_chosen } }
+			set_variable = { LTH.m_storyline_pot_mirrors_doomed = THIS }
+		}
+	}
+
+	random_list = {
+		# Visions of a plot
+		30 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_plot_knows_about_plot
+			}
+			set_country_flag = m_storyline_plot_knows_about_plot # only start this once
+			country_event = mirror.29
+		}
+		# Mirror's Chosen and Doomed
+		20 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_plot_knows_mirrors_chosen_and_doomed
+			}
+			set_country_flag = m_storyline_plot_knows_mirrors_chosen_and_doomed
+			country_event = mirror.28
+		}
+		# Visions of mystery man
+		20 = {
+			modifier = {
+				factor = 0
+				has_country_flag = m_storyline_plot_mystery_man
+			}
+			set_country_flag = m_storyline_plot_mystery_man
+			country_event = mirror.27
+		}
+	}
 }
