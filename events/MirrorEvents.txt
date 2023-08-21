@@ -20,19 +20,31 @@ country_event = {
 	# We construct additional fortifications!
 	option = {
 		name = mirror.1.a
-		# TODO
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_timed_idea = { idea = fortification_focus days = 90 }
+		}
+		else = { add_timed_idea = { idea = fortification_focus days = 60 } }
 	}
 	
 	# Send diplomatic emissaries and ask for protection!
 	option = {
 		name = mirror.1.b
-		# TODO
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_timed_idea = { idea = diplomacy_focus days = 90 }
+		}
+		else = { add_timed_idea = { idea = diplomacy_focus days = 60 } }
 	}
 	
 	# Let them try, if they dare.
 	option = {
 		name = mirror.1.c
-		# TODO
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_timed_idea = { idea = defense_focus days = 90 }
+		}
+		else = { add_timed_idea = { idea = defense_focus days = 60 } }
 	}
 	
 
@@ -51,20 +63,31 @@ country_event = {
 
 	# An inspiring sight!
 	option = {
+		trigger = {
+			NOT = { has_completed_focus = lth_thegreatschism }
+			NOT = { has_government = belligerent }
+			NOT = { is_ally_with = MOR }
+		}
 		name = mirror.2.a
-		# TODO
+		add_stability = 0.1
 	}
 	
 	# They may arrive in Lothlorien before long.
 	option = {
 		name = mirror.2.b
-		# TODO
+		add_political_power = 50
 	}
 	
 	# Curse them!
 	option = {
+		trigger = {
+			OR = {
+				has_government = belligerent
+				is_ally_with = MOR
+			}
+		}
 		name = mirror.2.c
-		# TODO
+		ring_curse_random_fellowship_member = yes
 	}
 	
 
@@ -84,23 +107,35 @@ country_event = {
 	# The halfling's strength is an inspiration to us all!
 	option = {
 		name = mirror.3.a
-		# TODO
+		trigger = {
+			NOT = { has_completed_focus = lth_thegreatschism }
+		}
+		add_stability = 0.1
+		add_war_support = 0.1
 	}
 	
 	# Reach out to him through the veil. Channel into him the positive energy of hopefulness.
 	option = {
 		name = mirror.3.b
-		# TODO
+		trigger = {
+			NOT = { has_completed_focus = lth_thegreatschism }
+			NOT = { has_government = belligerent }
+			NOT = { is_ally_with = MOR }
+		}
+		ring_bless_ringbearer = yes
 	}
 	
 	# Whisper a curse to him.
 	option = {
+		trigger = {
+			OR = {
+				has_government = belligerent
+				is_ally_with = MOR
+			}
+		}
 		name = mirror.3.c
-		# TODO
+		ring_curse_random_fellowship_member = yes
 	}
-	
-
-
 }
 
 # The Fall of the Fellowship
@@ -116,25 +151,60 @@ country_event = {
 	# Tragic, but a stark reminder that our enemy is without mercy. Ring or not, we will not yield to Sauron!
 	option = {
 		name = mirror.4.a
-		# TODO
+		trigger = {
+			NOT = { has_completed_focus = lth_thegreatschism }
+			NOT = { has_government = belligerent }
+			NOT = { is_ally_with = MOR }
+			NOT = { ring_has_the_ring = yes }
+		}
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_timed_idea = { idea = increased_morale days = 90 }
+		}
+		else = { add_timed_idea = { idea = increased_morale days = 60 } }
 	}
 	
 	# Elrond's gamble has failed. Now the Ring will decide the fate of empires.
 	option = {
 		name = mirror.4.b
-		# TODO
+		ring_rivendell_disapproves = yes
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_timed_idea = { idea = bracing_for_war days = 90 }
+		}
+		else = { add_timed_idea = { idea = bracing_for_war days = 60 } }
 	}
 	
 	# An now it ours, at last!
 	option = {
 		name = mirror.4.c
-		# TODO
+		trigger = {
+			ring_has_the_ring = yes
+		}
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_war_support = 0.15
+			add_political_power = 150
+		}
+		else = {
+			add_war_support = 0.1
+			add_political_power = 100
+		}
 	}
 	
 	# The Ring has not yet reached Sauron. There may yet be hope.
 	option = {
 		name = mirror.4.d
-		# TODO
+		trigger = {
+			NOT = { MOR = { ring_has_the_ring = yes } }
+		}
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_political_power = 150
+		}
+		else = {
+			add_political_power = 100
+		}
 	}
 
 
@@ -154,7 +224,24 @@ country_event = {
 	# A stirring sight for any proud Noldorin!
 	option = {
 		name = mirror.5.a
-		# TODO
+		lthi_increase_influence_noldor_intermediate = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = mirror_has_had_influence_vision }
+				has_completed_focus = lth_mirrorupgrade
+			}
+			multiply_variable = { var:lthi_noldor_bonus_factoryoutput = 1.2 }
+			multiply_variable = { var:lthi_noldor_bonus_breakthrough = 1.2 }
+			multiply_variable = { var:lthi_noldor_bonus_attack = 1.2 }
+			custom_effect_tooltip = increase_noldor_bonus_20p_tt
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = mirror_has_had_influence_vision } }
+			multiply_variable = { var:lthi_noldor_bonus_factoryoutput = 1.3 }
+			multiply_variable = { var:lthi_noldor_bonus_breakthrough = 1.3 }
+			multiply_variable = { var:lthi_noldor_bonus_attack = 1.3 }
+			custom_effect_tooltip = increase_noldor_bonus_30p_tt
+		}
 	}
 	
 }
@@ -172,7 +259,24 @@ country_event = {
 	# A reminder that not all victories are without cost. Our peredhil compatriots be blessed!
 	option = {
 		name = mirror.6.a
-		# TODO
+		lthi_increase_influence_halfelves_intermediate = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = mirror_has_had_influence_vision }
+				has_completed_focus = lth_mirrorupgrade
+			}
+			multiply_variable = { var:lthi_halfelves_bonus_factoryoutput = 1.2 }
+			multiply_variable = { var:lthi_halfelves_bonus_breakthrough = 1.2 }
+			multiply_variable = { var:lthi_halfelves_bonus_attack = 1.2 }
+			custom_effect_tooltip = increase_halfelves_bonus_20p_tt
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = mirror_has_had_influence_vision } }
+			multiply_variable = { var:lthi_halfelves_bonus_factoryoutput = 1.3 }
+			multiply_variable = { var:lthi_halfelves_bonus_breakthrough = 1.3 }
+			multiply_variable = { var:lthi_halfelves_bonus_attack = 1.3 }
+			custom_effect_tooltip = increase_halfelves_bonus_30p_tt
+		}
 	}
 	
 }
@@ -190,7 +294,24 @@ country_event = {
 	# It is a stirring sight, to glance upon the ancestors our people.
 	option = {
 		name = mirror.7.a
-		# TODO
+		lthi_increase_influence_nandor_intermediate = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = mirror_has_had_influence_vision }
+				has_completed_focus = lth_mirrorupgrade
+			}
+			multiply_variable = { var:lthi_nandor_bonus_factoryoutput = 1.2 }
+			multiply_variable = { var:lthi_nandor_bonus_breakthrough = 1.2 }
+			multiply_variable = { var:lthi_nandor_bonus_attack = 1.2 }
+			custom_effect_tooltip = increase_nandor_bonus_20p_tt
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = mirror_has_had_influence_vision } }
+			multiply_variable = { var:lthi_nandor_bonus_factoryoutput = 1.3 }
+			multiply_variable = { var:lthi_nandor_bonus_breakthrough = 1.3 }
+			multiply_variable = { var:lthi_nandor_bonus_attack = 1.3 }
+			custom_effect_tooltip = increase_nandor_bonus_30p_tt
+		}
 	}
 	
 }
@@ -208,7 +329,24 @@ country_event = {
 	# A depiction of the true potential held by the Sindar.
 	option = {
 		name = mirror.8.a
-		# TODO
+		lthi_increase_influence_sindar_intermediate = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = mirror_has_had_influence_vision }
+				has_completed_focus = lth_mirrorupgrade
+			}
+			multiply_variable = { var:lthi_sindar_bonus_factoryoutput = 1.2 }
+			multiply_variable = { var:lthi_sindar_bonus_breakthrough = 1.2 }
+			multiply_variable = { var:lthi_sindar_bonus_attack = 1.2 }
+			custom_effect_tooltip = increase_sindar_bonus_20p_tt
+		}
+		else_if = {
+			limit = { NOT = { has_country_flag = mirror_has_had_influence_vision } }
+			multiply_variable = { var:lthi_sindar_bonus_factoryoutput = 1.3 }
+			multiply_variable = { var:lthi_sindar_bonus_breakthrough = 1.3 }
+			multiply_variable = { var:lthi_sindar_bonus_attack = 1.3 }
+			custom_effect_tooltip = increase_sindar_bonus_30p_tt
+		}
 	}
 	
 }
@@ -226,7 +364,13 @@ country_event = {
 	# It... it was just a vision, right?
 	option = {
 		name = mirror.9.a
-		# TODO
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			ring_increase_corruption = yes
+		}
+		else = {
+			ring_increase_corruption_2 = yes
+		}
 	}
 	
 }
@@ -244,7 +388,13 @@ country_event = {
 	# Nice try, Sauron.
 	option = {
 		name = mirror.10.a
-		# TODO
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			ring_decrease_corruption_2 = yes
+		}
+		else = {
+			ring_decrease_corruption = yes
+		}
 	}
 	
 }
@@ -262,7 +412,13 @@ country_event = {
 	# The vision has provided useful insight into what is happening in Mordor.
 	option = {
 		name = mirror.11.a
-		# TODO
+		MOR = {
+			give_intel_on_country = yes
+			if = {
+				limit = { has_completed_focus = lth_mirrorupgrade }
+				give_steal_tech_from_country = yes 
+			}
+		}
 	}
 	
 }
@@ -280,7 +436,13 @@ country_event = {
 	# The vision has provided useful insight into what is happening in Gondor.
 	option = {
 		name = mirror.12.a
-		# TODO
+		GON = {
+			give_intel_on_country = yes
+			if = {
+				limit = { has_completed_focus = lth_mirrorupgrade }
+				give_steal_tech_from_country = yes 
+			}
+		}
 	}
 	
 }
@@ -298,7 +460,13 @@ country_event = {
 	# The vision has provided useful insight into what the dwarves are up to.
 	option = {
 		name = mirror.13.a
-		# TODO
+		ERE = {
+			give_intel_on_country = yes
+			if = {
+				limit = { has_completed_focus = lth_mirrorupgrade }
+				give_steal_tech_from_country = yes 
+			}
+		}
 	}
 	
 }
@@ -316,7 +484,13 @@ country_event = {
 	# The vision provides a clear image of the situation in Angmar.
 	option = {
 		name = mirror.14.a
-		# TODO
+		ANG = {
+			give_intel_on_country = yes
+			if = {
+				limit = { has_completed_focus = lth_mirrorupgrade }
+				give_steal_tech_from_country = yes 
+			}
+		}
 	}
 	
 }
@@ -334,7 +508,10 @@ country_event = {
 	# There is nothing to be learnt of these visions.
 	option = {
 		name = mirror.15.a
-		# TODO
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_political_power = 50
+		}
 	}
 	
 }
@@ -352,7 +529,30 @@ country_event = {
 	# This could be useful.
 	option = {
 		name = mirror.16.a
-		# TODO
+		custom_effect_tooltip = spark_of_genius_timeout_tooltip
+		hidden_effect = {
+			random_list = {
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_infantry_weapons } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_infantry_archery } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_support_tech } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_cavalry_carriages } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_cavalry_archers } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_cavalry_light } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_cavalry_lancer } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_cavalry_heavy } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_machines_ballista } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_machines_siege_equipment } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_knowledge_alchemy } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_knowledge_scriptorium } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_knowledge_intrigue } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_labour_metalworking } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_labour_construction } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_labour_farming } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_sailing_longship } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_sailing_galley } }
+			10 = { add_tech_bonus = { bonus = 0.5 uses = 1 name = "The Mirror's Vision" category = lotr_sailing_sailingship } }
+		}	
+		}
 	}
 	
 }
@@ -370,7 +570,11 @@ country_event = {
 	# A testament to the unbreakable will of Lothlórien!
 	option = {
 		name = mirror.17.a
-		# TODO
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_timed_idea = { idea = increased_attack days = 90 }
+		}
+		else = { add_timed_idea = { idea = increased_attack days = 60 } }
 	}
 	
 }
@@ -388,7 +592,11 @@ country_event = {
 	# A testament to Lothlórien's tenacious spirit!
 	option = {
 		name = mirror.18.a
-		# TODO
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_timed_idea = { idea = increased_austerity days = 90 }
+		}
+		else = { add_timed_idea = { idea = increased_austerity days = 60 } }
 	}
 	
 }
@@ -406,19 +614,46 @@ country_event = {
 	# A stirring sight, to glance upon the upturned faces of the dead...
 	option = {
 		name = mirror.19.a
-		# TODO
+		add_popularity = { ideology = unaligned popularity = 0.1 }
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_stability = 0.1
+			add_political_power = 150
+		}
+		else = {
+			add_stability = 0.05
+			add_political_power = 100
+		}
 	}
 	
 	# Another enemy bites the dust.
 	option = {
 		name = mirror.19.b
-		# TODO
+		trigger = {
+			has_war_with = FROM
+		}
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_war_support = 0.15
+		}
+		else = {
+			add_war_support = 0.1
+		}
 	}
 	
 	# They will be avenged.
 	option = {
 		name = mirror.19.c
-		# TODO
+		trigger = {
+			is_ally_with = FROM
+		}
+		if = {
+			limit = { has_completed_focus = lth_mirrorupgrade }
+			add_war_support = 0.15
+		}
+		else = {
+			add_war_support = 0.1
+		}
 	}
 	
 
