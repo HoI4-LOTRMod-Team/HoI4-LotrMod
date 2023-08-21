@@ -650,7 +650,8 @@ country_event = {
 	# Curious.
 	option = {
 		name = mirror.27.a
-		# TODO
+		set_country_flag = m_storyline_plot_mystery_man
+		hidden_effect = { country_event = { id = mirror.55 days = 60 random_days = 60 } }
 	}
 	
 }
@@ -668,7 +669,17 @@ country_event = {
 	# The mirror appears to have chosen one of our generals, and doomed the other.
 	option = {
 		name = mirror.28.a
-		# TODO
+		set_country_flag = m_storyline_plot_knows_mirrors_chosen_and_doomed
+		var:m_storyline_pot_mirrors_chosen = {
+			add_unit_leader_trait = mirrors_chosen
+		}
+		var:m_storyline_pot_mirrors_doomed = {
+			add_unit_leader_trait = mirrors_doomed
+		}
+
+		hidden_effect = {
+			country_event = { id = mirror.53 days = 70 random_days = 100 }
+		}
 	}
 	
 }
@@ -686,7 +697,37 @@ country_event = {
 	# A worrying vision. Could our fellow elves really be this treacherous?
 	option = {
 		name = mirror.29.a
-		# TODO
+		set_country_flag = m_storyline_plot_knows_about_plot
+		add_stability = -0.1
+		hidden_effect = {
+			# It is time for the plot to unfold
+			if = {
+				limit = {
+					has_country_flag = m_storyline_plot_mirrors_cult_formed
+					has_country_flag = m_storyline_plot_mystery_man_arrived
+					NOT = { has_country_flag = m_storyline_plot_plot_in_motion }
+				}
+				set_country_flag = m_storyline_plot_plot_in_motion
+				random_list = {
+					# mysterious stranger is plotter, thwarted by cult
+					6 = {
+						country_event = { id = mirror.57 days = 90 random_days = 90 }
+					}
+					# cult is plotter, thwarted by stranger
+					10 = {
+						country_event = { id = mirror.56 days = 90 random_days = 90 }
+					}
+					# stranger is plotter, thwarted by doomed
+					6 = {
+						modifier = {
+							factor = 0
+							has_country_flag = m_storyline_plot_mirrors_doomed_executed
+						}
+						country_event = { id = mirror.58 days = 90 random_days = 90 }
+					}
+				}
+			}
+		}
 	}
 	
 }
@@ -1331,16 +1372,50 @@ country_event = {
 
 	is_triggered_only = yes
 
+	trigger = {
+		has_country_flag = m_storyline_plot
+	}
+
 	# We shall allow this.
 	option = {
 		name = mirror.51.a
-		# TODO
+		set_country_flag = m_storyline_plot_mystery_man_looked_into_mirror
+		country_event = { id = mirror.52 days = 2 }
 	}
 	
 	# Not happening.
 	option = {
 		name = mirror.51.b
-		# TODO
+
+		hidden_effect = {
+			# It is time for the plot to unfold
+			if = {
+				limit = {
+					has_country_flag = m_storyline_plot_mirrors_cult_formed
+					has_country_flag = m_storyline_plot_knows_about_plot
+					NOT = { has_country_flag = m_storyline_plot_plot_in_motion }
+				}
+				set_country_flag = m_storyline_plot_plot_in_motion
+				random_list = {
+					# mysterious stranger is plotter, thwarted by cult
+					10 = {
+						country_event = { id = mirror.57 days = 90 random_days = 90 }
+					}
+					# cult is plotter, thwarted by stranger
+					5 = {
+						country_event = { id = mirror.56 days = 90 random_days = 90 }
+					}
+					# stranger is plotter, thwarted by doomed
+					10 = {
+						modifier = {
+							factor = 0
+							has_country_flag = m_storyline_plot_mirrors_doomed_executed
+						}
+						country_event = { id = mirror.58 days = 90 random_days = 90 }
+					}
+				}
+			}
+		}
 	}
 	
 
@@ -1359,7 +1434,35 @@ country_event = {
 	# Mysterious.
 	option = {
 		name = mirror.52.a
-		# TODO
+		hidden_effect = {
+			# It is time for the plot to unfold
+			if = {
+				limit = {
+					has_country_flag = m_storyline_plot_mirrors_cult_formed
+					has_country_flag = m_storyline_plot_knows_about_plot
+					NOT = { has_country_flag = m_storyline_plot_plot_in_motion }
+				}
+				set_country_flag = m_storyline_plot_plot_in_motion
+				random_list = {
+					# mysterious stranger is plotter, thwarted by cult
+					5 = {
+						country_event = { id = mirror.57 days = 90 random_days = 90 }
+					}
+					# cult is plotter, thwarted by stranger
+					35 = {
+						country_event = { id = mirror.56 days = 90 random_days = 90 }
+					}
+					# stranger is plotter, thwarted by doomed
+					5 = {
+						modifier = {
+							factor = 0
+							has_country_flag = m_storyline_plot_mirrors_doomed_executed
+						}
+						country_event = { id = mirror.58 days = 90 random_days = 90 }
+					}
+				}
+			}
+		}
 	}
 	
 }
@@ -1377,7 +1480,16 @@ country_event = {
 	# So long as they fight for our side...
 	option = {
 		name = mirror.53.a
-		# TODO
+		set_country_flag = m_storyline_plot_mirrors_cult_formed
+		load_oob = Lothlorien_MirrorsCult
+		hidden_effect = {
+			random_list = {
+				40 = {
+					country_event = { id = mirror.54 days = 90 random_days = 90 }
+				}
+				20 = { }
+			}
+		}
 	}
 	
 }
@@ -1392,19 +1504,75 @@ country_event = {
 
 	is_triggered_only = yes
 
+	trigger = {
+		has_country_flag = m_storyline_plot
+	}
+
 	# They are in no place to make demands of this sort.
 	option = {
 		name = mirror.54.a
-		# TODO
+		add_political_power = -50
+
+		hidden_effect = {
+			# It is time for the plot to unfold
+			if = {
+				limit = {
+					has_country_flag = m_storyline_plot_mystery_man_arrived
+					has_country_flag = m_storyline_plot_knows_about_plot
+					NOT = { has_country_flag = m_storyline_plot_plot_in_motion }
+				}
+				set_country_flag = m_storyline_plot_plot_in_motion
+				random_list = {
+					# mysterious stranger is plotter, thwarted by cult
+					5 = {
+						country_event = { id = mirror.57 days = 90 random_days = 90 }
+					}
+					# cult is plotter, thwarted by stranger
+					20 = {
+						country_event = { id = mirror.56 days = 90 random_days = 90 }
+					}
+					# stranger is plotter, thwarted by doomed
+					5 = {
+						modifier = {
+							factor = 0
+							has_country_flag = m_storyline_plot_mirrors_doomed_executed
+						}
+						country_event = { id = mirror.58 days = 90 random_days = 90 }
+					}
+				}
+			}
+		}
 	}
 	
 	# Perhaps it is for the better.
 	option = {
 		name = mirror.54.b
-		# TODO
+		var:m_storyline_pot_mirrors_doomed = {
+			kill_character = yes
+		}
+		set_country_flag = m_storyline_plot_mirrors_doomed_executed
+		hidden_effect = {
+			# It is time for the plot to unfold
+			if = {
+				limit = {
+					has_country_flag = m_storyline_plot_mystery_man_arrived
+					has_country_flag = m_storyline_plot_knows_about_plot
+					NOT = { has_country_flag = m_storyline_plot_plot_in_motion }
+				}
+				set_country_flag = m_storyline_plot_plot_in_motion
+				random_list = {
+					# mysterious stranger is plotter, thwarted by cult
+					20 = {
+						country_event = { id = mirror.57 days = 90 random_days = 90 }
+					}
+					# cult is plotter, thwarted by stranger
+					5 = {
+						country_event = { id = mirror.56 days = 90 random_days = 90 }
+					}
+				}
+			}
+		}
 	}
-	
-
 }
 
 # Mysterious elf arrives
@@ -1420,19 +1588,36 @@ country_event = {
 	# Put him to work.
 	option = {
 		name = mirror.55.a
-		# TODO
+		add_ideas = mysterious_stranger_idea
+		set_country_flag = m_storyline_plot_mystery_man_arrived
+		hidden_effect = {
+			random_list = {
+				40 = {
+					country_event = { id = mirror.51 days = 60 random_days = 90 }
+				}
+				20 = { }
+			}
+		}
 	}
 	
 	# Keep an eye on him.
 	option = {
 		name = mirror.55.b
-		# TODO
+		set_country_flag = m_storyline_plot_mystery_man_arrived
+		hidden_effect = {
+			random_list = {
+				20 = {
+					country_event = { id = mirror.51 days = 60 random_days = 90 }
+				}
+				40 = { }
+			}
+		}
 	}
 	
 
 }
 
-# Secret plot thwarted by Caladion
+# Secret plot by cult thwarted by Caladion
 country_event = {
 	id = mirror.56
 	title = mirror.56.t
@@ -1445,12 +1630,21 @@ country_event = {
 	# A close shave. Caladion has earned our gratitude.
 	option = {
 		name = mirror.56.a
-		# TODO
+		var:m_storyline_pot_mirrors_chosen = {
+			kill_character = yes
+		}
+		any_country_division = {
+			limit = { has_template = "Mirror's Cult" }
+			destroy_unit = yes
+		}
+		add_stability = 0.2
+		add_political_power = 150
+		mirror_end_storyline = yes
 	}
 	
 }
 
-# Secret plot thwarted by the Mirror's Chosen
+# Secret plot stragner thwarted by the Mirror's Chosen
 country_event = {
 	id = mirror.57
 	title = mirror.57.t
@@ -1463,12 +1657,18 @@ country_event = {
 	# A close shave. [TODO.GetName] deserves our gratitude.
 	option = {
 		name = mirror.57.a
-		# TODO
+		remove_ideas = mysterious_stranger_idea
+		var:m_storyline_pot_mirrors_chosen = {
+			add_skill_level = 1
+		}
+		add_stability = 0.2
+		add_political_power = 150
+		mirror_end_storyline = yes
 	}
 	
 }
 
-# Secret plot thwarted by the Mirror's Doomed
+# Secret plot by stanger thwarted by the Mirror's Doomed
 country_event = {
 	id = mirror.58
 	title = mirror.58.t
@@ -1481,12 +1681,19 @@ country_event = {
 	# [TODO.GetName] dies a hero.
 	option = {
 		name = mirror.58.a
-		# TODO
+		remove_ideas = mysterious_stranger_idea
+		var:m_storyline_pot_mirrors_doomed = {
+			kill_character = yes
+		}
+		add_stability = 0.2
+		add_political_power = 150
+		add_war_support = 0.1
+		mirror_end_storyline = yes
 	}
 	
 }
 
-# Secret plot thwarted by the Mirror's Doomed
+# Secret plot by cult thwarted by the Mirror's Doomed
 country_event = {
 	id = mirror.59
 	title = mirror.59.t
@@ -1499,7 +1706,19 @@ country_event = {
 	# [TODO.GetName] dies a hero.
 	option = {
 		name = mirror.59.a
-		# TODO
-	}
-	
+		var:m_storyline_pot_mirrors_chosen = {
+			kill_character = yes
+		}
+		any_country_division = {
+			limit = { has_template = "Mirror's Cult" }
+			destroy_unit = yes
+		}
+		var:m_storyline_pot_mirrors_doomed = {
+			kill_character = yes
+		}
+		add_stability = 0.2
+		add_political_power = 150
+		add_war_support = 0.1
+		mirror_end_storyline = yes
+	}	
 }
