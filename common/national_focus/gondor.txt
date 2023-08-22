@@ -817,7 +817,6 @@ focus = {
 	completion_reward = { army_experience = 25 }
 }
 
-	#Focus for Expand Infantry
 focus = {
 	id = GON_expand_infantry
 	icon = GFX_goal_generic_army_artillery
@@ -838,8 +837,6 @@ focus = {
 	}
 }
 
-
-#Focus for Artillery Improvements
 focus = {
 	id = GON_artillery_improvements
 	icon = GFX_goal_generic_army_artillery2
@@ -860,7 +857,6 @@ focus = {
 	}
 }
 
-#Focus for Improved Fighters
 focus = {
 	id = improvedfighters
 	icon = GFX_goal_generic_air_fighter
@@ -882,7 +878,6 @@ focus = {
 	}
   }
 
-#Focus for Expand Cavalry
 focus = {
 	id = GON_expand_cavalry
 	icon = GFX_goal_generic_cavalry
@@ -895,7 +890,6 @@ focus = {
    	available_if_capitulated = yes
 }
 
-#Focus for Motirization Improvements
 focus = {
 	id = GON_chariots_improvements
 	icon = GFX_goal_generic_army_motorized
@@ -916,7 +910,6 @@ focus = {
 	}
 }
 
-#Focus for Counter Haradwaith Forces
 focus = {
 	id = GON_counter_haradwaith_forces
 	icon = GFX_goal_generic_attack_allies
@@ -938,19 +931,135 @@ focus = {
 	}
 }
 
-
 #Internal policy department paths
-
 focus = {
 	id = GON_internal_policy_department
-	icon = GFX_goal_generic_attack_allies
+	icon = GFX_focus_generic_support_the_left_right
 	ai_will_do = { factor = 4 }
-	x = 30
+	x = 31
 	y = 1
 	cost = 5
 	available_if_capitulated = yes
 	completion_reward = { 
+		add_political_power = 100
+		add_stability = 0.05
+		denethor_gets_less_paranoid = yes
+	}
+}
 
+focus = {
+	id = GON_prepare_for_the_growing_theat_north
+	icon = GFX_goal_the_white_hand
+	ai_will_do = { factor = 4 }
+	relative_position_id = GON_internal_policy_department
+	prerequisite = { focus = GON_internal_policy_department }
+	x = 5
+	y = 1
+	cost = 10
+	available = {
+		ISE = {
+			NOT = {
+				has_government = cooperative
+			}
+		}
+	}
+	available_if_capitulated = yes
+	completion_reward = { 
+		add_timed_idea = { days = 356 idea = GON_preprare_for_the_worst }
+	}
+}
+
+focus = {
+	id = GON_improve_infrastructure_west
+	icon = GFX_goal_generic_construct_infrastructure
+	ai_will_do = { factor = 4 }
+	relative_position_id = GON_prepare_for_the_growing_theat_north
+	prerequisite = { focus = GON_prepare_for_the_growing_theat_north }
+	x = -1
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+		20 = {
+			add_building_construction = {	type = infrastructure level = 2 instant_build = yes }
+			add_building_construction = {
+				type = supply_node
+				level = 1
+				instant_build = yes
+				province = 4665
+			}
+		}
+		136 = {
+			add_building_construction = {	type = infrastructure level = 2 instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = GON_stay_our_ground
+	icon = GFX_goal_generic_fortify_city
+	ai_will_do = { factor = 4 }
+	relative_position_id = GON_prepare_for_the_growing_theat_north
+	prerequisite = { focus = GON_prepare_for_the_growing_theat_north }
+	x = 1
+	y = 1
+	cost = 10
+	available = {
+		ISE = {
+			NOT = {
+				has_government = cooperative
+			}
+		}
+	}
+	available_if_capitulated = yes
+	completion_reward = { 
+		#Only adds bunkers to the state if it bordering state is owned by isengard
+		if = {
+			limit = {
+				ISE = {
+					controls_state = 23
+				}
+			}
+			20 = {
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 50 }
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 6816 }
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 4665 }
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 6791 }
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 5418 }
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 6789 }
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 38 }
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 6783 }
+			}
+		}
+		if = {
+			limit = {
+				ISE = {
+					controls_state = 77
+				}
+			}
+			20 = {
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 4353 }
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 6804 }
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 1142 }
+			}
+			136 = {
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 586 }
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 3005 }
+			}
+		}
+		if = {
+			limit = {
+				ISE = {
+					OR = {
+						controls_state = 77
+						controls_state = 23
+					}
+				}
+			}
+			20 = {
+				add_building_construction = {type = bunker level = 2 instant_build = yes province = 6765 }
+			}
+		}
 	}
 }
 
@@ -960,7 +1069,7 @@ focus = {
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_internal_policy_department
 	prerequisite = { focus = GON_internal_policy_department }
-	x = 1
+	x = 0
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
@@ -969,7 +1078,110 @@ focus = {
 			add_extra_state_shared_building_slots = 2
 			add_building_construction = { type = arms_factory level = 2 instant_build = yes }
 		}
-		custom_effect_tooltip = "Add reserach bonus"
+		add_tech_bonus = {
+			bonus = 0.5
+			uses = 1
+			category = lotr_labour
+		}
+	}
+}
+
+focus = {
+	id = GON_where_is_the_string
+	icon = GFX_goal_generic_construct_civ_factory
+	ai_will_do = { factor = 4 }
+	relative_position_id = GON_expand_the_military_production
+	prerequisite = { focus = GON_expand_the_military_production }
+	x = 0
+	y = 3
+	cost = 5
+	available = {
+		owns_state = 174
+	}
+	available_if_capitulated = yes
+	completion_reward = {
+		174 = {
+			add_resource = {
+                type = tungsten
+                amount = 12
+            }
+		}
+	}
+}
+
+focus = {
+	id = GON_library_of_wisdom
+	icon = GFX_goal_generic_construct_civ_factory
+	ai_will_do = { factor = 4 }
+	relative_position_id = GON_where_is_the_string
+	prerequisite = { focus = GON_where_is_the_string }
+	x = -3
+	y = 1
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			bonus = 0.5
+			uses = 2
+			category = lotr_knowledge_scriptorium
+		}
+	}
+}
+
+focus = {
+	id = GON_dig_out_the_mountains
+	icon = GFX_focus_generic_steel
+	ai_will_do = { factor = 4 }
+	relative_position_id = GON_where_is_the_string
+	prerequisite = { focus = GON_where_is_the_string }
+	x = -1
+	y = 1
+	cost = 10
+	available = {
+		owns_state = 16
+	}
+	available_if_capitulated = yes
+	completion_reward = {
+		16 = {
+			add_resource = {
+				type = steel
+				amount = 15
+			}
+		}
+	}
+}
+
+focus = {
+	id = GON_university_of_minas_tirith
+	icon = GFX_focus_research
+	ai_will_do = { factor = 4 }
+	relative_position_id = GON_where_is_the_string
+	prerequisite = { focus = GON_where_is_the_string }
+	x = 1
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_research_slot = 1
+	}
+}
+
+focus = {
+	id = GON_construction_research
+	icon = GFX_goal_generic_production
+	ai_will_do = { factor = 4 }
+	relative_position_id = GON_where_is_the_string
+	prerequisite = { focus = GON_where_is_the_string }
+	x = 3
+	y = 1
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			bonus = 0.75
+			uses = 2
+			category = lotr_labour_construction_industry
+		}
 	}
 }
 
@@ -982,6 +1194,9 @@ focus = {
 	x = -2
 	y = 1
 	cost = 10
+	available = {
+		owns_state = 135
+	}
 	available_if_capitulated = yes
 	completion_reward = { 
 		135 = {
@@ -1002,6 +1217,9 @@ focus = {
 	x = -1
 	y = 1
 	cost = 5
+	available = {
+		owns_state = 135
+	}
 	available_if_capitulated = yes
 	completion_reward = { 
 		135 = {
@@ -1021,6 +1239,9 @@ focus = {
 	x = 1
 	y = 1
 	cost = 5
+	available = {
+		owns_state = 135
+	}
 	available_if_capitulated = yes
 	completion_reward = { 
 		135 = {
@@ -1039,6 +1260,9 @@ focus = {
 	x = 2
 	y = 1
 	cost = 10
+	available = {
+		owns_state = 15
+	}
 	available_if_capitulated = yes
 	completion_reward = { 
 		15 = {
@@ -1059,6 +1283,9 @@ focus = {
 	x = -1
 	y = 1
 	cost = 5
+	available = {
+		owns_state = 15
+	}
 	available_if_capitulated = yes
 	completion_reward = { 
 		15 = {
@@ -1078,6 +1305,9 @@ focus = {
 	x = 1
 	y = 1
 	cost = 5
+	available = {
+		owns_state = 15
+	}
 	available_if_capitulated = yes
 	completion_reward = { 
 		15 = {
@@ -1088,12 +1318,12 @@ focus = {
 }
 
 focus = {
-	id = GON_putting_faramit_in_charge
+	id = GON_putting_faramir_in_charge
 	icon = GFX_goal_generic_attack_allies
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_internal_policy_department
 	prerequisite = { focus = GON_internal_policy_department }
-	x = -2
+	x = -4
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
@@ -1104,13 +1334,16 @@ focus = {
 
 focus = {
 	id = GON_reinforce_osgilliath
-	icon = GFX_goal_generic_attack_allies
+	icon = GFX_goal_fortify_the_westwall
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_internal_policy_department
 	prerequisite = { focus = GON_internal_policy_department }
-	x = -4
+	x = -7
 	y = 1
 	cost = 10
+	available = {
+		owns_state = 163
+	}
 	available_if_capitulated = yes
 	completion_reward = { 
 		163 = {
@@ -1126,17 +1359,18 @@ focus = {
 }
 
 focus = {
-	id = GON_hit_before_you_get_git
-	icon = GFX_goal_generic_attack_allies
+	id = GON_hit_before_you_get_hit
+	icon = GFX_goal_generic_military_sphere
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_reinforce_osgilliath
 	prerequisite = { focus = GON_reinforce_osgilliath }
-	x = -4
+	mutually_exclusive = { focus = GON_defense_is_the_best_attack }
+	x = -2
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { 
-		custom_effect_tooltip = "add idea"
+		add_ideas = GON_strike_before_the_enemy_0
 	}
 }
 
@@ -1144,8 +1378,8 @@ focus = {
 	id = GON_temp_1
 	icon = GFX_goal_generic_attack_allies
 	ai_will_do = { factor = 4 }
-	relative_position_id = GON_hit_before_you_get_git
-	prerequisite = { focus = GON_hit_before_you_get_git }
+	relative_position_id = GON_hit_before_you_get_hit
+	prerequisite = { focus = GON_hit_before_you_get_hit }
 	x = 0
 	y = 1
 	cost = 10
@@ -1157,7 +1391,7 @@ focus = {
 
 focus = {
 	id = GON_hit_now_you_can
-	icon = GFX_goal_generic_attack_allies
+	icon = GFX_goal_generic_small_arms
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_temp_1
 	prerequisite = { focus = GON_temp_1 }
@@ -1166,37 +1400,50 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { 
-		custom_effect_tooltip = "add idea"
+		swap_ideas = {
+			remove_idea = GON_strike_before_the_enemy_0
+			add_idea = GON_strike_before_the_enemy_1
+		}
 	}
 }
 
 focus = {
-	id = GON_temp_3
+	id = GON_modernize_the_military
 	icon = GFX_goal_generic_attack_allies
 	ai_will_do = { factor = 4 }
-	relative_position_id = GON_hit_before_you_get_git
-	prerequisite = { focus = GON_hit_before_you_get_git focus = GON_defense_is_the_best_attack }
+	relative_position_id = GON_hit_before_you_get_hit
+	prerequisite = { focus = GON_hit_before_you_get_hit focus = GON_defense_is_the_best_attack }
 	x = 2
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { 
-		custom_effect_tooltip = "Add militair research related bonuses"
+		add_tech_bonus = {
+			bonus = 0.5
+			uses = 2
+			category = lotr_infantry
+		}
+		add_tech_bonus = {
+			bonus = 0.75
+			uses = 1
+			category = lotr_support_tech
+		}
 	}
 }
 
 focus = {
 	id = GON_defense_is_the_best_attack
-	icon = GFX_goal_generic_attack_allies
+	icon = GFX_goal_generic_fortify_city
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_reinforce_osgilliath
 	prerequisite = { focus = GON_reinforce_osgilliath }
-	x = 0
+	mutually_exclusive = { focus = GON_hit_before_you_get_hit }
+	x = 2
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { 
-		custom_effect_tooltip = "add idea"
+		add_ideas = GON_bunker_focus
 	}
 }
 
@@ -1232,7 +1479,7 @@ focus = {
 
 focus = {
 	id = GON_no_step_back
-	icon = GFX_goal_generic_attack_allies
+	icon = GFX_goal_generic_defence
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_temp_2
 	prerequisite = { focus = GON_temp_2 }
@@ -1241,6 +1488,6 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { 
-		custom_effect_tooltip = "add idea"
+		add_ideas = GON_no_step_back_idea
 	}
 }
