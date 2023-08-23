@@ -1,1 +1,0 @@
-python.exe .\gfx_spirits.py | Out-File ../../../../../interface/national_spirit_icons.gfx -Encoding ASCII

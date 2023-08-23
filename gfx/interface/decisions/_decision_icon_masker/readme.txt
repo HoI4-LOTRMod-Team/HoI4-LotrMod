@@ -1,1 +1,0 @@
-python.exe .\mask_icons.py | Out-File ../../../../interface/decisions.gfx -Encoding ASCII
