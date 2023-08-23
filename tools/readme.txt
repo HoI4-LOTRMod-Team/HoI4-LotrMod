@@ -1,3 +1,8 @@
+Don't know what you're doing here? Read this: https://github.com/Helliaca/HoI4-LotrMod/wiki/Python-GFX-Scripts
+
+
+
+
 For decisions:
 
 python.exe .\make_gfx.py -s decisions -o decisions
