@@ -1,1 +1,0 @@
-python.exe .\report_icons.py | Out-File ../../../interface/report_event_pictures.gfx -Encoding ASCII
