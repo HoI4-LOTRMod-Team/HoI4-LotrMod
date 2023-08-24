@@ -268,59 +268,67 @@ lothlorien_mirror_decisions_category = {
 			has_completed_focus = lth_preemptivemeasures
 			NOT = { has_completed_focus = lth_amostgenerousoffer }
 			NOT = { has_completed_focus = lth_agestureofgoodwill }
-			VAL = { is_ai = no }
+			VAL = { is_ai = yes }
+			NOT = { has_war_with = VAL }
+			VAL = { is_puppet = no }
 		}
 
 		fire_only_once = yes
 		cost = 50
 
 		complete_effect = {
-			# TODO
-		}
-	}
-
-
-	# Consult the mirror on rivendell path
-	consult_mirror_rivendell_path = {
-		icon = GFX_decision_lth_mirror
-
-		available = {
-			always = yes
-		}
-
-		visible = {
-			NOT = { RIV = { has_completed_focus = holdthecouncilofelrond } }
-			RIV = { is_ai = no }
-		}
-
-		fire_only_once = yes
-		cost = 50
-
-		complete_effect = {
-			# TODO
-		}
-	}
-
-
-	# Consult the mirror on isengard
-	consult_mirror_isengard_path = {
-		icon = GFX_decision_lth_mirror
-
-		available = {
-			always = yes
-		}
-
-		visible = {
-			NOT = { ISE = { has_completed_focus = unitewithgandalf } }
-			NOT = { ISE = { has_completed_focus = imprisongandalf } }
-			ISE = { is_ai = no }
-		}
-
-		fire_only_once = yes
-		cost = 50
-
-		complete_effect = {
-			# TODO
+			hidden_effect = {
+				VAL = {
+					random_list = {
+						# no
+						80 = {
+							modifier = {
+								has_government = cooperative
+								factor = 2
+							}
+							modifier = {
+								strength_ratio = {
+									tag = LTH
+									ratio > 1
+								}
+								factor = 2
+							}
+							modifier = {
+								has_opinion = {
+									target = LTH
+									value < -15
+								}
+								factor = 2
+							}
+							LTH = { country_event = mirror.83 }
+							LTH = { set_country_flag = mirror_predicted_vales_decline }
+						}
+						# yes
+						20 = {
+							modifier = {
+								strength_ratio = {
+									tag = LTH
+									ratio < 0.8
+								}
+								factor = 2
+							}
+							modifier = {
+								has_opinion = {
+									target = LTH
+									value > 30
+								}
+								factor = 2
+							}
+							LTH = { country_event = mirror.82 }
+							LTH = { set_country_flag = mirror_predicted_vales_accept }
+						}
+						# dunno
+						5 = {
+							LTH = { country_event = mirror.79 }
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -332,15 +340,17 @@ lothlorien_mirror_decisions_category = {
 		target_root_trigger = {
 			has_completed_focus = lth_mirrorupgrade
 		}
-		target_array = countries
+		target_array = global.countries
 		
 		target_trigger = {
-			NOT = { tag = NEP }
-			compare_intel_with = { 
-				target = FROM
-				civilian_intel < 0
-				army_intel < 0
-				navy_intel < 0
+			FROM = {
+				NOT = { tag = NEP }
+				compare_intel_with = { 
+					target = FROM
+					civilian_intel < 1
+					army_intel < 1
+					navy_intel < 1
+				}
 			}
 		}
 
@@ -349,12 +359,97 @@ lothlorien_mirror_decisions_category = {
 		fire_only_once = yes
 		
 		complete_effect = {
-			# TODO
+			add_intel = {
+				target = FROM
+				civilian_intel = 20
+				army_intel = 20
+				navy_intel = 20
+			}
 		}
 	}
 
 
-	# Possible TODO: Consult on path of any country
-	# We'll need ai_strategy plans and pre-set flags for this
+	# Possible Consult on path of any country
+	consult_mirror_on_country_path = {
+		icon = GFX_decision_lth_mirror
+
+		target_root_trigger = {
+			has_completed_focus = lth_mirrorupgrade
+		}
+		target_array = global.countries
+		
+		target_trigger = {
+			FROM = {
+				NOT = { tag = NEP }
+				is_ai = yes
+				OR = {
+					is_going_belligerent = yes
+					is_going_revolutionary = yes
+					is_going_unaligned = yes
+					is_going_cooperative = yes
+				}
+			}
+		}
+
+		cost = 100
+
+		fire_only_once = yes
+		
+		complete_effect = {
+			custom_effect_tooltip = consult_mirror_on_country_path_tt
+			hidden_effect = {
+				FROM = {
+					# 3/4 Certain chance of success
+					random_list = {
+						30 = {
+							if = {
+								limit = { is_going_belligerent = yes }
+								random_list = {
+									10 = { LTH = { country_event = mirror.67 } }
+									10 = { LTH = { country_event = mirror.68 } }
+									10 = { LTH = { country_event = mirror.69 } }
+								}
+							}
+
+
+							else_if = {
+								limit = { is_going_revolutionary = yes }
+								random_list = {
+									10 = { LTH = { country_event = mirror.70 } }
+									10 = { LTH = { country_event = mirror.71 } }
+									10 = { LTH = { country_event = mirror.72 } }
+								}
+							}
+
+							else_if = {
+								limit = { is_going_revolutionary = yes }
+								random_list = {
+									10 = { LTH = { country_event = mirror.73 } }
+									10 = { LTH = { country_event = mirror.74 } }
+									10 = { LTH = { country_event = mirror.75 } }
+								}
+							}
+
+							else_if = {
+								limit = { is_going_revolutionary = yes }
+								random_list = {
+									10 = { LTH = { country_event = mirror.76 } }
+									10 = { LTH = { country_event = mirror.77 } }
+									10 = { LTH = { country_event = mirror.78 } }
+								}
+							}
+						}
+						10 = {
+							random_list = {
+								10 = { LTH = { country_event = mirror.79 } }
+								10 = { LTH = { country_event = mirror.80 } }
+								10 = { LTH = { country_event = mirror.81 } }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 }
