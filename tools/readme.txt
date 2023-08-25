@@ -30,4 +30,4 @@ python.exe .\make_gfx.py -s spirits -o spirits
 
 For event-pictures:
 
-python.exe .\make_gfx.py -s report_eventpictures -o pepega
+python.exe .\make_gfx.py -s report_eventpictures -o reporteventpictures
