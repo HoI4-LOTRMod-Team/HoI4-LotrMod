@@ -69,7 +69,7 @@ focus = {
 	id = GON_honor_isildurs_legacy
 	icon = GFX_focus_hun_elect_a_king
 	ai_will_do = { factor = 15 }
-	x = 10
+	x = 4
 	y = 1
 	cost = 10
 	search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
@@ -204,7 +204,7 @@ focus = {
 	icon = GFX_focus_hun_elect_a_king
 	ai_will_do = { factor = 15 }
 	relative_position_id = GON_declare_aragorn_the_rightful_heir
-	x = -2
+	x = 2
 	y = 1
 	prerequisite = { focus = GON_declare_aragorn_the_rightful_heir }
 	cost = 10
@@ -213,6 +213,10 @@ focus = {
 		custom_trigger_tooltip = {
 			tooltip = fs_aragorn_in_fellowship	
 			ring_aragorn_in_fellowship = yes
+		}
+		custom_trigger_tooltip = {
+			tooltip = ring_aragorn_is_alive_tt		
+			NOT = { ring_aragorn_is_dead = yes }
 		}
 	}
 	completion_reward = {
@@ -232,6 +236,7 @@ focus = {
 						FS_aragorn = { ring_remove_member_from_fellowship = yes }
 					}
 				}
+				set_global_flag = aragorn_persuaded
 				custom_effect_tooltip = GON_aragorn_leaves_the_fellowship
 			}
 			35 = {
@@ -539,175 +544,146 @@ focus = {
 	}
 }
 
-#Focus for Send Faramir with the Fellowship
-		focus = {
-		id = sendfaramirwiththefellowship
-		icon = GFX_goal_faramir
-		ai_will_do = { factor = 100 }
-		available = { has_global_flag = fs_gondor_faramir }
- 		x =0
- 		y =1
- 		mutually_exclusive = { focus = sendboromirwiththefellowship }
- 		prerequisite = { focus = thefateofgondor}
- 		cost = 0
-  		available_if_capitulated = yes
-		completion_reward = {
-			custom_effect_tooltip = MOR_event_triggert_focus
-		}
+focus = {
+	id = GON_send_boromir_with_the_fellowship
+	icon = GFX_goal_boromir
+	ai_will_do = { factor = 100 }
+	available = { has_global_flag = fs_gondor_boromir }
+	relative_position_id = GON_honor_isildurs_legacy
+	x = 9
+	y = 3
+	mutually_exclusive = { focus = GON_send_faramir_with_the_fellowship}
+	cost = 0
+	available_if_capitulated = yes
+	completion_reward = {
+		custom_effect_tooltip = MOR_event_triggert_focus
+	}
+ 
  }
 
- #Focus for Send Boromir with the Fellowship
-		focus = {
-		id = sendboromirwiththefellowship
-		icon = GFX_goal_boromir
-		ai_will_do = { factor = 100 }
-		available = { has_global_flag = fs_gondor_boromir }
- 		x =3
- 		y =1
- 		mutually_exclusive = { focus = sendfaramirwiththefellowship}
- 		prerequisite = { focus = thefateofgondor}
- 		cost = 0
-  		available_if_capitulated = yes
-		completion_reward = {
-			custom_effect_tooltip = MOR_event_triggert_focus
-		}
+focus = {
+	id = GON_have_boromir_steal_the_ring
+	icon = GFX_goal_the_one_ring
+	ai_will_do = { factor = 70 }
+	available = {always = no }
+	mutually_exclusive = { focus = GON_persuade_aragorn_to_come_to_Gondor }
+	prerequisite = { focus = GON_send_boromir_with_the_fellowship}
+	relative_position_id = GON_send_boromir_with_the_fellowship
+	x = 0
+	y = 1
+	cost = 2
+	available_if_capitulated = yes
+	completion_reward = { custom_effect_tooltip = MOR_event_triggert_focus }
  }
 
- #Focus for Forge closer ties with the Rangers of the North
-		focus = {
-		id = forgeclosertieswiththerangersofthenorth
-		icon = GFX_goal_tripartite_pact
-		ai_will_do = { factor = 5 }
- 		x =0
- 		y =2
- 		mutually_exclusive = { }
- 		prerequisite = { focus = sendfaramirwiththefellowship}
- 		cost = 10
+focus = {
+	id = GON_betray_elronds_council
+	icon = GFX_goal_anti_comintern_pact
+	ai_will_do = { factor = 25 }
+	available = { has_global_flag = gondor_has_ring }
+	prerequisite = { focus = GON_have_boromir_steal_the_ring}
+	relative_position_id = GON_have_boromir_steal_the_ring
+	x = 0
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		RIV = { add_opinion_modifier = { target = GON modifier = geo_treason } }
+		MIR = { add_opinion_modifier = { target = GON modifier = geo_treason } }
+		ERE = { add_opinion_modifier = { target = GON modifier = geo_treason } }
+	}
+}
+
+focus = {
+	id = GON_take_the_ring_to_gondor
+	icon = GFX_goal_the_one_ring
+	ai_will_do = { factor = 50 }
+	available = { has_global_flag = gondor_has_ring }
+	prerequisite = { focus = GON_betray_elronds_council }
+	relative_position_id = GON_betray_elronds_council
+	x = 0
+	y = 1
+	cost = 5
   	available_if_capitulated = yes
-		completion_reward = {
-			CAR = { add_opinion_modifier = { target = GON modifier = large_increase } }
-			ART = { add_opinion_modifier = { target = GON modifier = large_increase } }
-			RHD = { add_opinion_modifier = { target = GON modifier = large_increase } }
+	completion_reward = { GON = { add_ideas = one_true_ring } }
+}
+
+focus = {
+	id = GON_strike_a_deal_with_sauron
+	icon = GFX_goal_sauron_eye
+	ai_will_do = { factor = 10 }
+	available = { any_country = { original_tag = MOR has_government = belligerent } }
+	mutually_exclusive = { focus = GON_form_the_empire_of_gondor}
+	prerequisite = { focus = GON_take_the_ring_to_gondor}
+	relative_position_id = GON_take_the_ring_to_gondor
+	x = 1
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		news_event = { hours = 12 id = news.367 }
+		clr_global_flag = gondor_has_ring
+		set_global_flag = sauron_has_ring
+		random_other_country = {
+			limit = { original_tag = MOR has_government = belligerent }
+			add_ideas = one_true_ring
+			white_peace = ROOT
+			diplomatic_relation = { country = ROOT relation = non_aggression_pact }
 		}
+		remove_ideas = one_true_ring
+	}
+}
+
+focus = {
+	id = GON_form_the_empire_of_gondor
+	icon = GFX_goal_gondor
+	ai_will_do = { factor = 10 }
+	mutually_exclusive = { focus = GON_strike_a_deal_with_sauron }
+	prerequisite = { focus = GON_take_the_ring_to_gondor}
+	relative_position_id = GON_take_the_ring_to_gondor
+	x = -1
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		set_cosmetic_tag = EOG
+	}
+}
+
+focus = {
+	id = GON_send_faramir_with_the_fellowship
+	icon = GFX_goal_faramir
+	ai_will_do = { factor = 100 }
+	available = { has_global_flag = fs_gondor_faramir }
+	mutually_exclusive = { focus = GON_send_boromir_with_the_fellowship }
+	prerequisite = { focus = thefateofgondor}
+	relative_position_id = GON_honor_isildurs_legacy
+	x = 11
+	y = 3
+	cost = 0
+	available_if_capitulated = yes
+	completion_reward = {
+		custom_effect_tooltip = MOR_event_triggert_focus
+	}
  }
 
- #Focus for Have Boromir steal the Ring
-		focus = {
-		id = haveboromirstealthering
-		icon = GFX_goal_the_one_ring
-		ai_will_do = { factor = 70 }
-		available = {always = no }
- 		x =2
- 		y =2
- 		mutually_exclusive = { focus = persuadearagorntoreturntogondor }
- 		prerequisite = { focus = sendboromirwiththefellowship}
- 		cost = 2
+
+focus = {
+	id = GON_closer_ties_with_the_rangers_of_the_north
+	icon = GFX_goal_tripartite_pact
+	ai_will_do = { factor = 5 }
+	prerequisite = { focus = GON_send_faramir_with_the_fellowship}
+	relative_position_id = GON_send_faramir_with_the_fellowship
+	x = 0
+	y = 1
+	cost = 10
   	available_if_capitulated = yes
-		completion_reward = {  }
+	completion_reward = {
+		CAR = { add_opinion_modifier = { target = GON modifier = large_increase } }
+		ART = { add_opinion_modifier = { target = GON modifier = large_increase } }
+		RHD = { add_opinion_modifier = { target = GON modifier = large_increase } }
+	}
  }
-
- #Focus for Persuade Aragorn to return to Gondor
-		focus = {
-		id = persuadearagorntoreturntogondor
-		icon = GFX_focus_hun_elect_a_king
-		ai_will_do = { factor = 100 }
- 		x =4
- 		y =2
-		available = {
-			NOT = {
-				has_global_flag = aragorn_dead
-			}
-		}
- 		mutually_exclusive = { focus = haveboromirstealthering}
- 		prerequisite = { focus = sendboromirwiththefellowship}
- 		cost = 10
-  	    available_if_capitulated = yes
-		completion_reward = {
-			set_global_flag = aragorn_persuaded
-			add_popularity = { ideology = cooperative popularity = 0.05 }
-		}
- }
-
- #Focus for Betray Elrond's Council
-		focus = {
-		id = betrayelrondscouncil
-		icon = GFX_goal_anti_comintern_pact
-		ai_will_do = { factor = 25 }
-		available = { has_global_flag = gondor_has_ring }
- 		x =2
- 		y =5
- 		mutually_exclusive = { }
- 		prerequisite = { focus = haveboromirstealthering}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			RIV = { add_opinion_modifier = { target = GON modifier = geo_treason } }
-			MIR = { add_opinion_modifier = { target = GON modifier = geo_treason } }
-			ERE = { add_opinion_modifier = { target = GON modifier = geo_treason } }
-		}
- }
-
- #Focus for Take the Ring to Gondor
-		focus = {
-		id = taketheringtogondor
-		icon = GFX_goal_the_one_ring
-		ai_will_do = { factor = 50 }
-		available = { has_global_flag = gondor_has_ring }
- 		x =2
- 		y =6
- 		mutually_exclusive = { }
- 		prerequisite = { focus = betrayelrondscouncil}
-  	prerequisite = { focus =anewking focus = thepeopleshallrule}
- 		cost = 5
-  	available_if_capitulated = yes
-		completion_reward = { GON = { add_ideas = one_true_ring } }
- }
-
- #Focus for Strike a Deal with Sauron
-		focus = {
-		id = strikeadealwithsauron
-		icon = GFX_goal_sauron_eye
-		ai_will_do = { factor = 10 }
-		available = { any_country = { original_tag = MOR has_government = belligerent } }
- 		x =1
- 		y =7
- 		mutually_exclusive = { focus = formtheempireofgondor}
- 		prerequisite = { focus = taketheringtogondor}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			news_event = { hours = 12 id = news.367 }
-			clr_global_flag = gondor_has_ring
-			set_global_flag = sauron_has_ring
-			random_other_country = {
-				limit = { original_tag = MOR has_government = belligerent }
-				add_ideas = one_true_ring
-				white_peace = ROOT
-				diplomatic_relation = { country = ROOT relation = non_aggression_pact }
-			}
-			remove_ideas = one_true_ring
-		}
- }
-
- #Focus for Form the Empire of Gondor
-		focus = {
-		id = formtheempireofgondor
-		icon = GFX_goal_gondor
-		ai_will_do = { factor = 10 }
- 		x =3
- 		y =7
- 		mutually_exclusive = { focus = strikeadealwithsauron }
- 		prerequisite = { focus = taketheringtogondor}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			set_cosmetic_tag = EOG
-		}
- }
-
-
-
-
 
 
 
@@ -1450,7 +1426,7 @@ focus = {
 
 focus = {
 	id = GON_modernize_the_military
-	icon = GFX_goal_generic_attack_allies
+	icon = GFX_goal_generic_army_doctrines
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_hit_before_you_get_hit
 	prerequisite = { focus = GON_hit_before_you_get_hit focus = GON_defense_is_the_best_attack }
@@ -1475,7 +1451,7 @@ focus = {
 
 focus = {
 	id = GON_defense_is_the_best_attack
-	icon = GFX_goal_generic_fortify_city
+	icon = GFX_goal_generic_construction
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_reinforce_osgilliath
 	prerequisite = { focus = GON_reinforce_osgilliath }
@@ -1492,7 +1468,7 @@ focus = {
 
 focus = {
 	id = GON_prepare_for_the_worse
-	icon = GFX_goal_generic_attack_allies
+	icon = GFX_goal_generic_fortify_city
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_defense_is_the_best_attack
 	prerequisite = { focus = GON_defense_is_the_best_attack }
@@ -1501,7 +1477,34 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { 
-		custom_effect_tooltip = "Add forts with bordor Mordor and Harad"
+		135 = { 
+			add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4617 } 
+			add_building_construction = {	type = bunker level = 2 instant_build = yes province = 3996 } 
+			add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7307 } 
+			add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7318 } 
+			add_building_construction = {	type = bunker level = 2 instant_build = yes province = 3545 } 
+		}
+		176 = {
+			add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7428 } 
+			add_building_construction = {	type = bunker level = 2 instant_build = yes province = 5388 } 
+			add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7791 } 
+		}
+		173 = {
+			add_building_construction = {	type = bunker level = 2 instant_build = yes province = 3773 } 
+		}
+		if = {
+			limit = {
+				MOR = {
+					controls_state = 204
+				}
+			}
+			22 ={
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 2430 } 
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 6861 } 
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4602 } 
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4479 } 
+			}
+		}
 	}
 }
 
