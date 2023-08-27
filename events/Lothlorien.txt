@@ -931,7 +931,11 @@ country_event = {
 		}
 		name = lothlorien.23.a
 
-		# TODO: Add compliance/reduce reistance in DGU
+		87 = {
+			add_compliance = 15
+			add_resistance = -5
+		}
+		# Add compliance/reduce reistance in DGU
 	}
 }
 
@@ -951,11 +955,16 @@ country_event = {
 		}
 		trigger = {
 			NOT = { has_war_with = MIR }
+			191 = { is_controlled_by = MIR }
 		}
 		name = lothlorien.24.a
 
-		MIR = { country_event = { id = lothlorien.25 days = 5 } }
-		# TODO: Add tooltip saying that we *will* immediately declare war if they accept
+		hidden_effect = {
+			MIR = { country_event = { id = lothlorien.25 days = 5 } }
+		}
+		# Add tooltip saying that we *will* immediately declare war if they accept
+		custom_effect_tooltip = if_they_accept
+		event_option_tooltip = lothlorien.25.a
 	}
 
 	# Offer 2: Offer them weapons n shit
@@ -968,8 +977,12 @@ country_event = {
 		}
 		name = lothlorien.24.b
 
-		MIR = { country_event = { id = lothlorien.26 days = 5 } }
-		# TODO: remove some weapons and stuff
+		hidden_effect = {
+			MIR = { country_event = { id = lothlorien.26 days = 5 } }
+		}
+		# remove some weapons and stuff
+		event_option_tooltip = lothlorien.26.a
+		add_political_power = 100
 	}
 
 	# Take things into our own hands
@@ -979,7 +992,12 @@ country_event = {
 		}
 		name = lothlorien.24.b
 
-		# TODO: Get wargoal on DGU
+		# Get wargoal on DGU
+		create_wargoal = {
+            target = DGU
+            type = take_state_focus
+            generator = { 87 }
+        }
 	}
 }
 
@@ -999,7 +1017,7 @@ country_event = {
 		}
 		name = lothlorien.25.a
 
-		# TODO
+		191 = { transfer_state_to = LTH }
 	}
 
 	# Hell no
@@ -1009,7 +1027,7 @@ country_event = {
 		}
 		name = lothlorien.25.b
 
-		# TODO
+		add_stability = -0.1
 	}
 }
 
@@ -1029,7 +1047,19 @@ country_event = {
 		}
 		name = lothlorien.26.a
 
-		# TODO
+		LTH = {
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 2000
+				target = MIR
+			}
+		}
+		MIR = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_increase
+			}
+		}
 	}
 }
 
@@ -1508,5 +1538,107 @@ country_event = {
 
 		# TODO: gives random swing, with preference to cele
 		# Change the chances if player has dome the "reasset_celes lordship" focus
+	}
+}
+
+# Send help to dwarf moria?
+country_event = {
+	id = lothlorien.40
+	title = lothlorien.40.t
+	desc = lothlorien.40.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.40.a
+
+		# Send weapons
+		event_option_tooltip = lothlorien.41.a
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.40.b
+
+		# Send a few volunteers
+		event_option_tooltip = lothlorien.42.a
+
+		add_manpower = -10000
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.40.c
+
+		# Thoughts and prayers
+	}
+}
+
+# Moria help: weapons
+country_event = {
+	id = lothlorien.41
+	title = lothlorien.41.t
+	desc = lothlorien.41.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.41.a
+
+		# Send weapons
+		LTH = {
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 1000
+				target = MOA
+			}
+		}
+		MOA = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_increase
+			}
+		}
+	}
+}
+
+# Moria help: volunteers
+country_event = {
+	id = lothlorien.42
+	title = lothlorien.42.t
+	desc = lothlorien.42.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.42.a
+
+		MOA = {
+			add_manpower = 10000
+			add_war_support = 0.1
+			add_opinion_modifier = {
+				target = LTH
+				modifier = small_increase
+			}
+		}
 	}
 }

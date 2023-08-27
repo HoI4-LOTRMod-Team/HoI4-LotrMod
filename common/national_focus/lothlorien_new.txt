@@ -1177,7 +1177,7 @@ focus_tree = {
 		icon = GFX_goal_lth_guardiansoftheriveranduin
 		
 		relative_position_id = lth_territorialdefense
-		x =1
+		x =2
 		y =2
 
 		cost = 10
@@ -1185,10 +1185,13 @@ focus_tree = {
 		prerequisite = { focus = lth_territorialdefense }
 		completion_reward = {
 			navy_experience = 50
+			custom_effect_tooltip = lth_guardiansoftheriveranduin_tt
 			# Add trait to all unit leaders
-			every_unit_leader = {
-				add_trait = {
-					trait = river_specialist
+			hidden_effect = {
+				every_unit_leader = {
+					add_trait = {
+						trait = river_specialist
+					}
 				}
 			}
 		}
@@ -1208,6 +1211,7 @@ focus_tree = {
 		completion_reward = {
 			# Lower the chances of orc raids from Dol Guldur succeeding
 			# (Taken care of automatically in the raid decision)
+			custom_effect_tooltip = lth_patrolsandriverwardens_tt
 		}
 	}
 
@@ -1223,10 +1227,13 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_guardiansoftheriveranduin }
 		completion_reward = {
-			# Build a bunch of forts
-			75 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 2202 } }
-			75 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 3538 } }
-			75 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 6366 } }
+			custom_effect_tooltip = lth_strengthenfortifications_tt
+			hidden_effect = {
+				# Build a bunch of forts
+				75 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 2202 } }
+				75 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 3538 } }
+				75 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 6366 } }
+			}
 		}
 	}
 
@@ -1852,6 +1859,7 @@ focus_tree = {
 		prerequisite = { focus = lth_mendtheschism }
 		completion_reward = {
 			# TODO: Form an agreement to switch ruler and ideology every 6 months or something, LOL
+			# The leader of the other ideology becomes the chief advisor
 		}
 	}
 
@@ -3988,7 +3996,6 @@ focus_tree = {
 		prerequisite = { focus = lth_preemptivemeasures }
 		completion_reward = {
 			# build new supply base to moria and stuff
-			# if MOA exists: choose if we want to help MOA
 			160 = {
 				add_building_construction = {
 					type = supply_node
@@ -3998,8 +4005,19 @@ focus_tree = {
 				}
 			}
 
+			# if MOA exists: choose if we want to help MOA
+			if = {
+				limit = {
+					country_exists = MOA
+					MOA = { has_war_with = MOC }
+					NOT = { has_government = belligerent }
+				}
+				country_event = lothlorien.40
+			}
+
 			# Slightly lowers the chances of orc raids from MOC succeeding
 			# (Taken care of automatically in the raid decision)
+			custom_effect_tooltip = lth_theminesofmoria_tt
 		}
 	}
 
@@ -4050,12 +4068,21 @@ focus_tree = {
 
 		cost = 10
 		ai_will_do = { factor = 1 }
-		prerequisite = { focus = lth_preemptivemeasures focus = lth_guardiansoftheriveranduin }
+		prerequisite = { focus = lth_patrolsandriverwardens }
+		prerequisite = { focus = lth_preemptivemeasures }
 		completion_reward = {
 			# Slightly lowers the chances of orc raids from Dol Guldur succeeding
 			# (Taken care of automatically in the raid decision)
+			custom_effect_tooltip = lth_thefortressofdolguldur_tt
 
-			# TODO: Something else
+			75 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 3335
+				}
+			}
 		}
 	}
 
@@ -4070,12 +4097,22 @@ focus_tree = {
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thefortressofdolguldur }
+		available = {
+			MIR = { controls_state = 87 }
+			87 = { compliance < 80 }
+			NOT = { has_war_with = MIR }
+			NOT = { MIR = { is_ally_with = MOR } }
+		}
 		completion_reward = {
 			# Can only be taken whilst DGU isn't released yet
 
+			custom_effect_tooltip = lth_helpmirkwoodwithcontainment_tt
+
 			# Send Mirkwood an event that increases compliance and lowers resistance in DGU
 			MIR = {
-				country_event = lothlorien.23
+				hidden_effect = {
+					country_event = lothlorien.23
+				}
 
 				add_opinion_modifier = {
     				target = LTH
@@ -4093,12 +4130,22 @@ focus_tree = {
 		x =1
 		y =1
 
+		will_lead_to_war_with = DGU
+
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thefortressofdolguldur }
+		available = {
+			DGU = { controls_state = 87 }
+			NOT = { has_war_with = DGU }
+			NOT = { is_ally_with = DGU }
+		}
 		completion_reward = {
+			custom_effect_tooltip = lth_forcetheissue_tt
 			# Choose one of three options to offer Mirkwood
-			country_event = lothlorien.24
+			hidden_effect = {
+				country_event = lothlorien.24
+			}
 		}
 	}
 
@@ -4693,21 +4740,21 @@ focus_tree = {
 
 		cost = 10
 		ai_will_do = { factor = 1 }
-		prerequisite = { focus = lth_investindrimrilldale focus = lth_investingladdenfields focus = lth_investinparthcelebrant }
+		prerequisite = { focus = lth_investinnanduhirion focus = lth_investintaurhith focus = lth_investinparthcelebrant }
 		completion_reward = {
 			# Disable resistance in these states
 			# add compliance
 			custom_effect_tooltip = lth_localautonomy_tt
 			hidden_effect = {
 				if = {
-					limit = { has_completed_focus = lth_investindrimrilldale }
+					limit = { has_completed_focus = lth_investinnanduhirion }
 					160 = {
 						force_disable_resistance = LTH
 						add_compliance = 25
 					}
 				}
 				if = {
-					limit = { has_completed_focus = lth_investingladdenfields }
+					limit = { has_completed_focus = lth_investintaurhith }
 					76 = {
 						force_disable_resistance = LTH
 						add_compliance = 25
@@ -4734,7 +4781,7 @@ focus_tree = {
 
 		cost = 10
 		ai_will_do = { factor = 1 }
-		available = { num_of_military_factories > 50 }
+		available = { num_of_factories > 40 }
 		prerequisite = { focus = lth_reformtaxcollection }
 		prerequisite = { focus = lth_localautonomy }
 		completion_reward = {
@@ -4742,13 +4789,13 @@ focus_tree = {
 			custom_effect_tooltip = lth_territorialintegration_tt
 			hidden_effect = {
 				if = {
-					limit = { has_completed_focus = lth_investindrimrilldale }
+					limit = { has_completed_focus = lth_investinnanduhirion }
 					160 = {
 						add_core_of = LTH
 					}
 				}
 				if = {
-					limit = { has_completed_focus = lth_investingladdenfields }
+					limit = { has_completed_focus = lth_investintaurhith }
 					76 = {
 						add_core_of = LTH
 					}
@@ -4764,7 +4811,7 @@ focus_tree = {
 	}
 
 	focus = {
-		id = lth_investingladdenfields
+		id = lth_investintaurhith
 		icon = GFX_goal_lth_investfocus
 		
 		relative_position_id = lth_provincialcouncils
@@ -4808,7 +4855,7 @@ focus_tree = {
 	}
 
 	focus = {
-		id = lth_investindrimrilldale
+		id = lth_investinnanduhirion
 		icon = GFX_goal_lth_investfocus
 		
 		relative_position_id = lth_provincialcouncils
@@ -4839,22 +4886,22 @@ focus_tree = {
 
 		cost = 10
 		ai_will_do = { factor = 1 }
-		prerequisite = { focus = lth_investindrimrilldale focus = lth_investingladdenfields focus = lth_investinparthcelebrant }
+		prerequisite = { focus = lth_investinnanduhirion focus = lth_investintaurhith focus = lth_investinparthcelebrant }
 		completion_reward = {
 			# Gain civs in every invested state
 			custom_effect_tooltip = lth_reformtaxcollection_tt
 			hidden_effect = {
 				if = {
-					limit = { has_completed_focus = lth_investindrimrilldale }
-					160 = { add_building_slot_and_civ_x3 = yes }
+					limit = { has_completed_focus = lth_investinnanduhirion }
+					160 = { add_building_slot_and_civ_x4 = yes }
 				}
 				if = {
-					limit = { has_completed_focus = lth_investingladdenfields }
-					76 = { add_building_slot_and_civ_x3 = yes }
+					limit = { has_completed_focus = lth_investintaurhith }
+					76 = { add_building_slot_and_civ_x4 = yes }
 				}
 				if = {
 					limit = { has_completed_focus = lth_investinparthcelebrant }
-					74 = { add_building_slot_and_civ_x3 = yes }
+					74 = { add_building_slot_and_civ_x4 = yes }
 				}
 			}
 		}
