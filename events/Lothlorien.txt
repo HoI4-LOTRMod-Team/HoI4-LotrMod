@@ -1133,7 +1133,16 @@ country_event = {
 			flag = lth_anduin_accepts_offer
 			days = 30
 		}
-		LTH = { country_event = lothlorien.29 }
+
+		LTH = { add_timed_idea = { idea = six_civs_cost days = 300 } }
+		VAL = { add_timed_idea = { idea = six_civs_gain days = 300 } }
+
+		VAL = { transfer_state = 76 }
+		LTH = { puppet = VAL }
+
+		hidden_effect = {
+			LTH = { country_event = lothlorien.29 }
+		}
 	}
 
 	# Nope
@@ -1143,7 +1152,11 @@ country_event = {
 		}
 		name = lothlorien.28.b
 
-		LTH = { country_event = lothlorien.29 }
+		custom_effect_tooltip = lothlorien.28.b_tt
+
+		hidden_effect = {
+			LTH = { country_event = lothlorien.29 }
+		}
 	}
 }
 
@@ -1181,7 +1194,13 @@ country_event = {
 		}
 		name = lothlorien.29.a
 
-		# TODO
+		effect_tooltip = {
+			LTH = { add_timed_idea = { idea = six_civs_cost days = 300 } }
+			VAL = { add_timed_idea = { idea = six_civs_gain days = 300 } }
+
+			VAL = { transfer_state = 76 }
+			LTH = { puppet = VAL }
+		}
 	}
 
 	# Wtf
@@ -1194,7 +1213,10 @@ country_event = {
 		}
 		name = lothlorien.29.b
 
-		# TODO
+		add_opinion_modifier = {
+			target = VAL
+			modifier = medium_decrease
+		}
 	}
 }
 
@@ -1214,8 +1236,17 @@ country_event = {
 		}
 		name = lothlorien.30.a
 
-		give_guarantee = VAL
 		set_country_flag = lth_anduin_gift_guarantee
+		give_guarantee = VAL
+		VAL = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = large_increase
+			}
+		}
+		hidden_effect = {
+			VAL = { country_event = lothlorien.43 }
+		}
 	}
 
 	# Send them some old equipment
@@ -1225,8 +1256,23 @@ country_event = {
 		}
 		name = lothlorien.30.b
 
-		# TODO: send equipment
 		set_country_flag = lth_anduin_gift_equipment
+		LTH = {
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 3000
+				target = VAL
+			}
+		}
+		VAL = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_increase
+			}
+		}
+		hidden_effect = {
+			VAL = { country_event = lothlorien.43 }
+		}
 	}
 
 	# Just a diplomatic gesture
@@ -1235,7 +1281,12 @@ country_event = {
 			base = 1
 		}
 		name = lothlorien.30.c
-
+		VAL = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = small_increase
+			}
+		}
 		
 	}
 }
@@ -1658,6 +1709,94 @@ country_event = {
 			add_opinion_modifier = {
 				target = LTH
 				modifier = small_increase
+			}
+		}
+	}
+}
+
+# Vales of Anduin cooperation
+country_event = {
+	id = lothlorien.43
+	title = lothlorien.43.t
+	desc = lothlorien.43.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.43.a
+
+		if = {
+			limit = { LTH = { has_country_flag = lth_anduin_gift_equipment } }
+			effect_tooltip = {
+				LTH = {
+					send_equipment = {
+						equipment = infantry_equipment
+						amount = 3000
+						target = VAL
+					}
+				}
+				VAL = {
+					add_opinion_modifier = {
+						target = LTH
+						modifier = medium_increase
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { LTH = { has_country_flag = lth_anduin_gift_guarantee } }
+			effect_tooltip = {
+				LTH = { give_guarantee = VAL }
+				VAL = {
+					add_opinion_modifier = {
+						target = LTH
+						modifier = large_increase
+					}
+				}
+			}
+		}
+	}
+}
+
+# Vales of Anduin cooperation efforts
+country_event = {
+	id = lothlorien.44
+	title = lothlorien.44.t
+	desc = lothlorien.44.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.44.a
+
+		if = {
+			limit = { LTH = { has_country_flag = lth_anduin_gift_guarantee } }
+			army_experience = 100
+			random_state = {
+				add_building_slot_and_civ_x3 = yes
+			}
+		}
+		else_if = {
+			limit = { has_country_flag = lth_anduin_gift_equipment }
+			army_experience = 50
+			random_state = {
+				add_building_slot_and_civ_x2 = yes
+			}
+		}
+		else = {
+			army_experience = 25
+			random_state = {
+				add_building_slot_and_civ = yes
 			}
 		}
 	}
