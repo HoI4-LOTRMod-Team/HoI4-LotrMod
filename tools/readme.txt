@@ -31,3 +31,9 @@ python.exe .\make_gfx.py -s spirits -o spirits
 For event-pictures:
 
 python.exe .\make_gfx.py -s report_eventpictures -o reporteventpictures
+
+
+
+For traits:
+
+python.exe .\make_gfx.py -s traits -o lotr_traits
