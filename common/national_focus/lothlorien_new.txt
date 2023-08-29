@@ -75,6 +75,10 @@ focus_tree = {
 			# Possibly:
 			# TODO: Start a timer. If the schism isn't mended by the end of it, start a civil war
 			# between Gala and Cele with advisors and unit leaders split by their allegiance.
+			hidden_effect = {
+				activate_mission = great_schism_civil_war
+			}
+			custom_effect_tooltip = lth_thegreatschism_tt
 		}
 	}
 
@@ -108,8 +112,42 @@ focus_tree = {
 		prerequisite = { focus = lth_thegreatschism }
 		mutually_exclusive = { focus = lth_electedrepresentatives }
 		completion_reward = {
-			# Give an event that forces us to hire an advisor. We will be able to choose between noldor, sindar, nandor and half-elf
-			country_event = lothlorien.35
+			lthi_increase_influence_halfelves_minor = yes
+			lthi_increase_influence_noldor_minor = yes
+
+			# Next advisor hired costs 50%
+			custom_effect_tooltip = lth_appointedrepresentatives_tt
+
+			hidden_effect = {
+				if = {
+					limit = {
+						amount_taken_ideas = { amount < 1 slots = { treasurer spymaster political_advisor } }
+					}
+					set_variable = { lth_advisors_hired = 0 }
+					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper }
+				}
+				else_if = {
+					limit = {
+						amount_taken_ideas = { amount < 2 slots = { treasurer spymaster political_advisor } }
+					}
+					set_variable = { lth_advisors_hired = 1 }
+					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper }
+				}
+				else_if = {
+					limit = {
+						amount_taken_ideas = { amount < 3 slots = { treasurer spymaster political_advisor } }
+					}
+					set_variable = { lth_advisors_hired = 2 }
+					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper }
+				}
+				else_if = {
+					limit = {
+						amount_taken_ideas = { amount < 4 slots = { treasurer spymaster political_advisor } }
+					}
+					set_variable = { lth_advisors_hired = 3 }
+					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper }
+				}
+			}
 		}
 	}
 
@@ -126,8 +164,11 @@ focus_tree = {
 		prerequisite = { focus = lth_thegreatschism }
 		mutually_exclusive = { focus = lth_appointedrepresentatives }
 		completion_reward = {
+			lthi_increase_influence_sindar_minor = yes
+			lthi_increase_influence_nandor_minor = yes
 			# Hire a bunch of random advisors
-			# TODO
+			hidden_effect = { lthi_hire_random_advisors = yes }
+			custom_effect_tooltip = lth_electedrepresentatives_tt
 			
 		}
 	}
@@ -155,16 +196,19 @@ focus_tree = {
 		
 		relative_position_id = lth_thegreatschism
 		x =0
-		y =4
+		y =6
 
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thegreatschism }
 		completion_reward = {
 			# Send out events to RIV, MIR and LIN. Their reponse will increase a factions influence
-			RIV = { country_event = { id = lothlorien.8 days = 5 } }
-			MIR = { country_event = { id = lothlorien.8 days = 7 } }
-			LIN = { country_event = { id = lothlorien.8 days = 9 } }
+			custom_effect_tooltip = lth_consulttheelves_tt
+			hidden_effect = {
+				RIV = { country_event = { id = lothlorien.8 days = 5 } }
+				MIR = { country_event = { id = lothlorien.8 days = 7 } }
+				LIN = { country_event = { id = lothlorien.8 days = 9 } }
+			}
 		}
 	}
 
@@ -182,7 +226,8 @@ focus_tree = {
 		mutually_exclusive = { focus = lth_alordsprerogative }
 		completion_reward = {
 			# Event that gives random swing, with preference to gala
-			country_event = lothlorien.36
+			hidden_effect = { country_event = lothlorien.36 }
+			event_option_tooltip = lothlorien.36.a
 		}
 	}
 
@@ -200,7 +245,8 @@ focus_tree = {
 		mutually_exclusive = { focus = lth_ringbearersedicts }
 		completion_reward = {
 			# Event that gives random swing, with preference to cele
-			country_event = lothlorien.37
+			hidden_effect = { country_event = lothlorien.37 }
+			event_option_tooltip = lothlorien.37.a
 		}
 	}
 
