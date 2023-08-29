@@ -37,3 +37,9 @@ python.exe .\make_gfx.py -s report_eventpictures -o reporteventpictures
 For traits:
 
 python.exe .\make_gfx.py -s traits -o lotr_traits
+
+
+
+For state modifiers:
+
+python.exe .\make_gfx.py -s state_modifiers -o lotr_state_modifiers
