@@ -123,29 +123,25 @@ focus_tree = {
 					limit = {
 						amount_taken_ideas = { amount < 1 slots = { treasurer spymaster political_advisor } }
 					}
-					set_variable = { lth_advisors_hired = 0 }
-					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper }
+					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper_0 }
 				}
 				else_if = {
 					limit = {
 						amount_taken_ideas = { amount < 2 slots = { treasurer spymaster political_advisor } }
 					}
-					set_variable = { lth_advisors_hired = 1 }
-					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper }
+					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper_1 }
 				}
 				else_if = {
 					limit = {
 						amount_taken_ideas = { amount < 3 slots = { treasurer spymaster political_advisor } }
 					}
-					set_variable = { lth_advisors_hired = 2 }
-					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper }
+					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper_2 }
 				}
 				else_if = {
 					limit = {
 						amount_taken_ideas = { amount < 4 slots = { treasurer spymaster political_advisor } }
 					}
-					set_variable = { lth_advisors_hired = 3 }
-					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper }
+					add_dynamic_modifier = { modifier = lth_next_advisor_cheaper_3 }
 				}
 			}
 		}
@@ -226,8 +222,25 @@ focus_tree = {
 		mutually_exclusive = { focus = lth_alordsprerogative }
 		completion_reward = {
 			# Event that gives random swing, with preference to gala
-			hidden_effect = { country_event = lothlorien.36 }
-			event_option_tooltip = lothlorien.36.a
+			random_list = {
+				60 = {
+					modifier = {
+						factor = 0
+						has_country_flag = mirror_predicted_gala_edicts_bad
+					}
+					event_option_tooltip = lothlorien.36.a
+					hidden_effect = { country_event = lothlorien.36 }
+				}
+				40 = {
+					modifier = {
+						factor = 0
+						has_country_flag = mirror_predicted_gala_edicts_good
+					}
+					event_option_tooltip = lothlorien.37.a
+					hidden_effect = { country_event = lothlorien.37 }
+				}
+			}
+			custom_effect_tooltip = mirror_predictable
 		}
 	}
 
@@ -245,8 +258,25 @@ focus_tree = {
 		mutually_exclusive = { focus = lth_ringbearersedicts }
 		completion_reward = {
 			# Event that gives random swing, with preference to cele
-			hidden_effect = { country_event = lothlorien.37 }
-			event_option_tooltip = lothlorien.37.a
+			random_list = {
+				60 = {
+					modifier = {
+						factor = 0
+						has_country_flag = mirror_predicted_cele_edicts_bad
+					}
+					event_option_tooltip = lothlorien.38.a
+					hidden_effect = { country_event = lothlorien.38 }
+				}
+				40 = {
+					modifier = {
+						factor = 0
+						has_country_flag = mirror_predicted_cele_edicts_good
+					}
+					event_option_tooltip = lothlorien.39.a
+					hidden_effect = { country_event = lothlorien.39 }
+				}
+			}
+			custom_effect_tooltip = mirror_predictable
 		}
 	}
 
@@ -1749,6 +1779,7 @@ focus_tree = {
 				ruling_party = belligerent
 				elections_allowed = no
 			}
+			# TODO: Newspaper event
 		}
 	}
 
@@ -1838,7 +1869,11 @@ focus_tree = {
 			# Traits for Gala
 			add_country_leader_trait = dreadful_as_storm_and_lightning
 
-			# TODO: change Gala's portrait
+			# change Gala's portrait
+			set_country_leader_portrait = {
+				ideology = belligerent
+				portrait = GFX_portrait_lothlorien_galadriel_dark
+			}
 		}
 	}
 
@@ -1854,7 +1889,10 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_elvensupremacy }
 		completion_reward = {
-			# TODO: Give a research slot and probably something else relating to how mono the influence is
+			# Give a research slot and probably something else relating to how mono the influence is
+			add_research_slot = 1
+			custom_effect_tooltip = lth_purityandbrilliance_tt
+			# TODO: This seems like it should be two focuses instead of 1
 		}
 	}
 
@@ -3502,6 +3540,7 @@ focus_tree = {
 		completion_reward = {
 			# Unlocks "Elven Imperial Rule" Occupation law
 			# Automatically done through focus and triggers
+			custom_effect_tooltip = lth_atasteofempire_tt
 		}
 	}
 
@@ -3518,19 +3557,22 @@ focus_tree = {
 		prerequisite = { focus = lth_atasteofempire }
 		completion_reward = {
 			army_experience = 100
-			# Every unit leader of skill level 1 will be dismissed
-			every_unit_leader = {
-				limit = {
-					check_variable = { skill_level < 2 }
+			custom_effect_tooltip = lth_reformmilitaryleadership_tt
+			hidden_effect = {
+				# Every unit leader of skill level 1 will be dismissed
+				every_unit_leader = {
+					limit = {
+						check_variable = { skill_level < 2 }
+					}
+					retire = yes
 				}
-				retire = yes
-			}
-			# All other unit leaders gain an additional skill level
-			every_unit_leader = {
-				limit = {
-					check_variable = { skill_level > 1 }
-				}
-				add_skill_level = 1
+				# All other unit leaders gain an additional skill level
+				every_unit_leader = {
+					limit = {
+						check_variable = { skill_level > 1 }
+					}
+					add_skill_level = 1
+				}	
 			}
 		}
 	}
@@ -3549,7 +3591,10 @@ focus_tree = {
 		completion_reward = {
 			# Give targeted modifer against some realms of men
 			add_war_support = 0.2
-			add_threat = 0.15
+			add_named_threat = {
+				threat = 15
+				name = "Lothlórien completed the 'Fate of Mortals' focus"
+			}
 			add_ideas = LTH_tha_fate_of_mortals
 		}
 	}
@@ -3565,12 +3610,18 @@ focus_tree = {
 		cost = 10
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_thefateofmortals }
+		available = {
+			any_country = {
+				is_dwarves = yes
+				ic_ratio = { tag = LTH ratio < 1.3 }
+			}
+		}
 		completion_reward = {
 			# Send events to dwarves
 			every_country = {
 				limit = {
 					is_dwarves = yes
-					ic_ratio = { tag = THIS ratio < 1.3 }
+					ic_ratio = { tag = LTH ratio < 1.3 }
 				}
 				country_event = lothlorien.31
 			}
@@ -3947,6 +3998,7 @@ focus_tree = {
 			hidden_effect = {
 				VAL = { country_event = { id = lothlorien.28 days = 3 } }
 			}
+			custom_effect_tooltip = mirror_predictable
 		}
 	}
 
