@@ -21,7 +21,7 @@ python.exe .\make_gfx.py -s leaders -o leaders/lotr_leaders_dwarves 0_generic_Dw
 
 
 
-For spirits
+For spirits aka ideas
 
 python.exe .\make_gfx.py -s spirits -o spirits
 
