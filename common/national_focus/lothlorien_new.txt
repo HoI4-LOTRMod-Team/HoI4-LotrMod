@@ -2606,6 +2606,24 @@ focus_tree = {
 		completion_reward = {
 			# Advance medicine research
 			# Increase opinion with MIR, ENT, SPI
+			MIR = {
+				add_opinion_modifier = {
+					target = LTH
+					modifier = medium_increase
+				}
+			}
+			ENT = {
+				add_opinion_modifier = {
+					target = LTH
+					modifier = medium_increase
+				}
+			}
+			SPI = {
+				add_opinion_modifier = {
+					target = LTH
+					modifier = medium_increase
+				}
+			}
 		}
 	}
 
@@ -2622,6 +2640,7 @@ focus_tree = {
 		prerequisite = { focus = lth_bondsofnature }
 		completion_reward = {
 			# Unlock forest infantry?
+			set_technology = { forest_infantry = 1 }
 		}
 	}
 
@@ -2638,6 +2657,8 @@ focus_tree = {
 		prerequisite = { focus = lth_bondsofnature }
 		completion_reward = {
 			# Something with the ents
+
+			# TODO
 		}
 	}
 
@@ -2654,6 +2675,7 @@ focus_tree = {
 		prerequisite = { focus = lth_bondsofnature }
 		completion_reward = {
 			# Give increased air supp /bombing bonuses and stuff
+			add_ideas = LTH_great_beasts
 		}
 	}
 
@@ -2670,7 +2692,16 @@ focus_tree = {
 		prerequisite = { focus = lth_thegreatbeasts }
 		completion_reward = {
 			# Unlock eagle research
-			# Get a number of eagles 
+			set_technology = {
+				eagle_domestication = 1
+				fighter_eagle = 1
+			}
+			# Get a number of eagles
+			add_equipment_to_stockpile = {
+    			type = fighter_equipment_1
+    			amount = 80
+    			producer = LTH
+			}
 		}
 	}
 
@@ -2687,7 +2718,16 @@ focus_tree = {
 		prerequisite = { focus = lth_thegreatbeasts }
 		completion_reward = {
 			# Unlock fellbeast tech
+			set_technology = {
+				fellbeast_domestication = 1
+				fighter_fellbeast = 1
+			}
 			# Get a number of fellbeasts
+			add_equipment_to_stockpile = {
+    			type = fighter_equipment_0
+    			amount = 80
+    			producer = LTH
+			}
 		}
 	}
 
@@ -2753,7 +2793,16 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_unityindivision  }
 		completion_reward = {
+			custom_effect_tooltip = lth_tamingthewild_tt
 			# Give our generals a forest trait or something
+			hidden_effect = {
+				every_unit_leader = {
+					limit = {
+						check_variable = { skill_level > 1 }
+					}
+					add_trait = { trait = forest_skirmisher }
+				}
+			}
 		}
 	}
 
@@ -3399,9 +3448,18 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_publiccelebrations }
 		completion_reward = {
-			# End schism
-			# Galadriel leaves
-			# Switch to commie
+			# End the schism
+			remove_ideas = LTH_great_schism
+			# Get rid of Cele
+			LTH_galadriel = {
+				retire = yes
+			}
+			# Switch to revolutionary
+			set_politics = {
+				ruling_party = revolutionary
+				elections_allowed = no
+			}
+			# TODO: Newspaper event
 		}
 	}
 
@@ -3420,7 +3478,7 @@ focus_tree = {
 			# Cele becomes a field marshal
 			add_field_marshal_role = {
 				character = LTH_celeborn
-				traits={ inspirational_leader }
+				traits={ inspirational_leader sindar_trait }
 				skill=5
 				attack_skill=4
 				defense_skill=4
@@ -3443,11 +3501,14 @@ focus_tree = {
 		prerequisite = { focus = lth_celebornsreforms focus = lth_thesupremeleader }
 		completion_reward = {
 			# grant bonuses based on how evened out the influence among races is
+			custom_effect_tooltip = lth_unityindivision_tt
 			# Max bonus is 15%
-			add_dynamic_modifier = {
-				modifier = lth_unity_in_division_modifier
+			hidden_effect = {
+				add_dynamic_modifier = {
+					modifier = lth_unity_in_division_modifier
+				}
+				lthi_update_values = yes
 			}
-			lthi_update_values = yes
 		}
 	}
 
@@ -3461,9 +3522,10 @@ focus_tree = {
 
 		cost = 10
 		ai_will_do = { factor = 1 }
-		prerequisite = { focus = lth_elvenhighereducation focus = lth_anewbeginning }
+		prerequisite = { focus = lth_elvenhighereducation focus = lth_asharedcause }
 		completion_reward = {
 			# Event on orc rights
+			country_event = lothlorien.52
 		}
 	}
 
@@ -3484,8 +3546,8 @@ focus_tree = {
 	}
 
 	focus = {
-		id = lth_anewbeginning
-		icon = GFX_goal_lth_anewbeginning
+		id = lth_asharedcause
+		icon = GFX_goal_lth_asharedcause
 		
 		relative_position_id = lth_theuntreadedpath
 		x =1
@@ -3495,10 +3557,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_unityindivision }
 		completion_reward = {
-			# Event that lets us choose:
-			# - create a faction
-			# - Attack neighbours
-			# - ...
+			# TODO
+			# Add MP based on other commie countries and their commie suppoort (see dd)
 		}
 	}
 
@@ -3516,7 +3576,6 @@ focus_tree = {
 		completion_reward = {
 			# Extra traits for Cele
 			add_country_leader_trait = supreme_leader
-			# TODO: Possibly change Cele's portrait
 		}
 	}
 
@@ -3532,8 +3591,8 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = lth_unityindivision }
 		completion_reward = {
-			# TODO: Give research slot
-			
+			# Give research slot
+			add_research_slot = 1
 		}
 	}
 
@@ -3869,6 +3928,7 @@ focus_tree = {
 		prerequisite = { focus = lth_celebornsascendancy focus = lth_celeborngaladrielaccord }
 		completion_reward = {
 			# add idea?
+			# TODO
 		}
 	}
 
@@ -3928,7 +3988,7 @@ focus_tree = {
 			random_core_state = {
 				add_resource = {
 					type = oil
-					amount = 8
+					amount = 15
 				}
 			}
 			# build a bunch of fuel silos
