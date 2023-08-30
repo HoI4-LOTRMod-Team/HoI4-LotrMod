@@ -1242,7 +1242,7 @@ country_event = {
 		VAL = { add_timed_idea = { idea = six_civs_gain days = 300 } }
 
 		VAL = { transfer_state = 76 }
-		LTH = { puppet = VAL }
+		LTH = { puppet = { target = VAL end_wars = no } }
 
 		hidden_effect = {
 			LTH = { country_event = lothlorien.29 }
@@ -1256,7 +1256,7 @@ country_event = {
 		}
 		name = lothlorien.28.b
 
-		custom_effect_tooltip = lothlorien.28.b_tt
+		custom_effect_tooltip = lth_gain_wargoal_through_focus_tt
 
 		hidden_effect = {
 			LTH = { country_event = lothlorien.29 }
@@ -1411,9 +1411,9 @@ country_event = {
 		}
 		name = lothlorien.31.a
 
-		# TODO
+		event_option_tooltip = lothlorien.32.a_accepted
 
-		LTH = { country_event = { id = lothlorien.32 days = 7 } }
+		LTH = { country_event = { id = lothlorien.32 days = 1 } }
 	}
 
 	# Send them tribute
@@ -1427,9 +1427,9 @@ country_event = {
 			flag = lth_sent_tribute
 			days = 60
 		}
-		# TODO
+		event_option_tooltip = lothlorien.32.a_tribute
 
-		LTH = { country_event = { id = lothlorien.32 days = 7 } }
+		LTH = { country_event = { id = lothlorien.32 days = 1 } }
 	}
 
 	# No way
@@ -1439,11 +1439,16 @@ country_event = {
 		}
 		name = lothlorien.31.c
 
-		set_country_flag = lth_refused_subjugation
-		# TODO: tooltip: LTH will be able to declare war
-		# TODO: opinion modifier
+		LTH = {
+			add_opinion_modifier = {
+    		target = THIS
+    		modifier = medium_decrease
+		}
 
-		LTH = { country_event = { id = lothlorien.32 days = 7 } }
+		set_country_flag = lth_refused_subjugation
+		event_option_tooltip = lothlorien.32.a_declined
+
+		LTH = { country_event = { id = lothlorien.32 days = 1 } }
 	}
 }
 
@@ -1485,6 +1490,8 @@ country_event = {
 		}
 		trigger = { FROM = { has_country_flag = lth_refused_subjugation } }
 		name = lothlorien.32.a_declined
+		
+		custom_effect_tooltip = lth_gain_wargoal_through_focus_tt
 	}
 
 	option = {
@@ -1493,6 +1500,16 @@ country_event = {
 		}
 		trigger = { FROM = { has_country_flag = lth_sent_tribute } }
 		name = lothlorien.32.a_tribute
+
+		if = {
+			limit = { FROM = { num_of_civilian_factories > 15 } }
+			LTH = { add_timed_idea = { idea = six_civs_gain days = 210 } }
+			FROM = { add_timed_idea = { idea = six_civs_cost days = 210 } }
+		}
+		else = {
+			LTH = { add_timed_idea = { idea = three_civs_gain days = 210 } }
+			FROM = { add_timed_idea = { idea = three_civs_cost days = 210 } }
+		}
 	}
 
 	option = {
@@ -1504,6 +1521,13 @@ country_event = {
 			NOT = { FROM = { has_country_flag = lth_sent_tribute } }
 		}
 		name = lothlorien.32.a_accepted
+
+		LTH = {
+			puppet = {
+				target = FROM
+				end_wars = no
+			}
+		}
 	}
 }
 
@@ -1523,7 +1547,7 @@ country_event = {
 		}
 		name = lothlorien.33.a
 
-		# TODO
+		event_option_tooltip = lothlorien.34.a_accepted
 	}
 
 	# Wtf?
@@ -1533,7 +1557,7 @@ country_event = {
 		}
 		name = lothlorien.33.b
 
-		# TODO
+		event_option_tooltip = lth_gain_wargoal_through_focus_tt
 
 		set_country_flag = lth_refused_subjugation
 	}
@@ -1578,6 +1602,13 @@ country_event = {
 			NOT = { FROM = { has_country_flag = lth_refused_subjugation } }
 		}
 		name = lothlorien.34.a_accepted
+
+		LTH = {
+			puppet = {
+				target = FROM
+				end_wars = no
+			}
+		}
 	}
 }
 
