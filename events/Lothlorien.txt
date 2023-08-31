@@ -54,8 +54,18 @@ country_event = {
 
 	is_triggered_only = yes
 
+	# yes
 	option = {
-		ai_chance = {base = 6}
+		ai_chance = {
+			base = 6
+			modifier = {
+				factor = 2
+				OR = {
+					ring_orophin_in_fellowship = yes
+					ring_haldir_in_fellowship = yes
+				}
+			}
+		}
 		name = lothlorien.3.a
 
 		ring_rivendell_approves = yes
@@ -78,6 +88,8 @@ country_event = {
 			ring_trim_eventlog = yes
 		}
 	}
+
+	# A la calle
 	option = {
 		ai_chance = {
 			base = 1 
@@ -113,9 +125,7 @@ country_event = {
 			base = 3
 			modifier = {
 				OR = {
-					has_completed_focus = victorythroughstrength
-					has_completed_focus = victorythroughsubmission
-					has_completed_focus = victorythroughequity
+					has_completed_focus = lth_thegreatschism
 				}
 				add = 10
 			}
@@ -125,8 +135,6 @@ country_event = {
 		ring_rivendell_disapproves = yes
 
 		add_political_power = -250
-
-		LTH = {complete_national_focus = taketheringfromfrodo}
 
 		random_list = {
 
@@ -170,6 +178,18 @@ country_event = {
 		name = lothlorien.4.a
 
 		hidden_effect = {
+			# Add Haldir/Orophin back as a general if they were in fellowship
+			if = {
+				limit = { ring_haldir_in_fellowship = yes }
+				clr_global_flag = fs_lothlorien_haldir
+				FS_haldir = { ring_remove_member_from_fellowship_nolog = yes }
+			}
+			else_if = {
+				limit = { ring_orophin_in_fellowship = yes }
+				clr_global_flag = fs_lothlorien_orophin
+				FS_orophin = { ring_remove_member_from_fellowship_nolog = yes }
+			}
+
 			news_event = { hours = 12 id = news.371 }
 			ring_seize_ring = yes
 
@@ -195,11 +215,7 @@ country_event = {
 		ai_chance = {
 			base = 1
 			modifier = {
-				OR = {
-					has_completed_focus = victorythroughstrength
-					has_completed_focus = victorythroughsubmission
-					has_completed_focus = victorythroughequity
-				}
+				has_completed_focus = lth_thegreatschism
 				add = 10
 			}
 		}
@@ -210,6 +226,28 @@ country_event = {
 		ring_rivendell_disapproves = yes
 
 		hidden_effect = {
+			# Haldir/Orophin betray fellowship if they were in it
+			if = {
+				limit = { ring_haldir_in_fellowship = yes }
+				clr_global_flag = fs_lothlorien_haldir
+				FS_haldir = { ring_remove_member_from_fellowship_nolog = yes }
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_lth_haldir_betrays_fellowship }
+				ring_trim_eventlog = yes
+			}
+			else_if = {
+				limit = { ring_orophin_in_fellowship = yes }
+				clr_global_flag = fs_lothlorien_orophin
+				FS_orophin = { ring_remove_member_from_fellowship_nolog = yes }
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_lth_orohpin_betrays_fellowship }
+				ring_trim_eventlog = yes
+			}
+
 			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 			add_to_array = { global.fs_eventlog = token:fs_event_lth_frodo_refuses }
@@ -283,8 +321,17 @@ country_event = {
 		}
 	}
 
-	# Haldir
+	# Send Haldir with them (Only available if not part of Elrond's council)
 	option = {
+		trigger = {
+			OR = {
+				NOT = { has_global_flag = fs_lothlorien_invited }
+				has_global_flag = fs_lothlorien_none
+			}
+			LTH_haldir = {
+				is_unit_leader = yes
+			}
+		}
 		ai_chance = {
 			base = 1
 			modifier = { is_historical_focus_on = yes factor = 0 }
@@ -313,6 +360,54 @@ country_event = {
 		name = lothlorien.6.c
 
 		ring_rivendell_disapproves = yes
+	}
+
+	# Request Haldir to stay behind
+	option = {
+		trigger = {
+			ring_haldir_in_fellowship = yes
+		}
+		ai_chance = {
+			base = 1
+			modifier = { is_historical_focus_on = yes factor = 0 }
+		}
+		name = lothlorien.6.d
+
+		custom_effect_tooltip = lothlorien.6.d.tt
+
+		hidden_effect = {
+			clr_global_flag = fs_lothlorien_haldir
+			FS_haldir = { ring_remove_member_from_fellowship_nolog = yes }
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_haldir_asked_to_stay_behind }
+			ring_trim_eventlog = yes
+		}
+	}
+
+	# Request Orophin to stay behind
+	option = {
+		trigger = {
+			ring_orophin_in_fellowship = yes
+		}
+		ai_chance = {
+			base = 1
+			modifier = { is_historical_focus_on = yes factor = 0 }
+		}
+		name = lothlorien.6.e
+
+		custom_effect_tooltip = lothlorien.6.e.tt
+
+		hidden_effect = {
+			clr_global_flag = fs_lothlorien_orophin
+			FS_orophin = { ring_remove_member_from_fellowship_nolog = yes }
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_orophin_asked_to_stay_behind }
+			ring_trim_eventlog = yes
+		}
 	}
 }
 
@@ -1199,21 +1294,37 @@ country_event = {
 	# Ok
 	option = {
 		ai_chance = {
-			base = 1
+			base = 5
+			modifier = {
+				factor = 0
+				LTH = { is_ai = yes }
+				is_historical_focus_on = yes
+			}
 		}
 		name = lothlorien.27.a
 
-		# TODO
+		set_global_flag = fs_lothlorien_invited
+		custom_effect_tooltip = lothlorien.27.a_tt
+		LTH = { country_event = lothlorien.64 }
 	}
 
 	# Nope
 	option = {
 		ai_chance = {
 			base = 1
+			modifier = {
+				factor = 10
+				LTH = { has_completed_focus = lth_thegreatschism }
+			}
+			modifier = {
+				factor = 10
+				LTH = { has_added_tension_amount > 1 }
+			}
 		}
 		name = lothlorien.27.b
 
-		# TODO
+		event_option_tooltip = lothlorien.65.a
+		LTH = { country_event = lothlorien.65 }
 	}
 }
 
@@ -2600,7 +2711,14 @@ country_event = {
 	# accept
 	option = {
 		ai_chance = {
-			base = 1
+			base = 5
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 30
+				}
+			}
 		}
 		name = lothlorien.63.a
 
@@ -2612,11 +2730,57 @@ country_event = {
 	# no
 	option = {
 		ai_chance = {
-			base = 1
+			base = 2
+			modifier = {
+				factor = 10
+				LTH = { has_added_tension_amount > 5 }
+			}
 		}
 		name = lothlorien.63.b
 
 		add_political_power = -150
 		add_stability = -0.1
+	}
+}
+
+# Elrond council reponse: accepted
+country_event = {
+	id = lothlorien.64
+	title = lothlorien.64.t
+	desc = lothlorien.64.d
+
+	is_triggered_only = yes
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.64.a
+		custom_effect_tooltip = lothlorien.64.a_tt
+	}
+}
+
+# Elrond council reponse: accepted
+country_event = {
+	id = lothlorien.65
+	title = lothlorien.65.t
+	desc = lothlorien.65.d
+
+	is_triggered_only = yes
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.65.a
+
+		LTH = {
+			add_opinion_modifier = {
+				target = RIV
+				modifier = small_decrease
+			}
+		}
 	}
 }

@@ -225,10 +225,19 @@ execute_fellowship_step = {
 		ring_heal_fellowship = yes
 
 		# Hold Council of Elrond:
-		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-		add_to_array = { global.fs_eventlog = token:fs_event_rivendell_council_invoked }
-		ring_trim_eventlog = yes
+		if = {
+			limit = { has_global_flag = fs_lothlorien_invited }
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_rivendell_council_invoked_with_lth }
+			ring_trim_eventlog = yes
+		}
+		else = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_rivendell_council_invoked }
+			ring_trim_eventlog = yes
+		}
 		RIV = { country_event = { days = 14 id = rivendell.1 } }
 	}
 
@@ -462,6 +471,10 @@ ring_check_if_council_of_elrond_started = {
 			has_global_flag = fs_mirkwood_responded
 			has_global_flag = fs_gondor_responded
 			has_global_flag = fs_erebor_responded
+			OR = {
+				NOT = { has_global_flag = fs_lothlorien_invited }
+				has_global_flag = fs_lothlorien_responded
+			}
 		}
 		SHI = { execute_start_council_of_elrond = yes }
 	}
@@ -475,6 +488,10 @@ ring_check_if_council_of_elrond_concluded = {
 			has_global_flag = fs_gondor_responded
 			has_global_flag = fs_erebor_responded
 			has_global_flag = fs_rivendell_responded
+			OR = {
+				NOT = { has_global_flag = fs_lothlorien_invited }
+				has_global_flag = fs_lothlorien_responded
+			}
 		}
 		SHI = { execute_conclude_council_of_elrond = yes }
 	}
@@ -485,6 +502,7 @@ execute_start_council_of_elrond = {
 	clr_global_flag = fs_mirkwood_responded
 	clr_global_flag = fs_erebor_responded
 	clr_global_flag = fs_gondor_responded
+	clr_global_flag = fs_lothlorien_responded
 
 	# Let the members vote on the fellowships path
 	RIV = { country_event = { id = rivendell.19 days = 4 } }
@@ -508,6 +526,16 @@ execute_start_council_of_elrond = {
 	}
 	else = {
 		set_global_flag = fs_mirkwood_responded
+	}
+	if = {
+		limit = {
+			has_global_flag = fs_lothlorien_invited
+			NOT = { has_global_flag = fs_lothlorien_noone }
+		}
+		LTH = { country_event = { id = rivendell.19 days = 4 } }
+	}
+	else = {
+		set_global_flag = fs_lothlorien_responded
 	}
 }
 
