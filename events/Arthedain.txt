@@ -233,3 +233,118 @@ country_event = {
 		add_stability = -0.10
 	}
 }
+
+# Request to form the 'Grey Company'
+country_event = {
+	id = arthedain.6
+	title = arthedain.6.t
+	desc = arthedain.6.d
+	picture = GFX_report_event_rangers
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = arthedain.6.a
+		ai_chance = {
+			base = 6
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = ART
+					value > 30
+				}
+			}
+			modifier = {
+				factor = 5
+				ART = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 0.25
+				ART = { is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 5
+				OR = {
+					tag = ART
+					tag = RHD
+				}
+			}
+		}
+
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = -800
+		}
+		add_timed_idea = {
+			idea = minor_expense
+			days = 80
+		}
+
+		custom_effect_tooltip = arthedain.6.a_tt
+
+		hidden_effect = {
+			add_to_variable = { grey_company_supporters = 1 }
+
+			if = {
+				limit = {
+					check_variable = { grey_company_supporters > 2 }
+					NOT = { has_global_flag = grey_company_formed }
+				}
+				set_global_flag = grey_company_formed
+				ART = { country_event = arthedain.7 }
+				RHD = { country_event = arthedain.7 }
+			}
+		}
+		
+	}
+	option = { #Refuse
+		name = arthedain.6.b
+		
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 3
+				has_opinion = {
+					target = ART
+					value < 0
+				}
+			}
+			modifier = {
+				factor = 3
+				ART = { is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 0.25
+				OR = {
+					tag = ART
+					tag = RHD
+				}
+			}
+		}
+	}
+}
+
+# Grey Company Formed
+country_event = {
+	id = arthedain.7
+	title = arthedain.7.t
+	desc = arthedain.7.d
+	picture = GFX_report_event_rangers
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = arthedain.7.a
+		ai_chance = {
+			base = 60
+		}
+		if = {
+			limit = { tag = ART }
+			load_oob = ART_GreyCompany
+		}
+		else_if = {
+			limit = { tag = RHD }
+			load_oob = RHD_GreyCompany
+		}
+	}
+}

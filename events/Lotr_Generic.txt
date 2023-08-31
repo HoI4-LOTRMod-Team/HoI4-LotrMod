@@ -292,3 +292,106 @@ country_event = {
 		set_country_flag = investment_gambler_killed
 	}
 }
+
+# Send delegation to country
+country_event = {
+	id = lotr_generic.6
+	title = lotr_generic.6.t
+	desc = lotr_generic.6.d
+	picture = GFX_report_event_alliance
+
+	is_triggered_only = yes
+
+	option = { # Shower them with gifts
+		name = lotr_generic.6.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 30
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 0.25
+				FROM = { is_going_different_path_as_root = yes }
+			}
+		}
+		
+		add_timed_idea = {
+			idea = minor_expense
+			days = 60
+		}
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = large_increase
+			}
+			add_relation_modifier = {
+				target = FROM
+				modifier = free_license
+			}
+		}
+	}
+
+	option = { # Give them the common courtesies
+		name = lotr_generic.6.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 15
+				}
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { is_going_different_path_as_root = yes }
+			}
+		}
+		
+		add_political_power = 50
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = medium_increase
+			}
+		}
+	}
+
+	option = { # They're not welcome here
+		name = lotr_generic.6.c
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value < 0
+				}
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_going_different_path_as_root = yes }
+			}
+		}
+		
+		add_political_power = -50
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = medium_decrease
+			}
+		}
+	}
+}
