@@ -305,6 +305,7 @@ ring_fellowship_begin_move_to_next_state = {
 		set_variable = { global.fs_days_left_in_state = 65 }
 	}
 
+	# Slow fellowship down by 50% in Mordor territory
 	if = {
 		limit = {
 			var:global.fs_currentstate = {
@@ -317,6 +318,7 @@ ring_fellowship_begin_move_to_next_state = {
 			}
 		}
 		multiply_variable = { global.fs_days_left_in_state = 1.5 }
+		round_variable = global.fs_days_left_in_state
 	}
 }
 
@@ -389,9 +391,15 @@ ring_daily_update = {
 		limit = { check_variable = { global.fs_days_left_in_state > 0 } }
 		subtract_from_variable = { global.fs_days_left_in_state = 1 }
 
-		# When the timer runs out, move fellowship to the enxt state
+		# When the timer runs out, move fellowship to the next state
 		if = {
-			limit = { check_variable = { global.fs_days_left_in_state = 0 } }
+			limit = {
+				check_variable = {
+					var = global.fs_days_left_in_state
+					value = 0
+					compare = less_than_or_equals
+			}
+		}
 
 			# This event moves the fellowship to the enxt state
 			#log = "FS_STEP"
