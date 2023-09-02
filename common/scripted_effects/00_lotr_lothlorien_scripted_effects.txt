@@ -877,3 +877,38 @@ lth_accord_gala_term = {
 	}
 	custom_effect_tooltip = lth_accord_gala_term_tt
 }
+
+lth_add_sharedcause_mp = {
+	set_temp_variable = { lth_sharedcause_total_manpower_gained = 0 }
+    
+	every_other_country = {
+		limit = {
+			has_government = revolutionary
+			NOT = { original_tag = lth }
+		}
+        
+		set_temp_variable = { lth_sharedcause_manpower_gained = party_popularity@revolutionary }
+		if = {
+			limit = {
+				is_major = yes
+			}
+			multiply_temp_variable =  { lth_sharedcause_manpower_gained =  40000 }
+
+		}
+		else = {
+			multiply_temp_variable =  { lth_sharedcause_manpower_gained =  3000 }
+		}
+		add_to_temp_variable = {
+			var = lth_sharedcause_total_manpower_gained
+			value = lth_sharedcause_manpower_gained
+		}
+    }
+    clamp_temp_variable = {
+        var = lth_sharedcause_total_manpower_gained
+        min = 10000
+        max = 150000
+    }
+
+	custom_effect_tooltip = lth_add_sharedcause_mp_tt
+	add_manpower = lth_sharedcause_total_manpower_gained
+}
