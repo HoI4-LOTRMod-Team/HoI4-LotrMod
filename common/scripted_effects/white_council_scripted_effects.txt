@@ -2,14 +2,52 @@
 
 
 add_to_white_council = {
+	if = {
+		limit = {
+			OR = {
+				LTH = { is_in_tech_sharing_group = white_council_group }
+				ISE = { is_in_tech_sharing_group = white_council_group }
+				RIV = { is_in_tech_sharing_group = white_council_group }
+			}
+			NOT = { is_in_tech_sharing_group = white_council_group }
+		}
+		add_to_tech_sharing_group = white_council_group
+	}
+
 	set_country_flag = whc_white_council_member
 }
 
 
 remove_from_white_council = {
+	every_country = {
+		limit = {
+			is_white_council_member = yes
+			NOT = { tag = THIS }
+		}
+		country_event = whitecouncil.3
+	}
+	country_event = whitecouncil.4
+
 	clr_country_flag = whc_white_council_member
 }
 
 create_white_council = {
 	set_global_flag = whc_white_council_exists
+}
+
+white_council_members_tt = {
+	custom_effect_tooltip = "Current White Council Members:"
+	custom_effect_tooltip = "   Gandalf"
+	if = {
+		limit = { ISE = { is_white_council_member = yes } }
+		custom_effect_tooltip = "   Saruman"
+	}
+	if = {
+		limit = { RIV = { is_white_council_member = yes } }
+		custom_effect_tooltip = "   Elrond"
+	}
+	if = {
+		limit = { LTH = { is_white_council_member = yes } }
+		custom_effect_tooltip = "   Galadriel"
+	}
 }
