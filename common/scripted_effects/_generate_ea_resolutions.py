@@ -13,14 +13,6 @@ ea_resolution_$NAME$_effect = {
 		limit = { has_idea = ea_resolution_$NAME$_idea_2 }
 		swap_ideas = { remove_idea = ea_resolution_$NAME$_idea_2 add_idea = ea_resolution_$NAME$_idea_3 }
 	}
-	else_if = {
-		limit = { has_idea = ea_resolution_$NAME$_idea_3 }
-		swap_ideas = { remove_idea = ea_resolution_$NAME$_idea_3 add_idea = ea_resolution_$NAME$_idea_4 }
-	}
-	else_if = {
-		limit = { has_idea = ea_resolution_$NAME$_idea_4 }
-		swap_ideas = { remove_idea = ea_resolution_$NAME$_idea_4 add_idea = ea_resolution_$NAME$_idea_5 }
-	}
 	else = {
 		add_ideas = ea_resolution_$NAME$_idea_1
 	}
@@ -43,10 +35,6 @@ ea_resolution_$NAME$_current_tteffect = {
 		limit = { has_idea = ea_resolution_$NAME$_idea_3 }
 		show_ideas_tooltip = ea_resolution_$NAME$_idea_3
 	}
-	else_if = {
-		limit = { has_idea = ea_resolution_$NAME$_idea_4 }
-		show_ideas_tooltip = ea_resolution_$NAME$_idea_4
-	}
 	else = {
 		custom_effect_tooltip = ea_resolution_none_tt
 	}
@@ -65,12 +53,8 @@ ea_resolution_$NAME$_next_tteffect = {
 		limit = { has_idea = ea_resolution_$NAME$_idea_2 }
 		show_ideas_tooltip = ea_resolution_$NAME$_idea_3
 	}
-	else_if = {
-		limit = { has_idea = ea_resolution_$NAME$_idea_3 }
-		show_ideas_tooltip = ea_resolution_$NAME$_idea_4
-	}
 	else = {
-		add_ideas = ea_resolution_$NAME$_idea_1
+		show_ideas_tooltip = ea_resolution_$NAME$_idea_1
 	}
 }
 
@@ -91,14 +75,6 @@ ea_resolution_$NAME$_add_to_new_member = {
 		else_if = {
 			limit = { has_idea = ea_resolution_$NAME$_idea_3 }
 			ROOT = { add_ideas = ea_resolution_$NAME$_idea_3 }
-		}
-		else_if = {
-			limit = { has_idea = ea_resolution_$NAME$_idea_4 }
-			ROOT = { add_ideas = ea_resolution_$NAME$_idea_4 }
-		}
-		else_if = {
-			limit = { has_idea = ea_resolution_$NAME$_idea_5 }
-			ROOT = { add_ideas = ea_resolution_$NAME$_idea_5 }
 		}
 	}
 }
