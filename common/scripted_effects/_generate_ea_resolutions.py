@@ -49,7 +49,7 @@ ea_$NAME$_add_to_queue = {
 	add_to_array = { global.ea_resolutions_queue = token:ea_resolution_$NAME$ }
 
 	custom_effect_tooltip = ea_propose_resolution_tt
-	effect_tooltip = { ea_resolution_$NAME$_effect = yes }
+	effect_tooltip = { ea_$NAME$_passed_effect = yes }
 }
 """
 
@@ -104,7 +104,7 @@ decisions_content_string = """
         }
 		visible = {
 			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_industry_$NAME$ = yes
+			ea_$NAME$_unlocked = yes
 			ea_$NAME$_can_be_passed = yes
 		}
 
@@ -115,7 +115,7 @@ decisions_content_string = """
 		fire_only_once = no
 
 		complete_effect = {
-			propose_ea_resolution_$NAME$ = yes
+			ea_$NAME$_add_to_queue = yes
 		}
 	}
 """
