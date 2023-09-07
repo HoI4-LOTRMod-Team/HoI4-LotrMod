@@ -34,19 +34,58 @@ is_sanctioned_by_elven_alliance = {
     tag = MOR
 }
 
+is_not_sanctioned_by_elven_alliance = {
+    NOT = { is_sanctioned_by_elven_alliance = yes }
+}
+
 is_at_war_with_elven_alliance = {
-    # TODO:
-    tag = ISE
+    custom_trigger_tooltip = {
+        tooltip = "[THIS.GetName] is at war with all Elven Alliance members"
+        all_of_scopes = {
+            array = global.elven_alliance_members
+            has_war_with = THIS
+        }
+    }
+}
+
+is_not_at_war_with_elven_alliance = {
+    custom_trigger_tooltip = {
+        tooltip = "[THIS.GetName] is not at war with all Elven Alliance members"
+        NOT = { is_at_war_with_elven_alliance = yes }
+    }
 }
 
 # TODO
 can_invite_to_elven_alliance = {
-    always = yes
+    custom_trigger_tooltip = {
+        tooltip = "The current Expansion Resolution allows [THIS.GetName] to invite new members"
+        OR = {
+            is_elves = yes
+            AND = {
+                has_global_flag = { flag = ea_resolution_expansion_passed value = 2 }
+                is_men = yes
+            }
+            has_global_flag = { flag = ea_resolution_expansion_passed value = 3 }
+        }
+    }
 }
 
-# TODO
 can_be_invited_to_elven_alliance = {
-    always = yes
+    custom_trigger_tooltip = {
+        tooltip = "The current Expansion Resolution allows [THIS.GetName] to be invited"
+        OR = {
+            is_elves = yes
+            AND = {
+                has_global_flag = { flag = ea_resolution_expansion_passed value = 1 }
+                is_men = yes
+            }
+            AND = {
+                has_global_flag = { flag = ea_resolution_expansion_passed value = 2 }
+                is_orcs = no
+            }
+            has_global_flag = { flag = ea_resolution_expansion_passed value = 3 }
+        }
+    }
 }
 
 ea_has_resolution_in_queue = {

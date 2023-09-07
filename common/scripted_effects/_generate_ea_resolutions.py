@@ -15,12 +15,12 @@ ea_$NAME$_passed_effect = {
 		set_global_flag = { flag = ea_resolution_$NAME$_passed value = 2 }
 	}
 	else_if = {
-		limit = { has_idea = ea_resolution_alliance_idea_2 }
-		swap_ideas = { remove_idea = ea_resolution_alliance_idea_2 add_idea = ea_resolution_alliance_idea_3 }
+		limit = { has_idea = ea_resolution_$NAME$_idea_2 }
+		swap_ideas = { remove_idea = ea_resolution_$NAME$_idea_2 add_idea = ea_resolution_$NAME$_idea_3 }
 		set_global_flag = { flag = ea_resolution_$NAME$_passed value = 3 }
 	}
 	else = {
-		add_ideas = ea_resolution_alliance_idea_1
+		add_ideas = ea_resolution_$NAME$_idea_1
 		set_global_flag = { flag = ea_resolution_$NAME$_passed value = 1 }
 	}
 }
@@ -69,7 +69,7 @@ ea_$NAME$_can_be_passed = {
 		tooltip = ea_resolution_unlocked_tt
 		has_global_flag = ea_$NAME$_resolutions_unlocked
 		OR = {
-			NOT = { has_global_flag = ea_resolution_alliance_passed }
+			NOT = { has_global_flag = ea_resolution_$NAME$_passed }
 			has_global_flag = { flag = ea_resolution_$NAME$_passed value < 2 }
 			AND = {
 				has_global_flag = { flag = ea_resolution_$NAME$_passed value < 3 }

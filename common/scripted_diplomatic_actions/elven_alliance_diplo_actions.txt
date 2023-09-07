@@ -9,19 +9,25 @@ scripted_diplomatic_actions = {
 			always = yes
 		}
 		visible = {
-			is_elven_alliance_member = yes
+			FROM = { NOT = { is_elven_alliance_member = yes } }
+			ROOT = { is_elven_alliance_member = yes }
 		}
 		selectable = {
-			can_invite_to_elven_alliance = yes
+			ROOT = { can_invite_to_elven_alliance = yes }
+
+			FROM = { can_be_invited_to_elven_alliance = yes }
+			FROM = { NOT = { has_war_with = ROOT } }
+			FROM = { NOT = { is_sanctioned_by_elven_alliance = yes } }
+			FROM = { is_not_at_war_with_elven_alliance = yes }
 		}
 		can_be_accepted = {
 			always = yes
 		}
 		can_be_sent = {
-			can_be_invited_to_elven_alliance = yes
+			always = yes
 		}
 		
-		cost = 150
+		cost = 50
 
 		requires_acceptance = yes
 		show_acceptance_on_action_button = yes	
@@ -39,15 +45,36 @@ scripted_diplomatic_actions = {
 		on_sent_effect = {		#	An effect that can be applied when sending the diplomatic action.
 		}
 		complete_effect = {		#	An effect that can be applied the action is ACCEPTED (accepted always if requires_acceptance is set to NO)
+			if = { limit = { is_elven_alliance_member = no }
+				elven_alliance_join = yes
+			}
 		}
 		reject_effect = {		#	An effect that can be applied the action is REJECTED (only valid if requires_acceptance is set to YES )
+			set_country_flag = ea_has_declined_invitation
 		}
 		
 		#### AI SECTION ###
 		
 		ai_desire = {		# AI modifiers to use this diplomatic action
 			modifier = {
+				add = 20
+				FROM = { is_ai = no }
+			}
+			modifier = {
 				add = 10
+				FROM = { is_same_race = yes }
+			}
+			modifier = {
+				add = -25
+				FROM = { has_same_ideology = no }
+			}
+			modifier = {
+				add = 20
+				is_ally_with = FROM
+			}
+			modifer = {
+				factor=0
+				FROM = { has_country_flag = ea_has_declined_invitation }
 			}
 		}
 		ai_acceptance = {		# AI modifiers to accept this diplomatic action, not valid if requires_acceptance is set to NO.
@@ -55,7 +82,7 @@ scripted_diplomatic_actions = {
 				modifier = {
 					factor = 10
 				}
-			}		
+			}
 		}
 	}
 

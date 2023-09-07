@@ -24,16 +24,25 @@ shared_focus = {
         is_elven_alliance_member = yes
     }
     completion_reward = {
-        # Form Elven UN
-        # Send out invites
-        elven_alliance_join = yes
-        set_global_flag = ea_alliance_resolutions_unlocked
-        every_country = {
-            limit = {
-                is_elves = yes
-                NOT = { tag = THIS }
+        if = {
+            limit = { NOT = { has_global_flag = ea_alliance_resolutions_unlocked } } # lazy check to see if assembly already exists
+            # Form Elven UN
+            # Send out invites
+            elven_alliance_join = yes
+            set_global_flag = ea_alliance_resolutions_unlocked
+            set_global_flag = ea_industry_resolutions_unlocked
+            set_global_flag = ea_expansion_resolutions_unlocked
+            every_country = {
+                limit = {
+                    is_elves = yes
+                    NOT = { tag = THIS }
+                }
+                country_event = elven_alliance.2
             }
-            country_event = elven_alliance.2
+        }
+        else_if = {
+            limit = { is_elven_alliance_member = no }
+            elven_alliance_join = yes
         }
     }
 }
