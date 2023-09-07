@@ -1,7 +1,7 @@
 elven_alliance_decisions_category = {
 
-	vote_in_progress = {
-        icon = GFX_decision_generic_naval
+	starting_vote = {
+		icon = GFX_decision_generic_naval
 		cost = 150
 
         activation = {
@@ -10,10 +10,44 @@ elven_alliance_decisions_category = {
 			NOT = { ea_resolution_queue_empty = yes }
         }
 		available = {
-            always = no
+            always = yes
         }
 		visible = {
 			always = yes
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		priority = 100
+
+		fire_only_once = no
+		days_mission_timeout = 0
+		selectable_mission = no
+
+		complete_effect = {
+			elven_alliance_clear_votes = yes
+			set_global_flag = ea_vote_in_progress
+			activate_mission = vote_in_progress
+		}
+	}
+
+	vote_in_progress = {
+        icon = GFX_decision_generic_naval
+		cost = 150
+
+        activation = {
+            #NOT = { has_global_flag = ea_vote_in_progress }
+			#NOT = { has_global_flag = ea_assembly_in_recess }
+			#NOT = { ea_resolution_queue_empty = yes }
+			always = no
+        }
+		available = {
+            always = no
+        }
+		visible = {
+			always = no
 		}
 
 		ai_will_do = {
@@ -27,11 +61,6 @@ elven_alliance_decisions_category = {
 		days_mission_timeout = 30
 		selectable_mission = no
 
-		complete_effect = {
-			set_global_flag = ea_vote_in_progress
-			elven_alliance_clear_votes = yes
-		}
-
 		timeout_effect = {
             # Count votes and pass resolution
 
@@ -44,9 +73,7 @@ elven_alliance_decisions_category = {
         }
 
 		cancel_trigger = {
-			hidden_trigger = {
-            	has_global_flag = ea_vote_vetoed
-			}
+			has_global_flag = ea_vote_vetoed
         }
 
 		cancel_effect = {

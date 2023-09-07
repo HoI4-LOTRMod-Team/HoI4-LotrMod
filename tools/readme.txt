@@ -11,7 +11,7 @@ python.exe .\make_gfx.py -s decisions -o decisions
 
 For focus icons + shine:
 
-python.exe .\make_gfx.py -s goals -o goals
+python.exe .\make_gfx.py -s goals -o lotr_goals
 
 
 
