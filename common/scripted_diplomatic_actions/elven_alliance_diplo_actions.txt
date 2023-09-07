@@ -19,6 +19,8 @@ scripted_diplomatic_actions = {
 			FROM = { NOT = { has_war_with = ROOT } }
 			FROM = { NOT = { is_sanctioned_by_elven_alliance = yes } }
 			FROM = { is_not_at_war_with_elven_alliance = yes }
+
+			NOT = { FROM = { has_country_flag = ea_has_pending_invitation } }
 		}
 		can_be_accepted = {
 			always = yes
@@ -43,14 +45,18 @@ scripted_diplomatic_actions = {
 		#### EFFECTS ###		
 
 		on_sent_effect = {		#	An effect that can be applied when sending the diplomatic action.
+			set_country_flag = ea_has_pending_invitation
 		}
+		
 		complete_effect = {		#	An effect that can be applied the action is ACCEPTED (accepted always if requires_acceptance is set to NO)
 			if = { limit = { is_elven_alliance_member = no }
 				elven_alliance_join = yes
 			}
+			clr_country_flag = ea_has_pending_invitation
 		}
 		reject_effect = {		#	An effect that can be applied the action is REJECTED (only valid if requires_acceptance is set to YES )
 			set_country_flag = ea_has_declined_invitation
+			clr_country_flag = ea_has_pending_invitation
 		}
 		
 		#### AI SECTION ###
@@ -72,7 +78,7 @@ scripted_diplomatic_actions = {
 				add = 20
 				is_ally_with = FROM
 			}
-			modifer = {
+			modifier = {
 				factor=0
 				FROM = { has_country_flag = ea_has_declined_invitation }
 			}
@@ -96,35 +102,30 @@ scripted_diplomatic_actions = {
 		}
 		visible = {
 			is_elven_alliance_member = yes
+			FROM = { is_elven_alliance_member = yes }
 		}
 		selectable = {
-			can_invite_to_elven_alliance = yes
-		}
-		can_be_accepted = {
-			always = yes
-		}
-		can_be_sent = {
-			can_be_invited_to_elven_alliance = yes
+			ROOT = { can_propose_kick_elven_alliance = yes }
+
+			NOT = { FROM = { has_country_flag = ea_last_kick_210_days } }
 		}
 		
 		cost = 150
 
-		requires_acceptance = yes
+		requires_acceptance = no
 		show_acceptance_on_action_button = yes	
 
 		#### ACTION LOCALISATION ###
 
-		send_description = invite_to_elven_assembly_send_desc
-		receive_description = invite_to_elven_assembly_receive_desc
-		accept_title = invite_to_elven_assembly_accept_title
-		accept_description = invite_to_elven_assembly_accept_desc
-		reject_title = invite_to_elven_assembly_reject_title
-		reject_description = invite_to_elven_assembly_reject_desc
+		send_description = propose_kick_from_elven_assembly_send_desc
+		receive_description = propose_kick_from_elven_assembly_receive_desc
 		#### EFFECTS ###		
 
 		on_sent_effect = {		#	An effect that can be applied when sending the diplomatic action.
+			set_country_flag = { flag = ea_last_kick_210_days days = 210 }
 		}
 		complete_effect = {		#	An effect that can be applied the action is ACCEPTED (accepted always if requires_acceptance is set to NO)
+			
 		}
 		reject_effect = {		#	An effect that can be applied the action is REJECTED (only valid if requires_acceptance is set to YES )
 		}
