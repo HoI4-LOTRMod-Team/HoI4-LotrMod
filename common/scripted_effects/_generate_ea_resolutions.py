@@ -45,6 +45,7 @@ ea_$NAME$_add_to_new_member = {
 }
 
 ea_$NAME$_add_to_queue = {
+	clear_variable = ea_resolution_target
 	add_to_array = { global.ea_proposers_queue = ROOT }
 	add_to_array = { global.ea_resolutions_queue = token:ea_resolution_$NAME$ }
 

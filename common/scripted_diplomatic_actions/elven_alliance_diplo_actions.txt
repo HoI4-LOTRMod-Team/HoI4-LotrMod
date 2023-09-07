@@ -1,7 +1,7 @@
 scripted_diplomatic_actions = {
 	
 	invite_to_elven_assembly = {
-		icon = 16		#	The icon to use for the dipomatic request, visible when the diplomatic action is sent, not visible if the diplomatic request does not require acceptance, must be included in the \gfx\interface\alerts\global_diplorequest_icons.dds file, number represents icon location from left to right.
+		icon = 14		#	The icon to use for the dipomatic request, visible when the diplomatic action is sent, not visible if the diplomatic request does not require acceptance, must be included in the \gfx\interface\alerts\global_diplorequest_icons.dds file, number represents icon location from left to right.
 		
 		#### CONDITIONS TO USE/SEE ACTION ###
 		
@@ -11,16 +11,16 @@ scripted_diplomatic_actions = {
 		visible = {
 			FROM = { NOT = { is_elven_alliance_member = yes } }
 			ROOT = { is_elven_alliance_member = yes }
+			FROM = { NOT = { has_war_with = ROOT } }
 		}
 		selectable = {
 			ROOT = { can_invite_to_elven_alliance = yes }
 
 			FROM = { can_be_invited_to_elven_alliance = yes }
-			FROM = { NOT = { has_war_with = ROOT } }
 			FROM = { NOT = { is_sanctioned_by_elven_alliance = yes } }
 			FROM = { is_not_at_war_with_elven_alliance = yes }
 
-			NOT = { FROM = { has_country_flag = ea_has_pending_invitation } }
+			NOT = { FROM = { has_country_flag = ea_last_invitation_cooldown } }
 		}
 		can_be_accepted = {
 			always = yes
@@ -45,18 +45,14 @@ scripted_diplomatic_actions = {
 		#### EFFECTS ###		
 
 		on_sent_effect = {		#	An effect that can be applied when sending the diplomatic action.
-			set_country_flag = ea_has_pending_invitation
+			set_country_flag = { flag = ea_last_invitation_cooldown days = 180 value = 1 }
 		}
 		
 		complete_effect = {		#	An effect that can be applied the action is ACCEPTED (accepted always if requires_acceptance is set to NO)
-			if = { limit = { is_elven_alliance_member = no }
-				elven_alliance_join = yes
-			}
-			clr_country_flag = ea_has_pending_invitation
+			elven_alliance_join = yes
 		}
 		reject_effect = {		#	An effect that can be applied the action is REJECTED (only valid if requires_acceptance is set to YES )
 			set_country_flag = ea_has_declined_invitation
-			clr_country_flag = ea_has_pending_invitation
 		}
 		
 		#### AI SECTION ###
@@ -79,7 +75,7 @@ scripted_diplomatic_actions = {
 				is_ally_with = FROM
 			}
 			modifier = {
-				factor=0
+				factor = 0
 				FROM = { has_country_flag = ea_has_declined_invitation }
 			}
 		}
@@ -107,7 +103,7 @@ scripted_diplomatic_actions = {
 		selectable = {
 			ROOT = { can_propose_kick_elven_alliance = yes }
 
-			NOT = { FROM = { has_country_flag = ea_last_kick_210_days } }
+			NOT = { FROM = { has_country_flag = ea_last_kick_cooldown } }
 		}
 		
 		cost = 150
@@ -122,10 +118,10 @@ scripted_diplomatic_actions = {
 		#### EFFECTS ###		
 
 		on_sent_effect = {		#	An effect that can be applied when sending the diplomatic action.
-			set_country_flag = { flag = ea_last_kick_210_days days = 210 }
+			set_country_flag = { flag = ea_last_kick_cooldown days = 210 }
 		}
 		complete_effect = {		#	An effect that can be applied the action is ACCEPTED (accepted always if requires_acceptance is set to NO)
-			
+			FROM = { ea_kick_add_to_queue = yes }
 		}
 		reject_effect = {		#	An effect that can be applied the action is REJECTED (only valid if requires_acceptance is set to YES )
 		}
