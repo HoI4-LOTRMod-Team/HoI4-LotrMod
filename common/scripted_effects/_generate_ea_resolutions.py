@@ -64,15 +64,12 @@ triggers_content_string = """
 ### Triggers: $NAME$
 ########################
 
-
-ea_$NAME$_unlocked = {
-    has_global_flag = ea_$NAME$_resolutions_unlocked
-}
-
 ea_$NAME$_can_be_passed = {
 	custom_trigger_tooltip = {
 		tooltip = ea_resolution_unlocked_tt
+		has_global_flag = ea_$NAME$_resolutions_unlocked
 		OR = {
+			NOT = { has_global_flag = ea_resolution_alliance_passed }
 			has_global_flag = { flag = ea_resolution_$NAME$_passed value < 2 }
 			AND = {
 				has_global_flag = { flag = ea_resolution_$NAME$_passed value < 3 }
@@ -104,7 +101,6 @@ decisions_content_string = """
         }
 		visible = {
 			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_$NAME$_unlocked = yes
 			ea_$NAME$_can_be_passed = yes
 		}
 
