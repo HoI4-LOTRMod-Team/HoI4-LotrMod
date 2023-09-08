@@ -1,12 +1,15 @@
 
 
 elven_alliance_sanction_country = {
-	var:global.ea_resolution_target = {
+	var:global.ea_current_resolution_target = {
 		set_country_flag = ea_is_sanctioned
-	}
-	add_relation_modifier = {
-		target = var:global.ea_resolution_target
-		modifier = ea_country_sanctioned
+
+		ROOT = {
+			add_relation_modifier = {
+				target = PREV
+				modifier = ea_country_sanctioned
+			}
+		}
 	}
 }
 
@@ -23,8 +26,12 @@ ea_apply_all_sanctions = {
 }
 
 elven_alliance_declare_joint_war_against = {
-	declare_war_on = {
-		target = global.ea_resolution_target
+	var:global.ea_current_resolution_target = {
+		ROOT = {
+			declare_war_on = {
+				target = PREV
+			}
+		}
 	}
 }
 
@@ -160,8 +167,24 @@ elven_alliance_toggle_details_view = {
 
 # This THIS has a resolution in the ea queue, remove it
 elven_alliance_withdraw_resolution_from_queue = {
-	clear_variable = ea_resolution_target
-	# TODO: Loop over the array of tags, check if any matches ours, then remove entries from both arrays
+	if = {
+		limit = { ea_has_resolution_in_queue = yes }
+		clear_variable = ea_resolution_target
+		# Loop over the array of tags, check if any matches ours, then remove entries from both arrays
+		for_each_loop = {
+			array = global.ea_proposers_queue
+			value = v
+			index = i
+			break = break
+			if = {
+				limit = { tag = v }
+				clear_variable = ea_resolution_target
+				remove_from_array = { array = global.ea_proposers_queue index = i }
+				remove_from_array = { array = global.ea_resolutions_queue index = i }
+				set_temp_variable = { break = 1 }
+			}
+		}
+	}
 }
 
 
@@ -185,7 +208,7 @@ elven_alliance_join = {
 		ea_martial_add_to_new_member = yes
 		ea_union_add_to_new_member = yes
 
-		add_ideas = ea_is_member_idea
+		hidden_effect = { add_ideas = ea_is_member_idea }
 
 		ea_apply_all_sanctions = yes
 
@@ -198,6 +221,7 @@ elven_alliance_join = {
 }
 
 elven_alliance_leave = {
+	custom_effect_tooltip = "Leave the Elven Assembly"
 	if = {
 		limit = { is_elven_alliance_member = yes }
 		clr_country_flag = is_elven_alliance_member
@@ -425,6 +449,16 @@ elven_alliance_ai_vote = {
 				has_country_leader_ideology = federative
 				factor = 10
 			}
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_kick }
+				ea_is_current_resolution_target = yes
+				factor = 0
+			}
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_sanction }
+				ea_is_current_resolution_target = yes
+				factor = 0
+			}
 			elven_alliance_vote_in_favour = yes
 		}
 
@@ -481,7 +515,124 @@ elven_alliance_ai_vote = {
 				THIS.overlord = { ea_is_abstaining = yes }
 				factor = 30
 			}
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_kick }
+				ea_is_current_resolution_target = yes
+				factor = 0
+			}
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_sanction }
+				ea_is_current_resolution_target = yes
+				factor = 0
+			}
 			elven_alliance_abstain = yes
+		}
+	}
+}
+
+
+elven_alliance_ai_propose = {
+	random_list = {
+		50 = {
+			# Dont propose anything
+			modifier = {
+				factor = 2
+				elven_alliance_has_at_least_8_members = yes
+			}
+		}
+		50 = {
+			random_list = {
+
+				# This makes sure that if all modifiers are 0, something still gets picked
+				1 = {  }
+
+				# ALLIANCE
+				10 = {
+					modifier = {
+						factor = 0
+						ea_alliance_can_be_passed = no
+					}
+					ea_alliance_add_to_queue = yes
+				}
+
+				# INDUSTRY
+				10 = {
+					modifier = {
+						factor = 0
+						ea_industry_can_be_passed = no
+					}
+					ea_industry_add_to_queue = yes
+				}
+
+				# EXPANSION
+				10 = {
+					modifier = {
+						factor = 0
+						ea_expansion_can_be_passed = no
+					}
+					modifier = {
+						factor = 0
+						has_government = belligerent
+					}
+					modifier = {
+						factor = 2
+						has_government = revolutionary
+					}
+					modifier = {
+						factor = 1.5
+						has_government = cooperative
+					}
+					ea_expansion_add_to_queue = yes
+				}
+
+				# PEACE
+				10 = {
+					modifier = {
+						factor = 0
+						ea_peace_can_be_passed = no
+					}
+					modifier = {
+						factor = 0
+						has_government = belligerent
+					}
+					modifier = {
+						factor = 0
+						has_government = revolutionary
+					}
+					ea_peace_add_to_queue = yes
+				}
+
+				# TRADE
+				10 = {
+					modifier = {
+						factor = 0
+						ea_trade_can_be_passed = no
+					}
+					ea_trade_add_to_queue = yes
+				}
+
+				# RESEARCH
+				10 = {
+					modifier = {
+						factor = 0
+						ea_research_can_be_passed = no
+					}
+					ea_research_add_to_queue = yes
+				}
+
+				# SPECIAL
+				10 = {
+					modifier = {
+						factor = 0
+						ea_hegemony_can_be_passed = no
+						ea_martial_can_be_passed = no
+						ea_union_can_be_passed = no
+					}
+					if = { limit = { has_global_flag = ea_type_hegemony } ea_hegemony_add_to_queue = yes }
+					else_if = { limit = { has_global_flag = ea_type_martial } ea_martial_add_to_queue = yes }
+					else_if = { limit = { has_global_flag = ea_type_union } ea_union_add_to_queue = yes }
+				}
+			}
 		}
 	}
 }

@@ -1,8 +1,7 @@
 elven_alliance_decisions_category = {
 
 	starting_vote = {
-		icon = GFX_decision_generic_naval
-		cost = 150
+		icon = GFX_decision_assembly
 
         activation = {
             NOT = { has_global_flag = ea_vote_in_progress }
@@ -34,6 +33,7 @@ elven_alliance_decisions_category = {
 			# Get next resolution from queue
 			set_variable = { global.ea_current_resolution = global.ea_resolutions_queue^0 }
 			set_variable = { global.ea_current_resolution_proposer = global.ea_proposers_queue^0 }
+			set_variable = { global.ea_current_resolution_target = global.ea_proposers_queue^0.ea_current_resolution_target }
 			remove_from_array = { array = global.ea_resolutions_queue index = 0 }
 			remove_from_array = { array = global.ea_proposers_queue index = 0 }
 
@@ -44,8 +44,7 @@ elven_alliance_decisions_category = {
 	}
 
 	vote_in_progress = {
-        icon = GFX_decision_generic_naval
-		cost = 150
+        icon = GFX_decision_assembly
 
         activation = {
             #NOT = { has_global_flag = ea_vote_in_progress }
@@ -68,7 +67,7 @@ elven_alliance_decisions_category = {
 
 		fire_only_once = no
 		is_good = yes
-		days_mission_timeout = 30
+		days_mission_timeout = 60
 		selectable_mission = no
 
 		timeout_effect = {
@@ -80,6 +79,8 @@ elven_alliance_decisions_category = {
 			activate_mission = assembly_in_recess
 
 			elven_alliance_vote_effect = yes
+
+			clear_variable = global.ea_current_resolution_target
 
 			hidden_effect = {
 				# shorten recess if alliance advanced resolutions unlocked
@@ -107,12 +108,30 @@ elven_alliance_decisions_category = {
 
 		cancel_effect = {
 			clr_country_flag = ea_vote_vetoed
+			activate_mission = assembly_in_recess
+			hidden_effect = {
+				# shorten recess if alliance advanced resolutions unlocked
+				if = {
+					limit = {
+						ea_single_member_trigger = yes
+						has_global_flag = ea_alliance_advanced_resolutions_unlocked
+					}
+					add_days_mission_timeout = { mission = assembly_in_recess days = -20 }
+				}
+				# shorten recess if alliance advanced resolutions unlocked
+				if = {
+					limit = {
+						ea_single_member_trigger = yes
+						ea_has_alliance_tier_1 = yes
+					}
+					add_days_mission_timeout = { mission = assembly_in_recess days = -20 }
+				}
+			}
 		}
 	}
 
 	assembly_in_recess = {
-        icon = GFX_decision_generic_naval
-		cost = 150
+        icon = GFX_decision_assembly
 
 		activation = {
             #has_global_flag = ea_assembly_in_recess
@@ -134,7 +153,7 @@ elven_alliance_decisions_category = {
 		fire_only_once = no
 
 		is_good = yes
-		days_mission_timeout = 80
+		days_mission_timeout = 120
 		selectable_mission = no
 
 		timeout_effect = {
@@ -148,7 +167,7 @@ elven_alliance_decisions_category = {
 
 	# hegemony leader: VETO
 	ea_veto_resolution = {
-        icon = GFX_decision_generic_naval
+        icon = GFX_decision_generic_authority
 		cost = 100
 
 		days_re_enable = 120
@@ -176,7 +195,7 @@ elven_alliance_decisions_category = {
 
 	# Leave assembly
 	ea_leave_assembly = {
-        icon = GFX_decision_generic_naval
+        icon = GFX_decision_generic_4
 		cost = 100
 
 		visible = {
