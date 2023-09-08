@@ -81,6 +81,8 @@ elven_alliance_withdraw_resolution_from_queue = {
 elven_alliance_join = {
 	custom_effect_tooltip = elven_alliance_join_tt
 
+	set_country_flag = wtf_is_going_on
+
 	if = {
 		limit = { is_elven_alliance_member = no }
 		# Add all the existing ideas to the new member
@@ -119,7 +121,11 @@ elven_alliance_leave = {
 
 elven_allicane_increase_pp_cost = {
 	custom_effect_tooltip = elven_allicane_increase_pp_cost_tt
-	add_to_variable = { elven_alliance_proposal_cost = 25 }
+	if = {
+		limit = { NOT = { has_variable = elven_alliance_proposal_cost } }
+		set_variable = { elven_alliance_proposal_cost = 25 }
+	}
+	add_to_variable = { elven_alliance_proposal_cost = 10 }
 }
 
 elven_alliance_clear_votes = {
@@ -136,6 +142,7 @@ elven_alliance_clear_votes = {
 
 
 elven_alliance_vote_in_favour = {
+	add_political_power = -5
 	if = {
 		limit = { is_in_array = { global.elven_alliance_members_against = THIS } }
 		remove_from_array = { global.elven_alliance_members_against = THIS }
@@ -151,6 +158,7 @@ elven_alliance_vote_in_favour = {
 }
 
 elven_alliance_vote_against = {
+	add_political_power = -5
 	if = {
 		limit = { is_in_array = { global.elven_alliance_members_in_favour = THIS } }
 		remove_from_array = { global.elven_alliance_members_in_favour = THIS }
@@ -166,6 +174,7 @@ elven_alliance_vote_against = {
 }
 
 elven_alliance_abstain = {
+	add_political_power = -5
 	if = {
 		limit = { is_in_array = { global.elven_alliance_members_against = THIS } }
 		remove_from_array = { global.elven_alliance_members_against = THIS }
@@ -237,6 +246,22 @@ elven_alliance_vote_passed_effect = {
 	else_if = {
 		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_hegemony } }
 		ea_hegemony_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_kick} }
+		ea_kick_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_joint_war} }
+		ea_joint_war_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_sanction} }
+		ea_sanction_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_make_leader} }
+		ea_make_leader_passed_effect = yes
 	}
 }
 

@@ -45,6 +45,8 @@ ea_$NAME$_add_to_new_member = {
 }
 
 ea_$NAME$_add_to_queue = {
+	elven_alliance_withdraw_resolution_from_queue = yes
+
 	clear_variable = ea_resolution_target
 	add_to_array = { global.ea_proposers_queue = ROOT }
 	add_to_array = { global.ea_resolutions_queue = token:ea_resolution_$NAME$ }
@@ -66,6 +68,7 @@ triggers_content_string = """
 ########################
 
 ea_$NAME$_can_be_passed = {
+	has_political_power > elven_alliance_proposal_cost
 	custom_trigger_tooltip = {
 		tooltip = ea_resolution_unlocked_tt
 		has_global_flag = ea_$NAME$_resolutions_unlocked
