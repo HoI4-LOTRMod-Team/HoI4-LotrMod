@@ -181,6 +181,7 @@ scripted_diplomatic_actions = {
 			always = yes
 		}
 		visible = {
+			has_global_flag = ea_sanctions_unlocked
 			FROM = { NOT = { is_elven_alliance_member = yes } }
 			ROOT = { is_elven_alliance_member = yes }
 			FROM = { NOT = { has_war_with = ROOT } }
@@ -250,16 +251,15 @@ scripted_diplomatic_actions = {
 			always = yes
 		}
 		visible = {
+			has_global_flag = ea_type_hegemony
 			FROM = { is_elven_alliance_member = yes }
 			ROOT = { is_elven_alliance_member = yes }
 			FROM = { NOT = { has_war_with = ROOT } }
-			has_variable = global.ea_hegemony_leader
+			FROM = { NOT = { ea_is_hegemony_leader = yes } }
+			NOT = { ea_make_leader_proposal_in_queue = yes } # Only one leader proposal at a time pls
 		}
 		selectable = {
 			ROOT = { can_propose_resolutions_elven_alliance = yes }
-			FROM = {
-				strength_ratio = { tag = global.ea_hegemony_leader ratio > 1 }
-			}
 			FROM = { is_major = yes }
 		}
 		can_be_accepted = {
@@ -294,29 +294,15 @@ scripted_diplomatic_actions = {
 		#### AI SECTION ###
 		
 		ai_desire = {		# AI modifiers to use this diplomatic action
+			base = 0
 			modifier = {
-				add = 20
+				add = 100
 				FROM = { is_ai = no }
-			}
-			modifier = {
-				add = 10
-				FROM = { is_same_race = yes }
-			}
-			modifier = {
-				add = -100
-				FROM = { has_same_ideology = no }
-			}
-			modifier = {
-				add = 1
-				is_ally_with = FROM
+				is_subject_of = FROM
 			}
 			modifier = {
 				factor = 0
 				ROOT = { has_country_flag = ea_last_make_leader_cooldown }
-			}
-			modifier = {
-				add = 999
-				is_subject_of = FROM
 			}
 		}
 		ai_acceptance = {		# AI modifiers to accept this diplomatic action, not valid if requires_acceptance is set to NO.

@@ -31,15 +31,11 @@ elven_alliance_decisions_category = {
 			# clear previous votes
 			elven_alliance_clear_votes = yes
 
-			LOG = "FIRST IN QUEUE: [?global.ea_resolutions_queue^0]"
-
 			# Get next resolution from queue
 			set_variable = { global.ea_current_resolution = global.ea_resolutions_queue^0 }
 			set_variable = { global.ea_current_resolution_proposer = global.ea_proposers_queue^0 }
 			remove_from_array = { array = global.ea_resolutions_queue index = 0 }
 			remove_from_array = { array = global.ea_proposers_queue index = 0 }
-
-			LOG = "CURRENT RES: [?global.ea_current_resolution]"
 
 			# Start vote
 			set_global_flag = ea_vote_in_progress
@@ -72,7 +68,7 @@ elven_alliance_decisions_category = {
 
 		fire_only_once = no
 		is_good = yes
-		days_mission_timeout = 30
+		days_mission_timeout = 20
 		selectable_mission = no
 
 		timeout_effect = {
@@ -84,6 +80,17 @@ elven_alliance_decisions_category = {
 			#activate_mission = assembly_in_recess
 
 			elven_alliance_vote_effect = yes
+
+			hidden_effect = {
+				# shorten recess if alliance advanced resolutions unlocked
+				if = {
+					limit = {
+						ea_single_member_trigger = yes
+						has_global_flag = ea_alliance_advanced_resolutions_unlocked
+					}
+					add_days_mission_timeout = { mission = assembly_in_recess days = -25 }
+				}
+			}
         }
 
 		cancel_trigger = {
@@ -152,240 +159,6 @@ elven_alliance_decisions_category = {
 
 		complete_effect = {
 			set_global_flag = ea_vote_vetoed
-		}
-	}
-
-
-
-	# Propose resolution: industry
-	propose_ea_resolution_industry = {
-        icon = GFX_decision_generic_naval
-		cost = elven_alliance_proposal_cost?25
-
-        available = {
-            NOT = { has_global_flag = ea_assembly_in_recess }
-        }
-		visible = {
-			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_industry_can_be_passed = yes
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		fire_only_once = no
-
-		complete_effect = {
-			ea_industry_add_to_queue = yes
-		}
-	}
-
-
-
-	# Propose resolution: peace
-	propose_ea_resolution_peace = {
-        icon = GFX_decision_generic_naval
-		cost = elven_alliance_proposal_cost?25
-
-        available = {
-            NOT = { has_global_flag = ea_assembly_in_recess }
-        }
-		visible = {
-			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_peace_can_be_passed = yes
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		fire_only_once = no
-
-		complete_effect = {
-			ea_peace_add_to_queue = yes
-		}
-	}
-
-
-
-	# Propose resolution: expansion
-	propose_ea_resolution_expansion = {
-        icon = GFX_decision_generic_naval
-		cost = elven_alliance_proposal_cost?25
-
-        available = {
-            NOT = { has_global_flag = ea_assembly_in_recess }
-        }
-		visible = {
-			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_expansion_can_be_passed = yes
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		fire_only_once = no
-
-		complete_effect = {
-			ea_expansion_add_to_queue = yes
-		}
-	}
-
-
-
-	# Propose resolution: union
-	propose_ea_resolution_union = {
-        icon = GFX_decision_generic_naval
-		cost = elven_alliance_proposal_cost?25
-
-        available = {
-            NOT = { has_global_flag = ea_assembly_in_recess }
-        }
-		visible = {
-			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_union_can_be_passed = yes
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		fire_only_once = no
-
-		complete_effect = {
-			ea_union_add_to_queue = yes
-		}
-	}
-
-
-
-	# Propose resolution: trade
-	propose_ea_resolution_trade = {
-        icon = GFX_decision_generic_naval
-		cost = elven_alliance_proposal_cost?25
-
-        available = {
-            NOT = { has_global_flag = ea_assembly_in_recess }
-        }
-		visible = {
-			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_trade_can_be_passed = yes
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		fire_only_once = no
-
-		complete_effect = {
-			ea_trade_add_to_queue = yes
-		}
-	}
-
-
-
-	# Propose resolution: martial
-	propose_ea_resolution_martial = {
-        icon = GFX_decision_generic_naval
-		cost = elven_alliance_proposal_cost?25
-
-        available = {
-            NOT = { has_global_flag = ea_assembly_in_recess }
-        }
-		visible = {
-			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_martial_can_be_passed = yes
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		fire_only_once = no
-
-		complete_effect = {
-			ea_martial_add_to_queue = yes
-		}
-	}
-
-
-
-	# Propose resolution: research
-	propose_ea_resolution_research = {
-        icon = GFX_decision_generic_naval
-		cost = elven_alliance_proposal_cost?25
-
-        available = {
-            NOT = { has_global_flag = ea_assembly_in_recess }
-        }
-		visible = {
-			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_research_can_be_passed = yes
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		fire_only_once = no
-
-		complete_effect = {
-			ea_research_add_to_queue = yes
-		}
-	}
-
-
-
-	# Propose resolution: alliance
-	propose_ea_resolution_alliance = {
-        icon = GFX_decision_generic_naval
-		cost = elven_alliance_proposal_cost?25
-
-        available = {
-            NOT = { has_global_flag = ea_assembly_in_recess }
-        }
-		visible = {
-			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_alliance_can_be_passed = yes
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		fire_only_once = no
-
-		complete_effect = {
-			ea_alliance_add_to_queue = yes
-		}
-	}
-
-
-
-	# Propose resolution: hegemony
-	propose_ea_resolution_hegemony = {
-        icon = GFX_decision_generic_naval
-		cost = elven_alliance_proposal_cost?25
-
-        available = {
-            NOT = { has_global_flag = ea_assembly_in_recess }
-        }
-		visible = {
-			NOT = { has_global_flag = ea_vote_in_progress }
-			ea_hegemony_can_be_passed = yes
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		fire_only_once = no
-
-		complete_effect = {
-			ea_hegemony_add_to_queue = yes
 		}
 	}
 }
