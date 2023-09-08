@@ -14,11 +14,16 @@ scripted_diplomatic_actions = {
 			FROM = { NOT = { has_war_with = ROOT } }
 		}
 		selectable = {
+			FROM = { is_subject = no }
 			ROOT = { can_invite_to_elven_alliance = yes }
 
 			FROM = { can_be_invited_to_elven_alliance = yes }
 			FROM = { NOT = { is_sanctioned_by_elven_alliance = yes } }
-			FROM = { is_not_at_war_with_elven_alliance = yes }
+			
+			OR = {
+				FROM = { is_not_at_war_with_elven_alliance_member = yes }
+				ea_has_union_tier_2 = yes
+			}
 		}
 		can_be_accepted = {
 			always = yes
@@ -182,9 +187,11 @@ scripted_diplomatic_actions = {
 		}
 		visible = {
 			has_global_flag = ea_sanctions_unlocked
-			FROM = { NOT = { is_elven_alliance_member = yes } }
+			OR =  {
+				FROM = { NOT = { is_elven_alliance_member = yes } }
+				ea_has_union_tier_3 = yes
+			}
 			ROOT = { is_elven_alliance_member = yes }
-			FROM = { NOT = { has_war_with = ROOT } }
 		}
 		selectable = {
 			FROM = { has_added_tension_amount > 5 }
@@ -214,6 +221,9 @@ scripted_diplomatic_actions = {
 		visible = {
 			FROM = { NOT = { is_elven_alliance_member = yes } }
 			ROOT = { is_elven_alliance_member = yes }
+			OR = {
+				ea_has_martial_tier_1 = yes
+			}
 		}
 		selectable = {
 			OR = {
@@ -257,6 +267,7 @@ scripted_diplomatic_actions = {
 			FROM = { NOT = { has_war_with = ROOT } }
 			FROM = { NOT = { ea_is_hegemony_leader = yes } }
 			NOT = { ea_make_leader_proposal_in_queue = yes } # Only one leader proposal at a time pls
+			NOT = { ea_has_hegemony_tier_3 = yes }
 		}
 		selectable = {
 			ROOT = { can_propose_resolutions_elven_alliance = yes }

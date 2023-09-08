@@ -1,6 +1,27 @@
 ideas = {
 
-	country = {
+	hidden_ideas = {
+
+		# We use this idea to auto-leave EA when we're a puppet to a non EA master
+		ea_is_member_idea = {
+			allowed = {
+				always = no
+			}
+
+			cancel = {
+				OR = {
+					AND = {
+						is_subject = yes
+						THIS.overlord = { is_elven_alliance_member = no }
+					}
+					is_elven_alliance_member = no
+				}
+			}
+
+			on_remove = {
+				elven_alliance_leave = yes
+			}
+		}
 
 		ea_resolution_alliance_idea_1 = {
 			
@@ -34,7 +55,8 @@ ideas = {
 
 			modifier = {
 				opinion_gain_monthly_factor = 0.2
-				custom_modifier_tooltip = "Reduce the time the assembly spends voting or in recess."
+				custom_modifier_tooltip = ea_reduce_recess_tt
+				custom_modifier_tooltip = "Allow non-elven members of the assembly to propose resolutions"
 			}
 		}
 
@@ -53,6 +75,8 @@ ideas = {
 			modifier = {
 				opinion_gain_monthly_factor = 0.3
 				guarantee_tension = -0.3
+				custom_modifier_tooltip = ea_reduce_recess_tt
+				custom_modifier_tooltip = "Allow non-elven members of the assembly to propose resolutions"
 			}
 		}
 
@@ -123,7 +147,7 @@ ideas = {
 			picture = ea_resolution_icon_expansion
 
 			modifier = {
-				# allow men to be invited
+				custom_modifier_tooltip = "Extend invitation and joining rights to the race of men."
 			}
 		}
 
@@ -140,8 +164,7 @@ ideas = {
 			picture = ea_resolution_icon_expansion
 
 			modifier = {
-				# allow everything but orcs to be invited
-				# men can invite and propose kick too
+				custom_modifier_tooltip = "Extend invitation and joining rights to all races except orcs."
 			}
 		}
 
@@ -158,7 +181,7 @@ ideas = {
 			picture = ea_resolution_icon_expansion
 
 			modifier = {
-				# all races can join, invite and propose kick
+				custom_modifier_tooltip = "Extend invitation and joining rights to all."
 			}
 		}
 
@@ -346,8 +369,8 @@ ideas = {
 			picture = ea_resolution_icon_hegemony
 
 			modifier = {
-				custom_modifier_tooltip = "Members at war with the hegemony leaders will automatically get kicked."
-				custom_modifier_tooltip = "Allows the hegemony leader force quarreling assembly members to sign a truce or face explusion."
+				# grant Veto power
+				custom_modifier_tooltip = ea_executivevigour_tt
 			}
 		}
 
@@ -364,6 +387,7 @@ ideas = {
 			picture = ea_resolution_icon_hegemony
 
 			modifier = {
+				custom_modifier_tooltip = ea_executivevigour_tt
 				custom_modifier_tooltip = "Members can no longer leave the assembly."
 			}
 		}
@@ -381,8 +405,27 @@ ideas = {
 			picture = ea_resolution_icon_hegemony
 
 			modifier = {
+				custom_modifier_tooltip = ea_executivevigour_tt
+				custom_modifier_tooltip = "Members can no longer leave the assembly."
 				custom_modifier_tooltip = "All assembly members will become puppets of the hegemony leader."
 				custom_modifier_tooltip = "New hegemony leaders can no longer be proposed."
+			}
+
+			on_add = {
+				if = {
+					limit = {
+						ea_has_hegemony_tier_3 = yes
+						ea_is_hegemony_leader = no
+					}
+					elven_alliance_hegemony_puppet = yes
+				}
+			}
+
+			on_remove = {
+				if = {
+					limit = { ea_has_hegemony_tier_3 = yes ea_is_hegemony_leader = no }
+					elven_alliance_hegemony_end_puppet = yes
+				}
 			}
 		}
 
@@ -399,8 +442,7 @@ ideas = {
 			picture = ea_resolution_icon_martial
 
 			modifier = {
-				custom_modifier_tooltip = "Only members that are not at war with an assembly member will be permitted to join"
-				custom_modifier_tooltip = "Assembly members will no longer be able to declare war on one-another"
+				custom_modifier_tooltip = "Enable joint wars to be proposed"
 			}
 		}
 
@@ -417,7 +459,8 @@ ideas = {
 			picture = ea_resolution_icon_martial
 
 			modifier = {
-				custom_modifier_tooltip = "Enable joint wars to be proposed on non-assembly members"
+				custom_modifier_tooltip = "Enable joint wars to be proposed"
+				custom_modifier_tooltip = "When an assembly member is attacked by an outside power, all members receive an event that allows them to come to their aid"
 			}
 		}
 
@@ -469,7 +512,7 @@ ideas = {
 			picture = ea_resolution_icon_union
 
 			modifier = {
-				custom_modifier_tooltip = "Allow propositions for assembly members to be sanctioned, which will disallow them to vote."
+				custom_modifier_tooltip = "Allow members of the assembly to be at war with one-another."
 			}
 		}
 
@@ -486,7 +529,8 @@ ideas = {
 			picture = ea_resolution_icon_union
 
 			modifier = {
-				custom_modifier_tooltip = "Allow joint wars to be proposed against non-assembly members at war with a member."
+				custom_modifier_tooltip = "Allow members of the assembly to be at war with one-another."
+				custom_modifier_tooltip = "Allow assembly members to be sanctioned, disabling their vote."
 			}
 		}
 	}

@@ -69,6 +69,7 @@ triggers_content_string = """
 
 ea_$NAME$_can_be_passed = {
 	has_political_power > elven_alliance_proposal_cost
+	ROOT = { can_propose_resolutions_elven_alliance = yes }
 	custom_trigger_tooltip = {
 		tooltip = ea_resolution_unlocked_tt
 		has_global_flag = ea_$NAME$_resolutions_unlocked

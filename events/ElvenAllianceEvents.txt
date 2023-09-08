@@ -227,25 +227,107 @@ country_event = {
 	}
 }
 
-# Elven Alliance Martial Alliance Faction created
+# Elven Alliance: Call for help Martial tier 2
 country_event = {
-	id = elven_alliance.7
-	title = elven_alliance.7.t
-	desc = elven_alliance.7.d
+	id = elven_alliance.8
+	title = elven_alliance.8.t
+	desc = elven_alliance.8.d
 	
 	is_triggered_only = yes
 	
 	# Join in
 	option = { 
-		name = elven_alliance.7.a
+		name = elven_alliance.8.a
 		ai_chance = {
-			base = 50
+			base = 30
+			modifier = {
+				factor = 2
+				event_target:ea_call_to_arms_defender = {
+					has_same_ideology = yes
+				}
+			}
+			modifier = {
+				factor = 2
+				event_target:ea_call_to_arms_defender = {
+					is_ai = no
+				}
+			}
+		}
+		add_to_war = {
+			targeted_alliance = event_target:ea_call_to_arms_defender
+			enemy = event_target:ea_call_to_arms_attacker
+			hostility_reason = asked_to_join
 		}
 	}
 
 	# Leave
 	option = { 
-		name = elven_alliance.7.b
+		name = elven_alliance.8.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 2
+				has_war = yes
+			}
+			modifier = {
+				factor = 2
+				has_government = unaligned
+			}
+		}
+		add_political_power = -100
+		event_target:ea_call_to_arms_defender = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = large_decrease
+			}
+		}
+	}
+}
+
+# Elven Alliance Martial Alliance Faction created
+country_event = {
+	id = elven_alliance.9
+	title = elven_alliance.9.t
+	desc = {
+		text = elven_alliance.9.d
+		trigger = {
+			is_in_faction = no
+		}
+	}
+	desc = {
+		text = elven_alliance.9.d_2
+		trigger = {
+			is_in_faction = yes
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	# Join in
+	option = { 
+		name = elven_alliance.9.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 0
+				is_in_faction = yes
+			}
+		}
+		if = {
+			limit = { is_in_faction = yes }
+			leave_faction = yes
+		}
+		event_target:ea_martial_faction_leader = {
+			add_to_faction = ROOT
+		}
+	}
+
+	# Leave
+	option = {
+		trigger = {
+			is_in_faction = yes
+		}
+		name = elven_alliance.9.b
 		ai_chance = {
 			base = 50
 		}

@@ -68,7 +68,7 @@ elven_alliance_decisions_category = {
 
 		fire_only_once = no
 		is_good = yes
-		days_mission_timeout = 20
+		days_mission_timeout = 30
 		selectable_mission = no
 
 		timeout_effect = {
@@ -88,7 +88,15 @@ elven_alliance_decisions_category = {
 						ea_single_member_trigger = yes
 						has_global_flag = ea_alliance_advanced_resolutions_unlocked
 					}
-					add_days_mission_timeout = { mission = assembly_in_recess days = -25 }
+					add_days_mission_timeout = { mission = assembly_in_recess days = -20 }
+				}
+				# shorten recess if alliance advanced resolutions unlocked
+				if = {
+					limit = {
+						ea_single_member_trigger = yes
+						ea_has_alliance_tier_1 = yes
+					}
+					add_days_mission_timeout = { mission = assembly_in_recess days = -20 }
 				}
 			}
         }
@@ -126,7 +134,7 @@ elven_alliance_decisions_category = {
 		fire_only_once = no
 
 		is_good = yes
-		days_mission_timeout = 10
+		days_mission_timeout = 80
 		selectable_mission = no
 
 		timeout_effect = {
@@ -151,7 +159,7 @@ elven_alliance_decisions_category = {
 		visible = {
 			has_global_flag = ea_vote_in_progress
 			var:ea_hegemony_leader = { tag = ROOT }
-			has_global_flag = ea_executivevigour_enabled
+			ea_has_hegemony_tier_1 = yes
 			NOT = { has_global_flag = ea_vote_vetoed }
 		}
 
@@ -163,6 +171,28 @@ elven_alliance_decisions_category = {
 
 		complete_effect = {
 			set_global_flag = ea_vote_vetoed
+		}
+	}
+
+	# Leave assembly
+	ea_leave_assembly = {
+        icon = GFX_decision_generic_naval
+		cost = 100
+
+		visible = {
+			is_elven_alliance_member = yes
+			NOT = { ea_is_hegemony_leader = yes }
+			NOT = { ea_has_hegemony_tier_2 = yes }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		fire_only_once = no
+
+		complete_effect = {
+			elven_alliance_leave = yes
 		}
 	}
 }

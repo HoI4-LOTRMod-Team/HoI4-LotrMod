@@ -1,15 +1,97 @@
 
 
-start_next_resolution_vote = {
-	# TODO
+elven_alliance_sanction_country = {
+	var:global.ea_resolution_target = {
+		set_country_flag = ea_is_sanctioned
+	}
+	add_relation_modifier = {
+		target = var:global.ea_resolution_target
+		modifier = ea_country_sanctioned
+	}
 }
 
-elven_alliance_sanction_country = {
-	# TODO
+ea_apply_all_sanctions = {
+	every_country = {
+		limit = { is_sanctioned_by_elven_alliance = yes }
+		PREV = {
+			add_relation_modifier = {
+				target = PREV
+				modifier = ea_country_sanctioned
+			}
+		}
+	}
 }
 
 elven_alliance_declare_joint_war_against = {
-	# TODO
+	declare_war_on = {
+		target = global.ea_resolution_target
+	}
+}
+
+elven_alliance_form_martial_faction = {
+	get_highest_scored_country_temp = {
+		var = ea_strongest_member
+		scorer = ea_hegemony_leader_scorer
+	}
+	var:ea_strongest_member = {
+		if = {
+			limit = { is_faction_leader = yes }
+			set_faction_name = "Elven Assembly"
+		}
+		else_if = {
+			limit = { is_in_faction = yes }
+			leave_faction = yes
+			create_faction = "Elven Assembly"
+		}
+		else = {
+			create_faction = "Elven Assembly"
+		}
+
+		save_event_target_as = ea_martial_faction_leader
+
+		for_each_scope_loop = {
+			array = global.elven_alliance_members
+			if = {
+				limit = {
+					NOT = { tag = PREV }
+					NOT = { is_subject = yes }
+				}
+				country_event = elven_alliance.9
+			}
+		}
+	}
+}
+
+
+elven_alliance_ensure_no_war = {
+	if = {
+		limit = {
+			is_elven_alliance_member = yes
+			any_of_scopes = {
+				array = global.elven_alliance_members
+				PREV = { has_offensive_war_with = PREV }
+			}
+		}
+		# TODO: event that we've been kicked
+		elven_alliance_leave = yes
+	}
+}
+
+elven_alliance_hegemony_puppet = {
+	var:global.ea_hegemony_leader = {
+		set_autonomy = {
+			target = PREV
+			autonomy_state = autonomy_ea_hegemony_subject
+			end_wars = no
+			end_civil_wars = no
+		}
+	}
+}
+
+elven_alliance_hegemony_end_puppet = {
+	var:global.ea_hegemony_leader = {
+		end_puppet = PREV
+	}
 }
 
 
@@ -20,7 +102,7 @@ ea_set_type_hegemony = {
 			country_event = elven_alliance.7
 		}
 		ea_hegemony_select_leader = yes
-		set_global_flag = ea_type_hegemony	
+		set_global_flag = ea_type_hegemony
 	}
 }
 
@@ -103,6 +185,10 @@ elven_alliance_join = {
 		ea_martial_add_to_new_member = yes
 		ea_union_add_to_new_member = yes
 
+		add_ideas = ea_is_member_idea
+
+		ea_apply_all_sanctions = yes
+
 		add_to_array = {
 			global.elven_alliance_members = THIS
 		}
@@ -112,15 +198,23 @@ elven_alliance_join = {
 }
 
 elven_alliance_leave = {
-	clr_country_flag = is_elven_alliance_member
+	if = {
+		limit = { is_elven_alliance_member = yes }
+		clr_country_flag = is_elven_alliance_member
 
-	remove_from_array = {
-		global.elven_alliance_members = THIS
+		if = {
+			limit = { ea_has_martial_tier_3 = yes is_in_faction = yes }
+			leave_faction = yes
+		}
+
+		remove_from_array = {
+			global.elven_alliance_members = THIS
+		}
+
+		elven_alliance_withdraw_resolution_from_queue = yes
+
+		# Note: Ideas get removed automatically through the cancel trigger
 	}
-
-	elven_alliance_withdraw_resolution_from_queue = yes
-
-	# Note: Ideas get removed automatically through the cancel trigger
 }
 
 
