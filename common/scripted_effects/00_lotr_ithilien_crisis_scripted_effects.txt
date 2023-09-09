@@ -18,11 +18,9 @@ ithc_commence_ithilien_crisis = {
 
 ithc_set_vars_long_term = {
 	hidden_effect = {
-		set_variable = { ithc_subterfuge_decision_cost_pp = 30 }
 		set_variable = { ithc_pillage_decision_cost_pp = 30 }
 		set_variable = { ithc_pillage_decision_cost_pp_scaling = 30 }
 
-		set_variable = { ithc_subterfuge_decision_cost_days = 30 }
 		set_variable = { ithc_pillage_decision_cost_days = 30 }
 		set_variable = { ithc_pillage_decision_cost_days_scaling = 30 }
 	}
@@ -31,11 +29,9 @@ ithc_set_vars_long_term = {
 
 ithc_set_vars_short_term = {
 	hidden_effect = {
-		set_variable = { ithc_subterfuge_decision_cost_pp = 30 }
 		set_variable = { ithc_pillage_decision_cost_pp = 30 }
 		set_variable = { ithc_pillage_decision_cost_pp_scaling = 30 }
 
-		set_variable = { ithc_subterfuge_decision_cost_days = 30 }
 		set_variable = { ithc_pillage_decision_cost_days = 30 }
 		set_variable = { ithc_pillage_decision_cost_days_scaling = 30 }	
 	}
@@ -61,26 +57,7 @@ ithc_on_war_with_mordor_effects = {
 
 	ithc_end_ithilien_crisis = yes
 
-	if = {
-		limit = { has_dynamic_modifier = { modifier = ithc_sabotaged_infrastructure_prewar_modifier } }
-		remove_dynamic_modifier = { modifier = ithc_sabotaged_infrastructure_prewar_modifier }
-		ithc_subterfuge_sabotage_infrastructure_on_war = yes
-	}
-	if = {
-		limit = { has_dynamic_modifier = { modifier = ithc_defenses_located_prewar_modifier } }
-		remove_dynamic_modifier = { modifier = ithc_defenses_located_prewar_modifier }
-		ithc_subterfuge_locate_defenses_on_war = yes
-	}
-	if = {
-		limit = { has_dynamic_modifier = { modifier = ithc_weapon_caches_prewar_modifier } }
-		remove_dynamic_modifier = { modifier = ithc_weapon_caches_prewar_modifier }
-		ithc_subterfuge_hide_weapon_caches_on_war = yes
-	}
-	if = {
-		limit = { has_dynamic_modifier = { modifier = ithc_sleeper_cells_planted_prewar_modifier } }
-		remove_dynamic_modifier = { modifier = ithc_sleeper_cells_planted_prewar_modifier }
-		ithc_subterfuge_plant_sleeper_cells_on_war = yes
-	}
+	
 }
 
 
@@ -98,10 +75,8 @@ ithc_contest_state = {
 
 		set_state_flag = ithc_contested
 
-		set_variable = { ithc_subterfuge_level = 0 }
 		set_variable = { ithc_pillage_level = 0 }
 
-		ithc_subterfuge_enable_new_decision = yes
 		ithc_pillage_enable_new_decision = yes
 	}
 	effect_tooltip = {
@@ -109,54 +84,9 @@ ithc_contest_state = {
 
 		start_resistance = yes
 
-		ithc_subterfuge_enable_new_decision = yes
 		ithc_pillage_enable_new_decision = yes
 	}
 }
-
-
-# Will make a new subterfuge deicion available for MOR in this state
-ithc_subterfuge_enable_new_decision = {
-	
-	custom_effect_tooltip = ithc_subterfuge_enable_new_decision_tt
-
-	hidden_effect = {
-		random_list = {
-			1 = {
-				set_state_flag = ithc_subterfuge_gather_intelligence_enabled
-			}
-			1 = {
-				modifier = {
-					factor = 0
-					has_dynamic_modifier = { modifier = ithc_sabotaged_infrastructure_prewar_modifier }
-				}
-				set_state_flag = ithc_subterfuge_sabotage_infrastructure_enabled
-			}
-			1 = {
-				modifier = {
-					factor = 0
-					has_dynamic_modifier = { modifier = ithc_defenses_located_prewar_modifier }
-				}
-				set_state_flag = ithc_subterfuge_locate_defenses_enabled
-			}
-			1 = {
-				modifier = {
-					factor = 0
-					has_dynamic_modifier = { modifier = ithc_weapon_caches_prewar_modifier }
-				}
-				set_state_flag = ithc_subterfuge_hide_weapon_caches_enabled
-			}
-			1 = {
-				modifier = {
-					factor = 0
-					has_dynamic_modifier = { modifier = ithc_sleeper_cells_planted_prewar_modifier }
-				}
-				set_state_flag = ithc_subterfuge_plant_sleeper_cells_enabled
-			}
-		}
-	}
-}
-
 
 # Will make a new pillage deicion available for MOR in this state
 ithc_pillage_enable_new_decision = {
@@ -200,20 +130,8 @@ ithc_pillage_enable_new_decision = {
 	}
 }
 
-
-ithc_begin_subterfuge_decision = {
-	set_state_flag = ithc_subterfuge_operation
-}
-
 ithc_begin_pillage_decision = {
 	set_state_flag = ithc_pillage_operation
-}
-
-ithc_end_subterfuge_decision = {
-	clr_state_flag = ithc_subterfuge_operation
-	add_to_variable  = { ithc_subterfuge_level = 1 }
-
-	custom_effect_tooltip = ithc_increase_subterfuge_tt
 }
 
 ithc_end_pillage_decision = {
@@ -223,52 +141,6 @@ ithc_end_pillage_decision = {
 	custom_effect_tooltip = ithc_increase_pillage_tt
 }
 
-
-
-ithc_subterfuge_sabotage_infrastructure_on_war = {
-	
-	damage_building = { type = infrastructure damage = 2}
-	add_dynamic_modifier = {
-		modifier = ithc_sabotaged_infrastructure_modifier
-		days = 140
-	}
-}
-
-ithc_subterfuge_locate_defenses_on_war = {
-	
-	add_dynamic_modifier = {
-		modifier = ithc_defenses_located_modifier
-		days = 140
-	}
-}
-
-ithc_subterfuge_hide_weapon_caches_on_war = {
-	
-	add_dynamic_modifier = {
-		modifier = ithc_weapon_caches_modifier
-		days = 140
-	}
-}
-
-ithc_subterfuge_plant_sleeper_cells_on_war = {
-
-	if = {
-		limit = { state = 22 }
-		load_oob = ithc_slepper_cells_22
-	}
-	else_if = {
-		limit = { state = 175 }
-		load_oob = ithc_slepper_cells_175
-	}
-	else_if = {
-		limit = { state = 173 }
-		load_oob = ithc_slepper_cells_173
-	}
-	else_if = {
-		limit = { state = 135 }
-		load_oob = ithc_slepper_cells_135
-	}
-}
 
 
 
