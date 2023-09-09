@@ -2,11 +2,278 @@
 
 
 
+
+# THIS is the target country
+# PREV is the target state
+
+
+
+# total power projection of MOR
+ithc_pp_total_MOR = {
+	base = 0
+	modifier = {
+		add = mtth:ithc_pp_war_support
+	}
+	modifier = {
+		add = mtth:ithc_pp_industry
+	}
+	modifier = {
+		add = mtth:ithc_pp_stability
+	}
+	modifier = {
+		add = mtth:ithc_pp_planes_nearby_mor
+	}
+	modifier = {
+		add = mtth:ithc_manpower_deployed_nearby_mor
+	}
+}
+
+# total power projection of GON
+ithc_pp_total_GON = {
+	base = 0
+	modifier = {
+		add = mtth:ithc_pp_war_support
+	}
+	modifier = {
+		add = mtth:ithc_pp_pillage_level
+	}
+	modifier = {
+		add = mtth:ithc_pp_forts
+	}
+	modifier = {
+		add = mtth:ithc_pp_industry
+	}
+	modifier = {
+		add = mtth:ithc_pp_stability
+	}
+	modifier = {
+		add = mtth:ithc_pp_planes_in_region_gon
+	}
+	modifier = {
+		add = mtth:ithc_manpower_deployed_in_state_gon
+	}
+}
+
+
+# pp from war support
 ithc_pp_war_support = {
 	base = 0
 	modifier = {
-		set_temp_variable = { temp_ws = has_war_support }
-		multiply_temp_variable = { temp_ws = 100 }
-		add = temp_ws
+		set_temp_variable = { temp_pp = has_war_support }
+		multiply_temp_variable = { temp_pp = 100 }
+		add = temp_pp
+	}
+}
+
+# pp from stability
+ithc_pp_stability = {
+	base = 0
+	modifier = {
+		set_temp_variable = { temp_pp = stability }
+		multiply_temp_variable = { temp_pp = 50 }
+		add = temp_pp
+	}
+}
+
+
+# pp from pillage level (only for Gondor)
+ithc_pp_pillage_level = {
+	base = 0
+	modifier = {
+		PREV = { check_variable = { ithc_pillage_level = 1 } }
+		add = 20
+	}
+	modifier = {
+		PREV = { check_variable = { ithc_pillage_level = 2 } }
+		add = 40
+	}
+	modifier = {
+		PREV = { check_variable = { ithc_pillage_level = 3 } }
+		add = 60
+	}
+}
+
+
+# pp from undamaged forts in state (Gondor)
+ithc_pp_forts = {
+	base = 0
+	modifier = {
+		set_temp_variable = { temp_pp = PREV.non_damaged_building_level@bunker }
+		multiply_temp_variable = { temp_pp = 5 }
+		add = temp_pp
+	}
+}
+
+
+# pp industry
+ithc_pp_industry = {
+	base = 0
+	modifier = {
+		add = num_of_factories 
+	}
+}
+
+# pp planes in regions (gon)
+ithc_pp_planes_in_region_gon = {
+	base = 0
+
+	# North ithilien
+	modifier = {
+		OR = { check_variable = { PREV.id = 22.id } check_variable = { PREV.id = 173.id } }
+		num_planes_stationed_in_regions = {
+			value > 25
+			regions = { 73 }
+		}
+		add = 10
+	}
+	modifier = {
+		OR = { check_variable = { PREV.id = 22.id } check_variable = { PREV.id = 173.id } }
+		num_planes_stationed_in_regions = {
+			value > 50
+			regions = { 73 }
+		}
+		add = 10
+	}
+	modifier = {
+		OR = { check_variable = { PREV.id = 22.id } check_variable = { PREV.id = 173.id } }
+		num_planes_stationed_in_regions = {
+			value > 100
+			regions = { 73 }
+		}
+		add = 10
+	}
+
+	# Southern ithilien
+	modifier = {
+		OR = { check_variable = { PREV.id = 135.id } check_variable = { PREV.id = 175.id } }
+		num_planes_stationed_in_regions = {
+			value > 25
+			regions = { 77 }
+		}
+		add = 10
+	}
+	modifier = {
+		OR = { check_variable = { PREV.id = 135.id } check_variable = { PREV.id = 175.id } }
+		num_planes_stationed_in_regions = {
+			value > 50
+			regions = { 77 }
+		}
+		add = 10
+	}
+	modifier = {
+		OR = { check_variable = { PREV.id = 135.id } check_variable = { PREV.id = 175.id } }
+		num_planes_stationed_in_regions = {
+			value > 100
+			regions = { 77 }
+		}
+		add = 10
+	}
+}
+
+# pp planes in regions (mor)
+ithc_pp_planes_nearby_mor = {
+	base = 0
+
+	# North ithilien
+	modifier = {
+		OR = { check_variable = { PREV.id = 22.id } check_variable = { PREV.id = 173.id } }
+		num_planes_stationed_in_regions = {
+			value > 25
+			regions = { 73 35 32 17 }
+		}
+		add = 10
+	}
+	modifier = {
+		OR = { check_variable = { PREV.id = 22.id } check_variable = { PREV.id = 173.id } }
+		num_planes_stationed_in_regions = {
+			value > 50
+			regions = { 73 35 32 17 }
+		}
+		add = 10
+	}
+	modifier = {
+		OR = { check_variable = { PREV.id = 22.id } check_variable = { PREV.id = 173.id } }
+		num_planes_stationed_in_regions = {
+			value > 100
+			regions = { 73 35 32 17 }
+		}
+		add = 10
+	}
+
+	# Southern ithilien
+	modifier = {
+		OR = { check_variable = { PREV.id = 135.id } check_variable = { PREV.id = 175.id } }
+		num_planes_stationed_in_regions = {
+			value > 25
+			regions = { 77 17 69 40 }
+		}
+		add = 10
+	}
+	modifier = {
+		OR = { check_variable = { PREV.id = 135.id } check_variable = { PREV.id = 175.id } }
+		num_planes_stationed_in_regions = {
+			value > 50
+			regions = { 77 17 69 40 }
+		}
+		add = 10
+	}
+	modifier = {
+		OR = { check_variable = { PREV.id = 135.id } check_variable = { PREV.id = 175.id } }
+		num_planes_stationed_in_regions = {
+			value > 100
+			regions = { 77 17 69 40 }
+		}
+		add = 10
+	}
+}
+
+ithc_manpower_deployed_in_state_gon = {
+	base = 0
+
+	modifier = {
+		set_temp_variable = { temp_pp = num_armies_in_state@PREV }
+		multiply_temp_variable = { temp_pp = 2 }
+		add = temp_pp
+	}
+}
+
+ithc_manpower_deployed_nearby_mor = {
+	base = 0
+
+	# black gate
+	modifier = {
+		check_variable = { PREV.id = 22.id }
+		204 = { is_coontrolled_by_THIS_or_ally = yes }
+
+		set_temp_variable = { temp_pp = num_armies_in_state@204 }
+		multiply_temp_variable = { temp_pp = 2 }
+		add = temp_pp
+	}
+	# minas morgul
+	modifier = {
+		check_variable = { PREV.id = 173.id }
+		5 = { is_coontrolled_by_THIS_or_ally = yes }
+		
+		set_temp_variable = { temp_pp = num_armies_in_state@5 }
+		multiply_temp_variable = { temp_pp = 2 }
+		add = temp_pp
+	}
+	# Harad 1
+	modifier = {
+		check_variable = { PREV.id = 135.id }
+		107 = { is_coontrolled_by_THIS_or_ally = yes }
+		
+		set_temp_variable = { temp_pp = num_armies_in_state@107 }
+		multiply_temp_variable = { temp_pp = 2 }
+		add = temp_pp
+	}
+	# Harad 2
+	modifier = {
+		check_variable = { PREV.id = 135.id }
+		105 = { is_coontrolled_by_THIS_or_ally = yes }
+		
+		set_temp_variable = { temp_pp = num_armies_in_state@105 }
+		multiply_temp_variable = { temp_pp = 2 }
+		add = temp_pp
 	}
 }
