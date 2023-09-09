@@ -12,7 +12,7 @@ ithilien_crisis_decisions_category = {
 		targets = { 22 175 173 135 }
 		is_good = yes
 	    selectable_mission = yes
-	    days_remove = 10
+	    days_remove = 30
 
 	    fire_only_once = yes
 
@@ -90,7 +90,7 @@ ithilien_crisis_decisions_category = {
 	    }
 		
 		is_good = no
-		days_mission_timeout = 10
+		days_mission_timeout = 30
 		selectable_mission = no
 		days_remove = 1
 		fire_only_once = yes
@@ -104,101 +104,12 @@ ithilien_crisis_decisions_category = {
 		}
 	}
 
-	ithc_annex_state_MOR = {
-		icon = GFX_decision_sauron_eye
-
-		cost = 100
-		state_target = yes
-		targets = { 22 175 173 135 }
-		is_good = yes
-	    selectable_mission = yes
-	    days_remove = 10
-
-	    fire_only_once = yes
-
-	    allowed = {
-	    	tag = MOR
-	    }
-
-	    target_root_trigger = {
-			ithc_crisis_is_active = yes
-	    }
-
-	    target_trigger = {
-			FROM = {
-				ithc_state_can_annex_visible = yes
-			}
-	    }
-
-	    available = {
-	    	ithc_state_can_annex = yes
-	    }
-
-	    cancel_trigger = {
-	    	NOT = {
-	    		ithc_crisis_is_active = yes
-	    		FROM = { ithc_state_can_annex = yes } 
-	    	}
-	    }
-
-	    ai_will_do = {
-		    base = 10
-		}
-
-        remove_effect = {
-			FROM = { set_state_controller_to = MOR }
-        }
-
-        cancel_effect = {
-
-        }
-
-        complete_effect = {
-			hidden_effect = {
-				GON = { 
-					activate_targeted_decision = {
-						target = FROM
-						decision = ithc_annex_state_GON
-					}
-				}	
-			}
-    	}
-	}
-
-	ithc_annex_state_GON = {
-		icon = GFX_decision_sauron_eye
-
-		state_target = yes
-		targets = { 22 175 173 135 }
-		
-		allowed = {
-			always = no
-		}
-		activation = {
-			always = yes
-		}
-		available = {
-	    	always = no
-	    }
-		
-		is_good = no
-		days_mission_timeout = 10
-		selectable_mission = no
-		fire_only_once = yes
-		
-		timeout_effect = {
-			effect_tooltip = { FROM = { set_state_controller_to = MOR } }
-
-			hidden_effect = { remove_targeted_decision = { target = FROM decision = ithc_annex_state_GON } }
-		}
-	}
-
 
 	###
 	### PILLAGE
 	###
 
-	ithc_pillage_state_MOR_state = {
+	ithc_pillage_state = {
 		icon = {
 			key = GFX_decision_pillage_0
 			trigger = {
@@ -229,18 +140,19 @@ ithilien_crisis_decisions_category = {
 		state_target = yes
 		targets = { 22 175 173 135 }
 
-		cost = var:ithc_pillage_decision_cost_pp
-	    days_remove = var:ithc_pillage_decision_cost_days
+		cost = var:ithc_pillage_decision_cost_pp?50
+	    days_remove = 70
 
 	    visible = {
-	        ithc_crisis_is_active = yes
 	        tag = MOR
+			FROM = { has_state_flag = ithc_contested }
+			FROM = { is_controlled_by = GON }
 	    }
 
 	    available = {
 			ithc_crisis_is_active = yes
 
-			# TODO: For gondor: make sure it isnt already min level
+			NOT = { FROM = { has_state_flag = ithc_pillage_operation } }
 
 			FROM = {
 				MOR = {
@@ -250,114 +162,49 @@ ithilien_crisis_decisions_category = {
 	    }
 
 	    cancel_trigger = {
-			OR = {
+			hidden_trigger = {
 	    		ithc_crisis_is_active = no
-    			#FROM = { NOT = { has_state_flag = ithc_pillage_operation } }
 			}
 	    }
 
+		cancel_effect = {
+			FROM = { clr_state_flag = ithc_pillage_operation }
+		}
+
 	    ai_will_do = {
-		    base = 10
+		    base = 100
 		}
 
         complete_effect = {
+			FROM = { ithc_begin_pillage_decision = yes }
 
+			hidden_effect = {
+				GON = { 
+					activate_targeted_decision = {
+						target = FROM
+						decision = ithc_pillage_state_GON
+					}
+				}	
+			}
     	}
-	}
 
-
-
-	ithc_pillage_ambush_the_garrison = {
-		icon = {
-			key = GFX_decision_pillage_0
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level < 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_1
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_2
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 2 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_3
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level > 2 } }
-			}
-		}
-
-		cost = var:ithc_pillage_decision_cost_pp
-		state_target = yes
-		targets = { 22 175 173 135 }
-		is_good = yes
-	    selectable_mission = yes
-	    days_remove = var:ithc_pillage_decision_cost_days
-
-	    target_root_trigger = {
-	        ithc_crisis_is_active = yes
-	        tag = MOR
-	    }
-
-	    target_trigger = {
-	    	FROM = {
-	    		has_state_flag = ithc_pillage_ambush_the_garrison_enabled
-    		}
-	    }
-
-	    available = {
-	    	ithc_crisis_is_active = yes
-	    }
-
-	    cancel_trigger = {
-			OR = {
-	    		ithc_crisis_is_active = no
-    			FROM = { NOT = { has_state_flag = ithc_pillage_operation } }
-			}
-	    }
-
-	    ai_will_do = {
-		    base = 10
-		}
-
-        remove_effect = {
-        	# deal damage to troops stationed in the state
+		remove_effect = {
+			# deal damage to troops stationed in the state
         	FROM = {
-        		clr_state_flag = ithc_pillage_ambush_the_garrison_enabled
-        		ithc_pillage_enable_new_decision = yes
         		ithc_end_pillage_decision = yes
     		}
 
 			damage_units = {
 				state = FROM
-				org_damage = 0.25
-				str_damage = 0.15
+				org_damage = 0.15
+				str_damage = 0.1
 				ratio = yes
 				army = yes
 			}
-        }
-
-        complete_effect = {
-        	FROM = { ithc_begin_pillage_decision = yes }
-
-			hidden_effect = {
-				GON = { 
-					activate_targeted_decision = {
-						target = FROM
-						decision = ithc_pillage_ambush_the_garrison_GON
-					}
-				}	
-			}
-    	}
+		}
 	}
 
-	ithc_pillage_ambush_the_garrison_GON = {
+	ithc_pillage_state_GON = {
 		icon = {
 			key = GFX_decision_pillage_0
 			trigger = {
@@ -383,742 +230,179 @@ ithilien_crisis_decisions_category = {
 			}
 		}
 
+		state_target = yes
+		targets = { 22 175 173 135 }
+		
 		allowed = {
 			always = no
 		}
 		activation = {
 			always = yes
 		}
-
 		available = {
 	    	always = no
 	    }
-		
-		is_good = no
-		days_mission_timeout = var:MOR.ithc_pillage_decision_cost_days
-		selectable_mission = no
-		fire_only_once = yes
-		state_target = yes
-		targets = { 22 175 173 135 }
-		
-		timeout_effect = {
-			effect_tooltip = {
-				damage_units = {
-					state = FROM
-					org_damage = 0.25
-					str_damage = 0.15
-					ratio = yes
-					army = yes
-				}
-			}
-		}
-	}
 
-	ithc_pillage_massacre_the_population = {
-		icon = {
-			key = GFX_decision_pillage_0
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level < 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_1
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_2
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 2 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_3
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level > 2 } }
-			}
-		}
-
-		cost = var:ithc_pillage_decision_cost_pp
-		state_target = yes
-		targets = { 22 175 173 135 }
-		is_good = yes
-	    selectable_mission = yes
-	    days_remove = var:ithc_pillage_decision_cost_days
-
-	    target_root_trigger = {
-	    	ithc_crisis_is_active = yes
-	        tag = MOR
-	    }
-
-	    target_trigger = {
-	    	FROM = {
-	    		has_state_flag = ithc_pillage_massacre_the_population_enabled
-	    	}
-	    }
-
-	    available = {
-	    	ithc_crisis_is_active = yes
-	    }
-
-	    cancel_trigger = {
-	    	OR = {
+		cancel_trigger = {
+			hidden_trigger = {
 	    		ithc_crisis_is_active = no
-    			FROM = { NOT = { has_state_flag = ithc_pillage_operation } }
 			}
-	    }
-
-	    ai_will_do = {
-		    base = 10
-		}
-
-        remove_effect = {
-        	# add resistance
-        	# lower population
-        	FROM = {
-				add_manpower = -15000
-				add_resistance = 10
-
-        		clr_state_flag = ithc_pillage_massacre_the_population_enabled
-        		ithc_pillage_enable_new_decision = yes
-        		ithc_end_pillage_decision = yes
-    		}
-        }
-
-        complete_effect = {
-        	FROM = { ithc_begin_pillage_decision = yes }
-
-			hidden_effect = {
-				GON = { 
-					activate_targeted_decision = {
-						target = FROM
-						decision = ithc_pillage_massacre_the_population_GON
-					}
-				}	
-			}
-    	}
-	}
-
-	ithc_pillage_massacre_the_population_GON = {
-		icon = {
-			key = GFX_decision_pillage_0
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level < 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_1
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_2
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 2 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_3
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level > 2 } }
-			}
-		}
-
-		allowed = {
-			always = no
-		}
-		activation = {
-			always = yes
-		}
-
-		available = {
-	    	always = no
 	    }
 		
 		is_good = no
-		days_mission_timeout = var:MOR.ithc_pillage_decision_cost_days
+		days_mission_timeout = 70
 		selectable_mission = no
+		days_remove = 1
 		fire_only_once = yes
-		state_target = yes
-		targets = { 22 175 173 135 }
 		
-		timeout_effect = {
+		remove_effect = {
 			effect_tooltip = {
-				FROM = {
-					add_manpower = -15000
-					add_resistance = 10
-				}
+				ithc_increase_pillage_level = yes
 			}
 		}
 	}
 
-	ithc_pillage_lay_waste = {
+	ithc_unpillage_state = {
 		icon = {
-			key = GFX_decision_pillage_0
+			key = GFX_decision_unpillage_0
 			trigger = {
 				FROM = { check_variable = { ithc_pillage_level < 1 } }
 			}
 		}
 		icon = {
-			key = GFX_decision_pillage_1
+			key = GFX_decision_unpillage_1
 			trigger = {
 				FROM = { check_variable = { ithc_pillage_level = 1 } }
 			}
 		}
 		icon = {
-			key = GFX_decision_pillage_2
+			key = GFX_decision_unpillage_2
 			trigger = {
 				FROM = { check_variable = { ithc_pillage_level = 2 } }
 			}
 		}
 		icon = {
-			key = GFX_decision_pillage_3
+			key = GFX_decision_unpillage_3
 			trigger = {
 				FROM = { check_variable = { ithc_pillage_level > 2 } }
 			}
 		}
 
-		cost = var:ithc_pillage_decision_cost_pp
-		state_target = yes
-		targets = { 22 175 173 135 }
 		is_good = yes
 	    selectable_mission = yes
-	    days_remove = var:ithc_pillage_decision_cost_days
-
-	    target_root_trigger = {
-	    	ithc_crisis_is_active = yes
-	        tag = MOR
-	    }
-
-	    target_trigger = {
-	    	FROM = {
-	    		has_state_flag = ithc_pillage_lay_waste_enabled
-	    	}
-	    }
-
-	    available = {
-	    	ithc_crisis_is_active = yes
-	    }
-
-	    cancel_trigger = {
-	    	OR = {
-	    		ithc_crisis_is_active = no
-    			FROM = { NOT = { has_state_flag = ithc_pillage_operation } }
-			}
-	    }
-
-	    ai_will_do = {
-		    base = 10
-		}
-
-        remove_effect = {
-        	FROM = {
-				# add resistance
-				add_resistance = 10
-				# add damage to buildings
-				damage_building = { type = infrastructure damage = 1 }
-				damage_building = { type = industrial_complex damage = 1 }
-				damage_building = { type = arms_factory damage = 1 }
-				# lower repair speed
-				add_dynamic_modifier = {
-					modifier = ithc_lower_repair_speed
-					days = 30
-				}
-
-        		clr_state_flag = ithc_pillage_lay_waste_enabled
-        		ithc_pillage_enable_new_decision = yes
-        		ithc_end_pillage_decision = yes
-    		}
-        }
-
-        complete_effect = {
-        	FROM = { ithc_begin_pillage_decision = yes }
-
-			hidden_effect = {
-				GON = { 
-					activate_targeted_decision = {
-						target = FROM
-						decision = ithc_pillage_lay_waste_GON
-					}
-				}	
-			}
-    	}
-	}
-
-	ithc_pillage_lay_waste_GON = {
-		icon = {
-			key = GFX_decision_pillage_0
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level < 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_1
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_2
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 2 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_3
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level > 2 } }
-			}
-		}
-
-		allowed = {
-			always = no
-		}
-		activation = {
-			always = yes
-		}
-
-		available = {
-	    	always = no
-	    }
-		
-		is_good = no
-		days_mission_timeout = var:MOR.ithc_pillage_decision_cost_days
-		selectable_mission = no
-		fire_only_once = yes
 		state_target = yes
 		targets = { 22 175 173 135 }
-		
-		timeout_effect = {
-			effect_tooltip = {
-				FROM = {
-					# add resistance
-					add_resistance = 10
-					# add damage to buildings
-					damage_building = { type = infrastructure damage = 1 }
-					damage_building = { type = industrial_complex damage = 1 }
-					damage_building = { type = arms_factory damage = 1 }
-					# lower repair speed
-					add_dynamic_modifier = {
-						modifier = ithc_lower_repair_speed
-						days = 30
-					}
-				}
-			}
-		}
-	}
 
-	ithc_pillage_plunder = {
-		icon = {
-			key = GFX_decision_pillage_0
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level < 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_1
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_2
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 2 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_3
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level > 2 } }
-			}
-		}
+		cost = var:ithc_pillage_decision_cost_pp?50
+	    days_remove = 70
 
-		cost = var:ithc_pillage_decision_cost_pp
-		state_target = yes
-		targets = { 22 175 173 135 }
-		is_good = yes
-	    selectable_mission = yes
-	    days_remove = var:ithc_pillage_decision_cost_days
-
-	    target_root_trigger = {
+	    visible = {
 	        ithc_crisis_is_active = yes
-	        tag = MOR
-	    }
-
-	    target_trigger = {
-	    	FROM = {
-	    		has_state_flag = ithc_pillage_plunder_enabled
-	    	}
+	        tag = GON
+			FROM = { has_state_flag = ithc_contested }
+			FROM = { check_variable = { ithc_pillage_level > 0 } }
+			FROM = { is_controlled_by = GON }
 	    }
 
 	    available = {
-	    	ithc_crisis_is_active = yes
-	    }
+			NOT = { FROM = { has_state_flag = ithc_pillage_operation } }
 
-	    cancel_trigger = {
-	    	OR = {
-	    		ithc_crisis_is_active = no
-    			FROM = { NOT = { has_state_flag = ithc_pillage_operation } }
+			FROM = {
+				GON = {
+					ithc_has_higher_power_projection = yes
+				}
 			}
 	    }
 
-	    ai_will_do = {
-		    base = 10
+	    cancel_trigger = {
+			hidden_trigger = {
+	    		ithc_crisis_is_active = no
+			}
+	    }
+
+		cancel_effect = {
+			FROM = { clr_state_flag = ithc_pillage_operation }
 		}
 
-        remove_effect = {
-        	# take factories from state
-        	# (This should require min. X amount of resistance)
-        	FROM = {
-				remove_building = { type = industrial_complex level = 1 }
-				MOR = { add_timed_idea = {
-				    idea = three_civs_gain
-    				days = 120
-				} }
-
-        		clr_state_flag = ithc_pillage_plunder_enabled
-        		ithc_pillage_enable_new_decision = yes
-        		ithc_end_pillage_decision = yes
-    		}
-        }
+	    ai_will_do = {
+		    base = 100
+		}
 
         complete_effect = {
-        	FROM = { ithc_begin_pillage_decision = yes }
+			FROM = { ithc_begin_unpillage_decision = yes }
 
 			hidden_effect = {
-				GON = { 
-					activate_targeted_decision = {
-						target = FROM
-						decision = ithc_pillage_plunder_GON
-					}
-				}	
-			}
-    	}
-	}
-
-	ithc_pillage_plunder_GON = {
-		icon = {
-			key = GFX_decision_pillage_0
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level < 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_1
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_2
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 2 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_3
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level > 2 } }
-			}
-		}
-
-		allowed = {
-			always = no
-		}
-		activation = {
-			always = yes
-		}
-
-		available = {
-	    	always = no
-	    }
-		
-		is_good = no
-		days_mission_timeout = var:MOR.ithc_pillage_decision_cost_days
-		selectable_mission = no
-		fire_only_once = yes
-		state_target = yes
-		targets = { 22 175 173 135 }
-		
-		timeout_effect = {
-			effect_tooltip = {
-				FROM = {
-					remove_building = { type = industrial_complex level = 1 }
-					MOR = { add_timed_idea = {
-						idea = three_civs_gain
-						days = 120
-					} }
-				}
-			}
-		}
-	}
-
-	ithc_pillage_burn_and_sear_the_fields = {
-		icon = {
-			key = GFX_decision_pillage_0
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level < 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_1
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_2
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 2 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_3
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level > 2 } }
-			}
-		}
-
-		cost = var:ithc_pillage_decision_cost_pp
-		state_target = yes
-		targets = { 22 175 173 135 }
-		is_good = yes
-	    selectable_mission = yes
-	    days_remove = var:ithc_pillage_decision_cost_days
-
-	    target_root_trigger = {
-	    	ithc_crisis_is_active = yes
-	        tag = MOR
-	    }
-
-	    target_trigger = {
-	    	FROM = {
-	    		has_state_flag = ithc_pillage_burn_and_sear_the_fields_enabled
-	    	}
-	    }
-
-	    available = {
-	    	ithc_crisis_is_active = yes
-	    }
-
-	    cancel_trigger = {
-	    	OR = {
-	    		ithc_crisis_is_active = no
-    			FROM = { NOT = { has_state_flag = ithc_pillage_operation } }
-			}
-	    }
-
-	    ai_will_do = {
-		    base = 10
-		}
-
-        remove_effect = {
-        	# remove food, add damage, other stuff
-        	FROM = {
-				add_dynamic_modifier = {
-					modifier = ithc_destroyed_fields
-					days = 120
-				}
-
-        		clr_state_flag = ithc_pillage_burn_and_sear_the_fields_enabled
-        		ithc_pillage_enable_new_decision = yes
-        		ithc_end_pillage_decision = yes
-    		}
-        }
-
-        complete_effect = {
-        	FROM = { ithc_begin_pillage_decision = yes }
-
-			hidden_effect = {
-				GON = { 
-					activate_targeted_decision = {
-						target = FROM
-						decision = ithc_pillage_burn_and_sear_the_fields_GON
-					}
-				}	
-			}
-    	}
-	}
-
-	ithc_pillage_burn_and_sear_the_fields_GON = {
-		icon = {
-			key = GFX_decision_pillage_0
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level < 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_1
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_2
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 2 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_3
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level > 2 } }
-			}
-		}
-
-		allowed = {
-			always = no
-		}
-		activation = {
-			always = yes
-		}
-
-		available = {
-	    	always = no
-	    }
-		
-		is_good = no
-		days_mission_timeout = var:MOR.ithc_pillage_decision_cost_days
-		selectable_mission = no
-		fire_only_once = yes
-		state_target = yes
-		targets = { 22 175 173 135 }
-		
-		timeout_effect = {
-			effect_tooltip = {
-				FROM = {
-					add_dynamic_modifier = {
-						modifier = ithc_destroyed_fields
-						days = 120
-					}
-				}
-			}
-		}
-	}
-
-	ithc_pillage_counter = {
-		icon = {
-			key = GFX_decision_pillage_0
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level < 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_1
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 1 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_2
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level = 2 } }
-			}
-		}
-		icon = {
-			key = GFX_decision_pillage_3
-			trigger = {
-				FROM = { check_variable = { ithc_pillage_level > 2 } }
-			}
-		}
-
-		cost = var:ithc_pillage_decision_cost_pp
-		state_target = yes
-		targets = { 22 175 173 135 }
-		is_good = yes
-	    selectable_mission = yes
-	    days_remove = var:ithc_pillage_decision_cost_days
-
-	    target_root_trigger = {
-	    	tag = GON
-	    }
-
-	    target_trigger = {
-	    	FROM = { has_state_flag = ithc_pillage_operation }
-	    }
-
-	    available = {
-	    	# TODO?
-	    	always = yes
-	    }
-
-	    cancel_trigger = {
-	    	# TODO: war breaks out etc.
-    		always = no
-	    }
-
-	    ai_will_do = {
-		    base = 10
-		}
-
-        remove_effect = {
-        	# remove food, add damage, other stuff
-        	FROM = {
-        		clr_state_flag = ithc_pillage_operation
-    		}
-        }
-
-        complete_effect = {
-        	hidden_effect = {
 				MOR = { 
 					activate_targeted_decision = {
 						target = FROM
-						decision = ithc_pillage_counter_MOR
+						decision = ithc_unpillage_state_MOR
 					}
 				}	
 			}
     	}
+
+		remove_effect = {
+        	FROM = {
+        		ithc_end_unpillage_decision = yes
+    		}
+		}
 	}
 
-	ithc_pillage_counter_MOR = {
+	ithc_unpillage_state_MOR = {
 		icon = {
-			key = GFX_decision_pillage_0
+			key = GFX_decision_unpillage_0
 			trigger = {
 				FROM = { check_variable = { ithc_pillage_level < 1 } }
 			}
 		}
 		icon = {
-			key = GFX_decision_pillage_1
+			key = GFX_decision_unpillage_1
 			trigger = {
 				FROM = { check_variable = { ithc_pillage_level = 1 } }
 			}
 		}
 		icon = {
-			key = GFX_decision_pillage_2
+			key = GFX_decision_unpillage_2
 			trigger = {
 				FROM = { check_variable = { ithc_pillage_level = 2 } }
 			}
 		}
 		icon = {
-			key = GFX_decision_pillage_3
+			key = GFX_decision_unpillage_3
 			trigger = {
 				FROM = { check_variable = { ithc_pillage_level > 2 } }
 			}
 		}
 
+		state_target = yes
+		targets = { 22 175 173 135 }
+		
 		allowed = {
 			always = no
 		}
 		activation = {
 			always = yes
 		}
-
 		available = {
 	    	always = no
 	    }
+
+		cancel_trigger = {
+			hidden_trigger = {
+	    		ithc_crisis_is_active = no
+			}
+	    }
 		
 		is_good = no
-		days_mission_timeout = var:GON.ithc_pillage_decision_cost_days
+		days_mission_timeout = 70
 		selectable_mission = no
+		days_remove = 1
 		fire_only_once = yes
-		state_target = yes
-		targets = { 22 175 173 135 }
 		
-		timeout_effect = {
-			custom_effect_tooltip = ithc_contest_state_GON_tt
+		remove_effect = {
+			effect_tooltip = {
+				ithc_decrease_pillage_level = yes
+			}
 		}
 	}
 }

@@ -4,8 +4,8 @@
 ithc_commence_ithilien_crisis = {
 
 	hidden_effect = {
-		GON = { ithc_set_vars_long_term = yes }
-		MOR = { ithc_set_vars_long_term = yes }
+		GON = { ithc_set_vars = yes }
+		MOR = { ithc_set_vars = yes }
 
 		set_global_flag = ithc_ithilien_crisis_commenced
 
@@ -16,26 +16,10 @@ ithc_commence_ithilien_crisis = {
 	custom_effect_tooltip = ithc_commence_ithilien_crisis_tt
 }
 
-ithc_set_vars_long_term = {
+ithc_set_vars = {
 	hidden_effect = {
-		set_variable = { ithc_pillage_decision_cost_pp = 30 }
-		set_variable = { ithc_pillage_decision_cost_pp_scaling = 30 }
-
-		set_variable = { ithc_pillage_decision_cost_days = 30 }
-		set_variable = { ithc_pillage_decision_cost_days_scaling = 30 }
+		set_variable = { ithc_pillage_decision_cost_pp = 50 }
 	}
-	custom_effect_tooltip = ithc_set_vars_long_term_tt
-}
-
-ithc_set_vars_short_term = {
-	hidden_effect = {
-		set_variable = { ithc_pillage_decision_cost_pp = 30 }
-		set_variable = { ithc_pillage_decision_cost_pp_scaling = 30 }
-
-		set_variable = { ithc_pillage_decision_cost_days = 30 }
-		set_variable = { ithc_pillage_decision_cost_days_scaling = 30 }	
-	}
-	custom_effect_tooltip = ithc_set_vars_short_term_tt
 }
 
 # Happens when GON and MOR got to war. Runs on no scope in particular
@@ -53,11 +37,7 @@ ithc_end_ithilien_crisis = {
 # THIS is the state to run effects on.
 ithc_on_war_with_mordor_effects = {
 
-	set_global_flag = mordor_gondor_war
-
-	ithc_end_ithilien_crisis = yes
-
-	
+	# activate debuffs and clear variables and stuff	
 }
 
 
@@ -65,13 +45,9 @@ ithc_on_war_with_mordor_effects = {
 ithc_contest_state = {
 
 	hidden_effect = {
-		#remove_core_of = GON
-		#set_compliance = 80
-		#set_resistance = 0
-
 		force_enable_resistance = GON
 		start_resistance = yes
-		set_compliance = 100
+		set_compliance = 50
 
 		set_state_flag = ithc_contested
 
@@ -80,65 +56,58 @@ ithc_contest_state = {
 		ithc_pillage_enable_new_decision = yes
 	}
 	effect_tooltip = {
-		#remove_core_of = GON
-
 		start_resistance = yes
 
-		ithc_pillage_enable_new_decision = yes
-	}
-}
-
-# Will make a new pillage deicion available for MOR in this state
-ithc_pillage_enable_new_decision = {
-	
-	custom_effect_tooltip = ithc_pillage_enable_new_decision_tt
-
-	hidden_effect = {
-		random_list = {
-			1 = {
-				set_state_flag = ithc_pillage_ambush_the_garrison_enabled
-			}
-			1 = {
-				modifier = {
-					factor = 0
-					has_state_flag = ithc_population_massacred
-				}
-				set_state_flag = ithc_pillage_massacre_the_population_enabled
-			}
-			1 = {
-				modifier = {
-					factor = 0
-					has_state_flag = ithc_layed_waste
-				}
-				set_state_flag = ithc_pillage_lay_waste_enabled
-			}
-			1 = {
-				modifier = {
-					factor = 0
-					has_state_flag = ithc_plundered
-				}
-				set_state_flag = ithc_pillage_plunder_enabled
-			}
-			1 = {
-				modifier = {
-					factor = 0
-					has_state_flag = ithc_fields_burned
-				}
-				set_state_flag = ithc_pillage_burn_and_sear_the_fields_enabled
-			}
-		}	
+		custom_effect_tooltip = ithc_pillage_enable_new_decision_tt
 	}
 }
 
 ithc_begin_pillage_decision = {
 	set_state_flag = ithc_pillage_operation
+
+	add_to_variable = { ithc_pillage_decision_cost_pp = 25 }
+}
+
+ithc_begin_unpillage_decision = {
+	set_state_flag = ithc_pillage_operation
+
+	add_to_variable = { ithc_pillage_decision_cost_pp = 25 }
 }
 
 ithc_end_pillage_decision = {
 	clr_state_flag = ithc_pillage_operation
-	add_to_variable  = { ithc_pillage_level = 1 }
+	ithc_increase_pillage_level = yes
 
 	custom_effect_tooltip = ithc_increase_pillage_tt
+}
+
+ithc_end_unpillage_decision = {
+	clr_state_flag = ithc_pillage_operation
+	ithc_decrease_pillage_level = yes
+
+	custom_effect_tooltip = ithc_decrease_pillage_tt
+}
+
+ithc_increase_pillage_level = {
+	add_to_variable  = { ithc_pillage_level = 1 }
+
+	# TODO: pillage effects:
+	# - 0: no core
+	# - 1: lower speed and disabled strat redeploy
+	# - 2: divisions will spawn in this state at war start
+	# - 3: ruin construction speed
+	# - 4: Mordor annexes state
+}
+
+ithc_decrease_pillage_level = {
+	subtract_from_variable  = { ithc_pillage_level = 1 }
+
+	# TODO: pillage effects:
+	# - 0: no core
+	# - 1: lower speed and disabled strat redeploy
+	# - 2: divisions will spawn in this state at war start
+	# - 3: ruin construction speed
+	# - 4: Mordor annexes state
 }
 
 
