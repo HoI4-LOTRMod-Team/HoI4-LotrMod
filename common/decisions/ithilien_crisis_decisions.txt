@@ -95,7 +95,7 @@ ithilien_crisis_decisions_category = {
 		days_remove = 1
 		fire_only_once = yes
 		
-		remove_effect = {
+		timeout_effect = {
 			custom_effect_tooltip = ithc_contest_state_GON_tt
 
 			hidden_effect = {
@@ -142,6 +142,10 @@ ithilien_crisis_decisions_category = {
 
 		cost = var:ithc_pillage_decision_cost_pp?50
 	    days_remove = 70
+
+		allowed = {
+    		tag = MOR
+		}
 
 	    visible = {
 	        tag = MOR
@@ -192,12 +196,17 @@ ithilien_crisis_decisions_category = {
 			# deal damage to troops stationed in the state
         	FROM = {
         		ithc_end_pillage_decision = yes
+
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
     		}
 
 			damage_units = {
 				state = FROM
-				org_damage = 0.15
-				str_damage = 0.1
+				org_damage = 0.1
+				str_damage = 0.05
 				ratio = yes
 				army = yes
 			}
@@ -255,7 +264,7 @@ ithilien_crisis_decisions_category = {
 		days_remove = 1
 		fire_only_once = yes
 		
-		remove_effect = {
+		timeout_effect = {
 			effect_tooltip = {
 				ithc_increase_pillage_level = yes
 			}
@@ -296,15 +305,21 @@ ithilien_crisis_decisions_category = {
 		cost = var:ithc_pillage_decision_cost_pp?50
 	    days_remove = 70
 
+		allowed = {
+    		tag = GON
+		}
+
 	    visible = {
+			has_completed_focus = ithilien_crisis
 	        ithc_crisis_is_active = yes
 	        tag = GON
 			FROM = { has_state_flag = ithc_contested }
-			FROM = { check_variable = { ithc_pillage_level > 0 } }
 			FROM = { is_controlled_by = GON }
 	    }
 
 	    available = {
+			FROM = { check_variable = { ithc_pillage_level > 0 } }
+
 			NOT = { FROM = { has_state_flag = ithc_pillage_operation } }
 
 			FROM = {
@@ -399,10 +414,99 @@ ithilien_crisis_decisions_category = {
 		days_remove = 1
 		fire_only_once = yes
 		
-		remove_effect = {
+		timeout_effect = {
 			effect_tooltip = {
 				ithc_decrease_pillage_level = yes
 			}
+		}
+	}
+
+	ithc_evacuate_state_GON = {
+		icon = GFX_decision_generic_5
+
+		fire_only_once = yes
+
+		is_good = yes
+	    selectable_mission = yes
+		state_target = yes
+		targets = { 22 175 173 135 }
+
+		cost = 50
+	    days_remove = 90
+
+		allowed = {
+    		tag = GON
+		}
+
+	    visible = {
+			has_completed_focus = ithc_evacuate
+	        ithc_crisis_is_active = yes
+	        tag = GON
+	    }
+
+	    available = {
+			FROM = { check_variable = { ithc_pillage_level > 1 } }
+	    }
+
+	    ai_will_do = {
+		    base = 10
+		}
+
+		cancel_trigger = {
+			exists = no
+		}
+
+        complete_effect = {
+			set_temp_variable = {
+				ithc_evacuated_population = state_population
+			}
+
+			FROM = {
+				# get half the state's population
+				set_variable = { ithc_evacuated_population = state_population }
+				multiply_variable = { ithc_evacuated_population = 0.5 }
+
+				# Remove from state
+				multiply_variable = { ithc_evacuated_population = -1 }
+				add_manpower = ithc_evacuated_population
+				multiply_variable = { ithc_evacuated_population = -1 }
+
+				# get 2/3 of civ industry (rounded up)
+				set_variable = { ithc_evacuated_civs = industrial_complex_level }
+				multiply_variable = { ithc_evacuated_civs = 0.66 }
+				round_variable = ithc_evacuated_civs
+
+				# remove from state
+				remove_building = { type = industrial_complex level = ithc_evacuated_civs }
+
+				# get 2/3 of mil industry (rounded up)
+				set_variable = { ithc_evacuated_mils = arms_factory_level }
+				multiply_variable = { ithc_evacuated_mils = 0.66 }
+				round_variable = ithc_evacuated_mils
+
+				# remove from state
+				remove_building = { type = arms_factory level = ithc_evacuated_mils }
+			}
+    	}
+
+		remove_effect = {
+        	random_owned_state = {
+        		# add manpower
+				add_manpower = FROM.ithc_evacuated_population
+
+				# add civs
+				add_building_construction = { type = industrial_complex level = FROM.ithc_evacuated_civs instant_build = yes }
+
+				# add mils
+				add_building_construction = { type = arms_factory level = FROM.ithc_evacuated_mils instant_build = yes }
+
+				# clear vars
+				FROM = {
+					clear_variable = ithc_evacuated_population
+					clear_variable = ithc_evacuated_civs
+					clear_variable = ithc_evacuated_mils
+				}
+    		}
 		}
 	}
 }

@@ -3637,48 +3637,62 @@ focus = {
 
 	focus = {
 		id = encroach_on_ithilien
-		icon = GFX_mor_encroach_on_ithilien
+		icon = GFX_goal_mor_encroach_on_ithilien
 		ai_will_do = { factor = 0 }
 		x = 6
 		y = 1
 		relative_position_id = conquestofmiddleearth
 		prerequisite = { focus = conquestofmiddleearth }
 		cost = 10
-		available = { ithc_is_available = yes }
+		available = {
+			ithc_is_available = yes
+		}
 		completion_reward = {
+			set_country_flag = { flag = ithc_focus_cooldown value = 1 days = 90 }
 			ithc_commence_ithilien_crisis = yes
 		}
 	}
 
 	focus = {
 		id = escalate_the_attacks
-		icon = GFX_mor_escalate_the_attacks
+		icon = GFX_goal_mor_escalate_the_attacks
 		ai_will_do = { factor = 0 }
 		x = 0
 		y = 1
 		relative_position_id = encroach_on_ithilien
 		prerequisite = { focus = encroach_on_ithilien }
 		cost = 5
-		available = { ithc_crisis_is_active = yes }
+		available = {
+			ithc_crisis_is_active = yes
+			NOT = { has_country_flag = ithc_focus_cooldown }
+		}
 		completion_reward = {
-			# increase power projection
-			# add building damage in ithilien
+			set_country_flag = { flag = ithc_focus_cooldown value = 1 days = 90 }
+			country_event = ithc.3
 		}
 	}
 
 	focus = {
 		id = second_wave
-		icon = GFX_mor_second_wave
+		icon = GFX_goal_mor_second_wave
 		ai_will_do = { factor = 0 }
 		x = 0
 		y = 2
 		relative_position_id = encroach_on_ithilien
 		prerequisite = { focus = escalate_the_attacks }
 		cost = 5
-		available = { ithc_crisis_is_active = yes }
+		available = {
+			ithc_crisis_is_active = yes
+			NOT = { has_country_flag = ithc_focus_cooldown }
+		}
 		completion_reward = {
 			# increase power projection
+			custom_effect_tooltip = increase_power_projection_overall_tt
 			# add war-support
+			add_war_support = 0.05
+			# Decrease cost of ithc decisions
+			subtract_from_variable = { ithc_pillage_decision_cost_pp = 50 }
+			custom_effect_tooltip = decrease_ithc_pp_cost_tt
 		}
 	}
 }

@@ -23,14 +23,14 @@ ithc_set_vars = {
 }
 
 ithc_set_vars_long_term = {
-	custom_effect_tooltip = ithc_set_vars_short_term_tt
+	custom_effect_tooltip = ithc_set_vars_long_term_tt
 
 	set_country_flag = ithc_long_term_vars
 	set_variable = { ithc_bonus_pp = 0 }
 }
 
 ithc_set_vars_short_term = {
-	custom_effect_tooltip = ithc_set_vars_long_term_tt
+	custom_effect_tooltip = ithc_set_vars_short_term_tt
 
 	set_country_flag = ithc_short_term_vars
 	set_variable = { ithc_bonus_pp = 30 }
@@ -109,16 +109,14 @@ ithc_begin_unpillage_decision = {
 
 ithc_end_pillage_decision = {
 	clr_state_flag = ithc_pillage_operation
-	ithc_increase_pillage_level = yes
-
 	custom_effect_tooltip = ithc_increase_pillage_tt
+	ithc_increase_pillage_level = yes
 }
 
 ithc_end_unpillage_decision = {
 	clr_state_flag = ithc_pillage_operation
-	ithc_decrease_pillage_level = yes
-
 	custom_effect_tooltip = ithc_decrease_pillage_tt
+	ithc_decrease_pillage_level = yes
 }
 
 ithc_increase_pillage_level = {
@@ -130,27 +128,34 @@ ithc_increase_pillage_level = {
 ithc_decrease_pillage_level = {
 	subtract_from_variable  = { ithc_pillage_level = 1 }
 
-	ithc_set_state_modifier = yes
+	hidden_effect = {
+		ithc_set_state_modifier = yes	
+	}
 }
 
 ithc_set_state_modifier = {
 	if = {
+		limit = { check_variable = { ithc_pillage_level < 1 } }
+		effect_tooltip = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_1 } }
+	}
+	if = {
 		limit = { check_variable = { ithc_pillage_level = 1 } }
-		add_dynamic_modifier = {
-			modifier = ithc_pillage_modifier_1
-		}
+		effect_tooltip = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_2 } }
+		hidden_effect = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_1 } }
 	}
 	else_if = {
 		limit = { check_variable = { ithc_pillage_level = 2 } }
-		add_dynamic_modifier = {
-			modifier = ithc_pillage_modifier_2
-		}
+		effect_tooltip = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_3 } }
+		hidden_effect = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_2 } }
 	}
 	else_if = {
 		limit = { check_variable = { ithc_pillage_level = 3 } }
-		add_dynamic_modifier = {
-			modifier = ithc_pillage_modifier_3
-		}
+		effect_tooltip = { transfer_state_to = MOR }
+		hidden_effect = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_3 } }
+	}
+	else_if = {
+		limit = { check_variable = { ithc_pillage_level > 3 } }
+		transfer_state_to = MOR
 	}
 }
 
