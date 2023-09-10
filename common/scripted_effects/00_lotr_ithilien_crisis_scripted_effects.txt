@@ -22,22 +22,57 @@ ithc_set_vars = {
 	}
 }
 
+ithc_set_vars_long_term = {
+	custom_effect_tooltip = ithc_set_vars_short_term_tt
+
+	set_country_flag = ithc_long_term_vars
+	set_variable = { ithc_bonus_pp = 0 }
+}
+
+ithc_set_vars_short_term = {
+	custom_effect_tooltip = ithc_set_vars_long_term_tt
+
+	set_country_flag = ithc_short_term_vars
+	set_variable = { ithc_bonus_pp = 30 }
+}
+
 # Happens when GON and MOR got to war. Runs on no scope in particular
 ithc_end_ithilien_crisis = {
 	clr_global_flag = ithc_ithilien_crisis_commenced
-
-	# Add the cores back that were removed
-	22 = { add_core_of = GON }
-	175 = { add_core_of = GON }
-	173 = { add_core_of = GON }
-	135 = { add_core_of = GON }
 }
 
 
 # THIS is the state to run effects on.
 ithc_on_war_with_mordor_effects = {
 
-	# activate debuffs and clear variables and stuff	
+	# spawn divisions
+	if = {
+		limit = {
+			22 = { check_variable = { ithc_pillage_level > 1 } }
+		}
+		MOR = { load_oob = "ithc/ithc_slepper_cells_22" }
+	}
+	else_if = {
+		limit = {
+			135 = { check_variable = { ithc_pillage_level > 1 } }
+		}
+		MOR = { load_oob = "ithc/ithc_slepper_cells_135" }
+	}
+	else_if = {
+		limit = {
+			173 = { check_variable = { ithc_pillage_level > 1 } }
+		}
+		MOR = { load_oob = "ithc/ithc_slepper_cells_173" }
+	}
+	else_if = {
+		limit = {
+			175 = { check_variable = { ithc_pillage_level > 1 } }
+		}
+		MOR = { load_oob = "ithc/ithc_slepper_cells_175" }
+	}
+	
+	add_core_of = GON
+	clear_variable = ithc_pillage_level
 }
 
 
@@ -52,8 +87,6 @@ ithc_contest_state = {
 		set_state_flag = ithc_contested
 
 		set_variable = { ithc_pillage_level = 0 }
-
-		ithc_pillage_enable_new_decision = yes
 	}
 	effect_tooltip = {
 		start_resistance = yes
@@ -91,23 +124,34 @@ ithc_end_unpillage_decision = {
 ithc_increase_pillage_level = {
 	add_to_variable  = { ithc_pillage_level = 1 }
 
-	# TODO: pillage effects:
-	# - 0: no core
-	# - 1: lower speed and disabled strat redeploy
-	# - 2: divisions will spawn in this state at war start
-	# - 3: ruin construction speed
-	# - 4: Mordor annexes state
+	ithc_set_state_modifier = yes
 }
 
 ithc_decrease_pillage_level = {
 	subtract_from_variable  = { ithc_pillage_level = 1 }
 
-	# TODO: pillage effects:
-	# - 0: no core
-	# - 1: lower speed and disabled strat redeploy
-	# - 2: divisions will spawn in this state at war start
-	# - 3: ruin construction speed
-	# - 4: Mordor annexes state
+	ithc_set_state_modifier = yes
+}
+
+ithc_set_state_modifier = {
+	if = {
+		limit = { check_variable = { ithc_pillage_level = 1 } }
+		add_dynamic_modifier = {
+			modifier = ithc_pillage_modifier_1
+		}
+	}
+	else_if = {
+		limit = { check_variable = { ithc_pillage_level = 2 } }
+		add_dynamic_modifier = {
+			modifier = ithc_pillage_modifier_2
+		}
+	}
+	else_if = {
+		limit = { check_variable = { ithc_pillage_level = 3 } }
+		add_dynamic_modifier = {
+			modifier = ithc_pillage_modifier_3
+		}
+	}
 }
 
 
