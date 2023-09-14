@@ -6,7 +6,11 @@ generic_hunters_guild = {
 	}
 
 	equipment_type = {
-		infantry_equipment
+		artillery_equipment
+		rocket_artillery_equipment
+		light_tank_artillery_chassis
+		light_tank_chassis
+		light_tank_destroyer_chassis
 	}
 	research_categories = {
 		lotr_infantry_weapons_spear
@@ -40,16 +44,8 @@ generic_hunters_guild = {
 	initial_trait = {
 		name = generic_mio_initial_trait_hunters
 
-		organization_modifier = {
-			military_industrial_organization_research_bonus = 0.05
-		}
-
-		production_bonus = {
-			production_efficiency_cap_factor = 0.05
-		}
-
 		equipment_bonus = {
-			soft_attack = 0.03
+			fuel_consumption = -0.05
 		}
 	}
 
@@ -63,8 +59,8 @@ generic_hunters_guild = {
 		# more entrenchment
 
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			entrenchment = 0.03
+			defense = 0.03
 		}
 	}
 
@@ -82,8 +78,8 @@ generic_hunters_guild = {
 		position = { x=0 y=3 }
 
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			initiative = 0.05
+			recon = 0.05
 		}
 	}
 
@@ -95,10 +91,12 @@ generic_hunters_guild = {
 		position = { x=1 y=0 }
 
 		# better spears
-
+		limit_to_equipment_type = { light_tank_chassis light_tank_destroyer_chassis }
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			soft_attack = 0.04
+			hard_attack = 0.04
+			breakthrough = 0.04
+			defense = 0.04
 		}
 	}
 
@@ -110,10 +108,10 @@ generic_hunters_guild = {
 		position = { x=3 y=0 }
 
 		# better horses
-
+		limit_to_equipment_type = { light_tank_chassis light_tank_artillery_chassis light_tank_destroyer_chassis }
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			maximum_speed = 0.05
+			initiative = 0.05
 		}
 	}
 
@@ -130,9 +128,10 @@ generic_hunters_guild = {
 
 		all_parents = { generic_mio_trait_hunting_spears generic_mio_trait_improved_horsemanship }
 
+		limit_to_equipment_type = { light_tank_chassis light_tank_artillery_chassis light_tank_destroyer_chassis }
 		equipment_bonus = {
 			soft_attack = 0.025
-			reliability = 0.03
+			hard_attack = 0.025
 		}
 	}
 
@@ -151,9 +150,9 @@ generic_hunters_guild = {
 
 		mutually_exclusive = { generic_mio_mounted_archers }
 
+		limit_to_equipment_type = { light_tank_chassis }
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			recon = 0.1
 		}
 	}
 
@@ -172,9 +171,10 @@ generic_hunters_guild = {
 
 		position = { x=3 y=3 }
 
+		limit_to_equipment_type = { light_tank_artillery_chassis }
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			soft_attack = 0.08
+			breakthrough = 0.08
 		}
 	}
 
@@ -187,9 +187,10 @@ generic_hunters_guild = {
 
 		# better arty
 
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		limit_to_equipment_type = { artillery_equipment rocket_artillery_equipment }
+		production_bonus = {
+			production_cost_factor = -0.08
+			production_efficiency_gain_factor = 0.05
 		}
 	}
 
@@ -208,9 +209,10 @@ generic_hunters_guild = {
 
 		position = { x=-1 y=1 }
 
+		limit_to_equipment_type = { artillery_equipment }
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			supply_consumption_factor = -0.05
+			maximum_speed = 0.05
 		}
 	}
 
@@ -229,9 +231,11 @@ generic_hunters_guild = {
 
 		position = { x=0 y=1 }
 
+		limit_to_equipment_type = { rocket_artillery_equipment }
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			ap_attack = 0.05
+			hard_attack = 0.05
+			soft_attack = 0.05
 		}
 	}
 
@@ -250,9 +254,10 @@ generic_hunters_guild = {
 
 		position = { x=1 y=1 }
 
+		limit_to_equipment_type = { artillery_equipment }
+
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			soft_attack = 0.05
 		}
 	}
 
@@ -269,9 +274,14 @@ generic_hunters_guild = {
 
 		# more SA, higher production
 
+		limit_to_equipment_type = { artillery_equipment rocket_artillery_equipment }
+
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			soft_attack = 0.05
+		}
+
+		production_bonus = {
+			production_cost_factor = 0.05
 		}
 	}
 
@@ -282,11 +292,36 @@ generic_hunters_guild = {
 
 		position = { x=8 y=0 }
 
-		# better farming?
+		available = {
+			FROM = {
+				any_controlled_state = {
+					is_coastal = yes
+				}
+			}
+		}
 
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.25
+		}
+
+		on_complete = {
+			effect_tooltip = {
+				FROM = { random_owned_controlled_state = {
+					add_resource = {
+						type = oil
+						amount = 3
+					}
+				} }
+			}
+			hidden_effect = {
+				FROM = { random_owned_controlled_state = {
+					limit = { is_coastal = yes }
+					add_resource = {
+						type = oil
+						amount = 3
+					}
+				} }
+			}
 		}
 	}
 
@@ -301,11 +336,36 @@ generic_hunters_guild = {
 
 		position = { x=0 y=3 }
 
-		# better farming?
+		available = {
+			FROM = {
+				any_controlled_state = {
+					is_coastal = yes
+				}
+			}
+		}
 
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.25
+		}
+
+		on_complete = {
+			effect_tooltip = {
+				FROM = { random_owned_controlled_state = {
+					add_resource = {
+						type = oil
+						amount = 3
+					}
+				} }
+			}
+			hidden_effect = {
+				FROM = { random_owned_controlled_state = {
+					limit = { is_coastal = yes }
+					add_resource = {
+						type = oil
+						amount = 3
+					}
+				} }
+			}
 		}
 	}
 
@@ -320,11 +380,9 @@ generic_hunters_guild = {
 
 		position = { x=4 y=4 }
 
-		# AA, AP ?
-
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			equipment_capture_factor = 0.05
+			recon = 0.05
 		}
 	}
 
@@ -339,11 +397,9 @@ generic_hunters_guild = {
 
 		position = { x=3 y=4 }
 
-		# no clue lol
-
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			fuel_consumption = -0.05
+			supply_consumption = -0.05
 		}
 	}
 }

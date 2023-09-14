@@ -6,7 +6,10 @@ generic_farmers_guild = {
 	}
 
 	equipment_type = {
-		infantry_equipment
+		train_equipment
+		light_tank_chassis
+		light_tank_artillery_chassis
+		mechanized_equipment
 	}
 	research_categories = {
 		lotr_labour_farming
@@ -36,15 +39,16 @@ generic_farmers_guild = {
 		name = generic_mio_initial_trait_farmers
 
 		organization_modifier = {
-			military_industrial_organization_research_bonus = 0.05
+			military_industrial_organization_task_capacity = 1
+			military_industrial_organization_funds_gain = 0.1
 		}
 
 		production_bonus = {
-			production_efficiency_cap_factor = 0.05
+			
 		}
 
 		equipment_bonus = {
-			soft_attack = 0.03
+			
 		}
 	}
 
@@ -58,9 +62,9 @@ generic_farmers_guild = {
 		# less resource required for Horse
 		# add funds
 
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		production_bonus = {
+			production_resource_need_factor = -0.1
+			military_industrial_organization_funds_gain = 0.1
 		}
 	}
 
@@ -77,9 +81,16 @@ generic_farmers_guild = {
 
 		position = { x=0 y=2 }
 
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+
+		on_complete = {
+			add_tech_bonus = {
+				bonus = 0.25
+				uses = 1
+				category = cat_mobile_warfare
+			}
 		}
 	}
 
@@ -92,13 +103,18 @@ generic_farmers_guild = {
 
 		all_parents = { generic_mio_trait_horse_breeds_and_disc }
 
+		limit_to_equipment_type = { train_equipment mechanized_equipment }
+
 		# improve trade caravans and stuff
 
 		position = { x=0 y=3 }
 
+		production_bonus = {
+			production_cost_factor = -0.05
+		}
+
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			reliability = 0.05
 		}
 	}
 
@@ -110,10 +126,8 @@ generic_farmers_guild = {
 		position = { x=3 y=0 }
 
 		# Improve farming and stuff
-
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.1
 		}
 	}
 
@@ -129,10 +143,22 @@ generic_farmers_guild = {
 		position = { x=-1 y=1 }
 
 		# Increase leather production
+		production_bonus = {
+			production_resource_need_factor = -0.1
+		}
 
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		on_complete = {
+			add_tech_bonus = {
+				bonus = 0.25
+				uses = 1
+				category = lotr_labour_farming_leather
+			}
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = rubber
+					amount = 2
+				}
+			} }
 		}
 	}
 
@@ -167,10 +193,16 @@ generic_farmers_guild = {
 		position = { x=0 y=3 }
 
 		# better farming?
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.25
+		}
 
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		on_complete = {
+			add_tech_bonus = {
+				bonus = 0.25
+				uses = 1
+				category = lotr_labour_farming
+			}
 		}
 	}
 
@@ -187,10 +219,12 @@ generic_farmers_guild = {
 		position = { x=0 y=4 }
 
 		# improve chariots, something else
+		limit_to_equipment_type = { mechanized_equipment train_equipment }
 
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			fuel_consumption = -0.05
+			supply_consumption = -0.05
+			max_strength = 0.05
 		}
 	}
 
@@ -201,11 +235,8 @@ generic_farmers_guild = {
 
 		position = { x=6 y=0 }
 
-		# more funds? improve farming research?
-
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			fuel_capacity = 0.25
 		}
 	}
 
@@ -218,11 +249,17 @@ generic_farmers_guild = {
 
 		position = { x=1 y=0 }
 
-		# dunno
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.05
+		}
 
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = oil
+					amount = 2
+				}
+			} }
 		}
 	}
 
@@ -235,11 +272,12 @@ generic_farmers_guild = {
 
 		position = { x=2 y=0 }
 
-		# dunno
+		production_bonus = {
+			production_cost_factor = -0.05
+		}
 
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			fuel_consumption = -0.05
 		}
 	}
 
@@ -253,11 +291,14 @@ generic_farmers_guild = {
 
 		mutually_exclusive = { generic_mio_trait_soil_fertility generic_mio_trait_expand_arable_land }
 
-		# less winter attrition, dunno
-
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_building_construction = {
+					type = fuel_silo
+					level = 1
+					instant_build = yes
+				}
+			} }
 		}
 	}
 
@@ -276,9 +317,17 @@ generic_farmers_guild = {
 
 		position = { x=1 y=2 }
 
-		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.1
+		}
+
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = oil
+					amount = 3
+				}
+			} }
 		}
 	}
 
@@ -297,9 +346,12 @@ generic_farmers_guild = {
 
 		position = { x=2 y=2 }
 
+		production_bonus = {
+			production_cost_factor = -0.08
+		}
+
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			fuel_consumption = -0.08
 		}
 	}
 
@@ -316,9 +368,25 @@ generic_farmers_guild = {
 
 		position = { x=1 y=3 }
 
+		production_bonus = {
+			production_cost_factor = -0.03
+		}
+
 		equipment_bonus = {
-			soft_attack = 0.025
-			reliability = 0.03
+			fuel_consumption = -0.03
+		}
+
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = oil
+					amount = 2
+				}
+				add_resource = {
+					type = rubber
+					amount = 2
+				}
+			} }
 		}
 	}
 
