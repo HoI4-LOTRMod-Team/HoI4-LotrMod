@@ -1,5 +1,6 @@
 generic_alchemists_guild = {
-	icon = GFX_mio_generic_archers_2
+	icon = GFX_mio_generic_alchemists_3
+	name = "Alchemist's Guild"
 
 	allowed = {
 		always = yes
@@ -7,9 +8,9 @@ generic_alchemists_guild = {
 
 	equipment_type = {
 		infantry_equipment
-		lotr_equipment_catapult
+		lotr_equipment_all_siege_artillery
 		lotr_equipment_eagle_bomber
-		lotr_equipment_siege_trebuchet
+		lotr_equipment_magic
 	}
 	research_categories = {
 		lotr_knowledge
@@ -22,22 +23,22 @@ generic_alchemists_guild = {
 	research_bonus = 0.05
 
 	tree_header_text = {
-		text = "Technique"
+		text = "Scripture"
 		x = 1
 	}
 
 	tree_header_text = {
-		text = "Weapon Design"
+		text = "Alchemy"
 		x = 5
 	}
 
 	tree_header_text = {
-		text = "Armor Design"
-		x = 8
+		text = "Guild Structure"
+		x = 7
 	}
 
 	initial_trait = {
-		name = generic_mio_initial_trait_lorekeepers
+		name = "Alchemy Specialization"
 
 		organization_modifier = {
 			military_industrial_organization_research_bonus = 0.1
@@ -69,6 +70,8 @@ generic_alchemists_guild = {
 
 		relative_position_id = generic_mio_trait_scripture_archiving
 
+		all_parents = { generic_mio_trait_scripture_archiving }
+
 		organization_modifier = {
 			military_industrial_organization_research_bonus = 0.1
 			military_industrial_organization_design_team_assign_cost = -0.25
@@ -82,9 +85,11 @@ generic_alchemists_guild = {
 
 		# improve research bonus
 
-		position = { x=-1 y=2 }
+		position = { x=-1 y=3 }
 
 		relative_position_id = generic_mio_trait_scripture_archiving
+
+		all_parents = { generic_mio_trait_historical_preservation }
 
 		organization_modifier = {
 			military_industrial_organization_research_bonus = 0.1
@@ -103,6 +108,8 @@ generic_alchemists_guild = {
 
 		relative_position_id = generic_mio_trait_scripture_archiving
 
+		all_parents = { generic_mio_trait_scripture_archiving }
+
 		organization_modifier = {
 			military_industrial_organization_research_bonus = 0.1
 			military_industrial_organization_task_capacity = 1
@@ -119,6 +126,10 @@ generic_alchemists_guild = {
 		position = { x=1 y=2 }
 
 		relative_position_id = generic_mio_trait_scripture_archiving
+
+		all_parents = { generic_mio_trait_knowledge_collection }
+
+		mutually_exclusive = { generic_mio_trait_arcane_studies }
 
 		limit_to_equipment_type = { lotr_equipment_eagle_bomber lotr_equipment_siege_trebuchet lotr_equipment_catapult }
 
@@ -138,6 +149,10 @@ generic_alchemists_guild = {
 
 		position = { x=3 y=2 }
 
+		all_parents = { generic_mio_trait_knowledge_collection }
+
+		mutually_exclusive = { generic_mio_trait_advanced_alchemy }
+
 		relative_position_id = generic_mio_trait_scripture_archiving
 
 		limit_to_equipment_type = { guided_missile_equipment }
@@ -154,9 +169,11 @@ generic_alchemists_guild = {
 
 		# improve infantry equip
 
-		position = { x=2 y=3 }
+		position = { x=2 y=4 }
 
 		relative_position_id = generic_mio_trait_scripture_archiving
+
+		any_parent = { generic_mio_trait_arcane_studies generic_mio_trait_advanced_alchemy }
 
 		limit_to_equipment_type = { infantry_equipment }
 
@@ -195,7 +212,9 @@ generic_alchemists_guild = {
 
 		relative_position_id = generic_mio_trait_advanced_explosives
 
-		position = { x=5 y=1 }
+		all_parents = { generic_mio_trait_advanced_explosives }
+
+		position = { x=0 y=1 }
 
 		limit_to_equipment_type = { lotr_equipment_eagle_bomber lotr_equipment_siege_trebuchet lotr_equipment_catapult }
 
@@ -217,11 +236,12 @@ generic_alchemists_guild = {
 		name = "Destructive Potential"
 		icon = GFX_generic_mio_trait_flamethrower
 
-		# better "missiles"
+		all_parents = { generic_mio_trait_flammable_liquids }
+		any_parent = { generic_mio_trait_arcane_studies generic_mio_trait_advanced_alchemy }
 
 		relative_position_id = generic_mio_trait_advanced_explosives
 
-		position = { x=5 y=2 }
+		position = { x=0 y=3 }
 
 		limit_to_equipment_type = { guided_missile_equipment }
 
@@ -235,21 +255,19 @@ generic_alchemists_guild = {
 		name = "Advanced Sorcery"
 		icon = GFX_generic_mio_trait_sorcery
 
-		# faster reseach in magic
+		all_parents = { generic_mio_trait_destructive_potential }
 
 		relative_position_id = generic_mio_trait_advanced_explosives
 
-		position = { x=5 y=4 }
+		position = { x=0 y=4 }
 
 		organization_modifier = {
-			military_industrial_organization_research_bonus = 0.08
+			military_industrial_organization_research_bonus = 0.1
 		}
 
 		on_complete = {
-			add_tech_bonus = {
-				bonus = 0.25
-				uses = 1
-				category = lotr_knowledge_magic
+			FROM = {
+				add_ideas = better_magic
 			}
 		}
 	}
@@ -261,7 +279,7 @@ generic_alchemists_guild = {
 
 		# dunno
 
-		position = { x=5 y=0 }
+		position = { x=7 y=0 }
 
 		organization_modifier = {
 			military_industrial_organization_task_capacity = 1
@@ -276,9 +294,11 @@ generic_alchemists_guild = {
 
 		# more funds
 
-		relative_position_id = generic_mio_trait_advanced_explosives
+		relative_position_id = generic_mio_trait_guild_hierarchy
 
-		position = { x=5 y=1 }
+		all_parents = { generic_mio_trait_guild_hierarchy }
+
+		position = { x=0 y=2 }
 
 		organization_modifier = {
 			military_industrial_organization_funds_gain = 0.25
@@ -292,9 +312,11 @@ generic_alchemists_guild = {
 
 		# more funds
 
-		relative_position_id = generic_mio_trait_advanced_explosives
+		all_parents = { generic_mio_trait_fund_allocation }
 
-		position = { x=5 y=2 }
+		relative_position_id = generic_mio_trait_guild_hierarchy
+
+		position = { x=0 y=4 }
 
 		organization_modifier = {
 			military_industrial_organization_funds_gain = 0.25
