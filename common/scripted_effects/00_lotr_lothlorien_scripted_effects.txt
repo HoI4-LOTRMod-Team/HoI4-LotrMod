@@ -566,11 +566,17 @@ lthi_decrease_influence_orcs_major = {
 
 
 lthi_decrease_cw_timer = {
-	# TODO
+	add_days_mission_timeout = {
+		mission = great_schism_civil_war
+		days = -90
+	}
 }
 
 lthi_increase_cw_timer = {
-	# TODO
+	add_days_mission_timeout = {
+		mission = great_schism_civil_war
+		days = 90
+	}
 }
 
 lthi_increase_bonus_nandor = {
@@ -659,19 +665,107 @@ lthi_decrease_bonus_halfelves_major = {
 
 
 lthi_send_to_valinor_nandor = {
-	# TODO
+	random_character = {
+		limit = {
+			is_advisor = yes
+			# Don't retire the big boys
+			NOT = { is_character = LTH_celeborn }
+			NOT = { is_character = LTH_galadriel }
+			NOT = { is_character = LTH_haldir }
+
+			OR = {
+				has_trait = nandor_minor
+				has_trait = nandor_intermediate
+				has_trait = nandor_major
+			}
+		}
+
+		LTH = {
+			retire_character = PREV
+		}
+	}
+
+	add_manpower = -5000
+
+	lthi_decrease_influence_nandor_major = yes
 }
 
 lthi_send_to_valinor_noldor = {
-	# TODO
+	random_character = {
+		limit = {
+			is_advisor = yes
+			# Don't retire the big boys
+			NOT = { is_character = LTH_celeborn }
+			NOT = { is_character = LTH_galadriel }
+			NOT = { is_character = LTH_haldir }
+
+			OR = {
+				has_trait = noldor_minor
+				has_trait = noldor_intermediate
+				has_trait = noldor_major
+			}
+		}
+
+		LTH = {
+			retire_character = PREV
+		}
+	}
+
+	add_manpower = -5000
+
+	lthi_decrease_influence_noldor_major = yes
 }
 
 lthi_send_to_valinor_sindar = {
-	# TODO
+	random_character = {
+		limit = {
+			is_advisor = yes
+			# Don't retire the big boys
+			NOT = { is_character = LTH_celeborn }
+			NOT = { is_character = LTH_galadriel }
+			NOT = { is_character = LTH_haldir }
+
+			OR = {
+				has_trait = sindar_minor
+				has_trait = sindar_intermediate
+				has_trait = sindar_major
+			}
+		}
+
+		LTH = {
+			retire_character = PREV
+		}
+	}
+
+	add_manpower = -5000
+
+	lthi_decrease_influence_sindar_major = yes
 }
 
 lthi_send_to_valinor_halfelves = {
-	# TODO
+	random_character = {
+		limit = {
+			is_advisor = yes
+			# Don't retire the big boys
+			NOT = { is_character = LTH_celeborn }
+			NOT = { is_character = LTH_galadriel }
+			NOT = { is_character = LTH_haldir }
+
+			OR = {
+				has_trait = halfelves_minor
+				has_trait = halfelves_intermediate
+				has_trait = halfelves_major
+			}
+		}
+
+		LTH = {
+			retire_character = PREV
+		}
+	}
+
+	add_manpower = -5000
+
+	lthi_decrease_influence_halfelves_major = yes
 }
 
 
@@ -821,7 +915,97 @@ lthi_activate_orcs = {
 }
 
 lthi_hire_random_advisors = {
-	# TODO: Fill treasurer, spymaster and political advisor slots with random advisors
+	# Fill treasurer, spymaster and political advisor slots with random advisors
+
+	# NOTE: This does not care if advisors are already hired, or if they have been sent to Valinor
+	# Too bad.
+
+	# treasurer
+	if = {
+		limit = {
+			amount_taken_ideas = { amount < 1 slots = { treasurer } }
+		}
+		random_list = {
+			10 = { activate_advisor = generic_LTH_longterm_planner_treasurer }
+			10 = { activate_advisor = generic_LTH_serial_indeptor_treasurer }
+			10 = { activate_advisor = generic_LTH_level_headed_financier_treasurer }
+			10 = { activate_advisor = generic_LTH_backalley_dealer_treasurer }
+		}
+	}
+
+	# spymaster (no-lar)
+	if = {
+		limit = {
+			NOT = { has_dlc = "La Resistance" }
+			amount_taken_ideas = { amount < 1 slots = { spymaster } }
+		}
+		random_list = {
+			10 = { activate_advisor = generic_LTH_hearts_and_minds_occupier_nolar_spymaster }
+			10 = { activate_advisor = generic_LTH_networking_genius_nolar_spymaster }
+			10 = { activate_advisor = generic_LTH_daredevil_nolar_spymaster }
+			10 = { activate_advisor = generic_LTH_strict_supervisor_nolar_spymaster }
+			10 = { activate_advisor = generic_LTH_bribe_dispenser_nolar_spymaster }
+		}
+	}
+
+	# spymaster (lar)
+	if = {
+		limit = {
+			has_dlc = "La Resistance"
+			amount_taken_ideas = { amount < 1 slots = { spymaster } }
+		}
+		random_list = {
+			10 = { activate_advisor = generic_LTH_hearts_and_minds_occupier_spymaster }
+			10 = { activate_advisor = generic_LTH_networking_genius_spymaster }
+			10 = { activate_advisor = generic_LTH_daredevil_spymaster }
+			10 = { activate_advisor = generic_LTH_strict_supervisor_spymaster }
+			10 = { activate_advisor = generic_LTH_bribe_dispenser_spymaster }
+		}
+	}
+
+	# advisor #1
+	if = {
+		limit = {
+			amount_taken_ideas = { amount < 2 slots = { political_advisor } }
+		}
+		random_list = {
+			10 = { activate_advisor = generic_LTH_inspiring_artist_political_advisor }
+			10 = { activate_advisor = generic_LTH_food_hoarder_political_advisor }
+			10 = { activate_advisor = generic_LTH_aristocratic_landowner_political_advisor }
+			10 = { activate_advisor = generic_LTH_stubborn_struggler_political_advisor }
+			10 = { activate_advisor = generic_LTH_trade_enthusiast_political_advisor }
+			10 = { activate_advisor = generic_LTH_military_lobbyist_political_advisor }
+			10 = { activate_advisor = generic_LTH_silent_workhorse_political_advisor }
+			10 = { activate_advisor = generic_LTH_reluctant_interventionist_political_advisor }
+			10 = { activate_advisor = generic_LTH_xenophobic_isolationist_political_advisor }
+			10 = { activate_advisor = generic_LTH_militant_bully_political_advisor }
+			10 = { activate_advisor = generic_LTH_propaganda_expert_political_advisor }
+			10 = { activate_advisor = generic_LTH_sower_of_distrust_political_advisor }
+			10 = { activate_advisor = generic_LTH_provincial_councilor_political_advisor }
+		}
+	}
+
+	# advisor #2
+	if = {
+		limit = {
+			amount_taken_ideas = { amount < 2 slots = { political_advisor } }
+		}
+		random_list = {
+			10 = { activate_advisor = generic_LTH_inspiring_artist_political_advisor }
+			10 = { activate_advisor = generic_LTH_food_hoarder_political_advisor }
+			10 = { activate_advisor = generic_LTH_aristocratic_landowner_political_advisor }
+			10 = { activate_advisor = generic_LTH_stubborn_struggler_political_advisor }
+			10 = { activate_advisor = generic_LTH_trade_enthusiast_political_advisor }
+			10 = { activate_advisor = generic_LTH_military_lobbyist_political_advisor }
+			10 = { activate_advisor = generic_LTH_silent_workhorse_political_advisor }
+			10 = { activate_advisor = generic_LTH_reluctant_interventionist_political_advisor }
+			10 = { activate_advisor = generic_LTH_xenophobic_isolationist_political_advisor }
+			10 = { activate_advisor = generic_LTH_militant_bully_political_advisor }
+			10 = { activate_advisor = generic_LTH_propaganda_expert_political_advisor }
+			10 = { activate_advisor = generic_LTH_sower_of_distrust_political_advisor }
+			10 = { activate_advisor = generic_LTH_provincial_councilor_political_advisor }
+		}
+	}
 }
 
 
@@ -862,7 +1046,12 @@ lth_accord_cele_term = {
 			days = 365
 		}
 
-		# TODO: Gala becomes chief advisor that cant be fired
+		# Gala becomes chief advisor that cant be fired
+		activate_advisor = LTH_galadriel_chief_advisor
+		set_can_be_fired_in_advisor_role = {
+    		character = LTH_galadriel
+    		value = no
+		}
 	}
 	custom_effect_tooltip = lth_accord_cele_term_tt
 }
@@ -883,7 +1072,12 @@ lth_accord_gala_term = {
 			days = 365
 		}
 
-		# TODO: Cele becomes chief advisor that cant be fired
+		# Cele becomes chief advisor that cant be fired
+		activate_advisor = LTH_celeborn
+		set_can_be_fired_in_advisor_role = {
+    		character = LTH_celeborn_chief_advisor
+    		value = no
+		}
 	}
 	custom_effect_tooltip = lth_accord_gala_term_tt
 }
