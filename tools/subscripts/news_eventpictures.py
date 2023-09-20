@@ -17,6 +17,9 @@ def convert_image(img_file, out_path):
 	# Apply alpha mask
 	apply_mask(img, mask)
 
+	saturation_factor = 0.6
+	img.modulate(100, saturation_factor * 100, 100)
+
 	with img as op:
 	    op.compression = 'dxt5'
 	    op.save(filename=out_path)
