@@ -55,7 +55,7 @@ def main():
     # Ensure that the output file ends with ".gfx"
     if not args.outputfile.endswith(".gfx"):
         args.outputfile += ".gfx"
-    output_path = f"../interface/{args.outputfile}"
+    output_path = f"../interface/auto_generated/{args.outputfile}"
     
     with open(output_path, "w") as output_file:
         run_subscript(args.subscript, output_file, args.args)
