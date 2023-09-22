@@ -188,17 +188,18 @@ focus_tree = {
 					limit = { is_ai = no }
 					country_event = celebrations.1
 				}
-				# TODO: Add AI effect if it is going Hybrid path
+				# I don't wanna do all the AI will do weights for the celebration events
+				# So, I'll just put the outcome of the final event here
 				else_if = {
 					limit = { is_ai = yes is_going_belligerent = yes }
-					lthi_increase_influence_noldor_major = yes
+					lthi_celebrations_increase_influence_noldor_major = yes
 					lthi_decrease_influence_sindar_intermediate = yes
 					add_war_support = 0.1
 					add_stability = 0.1
 				}
 				else_if = {
 					limit = { is_ai = yes is_going_revolutionary = yes }
-					lthi_increase_influence_sindar_major = yes
+					lthi_celebrations_increase_influence_sindar_major = yes
 					lthi_decrease_influence_noldor_intermediate = yes
 					add_war_support = 0.1
 					add_stability = 0.1
@@ -2351,7 +2352,6 @@ focus_tree = {
 				ruling_party = belligerent
 				elections_allowed = no
 			}
-			# TODO: Newspaper event
 		}
 	}
 
@@ -2492,10 +2492,8 @@ focus_tree = {
 		ai_will_do = { factor = 40 }
 		prerequisite = { focus = lth_elvensupremacy }
 		completion_reward = {
-			# Give a research slot and probably something else relating to how mono the influence is
-			add_research_slot = 1
+			# factions with 80% influence get massive buff
 			custom_effect_tooltip = lth_purityandbrilliance_tt
-			# TODO: This seems like it should be two focuses instead of 1
 		}
 	}
 
@@ -3088,11 +3086,18 @@ focus_tree = {
 		prerequisite = { focus = lth_elrondtheperedhil }
 		available = {
 			NOT = { has_war_with = RIV }
+			is_faction_leader = yes
+			RIV = { is_in_faction = no }
+			RIV = { is_puppet = no }
+		}
+		bypass = {
+			is_in_faction_with = RIV
 		}
 		completion_reward = {
 			# increase half-elven influence
 			lthi_decrease_influence_halfelves_intermediate = yes
-			# TODO: More stuff with rivendell
+			# Invite Rivendell to faction
+			RIV = { country_event = generic.5 }
 		}
 	}
 
@@ -4194,7 +4199,6 @@ focus_tree = {
 				ruling_party = revolutionary
 				elections_allowed = no
 			}
-			# TODO: Newspaper event
 		}
 	}
 
@@ -4253,7 +4257,7 @@ focus_tree = {
 		
 		relative_position_id = lth_galadrielsfarewell
 		x =0
-		y =10
+		y =9
 
 		cost = 10
 		ai_will_do = {
@@ -4299,7 +4303,7 @@ focus_tree = {
 		
 		relative_position_id = lth_theuntreadedpath
 		x =1
-		y =5
+		y =4
 
 		cost = 10
 		ai_will_do = {
@@ -4342,7 +4346,7 @@ focus_tree = {
 		
 		relative_position_id = lth_unityindivision
 		x =-1
-		y =3
+		y =2
 
 		cost = 10
 		ai_will_do = { factor = 50 }
@@ -4815,8 +4819,8 @@ focus_tree = {
 		}
 		prerequisite = { focus = lth_celebornsascendancy focus = lth_celeborngaladrielaccord }
 		completion_reward = {
-			# add idea?
-			# TODO
+			# This is super lame ngl
+			add_political_power = 200
 		}
 	}
 
@@ -4846,7 +4850,7 @@ focus_tree = {
 		
 		relative_position_id = lth_celebornsreforms
 		x =-1
-		y =5
+		y =4
 
 		cost = 5
 		ai_will_do = { factor = 25 }
@@ -4872,7 +4876,7 @@ focus_tree = {
 		
 		relative_position_id = lth_celebornsreforms
 		x =1
-		y =5
+		y =4
 
 		cost = 5
 		ai_will_do = { factor = 25 }
@@ -4906,7 +4910,7 @@ focus_tree = {
 		
 		relative_position_id = lth_celebornsreforms
 		x =0
-		y =4
+		y =3
 
 		cost = 5
 		ai_will_do = { factor = 25 }
@@ -4926,7 +4930,7 @@ focus_tree = {
 		
 		relative_position_id = lth_celebornsreforms
 		x =0
-		y =6
+		y =5
 
 		cost = 10
 		ai_will_do = { factor = 25 }
@@ -4937,25 +4941,6 @@ focus_tree = {
 		completion_reward = {
 			# If we are on low/no taxes and low centralization or lower, We get a bunch of bonuses
 			add_ideas = LTH_lead_by_example 
-		}
-	}
-
-	focus = {
-		id = lth_anewelvenlanguage
-		icon = GFX_goal_lth_anewelvenlanguage
-		
-		relative_position_id = lth_leadbyexample
-		x =0
-		y =2
-
-		cost = 5
-		ai_will_do = { factor = 5 }
-		prerequisite = { focus = lth_unityindivision focus = lth_thedissolutionoftheelvennobility }
-		available = {
-			has_government = revolutionary
-		}
-		completion_reward = {
-			# TODO: Add idea with opinion, trade opinion and stuff
 		}
 	}
 
@@ -5791,6 +5776,25 @@ focus_tree = {
 	}
 
 	focus = {
+		id = lth_eternalwisdom
+		icon = GFX_goal_generic_CAS
+		
+		relative_position_id = lth_celebornsexile
+		x =1
+		y =6
+
+		cost = 10
+		ai_will_do = {
+			factor = 15
+		}
+		prerequisite = { focus = lth_theeternaldominion }
+		completion_reward = {
+			# Give a research slot
+			add_research_slot = 1
+		}
+	}
+
+	focus = {
 		id = lth_tworingsbecomethone
 		icon = GFX_goal_lth_tworingsbecomethone
 		
@@ -5799,7 +5803,7 @@ focus_tree = {
 
 		cost = 10
 		ai_will_do = { factor = 100 }
-		prerequisite = { focus = lth_theeternaldominion }
+		prerequisite = { focus = lth_eternalwisdom }
 		prerequisite = { focus = lth_ringenchantments }
 		prerequisite = { focus = lth_keepthering }
 		available = {
