@@ -28,8 +28,8 @@ focus = {
 }
 
 focus = {
-	id  = GON_enforce_militair_loyalty
-	icon = GFX_goal_support_unalligned
+	id  = GON_change_the_law
+	icon = GFX_goal_generic_forceful_treaty
 	ai_will_do = { factor = 3 }
 	prerequisite = { focus = GON_delegitimize_aragorns_claim }
 	relative_position_id = GON_delegitimize_aragorns_claim
@@ -37,13 +37,32 @@ focus = {
 	y = 1
 	cost = 10
 	completion_reward = {
-		denethor_gets_less_paranoid = yes
+		add_political_power = 100
+		if = {
+			limit = {
+				has_idea = weak_centralization
+			}
+			swap_ideas = {
+				remove_idea = weak_centralization
+				add_idea = moderate_centralization
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = moderate_centralization
+			}
+			swap_ideas = {
+				remove_idea = moderate_centralization
+				add_idea = strong_centralization
+			}
+		}
+		
 	}
 }
 
 focus = {
 	id  = GON_purge_the_crown_loyalists
-	icon = GFX_goal_support_unalligned
+	icon = GFX_goal_generic_political_pressure
 	ai_will_do = { factor = 3 }
 	prerequisite = { focus = GON_delegitimize_aragorns_claim }
 	relative_position_id = GON_delegitimize_aragorns_claim
@@ -60,22 +79,79 @@ focus = {
 			ideology = revolutionary
 			popularity = 0.05
 		}
+		add_popularity = {
+			ideology = belligerent
+			popularity = 0.05
+		}
 		denethor_gets_less_paranoid = yes
 	}
 }
 
 focus = {
-	id  = GON_change_the_law
-	icon = GFX_goal_support_unalligned
+	id  = GON_enforce_militair_loyalty
+	icon = GFX_goal_generic_intelligence_exchange
 	ai_will_do = { factor = 3 }
 	prerequisite = { focus = GON_purge_the_crown_loyalists }
-	prerequisite = { focus = GON_enforce_militair_loyalty }
+	prerequisite = { focus = GON_change_the_law }
 	relative_position_id = GON_purge_the_crown_loyalists
 	x = 1
 	y = 1
+	cost = 10
+	completion_reward = {
+		denethor_gets_less_paranoid = yes
+	}
+}
+
+focus = {
+	id  = GON_betray_denethor
+	icon = GFX_goal_generic_propaganda
+	ai_will_do = { factor = 3 }
+	prerequisite = { focus = GON_enforce_militair_loyalty }
+	mutually_exclusive = { focus = GON_publish_statement }
+	relative_position_id = GON_enforce_militair_loyalty
+	x = -4
+	y = 1
+	cost = 10
+	completion_reward = {
+		denethor_gets_more_paranoid = yes
+		add_popularity = {
+			ideology = belligerent
+			popularity = 0.15
+		}
+	}
+}
+
+focus = {
+	id  = GON_declare_military_rule
+	icon = GFX_goal_generic_propaganda
+	ai_will_do = { factor = 3 }
+	prerequisite = { focus = GON_betray_denethor }
+	relative_position_id = GON_betray_denethor
+	x = 0
+	y = 1
+	cost = 10
+	completion_reward = {
+		remove_denethor_paranoid = yes
+	}
+}
+
+focus = {
+	id  = GON_publish_statement
+	icon = GFX_goal_generic_propaganda
+	ai_will_do = { factor = 3 }
+	prerequisite = { focus = GON_enforce_militair_loyalty }
+	mutually_exclusive = { focus = GON_betray_denethor }
+	relative_position_id = GON_enforce_militair_loyalty
+	x = 0
+	y = 1
 	cost = 5
 	completion_reward = {
-		add_political_power = 100
+		news_event = { hours = 12 id = news.393 }
+		hidden_effect = {
+			DAM = {
+				country_event = dolamroth.1
+			}
+		}
 	}
 }
 
@@ -84,18 +160,128 @@ focus = {
 	icon = GFX_focus_rom_royal_dictatorship
 	ai_will_do = { factor = 100 }
 	available = { cooperative > 0.5 }
-	prerequisite = { focus = GON_change_the_law }
-	relative_position_id = GON_change_the_law
+	prerequisite = { focus = GON_publish_statement }
+	relative_position_id = GON_publish_statement
 	x = 0
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		remove_ideas = GON_kingdom_without_king_1
-		news_event = { hours = 12 id = news.393 }
-		set_politics = { ruling_party = cooperative elections_allowed = no }
+		swap_ideas = {
+			remove_idea = GON_kingdom_without_king_1
+			add_idea = GON_defeatist_0
+		}
 		retire_country_leader = yes
+		set_politics = { ruling_party = cooperative elections_allowed = no }
 		remove_denethor_paranoid = yes
+	}
+ }
+
+focus = {
+	id = GON_rally_the_nation
+	icon = GFX_goal_generic_demand_territory
+	ai_will_do = { factor = 100 }
+	available = { has_idea = GON_defeatist_0 }
+	prerequisite = { focus = GON_the_steward_of_gondor }
+	relative_position_id = GON_the_steward_of_gondor
+	x = 0
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		swap_ideas = {
+			remove_idea = GON_defeatist_0
+			add_idea = GON_defeatist_1
+		}
+		if = {
+			limit = {
+				has_idea = priviledged_service
+			}
+			swap_ideas = {
+				remove_idea = priviledged_service
+				add_idea = volunteer_service
+			}
+		}
+	}
+ }
+
+ focus = {
+	id = GON_in_memory_of_faramir
+	icon = GFX_goal_faramir
+	ai_will_do = { factor = 100 }
+	available = {
+		has_global_flag = faramir_dead
+	}
+	prerequisite = { focus = GON_rally_the_nation }
+	relative_position_id = GON_rally_the_nation
+	x = 2
+	y = 1
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		add_stability = 0.10
+		add_war_support = 0.10
+		army_experience = 25
+	}
+ }
+
+focus = {
+	id = GON_invest_in_the_industry
+	icon = GFX_goal_generic_construction
+	ai_will_do = { factor = 100 }
+	available = { has_idea = GON_defeatist_1 }
+	prerequisite = { focus = GON_rally_the_nation }
+	relative_position_id = GON_rally_the_nation
+	x = 0
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		swap_ideas = {
+			remove_idea = GON_defeatist_1
+			add_idea = GON_defeatist_2
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+		}
+	}
+ }
+
+focus = {
+	id = GON_restructure_the_army
+	icon = GFX_focus_generic_military_academy
+	ai_will_do = { factor = 100 }
+	available = { has_idea = GON_defeatist_2 }
+	prerequisite = { focus = GON_invest_in_the_industry }
+	relative_position_id = GON_invest_in_the_industry
+	x = 0
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		remove_ideas = GON_defeatist_2
+		army_experience = 25
+	}
+ }
+
+focus = {
+	id = GON_steward_of_the_people
+	icon = GFX_goal_denethor
+	ai_will_do = { factor = 100 }
+	available = { cooperative > 0.5 }
+	prerequisite = { focus = GON_restructure_the_army }
+	relative_position_id = GON_restructure_the_army
+	x = 0
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_ideas = GON_steward_of_the_people
 	}
  }
 
@@ -243,7 +429,6 @@ focus = {
 	ai_will_do = { factor = 10 }
 	relative_position_id = GON_declare_aragorn_the_rightful_heir
 	prerequisite = { focus = GON_declare_aragorn_the_rightful_heir }
-	mutually_exclusive = { focus = GON_have_boromir_steal_the_ring}
 	x = 2
 	y = 1
 	cost = 10
@@ -409,7 +594,7 @@ focus = {
 	ai_will_do = { factor = 30 }
 	relative_position_id = GON_crown_aragorn_king
 	x = 1
-	y = 1
+	y = 2
 	prerequisite = { focus = GON_crown_aragorn_king }
 	cost = 10
   	available_if_capitulated = yes
@@ -423,7 +608,7 @@ focus = {
 	icon = GFX_goal_generic_national_unity
 	ai_will_do = { factor = 30 }
 	relative_position_id = GON_restore_the_kingdom_of_gondor
-	x = -2
+	x = 0
 	y = 1
 	prerequisite = { focus = GON_restore_the_kingdom_of_gondor }
 	cost = 10
@@ -490,8 +675,8 @@ focus = {
 	icon = GFX_wargoal_mordor
 	ai_will_do = { factor = 30 }
 	relative_position_id = GON_restore_the_kingdom_of_gondor
-	prerequisite = { focus = GON_restore_the_kingdom_of_gondor }
-	x = 2
+	prerequisite = { focus = GON_restore_the_kingdom_of_gondor focus = GON_restructure_the_army }
+	x = 7
 	y = 1
 	cost = 10
 	available = {
@@ -555,8 +740,8 @@ focus = {
 	icon = GFX_goal_orthanc_destroyed
 	ai_will_do = { factor = 30 }
 	relative_position_id = GON_restore_the_kingdom_of_gondor
-	prerequisite = { focus = GON_restore_the_kingdom_of_gondor }
-	x = 5
+	prerequisite = { focus = GON_restore_the_kingdom_of_gondor focus = GON_restructure_the_army }
+	x = 10
 	y = 1
 	cost = 10
 	available = {
@@ -625,7 +810,6 @@ focus = {
 	icon = GFX_goal_the_one_ring
 	ai_will_do = { factor = 70 }
 	available = {always = no }
-	mutually_exclusive = { focus = GON_persuade_aragorn_to_come_to_Gondor }
 	prerequisite = { focus = GON_send_boromir_with_the_fellowship}
 	relative_position_id = GON_send_boromir_with_the_fellowship
 	x = 0
@@ -641,6 +825,7 @@ focus = {
 	ai_will_do = { factor = 25 }
 	available = { has_global_flag = gondor_has_ring }
 	prerequisite = { focus = GON_have_boromir_steal_the_ring}
+	prerequisite = { focus = GON_declare_military_rule }
 	relative_position_id = GON_have_boromir_steal_the_ring
 	x = 0
 	y = 1
@@ -654,27 +839,13 @@ focus = {
 }
 
 focus = {
-	id = GON_take_the_ring_to_gondor
-	icon = GFX_goal_the_one_ring
-	ai_will_do = { factor = 50 }
-	available = { has_global_flag = gondor_has_ring }
-	prerequisite = { focus = GON_betray_elronds_council }
-	relative_position_id = GON_betray_elronds_council
-	x = 0
-	y = 1
-	cost = 5
-  	available_if_capitulated = yes
-	completion_reward = { GON = { add_ideas = one_true_ring } }
-}
-
-focus = {
 	id = GON_strike_a_deal_with_sauron
 	icon = GFX_goal_sauron_eye
 	ai_will_do = { factor = 10 }
 	available = { any_country = { original_tag = MOR has_government = belligerent } }
 	mutually_exclusive = { focus = GON_form_the_empire_of_gondor}
-	prerequisite = { focus = GON_take_the_ring_to_gondor}
-	relative_position_id = GON_take_the_ring_to_gondor
+	prerequisite = { focus = GON_betray_elronds_council}
+	relative_position_id = GON_betray_elronds_council
 	x = 1
 	y = 1
 	cost = 10
@@ -698,11 +869,11 @@ focus = {
 	icon = GFX_goal_gondor
 	ai_will_do = { factor = 10 }
 	mutually_exclusive = { focus = GON_strike_a_deal_with_sauron }
-	prerequisite = { focus = GON_take_the_ring_to_gondor}
-	relative_position_id = GON_take_the_ring_to_gondor
+	prerequisite = { focus = GON_betray_elronds_council}
+	relative_position_id = GON_betray_elronds_council
 	x = -1
 	y = 1
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
 		set_cosmetic_tag = EOG
@@ -726,32 +897,12 @@ focus = {
 	}
  }
 
-
-focus = {
-	id = GON_closer_ties_with_the_rangers_of_the_north
-	icon = GFX_goal_tripartite_pact
-	ai_will_do = { factor = 5 }
-	prerequisite = { focus = GON_send_faramir_with_the_fellowship}
-	relative_position_id = GON_send_faramir_with_the_fellowship
-	x = 0
-	y = 1
-	cost = 10
-  	available_if_capitulated = yes
-	completion_reward = {
-		CAR = { add_opinion_modifier = { target = GON modifier = large_increase } }
-		ART = { add_opinion_modifier = { target = GON modifier = large_increase } }
-		RHD = { add_opinion_modifier = { target = GON modifier = large_increase } }
-	}
- }
-
-
-
 #Focus for Battle for the Gondor Sea
 focus = {
 	id = GON_battle_for_the_gondor_sea
 	icon = GFX_goal_generic_amphibious_assault
 	ai_will_do = { factor = 3 }
-	x = 25
+	x = 30
 	y = 7
 	cost = 5
 	available_if_capitulated = yes
@@ -847,7 +998,7 @@ focus = {
 	id = GON_military_rearmament
 	icon = GFX_goal_generic_axis_build_infantry
 	ai_will_do = { factor = 5 }
-	x = 30
+	x = 35
 	y = 7
 	cost = 5
 	available_if_capitulated = yes
