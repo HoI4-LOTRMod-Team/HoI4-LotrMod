@@ -26,7 +26,7 @@ mirror_randomize_targets = {
 				}
 				NOT = { is_in_array = { mirror_targets_future = THIS } }
 			}
-			random_select_amount = 3
+			random_select_amount = 2
 
 			LTH = { add_to_array = { mirror_targets_future = PREV } }
 		}
@@ -52,7 +52,7 @@ mirror_randomize_targets = {
 					}
 					NOT = { is_in_array = { mirror_targets_future = THIS } }
 				}
-				random_select_amount = 2
+				random_select_amount = 1
 
 				LTH = { add_to_array = { mirror_targets_future = PREV } }
 			}
@@ -347,6 +347,13 @@ mirror_end_storyline = {
 	clr_country_flag = m_storyline_giant
 	clr_country_flag = m_storyline_plot
 	clr_country_flag = m_has_storyline
+
+	hidden_effect = {
+		every_unit_leader = {
+			limit = { has_character_flag = m_storyline_reserved }
+			clr_character_flag = m_storyline_reserved
+		}
+	}
 }
 
 
@@ -360,17 +367,19 @@ mirror_storyline_ritual_look = {
 
 			random_unit_leader = {
 				set_variable = { LTH.m_storyline_ritual_spoken_name1 = THIS }
+				set_character_flag = m_storyline_reserved
 			}
 			random_unit_leader = {
-				limit = { NOT = { is_character = var:LTH.m_storyline_ritual_spoken_name1 } }
+				limit = { NOT = { has_character_flag = m_storyline_reserved } }
 				set_variable = { LTH.m_storyline_ritual_spoken_name2 = THIS }
+				set_character_flag = m_storyline_reserved
 			}
 			random_unit_leader = {
 				limit = {
-					NOT = { is_character = var:LTH.m_storyline_ritual_spoken_name1 }
-					NOT = { is_character = var:LTH.m_storyline_ritual_spoken_name2 }
+					NOT = { has_character_flag = m_storyline_reserved }
 				}
 				set_variable = { LTH.m_storyline_ritual_spoken_name3 = THIS }
+				set_character_flag = m_storyline_reserved
 			}
 		}
 
@@ -518,11 +527,21 @@ mirror_storyline_plot_look = {
 		set_country_flag = m_storyline_plot
 
 		random_unit_leader = {
+			limit = {
+				NOT = { is_character = LTH_haldir }
+				NOT = { is_character = LTH_celeborn }
+			}
 			set_variable = { LTH.m_storyline_pot_mirrors_chosen = THIS }
+			set_character_flag = m_storyline_reserved
 		}
 		random_unit_leader = {
-			limit = { NOT = { is_character = var:LTH.m_storyline_pot_mirrors_chosen } }
+			limit = { 
+				NOT = { is_character = LTH_haldir }
+				NOT = { is_character = LTH_celeborn }
+				NOT = { has_character_flag = m_storyline_reserved }
+			}
 			set_variable = { LTH.m_storyline_pot_mirrors_doomed = THIS }
+			set_character_flag = m_storyline_reserved
 		}
 	}
 
