@@ -418,55 +418,57 @@ execute_fellowship_step = {
 # starting-event
 execute_fs_commence = {
 	SHI = {
-
-		# set variables
-		set_variable = { global.fs_currentstate = 42 }
-		set_variable = { global.fs_steps = 1 }
-		log = "currentState: [?global.fs_currentstate]"
-
-		set_global_flag = fs_started
-
-		# Set path to prelude
-		set_variable = { global.fs_path = 0 }
-
-		# Set mordor max attempts
-		set_variable = { global.ring_mor_max_attempts = 1 }
-
-		# Initial fellowship
-		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
-		FS_sam = { ring_add_member_to_fellowship_nolog = yes }
-
 		if = {
-			limit = { has_global_flag = fs_nazgul_sent_to_shire }
+			limit = { NOT = { has_global_flag = fs_started } }
+			# set variables
+			set_variable = { global.fs_currentstate = 42 }
+			set_variable = { global.fs_steps = 1 }
+			log = "currentState: [?global.fs_currentstate]"
+
+			set_global_flag = fs_started
+
+			# Set path to prelude
+			set_variable = { global.fs_path = 0 }
+
+			# Set mordor max attempts
+			set_variable = { global.ring_mor_max_attempts = 1 }
+
+			# Initial fellowship
+			FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+			FS_sam = { ring_add_member_to_fellowship_nolog = yes }
+
+			if = {
+				limit = { has_global_flag = fs_nazgul_sent_to_shire }
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_start }
+				ring_trim_eventlog = yes
+			}
+			else = {
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_start_nazgul }
+				ring_trim_eventlog = yes
+			}
+
+			# Gandalf goes to meet Saruman
+			ISE = { country_event = { days = 20 id = isengard.1 } }
 			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-			add_to_array = { global.fs_eventlog = token:fs_event_start }
+			add_to_array = { global.fs_eventlog = token:fs_event_gandalf_goes_to_saruman }
 			ring_trim_eventlog = yes
+
+			# starting pathstack (Shire to Rivendell)
+			add_to_array = { global.fs_path_stack = 150 }
+			add_to_array = { global.fs_path_stack = 149 }
+			add_to_array = { global.fs_path_stack = 145 }
+			add_to_array = { global.fs_path_stack = 64 }
+			add_to_array = { global.fs_path_stack = 200 }
+			add_to_array = { global.fs_path_stack = 202 }
+			add_to_array = { global.fs_path_stack = 65 }
+
+			ring_fellowship_begin_move_to_next_state = yes
 		}
-		else = {
-			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-			add_to_array = { global.fs_eventlog = token:fs_event_start_nazgul }
-			ring_trim_eventlog = yes
-		}
-
-		# Gandalf goes to meet Saruman
-		ISE = { country_event = { days = 20 id = isengard.1 } }
-		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-		add_to_array = { global.fs_eventlog = token:fs_event_gandalf_goes_to_saruman }
-		ring_trim_eventlog = yes
-
-		# starting pathstack (Shire to Rivendell)
-		add_to_array = { global.fs_path_stack = 150 }
-		add_to_array = { global.fs_path_stack = 149 }
-		add_to_array = { global.fs_path_stack = 145 }
-		add_to_array = { global.fs_path_stack = 64 }
-		add_to_array = { global.fs_path_stack = 200 }
-		add_to_array = { global.fs_path_stack = 202 }
-		add_to_array = { global.fs_path_stack = 65 }
-
-		ring_fellowship_begin_move_to_next_state = yes
 
 	}
 }
