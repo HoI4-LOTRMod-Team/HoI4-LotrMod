@@ -1,0 +1,1 @@
+The Cyrillic symbols for our Merienda font files are taken from Neucha
