@@ -97,12 +97,17 @@ country_event = {
 	trigger = {
 		tag = GON
 		22 = { is_controlled_by = MOR }
-		GON = { has_war_with = MOR }
 		has_global_flag = boromir_dead
 		has_global_flag = faramir_dead
 		NOT = { has_global_flag = denethor_dead }
-		GON = { surrender_progress > 0.3 }
-		GON = { has_country_leader = { ruling_only = yes name = "Denethor II" } }
+		GON = { 
+			has_war_with = MOR
+			surrender_progress > 0.3 
+			has_country_leader = { ruling_only = yes name = "Denethor II" }
+			NOT = {
+				has_completed_focus = GON_the_steward_of_gondor
+			}
+		}
 	}
 
 	mean_time_to_happen = {
@@ -243,6 +248,7 @@ country_event = {
 }
 
 # Workers start civil war
+# Not in use for now
 country_event = {
 	id = gondor.5
 	title = gondor.5.t
@@ -748,7 +754,6 @@ country_event = {
 	}
 }
 
-
 #Dol Amroth declares seperation
 country_event = {
 	id = gondor.22
@@ -757,6 +762,8 @@ country_event = {
 	picture = GFX_report_event_ring
 
 	is_triggered_only = yes
+
+	mean_time_to_happen = { days = 15 }
 
 	option = { #So be it
 		name = gondor.22.a
@@ -778,3 +785,47 @@ country_event = {
 		}
 	}
 }
+
+
+#COUNTRY NAME invite to faction Gondor Alliance
+country_event = {
+	id = gondor.23
+	title = gondor.23.t
+	desc = gondor.23.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #Yes
+		name = gondor.23.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 25
+				has_war = yes
+			}
+			modifier = {
+				add = -25
+				has_completed_focus = generic_unaligned_focus
+			}
+		}
+		GON = {
+			add_to_faction = ROOT
+			add_opinion_modifier = { target = ROOT modifier = small_increase }
+		}
+	}
+	option = { #No
+		name = gondor.23.b
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 25
+				has_completed_focus = generic_unaligned_focus
+			}
+		}
+		GON = {
+			add_opinion_modifier = { target = ROOT modifier = small_decrease }
+		}
+	}
+}
+
