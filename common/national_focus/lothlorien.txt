@@ -2509,6 +2509,8 @@ focus_tree = {
 				ideology = belligerent
 				portrait = GFX_portrait_lothlorien_galadriel_dark
 			}
+
+			custom_effect_tooltip = "Change Galadriel's Portrait"
 		}
 	}
 
@@ -4584,9 +4586,11 @@ focus_tree = {
 						is_dwarves = yes
 						has_country_flag = lth_refused_subjugation
 					}
-					create_wargoal = {
-						target = THIS
-						type = annex_everything
+					ROOT = {
+						create_wargoal = {
+							target = PREV
+							type = puppet_wargoal_focus
+						}
 					}
 				}
 			}
@@ -4615,8 +4619,10 @@ focus_tree = {
 			is_puppet = no
 			any_country = {
 				is_men = yes
-				ic_ratio = { tag = THIS ratio < 1.3 }
+				ic_ratio = { tag = ROOT ratio < 0.8 }
 				NOT = { has_war_with = LTH }
+				is_puppet = no
+				NOT = { tag = NEP }
 			}
 		}
 		completion_reward = {
@@ -4624,11 +4630,13 @@ focus_tree = {
 			every_country = {
 				limit = {
 					is_men = yes
-					ic_ratio = { tag = THIS ratio < 1.3 }
+					ic_ratio = { tag = ROOT ratio < 0.8 }
 					NOT = { has_war_with = LTH }
+					is_puppet = no
+					NOT = { tag = NEP }
 				}
 				custom_effect_tooltip = lth_send_subjugation_demand_tt
-				hidden_effect = { country_event = lothlorien.31 }
+				hidden_effect = { country_event = { id = lothlorien.31 days = 3 } }
 			}
 		}
 	}
@@ -4667,9 +4675,11 @@ focus_tree = {
 						is_men = yes
 						has_country_flag = lth_refused_subjugation
 					}
-					create_wargoal = {
-						target = THIS
-						type = annex_everything
+					ROOT = {
+						create_wargoal = {
+							target = PREV
+							type = puppet_wargoal_focus
+						}
 					}
 				}
 			}
@@ -4717,9 +4727,20 @@ focus_tree = {
 					is_elves = yes
 					NOT = { tag = ROOT }
 				}
-				add_collaboration = {
-    				target = THIS
-    				value = 0.25
+				hidden_effect = {
+					ROOT = {
+						add_collaboration = {
+							target = PREV
+							value = 0.3
+						}
+					}	
+				}
+				# ^ THis is the correct way of doing this, but the tooltip doesn't work. So here is the *wrong* effect that produces the right tooltip:
+				effect_tooltip = {
+					add_collaboration = {
+						target = LTH
+						value = 0.3
+					}
 				}
 			}
 		}
@@ -4742,16 +4763,22 @@ focus_tree = {
 			}
 		}
 		prerequisite = { focus = lth_safeguardtheelves }
+		bypass = {
+			OR = {
+				RIV = { is_elves = no }
+				RIV = { is_puppet = yes }
+				has_war_with = RIV
+			}
+		}
 		available = {
 			is_puppet = no
 			has_government = belligerent
-			NOT = { has_war_with = LIN }
 		}
 		completion_reward = {
 			# Event to rivendell
 			RIV = {
 				custom_effect_tooltip = lth_send_subjugation_demand_elves_tt
-				hidden_effect = { country_event = lothlorien.33 }
+				hidden_effect = { country_event = { id = lothlorien.33 days = 3 } }
 			}
 		}
 	}
@@ -4774,18 +4801,21 @@ focus_tree = {
 		}
 		prerequisite = { focus = lth_safeguardtheelves }
 		bypass = {
-			MIR = { is_elves = no }
+			OR = {
+				MIR = { is_elves = no }
+				MIR = { is_puppet = yes }
+				has_war_with = MIR
+			}
 		}
 		available = {
 			is_puppet = no
 			has_government = belligerent
-			NOT = { has_war_with = LIN }
 		}
 		completion_reward = {
 			# Event to mirkwood
 			MIR = {
 				custom_effect_tooltip = lth_send_subjugation_demand_elves_tt
-				hidden_effect = { country_event = lothlorien.33 }
+				hidden_effect = { country_event = { id = lothlorien.33 days = 3 } }
 			}
 		}
 	}
@@ -4807,16 +4837,22 @@ focus_tree = {
 			}
 		}
 		prerequisite = { focus = lth_safeguardtheelves }
+		bypass = {
+			OR = {
+				LIN = { is_elves = no }
+				LIN = { is_puppet = yes }
+				has_war_with = LIN
+			}
+		}
 		available = {
 			is_puppet = no
 			has_government = belligerent
-			NOT = { has_war_with = LIN }
 		}
 		completion_reward = {
 			# Event to lindon
 			LIN = {
 				custom_effect_tooltip = lth_send_subjugation_demand_elves_tt
-				hidden_effect = { country_event = lothlorien.33 }
+				hidden_effect = { country_event = { id = lothlorien.33 days = 3 } }
 			}
 		}
 	}
@@ -4858,9 +4894,11 @@ focus_tree = {
 						has_country_flag = lth_refused_subjugation
 						NOT = { has_war_with = LTH }
 					}
-					create_wargoal = {
-						target = THIS
-						type = puppet_wargoal_focus
+					ROOT = {
+						create_wargoal = {
+							target = PREV
+							type = puppet_wargoal_focus
+						}
 					}
 				}
 			}
@@ -6286,6 +6324,9 @@ focus_tree = {
 
 		cost = 10
 		ai_will_do = { factor = 5 }
+		available = {
+			num_subjects > 0
+		}
 		prerequisite = { focus = lth_theeternaldominion }
 		completion_reward = {
 			custom_effect_tooltip = tribute_collector_advisor_effect_tooltip
@@ -6304,6 +6345,7 @@ focus_tree = {
 		ai_will_do = { factor = 15 }
 		prerequisite = { focus = lth_theeternaldominion }
 		available = {
+			num_subjects > 0
 			any_subject_country = {
 				is_elves = no
 			}
