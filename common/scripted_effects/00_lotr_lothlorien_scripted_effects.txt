@@ -164,18 +164,10 @@ lthi_update_values = {
 	if = {
 		limit = { has_dynamic_modifier = { modifier = lth_unity_in_division_modifier } }
 
-		add_to_temp_array = { temp_infl = modifier@nandor_influence }
-		add_to_temp_array = { temp_infl = modifier@noldor_influence }
-		add_to_temp_array = { temp_infl = modifier@sindar_influence }
-		add_to_temp_array = { temp_infl = modifier@halfelves_influence }
-		if = {
-			limit = { check_variable = { modifier@nonelves_influence > 0 } }
-			add_to_temp_array = { temp_infl = modifier@nonelves_influence }
-		}
-		if = {
-			limit = { check_variable = { modifier@orcs_influence > 0 } }
-			add_to_temp_array = { temp_infl = modifier@orcs_influence }
-		}
+		add_to_temp_array = { temp_infl = lthi_nandor_influence_fraction }
+		add_to_temp_array = { temp_infl = lthi_noldor_influence_fraction }
+		add_to_temp_array = { temp_infl = lthi_sindar_influence_fraction }
+		add_to_temp_array = { temp_infl = lthi_halfelves_influence_fraction }
 
 		find_highest_in_array = {
     		array = temp_infl
@@ -881,7 +873,7 @@ lth_spawn_spider_division = {
 }
 
 lth_spawn_spider_ent_division = {
-	load_oob = Lothlorien_Spiders
+	load_oob = Lothlorien_Spiders_2
 }
 
 lth_spawn_orc_penal_division = {
@@ -1005,7 +997,7 @@ lthi_activate_nonelves = {
 
 lthi_activate_orcs = {
 	custom_effect_tooltip = lthi_activate_orcs_tt
-	add_to_variable = { lthi_base_orcs_influence = 50 }
+	add_to_variable = { lthi_base_orcs_influence = 100 }
 }
 
 lthi_hire_random_advisors = {
@@ -1181,31 +1173,33 @@ lth_accord_gala_term = {
 lth_add_sharedcause_mp = {
 	set_temp_variable = { lth_sharedcause_total_manpower_gained = 0 }
     
-	every_other_country = {
-		limit = {
-			has_government = revolutionary
-			NOT = { original_tag = lth }
-		}
-        
-		set_temp_variable = { lth_sharedcause_manpower_gained = party_popularity@revolutionary }
-		if = {
+	hidden_effect = {
+		every_other_country = {
 			limit = {
-				is_major = yes
+				has_government = revolutionary
+				NOT = { original_tag = lth }
 			}
-			multiply_temp_variable =  { lth_sharedcause_manpower_gained =  40000 }
+			
+			set_temp_variable = { lth_sharedcause_manpower_gained = party_popularity@revolutionary }
+			if = {
+				limit = {
+					is_major = yes
+				}
+				multiply_temp_variable =  { lth_sharedcause_manpower_gained =  40000 }
 
-		}
-		else = {
-			multiply_temp_variable =  { lth_sharedcause_manpower_gained =  3000 }
-		}
-		add_to_temp_variable = {
-			var = lth_sharedcause_total_manpower_gained
-			value = lth_sharedcause_manpower_gained
-		}
-    }
+			}
+			else = {
+				multiply_temp_variable =  { lth_sharedcause_manpower_gained =  10000 }
+			}
+			add_to_temp_variable = {
+				var = lth_sharedcause_total_manpower_gained
+				value = lth_sharedcause_manpower_gained
+			}
+		}	
+	}
     clamp_temp_variable = {
         var = lth_sharedcause_total_manpower_gained
-        min = 10000
+        min = 15000
         max = 150000
     }
 
