@@ -201,3 +201,48 @@ invite_to_faction = {
 ask_to_join_faction = {
     country_event = { id = lotr_generic.8 days = 1 }
 }
+
+store_ideologies_before_puppeting = {
+    get_current_ideology_popularities = yes
+    get_current_ruling_party = yes
+}
+
+restore_ideologies_post_puppeting = {
+    # if this is run the same frame as store_ideologies the game crashes, that's why we do it next frame through a hidden event
+    ROOT = { country_event = { id = generic.26 hours = 1 } }
+}
+
+get_current_ideology_popularities = {
+    set_variable = { ROOT.revo_support_before_change = ROOT.party_popularity_100@revolutionary }
+    set_variable = { ROOT.coop_support_before_change = ROOT.party_popularity_100@cooperative }
+    set_variable = { ROOT.bell_support_before_change = ROOT.party_popularity_100@belligerent }
+    set_variable = { ROOT.unal_support_before_change = ROOT.party_popularity_100@unaligned }
+}
+get_current_ruling_party = {
+    set_variable = { ROOT.ruling_ideology_before_change = ROOT.current_party_ideology_group }
+}
+
+restore_ideology_popularities = {
+    hidden_effect = {
+        # Reset popluarities to what they were before puppeting 
+        set_popularities = {
+            revolutionary = ROOT.revo_support_before_change
+            cooperative = ROOT.coop_support_before_change
+            belligerent = ROOT.bell_support_before_change
+            unaligned = ROOT.unal_support_before_change
+        }
+        clear_variable = ROOT.revo_support_before_change
+        clear_variable = ROOT.coop_support_before_change
+        clear_variable = ROOT.bell_support_before_change
+        clear_variable = ROOT.unal_support_before_change
+    }
+}
+restore_ruling_party = {
+    ROOT = {
+        set_politics = {
+            ruling_party = var:ROOT.ruling_ideology_before_change
+            #ruling_party = revolutionary
+        }
+        clear_variable = ROOT.ruling_ideology_before_change
+    }
+}

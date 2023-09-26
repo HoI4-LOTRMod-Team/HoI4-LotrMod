@@ -3,34 +3,26 @@
 elven_alliance_sanction_country = {
 	var:global.ea_current_resolution_target = {
 		set_country_flag = ea_is_sanctioned
-
-		ROOT = {
-			add_relation_modifier = {
-				target = PREV
-				modifier = ea_country_sanctioned
-			}
-		}
 	}
+
+	send_embargo = global.ea_current_resolution_target
 }
 
 ea_apply_all_sanctions = {
 	every_country = {
 		limit = { is_sanctioned_by_elven_alliance = yes }
 		PREV = {
-			add_relation_modifier = {
-				target = PREV
-				modifier = ea_country_sanctioned
-			}
+			send_embargo = PREV
 		}
 	}
 }
 
 elven_alliance_declare_joint_war_against = {
-	var:global.ea_current_resolution_target = {
-		ROOT = {
-			declare_war_on = {
-				target = PREV
-			}
+	custom_effect_tooltip = elven_alliance_declare_joint_war_against_tt
+	hidden_effect = {
+		declare_war_on = {
+			target = var:global.ea_current_resolution_target
+			type = annex_everything
 		}
 	}
 }
@@ -73,6 +65,7 @@ elven_alliance_form_martial_faction = {
 elven_alliance_ensure_no_war = {
 	if = {
 		limit = {
+			NOT = { ea_has_union_tier_2 = yes } # Union tier 2 allows wars
 			is_elven_alliance_member = yes
 			any_of_scopes = {
 				array = global.elven_alliance_members
@@ -85,6 +78,9 @@ elven_alliance_ensure_no_war = {
 }
 
 elven_alliance_hegemony_puppet = {
+	# get current popularities
+	store_ideologies_before_puppeting = yes
+
 	var:global.ea_hegemony_leader = {
 		set_autonomy = {
 			target = PREV
@@ -93,6 +89,9 @@ elven_alliance_hegemony_puppet = {
 			end_civil_wars = no
 		}
 	}
+
+	# restore ideologies
+	restore_ideologies_post_puppeting = yes
 }
 
 elven_alliance_hegemony_end_puppet = {
@@ -104,32 +103,35 @@ elven_alliance_hegemony_end_puppet = {
 
 ea_set_type_hegemony = {
 	hidden_effect = {
-			every_country = {
-			limit = { is_elven_alliance_member = yes }
-			country_event = elven_alliance.7
-		}
 		ea_hegemony_select_leader = yes
 		set_global_flag = ea_type_hegemony
+		set_global_flag = ea_hegemony_resolutions_unlocked
+		every_country = {
+			limit = { is_elven_alliance_member = yes }
+			country_event = { id = elven_alliance.7 days = 1 }
+		}
 	}
 }
 
 ea_set_type_martial = {
 	hidden_effect = {
+		set_global_flag = ea_type_martial
+		set_global_flag = ea_martial_resolutions_unlocked
 		every_country = {
 			limit = { is_elven_alliance_member = yes }
-			country_event = elven_alliance.7
+			country_event = { id = elven_alliance.7 days = 1 }
 		}
-		set_global_flag = ea_type_martial
 	}
 }
 
 ea_set_type_union = {
 	hidden_effect = {
+		set_global_flag = ea_type_union
+		set_global_flag = ea_union_resolutions_unlocked
 		every_country = {
 			limit = { is_elven_alliance_member = yes }
-			country_event = elven_alliance.7
+			country_event = { id = elven_alliance.7 days = 1 }
 		}
-		set_global_flag = ea_type_union
 	}
 }
 
@@ -533,14 +535,19 @@ elven_alliance_ai_vote = {
 
 elven_alliance_ai_propose = {
 	random_list = {
-		50 = {
+		90 = {
 			# Dont propose anything
 			modifier = {
 				factor = 2
 				elven_alliance_has_at_least_8_members = yes
 			}
+			# Dont propose anything
+			modifier = {
+				factor = 2
+				elven_alliance_has_at_least_5_members = yes
+			}
 		}
-		50 = {
+		10 = {
 			random_list = {
 
 				# This makes sure that if all modifiers are 0, something still gets picked
