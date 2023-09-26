@@ -242,6 +242,10 @@ country_event = {
 	picture = GFX_report_event_rangers
 	
 	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = grey_company_formed }
+	}
 	
 	option = { #Accept
 		name = arthedain.6.a
@@ -283,16 +287,20 @@ country_event = {
 		custom_effect_tooltip = arthedain.6.a_tt
 
 		hidden_effect = {
-			add_to_variable = { grey_company_supporters = 1 }
+			if = {
+				limit = { NOT = { has_variable = global.grey_company_supporters } }
+				set_variable = { global.grey_company_supporters = 1 } # We start at 1 because whoever triggered the event/took the focus auto-support this
+			}
+			add_to_variable = { global.grey_company_supporters = 1 }
 
 			if = {
 				limit = {
-					check_variable = { grey_company_supporters > 2 }
+					check_variable = { global.grey_company_supporters > 2 }
 					NOT = { has_global_flag = grey_company_formed }
 				}
 				set_global_flag = grey_company_formed
-				ART = { country_event = arthedain.7 }
-				RHD = { country_event = arthedain.7 }
+				ART = { country_event = { id = arthedain.7 days = 12 } }
+				RHD = { country_event = { id = arthedain.7 days = 12 } }
 			}
 		}
 		
