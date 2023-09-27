@@ -1104,24 +1104,6 @@ ring_seize_ring = {
 		add_to_array = { global.fs_eventlog = token:fs_event_takes_the_ring }
 		ring_trim_eventlog = yes
 
-		# BOP-related stuff
-		# If there was a previous owner -> remove BOP
-		if = {
-			limit = { has_variable = global.fs_ring_owner }
-			var:global.fs_ring_owner = { remove_power_balance = { id = ring_corruption_balance } }
-		}
-		# Otherwise add BOP to new owner
-		else = {
-			set_power_balance = {
-				id = ring_corruption_balance
-				set_default = yes
-			}
-		}
-		ring_update_bop_values = yes
-		MOR = {
-			ring_update_bop_values = yes
-		}
-
 		set_global_flag = fs_ring_seized
 		var:global.fs_ring_owner = {
 			ring_remove_ring = yes
@@ -1145,6 +1127,7 @@ ring_remove_ring = {
 		limit = { has_idea = one_true_ring_2 }
 		remove_ideas = one_true_ring_2
 	}
+	remove_power_balance = { id = ring_corruption_balance }
 }
 
 ring_add_ring = {
@@ -1155,10 +1138,22 @@ ring_add_ring = {
 	else = {
 		add_ideas = one_true_ring
 	}
+	# add BOP to new owner
+	if = {
+		limit = { NOT = { tag = MOR } } # MOR can't corrupt themselves lol
+		set_power_balance = {
+			id = ring_corruption_balance
+			set_default = yes
+		}
+	}
+	ring_update_bop_values = yes
+	MOR = {
+		ring_update_bop_values = yes
+	}
 }
 
 ring_upgrade_ring = {
-	set_global_flag = one_ring_upgraded
+	set_global_flag = ring_merged_with_nenya
 	swap_ideas = {
 		remove_idea = one_true_ring
 		add_idea = one_true_ring_2

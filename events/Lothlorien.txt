@@ -106,7 +106,7 @@ country_event = {
 		random_list = {
 
 			# Frodo offers the ring up willingly
-			5 = {
+			50000 = {
 				LTH = { country_event = { days = 7 id = lothlorien.4 } }
 			}
 			# Frodo refuses
@@ -155,12 +155,12 @@ country_event = {
 			if = {
 				limit = { ring_haldir_in_fellowship = yes }
 				clr_global_flag = fs_lothlorien_haldir
-				FS_haldir = { ring_remove_member_from_fellowship_nolog = yes }
+				SHI = { FS_haldir = { ring_remove_member_from_fellowship_nolog = yes } }
 			}
 			else_if = {
 				limit = { ring_orophin_in_fellowship = yes }
 				clr_global_flag = fs_lothlorien_orophin
-				FS_orophin = { ring_remove_member_from_fellowship_nolog = yes }
+				SHI = { FS_orophin = { ring_remove_member_from_fellowship_nolog = yes } }
 			}
 
 			news_event = { hours = 12 id = news.371 }
@@ -208,28 +208,6 @@ country_event = {
 		ring_rivendell_disapproves = yes
 
 		hidden_effect = {
-			# Haldir/Orophin betray fellowship if they were in it
-			if = {
-				limit = { ring_haldir_in_fellowship = yes }
-				clr_global_flag = fs_lothlorien_haldir
-				FS_haldir = { ring_remove_member_from_fellowship_nolog = yes }
-
-				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-				add_to_array = { global.fs_eventlog = token:fs_event_lth_haldir_betrays_fellowship }
-				ring_trim_eventlog = yes
-			}
-			else_if = {
-				limit = { ring_orophin_in_fellowship = yes }
-				clr_global_flag = fs_lothlorien_orophin
-				FS_orophin = { ring_remove_member_from_fellowship_nolog = yes }
-
-				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-				add_to_array = { global.fs_eventlog = token:fs_event_lth_orophin_betrays_fellowship }
-				ring_trim_eventlog = yes
-			}
-
 			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 			add_to_array = { global.fs_eventlog = token:fs_event_lth_frodo_refuses }
@@ -239,6 +217,28 @@ country_event = {
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 			add_to_array = { global.fs_eventlog = token:fs_event_lth_frodo_refuses_escalate }
 			ring_trim_eventlog = yes
+
+			# Haldir/Orophin betray fellowship if they were in it
+			if = {
+				limit = { ring_haldir_in_fellowship = yes }
+				clr_global_flag = fs_lothlorien_haldir
+				SHI = { FS_haldir = { ring_remove_member_from_fellowship_nolog = yes } }
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_lth_haldir_betrays_fellowship }
+				ring_trim_eventlog = yes
+			}
+			else_if = {
+				limit = { ring_orophin_in_fellowship = yes }
+				clr_global_flag = fs_lothlorien_orophin
+				SHI = { FS_orophin = { ring_remove_member_from_fellowship_nolog = yes } }
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_lth_orophin_betrays_fellowship }
+				ring_trim_eventlog = yes
+			}
 
 			ring_open_interception_attempt_prompt = yes
 		}
@@ -277,7 +277,7 @@ country_event = {
 country_event = {
 	id = lothlorien.6
 	title = lothlorien.6.t
-	desc = lothlorien.6.d
+	desc = lothlorien.6.desc
 	fire_only_once = yes
 
 	is_triggered_only = yes
@@ -375,7 +375,7 @@ country_event = {
 
 		hidden_effect = {
 			clr_global_flag = fs_lothlorien_haldir
-			FS_haldir = { ring_remove_member_from_fellowship_nolog = yes }
+			SHI = { FS_haldir = { ring_remove_member_from_fellowship_nolog = yes } }
 
 			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
@@ -401,7 +401,7 @@ country_event = {
 
 		hidden_effect = {
 			clr_global_flag = fs_lothlorien_orophin
-			FS_orophin = { ring_remove_member_from_fellowship_nolog = yes }
+			SHI = { FS_orophin = { ring_remove_member_from_fellowship_nolog = yes } }
 
 			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
@@ -3113,6 +3113,11 @@ country_event = {
 	is_triggered_only = yes
 
 	picture = GFX_report_event_ring
+
+	trigger = {
+		NOT = { has_completed_focus = lth_keepthering }
+		NOT = { has_completed_focus = lth_anelvenfellowship }
+	}
 
 	# Keep it
 	option = {
