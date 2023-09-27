@@ -5,7 +5,7 @@ tags={
 	"Events"
 	"Gameplay"
 }
-name="Lord of the Rings Mod AAT"
+name="Lord of the Rings Mod BETA"
 replace_path="history/states"
 replace_path="history/countries"
 replace_path="history/general"
@@ -69,4 +69,3 @@ replace_path="scenario_tests/effects"
 replace_path="scenario_tests/tests"
 replace_path="scenario_tests/triggers"
 supported_version="1.12.*"
-path="C:/Users/Ruben Vermaat/Documents/Paradox Interactive/Hearts of Iron IV/mod/HoI4-LotrMod_AAT"

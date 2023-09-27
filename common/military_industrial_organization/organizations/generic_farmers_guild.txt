@@ -1,0 +1,384 @@
+generic_farmers_guild = {
+	icon = GFX_mio_generic_farming_1
+	name = "Farmer's Guild"
+
+	allowed = {
+		always = no
+	}
+
+	equipment_type = {
+		lotr_equipment_trade_caravans
+		lotr_equipment_light_cavalry
+		lotr_equipment_chariots
+	}
+	research_categories = {
+		lotr_labour_farming
+		lotr_eagles
+		lotr_fellbeasts
+		lotr_cavalry
+	}
+
+	research_bonus = 0.05
+
+	tree_header_text = {
+		text = "Horsekeeping"
+		x = 0
+	}
+
+	tree_header_text = {
+		text = "Livestock"
+		x = 3
+	}
+
+	tree_header_text = {
+		text = "Farming"
+		x = 7
+	}
+
+	initial_trait = {
+		name = "Farming Specialization"
+
+		organization_modifier = {
+			military_industrial_organization_task_capacity = 1
+			military_industrial_organization_funds_gain = 0.1
+		}
+
+		production_bonus = {
+			
+		}
+
+		equipment_bonus = {
+			
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_equine_industry
+		name = "Equine Industry"
+		icon = GFX_generic_mio_trait_horse
+
+		position = { x=0 y=0 }
+
+		# less resource required for Horse
+		# add funds
+
+		production_bonus = {
+			production_resource_need_factor = -0.1
+		}
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.1
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_horse_breeds_and_disc
+		name = "Horsebreeds and Disciplines"
+		icon = GFX_generic_mio_trait_saddle
+
+		relative_position_id = generic_mio_trait_equine_industry
+
+		all_parents = { generic_mio_trait_equine_industry }
+
+		# increase horse research speed, maybe add a mobile warfare boost
+
+		position = { x=0 y=2 }
+
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+
+		on_complete = {
+			FROM = {
+				army_experience = 10
+			}
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_horsedrawn_wagons
+		name = "Horsedrawn Wagons"
+		icon = GFX_generic_mio_trait_wagon
+
+		relative_position_id = generic_mio_trait_equine_industry
+
+		all_parents = { generic_mio_trait_horse_breeds_and_disc }
+
+		limit_to_equipment_type = { lotr_equipment_trade_caravans lotr_equipment_chariots }
+
+		# improve trade caravans and stuff
+
+		position = { x=0 y=3 }
+
+		production_bonus = {
+			production_cost_factor = -0.05
+		}
+
+		equipment_bonus = {
+			reliability = 0.05
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_livestock_management
+		name = "Livestock Management"
+		icon = GFX_generic_mio_trait_agricultre
+
+		position = { x=3 y=0 }
+
+		# Improve farming and stuff
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.1
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_leather_processing
+		name = "Leather Processing"
+		icon = GFX_generic_mio_trait_leather
+
+		relative_position_id = generic_mio_trait_livestock_management
+
+		all_parents = { generic_mio_trait_livestock_management }
+
+		position = { x=-1 y=1 }
+
+		# Increase leather production
+		production_bonus = {
+			production_resource_need_factor = -0.1
+		}
+
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = rubber
+					amount = 2
+				}
+			} }
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_enlarged_pastures
+		name = "Enlarged Pastures"
+		icon = GFX_generic_mio_trait_pasture
+
+		relative_position_id = generic_mio_trait_livestock_management
+
+		all_parents = { generic_mio_trait_livestock_management }
+
+		position = { x=1 y=1 }
+
+		# cheaper horses, better farming
+
+		equipment_bonus = {
+			soft_attack = 0.025
+			reliability = 0.03
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_expanded_produce
+		name = "Expanded Produce"
+		icon = GFX_generic_mio_trait_produce
+
+		relative_position_id = generic_mio_trait_livestock_management
+
+		any_parent = { generic_mio_trait_enlarged_pastures generic_mio_trait_leather_processing }
+
+		position = { x=0 y=3 }
+
+		# better farming?
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.25
+			military_industrial_organization_research_bonus = 0.05
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_horse_drawn_plows
+		name = "Horse-drawn Plows"
+		icon = GFX_generic_mio_trait_plow
+
+		relative_position_id = generic_mio_trait_livestock_management
+
+		any_parent = { generic_mio_trait_sustainable_agriculture generic_mio_trait_expanded_produce }
+		all_parents = { generic_mio_trait_horsedrawn_wagons }
+
+		position = { x=0 y=4 }
+
+		# improve chariots, something else
+		limit_to_equipment_type = { lotr_equipment_chariots lotr_equipment_trade_caravans }
+
+		equipment_bonus = {
+			fuel_consumption = -0.05
+			supply_consumption = -0.05
+			max_strength = 0.05
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_crop_storage
+		name = "Crop Storage and Preservation"
+		icon = GFX_generic_mio_trait_wheat
+
+		position = { x=6 y=0 }
+
+		equipment_bonus = {
+			fuel_capacity = 0.25
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_crop_selection
+		name = "Crop Selection and Rotation"
+		icon = GFX_generic_mio_trait_wheat2
+
+		relative_position_id = generic_mio_trait_crop_storage
+
+		position = { x=1 y=0 }
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.05
+		}
+
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = oil
+					amount = 2
+				}
+			} }
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_irrigation_channels
+		name = "Advanced Irrigation Channels"
+		icon = GFX_generic_mio_trait_water
+
+		relative_position_id = generic_mio_trait_crop_storage
+
+		position = { x=2 y=0 }
+
+		production_bonus = {
+			production_cost_factor = -0.05
+		}
+
+		equipment_bonus = {
+			fuel_consumption = -0.05
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_winter_stores
+		name = "Winter Stores"
+		icon = GFX_generic_mio_trait_winter_hut
+		position = { x=6 y=2 }
+
+		all_parents = { generic_mio_trait_crop_storage }
+
+		mutually_exclusive = { generic_mio_trait_soil_fertility generic_mio_trait_expand_arable_land }
+
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_building_construction = {
+					type = fuel_silo
+					level = 1
+					instant_build = yes
+				}
+			} }
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_soil_fertility
+		name = "Improved Soil Fertility"
+		icon = GFX_generic_mio_trait_fertility
+
+		relative_position_id = generic_mio_trait_crop_storage
+
+		all_parents = { generic_mio_trait_crop_selection }
+
+		mutually_exclusive = { generic_mio_trait_winter_stores generic_mio_trait_expand_arable_land }
+
+		# dunno
+
+		position = { x=1 y=2 }
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.1
+		}
+
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = oil
+					amount = 3
+				}
+			} }
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_expand_arable_land
+		name = "Expand Arable Land"
+		icon = GFX_generic_mio_trait_pasture
+
+		relative_position_id = generic_mio_trait_crop_storage
+
+		all_parents = { generic_mio_trait_irrigation_channels }
+
+		mutually_exclusive = { generic_mio_trait_soil_fertility generic_mio_trait_winter_stores }
+
+		# dunno
+
+		position = { x=2 y=2 }
+
+		production_bonus = {
+			production_cost_factor = -0.08
+		}
+
+		equipment_bonus = {
+			fuel_consumption = -0.08
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_sustainable_agriculture
+		name = "Sustainable Agriculture"
+		icon = GFX_generic_mio_trait_agricultre
+
+		relative_position_id = generic_mio_trait_crop_storage
+
+		any_parent = { generic_mio_trait_expand_arable_land generic_mio_trait_soil_fertility generic_mio_trait_winter_stores }
+
+		# dunno
+
+		position = { x=1 y=3 }
+
+		production_bonus = {
+			production_cost_factor = -0.03
+		}
+
+		equipment_bonus = {
+			fuel_consumption = -0.03
+		}
+
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = oil
+					amount = 2
+				}
+				add_resource = {
+					type = rubber
+					amount = 2
+				}
+			} }
+		}
+	}
+
+	
+}
+

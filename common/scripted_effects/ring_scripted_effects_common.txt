@@ -21,6 +21,57 @@ ring_heal_fellowship = {
 	}
 }
 
+# Gives ringbearer 1 extra HP
+ring_bless_ringbearer = {
+	custom_effect_tooltip = ring_bless_ringbearer_tt
+
+	hidden_effect = {
+		SHI = {
+			add_to_variable = { global.fs_members^0.health = 1 }
+
+			add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_country_ringbearer_blessed_member }
+			ring_trim_eventlog = yes
+		}
+	}
+}
+
+# Reduces the health and dexterity of a random member
+ring_curse_random_fellowship_member = {
+	custom_effect_tooltip = ring_curse_random_fellowship_member_tt
+
+	hidden_effect = {
+		SHI = {
+			random_scope_in_array = {
+				array = global.fs_members
+				limit = {
+					check_variable = { defense_level > 1 }
+					check_variable = { logistics_level > 1 }
+				}
+				
+				THIS = { ring_curse_member = yes }
+			}
+		}
+	}
+}
+
+# Reduces the health and dexterity
+ring_curse_member = {
+	add_logistics = -1
+	add_defense = -1
+
+	if = {
+		limit = { check_variable = { health > 1 } }
+		subtract_from_variable = { health = 1 }
+	}
+
+	add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+	add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+	add_to_array = { global.fs_eventlog = token:fs_event_country_curse_fellowship_member }
+	ring_trim_eventlog = yes
+}
+
 
 # Gives a random fellowship member +2 hp and +2 attack
 ring_gear_up_random_member = {
@@ -52,6 +103,10 @@ ring_heal_fellowship_member = {
 
 # Opens/Closes the details view
 ring_toggle_details_view = {
+	if = {
+		limit = { has_country_flag = elven_alliance_details_view_open }
+		clr_country_flag = elven_alliance_details_view_open
+	}
 	if = {
 		limit = { has_country_flag = ring_details_view_open }
 		clr_country_flag = ring_details_view_open
@@ -241,7 +296,7 @@ ring_fellowship_begin_move_to_next_state = {
 	}
 	# two hobbits on foot, not knowing wtf they're doing
 	else_if = {
-		limit = { has_global_flag = fs_only_hobbits }
+		limit = { has_global_flag = fs_post_argonath }
 		set_variable = { global.fs_days_left_in_state = 120 }
 	}
 	# base speed
@@ -249,6 +304,7 @@ ring_fellowship_begin_move_to_next_state = {
 		set_variable = { global.fs_days_left_in_state = 65 }
 	}
 
+	# Slow fellowship down by 50% in Mordor territory
 	if = {
 		limit = {
 			var:global.fs_currentstate = {
@@ -261,23 +317,89 @@ ring_fellowship_begin_move_to_next_state = {
 			}
 		}
 		multiply_variable = { global.fs_days_left_in_state = 1.5 }
+		round_variable = global.fs_days_left_in_state
 	}
+}
+
+
+ring_destroy_ring = {
+	# Remove BOPs
+	var:global.fs_ring_owner = {
+		if = {
+			limit = { has_power_balance = { id = ring_corruption_balance } }
+			remove_power_balance = { id = ring_corruption_balance }
+		}
+	}
+
+	if = {
+		limit = { MOR = { has_government = belligerent } }
+		MOR = { country_event = { days = 12 id = fs.106 } }
+	}
+
+	set_global_flag = fs_ring_destroyed
+	ring_clear_pathstack = yes
+	ring_clear_fellowship_members = yes
+	news_event = { hours = 12 id = news.376 }
+}
+
+
+# Update variables used for the ring corruption BOP
+ring_update_bop_values = {
+	if = {
+		limit = { NOT = { has_variable = ring_bop_casualties } }
+		set_variable = { ring_bop_casualties = casualties_k }
+	}
+	set_variable = { ring_bop_casualties_diff = casualties_k }
+	subtract_from_variable = { ring_bop_casualties_diff = ring_bop_casualties }
+
+	if = {
+		limit = { NOT = { has_variable = ring_bop_stability } }
+		set_variable = { ring_bop_stability = stability }
+	}
+	set_variable = { ring_bop_stability_diff = stability }
+	subtract_from_variable = { ring_bop_stability_diff = ring_bop_stability }
+
+	if = {
+		limit = { NOT = { has_variable = ring_bop_warsupport } }
+		set_variable = { ring_bop_warsupport = has_war_support }
+	}
+	set_variable = { ring_bop_warsupport_diff = has_war_support }
+	subtract_from_variable = { ring_bop_warsupport_diff = ring_bop_warsupport }
 }
 
 
 # Runs every day. Pls keep as simple as possible for best performance
 # Note to self: Maybe make this a weekly update instead?
 ring_daily_update = {
+	if = {
+		limit = {
+			has_global_flag = fs_ring_seized
+			NOT = { has_global_flag = fs_ring_destroyed }
+			var:global.fs_ring_owner = { NOT = { tag = MOR } }
+		}
+		var:global.fs_ring_owner = {
+			ring_update_bop_values = yes
+		}
+		MOR = {
+			ring_update_bop_values = yes
+		}
+	}
 
 	if = {
-
 		# Update fs_days_left_in_state
 		limit = { check_variable = { global.fs_days_left_in_state > 0 } }
 		subtract_from_variable = { global.fs_days_left_in_state = 1 }
+		round_variable = global.fs_days_left_in_state
 
-		# When the timer runs out, move fellowship to the enxt state
+		# When the timer runs out, move fellowship to the next state
 		if = {
-			limit = { check_variable = { global.fs_days_left_in_state = 0 } }
+			limit = {
+				check_variable = {
+					var = global.fs_days_left_in_state
+					value = 0
+					compare = less_than_or_equals
+			}
+		}
 
 			# This event moves the fellowship to the enxt state
 			#log = "FS_STEP"
@@ -438,7 +560,7 @@ ring_execute_interception_attempt = {
 	if = {
 		limit = {
 			tag = MOC
-			NOT = { ring_frodo_is_dead = yes }
+			NOT = { ring_ringbearer_is_dead = yes }
 			MOC_cavetroll = { is_in_array = { ROOT.fs_hunting_party = THIS } }
 			MOC_cavetroll = { check_variable = { health > 0 } }
 		}
@@ -469,7 +591,7 @@ ring_execute_interception_attempt = {
 	# eventlog if fellowship killed the entire hunting party
 	if = {
 		limit = {
-			NOT = { ring_frodo_is_dead = yes }
+			NOT = { ring_ringbearer_is_dead = yes }
 			check_variable = { ROOT.fs_hunting_party^num < 1 }
 		}
 
@@ -482,7 +604,7 @@ ring_execute_interception_attempt = {
 	# if the for-loop ran to end without cancelling, let the fellowship escape
 	else_if = {
 		limit = {
-			NOT = { ring_frodo_is_dead = yes }
+			NOT = { ring_ringbearer_is_dead = yes }
 			check_variable = { fs_interception_cancelled = 0 }
 		}
 
@@ -857,9 +979,9 @@ ring_interception_combat_fs_attack_hp = {
 ring_try_seize = {
 	
 	if = {
-		limit = { ring_frodo_is_dead = yes }
+		limit = { ring_ringbearer_is_dead = yes }
 
-		log = "FRODO IS DEAD. RING SEIZED"
+		log = "RINGBEARER IS DEAD. RING SEIZED"
 
 		ring_seize_ring = yes
 	}
@@ -906,11 +1028,72 @@ ring_interception_disengage_check = {
 	}
 }
 
+
+ring_increase_corruption = {
+	add_power_balance_value = {
+		id = ring_corruption_balance
+		value = 0.1
+	}
+}
+
+ring_increase_corruption_2 = {
+	add_power_balance_value = {
+		id = ring_corruption_balance
+		value = 0.2
+	}
+}
+
+ring_decrease_corruption = {
+	add_power_balance_value = {
+		id = ring_corruption_balance
+		value = 0.1
+	}
+}
+
+ring_decrease_corruption_2 = {
+	add_power_balance_value = {
+		id = ring_corruption_balance
+		value = 0.2
+	}
+}
+
+ring_give_sauron_ring = {
+	custom_effect_tooltip = corruption_bad_corrupted_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				tag = LTH
+				NOT = { has_completed_focus = lth_givesauronthering }
+			}
+			complete_national_focus = lth_givesauronthering
+		}
+
+		MOR = { ring_seize_ring = yes }	
+	}
+}
+
 # THIS gets the ring (NOT ROOT!)
 ring_seize_ring = {
 
 	hidden_effect = {
 		log = "RING SEIZED"
+
+		if = {
+			limit = {
+				tag = LTH
+				NOT = { has_completed_focus = lth_seizetheonering }
+			}
+			LTH = { complete_national_focus = lth_seizetheonering }
+		}
+		# Ring was seized through events in Lothlorien -> Elven Fellowship available
+		if = {
+			limit = {
+				tag = LTH
+				check_variable = { global.fs_currentstate = 75 }
+				NOT = { has_global_flag = fs_ring_seized }
+			}
+			set_global_flag = fs_ring_seized_in_lth
+		}
 		
 		set_variable = { global.fs_days_left_in_state = 0 }
 
@@ -920,21 +1103,59 @@ ring_seize_ring = {
 		add_to_array = { global.fs_eventlog = token:fs_event_takes_the_ring }
 		ring_trim_eventlog = yes
 
-
 		set_global_flag = fs_ring_seized
 		var:global.fs_ring_owner = {
-			remove_ideas = one_true_ring
+			ring_remove_ring = yes
 		}
 		THIS = {
 			set_variable = { global.fs_ring_owner = THIS }
-			add_ideas = one_true_ring
+			ring_add_ring = yes
 		}
 
 		ring_clear_fellowship_members = yes
 		ring_clear_pathstack = yes
 	}
-	THIS = {
-		country_event = fs.101
+}
+
+ring_remove_ring = {
+	if = {
+		limit = { has_idea = one_true_ring }
+		remove_ideas = one_true_ring
+	}
+	else_if = {
+		limit = { has_idea = one_true_ring_2 }
+		remove_ideas = one_true_ring_2
+	}
+	remove_power_balance = { id = ring_corruption_balance }
+}
+
+ring_add_ring = {
+	if = {
+		limit = { has_global_flag = ring_merged_with_nenya }
+		add_ideas = one_true_ring_2
+	}
+	else = {
+		add_ideas = one_true_ring
+	}
+	# add BOP to new owner
+	if = {
+		limit = { NOT = { tag = MOR } } # MOR can't corrupt themselves lol
+		set_power_balance = {
+			id = ring_corruption_balance
+			set_default = yes
+		}
+	}
+	ring_update_bop_values = yes
+	MOR = {
+		ring_update_bop_values = yes
+	}
+}
+
+ring_upgrade_ring = {
+	set_global_flag = ring_merged_with_nenya
+	swap_ideas = {
+		remove_idea = one_true_ring
+		add_idea = one_true_ring_2
 	}
 }
 

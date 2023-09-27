@@ -180,7 +180,7 @@ execute_fellowship_step = {
 			}
 			unlock_national_focus = torturegollum
 		}
-		
+
 
 		# Eventlog
 		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
@@ -217,7 +217,7 @@ execute_fellowship_step = {
 
 		ring_clear_fellowship_members = yes
 
-		# Create base fellowship 
+		# Create base fellowship
 		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
 		FS_sam = { ring_add_member_to_fellowship_nolog = yes }
 		FS_aragorn = { ring_add_member_to_fellowship_nolog = yes }
@@ -225,10 +225,19 @@ execute_fellowship_step = {
 		ring_heal_fellowship = yes
 
 		# Hold Council of Elrond:
-		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-		add_to_array = { global.fs_eventlog = token:fs_event_rivendell_council_invoked }
-		ring_trim_eventlog = yes
+		if = {
+			limit = { has_global_flag = fs_lothlorien_invited }
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_rivendell_council_invoked_with_lth }
+			ring_trim_eventlog = yes
+		}
+		else = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_rivendell_council_invoked }
+			ring_trim_eventlog = yes
+		}
 		RIV = { country_event = { days = 14 id = rivendell.1 } }
 	}
 
@@ -278,6 +287,12 @@ execute_fellowship_step = {
 	else_if = {
 		limit = { check_variable = { global.fs_currentstate = 75 } }
 
+		# If LTH hasn't done the ring focus yet, complete it now.
+		if = {
+			limit = { NOT = { LTH = { has_completed_focus = lth_theonering } } }
+			LTH = { complete_national_focus = lth_theonering }
+		}
+
 		# give LTH option to offer fellowship shelter
 		if = {
 			limit = {
@@ -317,12 +332,16 @@ execute_fellowship_step = {
 	else_if = {
 		limit = { check_variable = { global.fs_currentstate = 98 } }
 
+		set_global_flag = fs_post_argonath # Slow things down after Argonath
+		clr_global_flag = fs_on_boat
+		clr_global_flag = fs_on_horseback
+
 		if = {
-			limit = { has_global_flag = fs_fellowship_breakup }
+			limit = {
+				has_global_flag = fs_fellowship_breakup
+				NOT = { has_global_flag = fs_elven_fellowship }
+			}
 			FS_gollum = { ring_add_member_to_fellowship = yes }
-			set_global_flag = fs_only_hobbits
-			clr_global_flag = fs_on_boat
-			clr_global_flag = fs_on_horseback
 		}
 	}
 
@@ -335,7 +354,10 @@ execute_fellowship_step = {
 
 	# Ithilien: Faramir encounter
 	else_if = {
-		limit = { check_variable = { global.fs_currentstate = 173 } }
+		limit = {
+			check_variable = { global.fs_currentstate = 173 }
+			NOT = { has_global_flag = fs_elven_fellowship }
+		}
 
 		if = {
 			limit = {
@@ -364,7 +386,10 @@ execute_fellowship_step = {
 	# Minas Morgul: Gollum leaves and Shelob encounter
 	# Last chance for Mordor
 	else_if = {
-		limit = { check_variable = { global.fs_currentstate = 5 } }
+		limit = {
+			check_variable = { global.fs_currentstate = 5 }
+			NOT = { has_global_flag = fs_elven_fellowship }
+		}
 
 		FS_gollum = { ring_remove_member_from_fellowship = yes }
 
@@ -381,18 +406,9 @@ execute_fellowship_step = {
 	# Mount Doom: RING DESTROYED
 	else_if = {
 		limit = { check_variable = { global.fs_currentstate = 10 } }
-		if = {
-			limit = { MOR = { has_government = belligerent } }
-			MOR = { country_event = { days = 12 id = fs.106 } }
-		}
-		else = {
-			set_global_flag = fs_ring_destroyed
-			ring_clear_pathstack = yes
-			ring_clear_fellowship_members = yes
-			news_event = { hours = 12 id = news.376 }
-		}
+		ring_destroy_ring = yes
 	}
-	
+
 	# Move into next state if fellowship still exists
 	if = {
 		limit = { check_variable = { global.fs_path_stack^num > 0 } }
@@ -403,55 +419,57 @@ execute_fellowship_step = {
 # starting-event
 execute_fs_commence = {
 	SHI = {
-
-		# set variables
-		set_variable = { global.fs_currentstate = 42 }
-		set_variable = { global.fs_steps = 1 }
-		log = "currentState: [?global.fs_currentstate]"
-
-		set_global_flag = fs_started
-
-		# Set path to prelude
-		set_variable = { global.fs_path = 0 }
-
-		# Set mordor max attempts
-		set_variable = { global.ring_mor_max_attempts = 1 }
-
-		# Initial fellowship
-		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
-		FS_sam = { ring_add_member_to_fellowship_nolog = yes }
-
 		if = {
-			limit = { has_global_flag = fs_nazgul_sent_to_shire }
+			limit = { NOT = { has_global_flag = fs_started } }
+			# set variables
+			set_variable = { global.fs_currentstate = 42 }
+			set_variable = { global.fs_steps = 1 }
+			log = "currentState: [?global.fs_currentstate]"
+
+			set_global_flag = fs_started
+
+			# Set path to prelude
+			set_variable = { global.fs_path = 0 }
+
+			# Set mordor max attempts
+			set_variable = { global.ring_mor_max_attempts = 1 }
+
+			# Initial fellowship
+			FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+			FS_sam = { ring_add_member_to_fellowship_nolog = yes }
+
+			if = {
+				limit = { has_global_flag = fs_nazgul_sent_to_shire }
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_start }
+				ring_trim_eventlog = yes
+			}
+			else = {
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_start_nazgul }
+				ring_trim_eventlog = yes
+			}
+
+			# Gandalf goes to meet Saruman
+			ISE = { country_event = { days = 20 id = isengard.1 } }
 			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-			add_to_array = { global.fs_eventlog = token:fs_event_start }
+			add_to_array = { global.fs_eventlog = token:fs_event_gandalf_goes_to_saruman }
 			ring_trim_eventlog = yes
+
+			# starting pathstack (Shire to Rivendell)
+			add_to_array = { global.fs_path_stack = 150 }
+			add_to_array = { global.fs_path_stack = 149 }
+			add_to_array = { global.fs_path_stack = 145 }
+			add_to_array = { global.fs_path_stack = 64 }
+			add_to_array = { global.fs_path_stack = 200 }
+			add_to_array = { global.fs_path_stack = 202 }
+			add_to_array = { global.fs_path_stack = 65 }
+
+			ring_fellowship_begin_move_to_next_state = yes
 		}
-		else = {
-			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-			add_to_array = { global.fs_eventlog = token:fs_event_start_nazgul }
-			ring_trim_eventlog = yes
-		}
-
-		# Gandalf goes to meet Saruman
-		ISE = { country_event = { days = 20 id = isengard.1 } }
-		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-		add_to_array = { global.fs_eventlog = token:fs_event_gandalf_goes_to_saruman }
-		ring_trim_eventlog = yes
-
-		# starting pathstack (Shire to Rivendell)
-		add_to_array = { global.fs_path_stack = 150 }
-		add_to_array = { global.fs_path_stack = 149 }
-		add_to_array = { global.fs_path_stack = 145 }
-		add_to_array = { global.fs_path_stack = 64 }
-		add_to_array = { global.fs_path_stack = 200 }
-		add_to_array = { global.fs_path_stack = 202 }
-		add_to_array = { global.fs_path_stack = 65 }
-
-		ring_fellowship_begin_move_to_next_state = yes
 
 	}
 }
@@ -465,6 +483,10 @@ ring_check_if_council_of_elrond_started = {
 			has_global_flag = fs_mirkwood_responded
 			has_global_flag = fs_gondor_responded
 			has_global_flag = fs_erebor_responded
+			OR = {
+				NOT = { has_global_flag = fs_lothlorien_invited }
+				has_global_flag = fs_lothlorien_responded
+			}
 		}
 		SHI = { execute_start_council_of_elrond = yes }
 	}
@@ -478,6 +500,10 @@ ring_check_if_council_of_elrond_concluded = {
 			has_global_flag = fs_gondor_responded
 			has_global_flag = fs_erebor_responded
 			has_global_flag = fs_rivendell_responded
+			OR = {
+				NOT = { has_global_flag = fs_lothlorien_invited }
+				has_global_flag = fs_lothlorien_responded
+			}
 		}
 		SHI = { execute_conclude_council_of_elrond = yes }
 	}
@@ -488,6 +514,7 @@ execute_start_council_of_elrond = {
 	clr_global_flag = fs_mirkwood_responded
 	clr_global_flag = fs_erebor_responded
 	clr_global_flag = fs_gondor_responded
+	clr_global_flag = fs_lothlorien_responded
 
 	# Let the members vote on the fellowships path
 	RIV = { country_event = { id = rivendell.19 days = 4 } }
@@ -511,6 +538,16 @@ execute_start_council_of_elrond = {
 	}
 	else = {
 		set_global_flag = fs_mirkwood_responded
+	}
+	if = {
+		limit = {
+			has_global_flag = fs_lothlorien_invited
+			NOT = { has_global_flag = fs_lothlorien_noone }
+		}
+		LTH = { country_event = { id = rivendell.19 days = 4 } }
+	}
+	else = {
+		set_global_flag = fs_lothlorien_responded
 	}
 }
 
@@ -769,7 +806,7 @@ execute_black_gate_decision = {
 	}
 
 	# get going
-	ring_fellowship_begin_move_to_next_state = yes	
+	ring_fellowship_begin_move_to_next_state = yes
 }
 
 execute_force_fellowship_through_moria = {
@@ -817,13 +854,13 @@ ring_execute_weathertop_encounter = {
 	add_to_array = { global.fs_eventlog = token:fs_event_weathertop_encounter }
 	ring_trim_eventlog = yes
 
-	# Nazgul get a chance to attack once:
 	random_list = {
 		1 = {
+			# Nazgul attack once:
 			ring_interception_combat_hp_attack_fs = yes
 		}
 		1 = {
-
+			
 		}
 	}
 
@@ -864,7 +901,7 @@ ring_execute_weathertop_encounter = {
 	# Post-combat:
 	if = {
 		limit = {
-			NOT = { ring_frodo_is_dead = yes }
+			NOT = { ring_ringbearer_is_dead = yes }
 			has_global_flag = fs_arwen_sent
 		}
 
@@ -888,7 +925,7 @@ ring_execute_weathertop_encounter = {
 	}
 	else_if = {
 		limit = {
-			NOT = { ring_frodo_is_dead = yes }
+			NOT = { ring_ringbearer_is_dead = yes }
 		}
 		MOR = { country_event = { days = 3 id = mordor.56 } }
 	}
@@ -918,7 +955,7 @@ ring_execute_boromir_betrayal = {
 				limit = {
 					NOT = {
 						ring_boromir_is_dead = yes
-						ring_frodo_is_dead = yes
+						ring_ringbearer_is_dead = yes
 					}
 				}
 
@@ -928,7 +965,7 @@ ring_execute_boromir_betrayal = {
 
 		# if frodo dies -> GON seizes ring
 		if = {
-			limit = { ring_frodo_is_dead = yes }
+			limit = { ring_ringbearer_is_dead = yes }
 
 			GON = { country_event = gondor.11 }
 		}
@@ -948,6 +985,7 @@ ring_execute_argonath_raid = {
 		limit = {
 			has_global_flag = gandalf_imprisoned
 			country_exists = ISE
+			ISE = { NOT = { has_country_flag = fs_interceptions_disabled } }
 		}
 		ISE = { country_event = { id = isengard.7 days = 6 } }
 	}
@@ -969,19 +1007,98 @@ ring_execute_argonath_raid = {
 }
 
 ring_breakup_fellowship = {
-	SHI = {
-		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-		add_to_array = { global.fs_eventlog = token:fs_event_fellowship_separated }
-		ring_trim_eventlog = yes
+	if = {
+		limit = { NOT = { has_global_flag = fs_elven_fellowship } } # Elven fellowship doesnt break up
+		SHI = {
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_fellowship_separated }
+			ring_trim_eventlog = yes
 
-		ring_clear_fellowship_members = yes
-		set_global_flag = fs_fellowship_breakup
+			ring_clear_fellowship_members = yes
+			set_global_flag = fs_fellowship_breakup
 
-		FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
-		FS_sam = { ring_add_member_to_fellowship_nolog = yes }
+			FS_frodo = { ring_add_member_to_fellowship_nolog = yes }
+			FS_sam = { ring_add_member_to_fellowship_nolog = yes }
 
-		set_global_flag = fs_gandalf_left_fellowship
+			set_global_flag = fs_gandalf_left_fellowship
+		}
+	}
+}
+
+# Lothlorien can set up an elven fellowship after taking the ring
+ring_start_elven_fellowship = {
+	custom_effect_tooltip = ring_start_elven_fellowship_tt
+	hidden_effect = {
+		SHI = {
+			ring_clear_fellowship_members = yes
+
+			# Eventlog
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_elven_fellowship }
+			ring_trim_eventlog = yes
+
+			# News event:
+			news_event = { hours = 24 id = news.396 }
+
+			# global flag
+			set_global_flag = fs_elven_fellowship
+		}
+
+		LTH = {
+			# take ring away
+			ring_remove_ring = yes
+
+			# Create fellowship
+			#ring_clear_fellowship_members = yes
+			# Haldir is ringbearer
+			#LTH_haldir = { retire = yes }
+			LTH_haldir = { retire = yes }
+			SHI = { FS_haldir = { ring_add_member_to_fellowship_nolog = yes } }
+			# Add the other elves (if available)
+			if = {
+				limit = { LTH_orophin = { is_unit_leader = yes } }
+				LTH_orophin = { retire = yes }
+				SHI = { FS_orophin = { ring_add_member_to_fellowship_nolog = yes } }
+			}
+			if = {
+				limit = { LTH_rumil = { is_unit_leader = yes } }
+				LTH_rumil = { retire = yes }
+				SHI = { FS_rumil = { ring_add_member_to_fellowship_nolog = yes } }
+			}
+			if = {
+				limit = { LTH_tarborn = { is_unit_leader = yes } }
+				LTH_tarborn = { retire = yes }
+				SHI = { FS_tarborn = { ring_add_member_to_fellowship_nolog = yes } }
+			}
+			if = {
+				limit = { LTH_lethsael = { is_unit_leader = yes } }
+				LTH_lethsael = { retire = yes }
+				SHI = { FS_lethsael = { ring_add_member_to_fellowship_nolog = yes } }
+			}
+		}
+		
+		SHI = {
+			# Clear all the ring stuff:
+			clr_global_flag = fs_ring_seized
+			clear_variable = global.fs_ring_owner
+
+			# Re-populate pathstack (Path shouldnt change)
+			add_to_array = { global.fs_path_stack = 191 }
+			add_to_array = { global.fs_path_stack = 179 }
+			add_to_array = { global.fs_path_stack = 30 }
+			add_to_array = { global.fs_path_stack = 206 }
+			add_to_array = { global.fs_path_stack = 27 }
+			add_to_array = { global.fs_path_stack = 98 }
+			add_to_array = { global.fs_path_stack = 182 }
+			add_to_array = { global.fs_path_stack = 98 }
+			add_to_array = { global.fs_path_stack = 101 }
+			add_to_array = { global.fs_path_stack = 204 }
+
+			# Get going
+			ring_fellowship_begin_move_to_next_state = yes
+		}	
 	}
 }
 

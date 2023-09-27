@@ -1,0 +1,645 @@
+
+
+elven_alliance_sanction_country = {
+	var:global.ea_current_resolution_target = {
+		set_country_flag = ea_is_sanctioned
+	}
+
+	send_embargo = global.ea_current_resolution_target
+}
+
+ea_apply_all_sanctions = {
+	every_country = {
+		limit = { is_sanctioned_by_elven_alliance = yes }
+		PREV = {
+			send_embargo = PREV
+		}
+	}
+}
+
+elven_alliance_declare_joint_war_against = {
+	custom_effect_tooltip = elven_alliance_declare_joint_war_against_tt
+	hidden_effect = {
+		declare_war_on = {
+			target = var:global.ea_current_resolution_target
+			type = annex_everything
+		}
+	}
+}
+
+elven_alliance_form_martial_faction = {
+	get_highest_scored_country_temp = {
+		var = ea_strongest_member
+		scorer = ea_hegemony_leader_scorer
+	}
+	var:ea_strongest_member = {
+		if = {
+			limit = { is_faction_leader = yes }
+			set_faction_name = "Elven Assembly"
+		}
+		else_if = {
+			limit = { is_in_faction = yes }
+			leave_faction = yes
+			create_faction = "Elven Assembly"
+		}
+		else = {
+			create_faction = "Elven Assembly"
+		}
+
+		save_event_target_as = ea_martial_faction_leader
+
+		for_each_scope_loop = {
+			array = global.elven_alliance_members
+			if = {
+				limit = {
+					NOT = { tag = PREV }
+					NOT = { is_subject = yes }
+				}
+				country_event = elven_alliance.9
+			}
+		}
+	}
+}
+
+
+elven_alliance_ensure_no_war = {
+	if = {
+		limit = {
+			NOT = { ea_has_union_tier_2 = yes } # Union tier 2 allows wars
+			is_elven_alliance_member = yes
+			any_of_scopes = {
+				array = global.elven_alliance_members
+				PREV = { has_offensive_war_with = PREV }
+			}
+		}
+		country_event = elven_alliance.10
+		elven_alliance_leave = yes
+	}
+}
+
+elven_alliance_hegemony_puppet = {
+	# get current popularities
+	store_ideologies_before_puppeting = yes
+
+	var:global.ea_hegemony_leader = {
+		set_autonomy = {
+			target = PREV
+			autonomy_state = autonomy_ea_hegemony_subject
+			end_wars = no
+			end_civil_wars = no
+		}
+	}
+
+	# restore ideologies
+	restore_ideologies_post_puppeting = yes
+}
+
+elven_alliance_hegemony_end_puppet = {
+	var:global.ea_hegemony_leader = {
+		end_puppet = PREV
+	}
+}
+
+
+ea_set_type_hegemony = {
+	hidden_effect = {
+		ea_hegemony_select_leader = yes
+		set_global_flag = ea_type_hegemony
+		set_global_flag = ea_hegemony_resolutions_unlocked
+		every_country = {
+			limit = { is_elven_alliance_member = yes }
+			country_event = { id = elven_alliance.7 days = 1 }
+		}
+	}
+}
+
+ea_set_type_martial = {
+	hidden_effect = {
+		set_global_flag = ea_type_martial
+		set_global_flag = ea_martial_resolutions_unlocked
+		every_country = {
+			limit = { is_elven_alliance_member = yes }
+			country_event = { id = elven_alliance.7 days = 1 }
+		}
+	}
+}
+
+ea_set_type_union = {
+	hidden_effect = {
+		set_global_flag = ea_type_union
+		set_global_flag = ea_union_resolutions_unlocked
+		every_country = {
+			limit = { is_elven_alliance_member = yes }
+			country_event = { id = elven_alliance.7 days = 1 }
+		}
+	}
+}
+
+
+# Select strongest ea member and write it into global.ea_hegemony_leader_scorer
+ea_hegemony_select_leader = {
+	get_highest_scored_country = {
+		var = global.ea_hegemony_leader
+		scorer = ea_hegemony_leader_scorer
+	}
+	# Notify new leader
+	var:global.ea_hegemony_leader = {
+		country_event = elven_alliance.6
+	}
+}
+
+
+# Opens/Closes the details view
+elven_alliance_toggle_details_view = {
+	if = {
+		limit = { has_country_flag = ring_details_view_open }
+		clr_country_flag = ring_details_view_open
+	}
+	if = {
+		limit = { has_country_flag = elven_alliance_details_view_open }
+		clr_country_flag = elven_alliance_details_view_open
+	}
+	# To keep the UI clean and smooth, we won't allow this to open when interception_form is open
+	else_if = {
+		limit = { NOT = { has_country_flag = ring_interception_form_open } }
+		set_country_flag = elven_alliance_details_view_open
+	}
+}
+
+
+# This THIS has a resolution in the ea queue, remove it
+elven_alliance_withdraw_resolution_from_queue = {
+	if = {
+		limit = { ea_has_resolution_in_queue = yes }
+		clear_variable = ea_resolution_target
+		# Loop over the array of tags, check if any matches ours, then remove entries from both arrays
+		for_each_loop = {
+			array = global.ea_proposers_queue
+			value = v
+			index = i
+			break = break
+			if = {
+				limit = { tag = v }
+				clear_variable = ea_resolution_target
+				remove_from_array = { array = global.ea_proposers_queue index = i }
+				remove_from_array = { array = global.ea_resolutions_queue index = i }
+				set_temp_variable = { break = 1 }
+			}
+		}
+	}
+}
+
+
+elven_alliance_join = {
+	custom_effect_tooltip = elven_alliance_join_tt
+
+	set_country_flag = wtf_is_going_on
+
+	if = {
+		limit = { is_elven_alliance_member = no }
+		# Add all the existing ideas to the new member
+		ea_alliance_add_to_new_member = yes
+		ea_industry_add_to_new_member = yes
+		ea_expansion_add_to_new_member = yes
+
+		ea_trade_add_to_new_member = yes
+		ea_peace_add_to_new_member = yes
+		ea_research_add_to_new_member = yes
+
+		ea_hegemony_add_to_new_member = yes
+		ea_martial_add_to_new_member = yes
+		ea_union_add_to_new_member = yes
+
+		hidden_effect = { add_ideas = ea_is_member_idea }
+
+		ea_apply_all_sanctions = yes
+
+		add_to_array = {
+			global.elven_alliance_members = THIS
+		}
+
+		set_country_flag = is_elven_alliance_member
+	}
+}
+
+elven_alliance_leave = {
+	custom_effect_tooltip = "Leave the Elven Assembly"
+	if = {
+		limit = { is_elven_alliance_member = yes }
+		clr_country_flag = is_elven_alliance_member
+
+		if = {
+			limit = { ea_has_martial_tier_3 = yes is_in_faction = yes }
+			leave_faction = yes
+		}
+
+		remove_from_array = {
+			global.elven_alliance_members = THIS
+		}
+
+		elven_alliance_withdraw_resolution_from_queue = yes
+
+		# Note: Ideas get removed automatically through the cancel trigger
+	}
+}
+
+
+elven_allicane_increase_pp_cost = {
+	custom_effect_tooltip = elven_allicane_increase_pp_cost_tt
+	if = {
+		limit = { NOT = { has_variable = elven_alliance_proposal_cost } }
+		set_variable = { elven_alliance_proposal_cost = 25 }
+	}
+	add_to_variable = { elven_alliance_proposal_cost = 10 }
+}
+
+elven_alliance_clear_votes = {
+	clear_array = global.elven_alliance_members_against
+	clear_array = global.elven_alliance_members_in_favour
+	clear_array = global.elven_alliance_members_abstain
+
+	every_country = {
+		limit = { has_country_flag = is_elven_alliance_member }
+		add_to_array = { global.elven_alliance_members_abstain = THIS }
+	}
+}
+
+
+
+elven_alliance_vote_in_favour = {
+	add_political_power = -5
+	if = {
+		limit = { is_in_array = { global.elven_alliance_members_against = THIS } }
+		remove_from_array = { global.elven_alliance_members_against = THIS }
+	}
+	else_if = {
+		limit = { is_in_array = { global.elven_alliance_members_abstain = THIS } }
+		remove_from_array = { global.elven_alliance_members_abstain = THIS }
+	}
+	if = {
+		limit = { NOT = { is_in_array = { global.elven_alliance_members_in_favour = THIS } } }
+		add_to_array = { global.elven_alliance_members_in_favour = THIS }
+	}
+}
+
+elven_alliance_vote_against = {
+	add_political_power = -5
+	if = {
+		limit = { is_in_array = { global.elven_alliance_members_in_favour = THIS } }
+		remove_from_array = { global.elven_alliance_members_in_favour = THIS }
+	}
+	else_if = {
+		limit = { is_in_array = { global.elven_alliance_members_abstain = THIS } }
+		remove_from_array = { global.elven_alliance_members_abstain = THIS }
+	}
+	if = {
+		limit = { NOT = { is_in_array = { global.elven_alliance_members_against = THIS } } }
+		add_to_array = { global.elven_alliance_members_against = THIS }
+	}
+}
+
+elven_alliance_abstain = {
+	add_political_power = -5
+	if = {
+		limit = { is_in_array = { global.elven_alliance_members_against = THIS } }
+		remove_from_array = { global.elven_alliance_members_against = THIS }
+	}
+	else_if = {
+		limit = { is_in_array = { global.elven_alliance_members_in_favour = THIS } }
+		remove_from_array = { global.elven_alliance_members_in_favour = THIS }
+	}
+	if = {
+		limit = { NOT = { is_in_array = { global.elven_alliance_members_abstain = THIS } } }
+		add_to_array = { global.elven_alliance_members_abstain = THIS }
+	}
+}
+
+
+
+# The effect that the current vote will have
+elven_alliance_vote_effect = {
+	if = {
+		limit = { check_variable = { global.elven_alliance_members_in_favour^num > global.elven_alliance_members_against^num } }
+
+		custom_effect_tooltip = elven_alliance_vote_passing_tt
+		elven_alliance_vote_passed_effect = yes
+	}
+	else = {
+		custom_effect_tooltip = elven_alliance_vote_failing_tt
+		effect_tooltip = {
+			elven_alliance_vote_passed_effect = yes
+		}
+	}
+}
+
+
+# The effect that the current vote will have if it passes
+elven_alliance_vote_passed_effect = {
+
+	if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_alliance } }
+		ea_alliance_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_industry } }
+		ea_industry_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_trade } }
+		ea_trade_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_expansion } }
+		ea_expansion_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_peace } }
+		ea_peace_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_research } }
+		ea_research_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_union } }
+		ea_union_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_martial } }
+		ea_martial_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_hegemony } }
+		ea_hegemony_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_kick} }
+		ea_kick_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_joint_war} }
+		ea_joint_war_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_sanction} }
+		ea_sanction_passed_effect = yes
+	}
+	else_if = {
+		limit = { check_variable = { global.ea_current_resolution = token:ea_resolution_make_leader} }
+		ea_make_leader_passed_effect = yes
+	}
+}
+
+
+elven_alliance_ai_vote = {
+	random_list = {
+		# Vote YES
+		10 = {
+			# If we're a puppet -> vote like our master
+			modifier = {
+				is_puppet = yes
+				THIS.overlord = { ea_is_voting_yes = yes }
+				factor = 30
+			}
+			# Hegemony leaders are always going to vote for themselves
+			modifier = {
+				ea_is_hegemony_leader = yes
+				check_variable = { global.ea_current_resolution = token:ea_resolution_hegemony }
+				factor = 100
+			}
+			# You literally proposed it, now vote for it.
+			modifier = {
+				ea_is_resolution_proposer = yes
+				factor = 100
+			}
+			# Cooperative/Commie -> wants to expand more
+			modifier = {
+				OR = {
+					has_government = cooperative
+					has_government = revolutionary
+				}
+				check_variable = { global.ea_current_resolution = token:ea_resolution_expansion }
+				factor = 2
+			}
+			# Federatives likes expanding even more
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_expansion }
+				has_country_leader_ideology = federative
+				factor = 2
+			}
+			# Unaligned -> loves peace and stability
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_peace }
+				has_government = unaligned
+				factor = 3
+			}
+			# Mercantile -> loves trade resolutions
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_trade }
+				has_country_leader_ideology = mercantile
+				factor = 10
+			}
+			# Martial makes sense when at war
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_martial }
+				has_war = yes
+				factor = 4
+			}
+			# Federatives LOVES unions
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_union }
+				has_country_leader_ideology = federative
+				factor = 10
+			}
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_kick }
+				ea_is_current_resolution_target = yes
+				factor = 0
+			}
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_sanction }
+				ea_is_current_resolution_target = yes
+				factor = 0
+			}
+			elven_alliance_vote_in_favour = yes
+		}
+
+		# VOTE NO
+		10 = {
+			# If we're a puppet -> vote like our master
+			modifier = {
+				is_puppet = yes
+				THIS.overlord = { ea_is_voting_no = yes }
+				factor = 30
+			}
+			# Belli/Unaligned -> Doesn't want to expand more
+			modifier = {
+				OR = {
+					has_government = unaligned
+					has_government = belligerent
+				}
+				check_variable = { global.ea_current_resolution = token:ea_resolution_expansion }
+				factor = 2
+			}
+			# Already at war -> fuck peace
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_peace }
+				has_war = yes
+				factor = 2
+			}
+			# Cooperative and commie doesnt like hegemony
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_hegemony }
+				OR = {
+					has_government = cooperative
+					has_government = revolutionary
+				}
+				factor = 2
+			}
+			# Martial makes no sense when chilling at peace
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_martial }
+				has_war = no
+				OR = {
+					has_government = cooperative
+					has_government = unaligned
+				}
+				factor = 2
+			}
+			elven_alliance_vote_against = yes
+		}
+
+		# ABSTAIN
+		30 = {
+			# If we're a puppet -> vote like our master
+			modifier = {
+				is_puppet = yes
+				THIS.overlord = { ea_is_abstaining = yes }
+				factor = 30
+			}
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_kick }
+				ea_is_current_resolution_target = yes
+				factor = 0
+			}
+			modifier = {
+				check_variable = { global.ea_current_resolution = token:ea_resolution_sanction }
+				ea_is_current_resolution_target = yes
+				factor = 0
+			}
+			elven_alliance_abstain = yes
+		}
+	}
+}
+
+
+elven_alliance_ai_propose = {
+	random_list = {
+		90 = {
+			# Dont propose anything
+			modifier = {
+				factor = 2
+				elven_alliance_has_at_least_8_members = yes
+			}
+			# Dont propose anything
+			modifier = {
+				factor = 2
+				elven_alliance_has_at_least_5_members = yes
+			}
+		}
+		10 = {
+			random_list = {
+
+				# This makes sure that if all modifiers are 0, something still gets picked
+				1 = {  }
+
+				# ALLIANCE
+				10 = {
+					modifier = {
+						factor = 0
+						ea_alliance_can_be_passed = no
+					}
+					ea_alliance_add_to_queue = yes
+				}
+
+				# INDUSTRY
+				10 = {
+					modifier = {
+						factor = 0
+						ea_industry_can_be_passed = no
+					}
+					ea_industry_add_to_queue = yes
+				}
+
+				# EXPANSION
+				10 = {
+					modifier = {
+						factor = 0
+						ea_expansion_can_be_passed = no
+					}
+					modifier = {
+						factor = 0
+						has_government = belligerent
+					}
+					modifier = {
+						factor = 2
+						has_government = revolutionary
+					}
+					modifier = {
+						factor = 1.5
+						has_government = cooperative
+					}
+					ea_expansion_add_to_queue = yes
+				}
+
+				# PEACE
+				10 = {
+					modifier = {
+						factor = 0
+						ea_peace_can_be_passed = no
+					}
+					modifier = {
+						factor = 0
+						has_government = belligerent
+					}
+					modifier = {
+						factor = 0
+						has_government = revolutionary
+					}
+					ea_peace_add_to_queue = yes
+				}
+
+				# TRADE
+				10 = {
+					modifier = {
+						factor = 0
+						ea_trade_can_be_passed = no
+					}
+					ea_trade_add_to_queue = yes
+				}
+
+				# RESEARCH
+				10 = {
+					modifier = {
+						factor = 0
+						ea_research_can_be_passed = no
+					}
+					ea_research_add_to_queue = yes
+				}
+
+				# SPECIAL
+				10 = {
+					modifier = {
+						factor = 0
+						ea_hegemony_can_be_passed = no
+						ea_martial_can_be_passed = no
+						ea_union_can_be_passed = no
+					}
+					if = { limit = { has_global_flag = ea_type_hegemony } ea_hegemony_add_to_queue = yes }
+					else_if = { limit = { has_global_flag = ea_type_martial } ea_martial_add_to_queue = yes }
+					else_if = { limit = { has_global_flag = ea_type_union } ea_union_add_to_queue = yes }
+				}
+			}
+		}
+	}
+}

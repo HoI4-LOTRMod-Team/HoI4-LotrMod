@@ -1,0 +1,196 @@
+
+
+
+
+
+# To change the bonuses of the factions correctly, we run this on a weekly basis
+
+on_actions = {
+	
+	on_weekly_LTH  = {
+
+		effect = {
+
+			lth_on_weekly = yes
+
+		}
+
+	}
+
+	# THis on_action doesn't exist, so we use the month-counter variable below to get yearly events
+	#on_yearly_LTH = {
+	#	effect = {
+	#		lth_on_yearly = yes
+	#	}
+	#}
+
+	on_monthly_LTH = {
+		effect = {
+			if = {
+				limit = {
+					has_variable = lth_yearly_mcounter
+					check_variable = { lth_yearly_mcounter < 12 }
+				}
+				add_to_variable = { lth_yearly_mcounter = 1 }
+			}
+			else = {
+				set_variable = { lth_yearly_mcounter = 1 }
+				lth_on_yearly = yes
+			}
+
+			mirror_randomize_targets = yes
+		}
+	}
+
+
+	# ROOT is capitulated country, FROM is winner
+	on_capitulation = {
+		effect = {
+
+			if = {
+				limit = {
+					LTH = {
+						exists = yes
+						has_capitulated = no
+						NOT = { has_war_with = MOA }
+						has_completed_focus = lth_liftthelawofisolation
+					}
+					ROOT = { tag = MOA }
+					FROM = { tag = MOC }
+				}
+				LTH = { country_event = lothlorien.67 }
+			}
+
+			# If LTH has the safehaven focus, we can become a GoE within them
+			if = {
+				limit = {
+					LTH = { has_completed_focus = lth_safehaven }
+					LTH = { is_faction_leader = yes }
+					ROOT = { is_in_faction_with = LTH }
+					ROOT = { NOT = { tag = LTH } }
+					ROOT = { is_government_in_exile = no }
+				}
+				LTH = { country_event = lotr_generic.7 }
+				LTH = { add_manpower = 100000 }
+			}
+		}
+	}
+
+	# New general -> assign race trait
+	on_unit_leader_promote_from_ranks_veteran = {
+		effect = {
+			if = {
+				limit = { OWNER = { tag = LTH } }
+				if = {
+					limit = { OWNER = { is_elves = yes } }
+					ROOT = {
+						random_list = {
+							20 = {
+								add_unit_leader_trait = nandor_trait
+							}
+							10 = {
+								modifier = {
+									factor = 0
+									has_global_flag = lth_civil_war
+									has_government = revolutionary
+								}
+								add_unit_leader_trait = noldor_trait
+							}
+							10 = {
+								modifier = {
+									factor = 0
+									has_global_flag = lth_civil_war
+									has_government = belligerent
+								}
+								add_unit_leader_trait = sindar_trait
+							}
+							5 = {
+								add_unit_leader_trait = halfelves_trait
+							}
+						}
+					}
+				}
+				else_if = {
+					limit = { OWNER = { is_orcs = yes } }
+					add_unit_leader_trait = orcs_trait
+				}
+			}
+		}
+	}
+
+	# New general -> assign race trait
+	on_unit_leader_promote_from_ranks_green = {
+		effect = {
+			if = {
+				limit = { OWNER = { tag = LTH } }
+				if = {
+					limit = { OWNER = { is_elves = yes } }
+					ROOT = {
+						random_list = {
+							20 = {
+								add_unit_leader_trait = nandor_trait
+							}
+							10 = {
+								modifier = {
+									factor = 0
+									has_global_flag = lth_civil_war
+									has_government = revolutionary
+								}
+								add_unit_leader_trait = noldor_trait
+							}
+							10 = {
+								modifier = {
+									factor = 0
+									has_global_flag = lth_civil_war
+									has_government = belligerent
+								}
+								add_unit_leader_trait = sindar_trait
+							}
+							5 = {
+								add_unit_leader_trait = halfelves_trait
+							}
+						}
+					}
+				}
+				else_if = {
+					limit = { OWNER = { is_orcs = yes } }
+					add_unit_leader_trait = orcs_trait
+				}
+			}
+		}
+	}
+
+	 	
+	# Unit leader wins combat -> Add influence
+	on_army_leader_won_combat = {
+		effect = {
+			if = {
+				limit = { OWNER = { tag = LTH } }
+				if = {
+					limit = { has_trait = nandor_trait }
+					lthi_increase_influence_nandor_one = yes
+				}
+				else_if = {
+					limit = { has_trait = noldor_trait }
+					lthi_increase_influence_noldor_one = yes
+				}
+				else_if = {
+					limit = { has_trait = sindar_trait }
+					lthi_increase_influence_sindar_one = yes
+				}
+				else_if = {
+					limit = { has_trait = halfelves_trait }
+					lthi_increase_influence_halfelves_one = yes
+				}
+				else_if = {
+					limit = { has_trait = nonelves_trait }
+					lthi_increase_influence_nonelves_one = yes
+				}
+				else_if = {
+					limit = { has_trait = orcs_trait }
+					lthi_increase_influence_orcs_one = yes
+				}
+			}
+		}
+	}
+}

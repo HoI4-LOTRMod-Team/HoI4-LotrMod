@@ -2,24 +2,35 @@ can_attempt_ring_interception = {
 	controls_state = global.fs_currentstate
 }
 
-can_prepare_ring_interception = {
-	always = no
-
-	#any_of = {
-	#    array = global.fs_path_stack
-	#    value = v
-	#    index = i
-	#    
-	#    v > 0 				# make sure v is a state-event
-	#    controls_state = v
-	#}
-}
-
 
 ring_frodo_is_dead = {
 	SHI = {
 		FS_frodo = {
 			check_variable = { isdead > 0 }
+		}
+	}
+}
+
+ring_haldir_is_dead = {
+	SHI = {
+		FS_haldir = {
+			check_variable = { isdead > 0 }
+		}
+	}
+}
+
+
+ring_ringbearer_is_dead = {
+	SHI = {
+		OR = {
+			AND = {
+				NOT = { has_global_flag = fs_elven_fellowship }
+				ring_frodo_is_dead = yes
+			}
+			AND = {
+				has_global_flag = fs_elven_fellowship
+				ring_haldir_is_dead = yes
+			}
 		}
 	}
 }
@@ -79,7 +90,10 @@ ring_has_the_ring = {
 	custom_trigger_tooltip = {
 		tooltip = ring_has_the_ring_tt
 
-		has_idea = one_true_ring
+		OR = {
+			has_idea = one_true_ring
+			has_idea = one_true_ring_2
+		}
 	}
 }
 
@@ -107,6 +121,18 @@ ring_boromir_in_fellowship = {
 	}
 }
 
+ring_haldir_in_fellowship = {
+	SHI = {
+		FS_haldir = { ring_is_fs_member = yes }
+	}
+}
+
+ring_orophin_in_fellowship = {
+	SHI = {
+		FS_orophin = { ring_is_fs_member = yes }
+	}
+}
+
 # The countries that have "special" interactions with the ring-mechanic
 # IE. countries that should not be able to intercept/help at will
 ring_has_special_interaction = {
@@ -115,7 +141,11 @@ ring_has_special_interaction = {
     	tag = LTH
     	tag = MOA
     	tag = MOC
-    	tag = GON
 		tag = MOR
+		# Gondor can intercept only if it is the elven fellowship
+		AND = {
+			tag = GON
+			NOT = { has_global_flag = fs_elven_fellowship }
+		}
 	}
 }

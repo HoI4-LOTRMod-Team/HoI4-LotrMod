@@ -5,45 +5,6 @@
 add_namespace = lothlorien
 
 
-# Lorien asks jo join Gondor Faction
-country_event = {
-	id = lothlorien.1
-	title = lothlorien.1.t
-	desc = lothlorien.1.d
-	picture = GFX_report_event_alliance
-	
-	is_triggered_only = yes
-	
-	option = { #Accept
-		name = lothlorien.1.a
-		ai_chance = {
-			base = 60
-			modifier = {
-				add = 40
-				GON = { has_war = yes }
-			}
-		}
-		GON = { add_to_faction = LTH }
-	}
-	option = { #Refuse
-		name = lothlorien.1.b
-		ai_chance = {
-			base = 30
-			modifier = {
-				add = 5000
-				GON = { has_government = belligerent }
-			}
-			modifier = {
-				add = 20
-				GON = { has_government = unaligned }
-			}
-			modifier = {
-				add = 10
-				LTH = { has_war = yes }
-			}
-		}
-	}
-}
 
 # Offer shelter to fellowship
 country_event = {
@@ -54,14 +15,25 @@ country_event = {
 
 	is_triggered_only = yes
 
+	picture = GFX_report_event_fellowship_lothlorien
+
+	# yes
 	option = {
-		ai_chance = {base = 6}
+		ai_chance = {
+			base = 6
+			modifier = {
+				factor = 2
+				OR = {
+					ring_orophin_in_fellowship = yes
+					ring_haldir_in_fellowship = yes
+				}
+			}
+		}
 		name = lothlorien.3.a
 
 		ring_rivendell_approves = yes
 
 		set_global_flag = LTH_offered_shelter
-		LTH = {complete_national_focus = offersheltertothefellowship}
 
 		# delay the fellowship leaving
 		add_to_variable = { global.fs_days_left_in_state = 30 }
@@ -78,6 +50,8 @@ country_event = {
 			ring_trim_eventlog = yes
 		}
 	}
+
+	# A la calle
 	option = {
 		ai_chance = {
 			base = 1 
@@ -109,15 +83,18 @@ country_event = {
 	# take it
 	option = {
 		name = lothlorien.2.a
+		trigger = {
+			NOT = { has_country_flag = fs_interceptions_disabled }
+		}
 		ai_chance = {
 			base = 3
 			modifier = {
-				OR = {
-					has_completed_focus = victorythroughstrength
-					has_completed_focus = victorythroughsubmission
-					has_completed_focus = victorythroughequity
-				}
-				add = 10
+				has_completed_focus = lth_thegreatschism
+				factor = 3
+			}
+			modifier = {
+				has_completed_focus = lth_celebornsexile
+				factor = 2
 			}
 			modifier = { is_historical_focus_on = yes factor = 0 }
 		}
@@ -125,8 +102,6 @@ country_event = {
 		ring_rivendell_disapproves = yes
 
 		add_political_power = -250
-
-		LTH = {complete_national_focus = taketheringfromfrodo}
 
 		random_list = {
 
@@ -147,6 +122,10 @@ country_event = {
 		name = lothlorien.2.b # gear up fellowship
 		ai_chance = {
 			base = 5
+			modifier = {
+				factor = 3
+				has_government = cooperative
+			}
 		}
 
 		ring_rivendell_approves = yes
@@ -163,6 +142,8 @@ country_event = {
 	desc = lothlorien.4.d
 	fire_only_once = yes
 
+	picture = GFX_report_event_ring
+
 	is_triggered_only = yes
 
 	option = {
@@ -170,6 +151,18 @@ country_event = {
 		name = lothlorien.4.a
 
 		hidden_effect = {
+			# Add Haldir/Orophin back as a general if they were in fellowship
+			if = {
+				limit = { ring_haldir_in_fellowship = yes }
+				clr_global_flag = fs_lothlorien_haldir
+				SHI = { FS_haldir = { ring_remove_member_from_fellowship_nolog = yes } }
+			}
+			else_if = {
+				limit = { ring_orophin_in_fellowship = yes }
+				clr_global_flag = fs_lothlorien_orophin
+				SHI = { FS_orophin = { ring_remove_member_from_fellowship_nolog = yes } }
+			}
+
 			news_event = { hours = 12 id = news.371 }
 			ring_seize_ring = yes
 
@@ -188,19 +181,24 @@ country_event = {
 	desc = lothlorien.5.d
 	fire_only_once = yes
 
+	picture = GFX_report_event_ring
+
 	is_triggered_only = yes
 
 	# Escalate
 	option = {
+		trigger = {
+			NOT = { has_country_flag = fs_interceptions_disabled }
+		}
 		ai_chance = {
 			base = 1
 			modifier = {
-				OR = {
-					has_completed_focus = victorythroughstrength
-					has_completed_focus = victorythroughsubmission
-					has_completed_focus = victorythroughequity
-				}
-				add = 10
+				has_completed_focus = lth_thegreatschism
+				add = 7
+			}
+			modifier = {
+				has_completed_focus = lth_celebornsexile
+				add = 3
 			}
 		}
 		name = lothlorien.5.a
@@ -220,12 +218,44 @@ country_event = {
 			add_to_array = { global.fs_eventlog = token:fs_event_lth_frodo_refuses_escalate }
 			ring_trim_eventlog = yes
 
+			# Haldir/Orophin betray fellowship if they were in it
+			if = {
+				limit = { ring_haldir_in_fellowship = yes }
+				clr_global_flag = fs_lothlorien_haldir
+				SHI = { FS_haldir = { ring_remove_member_from_fellowship_nolog = yes } }
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_lth_haldir_betrays_fellowship }
+				ring_trim_eventlog = yes
+			}
+			else_if = {
+				limit = { ring_orophin_in_fellowship = yes }
+				clr_global_flag = fs_lothlorien_orophin
+				SHI = { FS_orophin = { ring_remove_member_from_fellowship_nolog = yes } }
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_lth_orophin_betrays_fellowship }
+				ring_trim_eventlog = yes
+			}
+
 			ring_open_interception_attempt_prompt = yes
 		}
 	}
 	# Doesnt matter
 	option = {
-		ai_chance = { base = 2 }
+		ai_chance = {
+			base = 3
+			modifier = {
+				add = 3
+				has_government = cooperative
+			}
+			modifier = {
+				add = 1
+				has_government = unaligned
+			}
+		}
 		name = lothlorien.5.b
 
 		custom_effect_tooltip = lothlorien.5.b.tt
@@ -247,10 +277,12 @@ country_event = {
 country_event = {
 	id = lothlorien.6
 	title = lothlorien.6.t
-	desc = lothlorien.6.d
+	desc = lothlorien.6.desc
 	fire_only_once = yes
 
 	is_triggered_only = yes
+
+	picture = GFX_report_event_fellowship_lothlorien
 
 	# Gifts
 	option = {
@@ -280,11 +312,22 @@ country_event = {
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 			add_to_array = { global.fs_eventlog = token:fs_event_lth_gifts }
 			ring_trim_eventlog = yes
+
+			complete_national_focus = lth_supportthefellowship
 		}
 	}
 
-	# Haldir
+	# Send Haldir with them (Only available if not part of Elrond's council)
 	option = {
+		trigger = {
+			OR = {
+				NOT = { has_global_flag = fs_lothlorien_invited }
+				has_global_flag = fs_lothlorien_none
+			}
+			LTH_haldir = {
+				is_unit_leader = yes
+			}
+		}
 		ai_chance = {
 			base = 1
 			modifier = { is_historical_focus_on = yes factor = 0 }
@@ -301,6 +344,8 @@ country_event = {
 			ring_trim_eventlog = yes
 
 			SHI = { FS_haldir = { ring_add_member_to_fellowship = yes } }
+
+			complete_national_focus = lth_supportthefellowship
 		}
 	}
 
@@ -315,7 +360,2977 @@ country_event = {
 		ring_rivendell_disapproves = yes
 	}
 
-		
+	# Request Haldir to stay behind
+	option = {
+		trigger = {
+			ring_haldir_in_fellowship = yes
+		}
+		ai_chance = {
+			base = 1
+			modifier = { is_historical_focus_on = yes factor = 0 }
+		}
+		name = lothlorien.6.d
 
+		custom_effect_tooltip = lothlorien.6.d.tt
+
+		hidden_effect = {
+			clr_global_flag = fs_lothlorien_haldir
+			SHI = { FS_haldir = { ring_remove_member_from_fellowship_nolog = yes } }
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_haldir_asked_to_stay_behind }
+			ring_trim_eventlog = yes
+
+			complete_national_focus = lth_supportthefellowship
+		}
+	}
+
+	# Request Orophin to stay behind
+	option = {
+		trigger = {
+			ring_orophin_in_fellowship = yes
+		}
+		ai_chance = {
+			base = 1
+			modifier = { is_historical_focus_on = yes factor = 0 }
+		}
+		name = lothlorien.6.e
+
+		custom_effect_tooltip = lothlorien.6.e.tt
+
+		hidden_effect = {
+			clr_global_flag = fs_lothlorien_orophin
+			SHI = { FS_orophin = { ring_remove_member_from_fellowship_nolog = yes } }
+
+			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+			add_to_array = { global.fs_eventlog = token:fs_event_lth_orophin_asked_to_stay_behind }
+			ring_trim_eventlog = yes
+
+			complete_national_focus = lth_supportthefellowship
+		}
+	}
 }
 
+# Schism: Consult elves
+country_event = {
+	id = lothlorien.8
+	title = lothlorien.8.t
+	desc = lothlorien.8.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_cele_gala
+
+	# Support Gala
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 5
+				is_going_belligerent = yes
+			}
+		}
+		name = lothlorien.8.a
+
+		LTH = { country_event = lothlorien.47 }
+	}
+
+	# Support Cele
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 5
+				is_going_revolutionary = yes
+			}
+		}
+		name = lothlorien.8.b
+
+		LTH = { country_event = lothlorien.48 }
+	}
+
+	# Abstain
+	option = {
+		ai_chance = {
+			base = 2
+		}
+		name = lothlorien.8.c
+
+		LTH = { country_event = lothlorien.49 }
+	}
+}
+
+# Aid to Helm's deep
+country_event = {
+	id = lothlorien.9
+	title = lothlorien.9.t
+	desc = lothlorien.9.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves_army
+
+	# Thanks
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.9.a
+
+		custom_effect_tooltip = lth_sendaidtohelmsdeep_tt
+
+		hidden_effect = {
+			load_oob = Lothlorien_Air_HelmsDeep
+		}
+	}
+}
+
+# Aid to Minas Tirith
+country_event = {
+	id = lothlorien.10
+	title = lothlorien.10.t
+	desc = lothlorien.10.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves_army
+
+	# Thanks
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.10.a
+
+		custom_effect_tooltip = lth_sendaidtominastirith_tt
+		
+		hidden_effect = {
+			load_oob = Lothlorien_Air_MinasTirith
+		}
+	}
+}
+
+# Commemorate Gondolin
+country_event = {
+	id = lothlorien.11
+	title = lothlorien.11.t
+	desc = lothlorien.11.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_celebrations
+
+	# As an epic battle
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.11.a
+
+		# Increase attack and breakthrough bonus by 5%
+		custom_effect_tooltip = lothlorien.11.a_tt
+		add_to_variable = { lthi_noldor_bonus_breakthrough_base = 0.1 }
+	}
+
+	# As a tragedy to be rebuilt
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.11.b
+
+		# Increase factory output bonus by 10%
+		custom_effect_tooltip = lothlorien.11.b_tt
+		add_to_variable = { lthi_noldor_bonus_factoryoutput_base = 0.15 }
+	}
+}
+
+# Affiliate with Lindon
+country_event = {
+	id = lothlorien.12
+	title = lothlorien.12.t
+	desc = lothlorien.12.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves
+
+	# Remind them that the sindar owe their longevity to their hard work and dedication
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.12.a
+
+		# Increase sindar construction speed bonus
+
+		set_global_flag = {
+			flag = lothlorien_12_response_a
+			value = 1
+			days = 60
+		}
+
+		event_option_tooltip = lothlorien.13.a
+		hidden_effect = { LTH = { country_event = { id = lothlorien.13 days = 7 } } }
+	}
+
+	# Remind them of the humility of the elves of Doriath
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.12.b
+
+		# Increase sindar supply bonus
+
+		set_global_flag = {
+			flag = lothlorien_12_response_b
+			value = 1
+			days = 60
+		}
+
+		event_option_tooltip = lothlorien.13.b
+		hidden_effect = { LTH = { country_event = { id = lothlorien.13 days = 7 } } }
+	}
+
+	# Remind them of the great Wisdom of Elu Thingol and Melian
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.12.c
+
+		# Increase sindar research
+
+		set_global_flag = {
+			flag = lothlorien_12_response_c^
+			value = 1
+			days = 60
+		}
+
+		event_option_tooltip = lothlorien.13.c
+		hidden_effect = { LTH = { country_event = { id = lothlorien.13 days = 7 } } }
+	}
+}
+
+# Affiliate with Lindon - Response
+country_event = {
+	id = lothlorien.13
+	title = lothlorien.13.t
+	desc = lothlorien.13.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lindon
+
+	# Remind them that the sindar owe their longevity to their hard work and dedication
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = {
+			has_global_flag = lothlorien_12_response_a
+		}
+		name = lothlorien.13.a
+
+		# Increase sindar construction speed bonus
+		LTH = {
+			custom_effect_tooltip = lothlorien.13.a_tt
+			multiply_variable = { lthi_sindar_bonus_constructionspeed_base = 2 }
+			add_opinion_modifier = {
+				target = LIN
+				modifier = small_increase
+			}
+		}
+	}
+
+	# Remind them of the humility of the elves of Doriath
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = {
+			has_global_flag = lothlorien_12_response_b
+		}
+		name = lothlorien.13.b
+
+		# Increase sindar supply bonus
+		LTH = {
+			custom_effect_tooltip = lothlorien.13.b_tt
+			multiply_variable = { lthi_sindar_bonus_supply_base = 2 }
+			add_opinion_modifier = {
+				target = LIN
+				modifier = small_increase
+			}
+		}
+	}
+
+	# Remind them of the great Wisdom of Elu Thingol and Melian
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = {
+			has_global_flag = lothlorien_12_response_c
+		}
+		name = lothlorien.13.c
+
+		# Increase sindar research
+		LTH = {
+			custom_effect_tooltip = lothlorien.13.c_tt
+			multiply_variable = { lthi_sindar_bonus_research_base = 2 }
+			add_opinion_modifier = {
+				target = LIN
+				modifier = small_increase
+			}
+		}
+	}
+}
+
+# elrosofnumenor - event to gondor
+country_event = {
+	id = lothlorien.14
+	title = lothlorien.14.t
+	desc = lothlorien.14.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves
+
+	# Remind them of the great warriors the numenorians were
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 10
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 50
+				}
+			}
+			modifier = {
+				factor = 5
+				is_ally_with = LTH
+			}
+		}
+		name = lothlorien.14.a
+
+		# Increase half-elf army xp
+
+		set_global_flag = {
+			flag = lothlorien_14_response_a
+			value = 1
+			days = 60
+		}
+		event_option_tooltip = lothlorien.15.a
+
+		hidden_effect = {
+			LTH = { country_event = { id = lothlorien.15 days = 7 } }
+		}
+	}
+
+	# Give general support
+	option = {
+		ai_chance = {
+			base = 2
+		}
+		name = lothlorien.14.b
+
+		# Give PP
+
+		set_global_flag = {
+			flag = lothlorien_14_response_b
+			value = 1
+			days = 60
+		}
+		event_option_tooltip = lothlorien.15.b
+
+		hidden_effect = {
+			LTH = { country_event = { id = lothlorien.15 days = 7 } }
+		}
+	}
+}
+
+# elrosofnumenor - event to gondor - response
+country_event = {
+	id = lothlorien.15
+	title = lothlorien.15.t
+	desc = {
+		text = lothlorien.15.d_a
+		trigger = {
+			has_global_flag = lothlorien_14_response_a
+		}
+		text = lothlorien.15.d_b
+		trigger = {
+			has_global_flag = lothlorien_14_response_b
+		}
+	}
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_gondor
+
+	# Find an old tome of war-stories and send it to them
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = {
+			has_global_flag = lothlorien_14_response_a
+		}
+		name = lothlorien.15.a
+
+		# Increase half-elf army xp
+		LTH = {
+			custom_effect_tooltip = lothlorien.15.a_tt
+			multiply_variable = { lthi_halfelves_bonus_experiencegain_base = 2 }
+			add_opinion_modifier = {
+				target = GON
+				modifier = small_increase
+			}
+		}
+	}
+
+	# Give their messengers common curesies, then send them back
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = {
+			has_global_flag = lothlorien_14_response_b
+		}
+		name = lothlorien.15.b
+
+		# Give PP
+		LTH = {
+			add_political_power = 150
+		}
+	}
+}
+
+# elrondtheperedhil - event to rivendell
+country_event = {
+	id = lothlorien.16
+	title = lothlorien.16.t
+	desc = lothlorien.16.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves
+
+	# Be humbled, full support. Speak at length with the delegation
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 10
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 50
+				}
+			}
+			modifier = {
+				factor = 5
+				is_ally_with = LTH
+			}
+		}
+		name = lothlorien.16.a
+
+		# Increase stability and consumer goods bonus, cost PP
+
+		set_global_flag = {
+			flag = lothlorien_16_response_a
+			value = 1
+			days = 60
+		}
+
+		event_option_tooltip = lothlorien.17.a
+
+		hidden_effect = { LTH = { country_event = { id = lothlorien.17 days = 7 } } }
+	}
+
+	# The delegation is welcome to speak with our more experienced warriors. Elrond is too busy
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.16.b
+
+		# Increase army xp
+
+		set_global_flag = {
+			flag = lothlorien_16_response_b
+			value = 1
+			days = 60
+		}
+
+		event_option_tooltip = lothlorien.17.b
+
+		hidden_effect = { LTH = { country_event = { id = lothlorien.17 days = 7 } } }
+	}
+}
+
+# elrondtheperedhil - event to rivendell (reponse)
+country_event = {
+	id = lothlorien.17
+	title = lothlorien.17.t
+	desc = {
+		text = lothlorien.17.d_a
+		trigger = {
+			has_global_flag = lothlorien_16_response_a
+		}
+		text = lothlorien.17.d_b
+		trigger = {
+			has_global_flag = lothlorien_16_response_b
+		}
+	}
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_rivendell
+
+	# Be humbled, full support. Speat at length with the delegation
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = {
+			has_global_flag = lothlorien_16_response_a
+		}
+		name = lothlorien.17.a
+
+		# Dobule all half-elves bonuses
+		LTH = {
+			custom_effect_tooltip = lothlorien.17.a_tt
+			multiply_variable = { lthi_halfelves_bonus_consumergoods_base = 2.0 }
+			multiply_variable = { lthi_halfelves_bonus_experiencegain_base = 2.0 }
+			multiply_variable = { lthi_halfelves_bonus_stability_base = 2.0 }
+
+			add_opinion_modifier = {
+				target = RIV
+				modifier = medium_increase
+			}
+		}
+	}
+
+	# The delegation is welcome to speak with our more experienced warriors. Elrond is too busy
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = {
+			has_global_flag = lothlorien_16_response_b
+		}
+		name = lothlorien.17.b
+
+		# Increase army xp bonus
+		LTH = {
+			custom_effect_tooltip = lothlorien.17.b_tt
+			add_to_variable = { lthi_halfelves_bonus_experiencegain_base = 0.1 }
+
+			add_opinion_modifier = {
+				target = RIV
+				modifier = small_increase
+			}
+		}
+	}
+}
+
+# maintain stability in the west event
+country_event = {
+	id = lothlorien.18
+	title = lothlorien.18.t
+	desc = lothlorien.18.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_paper
+
+	# Stability is imperative, guarantee everyone
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		name = lothlorien.18.a
+
+		every_country = {
+			limit = {
+				is_men = yes
+				is_western = yes
+				NOT = { tag = NEP }
+				NOT = { tag = ROH }
+				NOT = { tag = GON }
+				NOT = { belligerent > 0.35 }
+				NOT = { revolutionary > 0.35 }
+				NOT = { has_government = belligerent }
+				NOT = { has_government = revolutionary }
+				NOT = { is_in_faction = yes }
+				NOT = { is_puppet = yes }
+				
+			}
+			LTH = { give_guarantee = PREV }
+		}
+	}
+
+	# opinion is enough
+	option = {
+		ai_chance = {
+			base = 4
+		}
+		name = lothlorien.18.b
+
+		every_country = {
+			limit = {
+				is_men = yes
+				is_western = yes
+				NOT = { tag = NEP }
+				NOT = { tag = ROH }
+				NOT = { tag = GON }
+				NOT = { belligerent > 0.35 }
+				NOT = { revolutionary > 0.35 }
+				NOT = { has_government = belligerent }
+				NOT = { has_government = revolutionary }
+				NOT = { is_in_faction = yes }
+				NOT = { is_puppet = yes }
+			}
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_increase
+			}
+		}
+	}
+}
+
+# Cele and Gala BOTH leave for valinor
+country_event = {
+	id = lothlorien.19
+	title = lothlorien.19.t
+	desc = lothlorien.19.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_cele_gala
+
+	# Stability is imperative, guarantee everyone
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.19.a
+
+		LTH_celeborn = {
+			retire = yes
+		}
+		LTH_galadriel = {
+			retire = yes
+		}
+		hidden_effect = {
+			news_event = news.394
+		}
+	}
+}
+
+# Take Halflings to Valinor
+country_event = {
+	id = lothlorien.20
+	title = lothlorien.20.t
+	desc = lothlorien.20.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lindon
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.20.a
+
+		# Probably just add some flavour text to event-log
+		# and give a newspaper event
+		news_event = { id = news.395 days = 5 }
+		add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_frodo_bilbo_to_valinor }
+		ring_trim_eventlog = yes
+	}
+}
+
+# Durins Bane Tracked Down
+country_event = {
+	id = lothlorien.21
+	title = lothlorien.21.t
+	desc = lothlorien.21.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_balrog
+
+	# Kill
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.21.a
+
+		add_manpower = -25000
+		remove_durins_bane_from_moria = yes
+		kill_durins_bane = yes
+	}
+
+	# Tame
+	option = {
+		ai_chance = {
+			base = 5
+		}
+		trigger = {
+			ring_has_the_ring = yes
+			controls_state = 134
+		}
+		name = lothlorien.21.a
+
+		remove_durins_bane_from_moria = yes
+
+		custom_effect_tooltip = lothlorien.21.a_tt
+		hidden_effect = {
+			load_oob = Moria_Balrog
+		}
+	}
+}
+
+# We got raided by FROM
+country_event = {
+	id = lothlorien.22
+	title = lothlorien.22.t
+	desc = lothlorien.22.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_fire
+
+	# :(
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.22.a
+
+		# Cause some damage to buildings
+		random_list = {
+			10 = {
+				random_owned_state = {
+					damage_building = {
+						type = infrastructure
+						damage = 2
+					}
+				}
+			}
+			10 = {
+				random_owned_state = {
+					damage_building = {
+						type = industrial_complex
+						damage = 2
+					}
+				}
+			}
+			10 = {
+				random_owned_state = {
+					damage_building = {
+						type = arms_factory
+						damage = 2
+					}
+				}
+			}
+			10 = {
+				random_owned_state = {
+					limit = { industrial_complex > 1 }
+					remove_building = { type = industrial_complex level = 1 }
+				}
+			}
+			10 = {
+				random_owned_state = {
+					limit = { arms_factory > 1 }
+					remove_building = { type = arms_factory level = 1 }
+				}
+			}
+		}
+	}
+}
+
+# Help Mirkwood with containment of DGU
+country_event = {
+	id = lothlorien.23
+	title = lothlorien.23.t
+	desc = lothlorien.23.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_dolguldur
+
+	# :)
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.23.a
+
+		87 = {
+			add_compliance = 15
+			add_resistance = -5
+		}
+		# Add compliance/reduce reistance in DGU
+	}
+}
+
+# Force the DGU issue
+country_event = {
+	id = lothlorien.24
+	title = lothlorien.24.t
+	desc = lothlorien.24.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_dolguldur
+
+	# Offer 1: If they give us Mirkwood Outskirts, we will declare war
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 3
+				has_war = no
+			}
+			modifier = {
+				has_government = belligerent
+				factor = 2
+			}
+		}
+		trigger = {
+			NOT = { has_war_with = MIR }
+			191 = { is_controlled_by = MIR }
+		}
+		name = lothlorien.24.a
+
+		hidden_effect = {
+			MIR = { country_event = { id = lothlorien.25 days = 5 } }
+		}
+		# Add tooltip saying that we *will* immediately declare war if they accept
+		custom_effect_tooltip = if_they_accept
+		event_option_tooltip = lothlorien.25.a
+	}
+
+	# Offer 2: Offer them weapons n shit
+	option = {
+		ai_chance = {
+			base = 2
+		}
+		trigger = {
+			NOT = { has_war_with = MIR }
+		}
+		name = lothlorien.24.b
+
+		hidden_effect = {
+			MIR = { country_event = { id = lothlorien.26 days = 5 } }
+		}
+		# remove some weapons and stuff
+		event_option_tooltip = lothlorien.26.a
+		add_political_power = 100
+	}
+
+	# Take things into our own hands
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_war = no
+			}
+			modifier = {
+				has_government = belligerent
+				factor = 2
+			}
+		}
+		name = lothlorien.24.c
+
+		# Get wargoal on DGU
+		create_wargoal = {
+            target = DGU
+            type = take_state_focus
+            generator = { 87 }
+        }
+	}
+}
+
+# Mirkwood: Offer 1 on DGU (give us Mirkwood Outskirts, we will declare war)
+country_event = {
+	id = lothlorien.25
+	title = lothlorien.25.t
+	desc = lothlorien.25.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_dolguldur
+
+	# OK
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 3
+				LTH = { is_ai = yes is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 3
+				has_opinion = { target = LTH value > 20 }
+			}
+			modifier = {
+				factor = 2
+				has_war = yes
+			}
+			modifier = {
+				factor = 2
+				is_ally_with = LTH
+			}
+		}
+		name = lothlorien.25.a
+
+		191 = { transfer_state_to = LTH }
+	}
+
+	# Hell no
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 3
+				LTH = { is_ai = yes is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 3
+				has_opinion = { target = LTH value < -5 }
+			}
+		}
+		name = lothlorien.25.b
+
+		add_stability = -0.1
+	}
+}
+
+# Mirkwood: Offer 2 on DGU: LTH sends weapons and stuff
+country_event = {
+	id = lothlorien.26
+	title = lothlorien.26.t
+	desc = lothlorien.26.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_dolguldur
+
+	# Cool Beans
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.26.a
+
+		LTH = {
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 2000
+				target = MIR
+			}
+		}
+		MIR = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_increase
+			}
+		}
+	}
+}
+
+# Rivendell: Ask for a seat on Elrond's Council
+country_event = {
+	id = lothlorien.27
+	title = lothlorien.27.t
+	desc = lothlorien.27.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lothlorien
+
+	# Ok
+	option = {
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 0
+				LTH = { is_ai = yes }
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+		}
+		name = lothlorien.27.a
+
+		set_global_flag = fs_lothlorien_invited
+		custom_effect_tooltip = lothlorien.27.a_tt
+		LTH = { country_event = lothlorien.64 }
+	}
+
+	# Nope
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 10
+				LTH = { has_completed_focus = lth_thegreatschism }
+			}
+			modifier = {
+				factor = 10
+				LTH = { has_added_tension_amount > 1 }
+			}
+		}
+		name = lothlorien.27.b
+
+		event_option_tooltip = lothlorien.65.a
+		LTH = { country_event = lothlorien.65 }
+	}
+}
+
+# Vales: Offer Anduin to become our puppet in return for some stuff
+country_event = {
+	id = lothlorien.28
+	title = lothlorien.28.t
+	desc = lothlorien.28.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves_army
+
+	# Ok
+	option = {
+		ai_chance = {
+			base = 7
+			modifier = {
+				factor = 2
+				has_opinion = { target = LTH value > 50 }
+			}
+			modifier = {
+				factor = 2
+				has_opinion = { target = LTH value > 25 }
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				strength_ratio = { tag = LTH ratio < 1 }
+			}
+			modifier = {
+				factor = 2
+				strength_ratio = { tag = LTH ratio < 0.6 }
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = mirror_predicted_vales_decline
+			}
+		}
+		name = lothlorien.28.a
+
+		set_global_flag = lth_anduin_accepts_offer
+
+		LTH = { add_timed_idea = { idea = six_civs_cost days = 300 } }
+		VAL = { add_timed_idea = { idea = six_civs_gain days = 300 } }
+
+		VAL = { transfer_state = 76 }
+		LTH = { puppet = { target = VAL end_wars = no } }
+
+		hidden_effect = {
+			LTH = { country_event = lothlorien.29 }
+		}
+	}
+
+	# Nope
+	option = {
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				has_opinion = { target = LTH value < 0 }
+			}
+			modifier = {
+				factor = 2
+				has_opinion = { target = LTH value < -25 }
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				strength_ratio = { tag = LTH ratio > 1 }
+			}
+			modifier = {
+				factor = 2
+				strength_ratio = { tag = LTH ratio > 2 }
+			}
+			modifier = {
+				has_government = cooperative
+				factor = 2
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = mirror_predicted_vales_accept
+			}
+		}
+		name = lothlorien.28.b
+
+		custom_effect_tooltip = lth_gain_wargoal_through_focus_tt
+
+		hidden_effect = {
+			LTH = { country_event = lothlorien.29 }
+		}
+	}
+}
+
+# Vales: Response to the offer above
+country_event = {
+	id = lothlorien.29
+
+	title = {
+		text = lothlorien.29.t_accept
+		trigger = { has_global_flag = lth_anduin_accepts_offer }
+	}
+	title = {
+		text = lothlorien.29.t_decline
+	}
+
+	desc = {
+		text = lothlorien.29.d_accept
+		trigger = { has_global_flag = lth_anduin_accepts_offer }
+	}
+	desc = {
+		text = lothlorien.29.d_decline
+	}
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# Cool
+	option = {
+		trigger = {
+			has_global_flag = lth_anduin_accepts_offer
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.29.a
+
+		effect_tooltip = {
+			LTH = { add_timed_idea = { idea = six_civs_cost days = 300 } }
+			VAL = { add_timed_idea = { idea = six_civs_gain days = 300 } }
+
+			VAL = { transfer_state = 76 }
+			LTH = { puppet = VAL }
+		}
+	}
+
+	# Wtf
+	option = {
+		trigger = {
+			NOT = { has_global_flag = lth_anduin_accepts_offer }
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.29.b
+
+		add_opinion_modifier = {
+			target = VAL
+			modifier = medium_decrease
+		}
+	}
+}
+
+# Vales: Choose what gifts to send Anduin
+country_event = {
+	id = lothlorien.30
+	title = lothlorien.30.t
+	desc = lothlorien.30.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# Give them a full guarantee
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.30.a
+
+		set_country_flag = lth_anduin_gift_guarantee
+		give_guarantee = VAL
+		VAL = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = large_increase
+			}
+		}
+		hidden_effect = {
+			VAL = { country_event = lothlorien.43 }
+		}
+	}
+
+	# Send them some old equipment
+	option = {
+		ai_chance = {
+			base = 2
+		}
+		name = lothlorien.30.b
+
+		set_country_flag = lth_anduin_gift_equipment
+		LTH = {
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 2000
+				target = VAL
+			}
+		}
+		VAL = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_increase
+			}
+		}
+		hidden_effect = {
+			VAL = { country_event = lothlorien.43 }
+		}
+	}
+
+	# Just a diplomatic gesture
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.30.c
+		VAL = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = small_increase
+			}
+		}
+		
+	}
+}
+
+# Generic subjugation event from "Fate of Mortals"
+country_event = {
+	id = lothlorien.31
+	title = lothlorien.31.t
+	desc = lothlorien.31.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves_army
+
+	# Bow down to them (become puppet)
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				LTH = { is_in_faction = yes }
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				strength_ratio = { tag = LTH ratio < 1 }
+			}
+			modifier = {
+				factor = 2
+				strength_ratio = { tag = LTH ratio < 0.5 }
+			}
+		}
+		name = lothlorien.31.a
+
+		event_option_tooltip = lothlorien.32.a_accepted
+
+		LTH = { country_event = { id = lothlorien.32 days = 1 } }
+	}
+
+	# Send them tribute
+	option = {
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 2
+				LTH = { is_in_faction = yes }
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				strength_ratio = { tag = LTH ratio < 1 }
+			}
+		}
+		name = lothlorien.31.b
+
+		set_country_flag = {
+			flag = lth_sent_tribute
+			days = 60
+		}
+		event_option_tooltip = lothlorien.32.a_tribute
+
+		LTH = { country_event = { id = lothlorien.32 days = 1 } }
+	}
+
+	# No way
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 5
+				is_in_faction = yes
+			}
+			modifier = {
+				factor = 3
+				has_government = cooperative
+			}
+			modifier = {
+				factor = 5
+				strength_ratio = { tag = LTH ratio > 1 }
+			}
+		}
+		name = lothlorien.31.c
+
+		LTH = {
+			add_opinion_modifier = {
+    			target = THIS
+    			modifier = medium_decrease
+			}
+		}
+
+		set_country_flag = lth_refused_subjugation
+		event_option_tooltip = lothlorien.32.a_declined
+
+		LTH = { country_event = { id = lothlorien.32 days = 1 } }
+	}
+}
+
+# Generic subjugation event response
+country_event = {
+	id = lothlorien.32
+
+	title = {
+		text = lothlorien.32.t_declined
+		trigger = { FROM = { has_country_flag = lth_refused_subjugation } }
+	}
+	title = {
+		text = lothlorien.32.t_tribute
+		trigger = { FROM = { has_country_flag = lth_sent_tribute } }
+	}
+	title = {
+		text = lothlorien.32.t_accepted
+	}
+
+	desc = {
+		text = lothlorien.32.d_declined
+		trigger = { FROM = { has_country_flag = lth_refused_subjugation } }
+	}
+	desc = {
+		text = lothlorien.32.d_tribute
+		trigger = { FROM = { has_country_flag = lth_sent_tribute } }
+	}
+	desc = {
+		text = lothlorien.32.d_accepted
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = { FROM = { has_country_flag = lth_refused_subjugation } }
+		name = lothlorien.32.a_declined
+		
+		custom_effect_tooltip = lth_gain_wargoal_through_focus_tt
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = { FROM = { has_country_flag = lth_sent_tribute } }
+		name = lothlorien.32.a_tribute
+
+		if = {
+			limit = { FROM = { num_of_civilian_factories > 15 } }
+			LTH = { add_timed_idea = { idea = six_civs_gain days = 210 } }
+			FROM = { add_timed_idea = { idea = six_civs_cost days = 210 } }
+		}
+		else = {
+			LTH = { add_timed_idea = { idea = three_civs_gain days = 210 } }
+			FROM = { add_timed_idea = { idea = three_civs_cost days = 210 } }
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = {
+			NOT = { FROM = { has_country_flag = lth_refused_subjugation } }
+			NOT = { FROM = { has_country_flag = lth_sent_tribute } }
+		}
+		name = lothlorien.32.a_accepted
+
+		LTH = {
+			puppet = {
+				target = FROM
+				end_wars = no
+			}
+		}
+	}
+}
+
+# Safeguard elves event
+country_event = {
+	id = lothlorien.33
+	title = lothlorien.33.t
+	desc = lothlorien.33.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves_army
+
+	# Bow down to them (become puppet)
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				LTH = { is_in_faction = yes }
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				strength_ratio = { tag = LTH ratio < 1 }
+			}
+			modifier = {
+				factor = 2
+				strength_ratio = { tag = LTH ratio < 0.5 }
+			}
+		}
+		name = lothlorien.33.a
+
+		event_option_tooltip = lothlorien.34.a_accepted
+
+		hidden_effect = { FROM = { country_event = { id = lothlorien.34 days = 3 } } }
+	}
+
+	# Wtf?
+	option = {
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 5
+				is_in_faction = yes
+				LTH = { is_in_faction = no }
+			}
+			modifier = {
+				factor = 3
+				has_government = cooperative
+			}
+			modifier = {
+				factor = 5
+				strength_ratio = { tag = LTH ratio > 1 }
+			}
+		}
+		name = lothlorien.33.b
+
+		custom_effect_tooltip = lth_gain_wargoal_through_focus_tt
+
+		set_country_flag = lth_refused_subjugation
+
+		hidden_effect = { FROM = { country_event = { id = lothlorien.34 days = 3 } } }
+	}
+}
+
+# Safeguard elves event - Response
+country_event = {
+	id = lothlorien.34
+
+	title = {
+		text = lothlorien.34.t_declined
+		trigger = { FROM = { has_country_flag = lth_refused_subjugation } }
+	}
+	title = {
+		text = lothlorien.34.t_accepted
+		trigger = { NOT = { FROM = { has_country_flag = lth_refused_subjugation } } }
+	}
+
+	desc = {
+		text = lothlorien.34.d_declined
+		trigger = { FROM = { has_country_flag = lth_refused_subjugation } }
+	}
+	desc = {
+		text = lothlorien.34.d_accepted
+		trigger = { NOT = { FROM = { has_country_flag = lth_refused_subjugation } } }
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = { FROM = { has_country_flag = lth_refused_subjugation } }
+		name = lothlorien.34.a_declined
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = {
+			NOT = { FROM = { has_country_flag = lth_refused_subjugation } }
+		}
+		name = lothlorien.34.a_accepted
+
+		LTH = {
+			puppet = {
+				target = FROM
+				end_wars = no
+			}
+		}
+	}
+}
+
+# Ringbearers Edicts positive
+country_event = {
+	id = lothlorien.36
+	title = lothlorien.36.t
+	desc = lothlorien.36.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_galadriel
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.36.a
+
+		lthi_increase_influence_noldor_major = yes
+		add_political_power = 100
+	}
+}
+
+# Ringbearers Edicts negative
+country_event = {
+	id = lothlorien.37
+	title = lothlorien.37.t
+	desc = lothlorien.37.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_galadriel
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.37.a
+
+		lthi_decrease_influence_noldor_intermediate = yes
+		add_stability = -0.1
+		add_political_power = -100
+	}
+}
+
+# Lords Prerogative positive
+country_event = {
+	id = lothlorien.38
+	title = lothlorien.38.t
+	desc = lothlorien.38.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_celeborn
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.38.a
+
+		lthi_increase_influence_sindar_major = yes
+		add_political_power = 100
+	}
+}
+
+# Lords Prerogative negative
+country_event = {
+	id = lothlorien.39
+	title = lothlorien.39.t
+	desc = lothlorien.39.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_celeborn
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.39.a
+
+		lthi_decrease_influence_sindar_intermediate = yes
+		add_stability = -0.1
+		add_political_power = -100
+	}
+}
+
+# Send help to dwarf moria?
+country_event = {
+	id = lothlorien.40
+	title = lothlorien.40.t
+	desc = lothlorien.40.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_moria
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				MOA = { is_ai = no }
+			}
+			modifier = {
+				factor = 0
+				is_going_revolutionary = yes
+			}
+		}
+		name = lothlorien.40.a
+
+		# Send weapons
+		event_option_tooltip = lothlorien.41.a
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				MOA = { is_ai = no }
+			}
+			modifier = {
+				factor = 0
+				is_going_revolutionary = yes
+			}
+		}
+		name = lothlorien.40.b
+
+		# Send a few volunteers
+		event_option_tooltip = lothlorien.42.a
+
+		add_manpower = -10000
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.40.c
+
+		# Thoughts and prayers
+	}
+}
+
+# Moria help: weapons
+country_event = {
+	id = lothlorien.41
+	title = lothlorien.41.t
+	desc = lothlorien.41.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lothlorien
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.41.a
+
+		# Send weapons
+		LTH = {
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 1000
+				target = MOA
+			}
+		}
+		MOA = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_increase
+			}
+			add_equipment_subsidy = {
+				cic = 500
+				equipment_type = infantry_equipment
+				seller_tags = { LTH } 
+			}
+		}
+	}
+}
+
+# Moria help: volunteers
+country_event = {
+	id = lothlorien.42
+	title = lothlorien.42.t
+	desc = lothlorien.42.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves_army
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.42.a
+
+		MOA = {
+			add_manpower = 10000
+			add_war_support = 0.1
+			add_opinion_modifier = {
+				target = LTH
+				modifier = small_increase
+			}
+			add_equipment_subsidy = {
+				cic = 500
+				equipment_type = infantry_equipment
+				seller_tags = { LTH } 
+			}
+		}
+	}
+}
+
+# Vales of Anduin cooperation
+country_event = {
+	id = lothlorien.43
+	title = lothlorien.43.t
+	desc = lothlorien.43.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.43.a
+
+		if = {
+			limit = { LTH = { has_country_flag = lth_anduin_gift_equipment } }
+			effect_tooltip = {
+				LTH = {
+					send_equipment = {
+						equipment = infantry_equipment
+						amount = 2000
+						target = VAL
+					}
+				}
+				VAL = {
+					add_opinion_modifier = {
+						target = LTH
+						modifier = medium_increase
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { LTH = { has_country_flag = lth_anduin_gift_guarantee } }
+			effect_tooltip = {
+				LTH = { give_guarantee = VAL }
+				VAL = {
+					add_opinion_modifier = {
+						target = LTH
+						modifier = large_increase
+					}
+				}
+			}
+		}
+	}
+}
+
+# Vales of Anduin cooperation efforts
+country_event = {
+	id = lothlorien.44
+	title = lothlorien.44.t
+	desc = lothlorien.44.d
+
+	is_triggered_only = yes
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.44.a
+
+		if = {
+			limit = { LTH = { has_country_flag = lth_anduin_gift_guarantee } }
+			army_experience = 100
+			random_owned_state = {
+				add_building_slot_and_civ_x3 = yes
+			}
+		}
+		else_if = {
+			limit = { has_country_flag = lth_anduin_gift_equipment }
+			army_experience = 50
+			random_owned_state = {
+				add_building_slot_and_civ_x2 = yes
+			}
+		}
+		else = {
+			army_experience = 25
+			random_owned_state = {
+				add_building_slot_and_civ = yes
+			}
+		}
+	}
+}
+
+# Leaving to Valinor flavour event
+country_event = {
+	id = lothlorien.45
+	title = lothlorien.45.t
+	desc = lothlorien.45.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lindon
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.45.a
+
+		# start a mission that periodically looses manpower in core states
+		activate_mission = leaving_for_valinor
+	}
+}
+
+
+# Oath of Feanor reaffirmed
+country_event = {
+	id = lothlorien.46
+	title = lothlorien.46.t
+	desc = lothlorien.46.d
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves_oath
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.46.a
+
+		# Increase animosity towards Mordor
+		add_relation_modifier = {
+			target = MOR
+			modifier = oath_of_feanor
+		}
+		# Increase Noldor influence
+		lthi_increase_influence_noldor_major = yes
+		add_opinion_modifier = {
+    		target = MOR
+    		modifier = oath_of_feanor
+		}
+
+		custom_effect_tooltip = oath_of_feanor_effect_tt
+	}
+}
+
+# [Elven Lord] supports Galadriel
+country_event = {
+	id = lothlorien.47
+	title = lothlorien.47.t
+	desc = lothlorien.47.d
+
+	is_triggered_only = yes
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.47.a
+		lthi_increase_influence_noldor_intermediate = yes
+
+	}
+}
+
+# [Elven Lord] supports Celeborn
+country_event = {
+	id = lothlorien.48
+	title = lothlorien.48.t
+	desc = lothlorien.48.d
+
+	is_triggered_only = yes
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.48.a
+		lthi_increase_influence_sindar_intermediate = yes
+	}
+}
+
+# [Elven Lord] abstains
+country_event = {
+	id = lothlorien.49
+	title = lothlorien.49.t
+	desc = lothlorien.49.d
+
+	is_triggered_only = yes
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.49.a
+	}
+}
+
+# Accord: Gala begins term
+country_event = {
+	id = lothlorien.50
+	title = lothlorien.50.t
+	desc = lothlorien.50.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_galadriel
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.50.a
+
+		lth_accord_gala_term = yes
+	}
+}
+
+# Accord: Cele begins term
+country_event = {
+	id = lothlorien.51
+	title = lothlorien.51.t
+	desc = lothlorien.51.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_celeborn
+
+	# 
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.51.a
+
+		lth_accord_cele_term = yes
+	}
+}
+
+# Orc Right's Debate
+country_event = {
+	id = lothlorien.52
+	title = lothlorien.52.t
+	desc = lothlorien.52.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_orcs_marching
+
+	# Let's go
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_manpower < 50000
+			}
+			modifier = {
+				factor = 3
+				any_allied_country = {
+					is_orcs = yes
+				}
+			}
+		}
+		name = lothlorien.52.a
+
+		add_stability = -0.15
+		add_political_power = -150
+	}
+
+	# Hell no
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 2
+				has_manpower > 200000
+			}
+		}
+		name = lothlorien.52.b
+
+		add_stability = 0.15
+		add_political_power = 150
+		custom_effect_tooltip = lothlorien.52.b_tt
+		set_country_flag = orc_rights_debate_declined
+	}
+}
+
+# Ents asked for help
+country_event = {
+	id = lothlorien.53
+	title = lothlorien.53.t
+	desc = lothlorien.53.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lothlorien
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 2
+				LTH = { is_ai = no }
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				has_opinion = { target = LTH value > 25 }
+			}
+			modifier = {
+				factor = 2
+				has_opinion = { target = LTH value > 15 }
+			}
+		}
+		name = lothlorien.53.a
+
+		event_option_tooltip = lothlorien.54.a
+
+		hidden_effect = { LTH = { country_event = { id = lothlorien.54 days = 7 } } }
+	}
+
+	# decline
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				LTH = { is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				has_opinion = { target = LTH value < -10 }
+			}
+		}
+		name = lothlorien.53.b
+
+		event_option_tooltip = lothlorien.55.a
+
+		add_political_power = -100
+
+		hidden_effect = { LTH = { country_event = { id = lothlorien.55 days = 7 } } }
+	}
+}
+
+# Ents accept
+country_event = {
+	id = lothlorien.54
+	title = lothlorien.54.t
+	desc = lothlorien.54.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_ents
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.54.a
+
+		LTH = {
+			give_guarantee = ENT
+			add_opinion_modifier = {
+				target = ENT
+				modifier = small_increase
+			}
+			set_country_flag = lth_ent_cooperation
+		}
+		ENT = {
+			give_resource_rights = {
+				receiver = LTH
+				state = 161
+				resources = { chromium }
+			}
+		}
+	}
+}
+
+# Ents decline
+country_event = {
+	id = lothlorien.55
+	title = lothlorien.55.t
+	desc = lothlorien.55.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_ents
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.55.a
+
+		LTH = {
+			add_opinion_modifier = {
+				target = ENT
+				modifier = medium_decrease
+			}
+		}
+	}
+}
+
+# Spiders asked for help
+country_event = {
+	id = lothlorien.56
+	title = lothlorien.56.t
+	desc = lothlorien.56.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lothlorien
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 4
+			modifier = {
+				factor = 2
+				LTH = { is_ai = no }
+			}
+		}
+		name = lothlorien.56.a
+
+		event_option_tooltip = lothlorien.57.a
+
+		hidden_effect = { LTH = { country_event = { id = lothlorien.57 days = 7 } } }
+	}
+
+	# decline
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.56.b
+
+		event_option_tooltip = lothlorien.58.a
+
+		add_political_power = -100
+
+		hidden_effect = { LTH = { country_event = { id = lothlorien.58 days = 7 } } }
+	}
+}
+
+# Spiders accept
+country_event = {
+	id = lothlorien.57
+	title = lothlorien.57.t
+	desc = lothlorien.57.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_spiders
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.57.a
+
+		if = {
+			limit = {
+				MIR = { is_spiders = yes }
+			}
+			LTH = {
+				add_opinion_modifier = {
+					target = MIR
+					modifier = small_increase
+				}
+				diplomatic_relation = {
+					country = MIR
+					relation = non_aggression_pact
+					active = yes
+				}
+				# Will spawn spoders at regular intervals
+				custom_effect_tooltip = lth_spider_cooperation_tt
+				set_country_flag = lth_spider_cooperation
+				hidden_effect = {
+					load_oob = Lothlorien_Spiders_Template
+					lth_spawn_spider_division = yes
+				}
+			}
+		}
+		else = {
+			LTH = {
+				add_opinion_modifier = {
+					target = SPI
+					modifier = small_increase
+				}
+				diplomatic_relation = {
+					country = SPI
+					relation = non_aggression_pact
+					active = yes
+				}
+				# Will spawn spoders at regular intervals
+				custom_effect_tooltip = lth_spider_cooperation_tt
+				set_country_flag = lth_spider_cooperation
+				hidden_effect = {
+					load_oob = Lothlorien_Spiders_Template
+					lth_spawn_spider_division = yes
+				}
+			}
+		}
+		
+	}
+}
+
+# Spiders decline
+country_event = {
+	id = lothlorien.58
+	title = lothlorien.58.t
+	desc = lothlorien.58.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_spiders
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.58.a
+
+		LTH = {
+			add_opinion_modifier = {
+				target = SPI
+				modifier = medium_decrease
+			}
+		}
+	}
+}
+
+# Thranduil pressured to sign non-agression pact with Erebor
+country_event = {
+	id = lothlorien.59
+	title = lothlorien.59.t
+	desc = lothlorien.59.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lothlorien
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 30
+				}
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 0.25
+				LTH = { is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 5
+				ERE = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 10
+				has_completed_focus = reconcileerebor
+			}
+		}
+
+		name = lothlorien.59.a
+
+		custom_effect_tooltip = lothlorien.59.a_tt
+		effect_tooltip = {
+			diplomatic_relation = {
+				country = ERE
+				relation = non_aggression_pact
+				active = yes
+			}
+		}
+
+		hidden_effect = {
+			if = {
+				limit = { ERE = { has_country_flag = lth_pressure_accepted } }
+				diplomatic_relation = {
+					country = ERE
+					relation = non_aggression_pact
+					active = yes
+				}
+				ERE = { clr_country_flag = lth_pressure_accepted }
+			}
+			else = {
+				set_country_flag = {
+					flag = lth_pressure_accepted
+					days = 60
+					value = 1
+				}
+			}
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value < 0
+				}
+			}
+			modifier = {
+				factor = 10
+				has_completed_focus = opposeerebor
+			}
+			modifier = {
+				factor = 2
+				ERE = { is_going_different_path_as_root = yes }
+			}
+		}
+
+		name = lothlorien.59.b
+
+		add_political_power = -200
+		add_stability = -0.1
+	}
+}
+
+# Erebor pressured to sign non-agression pact with Mirkwood
+country_event = {
+	id = lothlorien.60
+	title = lothlorien.60.t
+	desc = lothlorien.60.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lothlorien
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 30
+				}
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 5
+				MIR = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = MIR
+					value > 0
+				}
+			}
+		}
+		name = lothlorien.60.a
+
+		custom_effect_tooltip = lothlorien.60.a_tt
+		effect_tooltip = {
+			diplomatic_relation = {
+				country = MIR
+				relation = non_aggression_pact
+				active = yes
+			}
+		}
+
+		hidden_effect = {
+			if = {
+				limit = { MIR = { has_country_flag = lth_pressure_accepted } }
+				diplomatic_relation = {
+					country = MIR
+					relation = non_aggression_pact
+					active = yes
+				}
+				MIR = { clr_country_flag = lth_pressure_accepted }
+			}
+			else = {
+				set_country_flag = {
+					flag = lth_pressure_accepted
+					days = 60
+					value = 1
+				}
+			}
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 30
+				}
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = MIR
+					value > 0
+				}
+			}
+		}
+		name = lothlorien.60.b
+
+		add_political_power = -150
+		add_stability = -0.05
+
+	}
+}
+
+# Commemorate Battle of Celebrant (ROH)
+country_event = {
+	id = lothlorien.61
+	title = lothlorien.61.t
+	desc = lothlorien.61.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lothlorien
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.61.a
+
+		army_experience = 50
+		add_war_support = 0.05
+		add_stability = 0.05
+
+		effect_tooltip = {
+			LTH = {
+				add_opinion_modifier = {
+					target = ROH
+					modifier = small_increase
+				}
+			}
+			ROH = {
+				add_opinion_modifier = {
+					target = LTH
+					modifier = small_increase
+				}
+			}
+		}
+	}
+}
+
+# Commemorate Battle of Celebrant (LTH)
+country_event = {
+	id = lothlorien.62
+	title = lothlorien.62.t
+	desc = lothlorien.62.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_riders
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.62.a
+
+		army_experience = 50
+		add_war_support = 0.05
+		add_stability = 0.05
+
+		LTH = {
+			add_opinion_modifier = {
+				target = ROH
+				modifier = small_increase
+			}
+		}
+		ROH = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = small_increase
+			}
+		}
+	}
+}
+
+# ROH asked by LTH for guarantee
+country_event = {
+	id = lothlorien.63
+	title = lothlorien.63.t
+	desc = lothlorien.63.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_lothlorien
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = LTH
+					value > 30
+				}
+			}
+		}
+		name = lothlorien.63.a
+
+		ROH = {
+			give_guarantee = LTH
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 10
+				LTH = { has_added_tension_amount > 5 }
+			}
+		}
+		name = lothlorien.63.b
+
+		add_political_power = -150
+		add_stability = -0.1
+	}
+}
+
+# Elrond council reponse: accepted
+country_event = {
+	id = lothlorien.64
+	title = lothlorien.64.t
+	desc = lothlorien.64.d
+
+	picture = GFX_report_event_elrond_council
+
+	is_triggered_only = yes
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.64.a
+		custom_effect_tooltip = lothlorien.64.a_tt
+	}
+}
+
+# Elrond council reponse: accepted
+country_event = {
+	id = lothlorien.65
+	title = lothlorien.65.t
+	desc = lothlorien.65.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elrond_council
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.65.a
+
+		LTH = {
+			add_opinion_modifier = {
+				target = RIV
+				modifier = small_decrease
+			}
+		}
+	}
+}
+
+# The One Ring: Forced to choose a path
+country_event = {
+	id = lothlorien.66
+	title = lothlorien.66.t
+	desc = lothlorien.66.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_ring
+
+	trigger = {
+		NOT = { has_completed_focus = lth_keepthering }
+		NOT = { has_completed_focus = lth_anelvenfellowship }
+	}
+
+	# Keep it
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 8
+				has_government = belligerent
+			}
+			modifier = {
+				factor = 4
+				has_government = revolutionary
+			}
+		}
+		name = lothlorien.66.a
+
+		if = {
+			limit = { NOT = { has_completed_focus = lth_anelvenfellowship } }
+			complete_national_focus = lth_keepthering
+		}
+	}
+
+	# Elven Fellowship
+	option = {
+		trigger = {
+			NOT = { is_ally_with = MOR }
+			LTH_haldir = { is_unit_leader = yes } # NEED Haldir, he is ringbearer
+		}
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 8
+				has_government = cooperative
+			}
+			modifier = {
+				factor = 4
+				has_government = unaligned
+			}
+		}
+		name = lothlorien.66.b
+
+		if = {
+			limit = { NOT = { has_completed_focus = lth_keepthering } }
+			complete_national_focus = lth_anelvenfellowship
+		}
+	}
+}
+
+# Moria has fallen - Government in exile?
+country_event = {
+	id = lothlorien.67
+	title = lothlorien.67.t
+	desc = lothlorien.67.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_fight
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.67.a
+
+		MOA = { become_exiled_in = { target = LTH legitimacy = 50 } }
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 0
+		}
+		name = lothlorien.67.b
+
+	}
+}
+
+# Schism failed -> Civil war
+country_event = {
+	id = lothlorien.68
+	title = lothlorien.68.t
+	desc = lothlorien.68.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_elves_oath
+
+	# support Galadriel
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.68.a
+
+		start_civil_war = {
+			ruling_party = belligerent
+			ideology = revolutionary
+
+			size = 0.5
+
+			keep_unit_leaders_trigger = {
+				NOT = { has_trait = sindar_trait }
+			}
+			keep_political_leader = no
+		}
+		complete_national_focus = lth_celebornsexile
+		remove_ideas_with_trait = sindar_minor
+		remove_ideas_with_trait = sindar_intermediate
+		remove_ideas_with_trait = sindar_major
+		every_character = {
+			limit = { character_has_sindar_trait = yes }
+			retire = yes
+		}
+		set_variable = { lthi_base_sindar_influence = 0 }
+		add_popularity = {
+			ideology = belligerent
+			popularity = 100
+		}
+
+		random_other_country = {
+            limit = {
+				original_tag = LTH
+				has_government = revolutionary
+			}
+            complete_national_focus = lth_galadrielsfarewell
+			every_character = {
+				limit = { character_has_noldor_trait = yes }
+				retire = yes
+			}
+			remove_ideas_with_trait = noldor_minor
+			remove_ideas_with_trait = noldor_intermediate
+			remove_ideas_with_trait = noldor_major
+			lthi_initialize_values = yes
+        }
+
+		set_global_flag = lth_civil_war
+	}
+
+	# Support Celeborn
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.68.b
+
+		start_civil_war = {
+			ruling_party = revolutionary
+			ideology = belligerent
+
+			size = 0.5
+
+			keep_unit_leaders_trigger = {
+				NOT = { has_trait = noldor_trait }
+			}
+			keep_political_leader = no
+		}
+		complete_national_focus = lth_galadrielsfarewell
+		remove_ideas_with_trait = noldor_minor
+		remove_ideas_with_trait = noldor_intermediate
+		remove_ideas_with_trait = noldor_major
+		every_character = {
+			limit = { character_has_noldor_trait = yes }
+			retire = yes
+		}
+		set_variable = { lthi_base_noldor_influence = 0 }
+		add_popularity = {
+			ideology = revolutionary
+			popularity = 100
+		}
+
+		random_other_country = {
+            limit = {
+				original_tag = LTH
+				has_government = belligerent
+			}
+            complete_national_focus = lth_celebornsexile
+			every_character = {
+				limit = { character_has_sindar_trait = yes }
+				retire = yes
+			}
+			remove_ideas_with_trait = sindar_minor
+			remove_ideas_with_trait = sindar_intermediate
+			remove_ideas_with_trait = sindar_major
+			lthi_initialize_values = yes
+        }
+
+		set_global_flag = lth_civil_war
+	}
+}
+
+# Starting event: Great Schism
+country_event = {
+	id = lothlorien.69
+	title = lothlorien.69.t
+	desc = lothlorien.69.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_cele_gala
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = lothlorien.69.a
+
+		effect_tooltip = {
+			remove_ideas = LTH_celeborn_and_galadriel
+			add_ideas = LTH_great_schism
+
+			custom_effect_tooltip = lth_thegreatschism_tt
+		}
+	}
+}

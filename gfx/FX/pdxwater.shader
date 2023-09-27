@@ -294,7 +294,7 @@ PixelShader =
 			float3 SunDirWater = float3( 0, -1, 0 );
 		#else
 			float3 SunDirWater = CalculateSunDirectionWater( Input.pos );
-			//float3 SunDirWater = float3( 0, -1, 0 ); // LOTR NOTE: TODO: Consider this
+			//float3 SunDirWater = float3( 0, -1, 0 ); // LOTR NOTE: Alternative way to do water
 		#endif
 			float3 H = normalize( normalize(vCamPos - Input.pos).xzy + -SunDirWater.xzy );
 			float2 HWave = H.xy/H.z - B;

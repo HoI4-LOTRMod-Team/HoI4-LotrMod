@@ -1,0 +1,465 @@
+lothlorien_mirror_decisions_category = {
+
+	investigate_the_giant = {
+		icon = GFX_decision_lth_mirror
+
+		available = {
+			always = yes
+		}
+
+		visible = {
+			has_country_flag = m_storyline_giant
+			has_country_flag = m_storyline_giant_knows_about_mound
+			has_country_flag = m_storyline_giant_knows_about_giant
+
+			NOT = {
+				has_country_flag = m_storyline_giant_has_failed
+			}
+		}
+
+		fire_only_once = no
+		cost = 50
+		days_re_enable = 30
+
+		complete_effect = {
+			country_event = mirror.45
+		}
+	}
+
+	investigate_the_giant_2 = {
+		icon = GFX_decision_lth_mirror
+
+		available = {
+			OR = {
+				has_country_flag = m_storyline_giant_arrows
+				has_country_flag = m_storyline_giant_rod
+			}
+		}
+
+		visible = {
+			has_country_flag = m_storyline_giant
+			has_country_flag = m_storyline_giant_knows_about_mound
+			has_country_flag = m_storyline_giant_knows_about_giant
+		}
+
+		fire_only_once = no
+		cost = 50
+		days_re_enable = 30
+
+		complete_effect = {
+			country_event = mirror.45
+		}
+	}
+
+	# look into mirror
+	look_into_mirror = {
+		icon = GFX_decision_lth_mirror
+
+		available = {
+			controls_state = 75
+		}
+
+		visible = {
+			has_completed_focus = lth_galadrielsmirror
+			NOT = { has_completed_focus = lth_mirrorupgrade }
+		}
+
+		fire_only_once = no
+		cost = 50
+		days_remove = 90
+
+		complete_effect = {
+			hidden_effect = { mirror_look_into_mirror = yes }
+			custom_effect_tooltip = look_into_mirror_tt
+		}
+	}
+
+	# Upgrade with mirror upgrade focus
+	look_into_mirror_2 = {
+		icon = GFX_decision_lth_mirror
+
+		available = {
+			controls_state = 75
+		}
+
+		visible = {
+			has_completed_focus = lth_galadrielsmirror
+			NOT = { has_decision = look_into_mirror }
+			has_completed_focus = lth_mirrorupgrade
+		}
+
+		fire_only_once = no
+		cost = 25
+		days_remove = 3
+
+		complete_effect = {
+			hidden_effect = { mirror_look_into_mirror = yes }
+			custom_effect_tooltip = look_into_mirror_tt
+		}
+	}
+
+	# Consult the mirror on the fellowships path
+	consult_mirror_fellowship_path = {
+		icon = GFX_decision_lth_mirror
+
+		available = {
+			always = yes
+		}
+
+		visible = {
+			has_completed_focus = lth_galadrielsmirror
+			has_completed_focus = lth_mirrorupgrade
+			has_global_flag = fs_started
+			NOT = { has_global_flag = fs_arrived_in_rivendell }
+			NOT = { has_global_flag = fs_ring_seized }
+			NOT = { has_global_flag = fs_ring_destroyed }
+			NOT = { has_completed_focus = lth_requestaseatonelrondscouncil }
+		}
+
+		fire_only_once = yes
+		cost = 50
+
+		complete_effect = {
+			custom_effect_tooltip = consult_mirror_fellowship_path_tt
+			hidden_effect = {
+				random_list = {
+					# redhorn pass
+					2 = {
+						set_global_flag = mirror_predicted_redhorn
+						country_event = mirror.61
+					}
+					# isengard
+					1 = {
+						modifier = {
+							factor = 3
+							has_global_flag = gandalf_saruman_united
+						}
+						modifier = {
+							factor = 0
+							is_historical_focus_on = yes
+						}
+						set_global_flag = mirror_predicted_isengard
+						country_event = mirror.60
+					}
+					# gundabad
+					1 = {
+						modifier = {
+							factor = 2
+							ANG = { has_completed_focus = ANG_join_gondor }
+						}
+						modifier = {
+							factor = 2
+							ANG = { is_ai = no }
+						}
+						modifier = {
+							factor = 0
+							is_historical_focus_on = yes
+						}
+						set_global_flag = mirror_predicted_gundabad
+						country_event = mirror.84
+					}
+					# no clue
+					1 = {
+						# The more non-ai players there are, the less we know
+						modifier = {
+							factor = 2
+							ERE = { is_ai = no }
+						}
+						modifier = {
+							factor = 2
+							MIR = { is_ai = no }
+						}
+						modifier = {
+							factor = 2
+							RIV = { is_ai = no }
+						}
+						modifier = {
+							factor = 2
+							GON = { is_ai = no }
+						}
+						country_event = mirror.62
+					}
+				}
+			}
+		}
+	}
+
+	# Consult the mirror on gala
+	consult_mirror_gala_edicts = {
+		icon = GFX_decision_lth_mirror
+
+		available = {
+			always = yes
+		}
+
+		visible = {
+			has_completed_focus = lth_thegreatschism
+			NOT = { has_completed_focus = lth_ringbearersedicts }
+			has_idea = LTH_great_schism
+		}
+
+		fire_only_once = yes
+		cost = 50
+
+		complete_effect = {
+			custom_effect_tooltip = consult_mirror_gala_edicts_tt
+			hidden_effect = {
+				random_list = {
+					70 = {
+						set_country_flag = mirror_predicted_gala_edicts_good
+						country_event = mirror.64
+					}
+					30 = {
+						set_country_flag = mirror_predicted_gala_edicts_bad
+						country_event = mirror.63
+					}
+				}
+			}
+		}
+	}
+
+	# Consult the mirror on cele
+	consult_mirror_cele_edicts = {
+		icon = GFX_decision_lth_mirror
+
+		available = {
+			always = yes
+		}
+
+		visible = {
+			has_completed_focus = lth_thegreatschism
+			NOT = { has_completed_focus = lth_alordsprerogative }
+			has_idea = LTH_great_schism
+		}
+
+		fire_only_once = yes
+		cost = 50
+
+		complete_effect = {
+			custom_effect_tooltip = consult_mirror_cele_edicts_tt
+			hidden_effect = {
+				random_list = {
+					70 = {
+						modifier = {
+							factor = 1.5
+							has_completed_focus = lth_theprinceofdoriath
+						}
+						set_country_flag = mirror_predicted_cele_edicts_good
+						country_event = mirror.66
+					}
+					30 = {
+						set_country_flag = mirror_predicted_cele_edicts_bad
+						country_event = mirror.65
+					}
+				}
+			}
+		}
+	}
+
+	# Consult the mirror on anduin offer
+	consult_mirror_anduin_offer = {
+		icon = GFX_decision_lth_mirror
+
+		available = {
+			always = yes
+		}
+
+		visible = {
+			has_completed_focus = lth_preemptivemeasures
+			NOT = { has_completed_focus = lth_amostgenerousoffer }
+			NOT = { has_completed_focus = lth_agestureofgoodwill }
+			VAL = { is_ai = yes }
+			NOT = { has_war_with = VAL }
+			VAL = { is_puppet = no }
+		}
+
+		fire_only_once = yes
+		cost = 50
+
+		complete_effect = {
+			hidden_effect = {
+				VAL = {
+					random_list = {
+						# no
+						10 = {
+							modifier = {
+								factor = 2
+								has_opinion = { target = LTH value < 0 }
+							}
+							modifier = {
+								factor = 2
+								has_opinion = { target = LTH value < -25 }
+							}
+							modifier = {
+								factor = 2
+								LTH = { is_going_different_path_as_root = yes }
+							}
+							modifier = {
+								factor = 2
+								strength_ratio = { tag = LTH ratio > 1 }
+							}
+							modifier = {
+								factor = 2
+								strength_ratio = { tag = LTH ratio > 2 }
+							}
+							modifier = {
+								has_government = cooperative
+								factor = 2
+							}
+							LTH = { country_event = mirror.83 }
+							LTH = { set_country_flag = mirror_predicted_vales_decline }
+						}
+						# yes
+						7 = {
+							modifier = {
+								factor = 2
+								has_opinion = { target = LTH value > 50 }
+							}
+							modifier = {
+								factor = 2
+								has_opinion = { target = LTH value > 25 }
+							}
+							modifier = {
+								factor = 2
+								LTH = { is_going_same_path_as_root = yes }
+							}
+							modifier = {
+								factor = 2
+								strength_ratio = { tag = LTH ratio < 1 }
+							}
+							modifier = {
+								factor = 2
+								strength_ratio = { tag = LTH ratio < 0.6 }
+							}
+							LTH = { country_event = mirror.82 }
+							LTH = { set_country_flag = mirror_predicted_vales_accept }
+						}
+						# dunno
+						5 = {
+							LTH = { country_event = mirror.79 }
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	# Get intel on country if it is really low (intel_level_over)
+	consult_mirror_intel = {
+		icon = GFX_decision_lth_mirror
+
+		visible = {
+			has_war = yes
+			has_completed_focus = lth_mirrorupgrade
+		}
+
+		cost = 150
+
+		fire_only_once = yes
+		
+		complete_effect = {
+			every_other_country = {
+				limit = { has_war_with = LTH }
+
+				LTH = {
+					add_intel = {
+						target = FROM
+						civilian_intel = 10
+						army_intel = 10
+						navy_intel = 10
+					}
+				}
+			}
+		}
+	}
+
+
+	# Possible Consult on path of any country
+	consult_mirror_on_country_path = {
+		icon = GFX_decision_lth_mirror
+
+		target_root_trigger = {
+			has_completed_focus = lth_galadrielsmirror
+		}
+		target_array = mirror_targets_future
+		
+		target_trigger = {
+			FROM = {
+				is_ai = yes
+				OR = {
+					is_going_belligerent = yes
+					is_going_revolutionary = yes
+					is_going_unaligned = yes
+					is_going_cooperative = yes
+				}
+			}
+			is_in_array = { mirror_targets_future = FROM }
+		}
+
+		cost = 100
+
+		fire_only_once = yes
+		
+		complete_effect = {
+			custom_effect_tooltip = consult_mirror_on_country_path_tt
+			hidden_effect = {
+				FROM = {
+					set_country_flag = mirror_targets_used
+
+					save_event_target_as = mirror_future_target
+
+					# 3/4 Certain chance of success
+					random_list = {
+						30 = {
+							if = {
+								limit = { is_going_belligerent = yes }
+								random_list = {
+									10 = { LTH = { country_event = mirror.67 } }
+									10 = { LTH = { country_event = mirror.68 } }
+									10 = { LTH = { country_event = mirror.69 } }
+								}
+							}
+
+
+							else_if = {
+								limit = { is_going_revolutionary = yes }
+								random_list = {
+									10 = { LTH = { country_event = mirror.70 } }
+									10 = { LTH = { country_event = mirror.71 } }
+									10 = { LTH = { country_event = mirror.72 } }
+								}
+							}
+
+							else_if = {
+								limit = { is_going_cooperative = yes }
+								random_list = {
+									10 = { LTH = { country_event = mirror.73 } }
+									10 = { LTH = { country_event = mirror.74 } }
+									10 = { LTH = { country_event = mirror.75 } }
+								}
+							}
+
+							else_if = {
+								limit = { is_going_unaligned = yes }
+								random_list = {
+									10 = { LTH = { country_event = mirror.76 } }
+									10 = { LTH = { country_event = mirror.77 } }
+									10 = { LTH = { country_event = mirror.78 } }
+								}
+							}
+						}
+						10 = {
+							random_list = {
+								10 = { LTH = { country_event = mirror.79 } }
+								10 = { LTH = { country_event = mirror.80 } }
+								10 = { LTH = { country_event = mirror.81 } }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+}

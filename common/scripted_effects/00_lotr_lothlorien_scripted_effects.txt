@@ -1,0 +1,1208 @@
+
+
+# Initialize the variables at game start
+lthi_initialize_values = {
+	set_variable = { lthi_base_nandor_influence = 100 }
+	set_variable = { lthi_base_noldor_influence = 35 }
+	set_variable = { lthi_base_sindar_influence = 30 }
+	set_variable = { lthi_base_halfelves_influence = 5 }
+	set_variable = { lthi_base_nonelves_influence = 0 }
+	set_variable = { lthi_base_orcs_influence = 0 }
+
+	# These are for civil war
+	if = {
+		limit = {
+			has_completed_focus = lth_acknowledgethemordorthreat
+			has_government = revolutionary
+		}
+		set_variable = { lthi_base_noldor_influence = 0 }
+	}
+	else_if = {
+		limit = {
+			has_government = belligerent
+			has_completed_focus = lth_acknowledgethemordorthreat
+		}
+		set_variable = { lthi_base_sindar_influence = 0 }
+	}
+
+	force_update_dynamic_modifier = yes
+
+	add_dynamic_modifier = {
+		modifier = lothlorien_base_influences
+	}
+	add_dynamic_modifier = {
+		modifier = lthi_influence_bonuses
+	}
+
+	# Bonus variables
+	set_variable = { lthi_nandor_bonus_conscription = 0 }
+	set_variable = { lthi_nandor_bonus_speed = 0 }
+	set_variable = { lthi_nandor_bonus_organization = 0 }
+
+	set_variable = { lthi_noldor_bonus_attack = 0 }
+	set_variable = { lthi_noldor_bonus_breakthrough = 0 }
+	set_variable = { lthi_noldor_bonus_factoryoutput = 0 }
+
+	set_variable = { lthi_sindar_bonus_constructionspeed = 0 }
+	set_variable = { lthi_sindar_bonus_supply = 0 }
+	set_variable = { lthi_sindar_bonus_research = 0 }
+
+	set_variable = { lthi_halfelves_bonus_experiencegain = 0 }
+	set_variable = { lthi_halfelves_bonus_stability = 0 }
+	set_variable = { lthi_halfelves_bonus_consumergoods = 0 }
+
+	set_variable = { lthi_nonelves_bonus_monthlypop = 0 }
+	set_variable = { lthi_orcs_bonus_strength = 0 }
+
+	# max bonus vars
+	set_variable = { lthi_nandor_bonus_conscription_base = 0.1 }
+	set_variable = { lthi_nandor_bonus_speed_base = 0 }
+	set_variable = { lthi_nandor_bonus_organization_base = 0 }
+
+	set_variable = { lthi_noldor_bonus_attack_base = 0.1 }
+	set_variable = { lthi_noldor_bonus_breakthrough_base = 0 }
+	set_variable = { lthi_noldor_bonus_factoryoutput_base = 0 }
+
+	set_variable = { lthi_sindar_bonus_constructionspeed_base = 0.1 }
+	set_variable = { lthi_sindar_bonus_supply_base = 0 }
+	set_variable = { lthi_sindar_bonus_research_base = 0 }
+
+	set_variable = { lthi_halfelves_bonus_experiencegain_base = 0.1 }
+	set_variable = { lthi_halfelves_bonus_stability_base = 0 }
+	set_variable = { lthi_halfelves_bonus_consumergoods_base = 0 }
+
+	set_variable = { lthi_nonelves_bonus_monthlypop_base = 0.2 }
+	set_variable = { lthi_orcs_bonus_strength_base = 0.2 }
+
+	lthi_update_values = yes
+}
+
+
+# Call this every time one of the influence vars is changed
+lthi_update_values = {
+	# Make sure no negative values
+	clamp_variable = { var = lthi_base_nandor_influence min = 0 }
+	clamp_variable = { var = lthi_base_sindar_influence min = 0 }
+	clamp_variable = { var = lthi_base_noldor_influence min = 0 }
+	clamp_variable = { var = lthi_base_halfelves_influence min = 0 }
+	clamp_variable = { var = lthi_base_nonelves_influence min = 0 }
+	clamp_variable = { var = lthi_base_orcs_influence min = 0 }
+
+	# Calculate sum
+	set_variable = { lthi_influence_sum = modifier@nandor_influence }
+	add_to_variable = { lthi_influence_sum = modifier@noldor_influence }
+	add_to_variable = { lthi_influence_sum = modifier@sindar_influence }
+	add_to_variable = { lthi_influence_sum = modifier@halfelves_influence }
+	add_to_variable = { lthi_influence_sum = modifier@nonelves_influence }
+	add_to_variable = { lthi_influence_sum = modifier@orcs_influence }
+
+	# Calculate fractions
+	set_variable = { lthi_nandor_influence_fraction = modifier@nandor_influence }
+	set_variable = { lthi_noldor_influence_fraction = modifier@noldor_influence }
+	set_variable = { lthi_sindar_influence_fraction = modifier@sindar_influence }
+	set_variable = { lthi_halfelves_influence_fraction = modifier@halfelves_influence }
+	set_variable = { lthi_nonelves_influence_fraction = modifier@nonelves_influence }
+	set_variable = { lthi_orcs_influence_fraction = modifier@orcs_influence }
+	divide_variable = { lthi_nandor_influence_fraction = lthi_influence_sum }
+	divide_variable = { lthi_noldor_influence_fraction = lthi_influence_sum }
+	divide_variable = { lthi_sindar_influence_fraction = lthi_influence_sum }
+	divide_variable = { lthi_halfelves_influence_fraction = lthi_influence_sum }
+	divide_variable = { lthi_nonelves_influence_fraction = lthi_influence_sum }
+	divide_variable = { lthi_orcs_influence_fraction = lthi_influence_sum }
+
+	# Ancestral Echoes in tandem focus: Noldor and Sindar share influence
+	if = {
+		limit = { has_completed_focus = lth_ancestralechoesintandem }
+		
+		set_temp_variable = { noldor_infl_frac_temp = lthi_noldor_influence_fraction }
+		add_to_variable = { lthi_noldor_influence_fraction = lthi_sindar_influence_fraction }
+		add_to_variable = { lthi_sindar_influence_fraction = noldor_infl_frac_temp }
+	}
+
+	# Set bonus nandor
+	set_variable = { lthi_nandor_bonus_conscription = lthi_nandor_bonus_conscription_base }
+	set_variable = { lthi_nandor_bonus_speed = lthi_nandor_bonus_speed_base }
+	set_variable = { lthi_nandor_bonus_organization = lthi_nandor_bonus_organization_base }
+	multiply_variable = { lthi_nandor_bonus_conscription = lthi_nandor_influence_fraction }
+	multiply_variable = { lthi_nandor_bonus_speed = lthi_nandor_influence_fraction }
+	multiply_variable = { lthi_nandor_bonus_organization = lthi_nandor_influence_fraction }
+		
+	# Set bonus noldor
+	set_variable = { lthi_noldor_bonus_attack = lthi_noldor_bonus_attack_base }
+	set_variable = { lthi_noldor_bonus_breakthrough = lthi_noldor_bonus_breakthrough_base }
+	set_variable = { lthi_noldor_bonus_factoryoutput = lthi_noldor_bonus_factoryoutput_base }
+	multiply_variable = { lthi_noldor_bonus_attack = lthi_noldor_influence_fraction }
+	multiply_variable = { lthi_noldor_bonus_breakthrough = lthi_noldor_influence_fraction }
+	multiply_variable = { lthi_noldor_bonus_factoryoutput = lthi_noldor_influence_fraction }
+
+	# Set bonus sindar
+	set_variable = { lthi_sindar_bonus_constructionspeed = lthi_sindar_bonus_constructionspeed_base }
+	set_variable = { lthi_sindar_bonus_supply = lthi_sindar_bonus_supply_base }
+	set_variable = { lthi_sindar_bonus_research = lthi_sindar_bonus_research_base }
+	multiply_variable = { lthi_sindar_bonus_constructionspeed = lthi_sindar_influence_fraction }
+	multiply_variable = { lthi_sindar_bonus_supply = lthi_sindar_influence_fraction }
+	multiply_variable = { lthi_sindar_bonus_research = lthi_sindar_influence_fraction }
+
+	# Set bonus halfelves
+	set_variable = { lthi_halfelves_bonus_experiencegain = lthi_halfelves_bonus_experiencegain_base }
+	set_variable = { lthi_halfelves_bonus_stability = lthi_halfelves_bonus_stability_base }
+	set_variable = { lthi_halfelves_bonus_consumergoods = lthi_halfelves_bonus_consumergoods_base }
+	multiply_variable = { lthi_halfelves_bonus_experiencegain = lthi_halfelves_influence_fraction }
+	multiply_variable = { lthi_halfelves_bonus_stability = lthi_halfelves_influence_fraction }
+	multiply_variable = { lthi_halfelves_bonus_consumergoods = lthi_halfelves_influence_fraction }
+
+	# Set bonus nonelves
+	set_variable = { lthi_nonelves_bonus_monthlypop = lthi_nonelves_bonus_monthlypop_base }
+	multiply_variable = { lthi_nonelves_bonus_monthlypop = lthi_nonelves_influence_fraction }
+
+	# Set bonus orcs
+	set_variable = { lthi_orcs_bonus_strength = lthi_orcs_bonus_strength_base }
+	multiply_variable = { lthi_orcs_bonus_strength = lthi_orcs_influence_fraction }
+
+	# If we have the unity_in_division modifier we need to find out how "evened out" the influence is
+	# For this, we fing the highest and lowest values
+	if = {
+		limit = { has_dynamic_modifier = { modifier = lth_unity_in_division_modifier } }
+
+		add_to_temp_array = { temp_infl = lthi_nandor_influence_fraction }
+		add_to_temp_array = { temp_infl = lthi_noldor_influence_fraction }
+		add_to_temp_array = { temp_infl = lthi_sindar_influence_fraction }
+		add_to_temp_array = { temp_infl = lthi_halfelves_influence_fraction }
+
+		find_highest_in_array = {
+    		array = temp_infl
+			value = temp_highest_influence
+		}
+
+		find_lowest_in_array = {
+    		array = temp_infl
+			value = temp_lowest_influence
+		}
+
+		# We subtract from 1 the difference between highest and lowest
+		subtract_from_temp_variable = { temp_highest_influence = temp_lowest_influence }
+		set_variable = { lth_influence_spread_bonus = 1 }
+		subtract_from_variable = { lth_influence_spread_bonus = temp_highest_influence }
+
+		# Multiply with base value (maximum bonus)
+		multiply_variable = { lth_influence_spread_bonus = 0.15 }
+	}
+	# Purity and Brilliance: Any faction with more than 80% support automatically gets their bonus doubled
+	else_if = {
+		limit = { has_completed_focus = lth_purityandbrilliance }
+
+		if = {
+			limit = { check_variable = { lthi_noldor_influence_fraction > 0.8 } }
+			multiply_variable = { lthi_noldor_bonus_attack = 2 }
+			multiply_variable = { lthi_noldor_bonus_breakthrough = 2 }
+			multiply_variable = { lthi_noldor_bonus_factoryoutput = 2 }
+		}
+		else_if = {
+			limit = { check_variable = { lthi_nandor_influence_fraction > 0.8 } }
+			multiply_variable = { lthi_nandor_bonus_conscription = 2 }
+			multiply_variable = { lthi_nandor_bonus_speed = 2 }
+			multiply_variable = { lthi_nandor_bonus_organization = 2 }
+		}
+		else_if = {
+			limit = { check_variable = { lthi_sindar_influence_fraction > 0.8 } }
+			multiply_variable = { lthi_sindar_bonus_constructionspeed = 2 }
+			multiply_variable = { lthi_sindar_bonus_supply = 2 }
+			multiply_variable = { lthi_sindar_bonus_research = 2 }
+		}
+		else_if = {
+			limit = { check_variable = { lthi_halfelves_influence_fraction > 0.8 } }
+			multiply_variable = { lthi_halfelves_bonus_experiencegain = 2 }
+			multiply_variable = { lthi_halfelves_bonus_stability = 2 }
+			multiply_variable = { lthi_halfelves_bonus_consumergoods = 2 }
+		}
+		else_if = {
+			limit = { check_variable = { lthi_nonelves_influence_fraction > 0.8 } }
+			multiply_variable = { lthi_nonelves_bonus_monthlypop = 2 }
+		}
+		else_if = {
+			limit = { check_variable = { lthi_orcs_influence_fraction > 0.8 } }
+			multiply_variable = { lthi_orcs_bonus_strength = 2 }
+		}
+	}
+}
+
+lthi_increase_influence_nandor_one = {
+	add_to_variable = {
+		var = lthi_base_nandor_influence
+		value = 1
+		tooltip = increase_influence_nandor_tt
+	}
+}
+
+lthi_increase_influence_noldor_one = {
+	add_to_variable = {
+		var = lthi_base_noldor_influence
+		value = 1
+		tooltip = increase_influence_noldor_tt
+	}
+}
+
+lthi_increase_influence_sindar_one = {
+	add_to_variable = {
+		var = lthi_base_sindar_influence
+		value = 1
+		tooltip = increase_influence_sindar_tt
+	}
+}
+
+lthi_increase_influence_halfelves_one = {
+	add_to_variable = {
+		var = lthi_base_halfelves_influence
+		value = 1
+		tooltip = increase_influence_halfelves_tt
+	}
+}
+
+lthi_increase_influence_orcs_one = {
+	add_to_variable = {
+		var = lthi_base_orcs_influence
+		value = 1
+		tooltip = increase_influence_orcs_tt
+	}
+}
+
+lthi_increase_influence_nonelves_one = {
+	add_to_variable = {
+		var = lthi_base_nonelves_influence
+		value = 1
+		tooltip = increase_influence_nonelves_tt
+	}
+}
+
+lthi_increase_influence_nandor_minor = {
+	add_to_variable = {
+		var = lthi_base_nandor_influence
+		value = 20
+		tooltip = increase_influence_nandor_tt
+	}
+}
+
+lthi_increase_influence_nandor_intermediate = {
+	add_to_variable = {
+		var = lthi_base_nandor_influence
+		value = 35
+		tooltip = increase_influence_nandor_tt
+	}
+}
+
+lthi_increase_influence_nandor_major = {
+	add_to_variable = {
+		var = lthi_base_nandor_influence
+		value = 50
+		tooltip = increase_influence_nandor_tt
+	}
+}
+
+lthi_increase_influence_noldor_minor = {
+	add_to_variable = {
+		var = lthi_base_noldor_influence
+		value = 20
+		tooltip = increase_influence_noldor_tt
+	}
+}
+
+lthi_increase_influence_noldor_intermediate = {
+	add_to_variable = {
+		var = lthi_base_noldor_influence
+		value = 35
+		tooltip = increase_influence_noldor_tt
+	}
+}
+
+lthi_increase_influence_noldor_major = {
+	add_to_variable = {
+		var = lthi_base_noldor_influence
+		value = 50
+		tooltip = increase_influence_noldor_tt
+	}
+}
+
+lthi_increase_influence_sindar_minor = {
+	add_to_variable = {
+		var = lthi_base_sindar_influence
+		value = 20
+		tooltip = increase_influence_sindar_tt
+	}
+}
+
+lthi_increase_influence_sindar_intermediate = {
+	add_to_variable = {
+		var = lthi_base_sindar_influence
+		value = 35
+		tooltip = increase_influence_sindar_tt
+	}
+}
+
+lthi_increase_influence_sindar_major = {
+	add_to_variable = {
+		var = lthi_base_sindar_influence
+		value = 50
+		tooltip = increase_influence_sindar_tt
+	}
+}
+
+lthi_increase_influence_nonelves_minor = {
+	add_to_variable = {
+		var = lthi_base_nonelves_influence
+		value = 20
+		tooltip = increase_influence_nonelves_tt
+	}
+}
+
+lthi_increase_influence_nonelves_intermediate = {
+	add_to_variable = {
+		var = lthi_base_nonelves_influence
+		value = 35
+		tooltip = increase_influence_nonelves_tt
+	}
+}
+
+lthi_increase_influence_nonelves_major = {
+	add_to_variable = {
+		var = lthi_base_nonelves_influence
+		value = 50
+		tooltip = increase_influence_nonelves_tt
+	}
+}
+
+lthi_increase_influence_orcs_minor = {
+	add_to_variable = {
+		var = lthi_base_orcs_influence
+		value = 20
+		tooltip = increase_influence_orcs_tt
+	}
+}
+
+lthi_increase_influence_orcs_intermediate = {
+	add_to_variable = {
+		var = lthi_base_orcs_influence
+		value = 35
+		tooltip = increase_influence_orcs_tt
+	}
+}
+
+lthi_increase_influence_orcs_major = {
+	add_to_variable = {
+		var = lthi_base_orcs_influence
+		value = 50
+		tooltip = increase_influence_orcs_tt
+	}
+}
+
+lthi_increase_influence_orcs_huge = {
+	add_to_variable = {
+		var = lthi_base_orcs_influence
+		value = 200
+		tooltip = increase_influence_orcs_tt
+	}
+}
+
+lthi_increase_influence_halfelves_minor = {
+	add_to_variable = {
+		var = lthi_base_halfelves_influence
+		value = 20
+		tooltip = increase_influence_halfelves_tt
+	}
+}
+
+lthi_increase_influence_halfelves_intermediate = {
+	add_to_variable = {
+		var = lthi_base_halfelves_influence
+		value = 35
+		tooltip = increase_influence_halfelves_tt
+	}
+}
+
+lthi_increase_influence_halfelves_major = {
+	add_to_variable = {
+		var = lthi_base_halfelves_influence
+		value = 50
+		tooltip = increase_influence_halfelves_tt
+	}
+}
+
+lthi_celebrations_increase_influence_halfelves_minor = {
+	add_to_variable = {
+		var = lthi_base_halfelves_influence
+		value = 25
+		tooltip = increase_influence_halfelves_tt
+	}
+}
+
+lthi_celebrations_increase_influence_halfelves_intermediate = {
+	add_to_variable = {
+		var = lthi_base_halfelves_influence
+		value = 45
+		tooltip = increase_influence_halfelves_tt
+	}
+}
+
+lthi_celebrations_increase_influence_halfelves_major = {
+	add_to_variable = {
+		var = lthi_base_halfelves_influence
+		value = 75
+		tooltip = increase_influence_halfelves_tt
+	}
+}
+
+lthi_celebrations_increase_influence_nandor_minor = {
+	add_to_variable = {
+		var = lthi_base_nandor_influence
+		value = 25
+		tooltip = increase_influence_nandor_tt
+	}
+}
+
+lthi_celebrations_increase_influence_nandor_intermediate = {
+	add_to_variable = {
+		var = lthi_base_nandor_influence
+		value = 45
+		tooltip = increase_influence_nandor_tt
+	}
+}
+
+lthi_celebrations_increase_influence_nandor_major = {
+	add_to_variable = {
+		var = lthi_base_nandor_influence
+		value = 75
+		tooltip = increase_influence_nandor_tt
+	}
+}
+
+lthi_celebrations_increase_influence_noldor_minor = {
+	add_to_variable = {
+		var = lthi_base_noldor_influence
+		value = 25
+		tooltip = increase_influence_noldor_tt
+	}
+}
+
+lthi_celebrations_increase_influence_noldor_intermediate = {
+	add_to_variable = {
+		var = lthi_base_noldor_influence
+		value = 45
+		tooltip = increase_influence_noldor_tt
+	}
+}
+
+lthi_celebrations_increase_influence_noldor_major = {
+	add_to_variable = {
+		var = lthi_base_noldor_influence
+		value = 75
+		tooltip = increase_influence_noldor_tt
+	}
+}
+
+lthi_celebrations_increase_influence_sindar_minor = {
+	add_to_variable = {
+		var = lthi_base_sindar_influence
+		value = 25
+		tooltip = increase_influence_sindar_tt
+	}
+}
+
+lthi_celebrations_increase_influence_sindar_intermediate = {
+	add_to_variable = {
+		var = lthi_base_sindar_influence
+		value = 45
+		tooltip = increase_influence_sindar_tt
+	}
+}
+
+lthi_celebrations_increase_influence_sindar_major = {
+	add_to_variable = {
+		var = lthi_base_sindar_influence
+		value = 75
+		tooltip = increase_influence_sindar_tt
+	}
+}
+
+lthi_decrease_influence_nandor_minor = {
+	add_to_variable = {
+		var = lthi_base_nandor_influence
+		value = -20
+		tooltip = decrease_influence_nandor_tt
+	}
+}
+
+lthi_decrease_influence_nandor_intermediate = {
+	add_to_variable = {
+		var = lthi_base_nandor_influence
+		value = -35
+		tooltip = decrease_influence_nandor_tt
+	}
+}
+
+lthi_decrease_influence_nandor_major = {
+	add_to_variable = {
+		var = lthi_base_nandor_influence
+		value = -50
+		tooltip = decrease_influence_nandor_tt
+	}
+}
+
+lthi_decrease_influence_noldor_minor = {
+	add_to_variable = {
+		var = lthi_base_noldor_influence
+		value = -20
+		tooltip = decrease_influence_noldor_tt
+	}
+}
+
+lthi_decrease_influence_noldor_intermediate = {
+	add_to_variable = {
+		var = lthi_base_noldor_influence
+		value = -35
+		tooltip = decrease_influence_noldor_tt
+	}
+}
+
+lthi_decrease_influence_noldor_major = {
+	add_to_variable = {
+		var = lthi_base_noldor_influence
+		value = -50
+		tooltip = decrease_influence_noldor_tt
+	}
+}
+
+lthi_decrease_influence_sindar_minor = {
+	add_to_variable = {
+		var = lthi_base_sindar_influence
+		value = -20
+		tooltip = decrease_influence_sindar_tt
+	}
+}
+
+lthi_decrease_influence_sindar_intermediate = {
+	add_to_variable = {
+		var = lthi_base_sindar_influence
+		value = -35
+		tooltip = decrease_influence_sindar_tt
+	}
+}
+
+lthi_decrease_influence_sindar_major = {
+	add_to_variable = {
+		var = lthi_base_sindar_influence
+		value = -50
+		tooltip = decrease_influence_sindar_tt
+	}
+}
+
+lthi_decrease_influence_halfelves_minor = {
+	add_to_variable = {
+		var = lthi_base_halfelves_influence
+		value = -20
+		tooltip = decrease_influence_halfelves_tt
+	}
+}
+
+lthi_decrease_influence_halfelves_intermediate = {
+	add_to_variable = {
+		var = lthi_base_halfelves_influence
+		value = -35
+		tooltip = decrease_influence_halfelves_tt
+	}
+}
+
+lthi_decrease_influence_halfelves_major = {
+	add_to_variable = {
+		var = lthi_base_halfelves_influence
+		value = -50
+		tooltip = decrease_influence_halfelves_tt
+	}
+}
+
+lthi_decrease_influence_nonelves_minor = {
+	add_to_variable = {
+		var = lthi_base_nonelves_influence
+		value = -20
+		tooltip = decrease_influence_nonelves_tt
+	}
+}
+
+lthi_decrease_influence_nonelves_intermediate = {
+	add_to_variable = {
+		var = lthi_base_nonelves_influence
+		value = -35
+		tooltip = decrease_influence_nonelves_tt
+	}
+}
+
+lthi_decrease_influence_nonelves_major = {
+	add_to_variable = {
+		var = lthi_base_nonelves_influence
+		value = -50
+		tooltip = decrease_influence_nonelves_tt
+	}
+}
+
+lthi_decrease_influence_orcs_minor = {
+	add_to_variable = {
+		var = lthi_base_orcs_influence
+		value = -20
+		tooltip = decrease_influence_orcs_tt
+	}
+}
+
+lthi_decrease_influence_orcs_intermediate = {
+	add_to_variable = {
+		var = lthi_base_orcs_influence
+		value = -35
+		tooltip = decrease_influence_orcs_tt
+	}
+}
+
+lthi_decrease_influence_orcs_major = {
+	add_to_variable = {
+		var = lthi_base_orcs_influence
+		value = -50
+		tooltip = decrease_influence_orcs_tt
+	}
+}
+
+
+
+lthi_decrease_cw_timer = {
+	add_days_mission_timeout = {
+		mission = great_schism_civil_war
+		days = -70
+	}
+}
+
+lthi_increase_cw_timer = {
+	add_days_mission_timeout = {
+		mission = great_schism_civil_war
+		days = 100
+	}
+}
+
+lthi_increase_bonus_nandor = {
+	custom_effect_tooltip = lthi_increase_bonus_nandor_tt
+	multiply_variable = { lthi_nandor_bonus_conscription_base = 1.2 }
+	multiply_variable = { lthi_nandor_bonus_organization_base = 1.2 }
+	multiply_variable = { lthi_nandor_bonus_speed_base = 1.2 }
+}
+
+lthi_increase_bonus_noldor = {
+	custom_effect_tooltip = lthi_increase_bonus_noldor_tt
+	multiply_variable = { lthi_noldor_bonus_attack_base = 1.2 }
+	multiply_variable = { lthi_noldor_bonus_breakthrough_base = 1.2 }
+	multiply_variable = { lthi_noldor_bonus_factoryoutput_base = 1.2 }
+}
+
+lthi_increase_bonus_sindar = {
+	custom_effect_tooltip = lthi_increase_bonus_sindar_tt
+	multiply_variable = { lthi_sindar_bonus_constructionspeed_base = 1.2 }
+	multiply_variable = { lthi_sindar_bonus_research_base = 1.2 }
+	multiply_variable = { lthi_sindar_bonus_supply_base = 1.2 }
+}
+
+lthi_increase_bonus_halfelves = {
+	custom_effect_tooltip = lthi_increase_bonus_halfelves_tt
+	multiply_variable = { lthi_halfelves_bonus_consumergoods_base = 1.2 }
+	multiply_variable = { lthi_halfelves_bonus_experiencegain_base = 1.2 }
+	multiply_variable = { lthi_halfelves_bonus_stability_base = 1.2 }
+}
+
+lthi_decrease_bonus_nandor = {
+	custom_effect_tooltip = lthi_decrease_bonus_nandor_tt
+	multiply_variable = { lthi_nandor_bonus_conscription_base = 0.8 }
+	multiply_variable = { lthi_nandor_bonus_organization_base = 0.8 }
+	multiply_variable = { lthi_nandor_bonus_speed_base = 0.8 }
+}
+
+lthi_decrease_bonus_noldor = {
+	custom_effect_tooltip = lthi_decrease_bonus_noldor_tt
+	multiply_variable = { lthi_noldor_bonus_attack_base = 0.8 }
+	multiply_variable = { lthi_noldor_bonus_breakthrough_base = 0.8 }
+	multiply_variable = { lthi_noldor_bonus_factoryoutput_base = 0.8 }
+}
+
+lthi_decrease_bonus_sindar = {
+	custom_effect_tooltip = lthi_decrease_bonus_sindar_tt
+	multiply_variable = { lthi_sindar_bonus_constructionspeed_base = 0.8 }
+	multiply_variable = { lthi_sindar_bonus_research_base = 0.8 }
+	multiply_variable = { lthi_sindar_bonus_supply_base = 0.8 }
+}
+
+lthi_decrease_bonus_halfelves = {
+	custom_effect_tooltip = lthi_decrease_bonus_halfelves_tt
+	multiply_variable = { lthi_halfelves_bonus_consumergoods_base = 0.8 }
+	multiply_variable = { lthi_halfelves_bonus_experiencegain_base = 0.8 }
+	multiply_variable = { lthi_halfelves_bonus_stability_base = 0.8 }
+}
+
+lthi_decrease_bonus_nandor_major = {
+	custom_effect_tooltip = lthi_decrease_bonus_nandor_major_tt
+	multiply_variable = { lthi_nandor_bonus_conscription_base = 0.1 }
+	multiply_variable = { lthi_nandor_bonus_organization_base = 0.1 }
+	multiply_variable = { lthi_nandor_bonus_speed_base = 0.1 }
+}
+
+lthi_decrease_bonus_noldor_major = {
+	custom_effect_tooltip = lthi_decrease_bonus_noldor_major_tt
+	multiply_variable = { lthi_noldor_bonus_attack_base = 0.1 }
+	multiply_variable = { lthi_noldor_bonus_breakthrough_base = 0.1 }
+	multiply_variable = { lthi_noldor_bonus_factoryoutput_base = 0.1 }
+}
+
+lthi_decrease_bonus_sindar_major = {
+	custom_effect_tooltip = lthi_decrease_bonus_sindar_major_tt
+	multiply_variable = { lthi_sindar_bonus_constructionspeed_base = 0.1 }
+	multiply_variable = { lthi_sindar_bonus_research_base = 0.1 }
+	multiply_variable = { lthi_sindar_bonus_supply_base = 0.1 }
+}
+
+lthi_decrease_bonus_halfelves_major = {
+	custom_effect_tooltip = lthi_decrease_bonus_halfelves_major_tt
+	multiply_variable = { lthi_halfelves_bonus_consumergoods_base = 0.1 }
+	multiply_variable = { lthi_halfelves_bonus_experiencegain_base = 0.1 }
+	multiply_variable = { lthi_halfelves_bonus_stability_base = 0.1 }
+}
+
+lthi_send_to_valinor_nandor = {
+	random_character = {
+		limit = {
+			is_advisor = yes
+			# Don't retire the big boys
+			NOT = { is_character = LTH_celeborn }
+			NOT = { is_character = LTH_galadriel }
+			NOT = { is_character = LTH_haldir }
+
+			character_has_nandor_trait = yes
+		}
+
+		LTH = {
+			retire_character = PREV
+		}
+	}
+
+	add_manpower = -5000
+
+	lthi_decrease_influence_nandor_major = yes
+}
+
+lthi_send_to_valinor_noldor = {
+	random_character = {
+		limit = {
+			is_advisor = yes
+			# Don't retire the big boys
+			NOT = { is_character = LTH_celeborn }
+			NOT = { is_character = LTH_galadriel }
+			NOT = { is_character = LTH_haldir }
+
+			character_has_noldor_trait = yes
+		}
+
+		LTH = {
+			retire_character = PREV
+		}
+	}
+
+	add_manpower = -5000
+
+	lthi_decrease_influence_noldor_major = yes
+}
+
+lthi_send_to_valinor_sindar = {
+	random_character = {
+		limit = {
+			is_advisor = yes
+			# Don't retire the big boys
+			NOT = { is_character = LTH_celeborn }
+			NOT = { is_character = LTH_galadriel }
+			NOT = { is_character = LTH_haldir }
+
+			character_has_sindar_trait = yes
+		}
+
+		LTH = {
+			retire_character = PREV
+		}
+	}
+
+	add_manpower = -5000
+
+	lthi_decrease_influence_sindar_major = yes
+}
+
+lthi_send_to_valinor_halfelves = {
+	random_character = {
+		limit = {
+			is_advisor = yes
+			# Don't retire the big boys
+			NOT = { is_character = LTH_celeborn }
+			NOT = { is_character = LTH_galadriel }
+			NOT = { is_character = LTH_haldir }
+
+			character_has_halfelves_trait = yes
+		}
+
+		LTH = {
+			retire_character = PREV
+		}
+	}
+
+	add_manpower = -5000
+
+	lthi_decrease_influence_halfelves_major = yes
+}
+
+
+lth_on_weekly = {
+	# New breed adds 3 orc influence every week
+	if = {
+		limit = { has_completed_focus = lth_anewbreed }
+		add_to_variable = {
+			var = lthi_base_orcs_influence
+			value = 3
+		}
+	}
+
+	lthi_update_values = yes
+}
+
+lth_spawn_spider_division = {
+	load_oob = Lothlorien_Spiders
+}
+
+lth_spawn_spider_ent_division = {
+	load_oob = Lothlorien_Spiders_2
+}
+
+lth_spawn_orc_penal_division = {
+	if = {
+		limit = { has_completed_focus = lth_thegiftofservitude }
+		load_oob = Lothlorien_Orc_Prisoners_2
+	}
+	else = {
+		load_oob = Lothlorien_Orc_Prisoners
+	}
+}
+
+
+lth_on_yearly = {
+	# clear flag whena t war with spoders
+	if = {
+		limit = {
+			has_country_flag = lth_spider_cooperation
+			any_country = {
+				is_spiders = yes
+				has_war_with = LTH
+			}
+		}
+		clr_country_flag = lth_spider_cooperation
+	}
+	if = {
+		limit = {
+			has_country_flag = lth_spider_cooperation
+			any_country = {
+				is_ents = yes
+				has_war_with = LTH
+			}
+		}
+		clr_country_flag = lth_ent_cooperation
+	}
+
+	# Spawn spoder/ent divisions
+	if = {
+		limit = {
+			has_completed_focus = lth_theforestbetween
+			has_country_flag = lth_spider_cooperation
+			has_country_flag = lth_ent_cooperation
+			controls_state = 75
+		}
+		lth_spawn_spider_ent_division = yes
+	}
+	else_if = {
+		limit = {
+			has_country_flag = lth_spider_cooperation
+			controls_state = 75
+		}
+		lth_spawn_spider_division = yes
+	}
+	if = {
+		limit = {
+			has_completed_focus = lth_sauronstoolsturned
+			NOT = { is_ally_with = MOR }
+			controls_state = 75
+		}
+		lth_spawn_orc_penal_division = yes
+	}
+
+
+	# immortal endurance growth
+	if = {
+		limit = {
+			has_completed_focus = lth_endurethedarkness
+			has_dynamic_modifier = { modifier = lth_immortal_endurance_modifier }
+			check_variable = { lth_immortal_endurance_bonus < 0.5 } # cap
+		}
+		add_to_variable = { lth_immortal_endurance_bonus = 0.05 }
+	}
+	else_if = {
+		limit = {
+			has_dynamic_modifier = { modifier = lth_immortal_endurance_modifier }
+			check_variable = { lth_immortal_endurance_bonus < 0.15 } # cap
+		}
+
+		add_to_variable = { lth_immortal_endurance_bonus = 0.03 }
+	}
+
+	if = {
+		limit = {
+			has_dynamic_modifier = { modifier = lth_immortal_endurance_modifier }
+			has_completed_focus = lth_preservationofknowledge
+		}
+		set_variable = { lth_preservationofknowledge_bonus = var:lth_immortal_endurance_bonus }
+	}
+}
+
+# Make the isoloationist_resevations idea less bad
+lth_lower_isolationist_reservations = {
+	if = {
+		limit = { has_idea = LTH_isolationist_reservations_3 }
+		swap_ideas = {
+			remove_idea = LTH_isolationist_reservations_3
+			add_idea = LTH_isolationist_reservations_2
+		}
+	}
+	else_if = {
+		limit = { has_idea = LTH_isolationist_reservations_2 }
+		swap_ideas = {
+			remove_idea = LTH_isolationist_reservations_2
+			add_idea = LTH_isolationist_reservations_1
+		}
+	}
+	else_if = {
+		limit = { has_idea = LTH_isolationist_reservations_1 }
+		remove_ideas = LTH_isolationist_reservations_1
+	}
+	else_if = {
+		limit = { has_idea = LTH_total_isolation_idea }
+		add_political_power = 100
+	}
+}
+
+lthi_activate_nonelves = {
+	custom_effect_tooltip = lthi_activate_nonelves_tt
+	add_to_variable = { lthi_base_nonelves_influence = 50 }
+}
+
+lthi_activate_orcs = {
+	custom_effect_tooltip = lthi_activate_orcs_tt
+	add_to_variable = { lthi_base_orcs_influence = 100 }
+}
+
+lthi_hire_random_advisors = {
+	# Fill treasurer, spymaster and political advisor slots with random advisors
+
+	# NOTE: This does not care if advisors are already hired, or if they have been sent to Valinor
+	# Too bad.
+
+	# treasurer
+	if = {
+		limit = {
+			amount_taken_ideas = { amount < 1 slots = { treasurer } }
+		}
+		random_list = {
+			10 = { activate_advisor = generic_LTH_longterm_planner_treasurer }
+			10 = { activate_advisor = generic_LTH_serial_indeptor_treasurer }
+			10 = { activate_advisor = generic_LTH_level_headed_financier_treasurer }
+			10 = { activate_advisor = generic_LTH_backalley_dealer_treasurer }
+		}
+	}
+
+	# spymaster (no-lar)
+	if = {
+		limit = {
+			NOT = { has_dlc = "La Resistance" }
+			amount_taken_ideas = { amount < 1 slots = { spymaster } }
+		}
+		random_list = {
+			10 = { activate_advisor = generic_LTH_hearts_and_minds_occupier_nolar_spymaster }
+			10 = { activate_advisor = generic_LTH_networking_genius_nolar_spymaster }
+			10 = { activate_advisor = generic_LTH_daredevil_nolar_spymaster }
+			10 = { activate_advisor = generic_LTH_strict_supervisor_nolar_spymaster }
+			10 = { activate_advisor = generic_LTH_bribe_dispenser_nolar_spymaster }
+		}
+	}
+
+	# spymaster (lar)
+	if = {
+		limit = {
+			has_dlc = "La Resistance"
+			amount_taken_ideas = { amount < 1 slots = { spymaster } }
+		}
+		random_list = {
+			10 = { activate_advisor = generic_LTH_hearts_and_minds_occupier_spymaster }
+			10 = { activate_advisor = generic_LTH_networking_genius_spymaster }
+			10 = { activate_advisor = generic_LTH_daredevil_spymaster }
+			10 = { activate_advisor = generic_LTH_strict_supervisor_spymaster }
+			10 = { activate_advisor = generic_LTH_bribe_dispenser_spymaster }
+		}
+	}
+
+	# advisor #1
+	if = {
+		limit = {
+			amount_taken_ideas = { amount < 2 slots = { political_advisor } }
+		}
+		random_list = {
+			10 = { activate_advisor = generic_LTH_inspiring_artist_political_advisor }
+			10 = { activate_advisor = generic_LTH_food_hoarder_political_advisor }
+			10 = { activate_advisor = generic_LTH_aristocratic_landowner_political_advisor }
+			10 = { activate_advisor = generic_LTH_stubborn_struggler_political_advisor }
+			10 = { activate_advisor = generic_LTH_trade_enthusiast_political_advisor }
+			10 = { activate_advisor = generic_LTH_military_lobbyist_political_advisor }
+			10 = { activate_advisor = generic_LTH_silent_workhorse_political_advisor }
+			10 = { activate_advisor = generic_LTH_reluctant_interventionist_political_advisor }
+			10 = { activate_advisor = generic_LTH_xenophobic_isolationist_political_advisor }
+			10 = { activate_advisor = generic_LTH_militant_bully_political_advisor }
+			10 = { activate_advisor = generic_LTH_propaganda_expert_political_advisor }
+			10 = { activate_advisor = generic_LTH_sower_of_distrust_political_advisor }
+			10 = { activate_advisor = generic_LTH_provincial_councilor_political_advisor }
+		}
+	}
+
+	# advisor #2
+	if = {
+		limit = {
+			amount_taken_ideas = { amount < 2 slots = { political_advisor } }
+		}
+		random_list = {
+			10 = { activate_advisor = generic_LTH_inspiring_artist_political_advisor }
+			10 = { activate_advisor = generic_LTH_food_hoarder_political_advisor }
+			10 = { activate_advisor = generic_LTH_aristocratic_landowner_political_advisor }
+			10 = { activate_advisor = generic_LTH_stubborn_struggler_political_advisor }
+			10 = { activate_advisor = generic_LTH_trade_enthusiast_political_advisor }
+			10 = { activate_advisor = generic_LTH_military_lobbyist_political_advisor }
+			10 = { activate_advisor = generic_LTH_silent_workhorse_political_advisor }
+			10 = { activate_advisor = generic_LTH_reluctant_interventionist_political_advisor }
+			10 = { activate_advisor = generic_LTH_xenophobic_isolationist_political_advisor }
+			10 = { activate_advisor = generic_LTH_militant_bully_political_advisor }
+			10 = { activate_advisor = generic_LTH_propaganda_expert_political_advisor }
+			10 = { activate_advisor = generic_LTH_sower_of_distrust_political_advisor }
+			10 = { activate_advisor = generic_LTH_provincial_councilor_political_advisor }
+		}
+	}
+}
+
+
+lth_harmoinic_ascendandy_year_one = {
+	add_political_power = 50
+	random_state_add_building_slot_and_civ = yes
+	random_state_add_building_slot_and_mil = yes
+}
+
+lth_harmoinic_ascendandy_year_two = {
+	add_political_power = 100
+	add_stability = 0.1
+	add_war_support = 0.1
+	random_state_add_building_slot_and_civ_x2 = yes
+	random_state_add_building_slot_and_mil_x2 = yes
+}
+
+lth_harmoinic_ascendandy_year_three = {
+	add_political_power = 150
+	add_research_slot = 1
+	random_state_add_building_slot_and_civ_x3 = yes
+	random_state_add_building_slot_and_mil_x3 = yes
+}
+
+lth_accord_cele_term = {
+	hidden_effect = {
+		set_popularities = {
+			belligerent = 50
+			revolutionary = 50
+		}
+		set_politics = {
+			ruling_party = revolutionary
+			elections_allowed = no
+		}
+
+		add_timed_idea = {
+			idea = LTH_celeborn_galadriel_accord_cele
+			days = 365
+		}
+
+		# Gala becomes chief advisor that cant be fired
+		activate_advisor = LTH_galadriel_chief_advisor
+		set_can_be_fired_in_advisor_role = {
+    		character = LTH_galadriel
+			slot = chief_advisor
+    		value = no
+		}
+	}
+	custom_effect_tooltip = lth_accord_cele_term_tt
+}
+
+lth_accord_gala_term = {
+	hidden_effect = {
+		set_popularities = {
+			belligerent = 50
+			revolutionary = 50
+		}
+		set_politics = {
+			ruling_party = belligerent
+			elections_allowed = no
+		}
+
+		add_timed_idea = {
+			idea = LTH_celeborn_galadriel_accord_gala
+			days = 365
+		}
+
+		# Cele becomes chief advisor that cant be fired
+		activate_advisor = LTH_celeborn_chief_advisor
+		set_can_be_fired_in_advisor_role = {
+    		character = LTH_celeborn
+			slot = chief_advisor
+    		value = no
+		}
+	}
+	custom_effect_tooltip = lth_accord_gala_term_tt
+}
+
+lth_add_sharedcause_mp = {
+	set_temp_variable = { lth_sharedcause_total_manpower_gained = 0 }
+    
+	hidden_effect = {
+		every_other_country = {
+			limit = {
+				has_government = revolutionary
+				NOT = { original_tag = lth }
+			}
+			
+			set_temp_variable = { lth_sharedcause_manpower_gained = party_popularity@revolutionary }
+			if = {
+				limit = {
+					is_major = yes
+				}
+				multiply_temp_variable =  { lth_sharedcause_manpower_gained =  40000 }
+
+			}
+			else = {
+				multiply_temp_variable =  { lth_sharedcause_manpower_gained =  10000 }
+			}
+			add_to_temp_variable = {
+				var = lth_sharedcause_total_manpower_gained
+				value = lth_sharedcause_manpower_gained
+			}
+		}	
+	}
+    clamp_temp_variable = {
+        var = lth_sharedcause_total_manpower_gained
+        min = 15000
+        max = 150000
+    }
+
+	custom_effect_tooltip = lth_add_sharedcause_mp_tt
+	add_manpower = lth_sharedcause_total_manpower_gained
+}

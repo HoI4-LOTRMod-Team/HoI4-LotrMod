@@ -1,0 +1,344 @@
+generic_miners_guild = {
+	icon = GFX_mio_generic_5
+	name = "Miner's Guild"
+
+	allowed = {
+		always = no
+	}
+
+	equipment_type = {
+		infantry_equipment
+		lotr_equipment_catapult
+		lotr_equipment_siege_tower
+	}
+	research_categories = {
+		lotr_labour_metalworking_mining
+		lotr_labour_metalworking_tools
+		lotr_infantry_weapons
+		lotr_machines_siege_equipment
+		lotr_labour_construction
+	}
+
+	research_bonus = 0.05
+
+	tree_header_text = {
+		text = "Technique"
+		x = 1
+	}
+
+	tree_header_text = {
+		text = "Weapon Design"
+		x = 5
+	}
+
+	tree_header_text = {
+		text = "Armor Design"
+		x = 8
+	}
+
+	initial_trait = {
+		name = "Mining Specialization"
+
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+
+		production_bonus = {
+			production_resource_penalty_factor = -0.05
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_organized_prospecting
+		name = "Organized Prospecting"
+		icon = GFX_generic_mio_trait_icon_entrenchment
+
+		position = { x=1 y=0 }
+
+		# funds
+		organization_modifier = {
+			military_industrial_organization_size_up_requirement = -0.2
+			military_industrial_organization_funds_gain = 0.15
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_surface_deposits
+		name = "Surface Deposits"
+		icon = GFX_generic_mio_trait_rock
+
+		relative_position_id = generic_mio_trait_organized_prospecting
+
+		all_parents = { generic_mio_trait_organized_prospecting }
+
+		# more resources?
+
+		position = { x=-1 y=1 }
+
+		production_bonus = {
+			production_resource_penalty_factor = -0.1
+		}
+
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = steel
+					amount = 2
+				}
+			} }
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_mineral_assaying
+		name = "Mineral Assaying"
+		icon = GFX_generic_mio_trait_mineral_examine
+
+		relative_position_id = generic_mio_trait_organized_prospecting
+
+		any_parent = { generic_mio_trait_surface_deposits generic_mio_trait_underground_deposits }
+
+		# less resopurce need?
+
+		position = { x=0 y=4 }
+
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.1
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_underground_deposits
+		name = "Underground Deposits"
+		icon = GFX_generic_mio_trait_rock2
+
+		relative_position_id = generic_mio_trait_organized_prospecting
+
+		all_parents = { generic_mio_trait_organized_prospecting }
+
+		# ???
+
+		position = { x=1 y=1 }
+
+		production_bonus = {
+			production_resource_penalty_factor = -0.1
+		}
+
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = steel
+					amount = 2
+				}
+			} }
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_timber_support_structures
+		name = "Timber Support Structures"
+		icon = GFX_generic_mio_trait_springald
+
+		relative_position_id = generic_mio_trait_organized_prospecting
+
+		limit_to_equipment_type = { lotr_equipment_siege_tower }
+
+		all_parents = { generic_mio_trait_underground_deposits }
+
+		position = { x=1 y=2 }
+
+		equipment_bonus = {
+			reliability = 0.1
+			hardness = 0.1
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_shaft_mining
+		name = "Shaft Mining"
+		icon = GFX_generic_mio_trait_minecart
+
+		relative_position_id = generic_mio_trait_organized_prospecting
+
+		# ???
+
+		all_parents = { generic_mio_trait_timber_support_structures generic_mio_trait_cranked_winches }
+
+		position = { x=1 y=3 }
+
+		on_complete = {
+			FROM = {
+				add_ideas = better_mining
+			}
+		}
+
+		production_bonus = {
+			production_resource_need_factor = -0.05
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_mining_tool_advancements
+		name = "Mining Tool Advancements"
+		icon = GFX_generic_mio_trait_pickaxe
+
+		position = { x=4 y=0 }
+
+		production_bonus = {
+			production_efficiency_cap_factor = 0.05
+		}
+
+		on_complete = {
+			FROM = {
+				add_ideas = better_tools
+			}
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_mattocks_and_adzes
+		name = "Mattocks and Adzes"
+		icon = GFX_generic_mio_trait_pickaxe
+
+		position = { x=0 y=1 }
+
+		# ???
+
+		relative_position_id = generic_mio_trait_mining_tool_advancements
+
+		all_parents = { generic_mio_trait_mining_tool_advancements }
+
+		equipment_bonus = {
+			build_cost_ic = -0.1
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_cranked_winches
+		name = "Cranked Winches"
+		icon = GFX_generic_mio_trait_machine
+
+		position = { x=-1 y=2 }
+
+		# ???
+
+		relative_position_id = generic_mio_trait_mining_tool_advancements
+
+		all_parents = { generic_mio_trait_mattocks_and_adzes }
+
+		limit_to_equipment_type = { lotr_equipment_siege_tower lotr_equipment_catapult }
+
+		equipment_bonus = {
+			reliability = 0.05
+			soft_attack = 0.03
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_tamping_rods
+		name = "Tamping Rods"
+		icon = GFX_generic_mio_trait_icon_naval_range
+
+		position = { x=1 y=3 }
+
+		relative_position_id = generic_mio_trait_mining_tool_advancements
+
+		all_parents = { generic_mio_trait_mattocks_and_adzes }
+
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.1
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_gemstone_prospecting
+		name = "Gemstone Prospecting "
+		icon = GFX_generic_mio_trait_raw_gemstone
+
+		position = { x=1 y=4 }
+
+		# funds
+
+		relative_position_id = generic_mio_trait_mining_tool_advancements
+
+		all_parents = { generic_mio_trait_tamping_rods generic_mio_trait_shaft_mining generic_mio_trait_mining_drills }
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.5
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_metallurgic_processing
+		name = "Metallurgic Processing"
+		icon = GFX_generic_mio_trait_steel
+
+		position = { x=8 y=0 }
+
+		limit_to_equipment_type = { infantry_equipment }
+
+		production_bonus = {
+			production_resource_need_factor = -0.1
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_martensite_pretempers
+		name = "Martensite Pre-tempers"
+		icon = GFX_generic_mio_trait_quench
+
+		relative_position_id = generic_mio_trait_metallurgic_processing
+
+		position = { x=0 y=1 }
+
+		all_parents = { generic_mio_trait_metallurgic_processing }
+
+		limit_to_equipment_type = { infantry_equipment }
+
+		equipment_bonus = {
+			soft_attack = 0.05
+			hard_attack = 0.05
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_advanced_alloys
+		name = "Advanced Alloys"
+		icon = GFX_generic_mio_trait_heating
+
+		relative_position_id = generic_mio_trait_metallurgic_processing
+
+		all_parents = { generic_mio_trait_martensite_pretempers }
+
+		position = { x=0 y=4 }
+
+		limit_to_equipment_type = { infantry_equipment }
+
+		equipment_bonus = {
+			soft_attack = 0.03
+			hard_attack = 0.03
+			reliability = 0.03
+		}
+	}
+
+	trait = {
+		token = generic_mio_trait_mining_drills
+		name = "Mining Drills"
+		icon = GFX_generic_mio_trait_drill
+
+		relative_position_id = generic_mio_trait_metallurgic_processing
+
+		any_parent = { generic_mio_trait_martensite_pretempers generic_mio_trait_mattocks_and_adzes }
+
+		position = { x=-1 y=3 }
+
+		production_bonus = {
+			production_capacity_factor = 0.05
+		}
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.1
+		}
+	}
+}
+

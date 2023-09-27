@@ -15,6 +15,10 @@ set_gameplan_generic = {
 					has_government = belligerent
 				}
 			}
+            modifier = {
+				factor = 0.5
+                NOT = { has_government = belligerent }
+			}
 			modifier = {
 				factor = 0
                 is_historical_focus_on = yes
@@ -41,6 +45,10 @@ set_gameplan_generic = {
 					has_government = revolutionary
 				}
 			}
+            modifier = {
+				factor = 0.5
+                NOT = { has_government = revolutionary }
+			}
 			modifier = {
 				factor = 0
 				AND = {
@@ -63,6 +71,10 @@ set_gameplan_generic = {
                 tag = DAG
             }
             modifier = {
+				factor = 0.5
+                NOT = { has_government = cooperative }
+			}
+            modifier = {
 				factor = 0
                 is_historical_focus_on = yes
                 NOT = { has_government = cooperative }
@@ -75,8 +87,12 @@ set_gameplan_generic = {
         100 = {
             modifier = {
                 factor = 0
-                NOT = { has_unaligned_path = yes }
-            }    
+                has_unaligned_path = no
+            }
+            modifier = {
+				factor = 0.5
+                NOT = { has_government = unaligned }
+			} 
             modifier = {
 				factor = 0
                 is_historical_focus_on = yes
@@ -283,8 +299,104 @@ set_gameplan_ISE = {
 
 
 set_gameplan_LTH = {
-    # TODO
     set_country_flag = gameplan_going_unaligned
+
+    # TODO: Once the LTH AI is fixed, remove this if:
+    if = {
+        limit = { always = yes }
+        set_country_flag = gameplan_going_unaligned
+        set_country_flag = gameplan_historical
+        set_country_flag = gameplan_limited_intervention
+    }
+
+    else_if = {
+        limit = { is_historical_focus_on = yes }
+
+        set_country_flag = gameplan_going_unaligned
+        set_country_flag = gameplan_historical
+        set_country_flag = gameplan_limited_intervention
+    }
+
+    else = {
+        random_list = {
+            # unaligned
+            20 = {
+                set_country_flag = gameplan_going_unaligned
+                random_list = {
+                    6 = {
+                        set_country_flag = gameplan_limited_intervention
+                    }
+                    5 = {
+                        set_country_flag = gameplan_total_isolation
+                    }
+                }
+            }
+            # cooperative
+            5 = {
+                set_country_flag = gameplan_going_cooperative
+                random_list = {
+                    10 = { }
+                    3 = {
+                        set_country_flag = gameplan_white_council
+                    }
+                    3 = {
+                        set_country_flag = gameplan_elven_alliance
+                    }
+                }
+            }
+            # belligerent
+            3 = {
+                set_country_flag = gamplan_going_belligerent
+                random_list = {
+                    5 = { }
+                    3 = {
+                        set_country_flag = gameplan_bully_elves
+                    }
+                    3 = {
+                        set_country_flag = gameplan_bully_mortals
+                    }
+                }
+            }
+            #revo
+            2 = {
+                set_country_flag = gameplan_going_revolutionary
+            }
+            # mix/harmonic ascendancy
+            1 = {
+                set_country_flag = gameplan_going_revolutionary
+                set_country_flag = gamplan_going_belligerent
+                set_country_flag = gamplan_harmonic_ascendancy
+            }
+        }
+
+        random_list = {
+            50 = {
+                
+            }
+            5 = {
+                modifier = {
+                    factor = 3
+                    MOA = { is_ai = no }
+                    has_country_flag = gameplan_going_cooperative
+                }
+                modifier = {
+                    factor = 2
+                    MOA = { is_ai = no }
+                    has_country_flag = gameplan_going_unaligned
+                }
+                set_country_flag = gameplan_rush_moria
+            }
+            5 = {
+                set_country_flag = gameplan_rush_vale
+            }
+        }
+
+        # 5% chance to go for elronds council
+        random = {
+            chance = 5
+            set_country_flag = gameplan_rush_ring
+        }
+    }
 }
 
 
@@ -313,6 +425,10 @@ set_gameplan_MIR = {
                 factor=0
             }
             set_country_flag = gameplan_going_cooperative
+            random = {
+                chance = 5
+                set_country_flag = gameplan_elven_alliance
+            }
         }
     }
 }
@@ -359,6 +475,10 @@ set_gameplan_RIV = {
                 factor=0
             }
             set_country_flag = gameplan_going_cooperative
+            random = {
+                chance = 20
+                set_country_flag = gameplan_elven_alliance
+            }
         }
         20 = {
             set_country_flag = gameplan_going_unaligned

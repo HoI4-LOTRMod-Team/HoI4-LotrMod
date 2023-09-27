@@ -1,0 +1,360 @@
+scripted_diplomatic_actions = {
+	
+	invite_to_elven_assembly = {
+		icon = 17		#	The icon to use for the dipomatic request, visible when the diplomatic action is sent, not visible if the diplomatic request does not require acceptance, must be included in the \gfx\interface\alerts\global_diplorequest_icons.dds file, number represents icon location from left to right.
+		
+		#### CONDITIONS TO USE/SEE ACTION ###
+		
+		allowed = {
+			always = yes
+		}
+		visible = {
+			FROM = { NOT = { is_elven_alliance_member = yes } }
+			ROOT = { is_elven_alliance_member = yes }
+			FROM = { NOT = { has_war_with = ROOT } }
+		}
+		selectable = {
+			FROM = { is_subject = no }
+			ROOT = { can_invite_to_elven_alliance = yes }
+
+			FROM = { can_be_invited_to_elven_alliance = yes }
+			FROM = { NOT = { is_sanctioned_by_elven_alliance = yes } }
+			
+			OR = {
+				FROM = { is_not_at_war_with_elven_alliance_member = yes }
+				ea_has_union_tier_2 = yes
+			}
+		}
+		can_be_accepted = {
+			always = yes
+		}
+		can_be_sent = {
+			NOT = { ROOT = { has_country_flag = ea_last_invitation_cooldown } } # NOTE: This i broken. Idk why, but it doesn't work.
+		}
+		
+		cost = 50
+
+		requires_acceptance = yes
+		show_acceptance_on_action_button = yes
+
+		#### ACTION LOCALISATION ###
+
+		send_description = invite_to_elven_assembly_send_desc
+		receive_description = invite_to_elven_assembly_receive_desc
+		#### EFFECTS ###		
+
+		on_sent_effect = {		#	An effect that can be applied when sending the diplomatic action.
+			ROOT = { set_country_flag = { flag = ea_last_invitation_cooldown days = 70 value = 1 } }
+		}
+		
+		complete_effect = {		#	An effect that can be applied the action is ACCEPTED (accepted always if requires_acceptance is set to NO)
+			elven_alliance_join = yes
+		}
+		reject_effect = {		#	An effect that can be applied the action is REJECTED (only valid if requires_acceptance is set to YES )
+			set_country_flag = ea_has_declined_invitation
+		}
+		
+		#### AI SECTION ###
+		
+		ai_desire = {		# AI modifiers to use this diplomatic action
+			modifier = {
+				add = 20
+				FROM = { is_ai = no }
+			}
+			modifier = {
+				add = 10
+				FROM = { is_same_race = yes }
+			}
+			modifier = {
+				add = -5
+				FROM = { is_same_race = no }
+			}
+			modifier = {
+				add = -25
+				FROM = { has_same_ideology = no }
+			}
+			modifier = {
+				add = 20
+				FROM = { has_same_ideology = yes }
+			}
+			modifier = {
+				add = 50
+				is_ally_with = FROM
+			}
+			modifier = {
+				add = -99999
+				FROM = { has_country_flag = ea_has_declined_invitation }
+			}
+			modifier = {
+				add = -99999
+				ROOT = { has_country_flag = ea_last_invitation_cooldown }
+			}
+			modifier = {
+				add = -99999
+				FROM = { tag = DAG }
+			}
+			modifier = {
+				add = -99999
+				FROM = { tag = NEP }
+			}
+			modifier = {
+				add = 10
+				elven_alliance_has_at_least_5_members = no
+			}
+			modifier = {
+				add = -5
+				elven_alliance_has_at_least_5_members = yes
+			}
+			modifier = {
+				add = -10
+				elven_alliance_has_at_least_8_members = yes
+			}
+			modifier = {
+				add = -10
+				elven_alliance_has_at_least_10_members = yes
+			}
+		}
+		ai_acceptance = {		# AI modifiers to accept this diplomatic action, not valid if requires_acceptance is set to NO.
+			race_diff = {
+				base = 0
+				modifier = {
+					is_same_race = yes
+					add = 10
+				}
+				modifier = {
+					is_same_race = no
+					add = -10
+				}
+				modifier = {
+					ROOT = { is_orcs = no }
+					FROM = { is_orcs = yes }
+					add = -15
+				}
+				modifier = {
+					ROOT = { is_spiders = no }
+					FROM = { is_spiders = yes }
+					add = -15
+				}
+			}
+			threat_generation = {
+				base = 0
+				modifier = {
+					FROM = { has_government = cooperative }
+
+					set_temp_variable = { t = 0 }
+					subtract_from_temp_variable = { t = ROOT.has_added_tension_amount }
+					multiply_temp_variable = { t = 2.0 } # cooperative cares extra about tension
+					add = t
+				}
+				modifier = {
+					FROM = { has_government = unaligned }
+
+					set_temp_variable = { t = 0 }
+					subtract_from_temp_variable = { t = ROOT.has_added_tension_amount }
+					add = t
+				}
+			}
+			ea_is_hegemony = {
+				base = 0
+				modifier = {
+					FROM = { has_government = cooperative }
+					has_global_flag = ea_type_hegemony
+					add = -20
+				}
+				modifier = {
+					FROM = { has_government = unaligned }
+					has_global_flag = ea_type_hegemony
+					add = -15
+				}
+				modifier = {
+					FROM = { is_major = yes }
+					has_global_flag = ea_type_hegemony
+					add = -30
+				}
+			}
+			base_reluctance = {
+				modifier = {
+					factor = -5
+				}
+			}
+			opinion_modifier = {
+				modifier = {
+					factor = FROM.opinion@ROOT
+				}
+			}
+		}
+	}
+
+	propose_kick_from_elven_assembly = {		
+		allowed = {
+			always = yes
+		}
+		visible = {
+			ROOT = { is_elven_alliance_member = yes }
+			FROM = { is_elven_alliance_member = yes }
+			FROM = { is_sanctioned_by_elven_alliance = no }
+			FROM = { ea_is_hegemony_leader = no }
+		}
+		selectable = {
+			ROOT = { can_propose_resolutions_elven_alliance = yes }
+
+			NOT = { ROOT = { has_country_flag = ea_last_kick_cooldown } }
+		}
+		
+		cost = elven_alliance_proposal_cost?25
+
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+
+		send_description = propose_kick_from_elven_assembly_send_desc
+
+		complete_effect = {		#	An effect that can be applied when sending the diplomatic action.
+			ROOT = { set_country_flag = { flag = ea_last_kick_cooldown days = 90 value = 1 } }
+			FROM = { ea_kick_add_to_queue = yes }
+		}
+	}
+
+	propose_sanction_elven_assembly = {
+		allowed = {
+			always = yes
+		}
+		visible = {
+			has_global_flag = ea_sanctions_unlocked
+			OR =  {
+				FROM = { NOT = { is_elven_alliance_member = yes } }
+				ea_has_union_tier_3 = yes
+			}
+			ROOT = { is_elven_alliance_member = yes }
+		}
+		selectable = {
+			FROM = { has_added_tension_amount > 5 }
+
+			ROOT = { can_propose_resolutions_elven_alliance = yes }
+
+			NOT = { ROOT = { has_country_flag = ea_last_sanction_cooldown } }
+		}
+		
+		cost = elven_alliance_proposal_cost?25
+
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+
+		send_description = propose_sanction_elven_assembly_send_desc
+
+		complete_effect = {		#	An effect that can be applied when sending the diplomatic action.
+			ROOT = { set_country_flag = { flag = ea_last_sanction_cooldown days = 90 value = 1 } }
+			FROM = { ea_sanction_add_to_queue = yes }
+		}
+	}
+
+	propose_joint_war_elven_assembly = {
+		allowed = {
+			always = yes
+		}
+		visible = {
+			FROM = { NOT = { is_elven_alliance_member = yes } }
+			ROOT = { is_elven_alliance_member = yes }
+			OR = {
+				ea_has_martial_tier_1 = yes
+			}
+		}
+		selectable = {
+			OR = {
+				FROM = { has_added_tension_amount > 15 }
+				AND = {
+					FROM = { has_war_with = ROOT }
+					enemies_strength_ratio > 0.5
+				}
+			}
+
+			ROOT = { can_propose_resolutions_elven_alliance = yes }
+
+			NOT = { ROOT = { has_country_flag = ea_last_joint_war_cooldown } }
+		}
+		
+		cost = elven_alliance_proposal_cost?25
+
+		requires_acceptance = no
+		show_acceptance_on_action_button = no
+
+		send_description = propose_joint_war_elven_assembly_send_desc
+
+		complete_effect = {		#	An effect that can be applied when sending the diplomatic action.
+			ROOT = { set_country_flag = { flag = ea_last_joint_war_cooldown days = 90 value = 1 } }
+			FROM = { ea_joint_war_add_to_queue = yes }
+		}
+	}
+
+	propose_make_leader_elven_assembly = {
+		icon = 17		#	The icon to use for the dipomatic request, visible when the diplomatic action is sent, not visible if the diplomatic request does not require acceptance, must be included in the \gfx\interface\alerts\global_diplorequest_icons.dds file, number represents icon location from left to right.
+		
+		#### CONDITIONS TO USE/SEE ACTION ###
+		
+		allowed = {
+			always = yes
+		}
+		visible = {
+			has_global_flag = ea_type_hegemony
+			FROM = { is_elven_alliance_member = yes }
+			ROOT = { is_elven_alliance_member = yes }
+			FROM = { NOT = { has_war_with = ROOT } }
+			FROM = { NOT = { ea_is_hegemony_leader = yes } }
+			NOT = { ea_make_leader_proposal_in_queue = yes } # Only one leader proposal at a time pls
+			NOT = { ea_has_hegemony_tier_3 = yes }
+		}
+		selectable = {
+			ROOT = { can_propose_resolutions_elven_alliance = yes }
+			FROM = { is_major = yes }
+		}
+		can_be_accepted = {
+			always = yes
+		}
+		can_be_sent = {
+			NOT = { ROOT = { has_country_flag = ea_last_make_leader_cooldown } } # NOTE: This i broken. Idk why, but it doesn't work.
+		}
+		
+		cost = elven_alliance_proposal_cost?25
+
+		requires_acceptance = yes
+		show_acceptance_on_action_button = yes
+
+		#### ACTION LOCALISATION ###
+
+		send_description = make_leader_elven_assembly_send_desc
+		receive_description = make_leader_elven_assembly_receive_desc
+		#### EFFECTS ###		
+
+		on_sent_effect = {		#	An effect that can be applied when sending the diplomatic action.
+			ROOT = { set_country_flag = { flag = ea_last_make_leader_cooldown days = 120 value = 1 } }
+		}
+		
+		complete_effect = {		#	An effect that can be applied the action is ACCEPTED (accepted always if requires_acceptance is set to NO)
+			FROM = { ea_make_leader_add_to_queue = yes }
+		}
+		reject_effect = {		#	An effect that can be applied the action is REJECTED (only valid if requires_acceptance is set to YES )
+			
+		}
+		
+		#### AI SECTION ###
+		
+		ai_desire = {		# AI modifiers to use this diplomatic action
+			base = 0
+			modifier = {
+				add = 100
+				FROM = { is_ai = no }
+				is_subject_of = FROM
+			}
+			modifier = {
+				factor = 0
+				ROOT = { has_country_flag = ea_last_make_leader_cooldown }
+			}
+		}
+		ai_acceptance = {		# AI modifiers to accept this diplomatic action, not valid if requires_acceptance is set to NO.
+			base_reluctance = {
+				modifier = {
+					factor = 10
+				}
+			}
+		}
+	}
+}
