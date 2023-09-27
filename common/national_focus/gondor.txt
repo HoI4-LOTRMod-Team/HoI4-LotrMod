@@ -97,7 +97,63 @@ focus = {
 	y = 1
 	cost = 10
 	completion_reward = {
+		army_experience = 25
 		denethor_gets_less_paranoid = yes
+	}
+}
+
+focus = {
+	id = GON_promote_dol_amroth_loyalty
+	icon = GFX_goal_generic_intelligence_exchange
+	ai_will_do = { factor = 3 }
+	prerequisite = { focus = GON_enforce_militair_loyalty }
+	relative_position_id = GON_enforce_militair_loyalty
+	x = 2
+	y = 1
+	cost = 5
+	completion_reward = {
+		DAM = {
+			add_popularity = {
+				ideology = unaligned
+				popularity = 0.075
+			}
+		}
+		custom_effect_tooltip = "Lowers the change of Dol Amroth leaving Gondor"
+		hidden_effect = {
+			DAM = {
+				set_country_flag = denethor_supporters
+			}
+		}
+	}
+}
+
+focus = {
+	id = GON_install_loyal_government_DAM
+	icon = GFX_goal_generic_intelligence_exchange
+	ai_will_do = { factor = 3 }
+	prerequisite = { focus = GON_promote_dol_amroth_loyalty }
+	relative_position_id = GON_promote_dol_amroth_loyalty
+	x = 0
+	y = 1
+	cost = 10
+	completion_reward = {
+		DAM = {
+			add_stability = -0.1
+			retire_country_leader = yes
+			add_country_leader_role = {
+				character = DAM_amrothos
+				promote_leader = yes
+				country_leader = {
+					ideology = isolationist
+					expire = "1980.1.1"
+					traits = {  }
+				}
+			}
+			add_popularity = {
+				ideology = unaligned
+				popularity = 0.1
+			}
+		}
 	}
 }
 
@@ -112,11 +168,7 @@ focus = {
 	cost = 5
 	completion_reward = {
 		news_event = { hours = 12 id = news.393 }
-		hidden_effect = {
-			DAM = {
-				country_event = dolamroth.1
-			}
-		}
+		add_political_power = 100
 	}
 }
 
@@ -136,9 +188,12 @@ focus = {
 			remove_idea = GON_kingdom_without_king_1
 			add_idea = GON_defeatist_0
 		}
-		retire_country_leader = yes
-		set_politics = { ruling_party = cooperative elections_allowed = no }
 		remove_denethor_paranoid = yes
+		hidden_effect = {
+			DAM = {
+				country_event = dolamroth.1
+			}
+		}
 	}
  }
 
@@ -154,10 +209,7 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		swap_ideas = {
-			remove_idea = GON_defeatist_0
-			add_idea = GON_defeatist_1
-		}
+		decrease_defeatist = yes
 		if = {
 			limit = {
 				has_idea = priviledged_service
@@ -167,6 +219,57 @@ focus = {
 				add_idea = volunteer_service
 			}
 		}
+	}
+ }
+
+ focus = {
+	id = GON_researcher_of_Gondor
+	icon = GFX_goal_tfv_generic_tech_sharing
+	ai_will_do = { factor = 100 }
+	prerequisite = { focus = GON_rally_the_nation }
+	relative_position_id = GON_rally_the_nation
+	x = -2
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_tech_bonus = {
+			name = lotr_labour_bonus
+			bonus = 1.0
+			uses = 2
+			category = lotr_labour
+		}
+		add_tech_bonus = {
+			name = lotr_knowledge_bonus
+			bonus = 1.0
+			uses = 1
+			category = lotr_knowledge
+		}
+		add_tech_bonus = {
+			name = lotr_knowledge_alchemy_bonus
+			bonus = 0.5
+			uses = 1
+			category = lotr_knowledge_alchemy
+		}
+	}
+ }
+
+ 
+ focus = {
+	id = GON_wisdom_of_men_kind
+	icon = GFX_focus_research
+	ai_will_do = { factor = 100 }
+	prerequisite = { focus = GON_researcher_of_Gondor }
+	relative_position_id = GON_researcher_of_Gondor
+	available = {
+		num_of_factories > 75
+	}
+	x = 0
+	y = 1
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_research_slot = 1
 	}
  }
 
@@ -192,20 +295,17 @@ focus = {
 
 focus = {
 	id = GON_invest_in_the_industry
-	icon = GFX_goal_generic_construction
+	icon = GFX_goal_generic_windmile
 	ai_will_do = { factor = 100 }
 	available = { has_idea = GON_defeatist_1 }
 	prerequisite = { focus = GON_rally_the_nation }
 	relative_position_id = GON_rally_the_nation
-	x = 0
+	x = 3
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		swap_ideas = {
-			remove_idea = GON_defeatist_1
-			add_idea = GON_defeatist_2
-		}
+		decrease_defeatist = yes
 		random_owned_state = {
 			add_extra_state_shared_building_slots = 1
 			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
@@ -219,12 +319,12 @@ focus = {
 
 focus = {
 	id = GON_militair_industry
-	icon = GFX_goal_generic_construct_mil_factory
+	icon = GFX_goal_generic_anvil
 	ai_will_do = { factor = 100 }
 	prerequisite = { focus = GON_invest_in_the_industry }
 	relative_position_id = GON_invest_in_the_industry
 	mutually_exclusive = { focus = GON_civilian_industry }
-	x = 2
+	x = -1
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
@@ -251,7 +351,7 @@ focus = {
 	prerequisite = { focus = GON_invest_in_the_industry }
 	relative_position_id = GON_invest_in_the_industry
 	mutually_exclusive = { focus = GON_militair_industry }
-	x = 4
+	x = 1
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
@@ -291,19 +391,34 @@ focus = {
 	}
  }
 
-focus = {
-	id = GON_restructure_the_army
-	icon = GFX_focus_generic_military_academy
+ focus = {
+	id = GON_never_ending_production
+	icon = GFX_focus_generic_industry_3
 	ai_will_do = { factor = 100 }
-	available = { has_idea = GON_defeatist_2 }
-	prerequisite = { focus = GON_invest_in_the_industry }
-	relative_position_id = GON_invest_in_the_industry
+	prerequisite = { focus = GON_expand_string_industry_west }
+	relative_position_id = GON_expand_string_industry_west
 	x = 0
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		remove_ideas = GON_defeatist_2
+		add_ideas = GON_never_ending_industry
+	}
+ }
+
+focus = {
+	id = GON_restructure_the_army
+	icon = GFX_focus_generic_military_academy
+	ai_will_do = { factor = 100 }
+	available = { has_idea = GON_defeatist_2 }
+	prerequisite = { focus = GON_rally_the_nation }
+	relative_position_id = GON_rally_the_nation
+	x = 0
+	y = 2
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		decrease_defeatist = yes
 		army_experience = 25
 	}
  }
@@ -2097,6 +2212,12 @@ focus = {
 	ai_will_do = { factor = 4 }
 	relative_position_id = GON_express_intressed_in_haronder
 	prerequisite = { focus = GON_express_intressed_in_haronder }
+	available = {
+		has_war = no
+	}
+	bypass = {
+		has_war_with = HAR
+	}
 	x = 0
 	y = 1
 	cost = 5
