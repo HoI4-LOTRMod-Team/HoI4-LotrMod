@@ -332,15 +332,16 @@ execute_fellowship_step = {
 	else_if = {
 		limit = { check_variable = { global.fs_currentstate = 98 } }
 
+		set_global_flag = fs_post_argonath # Slow things down after Argonath
+		clr_global_flag = fs_on_boat
+		clr_global_flag = fs_on_horseback
+
 		if = {
 			limit = {
 				has_global_flag = fs_fellowship_breakup
 				NOT = { has_global_flag = fs_elven_fellowship }
 			}
 			FS_gollum = { ring_add_member_to_fellowship = yes }
-			set_global_flag = fs_only_hobbits
-			clr_global_flag = fs_on_boat
-			clr_global_flag = fs_on_horseback
 		}
 	}
 
@@ -900,7 +901,7 @@ ring_execute_weathertop_encounter = {
 	# Post-combat:
 	if = {
 		limit = {
-			NOT = { ring_frodo_is_dead = yes }
+			NOT = { ring_ringbearer_is_dead = yes }
 			has_global_flag = fs_arwen_sent
 		}
 
@@ -924,7 +925,7 @@ ring_execute_weathertop_encounter = {
 	}
 	else_if = {
 		limit = {
-			NOT = { ring_frodo_is_dead = yes }
+			NOT = { ring_ringbearer_is_dead = yes }
 		}
 		MOR = { country_event = { days = 3 id = mordor.56 } }
 	}
@@ -954,7 +955,7 @@ ring_execute_boromir_betrayal = {
 				limit = {
 					NOT = {
 						ring_boromir_is_dead = yes
-						ring_frodo_is_dead = yes
+						ring_ringbearer_is_dead = yes
 					}
 				}
 
@@ -964,7 +965,7 @@ ring_execute_boromir_betrayal = {
 
 		# if frodo dies -> GON seizes ring
 		if = {
-			limit = { ring_frodo_is_dead = yes }
+			limit = { ring_ringbearer_is_dead = yes }
 
 			GON = { country_event = gondor.11 }
 		}
@@ -1007,7 +1008,7 @@ ring_execute_argonath_raid = {
 
 ring_breakup_fellowship = {
 	if = {
-		limit = { NOT = { has_global_flag = fs_elven_fellowship } }
+		limit = { NOT = { has_global_flag = fs_elven_fellowship } } # Elven fellowship doesnt break up
 		SHI = {
 			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
@@ -1041,6 +1042,7 @@ ring_start_elven_fellowship = {
 			# News event:
 			news_event = { hours = 24 id = news.396 }
 
+			# global flag
 			set_global_flag = fs_elven_fellowship
 
 			# Clear all the ring stuff:
@@ -1051,11 +1053,9 @@ ring_start_elven_fellowship = {
 
 			# Add all the new elven members to the fellowship
 			LTH = {
-				if = {
-					limit = { LTH_haldir = { is_unit_leader = yes } }
-					LTH_haldir = { retire = yes }
-					SHI = { FS_haldir = { ring_add_member_to_fellowship_nolog = yes } }
-				}
+				# Haldir is ringbearer
+				LTH_haldir = { retire = yes }
+				SHI = { FS_haldir = { ring_add_member_to_fellowship_nolog = yes } }
 				if = {
 					limit = { LTH_orophin = { is_unit_leader = yes } }
 					LTH_orophin = { retire = yes }
