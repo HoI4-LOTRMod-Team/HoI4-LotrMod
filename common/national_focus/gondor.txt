@@ -300,10 +300,10 @@ continuous_focus_position = { x = 50 y = 2000 }
 		icon = GFX_goal_generic_windmile
 		ai_will_do = { factor = 100 }
 		available = { has_idea = GON_defeatist_1 }
-		prerequisite = { focus = GON_rally_the_nation }
+		prerequisite = { focus = GON_rally_the_nation focus = GON_purge_the_aristocracy }
 		relative_position_id = GON_rally_the_nation
-		x = 2
-		y = 3
+		x = 1
+		y = 4
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1330,7 +1330,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = GON_white_sails_of_gondor
 		icon = GFX_goal_generic_amphibious_assault
 		ai_will_do = { factor = 3 }
-		x = 26
+		x = 24
 		y = 0
 		cost = 5
 		available_if_capitulated = yes
@@ -1445,7 +1445,6 @@ continuous_focus_position = { x = 50 y = 2000 }
 				uses = 1
 				technology = transport
 				technology = landing_craft
-				technology = tank_landing_craft
 			}
 		}
 	}
@@ -1456,7 +1455,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		ai_will_do = { factor = 3 }
 		relative_position_id = GON_coastal_protection
 		x = 0
-		y = 4
+		y = 3
 		prerequisite = { focus = GON_coastal_protection }
 		available = {
 			any_controlled_state = { is_coastal = yes }
@@ -1474,7 +1473,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = GON_military_rearmament
 		icon = GFX_goal_generic_axis_build_infantry
 		ai_will_do = { factor = 5 }
-		x = 30
+		x = 28
 		y = 0
 		cost = 5
 		available_if_capitulated = yes
@@ -1629,7 +1628,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = GON_internal_policy_department
 		icon = GFX_focus_generic_support_the_left_right
 		ai_will_do = { factor = 5 }
-		x = 42
+		x = 40
 		y = 0
 		cost = 5
 		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
@@ -2319,7 +2318,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = GON_external_policy_department
 		icon = GFX_focus_generic_support_the_left_right
 		ai_will_do = { factor = 5 }
-		x = 55
+		x = 52
 		y = 0
 		cost = 5
 		search_filters = { FOCUS_FILTER_POLITICAL }
@@ -2336,7 +2335,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		ai_will_do = { factor = 5 }
 		relative_position_id = GON_external_policy_department
 		prerequisite = { focus = GON_external_policy_department }
-		x = -2
+		x = -1
 		y = 1
 		cost = 5
 		available_if_capitulated = yes
@@ -2416,7 +2415,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		ai_will_do = { factor = 4 }
 		relative_position_id = GON_external_policy_department
 		prerequisite = { focus = GON_external_policy_department }
-		x = 0
+		x = 1
 		y = 1
 		cost = 5
 		available_if_capitulated = yes
@@ -2594,7 +2593,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		ai_will_do = { factor = 0 }
 		prerequisite = { focus = GON_purge_the_crown_loyalists }
 		relative_position_id = GON_purge_the_crown_loyalists
-		x = 7
+		x = 6
 		y = 1
 		cost = 10
 		completion_reward = {
@@ -2645,6 +2644,8 @@ continuous_focus_position = { x = 50 y = 2000 }
 		y = 2
 		cost = 10
 		completion_reward = {
+			# TODO: news-event
+
 			start_civil_war = {
     			ruling_party = revolutionary
 				ideology = unaligned
@@ -2655,9 +2656,8 @@ continuous_focus_position = { x = 50 y = 2000 }
 				states = { 14 }
 			}
 
-			# TODO: Send event to red gondor asking if continue war or not
-			# option a: -> to war! 
-			# option b: -> let the go
+			# Send event to red gondor asking if continue war or not
+			country_event = gondor.24
 
 			# Complete national focus for unaligned GON
 			random_other_country = {
@@ -2669,9 +2669,13 @@ continuous_focus_position = { x = 50 y = 2000 }
 				complete_national_focus = GON_the_steward_of_gondor
 			}
 
-			# TODO: Send event to Dol Amroth
-			# option a: stick with Denethor
-			# option b: Im getting outta here
+			if = {
+				limit = {
+					DAM = { is_puppet = yes }
+					release_puppet = DAM
+					DAM = { country_event = gondor.25 }
+				}
+			}
 
 			# TODO: deal with advisors, unit leaders and country leaders
 
@@ -2685,14 +2689,21 @@ continuous_focus_position = { x = 50 y = 2000 }
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_gondor_needs_no_king }
 		relative_position_id = GON_gondor_needs_no_king
-		x = 1
-		y = 1
+		x = 0
+		y = 4
 		cost = 10
 		completion_reward = {
-			# TODO
 			# add revo support
+			add_popularity = {
+				ideology = revolutionary
+				popularity = 0.2
+			}
 			# add stability and ws
-			# remove Order of the White Rose (and some advisors)
+			add_stability = 0.1
+			add_war_support = 0.1
+			# remove Order of the White Rose
+			custom_effect_tooltip = GON_purge_the_aristocracy_tt
+			# TODO: remove aristocratic advisors
 		}
 	}
 
@@ -2706,8 +2717,29 @@ continuous_focus_position = { x = 50 y = 2000 }
 		y = 1
 		cost = 10
 		completion_reward = {
-			# TODO
-			# increase funds to guilds and stuff
+			if = {
+				limit = { has_dlc = "Arms against Tyranny" }
+				# increase funds to guilds and stuff
+				mio:GON_blacksmith_guild = {
+					add_mio_funds_gain_factor = 0.25
+				}
+				mio:GON_alchemists_guild = {
+					add_mio_funds_gain_factor = 0.25
+				}
+				mio:GON_shipbuilders_guild = {
+					add_mio_funds_gain_factor = 0.25
+				}
+				mio:GON_woodcutters_guild = {
+					add_mio_funds_gain_factor = 0.25
+				}
+			}
+			else = {
+				if = {
+					limit = { has_idea = high_taxes }
+					add_ideas = medium_taxes
+				}
+				add_ideas = LTH_peasant_assembly
+			}
 		}
 	}
 
@@ -2726,7 +2758,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 	}
 
 	focus = {
-		id = GON_chase_the_rats_into_the_sea
+		id = GON_the_tolfalas_stalemate
 		icon = GFX_goal_generic_political_pressure
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_the_tolfalas_stalemate }
@@ -2738,8 +2770,6 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			# TODO
-			# If at war with GON/DAM and they have land: add attack
-			# If not at war with GON/DAM but they have land -> gain wargoal
 		}
 	}
 
@@ -2747,14 +2777,14 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = GON_prepare_an_invasion_force
 		icon = GFX_goal_generic_political_pressure
 		ai_will_do = { factor = 3 }
-		prerequisite = { focus = GON_chase_the_rats_into_the_sea }
+		prerequisite = { focus = GON_the_tolfalas_stalemate }
 		relative_position_id = GON_gondor_needs_no_king
 		x = -2
 		y = 2
 		cost = 10
 		completion_reward = {
-			# TODO
 			# Get manpower, equipment and stuff
+
 		}
 	}
 
@@ -2766,11 +2796,19 @@ continuous_focus_position = { x = 50 y = 2000 }
 		prerequisite = { focus = GON_dockyard_effort }
 		relative_position_id = GON_gondor_needs_no_king
 		x = -2
-		y = 4
+		y = 3
 		cost = 10
 		completion_reward = {
-			# TODO
+			# TODO: Add some slick ship production almost ready
+
 			# massive dockyard bonus
+			random_state_add_building_slot_and_doc_x2 = yes
+			random_state_add_building_slot_and_doc_x2 = yes
+
+			add_timed_idea = {
+				idea = dockyard_focus
+				days = 240
+			}
 		}
 	}
 
@@ -2780,14 +2818,15 @@ continuous_focus_position = { x = 50 y = 2000 }
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_the_tolfalas_stalemate }
 		prerequisite = { focus = GON_the_steward_of_gondor }
-		mutually_exclusive = { focus = GON_chase_the_rats_into_the_sea }
+		mutually_exclusive = { focus = GON_the_tolfalas_stalemate }
 		relative_position_id = GON_gondor_needs_no_king
 		x = -4
 		y = 1
 		cost = 10
 		completion_reward = {
-			# TODO
-			# Not sure yet
+			add_war_support = 0.15
+			# Get troops
+			load_oob = GON_Loyalists
 		}
 	}
 
@@ -2801,8 +2840,12 @@ continuous_focus_position = { x = 50 y = 2000 }
 		y = 2
 		cost = 10
 		completion_reward = {
-			# TODO
 			# Get a ton of factories on Tolfalas
+			14 = {
+				add_extra_state_shared_building_slots = 8
+				add_building_construction = { type = arms_factory level = 4 instant_build = yes }
+				add_building_construction = { type = industrial_complex level = 4 instant_build = yes }
+			}
 		}
 	}
 
@@ -2817,7 +2860,20 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			# TODO
-			# War against fake GON, if already at war -> attack bonus
+			if = {
+				limit = { has_war_with = GON }
+				add_relation_modifier = {
+					target = GON
+					modifier = increased_attack_against
+				}
+			}
+			else = {
+				# War against commie GON, if already at war -> attack bonus
+				create_wargoal = {
+					type = annex_everything
+					target = GON
+				}
+			}
 		}
 	}
 }
