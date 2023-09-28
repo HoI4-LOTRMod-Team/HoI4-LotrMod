@@ -36,6 +36,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		y = 1
 		cost = 10
 		completion_reward = {
+			add_stability = -0.1
 			add_political_power = 100
 			if = {
 				limit = {
@@ -69,7 +70,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		y = 1
 		cost = 10
 		completion_reward = {
-			add_stability = -0.10
+			add_stability = -0.1
 			add_popularity = {
 				ideology = unaligned
 				popularity = 0.05
@@ -804,7 +805,18 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# Add idea to GON/ROH: royal marriage
+			add_relation_modifier = {
+    			target = ROH
+    			modifier = faramir_eowyn_marriage
+			}
+
+			ROH = {
+				add_relation_modifier = {
+					target = GON
+					modifier = faramir_eowyn_marriage
+				}
+			}
 		}
 	}
 
@@ -951,7 +963,12 @@ continuous_focus_position = { x = 50 y = 2000 }
 		}
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# Gain a little collab in orthanc, MMO and arnor
+			add_collaboration = { target = MMO value = 0.15 }
+			add_collaboration = { target = ISE value = 0.15 }
+			add_collaboration = { target = ART value = 0.15 }
+			add_collaboration = { target = CAR value = 0.15 }
+			add_collaboration = { target = RHD value = 0.15 }
 		}
 	}
 
@@ -1205,7 +1222,15 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = GON_strengthen_ties_with_angmar
 		icon = GFX_goal_faramir
 		ai_will_do = { factor = 100 }
-		available = { has_global_flag = fs_gondor_faramir }
+		available = {
+			ring_faramir_in_fellowship = yes
+			custom_trigger_tooltip = {
+				tooltip = "The fellowship is currently in territory controlled by Angmar"
+				var:global.fs_currentstate = {
+					is_controlled_by = ANG
+				}
+			}
+		}
 		prerequisite = { focus = GON_send_faramir_with_the_fellowship }
 		relative_position_id = GON_send_faramir_with_the_fellowship
 		mutually_exclusive = { focus = GON_rally_support_in_enedwaith }
@@ -1214,7 +1239,18 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 0
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# Generic Faramir diplo bonus
+			ANG = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = medium_increase
+				}
+			}
+			add_equipment_subsidy = {
+				cic = 500
+				equipment_type = infantry_equipment
+				seller_tags = { ANG } 
+			}
 		}
 	}
 
@@ -1222,7 +1258,15 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = GON_rally_support_in_enedwaith
 		icon = GFX_goal_faramir
 		ai_will_do = { factor = 100 }
-		available = { has_global_flag = fs_gondor_faramir }
+		available = {
+			ring_faramir_in_fellowship = yes
+			custom_trigger_tooltip = {
+				tooltip = "The fellowship is currently in territory controlled by Enedwaith"
+				var:global.fs_currentstate = {
+					is_controlled_by = ENE
+				}
+			}
+		}
 		prerequisite = { focus = GON_send_faramir_with_the_fellowship }
 		relative_position_id = GON_send_faramir_with_the_fellowship
 		mutually_exclusive = { focus = GON_strengthen_ties_with_angmar }
@@ -1231,7 +1275,18 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 0
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# Generic Faramir diplo bonus
+			ENE = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = medium_increase
+				}
+			}
+			add_equipment_subsidy = {
+				cic = 500
+				equipment_type = infantry_equipment
+				seller_tags = { ENE } 
+			}
 		}
 	}
 
@@ -1239,7 +1294,15 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = GON_gain_favour_with_the_elves
 		icon = GFX_goal_faramir
 		ai_will_do = { factor = 100 }
-		available = { has_global_flag = fs_gondor_faramir }
+		available = {
+			ring_faramir_in_fellowship = yes
+			custom_trigger_tooltip = {
+				tooltip = "The fellowship is currently in territory controlled by Lothlórien"
+				var:global.fs_currentstate = {
+					is_controlled_by = LTH
+				}
+			}
+		}
 		prerequisite = { focus = GON_send_faramir_with_the_fellowship }
 		relative_position_id = GON_send_faramir_with_the_fellowship
 		x = 0
@@ -1247,7 +1310,18 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 0
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# Generic Faramir diplo bonus
+			LTH = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = medium_increase
+				}
+			}
+			add_equipment_subsidy = {
+				cic = 500
+				equipment_type = infantry_equipment
+				seller_tags = { LTH } 
+			}
 		}
 	}
 
@@ -1277,23 +1351,13 @@ continuous_focus_position = { x = 50 y = 2000 }
 		available_if_capitulated = yes
 		completion_reward = {
 			navy_experience = 50
-				add_tech_bonus = {
-					name = bc_bonus
-					bonus = 0.5
-					uses = 1
-					category = lotr_sailing_sailingship
-				}
-				add_tech_bonus = {
-					name = bb_bonus
-					bonus = 0.5
-					uses = 1
-					technology = basic_battleship
-					technology = improved_battleship
-					technology = advanced_battleship
-					technology = heavy_battleship
-					technology = heavy_battleship2
-				}
+			add_tech_bonus = {
+				name = bc_bonus
+				bonus = 0.5
+				uses = 1
+				category = lotr_sailing_longboat
 			}
+		}
 	}
 
 	#Focus for Destroyer Effort
@@ -1309,7 +1373,13 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			navy_experience = 50
+			add_tech_bonus = {
+				name = bc_bonus
+				bonus = 0.5
+				uses = 1
+				category = lotr_sailing_sailingship
+			}
 		}
 	}
 
@@ -1324,7 +1394,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			add_ideas = GON_coastal_protection
 		}
 	}
 
@@ -1388,10 +1458,14 @@ continuous_focus_position = { x = 50 y = 2000 }
 		x = 0
 		y = 4
 		prerequisite = { focus = GON_coastal_protection }
+		available = {
+			any_controlled_state = { is_coastal = yes }
+		}
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			random_state_add_building_slot_and_doc_x2
+			random_state_add_building_slot_and_doc_x2
 		}
 	}
 
@@ -1459,7 +1533,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			add_ideas = GON_ship_mounted_catapults
 		}
 	}
 
@@ -2517,43 +2591,91 @@ continuous_focus_position = { x = 50 y = 2000 }
 	focus = {
 		id = GON_ensure_popular_support
 		icon = GFX_goal_generic_political_pressure
-		ai_will_do = { factor = 3 }
+		ai_will_do = { factor = 0 }
 		prerequisite = { focus = GON_purge_the_crown_loyalists }
 		relative_position_id = GON_purge_the_crown_loyalists
 		x = 7
 		y = 1
 		cost = 10
 		completion_reward = {
-			# TODO
+			# Add idea that gives revo + unaligned support and takes away coop support
+			add_ideas = GON_popular_support_campaign
+			add_stability = 0.1
 		}
 	}
 
 	focus = {
 		id = GON_defame_isildurs_lineage
 		icon = GFX_goal_generic_political_pressure
-		ai_will_do = { factor = 3 }
+		ai_will_do = { factor = 0 }
 		prerequisite = { focus = GON_ensure_popular_support }
 		relative_position_id = GON_ensure_popular_support
 		x = 0
 		y = 1
 		cost = 10
 		completion_reward = {
-			# TODO
+			# remove coop support, add stability and war support
+			# lower opinion with Arnor
+			add_political_power = 150
+			add_popularity = {
+				ideology = cooperative
+				popularity = -0.15
+			}
+			add_popularity = {
+				ideology = revolutionary
+				popularity = 0.1
+			}
+			ART = { add_opinion_modifier = { target = ART modifier = medium_decrease } }
+			CAR = { add_opinion_modifier = { target = ART modifier = medium_decrease } }
+			RHD = { add_opinion_modifier = { target = ART modifier = medium_decrease } }
 		}
 	}
 
 	focus = {
 		id = GON_gondor_needs_no_king
 		icon = GFX_goal_generic_political_pressure
-		ai_will_do = { factor = 3 }
+		ai_will_do = { factor = 0 }
 		prerequisite = { focus = GON_defame_isildurs_lineage }
 		mutually_exclusive = { focus = GON_the_steward_of_gondor }
 		relative_position_id = GON_ensure_popular_support
+		available = {
+			revolutionary > 0.4
+		}
 		x = 0
 		y = 2
 		cost = 10
 		completion_reward = {
-			# TODO
+			start_civil_war = {
+    			ruling_party = revolutionary
+				ideology = unaligned
+				army_ratio = 0.25
+				navy_ratio = 0.85
+				air_ratio = 0.25
+				capital = 14
+				states = { 14 }
+			}
+
+			# TODO: Send event to red gondor asking if continue war or not
+			# option a: -> to war! 
+			# option b: -> let the go
+
+			# Complete national focus for unaligned GON
+			random_other_country = {
+				limit = {
+					original_tag = GON
+					has_government = unaligned
+				}
+				uncomplete_national_focus = GON_gondor_needs_no_king
+				complete_national_focus = GON_the_steward_of_gondor
+			}
+
+			# TODO: Send event to Dol Amroth
+			# option a: stick with Denethor
+			# option b: Im getting outta here
+
+			# TODO: deal with advisors, unit leaders and country leaders
+
+			# TODO: make sure we can't take any weird focuses while in CW
 		}
 	}
 
@@ -2568,6 +2690,9 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			# TODO
+			# add revo support
+			# add stability and ws
+			# remove Order of the White Rose (and some advisors)
 		}
 	}
 
@@ -2582,6 +2707,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			# TODO
+			# increase funds to guilds and stuff
 		}
 	}
 
@@ -2595,7 +2721,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		y = 1
 		cost = 10
 		completion_reward = {
-			# TODO
+			add_ideas = GON_merit_based_advancement
 		}
 	}
 
@@ -2612,6 +2738,8 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			# TODO
+			# If at war with GON/DAM and they have land: add attack
+			# If not at war with GON/DAM but they have land -> gain wargoal
 		}
 	}
 
@@ -2626,6 +2754,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			# TODO
+			# Get manpower, equipment and stuff
 		}
 	}
 
@@ -2641,6 +2770,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			# TODO
+			# massive dockyard bonus
 		}
 	}
 
@@ -2657,6 +2787,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			# TODO
+			# Not sure yet
 		}
 	}
 
@@ -2671,6 +2802,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			# TODO
+			# Get a ton of factories on Tolfalas
 		}
 	}
 
@@ -2685,6 +2817,8 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			# TODO
+			# War against fake GON, if already at war -> attack bonus
 		}
 	}
 }
+
