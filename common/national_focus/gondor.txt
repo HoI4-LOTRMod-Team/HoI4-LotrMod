@@ -1385,7 +1385,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_coastal_protection
-		icon = GFX_goal_generic_navy_anti_submarine
+		icon = GFX_focus_generic_coastal_fort
 		ai_will_do = { factor = 3 }
 		relative_position_id = GON_white_sails_of_gondor
 		x = 0
@@ -1451,7 +1451,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_dockyard_effort
-		icon = GFX_goal_generic_navy_anti_submarine
+		icon = GFX_goal_generic_construct_naval_dockyard
 		ai_will_do = { factor = 3 }
 		relative_position_id = GON_coastal_protection
 		x = 0
@@ -1522,7 +1522,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_ship_mounted_catapults
-		icon = GFX_goal_generic_army_artillery2
+		icon = GFX_focus_generic_refit_civilian_ships
 		ai_will_do = { factor = 3 }
 		relative_position_id = GON_artillery_improvements
 		x = -1
@@ -2589,7 +2589,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_ensure_popular_support
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_generic_population_growth
 		ai_will_do = { factor = 0 }
 		prerequisite = { focus = GON_purge_the_crown_loyalists }
 		relative_position_id = GON_purge_the_crown_loyalists
@@ -2605,7 +2605,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_defame_isildurs_lineage
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_generic_monarchy_1
 		ai_will_do = { factor = 0 }
 		prerequisite = { focus = GON_ensure_popular_support }
 		relative_position_id = GON_ensure_popular_support
@@ -2632,7 +2632,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_gondor_needs_no_king
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_rom_abdicate
 		ai_will_do = { factor = 0 }
 		prerequisite = { focus = GON_defame_isildurs_lineage }
 		mutually_exclusive = { focus = GON_the_steward_of_gondor }
@@ -2644,46 +2644,58 @@ continuous_focus_position = { x = 50 y = 2000 }
 		y = 2
 		cost = 10
 		completion_reward = {
-			# TODO: news-event
-
-			start_civil_war = {
-    			ruling_party = revolutionary
-				ideology = unaligned
-				army_ratio = 0.25
-				navy_ratio = 0.85
-				air_ratio = 0.25
-				capital = 14
-				states = { 14 }
-			}
-
-			# Send event to red gondor asking if continue war or not
-			country_event = gondor.24
-
-			# Complete national focus for unaligned GON
-			random_other_country = {
-				limit = {
-					original_tag = GON
-					has_government = unaligned
-				}
-				uncomplete_national_focus = { focus = GON_gondor_needs_no_king }
-				complete_national_focus = GON_the_steward_of_gondor
-			}
-
 			if = {
-				limit = { DAM = { is_puppet = yes } }
-				release_puppet = DAM
-				DAM = { country_event = gondor.25 }
+				limit = { has_idea = GON_kingdom_without_king_1 }
+				remove_ideas = GON_kingdom_without_king_1
+			}
+			if = {
+				limit = { has_idea = GON_kingdom_without_king_0 }
+				remove_ideas = GON_kingdom_without_king_0
 			}
 
-			# TODO: deal with advisors, unit leaders and country leaders
+			custom_effect_tooltip = GON_gondor_needs_no_king_tt
+			hidden_effect = {
+				# TODO: news-event
 
-			# TODO: make sure we can't take any weird focuses while in CW
+				start_civil_war = {
+					ruling_party = revolutionary
+					ideology = unaligned
+					army_ratio = 0.25
+					navy_ratio = 0.85
+					air_ratio = 0.25
+					capital = 14
+					states = { 14 }
+				}
+
+				# Send event to red gondor asking if continue war or not
+				country_event = gondor.24
+
+				# Complete national focus for unaligned GON
+				random_other_country = {
+					limit = {
+						original_tag = GON
+						has_government = unaligned
+					}
+					uncomplete_national_focus = { focus = GON_gondor_needs_no_king }
+					complete_national_focus = GON_the_steward_of_gondor
+				}
+
+				if = {
+					limit = { DAM = { is_puppet = yes } }
+					release_puppet = DAM
+					DAM = { country_event = gondor.25 }
+				}
+
+				# TODO: deal with advisors, unit leaders and country leaders
+
+				# TODO: make sure we can't take any weird focuses while in CW	
+			}
 		}
 	}
 
 	focus = {
 		id = GON_purge_the_aristocracy
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_goal_tfv_saf_anti_colonialist_crusade
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_gondor_needs_no_king }
 		relative_position_id = GON_gondor_needs_no_king
@@ -2707,7 +2719,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_power_to_the_unions
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_SOV_bukharan_republic
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_purge_the_aristocracy }
 		relative_position_id = GON_purge_the_aristocracy
@@ -2743,7 +2755,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_meritocracy
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_SOV_merge_plants
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_purge_the_aristocracy }
 		relative_position_id = GON_purge_the_aristocracy
@@ -2757,7 +2769,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_the_tolfalas_stalemate
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_spr_masters_of_our_own_fate
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_gondor_needs_no_king }
 		mutually_exclusive = { focus = GON_rally_the_exiled_nobility }
@@ -2772,7 +2784,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_prepare_an_invasion_force
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_eng_special_air_service
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_the_tolfalas_stalemate }
 		relative_position_id = GON_gondor_needs_no_king
@@ -2780,17 +2792,17 @@ continuous_focus_position = { x = 50 y = 2000 }
 		y = 2
 		cost = 10
 		completion_reward = {
-			# Get manpower, equipment and stuff
+			# TODO: Get manpower, equipment and stuff
 
 		}
 	}
 
 	focus = {
 		id = GON_the_peoples_fleet
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_POL_develop_polish_shipbuilding
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_prepare_an_invasion_force }
-		prerequisite = { focus = GON_dockyard_effort }
+		#prerequisite = { focus = GON_dockyard_effort }
 		relative_position_id = GON_gondor_needs_no_king
 		x = -2
 		y = 3
@@ -2811,7 +2823,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_rally_the_exiled_nobility
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_POL_expand_polish_intelligence
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_the_steward_of_gondor }
 		mutually_exclusive = { focus = GON_the_tolfalas_stalemate }
@@ -2828,7 +2840,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_evacuate_the_treasury
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_usa_reestablish_the_gold_standard
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_rally_the_exiled_nobility }
 		relative_position_id = GON_gondor_needs_no_king
@@ -2847,7 +2859,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_liberate_the_capital_from_the_usurpers
-		icon = GFX_goal_generic_political_pressure
+		icon = GFX_focus_spa_the_war_of_vengeance
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_evacuate_the_treasury }
 		relative_position_id = GON_gondor_needs_no_king
