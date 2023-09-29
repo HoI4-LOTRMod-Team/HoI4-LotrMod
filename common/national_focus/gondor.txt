@@ -4,7 +4,7 @@ country = {
 	factor=0
 	modifier = {
 		add = 10
-		tag = GON
+		original_tag = GON
 	}
 }
 default = no
@@ -83,7 +83,10 @@ continuous_focus_position = { x = 50 y = 2000 }
 				ideology = belligerent
 				popularity = 0.05
 			}
-			denethor_gets_less_paranoid = yes
+			if = {
+				limit = { denethor_is_leader = yes }
+				denethor_gets_less_paranoid = yes
+			}
 		}
 	}
 
@@ -99,7 +102,10 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		completion_reward = {
 			army_experience = 25
-			denethor_gets_less_paranoid = yes
+			if = {
+				limit = { denethor_is_leader = yes }
+				denethor_gets_less_paranoid = yes
+			}
 		}
 	}
 
@@ -109,6 +115,9 @@ continuous_focus_position = { x = 50 y = 2000 }
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_enforce_militair_loyalty }
 		relative_position_id = GON_enforce_militair_loyalty
+		available = {
+			DAM = { is_subject_of = ROOT }
+		}
 		x = -2
 		y = 1
 		cost = 5
@@ -134,6 +143,9 @@ continuous_focus_position = { x = 50 y = 2000 }
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_promote_dol_amroth_loyalty }
 		relative_position_id = GON_promote_dol_amroth_loyalty
+		available = {
+			DAM = { is_subject_of = ROOT }
+		}
 		x = 0
 		y = 1
 		cost = 10
@@ -192,8 +204,11 @@ continuous_focus_position = { x = 50 y = 2000 }
 			}
 			remove_denethor_paranoid = yes
 			hidden_effect = {
-				DAM = {
-					country_event = dolamroth.1
+				if = {
+					limit = { DAM = { is_puppet = yes } }
+					DAM = {
+						country_event = dolamroth.1
+					}
 				}
 			}
 		}
@@ -951,7 +966,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 	focus = {
 		id = GON_historical_claims
-		icon = GFX_wargoal_mordor
+		icon = GFX_goal_gon_historical_claims
 		ai_will_do = { factor = 30 }
 		relative_position_id = GON_restore_the_kingdom_of_gondor
 		prerequisite = { focus = GON_restore_the_kingdom_of_gondor focus = GON_restructure_the_army }
@@ -959,7 +974,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		y = 1
 		cost = 10
 		available = {
-			always = yes
+			the_other_gondor_does_not_exist = yes
 		}
 		available_if_capitulated = yes
 		completion_reward = {
@@ -976,7 +991,10 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = GON_reconquering_arnor
 		icon = GFX_goal_denethor
 		ai_will_do = { factor = 100 }
-		available = { cooperative > 0.5 }
+		available = {
+			cooperative > 0.5
+			the_other_gondor_does_not_exist = yes
+		}
 		prerequisite = { focus = GON_historical_claims }
 		relative_position_id = GON_historical_claims
 		x = 0
@@ -1006,6 +1024,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 					has_government = revolutionary
 				}
 			}
+			the_other_gondor_does_not_exist = yes
 		}
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1027,6 +1046,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		available = {
 			controls_state = 5
+			the_other_gondor_does_not_exist = yes
 		}
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1046,6 +1066,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		available = {
 			controls_state = 5
+			the_other_gondor_does_not_exist = yes
 		}
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1066,6 +1087,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 			ISE = {
 				owns_state = 31
 			}
+			the_other_gondor_does_not_exist = yes
 		}
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1099,6 +1121,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		cost = 10
 		available = {
 			owns_state = 31
+			the_other_gondor_does_not_exist = yes
 		}
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1127,7 +1150,10 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = GON_have_boromir_steal_the_ring
 		icon = GFX_goal_the_one_ring
 		ai_will_do = { factor = 70 }
-		available = {always = no }
+		available = {
+			always = no
+			NOT = { has_government = revolutionary }
+		}
 		prerequisite = { focus = GON_send_boromir_with_the_fellowship}
 		relative_position_id = GON_send_boromir_with_the_fellowship
 		x = 0
@@ -2643,6 +2669,9 @@ continuous_focus_position = { x = 50 y = 2000 }
 		x = 0
 		y = 2
 		cost = 10
+		cancel = {
+			has_completed_focus = GON_the_steward_of_gondor
+		}
 		completion_reward = {
 			if = {
 				limit = { has_idea = GON_kingdom_without_king_1 }
@@ -2655,40 +2684,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 
 			custom_effect_tooltip = GON_gondor_needs_no_king_tt
 			hidden_effect = {
-				# TODO: news-event
-
-				start_civil_war = {
-					ruling_party = revolutionary
-					ideology = unaligned
-					army_ratio = 0.25
-					navy_ratio = 0.85
-					air_ratio = 0.25
-					capital = 14
-					states = { 14 }
-				}
-
-				# Send event to red gondor asking if continue war or not
-				country_event = gondor.24
-
-				# Complete national focus for unaligned GON
-				random_other_country = {
-					limit = {
-						original_tag = GON
-						has_government = unaligned
-					}
-					uncomplete_national_focus = { focus = GON_gondor_needs_no_king }
-					complete_national_focus = GON_the_steward_of_gondor
-				}
-
-				if = {
-					limit = { DAM = { is_puppet = yes } }
-					release_puppet = DAM
-					DAM = { country_event = gondor.25 }
-				}
-
-				# TODO: deal with advisors, unit leaders and country leaders
-
-				# TODO: make sure we can't take any weird focuses while in CW	
+				country_event = { id = gondor.25 hours = 1 }
 			}
 		}
 	}
@@ -2774,6 +2770,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		prerequisite = { focus = GON_gondor_needs_no_king }
 		mutually_exclusive = { focus = GON_rally_the_exiled_nobility }
 		relative_position_id = GON_gondor_needs_no_king
+		available = { the_other_gondor_exists = yes }
 		x = -2
 		y = 1
 		cost = 10
@@ -2788,6 +2785,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		ai_will_do = { factor = 3 }
 		prerequisite = { focus = GON_the_tolfalas_stalemate }
 		relative_position_id = GON_gondor_needs_no_king
+		available = { the_other_gondor_exists = yes }
 		x = -2
 		y = 2
 		cost = 10
@@ -2807,12 +2805,13 @@ continuous_focus_position = { x = 50 y = 2000 }
 		x = -2
 		y = 3
 		cost = 10
+		available = { the_other_gondor_exists = yes }
 		completion_reward = {
 			# TODO: Add some slick ship production almost ready
 
 			# massive dockyard bonus
-			random_state_add_building_slot_and_doc_x2 = yes
-			random_state_add_building_slot_and_doc_x2 = yes
+			random_state_add_building_slot_and_doc_x3 = yes
+			random_state_add_building_slot_and_doc_x3 = yes
 
 			add_timed_idea = {
 				idea = dockyard_focus
@@ -2831,8 +2830,12 @@ continuous_focus_position = { x = 50 y = 2000 }
 		x = -4
 		y = 1
 		cost = 10
+		available = { the_other_gondor_exists = yes }
 		completion_reward = {
 			add_war_support = 0.15
+			14 = {
+				add_manpower = 100000
+			}
 			# Get troops
 			load_oob = GON_Loyalists
 		}
@@ -2847,6 +2850,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		x = -4
 		y = 2
 		cost = 10
+		available = { the_other_gondor_exists = yes }
 		completion_reward = {
 			# Get a ton of factories on Tolfalas
 			14 = {
@@ -2866,6 +2870,7 @@ continuous_focus_position = { x = 50 y = 2000 }
 		x = -4
 		y = 3
 		cost = 10
+		available = { the_other_gondor_exists = yes }
 		completion_reward = {
 			# TODO
 			if = {

@@ -839,7 +839,7 @@ country_event = {
 	}
 }
 
-# Stewartship flees to Tolfalas. Pursue? # TODO: localization
+# Stewartship flees to Tolfalas. Pursue?
 country_event = {
 	id = gondor.24
 	title = gondor.24.t
@@ -848,21 +848,51 @@ country_event = {
 
 	is_triggered_only = yes
 
+	trigger = {
+		14 = {
+			controller = {
+				original_tag = GON
+				has_government = unaligned
+			}
+		}
+	}
+
 	# yes
 	option = {
 		name = gondor.24.a
 		ai_chance = {
-			base = 25
+			base = 30
 		}
 		random_other_country = {
 			limit = {
 				original_tag = GON
 				has_government = unaligned
 			}
-			#white_peace = GON
-			set_truce = {
-    			target = ROOT
-    			days = 500
+			ROOT = {
+				remove_civil_war_target = PREV
+				white_peace = PREV
+				set_truce = { target = PREV days = 300 }
+			}
+			if = {
+				limit = { controls_state = 167 }
+				167 = {
+					teleport_armies = { to_state = 14 }
+					transfer_state_to = GON
+				}
+			}
+			if = {
+				limit = { controls_state = 15 }
+				15 = {
+					teleport_armies = { to_state = 14 }
+					transfer_state_to = GON
+				}
+			}
+			if = {
+				limit = { controls_state = 166 }
+				166 = {
+					teleport_armies = { to_state = 14 }
+					transfer_state_to = GON
+				}
 			}
 		}
 	}
@@ -876,7 +906,7 @@ country_event = {
 	}
 }
 
-# Dol Amroth: Stewartship flees to Tolfalas. What now? # TODO: localization
+# Revolution started
 country_event = {
 	id = gondor.25
 	title = gondor.25.t
@@ -885,24 +915,53 @@ country_event = {
 
 	is_triggered_only = yes
 
-	# attack red gondor
 	option = {
 		name = gondor.25.a
 		ai_chance = {
 			base = 50
 		}
-		declare_war_on = {
-			target = GON
-			type = annex_everything
+		# TODO: news-event
+
+		dismantle_faction = yes
+
+		if = {
+			limit = { DAM = { is_puppet = yes } }
+			release_puppet = DAM
 		}
-	}
-	# Let's just do nothing lol
-	option = {
-		name = gondor.25.b
-		ai_chance = {
-			base = 50
+
+		start_civil_war = {
+			ruling_party = revolutionary
+			ideology = unaligned
+			army_ratio = 0.25
+			navy_ratio = 1.0
+			air_ratio = 0.25
+			capital = 14
+			states = { 14 167 15 166 }
 		}
-		
+
+		hidden_effect = {
+			# Send event to red gondor asking if continue war or not
+			country_event = { id = gondor.24 days = 3 random_days = 3 }	
+		}
+
+		# Complete national focus for unaligned GON
+		random_other_country = {
+			limit = {
+				original_tag = GON
+				has_government = unaligned
+			}
+			set_cosmetic_tag = STEWARDSHIP
+			# Increase VPs on Tolfalas to ensure stewartship does not surrender
+			add_victory_points = { province = 4726 value = 20 }
+
+			#uncomplete_national_focus = { focus = GON_gondor_needs_no_king }
+			complete_national_focus = GON_the_steward_of_gondor
+		}
+
+		# TODO: deal with advisors, unit leaders and country leaders
+
+		# TODO: make sure we can't take any weird focuses while in CW	
 	}
 }
+
 
