@@ -182,8 +182,9 @@ continuous_focus_position = { x = 50 y = 2000 }
 	 cost = 10
 	 available_if_capitulated = yes
 	 completion_reward = {
-	 		add_ideas = generic_cooperative
-			add_ideas = generic_unaligned
+		set_country_flag = path_going_cooperative
+		add_ideas = generic_cooperative
+		add_ideas = generic_unaligned
 	 }
 }
 
@@ -664,15 +665,23 @@ continuous_focus_position = { x = 50 y = 2000 }
 		id = ERE_war_with_rhun
 		icon = GFX_goal_generic_major_war
 		ai_will_do = { factor = 2 }
-		available = { 
-			NOT = {
-				OR = {
-					is_in_faction_with = RHU
-					has_government = cooperative
-					has_government = unaligned
-					RHU = {
-						is_puppet_of = ERE
-					}
+		available = {
+			RHU = {
+				exists = yes
+				NOT = {
+					is_puppet_of = ERE
+					is_in_faction_with = ERE
+				}
+			} 
+			OR = {
+				ERE = {
+					has_government = belligerent
+				}
+				ERE = {
+					has_government = revolutionary
+				}
+				RHU = {
+					has_government = belligerent
 				}
 			}
 		}
@@ -954,7 +963,7 @@ continuous_focus_position = { x = 50 y = 2000 }
  		cost = 10
   		available_if_capitulated = yes
 		completion_reward = {
-			add_threat = 2
+			set_country_flag = path_going_belligerent
 			set_politics = { ruling_party = belligerent elections_allowed = no }
 			remove_ideas = generic_revolutionary_intermediate
 			ERE_dain = { retire = yes }
@@ -976,6 +985,7 @@ continuous_focus_position = { x = 50 y = 2000 }
  		cost = 10
   	available_if_capitulated = yes
 		completion_reward = {
+			set_country_flag = path_going_revolutionary
 			set_politics = { ruling_party = revolutionary elections_allowed = no }
 			remove_ideas = generic_belligerent_intermediate
 			ERE_dain = { retire = yes }
@@ -1146,9 +1156,9 @@ focus = {
  		cost = 10
   		available_if_capitulated = no
 		completion_reward = {
-				add_ideas = workers_culture
-				add_ideas = progress_cult_focus
-				add_ideas = SOV_collectivist_propaganda
+			add_ideas = workers_culture
+			add_ideas = progress_cult_focus
+			add_ideas = SOV_collectivist_propaganda
 		}
  }
 
