@@ -9,7 +9,7 @@ country_event = {
 	id = gondor.1
 	title = gondor.1.t
 	desc = gondor.1.d
-	picture = GFX_report_event_alliance
+	picture = GFX_report_event_paper
 
 	is_triggered_only = yes
 
@@ -58,7 +58,7 @@ country_event = {
 	id = gondor.2
 	title = gondor.2.t
 	desc = gondor.2.d
-	picture = GFX_report_event_paper
+	picture = GFX_report_event_fight
 
 	trigger = {
 		tag = GON
@@ -588,7 +588,7 @@ country_event = {
 	id = gondor.16
 	title = gondor.16.t
 	desc = gondor.16.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_paper
 
 	is_triggered_only = yes
 
@@ -624,7 +624,7 @@ country_event = {
 	id = gondor.17
 	title = gondor.17.t
 	desc = gondor.17.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_paper
 
 	is_triggered_only = yes
 
@@ -684,7 +684,7 @@ country_event = {
 	id = gondor.18
 	title = gondor.18.t
 	desc = gondor.18.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_paper
 
 	is_triggered_only = yes
 
@@ -718,7 +718,7 @@ news_event = {
 	id = gondor.19
 	title = gondor.19.t
 	desc = gondor.19.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_paper
 
 	is_triggered_only = yes
 
@@ -735,7 +735,7 @@ country_event = {
 	id = gondor.20
 	title = gondor.20.t
 	desc = gondor.20.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_paper
 
 	is_triggered_only = yes
 
@@ -752,7 +752,7 @@ country_event = {
 	id = gondor.21
 	title = gondor.21.t
 	desc = gondor.21.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_paper
 
 	is_triggered_only = yes
 
@@ -769,7 +769,7 @@ country_event = {
 	id = gondor.22
 	title = gondor.22.t
 	desc = gondor.22.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_paper
 
 	is_triggered_only = yes
 
@@ -800,7 +800,7 @@ country_event = {
 	id = gondor.23
 	title = gondor.23.t
 	desc = gondor.23.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_paper
 
 	is_triggered_only = yes
 
@@ -838,4 +838,139 @@ country_event = {
 		}
 	}
 }
+
+# Stewartship flees to Tolfalas. Pursue?
+country_event = {
+	id = gondor.24
+	title = gondor.24.t
+	desc = gondor.24.d
+	picture = GFX_report_event_fight
+
+	is_triggered_only = yes
+
+	trigger = {
+		14 = {
+			controller = {
+				original_tag = GON
+				has_government = unaligned
+			}
+		}
+	}
+
+	# yes
+	option = {
+		name = gondor.24.a
+		ai_chance = {
+			base = 30
+		}
+
+		hidden_effect = {
+			news_event = { id = news.401 hours = 12 }	
+		}
+
+		random_other_country = {
+			limit = {
+				original_tag = GON
+				has_government = unaligned
+			}
+			ROOT = {
+				remove_civil_war_target = PREV
+				white_peace = PREV
+				set_truce = { target = PREV days = 300 }
+			}
+			if = {
+				limit = { controls_state = 167 }
+				167 = {
+					teleport_armies = { to_state = 14 }
+					transfer_state_to = GON
+				}
+			}
+			if = {
+				limit = { controls_state = 15 }
+				15 = {
+					teleport_armies = { to_state = 14 }
+					transfer_state_to = GON
+				}
+			}
+			if = {
+				limit = { controls_state = 166 }
+				166 = {
+					teleport_armies = { to_state = 14 }
+					transfer_state_to = GON
+				}
+			}
+		}
+	}
+	# no
+	option = {
+		name = gondor.24.b
+		ai_chance = {
+			base = 5
+		}
+		
+	}
+}
+
+# Revolution started
+country_event = {
+	id = gondor.25
+	title = gondor.25.t
+	desc = gondor.25.d
+	picture = GFX_report_event_fight
+
+	is_triggered_only = yes
+
+	option = {
+		name = gondor.25.a
+		ai_chance = {
+			base = 50
+		}
+		
+		hidden_effect = {
+			news_event = { id = news.400 hours = 12 }	
+		}
+
+		dismantle_faction = yes
+
+		if = {
+			limit = { DAM = { is_subject = yes } }
+			set_autonomy = {
+				target = DAM
+				autonomy_state = autonomy_free
+				end_wars = no
+				end_civil_wars = no
+			}
+		}
+
+		start_civil_war = {
+			ruling_party = revolutionary
+			ideology = unaligned
+			army_ratio = 0.25
+			navy_ratio = 1.0
+			air_ratio = 0.25
+			capital = 14
+			states = { 14 167 15 166 }
+		}
+
+		hidden_effect = {
+			# Send event to red gondor asking if continue war or not
+			country_event = { id = gondor.24 days = 30 random_days = 30 }	
+		}
+
+		# Complete national focus for unaligned GON
+		random_other_country = {
+			limit = {
+				original_tag = GON
+				has_government = unaligned
+			}
+			set_cosmetic_tag = STEWARDSHIP
+			# Increase VPs on Tolfalas to ensure stewartship does not surrender
+			add_victory_points = { province = 4726 value = 20 }
+
+			#uncomplete_national_focus = { focus = GON_gondor_needs_no_king }
+			complete_national_focus = GON_the_steward_of_gondor
+		}
+	}
+}
+
 
