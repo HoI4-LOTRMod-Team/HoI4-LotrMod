@@ -1,6 +1,13 @@
-MOR_build_infrastructure = {
+LTH_build_civs_in_caras = {
     enable = {
-        always = yes
+		OR = {
+			AND = {
+				has_government = unaligned
+				75 = { check_variable = { industrial_complex_level < 14 } } # build more if unaligned
+			}
+			75 = { check_variable = { industrial_complex_level < 12 } }
+		}
+		has_war = no
     }
     allowed = {
         original_tag = LTH
@@ -12,13 +19,44 @@ MOR_build_infrastructure = {
 		type = build_building
 		id = industrial_complex
 		target = 75
-		value = 100
+		value = 15 # Get *at least* 12 civs into state 75 first, that way we can get the most out of the "twin hearts" focus
 	}
+}
+
+LTH_build_mils_in_amroth = {
+    enable = {
+		OR = {
+        	75 = { check_variable = { industrial_complex_level > 12 } }
+			has_war = yes
+		}
+    }
+    allowed = {
+        original_tag = LTH
+    }
+
+    abort_when_not_enabled = yes
 
 	ai_strategy = {
 		type = build_building
 		id = arms_factory
 		target = 222
-		value = 90
+		value = 50 # as many as will fit
+	}
+}
+
+LTH_oath_of_feanor = {
+	enable = {
+		has_completed_focus = lth_theoathoffeanor
+	}
+	allowed = {
+		original_tag = LTH
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = antagonize
+		id = MOR
+		value = -100
 	}
 }
