@@ -2,19 +2,15 @@ NDefines.NGame.START_DATE = "3018.1.1.12"
 NDefines.NGame.END_DATE = "4018.1.1.1"
 NDefines.NGame.HANDS_OFF_START_TAG = "RHD"
 
-NDefines.NGame.HIGH_COMMAND_ADDED_WEIGHT_FACTOR = 0.5	-- Weight multiplier for high_command advisors over other chosen advisor or idea types
-NDefines.NGame.CHIEF_ADDED_WEIGHT_FACTOR = 1.0			-- Weight multiplier for chief roles over other advisor or idea types
-NDefines.NGame.HIGH_COMMAND_ADDED_WEIGHT_FACTOR = 0.25	-- Weight multiplier for high_command advisors over other chosen advisor or idea types
-NDefines.NGame.CHIEF_ADDED_WEIGHT_FACTOR = 12.5			-- Weight multiplier for chief roles over other advisor or idea types
+NDefines.NAI.HIGH_COMMAND_ADDED_WEIGHT_FACTOR = 0.5	-- Weight multiplier for high_command advisors over other chosen advisor or idea types
+NDefines.NAI.CHIEF_ADDED_WEIGHT_FACTOR = 1.0			-- Weight multiplier for chief roles over other advisor or idea types
+NDefines.NAI.ADVISOR_SCORE_CHEAPER_IS_BETTER_FACTOR = 0.5  -- When scoring advisors, this define scales how much the AI prefers cheaper advisors over more expensive ones. 0.0 means no effect, 0.15 means a cost difference of 100 PP modifies the score by 15 %.
+NDefines.NAI.DESIGN_COMPANY_SCORE_MULTIPLIER = 1.25              -- score multiplier for hiring a design company
+NDefines.NAI.ARMY_CHIEF_SCORE_MULTIPLIER = 0.75                  -- score multiplier for hiring an army chief
+NDefines.NAI.AIR_CHIEF_SCORE_MULTIPLIER = 1.0                   -- score multiplier for hiring an air chief
+NDefines.NAI.POLITICAL_ADVISOR_SCORE_MULTIPLIER = 1.25           -- score multiplier for hiring political advisors
 
-NDefines.NGame.HIGH_COMMAND_ADDED_WEIGHT_FACTOR = 0.5	-- Weight multiplier for high_command advisors over other chosen advisor or idea types
-NDefines.NGame.CHIEF_ADDED_WEIGHT_FACTOR = 1.0			-- Weight multiplier for chief roles over other advisor or idea types
-NDefines.NGame.ADVISOR_SCORE_CHEAPER_IS_BETTER_FACTOR = 0.5  -- When scoring advisors, this define scales how much the AI prefers cheaper advisors over more expensive ones. 0.0 means no effect, 0.15 means a cost difference of 100 PP modifies the score by 15 %.
-NDefines.NGame.DESIGN_COMPANY_SCORE_MULTIPLIER = 1.25              -- score multiplier for hiring a design company
-NDefines.NGame.ARMY_CHIEF_SCORE_MULTIPLIER = 0.75                  -- score multiplier for hiring an army chief
-NDefines.NGame.AIR_CHIEF_SCORE_MULTIPLIER = 1.0                   -- score multiplier for hiring an air chief
-NDefines.NGame.POLITICAL_ADVISOR_SCORE_MULTIPLIER = 1.25           -- score multiplier for hiring political advisors
-NDefines.NGame.AGENCY_CREATION_FACTORIES = 3					-- Number of factories used to create an intelligence agency
+NDefines.NOperatives.AGENCY_CREATION_FACTORIES = 3					-- Number of factories used to create an intelligence agency
 
 
 NDefines.NCharacter.OFFICER_CORP_ADVISOR_ENTRIES_IN_MENU = { "high_command", "theorist", "army_chief", "cavalry_chief", "navy_chief" }
