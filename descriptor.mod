@@ -6,6 +6,7 @@ tags={
 	"Gameplay"
 }
 name="Lord of the Rings Mod BETA"
+picture="lotr.png"
 replace_path="history/states"
 replace_path="history/countries"
 replace_path="history/general"
