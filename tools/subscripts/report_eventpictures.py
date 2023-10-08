@@ -2,6 +2,7 @@ import sys
 import glob
 import os
 from wand import image
+from wand.color import Color
 
 def apply_mask(img, mask):
     img.alpha_channel = True
@@ -10,12 +11,36 @@ def apply_mask(img, mask):
         #alpha_image.composite_channel("alpha", mask, "copy_alpha")
         img.composite_channel("alpha", mask, "dst_in")
 
+def apply_dropshadow(img):
+    # Hard-coded parameters for drop-shadow effect
+    shadow_color = Color('#000000')  # Black color
+    shadow_opacity = Color('#808080')  # Opacity (0 to 1) for each color
+    shadow_offset = (3, 3)  # Offset in (x, y) coordinates
+    shadow_blur_radius = 2  # Radius of Gaussian blur
+
+    # Create a new image with transparent background for shadow
+    with image.Image(width=img.width, height=img.height, background=Color('transparent')) as shadow:
+        # Draw the original image onto the shadow canvas with an offset
+        shadow.composite(img)#, left=shadow_offset[0], top=shadow_offset[1])
+
+        # Apply Gaussian blur to the shadow
+        shadow.gaussian_blur(shadow_blur_radius, shadow_blur_radius)
+
+        # Set shadow color and opacity
+        shadow.colorize(shadow_color, shadow_opacity)
+
+        # Composite the shadow and original image
+        img.composite(shadow, left=shadow_offset[0], top=shadow_offset[1], operator='lighten')
+
 def convert_image(img_file, out_path):
 	mask = image.Image(filename='res/reportevents_mask.dds')
 	img = image.Image(filename=img_file)
 
 	# Apply alpha mask
 	apply_mask(img, mask)
+
+	# Apply drop shadow effect
+	apply_dropshadow(img)
 
 	with img as op:
 	    op.compression = 'dxt5'
