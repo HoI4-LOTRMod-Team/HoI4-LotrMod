@@ -392,142 +392,175 @@ elven_alliance_vote_passed_effect = {
 
 
 elven_alliance_ai_vote = {
-	random_list = {
-		# Vote YES
-		10 = {
-			# If we're a puppet -> vote like our master
-			modifier = {
-				is_puppet = yes
-				THIS.overlord = { ea_is_voting_yes = yes }
-				factor = 30
-			}
-			# Hegemony leaders are always going to vote for themselves
-			modifier = {
-				ea_is_hegemony_leader = yes
-				check_variable = { global.ea_current_resolution = token:ea_resolution_hegemony }
-				factor = 100
-			}
-			# You literally proposed it, now vote for it.
-			modifier = {
-				ea_is_resolution_proposer = yes
-				factor = 100
-			}
-			# Cooperative/Commie -> wants to expand more
-			modifier = {
-				OR = {
-					has_government = cooperative
-					has_government = revolutionary
+	if = {
+		limit = { ea_is_resolution_proposer = yes }
+		elven_alliance_vote_in_favour = yes
+	}
+	else = {
+		random_list = {
+			# Vote YES
+			50 = {
+				# Add opinion modifier
+				modifier = {
+					add = ROOT.opinion@var:global.ea_current_resolution_proposer
 				}
-				check_variable = { global.ea_current_resolution = token:ea_resolution_expansion }
-				factor = 2
-			}
-			# Federatives likes expanding even more
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_expansion }
-				has_country_leader_ideology = federative
-				factor = 2
-			}
-			# Unaligned -> loves peace and stability
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_peace }
-				has_government = unaligned
-				factor = 3
-			}
-			# Mercantile -> loves trade resolutions
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_trade }
-				has_country_leader_ideology = mercantile
-				factor = 10
-			}
-			# Martial makes sense when at war
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_martial }
-				has_war = yes
-				factor = 4
-			}
-			# Federatives LOVES unions
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_union }
-				has_country_leader_ideology = federative
-				factor = 10
-			}
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_kick }
-				ea_is_current_resolution_target = yes
-				factor = 0
-			}
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_sanction }
-				ea_is_current_resolution_target = yes
-				factor = 0
-			}
-			elven_alliance_vote_in_favour = yes
-		}
-
-		# VOTE NO
-		10 = {
-			# If we're a puppet -> vote like our master
-			modifier = {
-				is_puppet = yes
-				THIS.overlord = { ea_is_voting_no = yes }
-				factor = 30
-			}
-			# Belli/Unaligned -> Doesn't want to expand more
-			modifier = {
-				OR = {
+				# Make it less likely to switch votes
+				modifier = {
+					ea_is_voting_yes = yes
+					factor = 4
+				}
+				# If we're a puppet -> vote like our master
+				modifier = {
+					is_puppet = yes
+					THIS.overlord = { ea_is_voting_yes = yes }
+					factor = 30
+				}
+				# Hegemony leaders are always going to vote for themselves
+				modifier = {
+					ea_is_hegemony_leader = yes
+					check_variable = { global.ea_current_resolution = token:ea_resolution_hegemony }
+					factor = 100
+				}
+				# Cooperative/Commie -> wants to expand more
+				modifier = {
+					OR = {
+						has_government = cooperative
+						has_government = revolutionary
+					}
+					check_variable = { global.ea_current_resolution = token:ea_resolution_expansion }
+					factor = 2
+				}
+				# Federatives likes expanding even more
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_expansion }
+					has_country_leader_ideology = federative
+					factor = 2
+				}
+				# Unaligned -> loves peace and stability
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_peace }
 					has_government = unaligned
-					has_government = belligerent
+					factor = 5
 				}
-				check_variable = { global.ea_current_resolution = token:ea_resolution_expansion }
-				factor = 2
-			}
-			# Already at war -> fuck peace
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_peace }
-				has_war = yes
-				factor = 2
-			}
-			# Cooperative and commie doesnt like hegemony
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_hegemony }
-				OR = {
-					has_government = cooperative
-					has_government = revolutionary
+				# Mercantile -> loves trade resolutions
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_trade }
+					has_country_leader_ideology = mercantile
+					factor = 10
 				}
-				factor = 2
-			}
-			# Martial makes no sense when chilling at peace
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_martial }
-				has_war = no
-				OR = {
-					has_government = cooperative
-					has_government = unaligned
+				# Martial makes sense when at war
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_martial }
+					has_war = yes
+					factor = 5
 				}
-				factor = 2
+				# Federatives LOVES unions
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_union }
+					has_country_leader_ideology = federative
+					factor = 10
+				}
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_kick }
+					ea_is_current_resolution_target = yes
+					factor = 0
+				}
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_sanction }
+					ea_is_current_resolution_target = yes
+					factor = 0
+				}
+				# Not voting for anything that asshole proposes
+				modifier = {
+					has_war_with = var:global.ea_current_resolution_proposer
+					factor = 0
+				}
+				elven_alliance_vote_in_favour = yes
 			}
-			elven_alliance_vote_against = yes
-		}
 
-		# ABSTAIN
-		30 = {
-			# If we're a puppet -> vote like our master
-			modifier = {
-				is_puppet = yes
-				THIS.overlord = { ea_is_abstaining = yes }
-				factor = 30
+			# VOTE NO
+			50 = {
+				# If we're a puppet -> vote like our master
+				modifier = {
+					is_puppet = yes
+					THIS.overlord = { ea_is_voting_no = yes }
+					factor = 30
+				}
+				# Make it less likely to switch votes
+				modifier = {
+					ea_is_voting_no = yes
+					factor = 4
+				}
+				# Belli/Unaligned -> Doesn't want to expand more
+				modifier = {
+					OR = {
+						has_government = unaligned
+						has_government = belligerent
+					}
+					check_variable = { global.ea_current_resolution = token:ea_resolution_expansion }
+					factor = 2
+				}
+				# Already at war -> fuck peace
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_peace }
+					has_war = yes
+					factor = 2
+				}
+				# Cooperative and commie doesnt like hegemony
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_hegemony }
+					OR = {
+						has_government = cooperative
+						has_government = revolutionary
+					}
+					factor = 5
+				}
+				# Martial makes no sense when chilling at peace
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_martial }
+					has_war = no
+					OR = {
+						has_government = cooperative
+						has_government = unaligned
+					}
+					factor = 2
+				}
+				elven_alliance_vote_against = yes
 			}
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_kick }
-				ea_is_current_resolution_target = yes
-				factor = 0
+
+			# ABSTAIN
+			100 = {
+				# If we're a puppet -> vote like our master
+				modifier = {
+					is_puppet = yes
+					THIS.overlord = { ea_is_abstaining = yes }
+					factor = 30
+				}
+				# Make it less likely to switch votes
+				modifier = {
+					OR = {
+						ea_is_voting_yes = yes
+						ea_is_voting_no = yes
+					}
+					factor = 0.5
+				}
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_kick }
+					ea_is_current_resolution_target = yes
+					factor = 0
+				}
+				modifier = {
+					check_variable = { global.ea_current_resolution = token:ea_resolution_sanction }
+					ea_is_current_resolution_target = yes
+					factor = 0
+				}
+				elven_alliance_abstain = yes
 			}
-			modifier = {
-				check_variable = { global.ea_current_resolution = token:ea_resolution_sanction }
-				ea_is_current_resolution_target = yes
-				factor = 0
+
+			# In case all are 0
+			1 = {
+				
 			}
-			elven_alliance_abstain = yes
 		}
 	}
 }
