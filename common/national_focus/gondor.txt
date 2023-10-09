@@ -602,6 +602,10 @@ continuous_focus_position = { x = 50 y = 1700 }
 				tooltip = ring_aragorn_is_alive_tt
 				NOT = { ring_aragorn_is_dead = yes }
 			}
+			OR = {
+				has_global_flag = fs_ring_seized
+				has_global_flag = fs_arrived_in_rivendell
+			}
 		}
 		relative_position_id = GON_limit_denethor_militair_power
 		x = 0
@@ -704,6 +708,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 	focus = {
 		id = GON_invite_aragorn_to_minas_tirith
 		icon = GFX_goal_generic_national_unity
+		dynamic = yes
 		ai_will_do = { factor = 15 }
 		relative_position_id = GON_declare_aragorn_the_rightful_heir
 		x = 0
@@ -717,14 +722,30 @@ continuous_focus_position = { x = 50 y = 1700 }
 				tooltip = ring_aragorn_not_in_fellowship_tt
 				NOT = { ring_aragorn_in_fellowship = yes }
 			}
-			cooperative > 0.4
+			if = {
+				limit = {
+					ring_aragorn_is_dead = no
+				}
+				cooperative > 0.4
+			}
 		}
 		prerequisite = { focus = GON_declare_aragorn_the_rightful_heir}
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			add_stability = 0.10
-			add_political_power = 100
+			if = {
+				limit = {
+					ring_aragorn_is_dead = yes
+				}
+				complete_national_focus = GON_enforce_militair_loyalty
+				add_popularity = {
+					ideology = unaligned
+					popularity = 0.15
+				}
+			}else = {
+				add_stability = 0.10
+				add_political_power = 100
+			}
 		}
 	}
 
@@ -739,6 +760,10 @@ continuous_focus_position = { x = 50 y = 1700 }
 		y = 1
 		cost = 10
 		available = {
+			custom_trigger_tooltip = {
+				tooltip = ring_aragorn_is_alive_tt
+				NOT = { ring_aragorn_is_dead = yes }
+			}
 			cooperative > 0.5
 		}
 		available_if_capitulated = yes
@@ -1897,7 +1922,6 @@ continuous_focus_position = { x = 50 y = 1700 }
 		x = 0
 		y = 3
 		cost = 5
-		search_filters = { FOCUS_FILTER_RESOURCES }
 		available = {
 			owns_state = 174
 		}
@@ -1941,7 +1965,6 @@ continuous_focus_position = { x = 50 y = 1700 }
 		x = -1
 		y = 1
 		cost = 10
-		search_filters = { FOCUS_FILTER_RESOURCES }
 		available = {
 			owns_state = 16
 		}
