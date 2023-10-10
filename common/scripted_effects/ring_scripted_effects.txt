@@ -1032,76 +1032,80 @@ ring_breakup_fellowship = {
 # Lothlorien can set up an elven fellowship after taking the ring
 ring_start_elven_fellowship = {
 	custom_effect_tooltip = ring_start_elven_fellowship_tt
-	hidden_effect = {
-		SHI = {
-			ring_clear_fellowship_members = yes
+	if = {
+		limit = { ring_has_the_ring = yes }
 
-			# Eventlog
-			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
-			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-			add_to_array = { global.fs_eventlog = token:fs_event_elven_fellowship }
-			ring_trim_eventlog = yes
+		hidden_effect = {
+			SHI = {
+				ring_clear_fellowship_members = yes
 
-			# News event:
-			news_event = { hours = 24 id = news.396 }
+				# Eventlog
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_event_elven_fellowship }
+				ring_trim_eventlog = yes
 
-			# global flag
-			set_global_flag = fs_elven_fellowship
+				# News event:
+				news_event = { hours = 24 id = news.396 }
+
+				# global flag
+				set_global_flag = fs_elven_fellowship
+			}
+
+			LTH = {
+				# take ring away
+				ring_remove_ring = yes
+
+				# Create fellowship
+				#ring_clear_fellowship_members = yes
+				# Haldir is ringbearer
+				#LTH_haldir = { retire = yes }
+				LTH_haldir = { retire = yes }
+				SHI = { FS_haldir = { ring_add_member_to_fellowship_nolog = yes } }
+				# Add the other elves (if available)
+				if = {
+					limit = { LTH_orophin = { is_unit_leader = yes } }
+					LTH_orophin = { retire = yes }
+					SHI = { FS_orophin = { ring_add_member_to_fellowship_nolog = yes } }
+				}
+				if = {
+					limit = { LTH_rumil = { is_unit_leader = yes } }
+					LTH_rumil = { retire = yes }
+					SHI = { FS_rumil = { ring_add_member_to_fellowship_nolog = yes } }
+				}
+				if = {
+					limit = { LTH_tarborn = { is_unit_leader = yes } }
+					LTH_tarborn = { retire = yes }
+					SHI = { FS_tarborn = { ring_add_member_to_fellowship_nolog = yes } }
+				}
+				if = {
+					limit = { LTH_lethsael = { is_unit_leader = yes } }
+					LTH_lethsael = { retire = yes }
+					SHI = { FS_lethsael = { ring_add_member_to_fellowship_nolog = yes } }
+				}
+			}
+			
+			SHI = {
+				# Clear all the ring stuff:
+				clr_global_flag = fs_ring_seized
+				clear_variable = global.fs_ring_owner
+
+				# Re-populate pathstack (Path shouldnt change)
+				add_to_array = { global.fs_path_stack = 191 }
+				add_to_array = { global.fs_path_stack = 179 }
+				add_to_array = { global.fs_path_stack = 30 }
+				add_to_array = { global.fs_path_stack = 206 }
+				add_to_array = { global.fs_path_stack = 27 }
+				add_to_array = { global.fs_path_stack = 98 }
+				add_to_array = { global.fs_path_stack = 182 }
+				add_to_array = { global.fs_path_stack = 98 }
+				add_to_array = { global.fs_path_stack = 101 }
+				add_to_array = { global.fs_path_stack = 204 }
+
+				# Get going
+				ring_fellowship_begin_move_to_next_state = yes
+			}	
 		}
-
-		LTH = {
-			# take ring away
-			ring_remove_ring = yes
-
-			# Create fellowship
-			#ring_clear_fellowship_members = yes
-			# Haldir is ringbearer
-			#LTH_haldir = { retire = yes }
-			LTH_haldir = { retire = yes }
-			SHI = { FS_haldir = { ring_add_member_to_fellowship_nolog = yes } }
-			# Add the other elves (if available)
-			if = {
-				limit = { LTH_orophin = { is_unit_leader = yes } }
-				LTH_orophin = { retire = yes }
-				SHI = { FS_orophin = { ring_add_member_to_fellowship_nolog = yes } }
-			}
-			if = {
-				limit = { LTH_rumil = { is_unit_leader = yes } }
-				LTH_rumil = { retire = yes }
-				SHI = { FS_rumil = { ring_add_member_to_fellowship_nolog = yes } }
-			}
-			if = {
-				limit = { LTH_tarborn = { is_unit_leader = yes } }
-				LTH_tarborn = { retire = yes }
-				SHI = { FS_tarborn = { ring_add_member_to_fellowship_nolog = yes } }
-			}
-			if = {
-				limit = { LTH_lethsael = { is_unit_leader = yes } }
-				LTH_lethsael = { retire = yes }
-				SHI = { FS_lethsael = { ring_add_member_to_fellowship_nolog = yes } }
-			}
-		}
-		
-		SHI = {
-			# Clear all the ring stuff:
-			clr_global_flag = fs_ring_seized
-			clear_variable = global.fs_ring_owner
-
-			# Re-populate pathstack (Path shouldnt change)
-			add_to_array = { global.fs_path_stack = 191 }
-			add_to_array = { global.fs_path_stack = 179 }
-			add_to_array = { global.fs_path_stack = 30 }
-			add_to_array = { global.fs_path_stack = 206 }
-			add_to_array = { global.fs_path_stack = 27 }
-			add_to_array = { global.fs_path_stack = 98 }
-			add_to_array = { global.fs_path_stack = 182 }
-			add_to_array = { global.fs_path_stack = 98 }
-			add_to_array = { global.fs_path_stack = 101 }
-			add_to_array = { global.fs_path_stack = 204 }
-
-			# Get going
-			ring_fellowship_begin_move_to_next_state = yes
-		}	
 	}
 }
 
