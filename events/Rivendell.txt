@@ -9,7 +9,7 @@ country_event = {
 	id = rivendell.1
 	title = rivendell.1.t
 	desc = rivendell.1.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_elrond_council
 
 	fire_only_once = yes
 
@@ -26,6 +26,10 @@ country_event = {
 			MIR = { country_event = { days = 7 id = rivendell.2 } }
 			ERE = { country_event = { days = 10 id = rivendell.3 } }
 			GON = { country_event = { days = 7 id = rivendell.4 } }
+			if = {
+				limit = { has_global_flag = fs_lothlorien_invited }
+				LTH = { country_event = { days = 5 id = rivendell.20 } }
+			}
 		}
 	}
 
@@ -36,7 +40,7 @@ country_event = {
 	id = rivendell.2
 	title = rivendell.2.t
 	desc = rivendell.2.d
-	picture = GFX_report_event_paper
+	picture = GFX_report_event_elrond_council
 
 	fire_only_once = yes
 
@@ -103,7 +107,7 @@ country_event = {
 	id = rivendell.3
 	title = rivendell.3.t
 	desc = rivendell.3.d
-	picture = GFX_report_event_paper
+	picture = GFX_report_event_elrond_council
 
 	fire_only_once = yes
 
@@ -163,7 +167,7 @@ country_event = {
 	id = rivendell.4
 	title = rivendell.4.t
 	desc = rivendell.4.d
-	picture = GFX_report_event_paper
+	picture = GFX_report_event_elrond_council
 
 	fire_only_once = yes
 
@@ -575,7 +579,7 @@ country_event = {
 	id = rivendell.15
 	title = rivendell.15.t
 	desc = rivendell.15.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_nazgul
 
 	is_triggered_only = yes
 
@@ -704,7 +708,7 @@ country_event = {
 	id = rivendell.19
 	title = rivendell.19.t
 	desc = rivendell.19.desc
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_elrond_council
 
 	is_triggered_only = yes
 
@@ -713,6 +717,11 @@ country_event = {
 		name = rivendell.19.a
 		ai_chance = {
 			base = 2
+			# Galadriel magic
+			modifier = {
+				factor = 2
+				has_global_flag = mirror_predicted_redhorn
+			}
 		}
 
 		# human votes count for more, to give players mor agency in the case of a tie
@@ -746,6 +755,10 @@ country_event = {
 			limit = { tag = MIR }
 			set_global_flag = fs_mirkwood_responded
 		}
+		else_if = {
+			limit = { tag = LTH }
+			set_global_flag = fs_lothlorien_responded
+		}
 
 		ring_check_if_council_of_elrond_concluded = yes
 	}
@@ -761,6 +774,10 @@ country_event = {
 			modifier = {
 	    		factor = 0
 	    		is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 2
+				has_global_flag = mirror_predicted_isengard
 			}
 		}
 
@@ -793,6 +810,10 @@ country_event = {
 		else_if = {
 			limit = { tag = MIR }
 			set_global_flag = fs_mirkwood_responded
+		}
+		else_if = {
+			limit = { tag = LTH }
+			set_global_flag = fs_lothlorien_responded
 		}
 
 		ring_check_if_council_of_elrond_concluded = yes
@@ -814,6 +835,10 @@ country_event = {
         		factor = 0
         		is_historical_focus_on = yes
     		}
+			modifier = {
+				factor = 2
+				has_global_flag = mirror_predicted_gundabad
+			}
 		}
 
 		if = {
@@ -845,6 +870,10 @@ country_event = {
 		else_if = {
 			limit = { tag = MIR }
 			set_global_flag = fs_mirkwood_responded
+		}
+		else_if = {
+			limit = { tag = LTH }
+			set_global_flag = fs_lothlorien_responded
 		}
 
 		ring_check_if_council_of_elrond_concluded = yes
@@ -872,8 +901,68 @@ country_event = {
 			limit = { tag = MIR }
 			set_global_flag = fs_mirkwood_responded
 		}
+		else_if = {
+			limit = { tag = LTH }
+			set_global_flag = fs_lothlorien_responded
+		}
 
 		ring_check_if_council_of_elrond_concluded = yes
+	}
+}
+
+# Lothlorien asked about the Fellowship
+country_event = {
+	id = rivendell.20
+	title = rivendell.20.t
+	desc = rivendell.20.d
+	picture = GFX_report_event_elrond_council
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = { #Haldir
+		name = rivendell.20.a
+		ai_chance = {
+			base = 50
+		}
+		custom_effect_tooltip = rivendell.20.a.tt
+		set_global_flag = fs_lothlorien_haldir
+		effect_tooltip = {
+			LTH_haldir = { retire = yes }
+		}
+
+		hidden_effect = { SHI = { FS_haldir = { ring_add_member_to_fellowship = yes } } }
+
+		set_global_flag = fs_lothlorien_responded
+		ring_check_if_council_of_elrond_started = yes
+	}
+	option = { #Orophin
+		name = rivendell.20.b
+		ai_chance = {
+			base = 30
+		}
+		custom_effect_tooltip = rivendell.20.b.tt
+		set_global_flag = fs_lothlorien_orophin
+		effect_tooltip = {
+			LTH_orophin = { retire = yes }
+		}
+
+		hidden_effect = { SHI = { FS_orophin = { ring_add_member_to_fellowship = yes } } }
+
+		set_global_flag = fs_lothlorien_responded
+		ring_check_if_council_of_elrond_started = yes
+	}
+	option = { #Noone
+		name = rivendell.20.c
+		ai_chance = {
+			base = 15
+		}
+		custom_effect_tooltip = rivendell.20.c.tt
+		set_global_flag = fs_lothlorien_none
+
+		set_global_flag = fs_lothlorien_responded
+		ring_check_if_council_of_elrond_started = yes
 	}
 }
 

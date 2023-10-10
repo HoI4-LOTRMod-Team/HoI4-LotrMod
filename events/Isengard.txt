@@ -117,6 +117,11 @@ country_event = {
 				MOR = { has_army_size = { size > 20 } }
 			}
 		}
+
+		# Adjust gameplan flag
+		set_country_flag = gamplan_going_belligerent
+		clr_country_flag = gameplan_going_cooperative
+
 		add_ideas = ISE_commited_to_the_dark
 		set_global_flag = gandalf_imprisoned
 
@@ -143,9 +148,14 @@ country_event = {
 				factor = 0
 				is_historical_focus_on = yes
 			}
+			modifier = { factor = 0 is_going_cooperative = no }
 		}
 		add_ideas = ISE_commited_to_the_light
 		set_global_flag = gandalf_saruman_united
+
+		# Adjust gameplan flag
+		set_country_flag = gameplan_going_cooperative
+		clr_country_flag = gamplan_going_belligerent
 
 		# Complete focuses
 		if = {
@@ -191,6 +201,7 @@ country_event = {
 		    character = ISE_grima
 		    activate = yes
 		    advisor = {
+				idea_token = ISE_grima_chief_advisor
 		        slot = chief_advisor
 		        cost = 150
 		        traits = {
@@ -244,7 +255,7 @@ country_event = {
 		ISE = {
 			kill_country_leader = yes
 			remove_ideas = saruman_chief_researcher
-			deactivate_advisor = ISE_grima
+			deactivate_advisor = ISE_grima_chief_advisor
 			remove_advisor_role = {
 	  			character = ISE_grima
 	  			slot = chief_advisor
@@ -450,6 +461,9 @@ country_event = {
 
 	option = {
 		name = isengard.12.a
+		ai_chance = {
+			factor = 3
+		}
 		MOR = {
 			add_to_faction = ISE
 		}
@@ -457,5 +471,48 @@ country_event = {
 
 	option = {
 		name = isengard.12.b
+	}
+}
+
+
+# The Kingdom of Gondor requests if Isengard will join as a fiefdom 
+country_event = {
+	id = isengard.13
+	title = isengard.13.t
+	desc = isengard.13.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.13.a
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				has_government = belligerent
+			}
+			modifier = {
+				factor = 3
+				has_government = cooperative
+				GON = { has_government = cooperative }
+			}
+		}
+		GON = {
+			set_autonomy = {
+				target = ISE
+				autonomy_state = autonomy_fiefdom
+			}
+		}
+	}
+
+	option = {
+		name = isengard.13.b
+		ai_chance = {
+			factor = 10
+		}
+		GON = {
+			add_opinion_modifier = { target = ISE modifier = large_decrease }
+		}
 	}
 }

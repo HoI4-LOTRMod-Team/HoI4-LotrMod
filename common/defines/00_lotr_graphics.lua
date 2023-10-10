@@ -10,3 +10,8 @@ NDefines.NGraphics.MOON_INTENSITY 			= 1.0
 NDefines.NFrontend.FRONTEND_POS_X = 1558.0
 NDefines.NFrontend.FRONTEND_POS_Y = 1900.0
 NDefines.NFrontend.FRONTEND_POS_Z = 1100.0
+
+NDefines.NGraphics.TRAIT_LINE_ASSIGNED_COLOR = { 1.0, 1.0, 0.0 } -- Color for parent dependency lines when the parent is assigned.
+NDefines.NGraphics.TRAIT_LINE_NON_ASSIGNED_COLOR = { 0.6, 0.6, 0.6 } -- Color for parent dependency lines when the parent is not assigned assigned.
+NDefines.NGraphics.TRAIT_LINE_HIGHLIGHT_COLOR = { 1.0, 1.0, 1.0 } -- Color for parent dependency lines to the parents when hovering over a trait.
+NDefines.NGraphics.TRAIT_INVALID_FOR_ASSIGNMENT_COLOR = { 0.8, 0.3, 0.3 }

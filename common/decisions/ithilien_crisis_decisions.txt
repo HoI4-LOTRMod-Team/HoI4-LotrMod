@@ -1,0 +1,572 @@
+####################
+##ITHILIEN CRISIS###
+####################
+
+ithilien_crisis_decisions_category = {
+
+	ithc_contest_state_MOR = {
+		icon = GFX_decision_sauron_eye
+
+		cost = 100
+		state_target = yes
+		targets = { 22 175 173 135 }
+		is_good = yes
+	    selectable_mission = yes
+	    days_remove = 30
+
+	    fire_only_once = yes
+
+	    allowed = {
+	    	tag = MOR
+	    }
+
+	    target_root_trigger = {
+			ithc_crisis_is_active = yes
+	    }
+
+	    target_trigger = {
+			FROM = {
+				ithc_state_available_to_contest = yes
+			}
+	    }
+
+	    available = {
+	    	FROM = { ithc_state_available_to_contest = yes }
+			NOT = { has_country_flag = ithc_is_contesting_state }
+	    }
+
+	    cancel_trigger = {
+			hidden_trigger = {
+				NOT = {
+					ithc_crisis_is_active = yes
+					FROM = { ithc_state_available_to_contest = yes} 
+				}	
+			}
+	    }
+
+	    ai_will_do = {
+		    base = 10
+		}
+
+        remove_effect = {
+			FROM = { ithc_contest_state = yes }
+			hidden_effect = {
+				clr_country_flag = ithc_is_contesting_state	
+			}
+        }
+
+        cancel_effect = {
+
+        }
+
+        complete_effect = {
+			hidden_effect = {
+				set_country_flag = ithc_is_contesting_state
+
+				GON = { 
+					activate_targeted_decision = {
+						target = FROM
+						decision = ithc_contest_state_GON
+					}
+				}	
+			}
+    	}
+	}
+
+	ithc_contest_state_GON = {
+		icon = GFX_decision_sauron_eye
+
+		state_target = yes
+		targets = { 22 175 173 135 }
+		
+		allowed = {
+			always = no
+		}
+		activation = {
+			always = yes
+		}
+		available = {
+	    	always = no
+	    }
+		
+		is_good = no
+		days_mission_timeout = 30
+		selectable_mission = no
+		days_remove = 1
+		fire_only_once = yes
+		
+		timeout_effect = {
+			custom_effect_tooltip = ithc_contest_state_GON_tt
+
+			hidden_effect = {
+				remove_targeted_decision = { target = FROM decision = ithc_contest_state_GON }
+			}
+		}
+	}
+
+
+	###
+	### PILLAGE
+	###
+
+	ithc_pillage_state = {
+		icon = {
+			key = GFX_decision_pillage_0
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level < 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_pillage_1
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level = 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_pillage_2
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level = 2 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_pillage_3
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level > 2 } }
+			}
+		}
+
+		is_good = yes
+	    selectable_mission = yes
+		state_target = yes
+		targets = { 22 175 173 135 }
+
+		cost = var:ithc_pillage_decision_cost_pp?50
+	    days_remove = 70
+
+		allowed = {
+    		tag = MOR
+		}
+
+	    visible = {
+	        tag = MOR
+			FROM = { has_state_flag = ithc_contested }
+			FROM = { is_controlled_by = GON }
+	    }
+
+	    available = {
+			ithc_crisis_is_active = yes
+
+			NOT = { FROM = { has_state_flag = ithc_pillage_operation } }
+
+			FROM = {
+				MOR = {
+					ithc_has_higher_power_projection = yes
+				}
+			}
+	    }
+
+	    cancel_trigger = {
+			hidden_trigger = {
+	    		ithc_crisis_is_active = no
+			}
+	    }
+
+		cancel_effect = {
+			FROM = { clr_state_flag = ithc_pillage_operation }
+		}
+
+	    ai_will_do = {
+		    base = 100
+		}
+
+        complete_effect = {
+			FROM = { ithc_begin_pillage_decision = yes }
+
+			hidden_effect = {
+				GON = { 
+					activate_targeted_decision = {
+						target = FROM
+						decision = ithc_pillage_state_GON
+					}
+				}	
+			}
+    	}
+
+		remove_effect = {
+			# deal damage to troops stationed in the state
+        	FROM = {
+        		ithc_end_pillage_decision = yes
+
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+    		}
+
+			damage_units = {
+				state = FROM
+				org_damage = 0.1
+				str_damage = 0.05
+				ratio = yes
+				army = yes
+			}
+		}
+	}
+
+	ithc_pillage_state_GON = {
+		icon = {
+			key = GFX_decision_pillage_0
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level < 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_pillage_1
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level = 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_pillage_2
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level = 2 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_pillage_3
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level > 2 } }
+			}
+		}
+
+		state_target = yes
+		targets = { 22 175 173 135 }
+		
+		allowed = {
+			always = no
+		}
+		activation = {
+			always = yes
+		}
+		available = {
+	    	always = no
+	    }
+
+		cancel_trigger = {
+			hidden_trigger = {
+	    		ithc_crisis_is_active = no
+			}
+	    }
+		
+		is_good = no
+		days_mission_timeout = 70
+		selectable_mission = no
+		days_remove = 1
+		fire_only_once = yes
+		
+		timeout_effect = {
+			effect_tooltip = {
+				ithc_increase_pillage_level = yes
+			}
+		}
+	}
+
+	ithc_unpillage_state = {
+		icon = {
+			key = GFX_decision_unpillage_0
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level < 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_unpillage_1
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level = 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_unpillage_2
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level = 2 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_unpillage_3
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level > 2 } }
+			}
+		}
+
+		is_good = yes
+	    selectable_mission = yes
+		state_target = yes
+		targets = { 22 175 173 135 }
+
+		cost = var:ithc_pillage_decision_cost_pp?50
+	    days_remove = 70
+
+		allowed = {
+    		tag = GON
+		}
+
+	    visible = {
+			has_completed_focus = GON_ithilien_crisis
+	        ithc_crisis_is_active = yes
+	        tag = GON
+			FROM = { has_state_flag = ithc_contested }
+			FROM = { is_controlled_by = GON }
+	    }
+
+	    available = {
+			custom_trigger_tooltip = {
+				tooltip = "Raid level is higher than 0"
+				FROM = { check_variable = { ithc_pillage_level > 0 } }
+			}
+
+			NOT = { FROM = { has_state_flag = ithc_pillage_operation } }
+
+			FROM = {
+				GON = {
+					ithc_has_higher_power_projection = yes
+				}
+			}
+	    }
+
+	    cancel_trigger = {
+			hidden_trigger = {
+	    		ithc_crisis_is_active = no
+			}
+	    }
+
+		cancel_effect = {
+			FROM = { clr_state_flag = ithc_pillage_operation }
+		}
+
+	    ai_will_do = {
+		    base = 100
+		}
+
+        complete_effect = {
+			FROM = { ithc_begin_unpillage_decision = yes }
+
+			hidden_effect = {
+				MOR = { 
+					activate_targeted_decision = {
+						target = FROM
+						decision = ithc_unpillage_state_MOR
+					}
+				}	
+			}
+    	}
+
+		remove_effect = {
+        	FROM = {
+        		ithc_end_unpillage_decision = yes
+    		}
+		}
+	}
+
+	ithc_unpillage_state_MOR = {
+		icon = {
+			key = GFX_decision_unpillage_0
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level < 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_unpillage_1
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level = 1 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_unpillage_2
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level = 2 } }
+			}
+		}
+		icon = {
+			key = GFX_decision_unpillage_3
+			trigger = {
+				FROM = { check_variable = { ithc_pillage_level > 2 } }
+			}
+		}
+
+		state_target = yes
+		targets = { 22 175 173 135 }
+		
+		allowed = {
+			always = no
+		}
+		activation = {
+			always = yes
+		}
+		available = {
+	    	always = no
+	    }
+
+		cancel_trigger = {
+			hidden_trigger = {
+	    		ithc_crisis_is_active = no
+			}
+	    }
+		
+		is_good = no
+		days_mission_timeout = 70
+		selectable_mission = no
+		days_remove = 1
+		fire_only_once = yes
+		
+		timeout_effect = {
+			effect_tooltip = {
+				ithc_decrease_pillage_level = yes
+			}
+		}
+	}
+
+	ithc_evacuate_state_GON = {
+		icon = GFX_decision_generic_5
+
+		fire_only_once = yes
+
+		is_good = yes
+	    selectable_mission = yes
+		state_target = yes
+		targets = { 22 175 173 135 }
+
+		cost = 50
+	    days_remove = 120
+
+		allowed = {
+    		tag = GON
+		}
+
+	    visible = {
+			has_completed_focus = GON_ithc_evacuate
+	        ithc_crisis_is_active = yes
+	        tag = GON
+	    }
+
+	    available = {
+			FROM = { check_variable = { ithc_pillage_level > 1 } }
+	    }
+
+	    ai_will_do = {
+		    base = 10
+		}
+
+		cancel_trigger = {
+			exists = no
+		}
+
+        complete_effect = {
+			set_temp_variable = {
+				ithc_evacuated_population = state_population
+			}
+
+			# TOOLTIP
+			effect_tooltip = {
+				FROM = {
+					# get half the state's population
+					set_temp_variable = { ithc_evacuated_population = state_population }
+					multiply_temp_variable = { ithc_evacuated_population = 0.5 }
+
+					# Remove from state
+					multiply_temp_variable = { ithc_evacuated_population = -1 }
+					add_manpower = ithc_evacuated_population
+					multiply_temp_variable = { ithc_evacuated_population = -1 }
+
+					# get 2/3 of civ industry (rounded up)
+					set_temp_variable = { ithc_evacuated_civs = industrial_complex_level }
+					multiply_temp_variable = { ithc_evacuated_civs = 0.66 }
+					round_temp_variable = ithc_evacuated_civs
+
+					# remove from state
+					remove_building = { type = industrial_complex level = ithc_evacuated_civs }
+
+					# get 2/3 of mil industry (rounded up)
+					set_temp_variable = { ithc_evacuated_mils = arms_factory_level }
+					multiply_temp_variable = { ithc_evacuated_mils = 0.66 }
+					round_temp_variable = ithc_evacuated_mils
+
+					# remove from state
+					remove_building = { type = arms_factory level = ithc_evacuated_mils }
+				}
+			}
+
+			# ACTUAL EFFECT
+			hidden_effect = {
+				FROM = {
+					# get half the state's population
+					set_variable = { ithc_evacuated_population = state_population }
+					multiply_variable = { ithc_evacuated_population = 0.5 }
+
+					# Remove from state
+					multiply_variable = { ithc_evacuated_population = -1 }
+					add_manpower = ithc_evacuated_population
+					multiply_variable = { ithc_evacuated_population = -1 }
+
+					# get 2/3 of civ industry (rounded up)
+					set_variable = { ithc_evacuated_civs = industrial_complex_level }
+					multiply_variable = { ithc_evacuated_civs = 0.66 }
+					round_variable = ithc_evacuated_civs
+
+					# remove from state
+					remove_building = { type = industrial_complex level = ithc_evacuated_civs }
+
+					# get 2/3 of mil industry (rounded up)
+					set_variable = { ithc_evacuated_mils = arms_factory_level }
+					multiply_variable = { ithc_evacuated_mils = 0.66 }
+					round_variable = ithc_evacuated_mils
+
+					# remove from state
+					remove_building = { type = arms_factory level = ithc_evacuated_mils }
+				}
+			}
+    	}
+
+		remove_effect = {
+        	random_owned_state = {
+
+				# TOOLTIP
+				effect_tooltip = {
+					set_temp_variable = { ithc_evacuated_population = FROM.state_population }
+					multiply_temp_variable = { ithc_evacuated_population = 0.5 }
+					# add manpower
+					add_manpower = ithc_evacuated_population
+
+					set_temp_variable = { ithc_evacuated_civs = FROM.industrial_complex_level }
+					multiply_temp_variable = { ithc_evacuated_civs = 0.66 }
+					round_temp_variable = ithc_evacuated_civs
+					# add civs
+					add_building_construction = { type = industrial_complex level = ithc_evacuated_civs instant_build = yes }
+
+					set_temp_variable = { ithc_evacuated_mils = FROM.arms_factory_level }
+					multiply_temp_variable = { ithc_evacuated_mils = 0.66 }
+					round_temp_variable = ithc_evacuated_mils
+					# add mils
+					add_building_construction = { type = arms_factory level = ithc_evacuated_mils instant_build = yes }
+				}
+
+				# ACTUAL AFFECT
+				hidden_effect = {
+					# add manpower
+					add_manpower = FROM.ithc_evacuated_population
+
+					# add civs
+					add_building_construction = { type = industrial_complex level = FROM.ithc_evacuated_civs instant_build = yes }
+
+					# add mils
+					add_building_construction = { type = arms_factory level = FROM.ithc_evacuated_mils instant_build = yes }
+
+					# clear vars
+					FROM = {
+						clear_variable = ithc_evacuated_population
+						clear_variable = ithc_evacuated_civs
+						clear_variable = ithc_evacuated_mils
+					}
+				}
+    		}
+		}
+	}
+}

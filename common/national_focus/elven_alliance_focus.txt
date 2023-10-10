@@ -1,0 +1,558 @@
+shared_focus = {
+    id = ea_theelvenalliance
+    icon = GFX_goal_lth_theelvenalliance
+    text_icon = joint_focus_style    
+    x =8
+    y =0
+    offset = {
+		x =43
+		y =0
+		trigger = {
+			has_focus_tree = lothlorien
+		}
+	}
+    offset = {
+		x =43
+		y =0
+		trigger = {
+			has_focus_tree = rivendell
+		}
+	}
+    offset = {
+		x =23
+		y =0
+		trigger = {
+			has_focus_tree = mirkwood
+		}
+	}
+    offset = {
+		x =27
+		y =0
+		trigger = {
+			has_focus_tree = lindon
+		}
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 1
+        modifier = {
+            factor = 15
+            has_country_flag = gameplan_elven_alliance
+        }
+    }
+    prerequisite = { }
+    available = {
+        has_government = cooperative
+        is_elves = yes
+    }
+    bypass = { 
+        has_global_flag = ea_alliance_resolutions_unlocked
+        is_elven_alliance_member = yes
+    }
+    completion_reward = {
+        if = {
+            limit = { NOT = { has_global_flag = ea_alliance_resolutions_unlocked } } # lazy check to see if assembly already exists
+            # Form Elven UN
+            # Send out invites
+            elven_alliance_join = yes
+            set_global_flag = ea_alliance_resolutions_unlocked
+            set_global_flag = ea_industry_resolutions_unlocked
+            set_global_flag = ea_expansion_resolutions_unlocked
+            every_country = {
+                limit = {
+                    is_elves = yes
+                    NOT = { tag = ROOT }
+                    NOT = { has_war_with = ROOT }
+                }
+                country_event = elven_alliance.2
+            }
+        }
+        else_if = {
+            limit = { is_elven_alliance_member = no }
+            elven_alliance_join = yes
+        }
+    }
+}
+
+joint_focus = {
+    id = ea_memberexpansion
+    icon = GFX_goal_lth_memberexpansion
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =-2
+    y =1
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = { factor = 1 }
+    prerequisite = { focus = ea_theelvenalliance }
+    available = {
+		is_elven_alliance_member = yes
+	}
+    completion_reward_joint_originator = {
+        # Unlocks higher member expansion tiers
+        custom_effect_tooltip = ea_memberexpansion_tt
+        set_global_flag = ea_expansion_advanced_resolutions_unlocked
+    }
+}
+
+joint_focus = {
+    id = ea_tradeagreements
+    icon = GFX_goal_lth_tradeagreements
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =2
+    y =1
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 5
+        modifier = {
+            factor = 10
+            elven_alliance_has_at_least_8_members = yes
+        }
+    }
+    prerequisite = { focus = ea_theelvenalliance }
+    available = {
+		is_elven_alliance_member = yes
+	}
+    completion_reward_joint_originator = {
+        # Unlocks trade resolutions
+        custom_effect_tooltip = ea_tradeagreements_tt
+        set_global_flag = ea_trade_resolutions_unlocked
+
+        add_equipment_subsidy = {
+            cic = 1000
+            equipment_type = infantry_equipment
+            seller_trigger = is_elven_alliance_member_no_tt
+        }
+        add_equipment_subsidy = {
+            cic = 1000
+            equipment_type = infantry_equipment
+            seller_trigger = is_elven_alliance_member_no_tt
+        }
+    }
+    completion_reward_joint_member = {
+        add_equipment_subsidy = {
+            cic = 500
+            equipment_type = artillery_equipment
+            seller_trigger = is_elven_alliance_member_no_tt
+        }
+        add_equipment_subsidy = {
+            cic = 500
+            equipment_type = artillery_equipment
+            seller_trigger = is_elven_alliance_member_no_tt
+        }
+    }
+}
+
+joint_focus = {
+    id = ea_coordinatedsanctions
+    icon = GFX_goal_lth_coordinatedsanctions
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =2
+    y =2
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 5
+        modifier = {
+            factor = 10
+            elven_alliance_has_at_least_8_members = yes
+        }
+    }
+    prerequisite = { focus = ea_tradeagreements }
+    available = {
+		is_elven_alliance_member = yes
+        elven_alliance_has_at_least_5_members = yes
+	}
+    completion_reward_joint_originator = {
+        # Unlock sanction decisions
+        custom_effect_tooltip = ea_coordinatedsanctions_tt
+        set_global_flag = ea_sanctions_unlocked
+    }
+}
+
+joint_focus = {
+    id = ea_proposalsandresolutions
+    icon = GFX_goal_lth_proposalsandresolutions
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =0
+    y =2
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 5
+        modifier = {
+            factor = 10
+            elven_alliance_has_at_least_8_members = yes
+        }
+    }
+    prerequisite = { focus = ea_theelvenalliance }
+    available = {
+		is_elven_alliance_member = yes
+	}
+    completion_reward_joint_originator = {
+        # Unlock higher tier alliance resolutions
+        custom_effect_tooltip = ea_proposalsandresolutions_tt
+        custom_effect_tooltip = ea_reduce_recess_tt
+        set_global_flag = ea_alliance_advanced_resolutions_unlocked
+
+        # Also makes recess take 25 days less
+    }
+}
+
+joint_focus = {
+    id = ea_pathtopeace
+    icon = GFX_goal_lth_collectivedefenseclause
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =-1
+    y =3
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 5
+        modifier = {
+            factor = 10
+            elven_alliance_has_at_least_8_members = yes
+        }
+    }
+    prerequisite = { focus = ea_proposalsandresolutions }
+    available = {
+		is_elven_alliance_member = yes
+	}
+    completion_reward_joint_originator = {
+        # Unlock peace 
+        custom_effect_tooltip = ea_pathtopeace_tt
+        set_global_flag = ea_peace_resolutions_unlocked
+    }
+}
+
+joint_focus = {
+    id = ea_researchcooperation
+    icon = GFX_goal_lth_researchcooperation
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =1
+    y =3
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 5
+        modifier = {
+            factor = 10
+            elven_alliance_has_at_least_8_members = yes
+        }
+    }
+    prerequisite = { focus = ea_proposalsandresolutions }
+    available = {
+		is_elven_alliance_member = yes
+	}
+    completion_reward_joint_originator = {
+        # Unlocks research decision line
+        custom_effect_tooltip = ea_researchcooperation_tt
+        set_global_flag = ea_research_resolutions_unlocked
+    }
+}
+
+joint_focus = {
+    id = ea_pooledknowledge
+    icon = GFX_goal_lth_researchcooperation
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =1
+    y =4
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 5
+        modifier = {
+            factor = 10
+            elven_alliance_has_at_least_8_members = yes
+        }
+    }
+    prerequisite = { focus = ea_researchcooperation }
+    available = {
+		is_elven_alliance_member = yes
+        elven_alliance_has_at_least_5_members = yes
+	}
+    completion_reward_joint_originator = {
+        # Unlocks high tier research decision line
+        custom_effect_tooltip = ea_pooledknowledge_tt
+        set_global_flag = ea_research_advanced_resolutions_unlocked
+    }
+}
+
+joint_focus = {
+    id = ea_elvenharmony
+    icon = GFX_goal_lth_elvenharmony
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =-1
+    y =4
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 5
+        modifier = {
+            factor = 10
+            elven_alliance_has_at_least_8_members = yes
+        }
+    }
+    prerequisite = { focus = ea_pathtopeace }
+    available = {
+		is_elven_alliance_member = yes
+        elven_alliance_has_at_least_5_members = yes
+	}
+    completion_reward_joint_originator = {
+        # Unlock higher tier peace
+        custom_effect_tooltip = ea_elvenharmony_tt
+        set_global_flag = ea_peace_advanced_resolutions_unlocked
+    }
+}
+
+joint_focus = {
+    id = ea_thecouncilofquendi
+    icon = GFX_goal_lth_thecouncilofquendi
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =0
+    y =5
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 5
+        modifier = {
+            factor = 10
+            elven_alliance_has_at_least_8_members = yes
+        }
+    }
+    prerequisite = { focus = ea_proposalsandresolutions }
+    available = {
+		is_elven_alliance_member = yes
+        elven_alliance_has_at_least_8_members = yes
+	}
+    completion_reward_joint_originator = {
+        custom_effect_tooltip = ea_thecouncilofquendi_tt
+        hidden_effect = {
+            # Start a vote on what type the alliance is going to be
+            every_country = {
+                limit = { is_elven_alliance_member = yes }
+                country_event = elven_alliance.3
+            }
+            country_event = { id = elven_alliance.5 days = 30 }
+        }
+    }
+}
+
+joint_focus = {
+    id = ea_hegemony
+    icon = GFX_goal_lth_hegemony
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =-2
+    y =6
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 5
+        modifier = {
+            factor = 50
+            ea_is_hegemony_leader = yes
+        }
+    }
+    prerequisite = { focus = ea_thecouncilofquendi }
+    mutually_exclusive = { focus = ea_internationalorganization }
+    mutually_exclusive = { focus = ea_martialalliance }
+    available = {
+		always = no
+	}
+    completion_reward_joint_originator = {
+        # Unlock hegemony line
+        ea_set_type_hegemony = yes
+
+        custom_effect_tooltip = autocompleted_on_event_tt
+    }
+}
+
+joint_focus = {
+    id = ea_executivevigour
+    icon = GFX_goal_lth_executivevigour
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =-2
+    y =7
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = {
+        factor = 5
+        modifier = {
+            factor = 50
+            ea_is_hegemony_leader = yes
+        }
+    }
+    prerequisite = { focus = ea_hegemony }
+    available = {
+		is_elven_alliance_member = yes
+        elven_alliance_has_at_least_10_members = yes
+	}
+    completion_reward_joint_originator = {
+        custom_effect_tooltip = ea_heg_3_tt
+        set_global_flag = ea_executivevigour_enabled
+        set_global_flag = ea_hegemony_advanced_resolutions_unlocked
+    }
+}
+
+
+
+joint_focus = {
+    id = ea_martialalliance
+    icon = GFX_goal_lth_martialalliance
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =0
+    y =6
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = { factor = 5 }
+    prerequisite = { focus = ea_thecouncilofquendi }
+    mutually_exclusive = { focus = ea_hegemony }
+    mutually_exclusive = { focus = ea_internationalorganization }
+    available = {
+		always = no
+	}
+    completion_reward_joint_originator = {
+        # unlock martial
+        ea_set_type_martial = yes
+        
+        custom_effect_tooltip = autocompleted_on_event_tt
+    }
+}
+
+joint_focus = {
+    id = ea_marchinunison
+    icon = GFX_goal_lth_marchinunison
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =0
+    y =7
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = { factor = 5 }
+    prerequisite = { focus = ea_martialalliance }
+    available = {
+		is_elven_alliance_member = yes
+        elven_alliance_has_at_least_10_members = yes
+	}
+    completion_reward_joint_originator = {
+        custom_effect_tooltip = ea_sharedtrainingprograms_tt
+        set_global_flag = ea_martial_advanced_resolutions_unlocked
+    }
+}
+
+joint_focus = {
+    id = ea_internationalorganization
+    icon = GFX_goal_lth_unionofequals
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =2
+    y =6
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = { factor = 5 }
+    prerequisite = { focus = ea_thecouncilofquendi }
+    mutually_exclusive = { focus = ea_hegemony }
+    mutually_exclusive = { focus = ea_martialalliance }
+    available = {
+		always = no
+	}
+    completion_reward_joint_originator = {
+        ea_set_type_union = yes
+        
+        custom_effect_tooltip = autocompleted_on_event_tt
+    }
+}
+
+joint_focus = {
+    id = ea_advanceddiplomacy
+    icon = GFX_goal_lth_theemissariesguild
+    text_icon = joint_focus_style    
+    relative_position_id = ea_theelvenalliance
+    x =2
+    y =7
+
+    joint_trigger = {
+		is_elven_alliance_member = yes
+	}
+
+    cost = 5
+    ai_will_do = { factor = 5 }
+    prerequisite = { focus = ea_internationalorganization }
+    available = {
+		is_elven_alliance_member = yes
+        elven_alliance_has_at_least_10_members = yes
+	}
+    completion_reward_joint_originator = {
+        custom_effect_tooltip = ea_advanceddiplomacy_tt
+        set_global_flag = ea_union_advanced_resolutions_unlocked
+    }
+}

@@ -4,7 +4,7 @@
 
 advisor_decisions_category = {
 	investment_gambling_venture = {
-		icon = mission_icon     # For GFX_decision_mission_icon
+		icon = GFX_decision_generic_treasure
 
         available = {
 			always = no
@@ -84,7 +84,7 @@ advisor_decisions_category = {
 	}
 
 	longterm_planner_improvement = {
-		icon = mission_icon     # For GFX_decision_mission_icon
+		icon = GFX_decision_generic_treasure
 
         available = {
 			always = no
@@ -105,15 +105,22 @@ advisor_decisions_category = {
 	    days_remove = 1
 
 	    timeout_effect = {
-
-	    	custom_effect_tooltip = longterm_planner_improvement_timeout
-
-	    	hidden_effect = {
+			if = {
+				limit = { has_country_flag = long_term_planner_improved }
+				custom_effect_tooltip = longterm_planner_improvement_timeout_improved
 				add_to_variable = {
-				    var = THIS.longterm_planner_factor
-				    value = -0.02
+					var = THIS.longterm_planner_factor
+					value = -0.04
 				}
-
+			}
+			else = {
+				custom_effect_tooltip = longterm_planner_improvement_timeout
+				add_to_variable = {
+					var = THIS.longterm_planner_factor
+					value = -0.02
+				}
+			}
+			hidden_effect = {
 				if = {
 					limit = { NOT = { has_dynamic_modifier = { modifier = longterm_planner_modifier } } }
 					add_dynamic_modifier = { modifier = longterm_planner_modifier }
@@ -122,8 +129,51 @@ advisor_decisions_category = {
 	    }
 	}
 
+	provincial_councilor_organization = {
+		icon = GFX_decision_generic_4
+
+        available = {
+			always = no
+        }
+
+		activation = {
+        	has_idea_with_trait = provincial_councilor
+        	any_owned_state = {
+				has_resistance = yes
+				NOT = { has_dynamic_modifier = { modifier = provincial_council_modifier } }
+			}
+    	}
+
+	    cancel_trigger = {
+			OR = {
+				NOT = { has_idea_with_trait = provincial_councilor }
+				NOT = {
+					any_owned_state = {
+						has_resistance = yes
+						NOT = { has_dynamic_modifier = { modifier = provincial_council_modifier } }
+					}
+				}
+			}
+	    }
+
+	    is_good = yes
+	    days_mission_timeout = 180
+	    selectable_mission = no
+	    days_remove = 1
+
+	    timeout_effect = {
+			random_owned_state = {
+				limit = {
+					has_resistance = yes
+					NOT = { has_dynamic_modifier = { modifier = provincial_council_modifier } }
+				}
+				add_dynamic_modifier = { modifier = provincial_council_modifier }
+			}
+	    }
+	}
+
 	serial_indeptor_loans_start = {
-		icon = mission_icon
+		icon = GFX_decision_generic_treasure
 
 		is_good = yes
 	    days_mission_timeout = 0
@@ -171,7 +221,7 @@ advisor_decisions_category = {
 	}
 
 	serial_indeptor_loans = {
-		icon = mission_icon
+		icon = GFX_decision_generic_treasure
 
 		is_good = yes
 	    days_mission_timeout = 712
@@ -209,7 +259,7 @@ advisor_decisions_category = {
 	}
 
 	serial_indeptor_extra_loan1 = {
-		icon = mission_icon
+		icon = GFX_decision_generic_treasure
 
 	    fire_only_once = yes # Can only loan money once!
 	    cost = 50
@@ -252,7 +302,7 @@ advisor_decisions_category = {
 	}
 
 	serial_indeptor_extra_loan2 = {
-		icon = mission_icon
+		icon = GFX_decision_generic_treasure
 
 	    fire_only_once = yes # Can only loan money once!
 	    cost = 50
@@ -295,9 +345,9 @@ advisor_decisions_category = {
 	}
 
 	backalley_dealer_sell_infantry_equipment = {
-		icon = mission_icon
+		icon = GFX_decision_operation_2
 
-	    selectable_mission = yes
+	    #selectable_mission = yes
 	    days_remove = 356
 
 	    visible = {
@@ -326,9 +376,9 @@ advisor_decisions_category = {
 	}
 
 	backalley_dealer_sell_support_equipment = {
-		icon = mission_icon
+		icon = GFX_decision_operation_2
 
-	    selectable_mission = yes
+	    #selectable_mission = yes
 	    days_remove = 356
 
 	    visible = {
@@ -336,7 +386,7 @@ advisor_decisions_category = {
 	    }
 	    available = {
 	    	has_idea_with_trait = backalley_dealer
-	    	has_equipment = { support_equipment > 999 }
+	    	has_equipment = { support_equipment > 499 }
 	    }
 
 	    ai_will_do = {
@@ -351,15 +401,15 @@ advisor_decisions_category = {
 	    	add_offsite_building = { type = industrial_complex level = 1 }
 	    	add_equipment_to_stockpile = {
 		        type = support_equipment
-		        amount = -1000
+		        amount = -500
 		    }
 	    }
 	}
 
 	backalley_dealer_sell_archery_equipment = {
-		icon = mission_icon
+		icon = GFX_decision_operation_2
 
-	    selectable_mission = yes
+	    #selectable_mission = yes
 	    days_remove = 356
 
 	    visible = {
@@ -367,7 +417,7 @@ advisor_decisions_category = {
 	    }
 	    available = {
 	    	has_idea_with_trait = backalley_dealer
-	    	has_equipment = { artillery_equipment > 999 }
+	    	has_equipment = { artillery_equipment > 499 }
 	    }
 
 	    ai_will_do = {
@@ -382,19 +432,19 @@ advisor_decisions_category = {
 	    	add_offsite_building = { type = industrial_complex level = 1 }
 	    	add_equipment_to_stockpile = {
 		        type = artillery_equipment
-		        amount = -1000
+		        amount = -500
 		    }
 	    }
 	}
 
 	ruthless_pillager_relocate_civs = {
-		icon = mission_icon
+		icon = GFX_decision_generic_army_2
 
 		cost = 75
 		state_target = yes
 		target_array = controlled_states
-		is_good = yes
-	    selectable_mission = yes
+		#is_good = yes
+	    #selectable_mission = yes
 	    days_remove = 120
 
 	    target_root_trigger = {
@@ -448,45 +498,8 @@ advisor_decisions_category = {
         }
 	}
 
-	demand_tribute = {
-		icon = mission_icon
-
-		cost = 75
-		target_array = subjects
-		is_good = yes
-	    selectable_mission = yes
-	    days_remove = 720
-
-	    ai_will_do = {
-		    base = 10
-		}
-
-	    target_root_trigger = {
-	        has_idea_with_trait = tribute_collector
-	    }
-
-	    available = {
-	    	has_idea_with_trait = tribute_collector
-	    }
-
-	    cancel_trigger = {
-	    	NOT = { has_idea_with_trait = tribute_collector }
-	    }
-
-	    cancel_effect = {
-            FROM = { remove_ideas = paying_tribute }
-        }
-
-        complete_effect = {
-      		FROM = { add_ideas = paying_tribute }
-	    }
-	    timeout_effect = {
-	        FROM = { remove_ideas = paying_tribute }
-	    }
-	}
-
 	pedantic_organizer_improvement = {
-		icon = mission_icon     # For GFX_decision_mission_icon
+		icon = GFX_decision_generic_research
 
         available = {
 			always = no
@@ -507,15 +520,22 @@ advisor_decisions_category = {
 	    days_remove = 1
 
 	    timeout_effect = {
-
-	    	custom_effect_tooltip = pedantic_organizer_improvement_timeout
-
-	    	hidden_effect = {
+			if = {
+				limit = { has_country_flag = pedantic_organizer_improved }
+				custom_effect_tooltip = pedantic_organizer_improvement_timeout_improved
 				add_to_variable = {
-				    var = THIS.pedantic_organizer_factor
-				    value = 0.02
+					var = THIS.pedantic_organizer_factor
+					value = 0.04
 				}
-
+			}
+			else = {
+				custom_effect_tooltip = pedantic_organizer_improvement_timeout
+				add_to_variable = {
+					var = THIS.pedantic_organizer_factor
+					value = 0.02
+				}
+			}
+			hidden_effect = {
 				if = {
 					limit = { NOT = { has_dynamic_modifier = { modifier = pedantic_organizer_modifier } } }
 					add_dynamic_modifier = { modifier = pedantic_organizer_modifier }
@@ -525,7 +545,7 @@ advisor_decisions_category = {
 	}
 
 	negotiate_trade_deal = {
-		icon = mission_icon
+		icon = GFX_decision_unknown
 
         available = {
         	OR = {
@@ -577,7 +597,7 @@ advisor_decisions_category = {
 	}
 
 	ambitous_expansionist_send_demand = {
-		icon = mission_icon
+		icon = GFX_decision_generic_5
 
 		target_root_trigger = {
 			has_idea_with_trait = ambitous_expansionist
@@ -604,16 +624,9 @@ advisor_decisions_category = {
         	}
         }
 
-        cancel_trigger = {
-        	NOT = {
-        		has_idea_with_trait = ambitous_expansionist
-        	}
-        }
-
 	    cost = 150
 	    target_array = neighbors
 	    cancel_if_not_visible = yes
-	    is_good = yes
 	    fire_only_once = yes
 
 	    ai_will_do = {
@@ -650,7 +663,7 @@ advisor_decisions_category = {
 	}
 
 	sanction_imposer_embargo_country = {
-		icon = mission_icon
+		icon = GFX_decision_generic_4
 
         available = {
         	has_opinion = { target = FROM value < -25 }
@@ -693,7 +706,7 @@ advisor_decisions_category = {
 	}
 
 	reasoning_charmer_build_collaboration = {
-		icon = mission_icon
+		icon = GFX_decision_generic_cooperation
 
 		target_root_trigger = {
 			has_idea_with_trait = reasoning_charmer
@@ -717,7 +730,6 @@ advisor_decisions_category = {
 	    cost = 150
 	    target_array = countries
 	    cancel_if_not_visible = yes
-	    is_good = yes
 	    fire_only_once = yes
 	    days_remove = 140
 
@@ -756,12 +768,12 @@ advisor_decisions_category = {
 	}
 
 	sow_of_distrust = {
-		icon = mission_icon
+		icon = GFX_decision_operation_2
 
 		cost = 150
 		target_array = neighbors
-		is_good = yes
-	    selectable_mission = yes
+		#is_good = yes
+	    #selectable_mission = yes
 	    days_remove = 356
 
 	    target_root_trigger = {
@@ -811,7 +823,7 @@ advisor_decisions_category = {
 	valuable_luxury_crafter_start = {
 		# A bit weird: we can't run on_add for characters, instead we use this auto-triggered mission.
 
-		icon = mission_icon
+		icon = GFX_decision_generic_blacksmith
 
 		is_good = yes
 	    days_mission_timeout = 0
@@ -842,7 +854,7 @@ advisor_decisions_category = {
 	chaos_enjoyer_start = {
 		# A bit weird: we can't run on_add for characters, instead we use this auto-triggered mission.
 
-		icon = mission_icon
+		icon = GFX_decision_revolt
 
 		is_good = yes
 	    days_mission_timeout = 0
@@ -871,9 +883,9 @@ advisor_decisions_category = {
 	}
 
 	food_exporter_sell_food = {
-		icon = mission_icon
+		icon = GFX_decision_generic_farming
 
-	    selectable_mission = yes
+	    #selectable_mission = yes
 	    days_remove = 356
 
 	    visible = {
@@ -930,7 +942,7 @@ advisor_decisions_category = {
 	captain_of_the_ithilien_rangers_start = {
 		# A bit weird: we can't run on_add for characters, instead we use this auto-triggered mission.
 
-		icon = mission_icon
+		icon = GFX_decision_generic_operation
 
 		is_good = yes
 	    days_mission_timeout = 0
@@ -960,7 +972,7 @@ advisor_decisions_category = {
 	}
 
 	spark_of_genius_spark = {
-		icon = mission_icon     # For GFX_decision_mission_icon
+		icon = GFX_decision_generic_research
 
         available = {
 			always = no

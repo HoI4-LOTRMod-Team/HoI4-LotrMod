@@ -14,7 +14,7 @@ ideas = {
 			cost = 300
 
 			modifier = {
-				consumer_goods_factor = 0.5
+				consumer_goods_expected_value = 0.6
 				political_power_gain = 0.25
 			}
 
@@ -38,7 +38,7 @@ ideas = {
 			cost = 300
 
 			modifier = {
-				consumer_goods_factor = 0.35
+				consumer_goods_expected_value = 0.4
 				# political_power_gain = 0.0
 			}
 
@@ -53,6 +53,12 @@ ideas = {
 				modifier = {
 					factor = 0
 					NOT = { has_idea = no_taxes }
+				}
+
+				modifier = {
+					add = 999
+					original_tag = LTH
+					has_government = revolutionary
 				}
 			}
 
@@ -76,17 +82,12 @@ ideas = {
 			cost = 300
 
 			modifier = {
-				consumer_goods_factor = 0.25
+				consumer_goods_expected_value = 0.25
 				political_power_gain = -0.25
 			}
 
 			ai_will_do = {
    				factor = 9
-
-   				modifier = {
-					factor = 0
-					has_political_power > 250 # dont waste too much pp on changing this
-				}
 
 				modifier = {
 					factor = 0
@@ -97,6 +98,12 @@ ideas = {
 				modifier = {
 					factor = 0
 					NOT = { has_idea = low_taxes }
+				}
+
+				modifier = {
+					factor = 0
+					original_tag = LTH
+					has_government = revolutionary
 				}
 			}
 
@@ -115,11 +122,21 @@ ideas = {
 			allowed = {
 				always = yes
 			}
+
+			available = {
+				if = {
+					limit = { original_tag = LTH }
+					NOT = { has_idea = LTH_peasant_assembly }
+				}
+				else = {
+					always = yes
+				}
+			}
 			removal_cost = -1
 			cost = 300
 
 			modifier = {
-				consumer_goods_factor = 0.15
+				consumer_goods_expected_value = 0.15
 				political_power_gain = -0.35
 			}
 
@@ -192,6 +209,12 @@ ideas = {
 					factor = 0
 					NOT = { has_idea = medium_taxes }
 				}
+
+				modifier = {
+					factor = 0
+					original_tag = LTH
+					has_government = revolutionary
+				}
 			}
 
 			cancel_if_invalid = no
@@ -202,6 +225,42 @@ ideas = {
 	trade_law = {
 		law = yes
 
+		# Isolationist LTH has special closed economy that costs no PP
+		lth_special_closed_economy = {
+
+			picture = law_closed_economy
+
+			allowed = {
+				tag = LTH
+			}
+			visible = {
+				tag = LTH
+				has_completed_focus = lth_sealtheborders
+			}
+			removal_cost = -1
+			cost = 300
+
+			rule = {
+				can_access_market = no
+				desc = can_not_access_market_closed_economy
+			}
+
+			modifier = {
+				min_export = 0.0
+			}
+
+			ai_will_do = {
+   				factor = 0
+   			}
+
+			allowed_to_remove = {
+				always = no
+			}
+
+			cancel_if_invalid = no
+			level = 5
+		}
+
 		closed_economy = {
 
 			picture = law_closed_economy
@@ -211,6 +270,11 @@ ideas = {
 			}
 			removal_cost = -1
 			cost = 300
+
+			rule = {
+				can_access_market = no
+				desc = can_not_access_market_closed_economy
+			}
 
 			modifier = {
 				min_export = 0.0
@@ -1099,11 +1163,11 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = -0.3
-				consumer_goods_factor = -0.3
-				taxation_law_cost_factor = 0.15
-				trade_law_cost_factor = 0.15
-				conscription_law_cost_factor = 0.15
+				political_power_gain = -0.35
+				consumer_goods_factor = -0.35
+				taxation_law_cost_factor = 0.2
+				trade_law_cost_factor = 0.2
+				conscription_law_cost_factor = 0.2
 			}
 
 			allowed_to_remove = {
@@ -1133,9 +1197,9 @@ ideas = {
 
 			modifier = {
 				political_power_gain = -0.15
-				taxation_law_cost_factor = 0.1
-				trade_law_cost_factor = 0.1
-				conscription_law_cost_factor = 0.1
+				taxation_law_cost_factor = 0.15
+				trade_law_cost_factor = 0.15
+				conscription_law_cost_factor = 0.15
 			}
 
 			allowed_to_remove = {
@@ -1156,10 +1220,10 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.05
-				taxation_law_cost_factor = 0.0
-				trade_law_cost_factor = 0.0
-				conscription_law_cost_factor = 0.0
+				political_power_gain = -0.05
+				taxation_law_cost_factor = 0.05
+				trade_law_cost_factor = 0.05
+				conscription_law_cost_factor = 0.05
 			}
 
 			allowed_to_remove = {
@@ -1198,10 +1262,10 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.15
-				taxation_law_cost_factor = -0.15
-				trade_law_cost_factor = -0.15
-				conscription_law_cost_factor = -0.15
+				political_power_gain = 0.1
+				taxation_law_cost_factor = -0.1
+				trade_law_cost_factor = -0.1
+				conscription_law_cost_factor = -0.1
 			}
 
 			allowed_to_remove = {
@@ -1210,12 +1274,6 @@ ideas = {
 
 			ai_will_do = {
    				factor = 20
-
-   				modifier = {
-					factor = 20
-
-					is_major = yes
-				}
 				modifier = { # downgrade block
 					factor = 0
 					NOT = { has_idea = weak_centralization }
@@ -1257,10 +1315,10 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.35
-				taxation_law_cost_factor = -0.35
-				trade_law_cost_factor = -0.35
-				conscription_law_cost_factor = -0.35
+				political_power_gain = 0.3
+				taxation_law_cost_factor = -0.3
+				trade_law_cost_factor = -0.3
+				conscription_law_cost_factor = -0.3
 			}
 
 			allowed_to_remove = {
@@ -1314,10 +1372,10 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.5
-				taxation_law_cost_factor = -0.5
-				trade_law_cost_factor = -0.5
-				conscription_law_cost_factor = -0.5
+				political_power_gain = 0.45
+				taxation_law_cost_factor = -0.45
+				trade_law_cost_factor = -0.45
+				conscription_law_cost_factor = -0.45
 			}
 
 			allowed_to_remove = {
@@ -1363,10 +1421,10 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.6
-				taxation_law_cost_factor = -0.6
-				trade_law_cost_factor = -0.6
-				conscription_law_cost_factor = -0.6
+				political_power_gain = 0.5
+				taxation_law_cost_factor = -0.5
+				trade_law_cost_factor = -0.5
+				conscription_law_cost_factor = -0.5
 			}
 
 			allowed_to_remove = {

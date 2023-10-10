@@ -1,5 +1,5 @@
 focus_tree = {
-id = 'isengard'
+id = isengard
 country = {
 	factor=0
 	modifier = {
@@ -9,6 +9,8 @@ country = {
 }
 
 continuous_focus_position = { x = 50 y = 2000 }
+
+shared_focus = whc_rekindlewhitecouncil
 
 default = no
 
@@ -38,7 +40,7 @@ default = no
 	 prerequisite = { focus = thefateofisengard}
 	 cost = 10
  	 available_if_capitulated = yes
-	 completion_reward = { set_country_flag = path_going_cooperative add_ideas = ISE_ways_of_the_light }
+	 completion_reward = { add_ideas = ISE_ways_of_the_light }
 }
 
 #Focus for Ways of the Dark
@@ -53,7 +55,6 @@ default = no
 	 cost = 10
  	 available_if_capitulated = yes
 	 completion_reward = {
-		set_country_flag = path_going_belligerent
 	 	add_ideas = ISE_ways_of_the_dark
  	}
 }
@@ -322,7 +323,9 @@ default = no
 	 id = rebrandisengard
 	 icon = GFX_goal_the_white_hand
 	 ai_will_do = { factor = 100 }
-	 available = { belligerent > 0.35 }
+	 available = { 
+		belligerent > 0.35 
+	}
 	 x =6
 	 y =4
 	 mutually_exclusive = {  }
@@ -333,6 +336,18 @@ default = no
 	 	lotr_switch_to_orcs = yes
 	 	set_politics = { ruling_party = belligerent elections_allowed = no }
 	 	add_named_threat = { threat = 1 name = "Rebranded Isengard" }
+		hidden_effect = {
+			if = {
+				limit = {
+					GON = {
+						is_denethor_paranoid = yes
+					}
+				}
+				GON = {
+					country_event = { id = denethor_paranoid.4 }
+				}
+			}
+		}
  	}
 }
 
@@ -459,6 +474,7 @@ default = no
 			add_advisor_role = {
 				character = ISE_ugluk
 				advisor = {
+					idea_token = ISE_ugluk_high_command
 			        slot = high_command
 			        cost = 150
 			        traits = { army_CombinedArms_1 }
@@ -476,6 +492,7 @@ default = no
 			add_advisor_role = {
 				character = ISE_lurtz
 				advisor = {
+					idea_token = ISE_lurtz_high_command
 			        slot = high_command
 			        cost = 150
 			        traits = { ring_catcher }
@@ -493,6 +510,7 @@ default = no
 			add_advisor_role = {
 				character = ISE_hargor
 				advisor = {
+					idea_token = ISE_hargor_high_command
 			        slot = high_command
 			        cost = 150
 			        traits = { army_concealment_1 }
@@ -510,6 +528,7 @@ default = no
 			add_advisor_role = {
 				character = ISE_mauhur
 				advisor = {
+					idea_token = ISE_mauhur_high_command
 			        slot = high_command
 			        cost = 150
 			        traits = { army_commando_1 }
@@ -527,6 +546,7 @@ default = no
 			add_advisor_role = {
 				character = ISE_gara
 				advisor = {
+					idea_token = ISE_gara_high_command
 			        slot = army_chief
 			        cost = 150
 			        traits = { army_chief_defensive_1 }
@@ -544,6 +564,7 @@ default = no
 			add_advisor_role = {
 				character = ISE_lugdush
 				advisor = {
+					idea_token = ISE_lugdush_high_command
 			        slot = army_chief
 			        cost = 150
 			        traits = { army_chief_offensive_1 }
@@ -760,6 +781,12 @@ default = no
 		}
 		prerequisite = { focus = claimdominionoverenedwaith}
 		cost = 5
+		available = {
+			ENE = {
+				controls_state = 77
+				controls_state = 156
+			}
+		}
 		available_if_capitulated = no
 		completion_reward = {
 			add_named_threat = { threat = 3 name = "Land seized by Isengard" }
@@ -781,6 +808,9 @@ default = no
 	 prerequisite = { focus = claimdominionoverenedwaith}
 	 cost = 10
 	 available_if_capitulated = no
+	 available = {
+		ENE = { is_subject = no }
+	 }
 	 completion_reward = { ENE = { country_event = { days = 1 id = isengard.4 } } }
 }
 
@@ -794,6 +824,9 @@ default = no
 	 y =7
 	 mutually_exclusive = { focus = subjugateenedwaith}
 	 prerequisite = { focus = claimdominionoverenedwaith}
+	 available = {
+		ENE = { is_subject = no }
+	 }
 	 cost = 10
  	 available_if_capitulated = yes
 	 completion_reward = { ENE = { add_ideas = ISE_sarumans_influence_f } }
@@ -813,6 +846,7 @@ default = no
 			}
 		} 
 		NOT = { has_war_with = ENE } 
+		ENE = { is_subject = no }
 	}
 
 	 x =10
@@ -1157,7 +1191,7 @@ default = no
 			}
 			modifier = {
 					add = 5
-					strength_ratio = { tag = MOR ratio > 0.7 }
+					strength_ratio = { tag = MOR ratio > 1.0 }
 			}
 		}
 		available = { has_government = belligerent }

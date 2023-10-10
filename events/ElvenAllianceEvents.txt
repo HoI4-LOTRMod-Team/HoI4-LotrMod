@@ -1,0 +1,373 @@
+add_namespace = elven_alliance
+
+# AI vote for resolution event
+country_event = {
+	id = elven_alliance.1
+
+	hidden = yes
+
+	mean_time_to_happen = {
+        days = 10
+    }
+
+    trigger = {
+        has_country_flag = is_elven_alliance_member
+        is_ai = yes
+        has_global_flag = ea_vote_in_progress
+    }
+
+	immediate = {
+        elven_alliance_ai_vote = yes
+    }
+}
+
+# Invite to elven alliance
+country_event = {
+	id = elven_alliance.2
+	title = elven_alliance.2.t
+	desc = elven_alliance.2.d
+	picture = GFX_report_event_alliance
+	
+	is_triggered_only = yes
+	
+	# Ye
+	option = { 
+		name = elven_alliance.2.a
+		ai_chance = {
+			base = 20
+		}
+		elven_alliance_join = yes
+	}
+
+	# Nah
+	option = { 
+		name = elven_alliance.2.a
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Vote on alliance type
+country_event = {
+	id = elven_alliance.3
+	title = elven_alliance.3.t
+	desc = elven_alliance.3.d
+	picture = GFX_report_event_alliance
+
+	timeout_days = 20
+	
+	is_triggered_only = yes
+	
+	# Hegemony
+	option = { 
+		name = elven_alliance.3.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 3
+				has_government = belligerent
+			}
+			modifier = {
+				factor = 2
+				is_puppet = yes
+			}
+			modifier = {
+				factor = 0
+				has_government = revolutionary
+			}
+		}
+		add_to_variable = { global.ea_type_vote_hegemony = 1 }
+	}
+
+	# Martial
+	option = { 
+		name = elven_alliance.3.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 3
+				has_government = cooperative
+			}
+		}
+
+		add_to_variable = { global.ea_type_vote_martial = 1 }
+	}
+
+	# Union
+	option = { 
+		name = elven_alliance.3.c
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 3
+				has_government = unaligned
+			}
+		}
+
+		add_to_variable = { global.ea_type_vote_union = 1 }
+	}
+}
+
+# Elven Alliance tutorial/help event
+country_event = {
+	id = elven_alliance.4
+	title = elven_alliance.4.t
+	desc = elven_alliance.4.d
+	
+	is_triggered_only = yes
+	
+	# Ye
+	option = { 
+		name = elven_alliance.4.a
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+# Form new assembly type (hidden)
+country_event = {
+	id = elven_alliance.5
+
+	hidden = yes
+
+	is_triggered_only = yes
+
+	immediate = {
+        if = {
+			limit = {
+				check_variable = { global.ea_type_vote_hegemony > global.ea_type_vote_martial }
+				check_variable = { global.ea_type_vote_hegemony > global.ea_type_vote_union }
+			}
+			complete_national_focus = ea_hegemony
+		}
+		else_if = {
+			limit = {
+				check_variable = { global.ea_type_vote_martial > global.ea_type_vote_hegemony }
+				check_variable = { global.ea_type_vote_martial > global.ea_type_vote_union }
+			}
+			complete_national_focus = ea_martialalliance
+		}
+		else = {
+			complete_national_focus = ea_internationalorganization
+		}
+    }
+}
+
+# Elven Alliance Hegemony leadership passed to us
+country_event = {
+	id = elven_alliance.6
+	title = elven_alliance.6.t
+	desc = elven_alliance.6.d
+	
+	is_triggered_only = yes
+	
+	# Ye
+	option = { 
+		name = elven_alliance.6.a
+		ai_chance = {
+			base = 50
+		}
+		custom_effect_tooltip = "Become leader of the Elven Assembly."
+	}
+}
+
+# Elven Alliance: Type decided
+country_event = {
+	id = elven_alliance.7
+
+	title = {
+		trigger = { has_global_flag = ea_type_hegemony }
+		text = elven_alliance.7.t_hegemony
+	}
+	title = {
+		trigger = { has_global_flag = ea_type_martial }
+		text = elven_alliance.7.t_martial
+	}
+	title = {
+		trigger = { has_global_flag = ea_type_union }
+		text = elven_alliance.7.t_union
+	}
+
+	desc = {
+		trigger = { has_global_flag = ea_type_hegemony }
+		text = elven_alliance.7.d_hegemony
+	}
+	desc = {
+		trigger = { has_global_flag = ea_type_martial }
+		text = elven_alliance.7.d_martial
+	}
+	desc = {
+		trigger = { has_global_flag = ea_type_union }
+		text = elven_alliance.7.d_union
+	}
+	
+	is_triggered_only = yes
+	
+	# Ye
+	option = { 
+		name = elven_alliance.7.a
+		ai_chance = {
+			base = 50
+		}
+		if = {
+			limit = { has_global_flag = ea_type_hegemony }
+			custom_effect_tooltip = elven_alliance.7.a_h_tt
+		}
+		else_if = {
+			limit = { has_global_flag = ea_type_martial }
+			custom_effect_tooltip = elven_alliance.7.a_m_tt
+		}
+		else_if = {
+			limit = { has_global_flag = ea_type_union }
+			custom_effect_tooltip = elven_alliance.7.a_u_tt
+		}
+	}
+}
+
+# Elven Alliance: Call for help Martial tier 2
+country_event = {
+	id = elven_alliance.8
+	title = elven_alliance.8.t
+	desc = elven_alliance.8.d
+	
+	is_triggered_only = yes
+	
+	# Join in
+	option = { 
+		name = elven_alliance.8.a
+		ai_chance = {
+			base = 30
+			modifier = {
+				factor = 2
+				var:event_target:ea_call_to_arms_defender = {
+					has_same_ideology = yes
+				}
+			}
+			modifier = {
+				factor = 2
+				var:event_target:ea_call_to_arms_defender = {
+					is_ai = no
+				}
+			}
+		}
+		declare_war_on = {
+			target = var:event_target:ea_call_to_arms_attacker
+			type = annex_everything
+		}
+	}
+
+	# Leave
+	option = { 
+		name = elven_alliance.8.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 2
+				has_war = yes
+			}
+			modifier = {
+				factor = 2
+				has_government = unaligned
+			}
+		}
+		add_political_power = -100
+		var:event_target:ea_call_to_arms_defender = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = large_decrease
+			}
+		}
+	}
+}
+
+# Elven Alliance Martial Alliance Faction created
+country_event = {
+	id = elven_alliance.9
+	title = elven_alliance.9.t
+	desc = {
+		text = elven_alliance.9.d
+		trigger = {
+			is_in_faction = no
+		}
+	}
+	desc = {
+		text = elven_alliance.9.d_2
+		trigger = {
+			is_in_faction = yes
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	# Join in
+	option = { 
+		name = elven_alliance.9.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 0
+				is_in_faction = yes
+			}
+		}
+		if = {
+			limit = { is_in_faction = yes }
+			leave_faction = yes
+		}
+		event_target:ea_martial_faction_leader = {
+			add_to_faction = ROOT
+		}
+	}
+
+	# Leave
+	option = {
+		trigger = {
+			is_in_faction = yes
+		}
+		name = elven_alliance.9.b
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+# Kicked out due to war
+country_event = {
+	id = elven_alliance.10
+	title = elven_alliance.10.t
+	desc = elven_alliance.10.d
+	
+	is_triggered_only = yes
+	
+	# k den
+	option = { 
+		name = elven_alliance.10.a
+		ai_chance = {
+			base = 1
+		}
+		effect_tooltip = {
+			elven_alliance_leave = yes
+		}
+	}
+}
+
+# Kicked out due to vote
+country_event = {
+	id = elven_alliance.11
+	title = elven_alliance.11.t
+	desc = elven_alliance.11.d
+	
+	is_triggered_only = yes
+	
+	# k den
+	option = { 
+		name = elven_alliance.11.a
+		ai_chance = {
+			base = 1
+		}
+		effect_tooltip = {
+			elven_alliance_leave = yes
+		}
+	}
+}

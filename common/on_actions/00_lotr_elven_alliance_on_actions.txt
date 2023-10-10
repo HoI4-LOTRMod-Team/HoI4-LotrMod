@@ -1,0 +1,83 @@
+
+
+
+on_actions = {
+
+	on_monthly = {
+		effect = {
+			if = {
+				limit = {
+					is_elven_alliance_member = yes
+					is_ai = yes
+					can_propose_resolutions_elven_alliance = yes
+					ea_has_resolution_in_queue = no
+					ea_more_than_2_resolutions_in_queue = no
+				}
+
+				elven_alliance_ai_propose = yes
+			}
+		}
+	}
+
+
+	on_war = {
+		effect = {
+			elven_alliance_ensure_no_war = yes
+		}
+	}
+
+	on_declare_war = {
+		effect = {
+
+			# If war decleared on alliance member with martial 2 enabled, send out a call for help to all other members
+			if = {
+				limit = {
+					FROM = { is_elven_alliance_member = yes }
+					ea_has_martial_tier_2 = yes
+					ea_has_martial_tier_3 = no # We're faction now anyway
+				}
+				for_each_scope_loop = {
+					array = global.elven_alliance_members
+					if = {
+						limit = {
+							NOT = { tag = FROM }
+							NOT = { has_war_with = ROOT }
+							NOT = { is_in_faction_with = FROM }
+						}
+						ROOT = { save_event_target_as = ea_call_to_arms_attacker }
+						FROM = { save_event_target_as = ea_call_to_arms_defender }
+						country_event = { id = elven_alliance.8 days = 1 }
+					}
+				}
+			}
+		}
+	}
+
+	on_join_faction = {
+		effect = {
+			if = {
+				limit = { FROM = { is_elven_alliance_member = yes } ea_has_martial_tier_3 = yes }
+				elven_alliance_join = yes
+			}
+		}
+	}
+
+	on_leave_faction = {
+		effect = { 
+			if = {
+				limit = { is_elven_alliance_member = yes ea_has_martial_tier_3 = yes }
+				elven_alliance_leave = yes
+			}
+		}
+	}
+
+	# countries that dont exist cant be part of EA
+	on_annex = {
+		effect = {
+			if = {
+				limit = { FROM = { is_elven_alliance_member = yes } }
+				FROM = { elven_alliance_leave = yes }
+			}
+		}
+	}
+}

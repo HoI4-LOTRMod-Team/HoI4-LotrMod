@@ -1,0 +1,78 @@
+
+
+ithc_is_available = {
+	GON = {
+		NOT = { is_in_faction_with = MOR }
+		NOT = { has_war_with = GON }
+	}
+	NOT = {
+		has_global_flag = mordor_gondor_war
+	}
+}
+
+
+ithc_crisis_is_active = {
+	has_global_flag = ithc_ithilien_crisis_commenced
+	NOT = { GON = { has_war_with = MOR } }
+	NOT = { GON = { is_ally_with = MOR } }
+	NOT = { has_global_flag = mordor_gondor_war }
+}
+
+ithc_state_available_to_contest = {
+	NOT = { has_state_flag = ithc_contested }
+	is_fully_controlled_by = GON
+}
+
+ithc_state_can_annex_visible = {
+	check_variable = { ithc_pillage_level > 1 }
+}
+
+ithc_state_can_annex = {
+	check_variable = { ithc_pillage_level > 2 }
+	custom_trigger_tooltip = {
+    	tooltip = ithc_state_can_annex_tt
+	}
+}
+
+
+ithc_has_higher_power_projection = {
+	if = {
+		limit = { tag = MOR }
+		custom_trigger_tooltip = {
+			tooltip = ithc_has_higher_power_projection_MOR_tt
+			PREV = { MOR = { set_temp_variable = { pp_total_MOR = mtth:ithc_pp_total_MOR } } }
+			PREV = { GON = { set_temp_variable = { pp_total_GON = mtth:ithc_pp_total_GON } } }
+			check_variable = { pp_total_MOR > pp_total_GON }
+		}
+
+		PREV = { MOR = {
+			custom_trigger_tooltip = {
+				tooltip = ithc_power_projection_MOR_good_tt
+			}
+		} }
+		PREV = { GON = {
+			custom_trigger_tooltip = {
+				tooltip = ithc_power_projection_GON_evil_tt
+			}
+		} }
+	}
+	else = {
+		custom_trigger_tooltip = {
+			tooltip = ithc_has_higher_power_projection_GON_tt
+			PREV = { MOR = { set_temp_variable = { pp_total_MOR = mtth:ithc_pp_total_MOR } } }
+			PREV = { GON = { set_temp_variable = { pp_total_GON = mtth:ithc_pp_total_GON } } }
+			check_variable = { pp_total_GON > pp_total_MOR }
+		}
+
+		PREV = { GON = {
+			custom_trigger_tooltip = {
+				tooltip = ithc_power_projection_GON_good_tt
+			}
+		} }
+		PREV = { MOR = {
+			custom_trigger_tooltip = {
+				tooltip = ithc_power_projection_MOR_evil_tt
+			}
+		} }
+	}
+}

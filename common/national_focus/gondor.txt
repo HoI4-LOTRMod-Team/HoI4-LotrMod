@@ -1,711 +1,1317 @@
 focus_tree = {
-id = 'gondor'
+id = gondor
 country = {
 	factor=0
 	modifier = {
 		add = 10
-		tag = GON
+		original_tag = GON
 	}
 }
 default = no
 
-continuous_focus_position = { x = 50 y = 2000 }
+continuous_focus_position = { x = 50 y = 1700 }
 
 
 #Custom focuses start here
-#Focus for Fate of Gondor
-		focus = {
-		id = thefateofgondor
-		icon = GFX_goal_gondor
-		ai_will_do = { factor = 100 }
- 		x =5
- 		y =0
- 		mutually_exclusive = { }
- 		prerequisite = { }
- 		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { add_political_power = 100 }
-}
 
-#Focus for Send Faramir with the Fellowship
-		focus = {
-		id = sendfaramirwiththefellowship
-		icon = GFX_goal_faramir
-		ai_will_do = { factor = 100 }
-		available = { has_global_flag = fs_gondor_faramir }
- 		x =0
- 		y =1
- 		mutually_exclusive = { focus = sendboromirwiththefellowship }
- 		prerequisite = { focus = thefateofgondor}
- 		cost = 0
-  		available_if_capitulated = yes
-		completion_reward = {
-			custom_effect_tooltip = MOR_event_triggert_focus
-		}
- }
-
- #Focus for Send Boromir with the Fellowship
-		focus = {
-		id = sendboromirwiththefellowship
-		icon = GFX_goal_boromir
-		ai_will_do = { factor = 100 }
-		available = { has_global_flag = fs_gondor_boromir }
- 		x =3
- 		y =1
- 		mutually_exclusive = { focus = sendfaramirwiththefellowship}
- 		prerequisite = { focus = thefateofgondor}
- 		cost = 0
-  		available_if_capitulated = yes
-		completion_reward = {
-			custom_effect_tooltip = MOR_event_triggert_focus
-		}
- }
-
-#Focus for Prepare for War with Mordor
-		focus = {
-		id = prepareforwarwithmordor
-		icon = GFX_goal_mordor
-		ai_will_do = { factor = 15 }
- 		x =12
- 		y =1
- 		mutually_exclusive = { focus = helprohandealwithisengard}
- 		prerequisite = { focus = thefateofgondor}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = { army_experience = 25 }
- }
-
- #Focus for Help Rohan deal with Isengard
-		focus = {
-		id = helprohandealwithisengard
-		icon = GFX_goal_rohan
-		ai_will_do = { factor = 4 }
- 		x =14
- 		y =1
- 		mutually_exclusive = { focus = prepareforwarwithmordor}
- 		prerequisite = { focus = thefateofgondor}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = { add_political_power = 50 }
- }
-
- #Focus for Improve Rohanian Relations
-		focus = {
-		id = improverohanianrelations
-		icon = GFX_goal_generic_intelligence_exchange
-		ai_will_do = { factor = 5 }
- 		x =14
- 		y =2
- 		prerequisite = { focus = helprohandealwithisengard}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			ROH = { add_opinion_modifier = { target = GON modifier = large_increase } }
-			GON = { add_opinion_modifier = { target = ROH modifier = large_increase } }
-		}
- }
-
- #Focus for Provide Rohan with Resources
-		focus = {
-		id = providerohanwithresources
-		icon = GFX_goal_generic_military_sphere
-		ai_will_do = {
-			factor = 0
-			modifier = {
-				add = 7
-				ROH = { has_war = yes }
-			}
-		}
- 		x =14
- 		y =3
- 		prerequisite = { focus = improverohanianrelations}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			send_equipment = { target = ROH type = infantry_equipment amount = 10000 }
-			add_resource = { type = steel amount = -25 state = 21 }
-			add_resource = { type = steel amount = 50 state = 25 }
-		}
- }
-
- #Focus for Allow Rohan to hire Ithilian soldiers
-		focus = {
-		id = allowrohantohireithiliansoldiers
-		icon = GFX_focus_generic_little_entente
-		ai_will_do = {
-			factor = 1
-			modifier = {
-				add = 7
-				ROH = { has_war = yes }
-			}
-		}
- 		x =14
- 		y =4
- 		prerequisite = { focus = providerohanwithresources}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			GON = { add_manpower = -225000 }
-			ROH = { add_manpower = 225000 }
-		}
- }
-
- #Focus for Honor Isildur's legacy
-		focus = {
-		id = honorisildurslegacy
-		icon = GFX_focus_hun_elect_a_king
-		ai_will_do = { factor = 15 }
- 		x =6
- 		y =1
- 		mutually_exclusive = { focus = delegitimizearagornsclaim }
- 		prerequisite = { focus = thefateofgondor}
-		bypass = { 
-			has_government = cooperative
-		}
- 		cost = 10
-  		available_if_capitulated = yes
-		completion_reward = {
-			set_country_flag = path_going_cooperative
-			add_ideas = generic_cooperative
-		}
- }
-
- #Focus for De-Legitimize Aragorn's Claim
-		focus = {
-		id = delegitimizearagornsclaim
-		icon = GFX_goal_support_unalligned
-		ai_will_do = { factor = 15 }
- 		x =9
- 		y =1
- 		mutually_exclusive = { focus = honorisildurslegacy }
- 		prerequisite = { focus = thefateofgondor}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = { add_ideas = generic_unaligned }
- }
-
- #Focus for Forge closer ties with the Rangers of the North
-		focus = {
-		id = forgeclosertieswiththerangersofthenorth
-		icon = GFX_goal_tripartite_pact
-		ai_will_do = { factor = 5 }
- 		x =0
- 		y =2
- 		mutually_exclusive = { }
- 		prerequisite = { focus = sendfaramirwiththefellowship}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			CAR = { add_opinion_modifier = { target = GON modifier = large_increase } }
-			ART = { add_opinion_modifier = { target = GON modifier = large_increase } }
-			RHD = { add_opinion_modifier = { target = GON modifier = large_increase } }
-		}
- }
-
- #Focus for Build up Defenses at Osgiliath
-		focus = {
-		id = buildupdefensesatosgiliath
-		icon = GFX_goal_generic_fortify_city
-		ai_will_do = {
-			factor = 10
-			modifier = {
-				add = 25
-				has_war_with = MOR
-			}
-		}
- 		x =12
- 		y =2
- 		mutually_exclusive = { }
- 		prerequisite = { focus = prepareforwarwithmordor }
- 		cost = 10
-  		available_if_capitulated = yes
-		completion_reward = {
-			163 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 1778 } }
-			163 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 6928 } }
-			173 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 430 } }
-		}
- }
-
- #Focus for Anti Nazgul Measures
-		focus = {
-		id = antinazgulmeasures
-		icon = GFX_goal_generic_fortify_city
-		ai_will_do = {
-			factor = 10
-			modifier = {
-				add = 25
-				has_war_with = MOR
-			}
-		}
-		available = { 21 = { is_controlled_by = GON } 22 = { is_controlled_by = GON } 19 = { is_controlled_by = GON } }
- 		x =12
- 		y =3
- 		mutually_exclusive = { }
- 		prerequisite = { focus = buildupdefensesatosgiliath }
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-				21 = { add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}	}
-				163 = { add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}	}
-				173 = { add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}	}
-		}
- }
-
- #Focus for Light The Beacons!
-	 focus = {
-	 id = lightthebeacons
-	 icon = GFX_goal_light_the_beacons
-	 available = { ROH = { has_government = cooperative } has_war = yes }
-	 bypass = { is_in_faction_with = ROH }
-	 ai_will_do = { factor = 25 }
- 	 x =12
-	 y =4
-	 mutually_exclusive = { }
-	 prerequisite = { focus = antinazgulmeasures }
-	 cost = 10
-	 available_if_capitulated = yes
-	 completion_reward = { ROH = { country_event = { days = 2 id = gondor.1 } } }
- }
-
- #Focus for Have Boromir steal the Ring
-		focus = {
-		id = haveboromirstealthering
-		icon = GFX_goal_the_one_ring
-		ai_will_do = { factor = 70 }
-		available = {always = no }
- 		x =2
- 		y =2
- 		mutually_exclusive = { focus = persuadearagorntoreturntogondor }
- 		prerequisite = { focus = sendboromirwiththefellowship}
- 		cost = 2
-  	available_if_capitulated = yes
-		completion_reward = {  }
- }
-
- #Focus for Persuade Aragorn to return to Gondor
-		focus = {
-		id = persuadearagorntoreturntogondor
-		icon = GFX_focus_hun_elect_a_king
-		ai_will_do = { factor = 100 }
- 		x =4
- 		y =2
-		available = {
-			NOT = {
-				has_global_flag = aragorn_dead
-			}
-		}
- 		mutually_exclusive = { focus = haveboromirstealthering}
- 		prerequisite = { focus = sendboromirwiththefellowship}
- 		cost = 10
-  	    available_if_capitulated = yes
-		completion_reward = {
-			set_global_flag = aragorn_persuaded
-			add_popularity = { ideology = cooperative popularity = 0.05 }
-		}
- }
-
- #Focus for Restore the Kingdom
-		focus = {
-		id = restorethekingdom
-		icon = GFX_goal_support_cooperative
-		ai_will_do = { factor = 100 }
-		available = { cooperative > 0.5 }
- 		x =6
- 		y =2
- 		bypass = { 
-			has_government = cooperative
-		}
- 		prerequisite = { focus = honorisildurslegacy}
- 		cost = 10
-  		available_if_capitulated = yes
-		completion_reward = {
-			set_politics = { ruling_party = cooperative elections_allowed = no }
-			add_stability = 0.10
-			add_political_power = 100
-				add_popularity = {
-				ideology = cooperative
-				popularity = 0.05
-			}
-		}
- }
-
- #Focus for Gondor has no King
-		focus = {
-		id = gondorhasnoking
-		icon = GFX_focus_rom_abdicate
-		ai_will_do = { factor = 100 }
- 		x =8
- 		y =2
- 		mutually_exclusive = { focus = forgeanewdynasty }
- 		prerequisite = { focus = delegitimizearagornsclaim}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = { set_country_flag = path_going_revolutionary add_ideas = generic_revolutionary_intermediate }
- }
-
- #Focus for Forge a new Dynasty
-		focus = {
-		id = forgeanewdynasty
-		icon = GFX_focus_rom_royal_dictatorship
-		ai_will_do = { factor = 100 }
- 		x =10
- 		y =2
- 		mutually_exclusive = { focus = gondorhasnoking }
- 		prerequisite = { focus = delegitimizearagornsclaim}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			set_country_flag = path_going_cooperative
-			add_ideas = generic_cooperative
-			set_global_flag = gondor_new_dynasty
-		}
- }
-
- #Focus for Declare Aragorn the rightful heir
-		focus = {
-		id = declarearagorntherightfulheir
-		icon = GFX_goal_king_aragorn
-		ai_will_do = { factor = 15 }
-		available = {
-			custom_trigger_tooltip = {
-			    tooltip = ring_aragorn_is_alive_tt		
-			    NOT = { ring_aragorn_is_dead = yes }
-			}
-			custom_trigger_tooltip = {
-			    tooltip = ring_aragorn_not_in_fellowship_tt		
-			    NOT = { ring_aragorn_in_fellowship = yes }
-			}
-			has_global_flag = fs_fellowship_departed
-			has_completed_focus = restorethekingdom
-		}
-		bypass = {
-			OR = {
-				hidden_trigger = {
-					ring_aragorn_is_dead = yes	
-				}
-				has_global_flag = fs_ring_destroyed
-				has_global_flag = fs_ring_seized
-			}
-		}
- 		x =5
- 		y =3
- 		mutually_exclusive = { }
- 		prerequisite = { focus = persuadearagorntoreturntogondor focus =restorethekingdom}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			add_popularity = { ideology = cooperative popularity = 0.05 }
-			add_stability = 0.05
-			add_political_power = 100
-		}
- }
-
- #Focus for Get rid of Denethor
 	focus = {
-		id = getridofdenethor
-		icon = GFX_goal_denethor
-		ai_will_do = { factor = 15 }
-		bypass = { has_global_flag = denethor_dead }
- 		x =7
- 		y =3
- 		mutually_exclusive = { }
- 		prerequisite = { focus = gondorhasnoking  focus = restorethekingdom}
- 		cost = 10
-  		available_if_capitulated = yes
-		completion_reward = {
-			retire_country_leader = yes
-			if = {
-				limit = { NOT = { has_global_flag = faramir_dead } NOT = { has_completed_focus = crownaragornkingofgondor } }
-				add_country_leader_role = {
-				    character = GON_faramir
-				    promote_leader = yes
-				    country_leader = {
-				        ideology = protective
-				        expire = "3080.1.1"
-				        traits = { }
-				    }
-				}
-				add_country_leader_role = {
-				    character = GON_faramir
-				    promote_leader = yes
-				    country_leader = {
-				        ideology = defensive
-				        expire = "3080.1.1"
-				        traits = { }
-				    }
-				}
-			}
-
-			if = {
-				limit = { NOT = { has_global_flag = boromir_dead } NOT = { has_completed_focus = crownaragornkingofgondor } }
-				add_country_leader_role = {
-				    character = GON_boromir
-				    promote_leader = yes
-				    country_leader = {
-				        ideology = protective
-				        expire = "3080.1.1"
-				        traits = { }
-				    }
-				}
-				add_country_leader_role = {
-				    character = GON_boromir
-				    promote_leader = yes
-				    country_leader = {
-				        ideology = defensive
-				        expire = "3080.1.1"
-				        traits = { }
-				    }
-				}
-			}
+		id = GON_delegitimize_aragorns_claim
+		icon = GFX_goal_support_unalligned
+		ai_will_do = { factor = 3 }
+		x = 14
+		y = 0
+		mutually_exclusive = { focus = GON_honor_isildurs_legacy }
+		cost = 10
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = { 
+			add_timed_idea = { days = 365 idea = generic_unaligned }
 		}
- }
+	}
 
- #Focus for Purge the Crown Loyalists
-		focus = {
-		id = purgethecrownloyalists
-		icon = GFX_goal_generic_war_with_comintern
-		ai_will_do = { factor = 25 }
- 		x =9
- 		y =3
- 		mutually_exclusive = { }
- 		prerequisite = { focus = forgeanewdynasty  focus = gondorhasnoking}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			add_stability = -0.05
-			add_popularity = { ideology = belligerent popularity = 0.02 }
-			add_popularity = { ideology = revolutionary popularity = 0.1 }
-			add_popularity = { ideology = unaligned popularity = 0.02 }
-			add_popularity = { ideology = cooperative popularity = -0.05 }
-		}
- }
-
- #Focus for Assasinate Aragorn
-		focus = {
-		id = assasinatearagorn
-		icon = GFX_goal_generic_major_war
-		ai_will_do = { factor = 25 }
-		available = { has_global_flag = fellowship_departed }
- 		x =10
- 		y =4
- 		mutually_exclusive = { }
- 		prerequisite = { focus = forgeanewdynasty }
-		prerequisite = { focus = purgethecrownloyalists }
- 		cost = 10
-  	available_if_capitulated = yes
+	focus = {
+		id = GON_change_the_law
+		icon = GFX_goal_generic_forceful_treaty
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_delegitimize_aragorns_claim }
+		relative_position_id = GON_delegitimize_aragorns_claim
+		x = -1
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			add_stability = -0.1
-			set_global_flag = aragorn_dead
-		}
- }
-
- #Focus for Seek out the spooky ghosts
-		focus = {
-		id = seekoutthespookyghosts
-		icon = GFX_goal_ghost_army
-		ai_will_do = { factor = 100 }
-		available = { 163 = { is_controlled_by = GON } NOT = {has_government = belligerent} RIV = { has_completed_focus = reforgethebladeofnarsil } has_war = yes }
- 		x =4
- 		y =4
- 		mutually_exclusive = { }
- 		prerequisite = { focus = declarearagorntherightfulheir}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			news_event = { hours = 12 id = news.365 }
-			create_corps_commander = {
-				name = "King of the Dead"
-				picture = "Portrait_Gondor_Dead.dds"
-				traits = { commando }
-				skill = 5
-				attack_skill = 5
-				defense_skill = 5
-				planning_skill = 1
-				logistics_skill = 5
+			add_political_power = 100
+			if = {
+				limit = {
+					has_idea = weak_centralization
+				}
+				swap_ideas = {
+					remove_idea = weak_centralization
+					add_idea = moderate_centralization
+				}
 			}
-			load_oob = "GON_Ghosts"
+			else_if = {
+				limit = {
+					has_idea = moderate_centralization
+				}
+				swap_ideas = {
+					remove_idea = moderate_centralization
+					add_idea = strong_centralization
+				}
+			}
+
 		}
- }
+	}
 
- #Focus for Invite Aragorn into Minas Tirith
-		focus = {
-		id = invitearagornintominastirith
-		icon = GFX_goal_generic_national_unity
-		ai_will_do = { factor = 10 }
- 		x =6
- 		y =4
- 		mutually_exclusive = { }
- 		prerequisite = { focus = getridofdenethor}
-  	prerequisite = { focus =declarearagorntherightfulheir}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = { add_political_power = 100 }
- }
-
- #Focus for The People shall rule
-		focus = {
-		id = thepeopleshallrule
-		icon = GFX_goal_tfv_burn_the_royal_portraits
-		ai_will_do = { factor = 100 }
-		available = { revolutionary > 0.4 }
- 		x =8
- 		y =4
- 		mutually_exclusive = { }
-		cancel_if_invalid = no
- 	  continue_if_invalid = yes
- 		prerequisite = { focus = gondorhasnoking }
-		prerequisite = { focus = purgethecrownloyalists }
- 		cost = 10
-  	available_if_capitulated = yes
+	focus = {
+		id = GON_purge_the_crown_loyalists
+		icon = GFX_goal_generic_political_pressure
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_delegitimize_aragorns_claim }
+		relative_position_id = GON_delegitimize_aragorns_claim
+		x = 1
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
 		completion_reward = {
-			set_politics = { ruling_party = revolutionary elections_allowed = no }
-			remove_ideas = GON_kingdom_without_king
+			add_stability = -0.1
+			add_popularity = {
+				ideology = unaligned
+				popularity = 0.05
+			}
+			add_popularity = {
+				ideology = revolutionary
+				popularity = 0.05
+			}
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.05
+			}
+			if = {
+				limit = { denethor_is_leader = yes }
+				denethor_gets_less_paranoid = yes
+			}
 		}
- }
+	}
 
-#Focus for A new King
-		focus = {
-		id = anewking
+	focus = {
+		id = GON_enforce_militair_loyalty
+		icon = GFX_goal_generic_intelligence_exchange
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_purge_the_crown_loyalists }
+		prerequisite = { focus = GON_change_the_law }
+		relative_position_id = GON_purge_the_crown_loyalists
+		x = -1
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		completion_reward = {
+			army_experience = 25
+			if = {
+				limit = { denethor_is_leader = yes }
+				denethor_gets_less_paranoid = yes
+			}
+		}
+	}
+
+	focus = {
+		id = GON_gondor_propaganda
+		icon = GFX_goal_gon_dam_propaganda
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_enforce_militair_loyalty }
+		relative_position_id = GON_enforce_militair_loyalty
+		available = {
+			DAM = { is_subject_of = ROOT }
+		}
+		x = -2
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			DAM = {
+				add_popularity = {
+					ideology = unaligned
+					popularity = 0.075
+				}
+			}
+			custom_effect_tooltip = "Lowers the change of Dol Amroth leaving Gondor"
+			hidden_effect = {
+				DAM = {
+					set_country_flag = denethor_supporters
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_install_loyal_government_DAM
+		icon = GFX_goal_dol_amroth
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_gondor_propaganda }
+		relative_position_id = GON_gondor_propaganda
+		available = {
+			DAM = { is_subject_of = ROOT }
+		}
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			DAM = {
+				add_stability = -0.1
+				retire_country_leader = yes
+				add_country_leader_role = {
+					character = DAM_amrothos
+					promote_leader = yes
+					country_leader = {
+						ideology = isolationist
+						expire = "1980.1.1"
+						traits = {  }
+					}
+				}
+				add_popularity = {
+					ideology = unaligned
+					popularity = 0.1
+				}
+			}
+			custom_effect_tooltip = "Ensures Dol Amroth not leaving Gondor"
+		}
+	}
+
+	focus = {
+		id = GON_publish_statement
+		icon = GFX_goal_generic_propaganda
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_enforce_militair_loyalty }
+		relative_position_id = GON_enforce_militair_loyalty
+		x = 0
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			news_event = { hours = 12 id = news.398 }
+			add_political_power = 100
+		}
+	}
+
+	focus = {
+		id = GON_the_steward_of_gondor
 		icon = GFX_focus_rom_royal_dictatorship
 		ai_will_do = { factor = 100 }
-		available = { cooperative > 0.5 }
- 		x =10
- 		y =5
- 		mutually_exclusive = { }
- 		prerequisite = { focus = assasinatearagorn}
- 		cost = 10
-  	available_if_capitulated = yes
+		available = { unaligned > 0.75 }
+		prerequisite = { focus = GON_publish_statement }
+		mutually_exclusive = { focus = GON_gondor_needs_no_king }
+		relative_position_id = GON_publish_statement
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_MANPOWER FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
 		completion_reward = {
-			remove_ideas = GON_kingdom_without_king
-			news_event = { hours = 12 id = news.368 }
-			set_politics = { ruling_party = cooperative elections_allowed = no }
-			retire_country_leader = yes
-			if = {
-				limit = { NOT = { has_global_flag = denethor_dead } }
-				create_country_leader = { name = "King Denethor II" picture = "Portrait_Gondor_Denethor.dds" expire = "3080.1.1" ideology = protective traits = { } }
-				else = {
-					if = {
-						limit = { NOT = { has_global_flag = boromir_dead } }
-						create_country_leader = { name = "King Boromir" picture = "Portrait_Gondor_Boromir.dds" expire = "3080.1.1" ideology = protective traits = { } }
-						else = {
-							if = {
-								limit = { NOT = { has_global_flag = faramir_dead } }
-								create_country_leader = { name = "King Faramir" picture = "Portrait_Gondor_Faramir.dds" expire = "3080.1.1" ideology = federative traits = { } }
-							}
-						}
+			swap_ideas = {
+				remove_idea = GON_kingdom_without_king_1
+				add_idea = GON_defeatist_0
+			}
+			remove_denethor_paranoid = yes
+			hidden_effect = {
+				if = {
+					limit = {
+						DAM = { is_puppet = yes }
+						the_other_gondor_does_not_exist = yes
+					}
+					DAM = {
+						country_event = dolamroth.1
 					}
 				}
 			}
 		}
- }
+	}
 
- #Focus for An Alliance of Men
-		focus = {
-		id = anallianceofmen
-		icon = GFX_goal_tfv_strengthen_commonwealth_ties
+	focus = {
+		id = GON_rally_the_nation
+		icon = GFX_goal_generic_demand_territory
 		ai_will_do = { factor = 100 }
-		bypass = { is_in_faction_with = ROH }
-		available = { ROH = { has_government = cooperative } if = { limit = { has_completed_focus = lightthebeacons } has_global_flag = beacons_accepted } }
- 		x =13
- 		y =5
- 		mutually_exclusive = { }
- 		prerequisite = { focus = lightthebeacons focus = allowrohantohireithiliansoldiers}
- 		cost = 10
-  	available_if_capitulated = yes
+		available = { has_idea = GON_defeatist_0 }
+		prerequisite = { focus = GON_the_steward_of_gondor }
+		relative_position_id = GON_the_steward_of_gondor
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available_if_capitulated = yes
 		completion_reward = {
-				add_to_faction = ROH
+			decrease_defeatist = yes
+			if = {
+				limit = {
+					has_idea = priviledged_service
+				}
+				swap_ideas = {
+					remove_idea = priviledged_service
+					add_idea = volunteer_service
+				}
+			}
 		}
- }
+	}
 
- #Focus for Technology Sharing
-		focus = {
-		id = geo_technologysharing
-		icon = GFX_goal_generic_scientific_exchange
+	focus = {
+		id = GON_researcher_of_Gondor
+		icon = GFX_goal_tfv_generic_tech_sharing
+		ai_will_do = { factor = 100 }
+		prerequisite = { focus = GON_rally_the_nation }
+		relative_position_id = GON_rally_the_nation
+		x = -2
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = lotr_labour_bonus
+				bonus = 1.0
+				uses = 2
+				category = lotr_labour
+			}
+			add_tech_bonus = {
+				name = lotr_knowledge_bonus
+				bonus = 1.0
+				uses = 1
+				category = lotr_knowledge
+			}
+			add_tech_bonus = {
+				name = lotr_knowledge_alchemy_bonus
+				bonus = 0.5
+				uses = 1
+				category = lotr_knowledge_alchemy
+			}
+		}
+	}
+
+	
+	focus = {
+		id = GON_wisdom_of_men_kind
+		icon = GFX_focus_research
+		ai_will_do = { factor = 100 }
+		prerequisite = { focus = GON_researcher_of_Gondor }
+		relative_position_id = GON_researcher_of_Gondor
+		available = {
+			num_of_factories > 75
+		}
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_research_slot = 1
+		}
+	}
+
+	focus = {
+		id = GON_in_memory_of_faramir
+		icon = GFX_goal_faramir
+		ai_will_do = { factor = 100 }
+		available = {
+			has_global_flag = faramir_dead
+		}
+		prerequisite = { focus = GON_the_steward_of_gondor }
+		relative_position_id = GON_the_steward_of_gondor
+		x = -2
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_ARMY_XP FOCUS_FILTER_WAR_SUPPORT }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_stability = 0.10
+			add_war_support = 0.10
+			army_experience = 25
+		}
+	}
+
+	focus = {
+		id = GON_invest_in_the_industry
+		icon = GFX_goal_generic_windmile
+		ai_will_do = { factor = 100 }
+		available = { 
+			OR = {
+				has_idea = GON_defeatist_1 
+				has_government = revolutionary
+			}
+		}
+		prerequisite = { focus = GON_rally_the_nation focus = GON_purge_the_aristocracy }
+		relative_position_id = GON_rally_the_nation
+		x = 1
+		y = 4
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			decrease_defeatist = yes
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_militair_industry
+		icon = GFX_goal_generic_anvil
+		ai_will_do = { factor = 100 }
+		prerequisite = { focus = GON_invest_in_the_industry }
+		relative_position_id = GON_invest_in_the_industry
+		mutually_exclusive = { focus = GON_civilian_industry }
+		x = -1
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_civilian_industry
+		icon = GFX_focus_generic_industry_2
+		ai_will_do = { factor = 100 }
+		prerequisite = { focus = GON_invest_in_the_industry }
+		relative_position_id = GON_invest_in_the_industry
+		mutually_exclusive = { focus = GON_militair_industry }
+		x = 1
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_expand_farming_industry
+		icon = GFX_focus_SOV_merge_plants
+		ai_will_do = { factor = 100 }
+		prerequisite = { focus = GON_civilian_industry focus = GON_militair_industry }
+		relative_position_id = GON_civilian_industry
+		x = -1
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			modify_building_resources = {
+				building = synthetic_refinery
+				resource = oil
+				amount = 1
+			}
+		}
+	}
+
+	focus = {
+		id = GON_never_ending_production
+		icon = GFX_focus_generic_industry_3
+		ai_will_do = { factor = 100 }
+		prerequisite = { focus = GON_expand_farming_industry }
+		relative_position_id = GON_expand_farming_industry
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = GON_never_ending_production
+		}
+	}
+
+	focus = {
+		id = GON_restructure_the_army
+		icon = GFX_focus_generic_military_academy
+		ai_will_do = { factor = 100 }
+		available = { has_idea = GON_defeatist_2 }
+		prerequisite = { focus = GON_rally_the_nation }
+		relative_position_id = GON_rally_the_nation
+		x = 0
+		y = 2
+		cost = 10
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_ARMY_XP }
+		available_if_capitulated = yes
+		completion_reward = {
+			decrease_defeatist = yes
+			army_experience = 25
+		}
+	}
+
+	focus = {
+		id = GON_steward_of_the_people
+		icon = GFX_goal_denethor
+		ai_will_do = { factor = 100 }
+		available = { unaligned > 0.85 }
+		prerequisite = { focus = GON_restructure_the_army }
+		relative_position_id = GON_restructure_the_army
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = GON_steward_of_the_people
+		}
+	}
+
+	#Focus for Honor Isildur's legacy
+	focus = {
+		id = GON_honor_isildurs_legacy
+		icon = GFX_focus_rom_royal_dictatorship
+		ai_will_do = { factor = 15 }
+		x = 0
+		y = 0
+		cost = 10
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
+		mutually_exclusive = { focus = GON_delegitimize_aragorns_claim  }
+		bypass = {
+			has_government = cooperative
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = GON_isildur_legacy
+			add_political_power = 50
+		}
+	}
+
+	focus = {
+		id = GON_prepare_for_the_king_return
+		icon = GFX_goal_generic_national_unity
+		ai_will_do = { factor = 5 }
+		relative_position_id = GON_honor_isildurs_legacy
+		prerequisite = { focus = GON_honor_isildurs_legacy}
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
+		bypass = {
+			has_government = cooperative
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			add_popularity = {
+				ideology = cooperative
+				popularity = 0.05
+			}
+			swap_ideas = {
+				remove_idea = GON_kingdom_without_king_0
+				add_idea = GON_kingdom_without_king_1
+			}
+		}
+	}
+
+	focus = {
+		id = GON_rally_support_from_the_people
+		icon = GFX_goal_generic_demand_territory
+		ai_will_do = { 
+			factor = 6 
+			modifier = {
+				add = 3
+				ring_aragorn_in_fellowship = no
+				ring_aragorn_is_dead = no
+			}
+		}
+		relative_position_id = GON_prepare_for_the_king_return
+		x = -2
+		y = 1
+		prerequisite = { focus = GON_prepare_for_the_king_return }
+		cost = 5
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_stability = 0.05
+			add_popularity = {
+				ideology = cooperative
+				popularity = 0.05
+			}
+		}
+	}
+
+	focus = {
+		id = GON_limit_denethor_militair_power
+		icon = GFX_goal_generic_allies_build_infantry
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				add = 3
+				could_denethor_paranoid_be_decreased = yes
+			}
+			modifier = {
+				add = 3
+				ring_aragorn_in_fellowship = no
+				ring_aragorn_is_dead = no
+			}
+		}
+		relative_position_id = GON_prepare_for_the_king_return
+		x = 0
+		y = 1
+		prerequisite = { focus = GON_prepare_for_the_king_return }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			denethor_gets_less_paranoid = yes
+			add_timed_idea = { idea = GON_idea_restructure_the_army  days = 100 }
+			add_popularity = { ideology = cooperative popularity = 0.025 }
+		}
+	}
+
+	focus = {
+		id = GON_limit_denethor_political_power
+		icon = GFX_goal_generic_propaganda
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				add = 3
+				could_denethor_paranoid_be_decreased = yes
+			}
+			modifier = {
+				add = 3
+				ring_aragorn_in_fellowship = no
+				ring_aragorn_is_dead = no
+			}
+		}
+		relative_position_id = GON_prepare_for_the_king_return
+		x = 2
+		y = 1
+		prerequisite = { focus = GON_prepare_for_the_king_return }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			denethor_gets_less_paranoid = yes
+			add_political_power = -50
+			add_popularity = { ideology = cooperative popularity = 0.025 }
+		}
+	}
+
+	#Focus for Declare Aragorn the rightful heir
+	focus = {
+		id = GON_declare_aragorn_the_rightful_heir
+		icon = GFX_goal_king_aragorn
 		ai_will_do = { factor = 10 }
- 		x =13
- 		y =6
- 		mutually_exclusive = { }
- 		prerequisite = { focus = anallianceofmen}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-				add_ideas = GON_tech_sharing
-				ROH = { add_ideas = GON_tech_sharing }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = ring_aragorn_is_alive_tt
+				NOT = { ring_aragorn_is_dead = yes }
+			}
+			OR = {
+				has_global_flag = fs_ring_seized
+				has_global_flag = fs_arrived_in_rivendell
+			}
 		}
- }
+		relative_position_id = GON_limit_denethor_militair_power
+		x = 0
+		y = 1
+		prerequisite = { focus = GON_limit_denethor_militair_power }
+		prerequisite = { focus = GON_limit_denethor_political_power }
+		prerequisite = { focus = GON_rally_support_from_the_people }
+		cost = 10
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_popularity = { ideology = cooperative popularity = 0.05 }
+			add_stability = 0.05
+			add_political_power = 100
+			denethor_gets_more_paranoid = yes
+		}
+	}
 
- #Focus for Betray Elrond's Council
-		focus = {
-		id = betrayelrondscouncil
-		icon = GFX_goal_anti_comintern_pact
+	focus = {
+		id = GON_persuade_aragorn_to_come_to_Gondor
+		icon = GFX_focus_hun_elect_a_king
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				add = 10
+				date > "3020.5.5"
+			}
+			modifier = {
+				add = 10
+				has_war = yes
+			}
+		}
+		relative_position_id = GON_declare_aragorn_the_rightful_heir
+		prerequisite = { focus = GON_declare_aragorn_the_rightful_heir }
+		prerequisite = { focus = GON_send_faramir_with_the_fellowship }
+		x = 2
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = fs_aragorn_in_fellowship
+				ring_aragorn_in_fellowship = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = ring_aragorn_is_alive_tt
+				NOT = { ring_aragorn_is_dead = yes }
+			}
+		}
+		completion_reward = {
+			random_list = {
+				65 = {
+					SHI = {
+						if = {
+							limit = {
+								FS_aragorn = { ring_is_fs_member = yes }
+							}
+
+							add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+							add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+							add_to_array = { global.fs_eventlog = token:fs_event_aragorn_leaves_for_gondor }
+							ring_trim_eventlog = yes
+
+							FS_aragorn = { ring_remove_member_from_fellowship = yes }
+						}
+					}
+					set_global_flag = aragorn_persuaded
+					custom_effect_tooltip = GON_aragorn_leaves_the_fellowship
+				}
+				35 = {
+					add_political_power = -100
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_send_help_towards_aragorn
+		icon = GFX_focus_hun_elect_a_king
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_limit_denethor_political_power
+		x = 0
+		y = 1
+		prerequisite = { focus = GON_limit_denethor_political_power }
+		cost = 5
+		available_if_capitulated = yes
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = fs_aragorn_in_fellowship
+				ring_aragorn_in_fellowship = yes
+			}
+		}
+		completion_reward = {
+			if = {
+				limit = {
+					ring_aragorn_in_fellowship = yes
+				}
+				custom_effect_tooltip = GON_send_help_towards_aragorn_tooltip
+				SHI = {
+					FS_aragorn = {
+						ring_heal_fellowship_member = yes
+					}
+				}
+			}
+		}
+	}
+
+	#Focus for Invite Aragorn into Minas Tirith
+	focus = {
+		id = GON_invite_aragorn_to_minas_tirith
+		icon = GFX_goal_generic_national_unity
+		dynamic = yes
+		ai_will_do = { factor = 15 }
+		relative_position_id = GON_declare_aragorn_the_rightful_heir
+		x = 0
+		y = 1
+		available = {
+			if = {
+				limit = {
+					ring_aragorn_is_dead = no
+				}
+				cooperative > 0.4
+				custom_trigger_tooltip = {
+					tooltip = ring_aragorn_is_alive_tt
+					NOT = { ring_aragorn_is_dead = yes }
+				}
+				custom_trigger_tooltip = {
+					tooltip = ring_aragorn_not_in_fellowship_tt
+					NOT = { ring_aragorn_in_fellowship = yes }
+				}
+			}else = {
+					custom_trigger_tooltip = {
+					tooltip = ring_aragorn_is_dead_tt
+					ring_aragorn_is_dead = yes
+				}
+			}
+		}
+		prerequisite = { focus = GON_declare_aragorn_the_rightful_heir}
+		cost = 5
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		available_if_capitulated = yes
+		completion_reward = {
+			if = {
+				limit = {
+					ring_aragorn_is_dead = yes
+				}
+				complete_national_focus = GON_enforce_militair_loyalty
+				add_popularity = {
+					ideology = unaligned
+					popularity = 0.15
+				}
+				add_timed_idea = { idea = generic_unaligned days = 356 }
+				add_stability = -0.05
+			}else = {
+				add_stability = 0.10
+				add_political_power = 100
+				add_popularity = { ideology = cooperative popularity = 0.05 }
+			}
+		}
+	}
+
+	#Focus for Crown Aragorn King of Gondor
+	focus = {
+		id = GON_crown_aragorn_king
+		icon = GFX_goal_king_aragorn
+		ai_will_do = { factor = 15 }
+		relative_position_id = GON_invite_aragorn_to_minas_tirith
+		prerequisite = { focus = GON_invite_aragorn_to_minas_tirith}
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_MANPOWER FOCUS_FILTER_INDUSTRY FOCUS_FILTER_WAR_SUPPORT}
+		available = {
+			cooperative > 0.5
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			remove_ideas = GON_kingdom_without_king_1
+			news_event = { hours = 12 id = news.366 }
+			create_country_leader = { name = "King Aragorn" picture = "Portrait_Gondor_Aragorn.dds" expire = "3080.1.1" ideology = protective traits = { patriot_king GON_isildur_heir } }
+			set_politics = {
+				ruling_party = cooperative
+				elections_allowed = no
+			}
+			add_ideas=  GON_denethor_loyalists
+			set_country_flag = GON_aragorn_crowned_king
+			remove_denethor_paranoid = yes
+		}
+	}
+
+	focus = {
+		id = GON_ban_denethor_loyalists
+		icon = GFX_goal_denethor
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_crown_aragorn_king
+		available = { has_idea =  GON_denethor_loyalists }
+		x = -2
+		y = 1
+		prerequisite = { focus = GON_crown_aragorn_king }
+		cost = 10
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY }
+		available_if_capitulated = yes
+		completion_reward = {
+			remove_ideas =  GON_denethor_loyalists
+		}
+	}
+
+	focus = {
+		id = GON_invest_industry_dol_amroth
+		icon = GFX_goal_generic_windmile
+		ai_will_do = { factor = 10 }
+		relative_position_id = GON_crown_aragorn_king
+		prerequisite = { focus = GON_crown_aragorn_king }
+		x = 2
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			DAM = {
+				add_autonomy_ratio = {
+					value = -0.1
+				}
+				random_owned_state = {
+					add_extra_state_shared_building_slots = 3
+					add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+				}
+				random_owned_state = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_invest_navy_dol_amroth
+		icon = GFX_goal_generic_construct_naval_dockyard
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_invest_industry_dol_amroth
+		prerequisite = { focus = GON_invest_industry_dol_amroth }
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			DAM = {
+				add_autonomy_ratio = {
+					value = -0.1
+				}
+				224 = {
+					add_extra_state_shared_building_slots = 2
+					add_building_construction = { type = dockyard level = 2 instant_build = yes }
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_restore_the_kingdom_of_gondor
+		icon = GFX_focus_generic_home_defense
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_crown_aragorn_king
+		x = 0
+		y = 2
+		prerequisite = { focus = GON_crown_aragorn_king }
+		cost = 10
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_MANPOWER FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = GON_kingdom_of_gondor
+		}
+	}
+
+	focus = {
+		id = GON_wed_faramir_to_eowyn
+		icon = GFX_goal_gon_wed_faramir_to_eowyn
+		ai_will_do = { 
+			factor = 3 
+			modifier = {
+				add = 3
+				ROH = {
+					has_government = cooperative
+				}
+			}
+		}
+		relative_position_id = GON_restore_the_kingdom_of_gondor
+		x = -2
+		y = 1
+		prerequisite = { focus = GON_restore_the_kingdom_of_gondor }
+		available = {
+			GON_faramir = { is_unit_leader = yes }
+			ROH = {
+				NOT = {
+					has_completed_focus = wedgrimatoeowyn
+				}
+			}
+		}
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			# Add idea to GON/ROH: royal marriage
+			add_relation_modifier = {
+    			target = ROH
+    			modifier = faramir_eowyn_marriage
+			}
+
+			ROH = {
+				add_relation_modifier = {
+					target = GON
+					modifier = faramir_eowyn_marriage
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_increase_bonds_with_the_kingdoms_of_arnor
+		icon = GFX_goal_generic_national_unity
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_restore_the_kingdom_of_gondor
+		x = 0
+		y = 1
+		prerequisite = { focus = GON_restore_the_kingdom_of_gondor }
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			if = {
+				limit = {
+					has_country_flag = ART_established_arnor
+				}
+				add_opinion_modifier = { target = ART modifier = medium_increase }
+			}
+			else = {
+				add_opinion_modifier = { target = ART modifier = medium_increase }
+				add_opinion_modifier = { target = CAR modifier = medium_increase }
+				add_opinion_modifier = { target = RHD modifier = medium_increase }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_prepose_unification
+		icon = GFX_goal_generic_improve_relations
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_increase_bonds_with_the_kingdoms_of_arnor
+		x = -1
+		y = 1
+		prerequisite = { focus = GON_increase_bonds_with_the_kingdoms_of_arnor }
+		mutually_exclusive = { focus = GON_demand_reinstate_kingdom_of_arnor }
+		available = {
+			ART = {
+				has_country_flag = ART_established_arnor
+				is_puppet = no
+			}
+			is_in_faction = yes
+		}
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			ART = {
+				country_event = { id = arthedain.8 }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_demand_reinstate_kingdom_of_arnor
+		icon = GFX_goal_arnor
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_increase_bonds_with_the_kingdoms_of_arnor
+		x = 1
+		y = 1
+		prerequisite = { focus = GON_increase_bonds_with_the_kingdoms_of_arnor }
+		mutually_exclusive = { focus = GON_prepose_unification }
+		cost = 10
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available_if_capitulated = yes
+		completion_reward = {
+			ART = {
+				country_event = { id = arthedain.9}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_defender_of_the_free_people
+		icon = GFX_focus_generic_support_the_left_right
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_restore_the_kingdom_of_gondor
+		prerequisite = { focus = GON_restore_the_kingdom_of_gondor }
+		x = 3
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = GON_defender_of_middle_earth
+		}
+	}
+
+	focus = {
+		id = GON_everyone_is_welcome
+		icon = GFX_focus_generic_diplomatic_treaty
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_defender_of_the_free_people
+		prerequisite = { focus = GON_defender_of_the_free_people }
+		x = 0
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			every_other_country = {
+				limit = {
+					OR = {
+						has_government = cooperative
+						has_government = unaligned
+					}
+					is_in_faction = no
+					is_subject = no
+					NOT = { tag = NEP }
+					NOT = {
+						has_war_with = GON
+						is_in_faction_with = GON
+					}
+				}
+				random_select_amount = 3 # Let's keep things under control
+				country_event = gondor.23
+			}
+		}
+	}
+
+	focus = {
+		id = GON_defeat_evil_once_and_for_all
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_everyone_is_welcome
+		prerequisite = { focus = GON_everyone_is_welcome }
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available_if_capitulated = yes
+		completion_reward = {
+			every_other_country = {
+				limit = {
+					has_government = belligerent
+					has_added_tension_amount > 5
+					NOT = { tag = NEP }
+				}
+				random_select_amount = 4
+				create_wargoal = { target = PREV type = topple_government }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_historical_claims
+		icon = GFX_goal_gon_historical_claims
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_restore_the_kingdom_of_gondor
+		prerequisite = { focus = GON_restore_the_kingdom_of_gondor focus = GON_restructure_the_army }
+		x = 9
+		y = 1
+		cost = 10
+		available = {
+			the_other_gondor_does_not_exist = yes
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			# Gain a little collab in orthanc, MMO and arnor
+			add_collaboration = { target = MMO value = 0.15 }
+			add_collaboration = { target = ISE value = 0.15 }
+			add_collaboration = { target = ART value = 0.15 }
+			add_collaboration = { target = CAR value = 0.15 }
+			add_collaboration = { target = RHD value = 0.15 }
+		}
+	}
+
+	focus = {
+		id = GON_attack_before_being_attack
+		icon = GFX_wargoal_mordor
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				factor = 10
+				date > "3022.1.1"
+				has_war = no
+			}
+		}
+		relative_position_id = GON_historical_claims
+		prerequisite = { focus = GON_historical_claims }
+		x = -2
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			MOR = {
+				OR = {
+					exists = yes
+					is_puppet = no
+					has_government = belligerent
+					has_government = revolutionary
+				}
+			}
+			the_other_gondor_does_not_exist = yes
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			create_wargoal = {
+				type = puppet_wargoal_focus target = MOR
+			}
+		}
+	}
+
+	focus = {
+		id = GON_restore_minas_ithil
+		icon = GFX_goal_generic_improve_relations
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_attack_before_being_attack
+		prerequisite = { focus = GON_attack_before_being_attack }
+		mutually_exclusive = { focus = GON_annex_minas_ithil }
+		x = -1
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			controls_state = 5
+			the_other_gondor_does_not_exist = yes
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			puppet = MMO
+		}
+	}
+
+	focus = {
+		id = GON_annex_minas_ithil
+		icon = GFX_goal_generic_territory_or_war
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_attack_before_being_attack
+		prerequisite = { focus = GON_attack_before_being_attack }
+		mutually_exclusive = { focus = GON_restore_minas_ithil }
+		x = 1
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			controls_state = 5
+			the_other_gondor_does_not_exist = yes
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			add_state_core = 5
+		}
+	}
+
+	focus = {
+		id = GON_reclaim_orthanc
+		icon = GFX_goal_orthanc_destroyed
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_historical_claims
+		prerequisite = { focus = GON_historical_claims }
+		x = 2
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = {
+			ISE = {
+				owns_state = 31
+			}
+			the_other_gondor_does_not_exist = yes
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			if = {
+				limit = {
+					ISE = {
+						has_government = belligerent
+					}
+				}
+				create_wargoal = {
+					type = annex_everything
+					target = ISE
+				}
+			}
+			else = {
+				ISE = {
+					country_event = { id = isengard.13 }
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_reintergrate_orthanc
+		icon = GFX_goal_generic_position_armies
+		ai_will_do = { factor = 30 }
+		relative_position_id = GON_reclaim_orthanc
+		prerequisite = { focus = GON_reclaim_orthanc }
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ANNEXATION FOCUS_FILTER_MANPOWER }
+		available = {
+			owns_state = 31
+			the_other_gondor_does_not_exist = yes
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			add_state_core = 31
+		}
+	}
+
+	focus = {
+		id = GON_send_boromir_with_the_fellowship
+		icon = GFX_goal_boromir
+		ai_will_do = { factor = 100 }
+		available = { has_global_flag = fs_gondor_boromir }
+		relative_position_id = GON_honor_isildurs_legacy
+		x = 9
+		y = 3
+		mutually_exclusive = { focus = GON_send_faramir_with_the_fellowship}
+		cost = 0
+		available_if_capitulated = yes
+		completion_reward = {
+			custom_effect_tooltip = MOR_event_triggert_focus
+		}
+
+	}
+
+	focus = {
+		id = GON_have_boromir_steal_the_ring
+		icon = GFX_goal_the_one_ring
+		ai_will_do = { factor = 70 }
+		available = {
+			always = no
+			the_other_gondor_does_not_exist = yes
+		}
+		prerequisite = { focus = GON_send_boromir_with_the_fellowship}
+		relative_position_id = GON_send_boromir_with_the_fellowship
+		x = 0
+		y = 1
+		cost = 2
+		available_if_capitulated = yes
+		completion_reward = { custom_effect_tooltip = MOR_event_triggert_focus }
+	}
+
+	focus = {
+		id = GON_betray_elronds_council
+		icon = GFX_goal_council_of_elrond
 		ai_will_do = { factor = 25 }
 		available = { has_global_flag = gondor_has_ring }
- 		x =2
- 		y =5
- 		mutually_exclusive = { }
- 		prerequisite = { focus = haveboromirstealthering}
- 		cost = 10
-  	available_if_capitulated = yes
+		prerequisite = { focus = GON_have_boromir_steal_the_ring}
+		prerequisite = { focus = GON_the_steward_of_gondor }
+		relative_position_id = GON_have_boromir_steal_the_ring
+		x = 0
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
 		completion_reward = {
 			RIV = { add_opinion_modifier = { target = GON modifier = geo_treason } }
 			MIR = { add_opinion_modifier = { target = GON modifier = geo_treason } }
 			ERE = { add_opinion_modifier = { target = GON modifier = geo_treason } }
 		}
- }
+	}
 
- #Focus for Crown Aragorn King of Gondor
-		focus = {
-		id = crownaragornkingofgondor
-		icon = GFX_focus_generic_home_defense
-		ai_will_do = { factor = 30 }
- 		x =6
- 		y =5
- 		mutually_exclusive = { }
-		dynamic = yes
- 		prerequisite = { focus = invitearagornintominastirith}
- 		cost = 10
-  	available_if_capitulated = yes
-		completion_reward = {
-			remove_ideas = GON_kingdom_without_king
-			if = {
-				limit = { NOT = { ring_aragorn_is_dead = yes } }
-				news_event = { hours = 12 id = news.366 }
-				create_country_leader = { name = "King Aragorn" picture = "Portrait_Gondor_Aragorn.dds" expire = "3080.1.1" ideology = protective traits = { patriot_king GON_isildur_heir } }
-			}
-			else = {
-				add_ideas = GON_restored_monarchy
-			}
-		}
- }
-
- #Focus for Take the Ring to Gondor
-		focus = {
-		id = taketheringtogondor
-		icon = GFX_goal_the_one_ring
-		ai_will_do = { factor = 50 }
-		available = { has_global_flag = gondor_has_ring }
- 		x =4
- 		y =6
- 		mutually_exclusive = { }
- 		prerequisite = { focus = betrayelrondscouncil}
-  	prerequisite = { focus =anewking focus = thepeopleshallrule}
- 		cost = 5
-  	available_if_capitulated = yes
-		completion_reward = { GON = { add_ideas = one_true_ring } }
- }
-
- #Focus for Strike a Deal with Sauron
-		focus = {
-		id = strikeadealwithsauron
+	focus = {
+		id = GON_strike_a_deal_with_sauron
 		icon = GFX_goal_sauron_eye
 		ai_will_do = { factor = 10 }
-		available = { any_country = { original_tag = MOR has_government = belligerent } }
- 		x =3
- 		y =7
- 		mutually_exclusive = { focus = formtheempireofgondor}
- 		prerequisite = { focus = taketheringtogondor}
- 		cost = 10
-  	available_if_capitulated = yes
+		available = {
+			MOR = {
+				has_government = belligerent
+			}
+		}
+		mutually_exclusive = { focus = GON_form_the_empire_of_gondor}
+		prerequisite = { focus = GON_betray_elronds_council}
+		relative_position_id = GON_betray_elronds_council
+		x = 1
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
 		completion_reward = {
 			news_event = { hours = 12 id = news.367 }
 			clr_global_flag = gondor_has_ring
@@ -718,273 +1324,239 @@ continuous_focus_position = { x = 50 y = 2000 }
 			}
 			remove_ideas = one_true_ring
 		}
- }
+	}
 
- #Focus for Form the Empire of Gondor
-		focus = {
-		id = formtheempireofgondor
+	focus = {
+		id = GON_form_the_empire_of_gondor
 		icon = GFX_goal_gondor
 		ai_will_do = { factor = 10 }
- 		x =5
- 		y =7
- 		mutually_exclusive = { focus = strikeadealwithsauron }
- 		prerequisite = { focus = taketheringtogondor}
- 		cost = 10
-  	available_if_capitulated = yes
+		mutually_exclusive = { focus = GON_strike_a_deal_with_sauron }
+		prerequisite = { focus = GON_betray_elronds_council}
+		relative_position_id = GON_betray_elronds_council
+		x = -1
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
 		completion_reward = {
 			set_cosmetic_tag = EOG
 		}
- }
+	}
 
-
-
-
-
-
-
-
- #Custom focuses start here
- #Focus for To the Skies!
- 		focus = {
- 		id = totheskies
- 		icon = GFX_goal_generic_build_airforce
- 		ai_will_do = { factor = 3 }
-  	x =30
-  	y =0
-  	mutually_exclusive = { }
-  	prerequisite = { }
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { air_experience = 25 }
-  }
-
-	#Focus for Battle for the Gondor Sea
- 		focus = {
- 		id = battleforthegondorsea
- 		icon = GFX_goal_generic_amphibious_assault
- 		ai_will_do = { factor = 4 }
-  	x =19
-  	y =0
-  	mutually_exclusive = { }
-  	prerequisite = { }
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { navy_experience = 25 }
-  }
-
-	#Focus for Military Rearmament
- 		focus = {
- 		id = geo_militaryrearmament
- 		icon = GFX_goal_generic_axis_build_infantry
- 		ai_will_do = { factor = 5 }
-  	x =25
-  	y =0
-  	mutually_exclusive = { }
-  	prerequisite = { }
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { army_experience = 25 }
-  }
-
-	#Focus for Industry Sector
- 		focus = {
- 		id = geo_industrysector
- 		icon = GFX_goal_generic_production2
- 		ai_will_do = { factor = 100 }
-  	x =34
-  	y =0
-  	mutually_exclusive = { }
-  	prerequisite = { }
-  	cost = 10
-   	available_if_capitulated = yes
+	focus = {
+		id = GON_send_faramir_with_the_fellowship
+		icon = GFX_goal_faramir
+		ai_will_do = { factor = 100 }
+		available = { has_global_flag = fs_gondor_faramir }
+		mutually_exclusive = { focus = GON_send_boromir_with_the_fellowship }
+		relative_position_id = GON_honor_isildurs_legacy
+		x = 5
+		y = 3
+		cost = 0
+		available_if_capitulated = yes
 		completion_reward = {
-			add_tech_bonus = {
-				name = industrial_bonus
-				bonus = 0.5
-				uses = 1
-				category = lotr_labour_construction_industry
+			custom_effect_tooltip = MOR_event_triggert_focus
+		}
+	}
+
+	focus = {
+		id = GON_strengthen_ties_with_angmar
+		icon = GFX_goal_gon_strengthen_ties_with_angmar
+		ai_will_do = { factor = 10 }
+		available = {
+			ring_faramir_in_fellowship = yes
+			custom_trigger_tooltip = {
+				tooltip = "The fellowship is currently in territory controlled by Angmar"
+				has_variable = var:global.fs_currentstate
+				var:global.fs_currentstate = {
+					is_controlled_by = ANG
+				}
 			}
 		}
-  }
+		prerequisite = { focus = GON_send_faramir_with_the_fellowship }
+		relative_position_id = GON_send_faramir_with_the_fellowship
+		mutually_exclusive = { focus = GON_rally_support_in_enedwaith }
+		x = 1
+		y = 2
+		cost = 2
+		available_if_capitulated = yes
+		completion_reward = {
+			# Generic Faramir diplo bonus
+			ANG = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = medium_increase
+				}
+			}
+			add_equipment_subsidy = {
+				cic = 500
+				equipment_type = infantry_equipment
+				seller_tags = { ANG } 
+			}
+		}
+	}
 
-	#Focus for Counter Haradwaith Forces
- 		focus = {
- 		id = counterharadwaithforces
- 		icon = GFX_goal_generic_attack_allies
- 		ai_will_do = { factor = 4 }
-  	x =23
-  	y =1
-  	mutually_exclusive = { }
-  	prerequisite = { focus = geo_militaryrearmament}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { army_experience = 50 }
-  }
+	focus = {
+		id = GON_rally_support_in_enedwaith
+		icon = GFX_goal_gon_rally_support_in_enedwaith
+		ai_will_do = { factor = 10 }
+		available = {
+			ring_faramir_in_fellowship = yes
+			custom_trigger_tooltip = {
+				tooltip = "The fellowship is currently in territory controlled by Enedwaith"
+				has_variable = var:global.fs_currentstate
+				var:global.fs_currentstate = {
+					is_controlled_by = ENE
+				}
+			}
+		}
+		prerequisite = { focus = GON_send_faramir_with_the_fellowship }
+		relative_position_id = GON_send_faramir_with_the_fellowship
+		mutually_exclusive = { focus = GON_strengthen_ties_with_angmar }
+		x = -1
+		y = 2
+		cost = 2
+		available_if_capitulated = yes
+		completion_reward = {
+			# Generic Faramir diplo bonus
+			ENE = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = medium_increase
+				}
+			}
+			add_equipment_subsidy = {
+				cic = 500
+				equipment_type = infantry_equipment
+				seller_tags = { ENE } 
+			}
+		}
+	}
 
-	#Focus for Submarine Effort
- 		focus = {
- 		id = submarineeffort
- 		icon = GFX_goal_generic_navy_submarine
- 		ai_will_do = { factor = 2 }
-  	x =17
-  	y =1
-  	prerequisite = { focus = battleforthegondorsea}
-  	cost = 10
-   	available_if_capitulated = yes
+	focus = {
+		id = GON_gain_favour_with_the_elves
+		icon = GFX_goal_gon_gain_favour_with_the_elves
+		ai_will_do = { factor = 10 }
+		available = {
+			ring_faramir_in_fellowship = yes
+			custom_trigger_tooltip = {
+				tooltip = "The fellowship is currently in territory controlled by Lothlórien"
+				has_variable = var:global.fs_currentstate
+				var:global.fs_currentstate = {
+					is_controlled_by = LTH
+				}
+			}
+		}
+		prerequisite = { focus = GON_send_faramir_with_the_fellowship }
+		relative_position_id = GON_send_faramir_with_the_fellowship
+		x = 0
+		y = 3
+		cost = 2
+		available_if_capitulated = yes
+		completion_reward = {
+			# Generic Faramir diplo bonus
+			LTH = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = medium_increase
+				}
+			}
+			add_equipment_subsidy = {
+				cic = 500
+				equipment_type = infantry_equipment
+				seller_tags = { LTH } 
+			}
+		}
+	}
+
+	#Focus for Battle for the Gondor Sea
+	focus = {
+		id = GON_white_sails_of_gondor
+		icon = GFX_goal_generic_amphibious_assault
+		ai_will_do = { factor = 3 }
+		x = 24
+		y = 0
+		cost = 5
+		search_filters = { FOCUS_FILTER_NAVY_XP }
+		available_if_capitulated = yes
+		completion_reward = { navy_experience = 25 }
+	}
+
+	#Focus for Destroyer Effort
+	focus = {
+		id = GON_strength_in_numbers
+		icon = GFX_goal_generic_navy_battleship
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_white_sails_of_gondor
+		x = -1
+		y = 1
+		prerequisite = { focus = GON_white_sails_of_gondor}
+		mutually_exclusive = { focus = GON_strength_in_quality }
+		cost = 10
+		search_filters = { FOCUS_FILTER_NAVY_XP }
+		available_if_capitulated = yes
 		completion_reward = {
 			navy_experience = 50
 			add_tech_bonus = {
-				name = ss_bonus
+				name = bc_bonus
 				bonus = 0.5
 				uses = 1
 				category = lotr_sailing_longship
 			}
-			add_tech_bonus = {
-				name = sub_op_bonus
-				bonus = 0.5
-				uses = 2
-				technology = submarine_operations
-				technology = undersea_blockade
-				technology = convoy_interdiction
-				technology = submarine_offensive
-			}
 		}
-  }
+	}
 
 	#Focus for Destroyer Effort
- 		focus = {
- 		id = destroyereffort
- 		icon = GFX_goal_generic_navy_anti_submarine
- 		ai_will_do = { factor = 2 }
-  	x =19
-  	y =1
-  	mutually_exclusive = { focus = destroyereffort}
-  	prerequisite = { focus = battleforthegondorsea}
-  	cost = 10
-   	available_if_capitulated = yes
+	focus = {
+		id = GON_strength_in_quality
+		icon = GFX_goal_generic_navy_battleship
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_white_sails_of_gondor
+		x = 1
+		y = 1
+		prerequisite = { focus = GON_white_sails_of_gondor}
+		mutually_exclusive = { focus = GON_strength_in_numbers }
+		cost = 10
+		search_filters = { FOCUS_FILTER_NAVY_XP }
+		available_if_capitulated = yes
 		completion_reward = {
-			navy_experience = 50
-				add_tech_bonus = {
-					name = bc_bonus
-					bonus = 0.5
-					uses = 1
-					category = lotr_sailing_sailingship
-				}
-				add_tech_bonus = {
-					name = bb_bonus
-					bonus = 0.5
-					uses = 1
-					technology = basic_battleship
-					technology = improved_battleship
-					technology = advanced_battleship
-					technology = heavy_battleship
-					technology = heavy_battleship2
-				}
-		 }
-  }
-
-#Focus for Coastal Defense Program
- 		focus = {
- 		id = coastaldefenseprogram
- 		icon = GFX_goal_generic_construct_naval_dockyard
- 		ai_will_do = { factor = 4 }
-		available = { 13 = { is_controlled_by = GON } 19 = { is_controlled_by = GON } }
-  	x =21
-  	y =1
-  	mutually_exclusive = { }
-  	prerequisite = { focus = battleforthegondorsea}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-				19 = { add_building_construction = {	type = coastal_bunker level = 7 instant_build = yes province = 4003 } }
-				13 = { add_building_construction = {	type = coastal_bunker level = 7 instant_build = yes province = 10891 } }
-				13 = { add_building_construction = {	type = coastal_bunker level = 7 instant_build = yes province = 13082 } }
-				13 = { add_building_construction = {	type = coastal_bunker level = 7 instant_build = yes province = 12774 } }
-				13 = { add_building_construction = {	type = coastal_bunker level = 7 instant_build = yes province = 2070 } }
-		}
-  }
-
-	#Focus for Expand Infantry
- 		focus = {
- 		id = expandinfantry
- 		icon = GFX_goal_generic_army_artillery
- 		ai_will_do = { factor = 2 }
-  	x =25
-  	y =1
-  	mutually_exclusive = { focus = expandcavalry}
-  	prerequisite = { focus = geo_militaryrearmament}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
+			navy_experience = 25
 			add_tech_bonus = {
-				name = infantry_weapons_bonus
+				name = bc_bonus
 				bonus = 0.5
 				uses = 1
-				category = lotr_infantry_weapons
+				category = lotr_sailing_sailingship
 			}
 		}
-  }
+	}
 
-	#Focus for Expand Cavalry
- 		focus = {
- 		id = expandcavalry
- 		icon = GFX_goal_generic_cavalry
- 		ai_will_do = { factor = 2 }
-  	x =27
-  	y =1
-  	mutually_exclusive = { focus = expandinfantry}
-  	prerequisite = { focus = geo_militaryrearmament}
-  	cost = 10
-   	available_if_capitulated = yes
-  }
-
-	#Focus for Improved Fighters
- 		focus = {
- 		id = improvedfighters
- 		icon = GFX_goal_generic_air_fighter
- 		ai_will_do = { factor = 2 }
-  	x =30
-  	y =1
-  	mutually_exclusive = { }
-  	prerequisite = { focus = totheskies}
-  	cost = 10
-   	available_if_capitulated = yes
+	focus = {
+		id = GON_coastal_protection
+		icon = GFX_focus_generic_coastal_fort
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_white_sails_of_gondor
+		x = 0
+		y = 3
+		prerequisite = { focus = GON_white_sails_of_gondor}
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
 		completion_reward = {
-			add_tech_bonus = {
-					name = fighter_bonus
-					bonus = 0.5
-					uses = 1
-					category = lotr_eagles
-					category = lotr_fellbeasts
-				}
-			}
-  }
+			add_ideas = GON_coastal_protection
+		}
+	}
 
-	#Focus for University of Minas Tirith
- 		focus = {
- 		id = universityofminastirith
- 		icon = GFX_focus_research
- 		ai_will_do = { factor = 100 }
-  	x =34
-  	y =1
-  	mutually_exclusive = { }
-  	prerequisite = { focus = geo_industrysector}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { add_research_slot = 1 }
-  }
 
 	#Focus for Improved Naval Strategies
- 		focus = {
- 		id = improvednavalstrategies
- 		icon = GFX_goal_generic_navy_battleship
- 		ai_will_do = { factor = 15 }
-  	x =18
-  	y =2
-  	mutually_exclusive = { }
-  	prerequisite = { focus = destroyereffort  focus = submarineeffort}
-  	cost = 10
-   	available_if_capitulated = yes
+	focus = {
+		id = GON_improved_naval_strategies
+		icon = GFX_goal_generic_navy_battleship
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_coastal_protection
+		x = 1
+		y = 1
+		prerequisite = { focus = GON_coastal_protection }
+		cost = 10
+		available_if_capitulated = yes
 		completion_reward = {
 			add_tech_bonus = {
 				name = naval_doc_bonus
@@ -993,392 +1565,19 @@ continuous_focus_position = { x = 50 y = 2000 }
 				category = naval_doctrine
 			}
 		}
-  }
-
-	#Focus for Anti-Oliphant Weapons
- 		focus = {
- 		id = antioliphantweapons
- 		icon = GFX_goal_generic_army_artillery2
- 		ai_will_do = { factor = 7 }
-  	x =23
-  	y =2
-  	mutually_exclusive = { }
-  	prerequisite = { focus = counterharadwaithforces}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-			add_tech_bonus = {
-				name = ROH_anti_tank_guns
-				bonus = 0.5
-				uses = 2
-				category = lotr_machines_ballista
-			}
-		}
-  }
-
-#Focus for Artillery Improvements
- 		focus = {
- 		id = artilleryimprovements
- 		icon = GFX_goal_generic_army_artillery2
- 		ai_will_do = { factor = 5 }
-  	x =25
-  	y =2
-  	mutually_exclusive = { }
-  	prerequisite = { focus = expandinfantry}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-			add_tech_bonus = {
-				name = ROH_artillery_modernisation
-				bonus = 0.5
-				uses = 1
-				category = lotr_infantry_archery
-			}
-		}
-  }
-
-	#Focus for Motirization Improvements
- 		focus = {
- 		id = motirizationimprovements
- 		icon = GFX_goal_generic_army_motorized
- 		ai_will_do = { factor = 4 }
-  	x =27
-  	y =2
-  	mutually_exclusive = { }
-  	prerequisite = { focus = expandcavalry}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-			add_tech_bonus = {
-					name = ROH_ride_of_the_rohirrim
-					bonus = 0.5
-					uses = 2
-					category = lotr_cavalry_carriages
-				}
-		}
-  }
-
-#Focus for Tactical Bombing
- 		focus = {
- 		id = tacticalbombing
- 		icon = GFX_goal_generic_air_bomber
- 		ai_will_do = { factor = 2 }
-  	x =29
-  	y =2
-  	mutually_exclusive = { focus = strategicbombing}
-  	prerequisite = { focus = improvedfighters}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-			add_doctrine_cost_reduction = {
-				cost_reduction = 0.75
-				uses = 1
-				category = battlefield_support_tree
-			}
-			add_tech_bonus = {
-				name = bomber_bonus
-				bonus = 0.5
-				uses = 1
-				category = lotr_eagles
-				category = lotr_fellbeasts
-			}
-		}
-  }
-
-	#Focus for Strategic Bombing
- 		focus = {
- 		id = strategicbombing
- 		icon = GFX_goal_poland_goal
- 		ai_will_do = { factor = 2 }
-  	x =31
-  	y =2
-  	mutually_exclusive = { focus = tacticalbombing}
-  	prerequisite = { focus = improvedfighters}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-			add_doctrine_cost_reduction = {
-				cost_reduction = 0.75
-				uses = 1
-				category = battlefield_support_tree
-			}
-			add_tech_bonus = {
-				name = bomber_bonus
-				bonus = 0.5
-				uses = 1
-				category = lotr_eagles
-				category = lotr_fellbeasts
-			}
-		}
-  }
-
-	#Focus for The Ends Justify the Means
- 		focus = {
- 		id = theendsjustifythemeans
- 		icon = GFX_goal_generic_political_pressure
- 		ai_will_do = { factor = 3 }
-  	x =33
-  	y =2
-  	mutually_exclusive = { focus = deontologicalethics}
-  	prerequisite = { focus = universityofminastirith}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { add_ideas = RIV_ends_justify_the_means }
-  }
-
-	#Focus for Deontological Ethics
- 		focus = {
- 		id = deontologicalethics
- 		icon = GFX_goal_generic_national_unity
- 		ai_will_do = { factor = 5 }
-  	x =35
-  	y =2
-  	mutually_exclusive = { focus = theendsjustifythemeans}
-  	prerequisite = { focus = universityofminastirith}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { add_stability = 0.1 }
-  }
-
-	#Focus for Carrier Effort
- 		focus = {
- 		id = carriereffort
- 		icon = GFX_goal_generic_navy_carrier
- 		ai_will_do = { factor = 2 }
-  	x =18
-  	y =3
-  	mutually_exclusive = { }
-  	prerequisite = { focus = improvednavalstrategies}
-  	cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_tech_bonus = {
-				bonus = 0.5
-				uses = 2
-				category = lotr_sailing
-			}
-		}
-  }
-
-	#Focus for Heavy Tank Improvements
- 		focus = {
- 		id = heavytankimprovements
- 		icon = GFX_goal_generic_army_tanks
- 		ai_will_do = { factor = 2 }
-  	x =25
-  	y =3
-  	mutually_exclusive = { }
-  	prerequisite = { focus = artilleryimprovements}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-	 		add_tech_bonus = {
-	 			name = cat_heavy_armor
-	 			bonus = 0.5
-	 			uses = 1
-	 			category = lotr_machines_siege_equipment
-	 		}
-	 	}
-  }
-
-	#Focus for Air Innovations
- 		focus = {
- 		id = geo_airinnovations
- 		icon = GFX_goal_generic_air_fighter2
- 		ai_will_do = { factor = 2 }
-  	x =31
-  	y =3
-  	mutually_exclusive = { }
-  	prerequisite = { focus = strategicbombing}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { air_experience = 200 }
-  }
-
-#Focus for Light Tank Improvements
- 		focus = {
- 		id = lighttankimprovements
- 		icon = GFX_goal_generic_army_tanks
- 		ai_will_do = { factor = 2 }
-  	x =27
-  	y =3
-  	mutually_exclusive = { }
-  	prerequisite = { focus = motirizationimprovements}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-				add_tech_bonus = {
-					name = cat_light_armor
-					ahead_reduction = 0.5
-					uses = 1
-					category = lotr_cavalry_light
-				}
-			}
-  }
-
-	#Focus for Naval Bombers
- 		focus = {
- 		id = navalbombers
- 		icon = GFX_goal_generic_air_naval_bomber
- 		ai_will_do = { factor = 2 }
-  	x =29
-  	y =3
-  	mutually_exclusive = { }
-  	prerequisite = { focus = tacticalbombing}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-			add_tech_bonus = {
-				name = nav_bomber_bonus
-				bonus = 0.5
-				uses = 1
-				category = lotr_eagles
-				category = lotr_fellbeasts
-			}
-		}
-  }
-
-	#Focus for Wartime Measures
- 		focus = {
- 		id = wartimemeasures
- 		icon = GFX_goal_generic_military_deal
- 		ai_will_do = { factor = 4 }
-  	x =33
-  	y =3
-  	mutually_exclusive = { }
-  	prerequisite = { focus = theendsjustifythemeans}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { add_ideas = GON_wartime_measures }
-  }
-
-	#Focus for Long Term Economic Plan
- 		focus = {
- 		id = longtermeconomicplan
- 		icon = GFX_goal_generic_scientific_exchange
- 		ai_will_do = { factor = 4 }
-  	x =35
-  	y =3
-  	mutually_exclusive = { }
-  	prerequisite = { focus = deontologicalethics}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { add_ideas = GON_long_term_economic_plan }
-  }
-
-	#Focus for The Faramir Doctrine
- 		focus = {
- 		id = thefaramirdoctrine
- 		icon = GFX_goal_generic_CAS
- 		ai_will_do = { factor = 7 }
-  	x =30
-  	y =4
-  	mutually_exclusive = { }
-  	prerequisite = { focus = geo_airinnovations  focus = navalbombers}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-			add_ideas = GON_faramir_doctrine
-		}
-  }
-
-	#Focus for The Grad Strategy
- 		focus = {
- 		id = thegradstrategy
- 		icon = GFX_goal_generic_position_armies
- 		ai_will_do = { factor = 4 }
-  	x =23
-  	y =4
-  	mutually_exclusive = { }
-  	prerequisite = { focus = antioliphantweapons}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { 
-			add_doctrine_cost_reduction = {
-				cost_reduction = 0.5
-				uses = 2
-				category = land_doctrine
-			}
-		}
-  }
-
-	#Focus for Expand Military Industry
- 		focus = {
- 		id = expandmilitaryindustry
- 		icon = GFX_goal_generic_construct_mil_factory
- 		ai_will_do = { factor = 10 }
-		available = { 19 = { is_controlled_by = GON } 21 = { is_controlled_by = GON } 22 = { is_controlled_by = GON }}
-  	x =33
-  	y =4
-  	mutually_exclusive = { }
-  	prerequisite = { focus = wartimemeasures}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-				19 = { add_extra_state_shared_building_slots = 1 }
-				19 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
-				21 = { add_extra_state_shared_building_slots = 2 }
-				21 = {add_building_construction = { type = arms_factory level = 2 instant_build = yes } }
-				22 = { add_extra_state_shared_building_slots = 1 }
-				22 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
-		}
-  }
-
-	#Focus for Expand Civil Industry
- 		focus = {
- 		id = expandcivilindustry
- 		icon = GFX_goal_generic_construct_civ_factory
- 		ai_will_do = { factor = 10 }
-		available = { 19 = { is_controlled_by = GON } 21 = { is_controlled_by = GON } 22 = { is_controlled_by = GON }}
-		x =35
-		y =4
-		mutually_exclusive = { }
-		prerequisite = { focus = longtermeconomicplan}
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-				19 = { add_extra_state_shared_building_slots = 1 }
-				19 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
-				21 = { add_extra_state_shared_building_slots = 2 }
-				21 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
-				22 = { add_extra_state_shared_building_slots = 1 }
-				22 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
-		}
-  }
-
-	#Focus for Invade by Land
- 		focus = {
- 		id = invadebyland
- 		icon = GFX_goal_generic_small_arms
- 		ai_will_do = { factor = 3 }
-  	x =23
-  	y =5
-  	mutually_exclusive = { }
-  	prerequisite = { focus = thegradstrategy }
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-			army_experience = 25
-			add_tech_bonus = {
-					name = motorized_bonus
-					bonus = 0.5
-					uses = 1
-					category = lotr_cavalry_carriages
-				}
-		}
-  }
+	}
 
 	#Focus for Invade by Sea
- 		focus = {
- 		id = invadebysea
- 		icon = GFX_goal_generic_amphibious_assault
- 		ai_will_do = { factor = 3 }
-  	x =21
-  	y =5
-  	mutually_exclusive = { }
-  	prerequisite = { focus = coastaldefenseprogram}
-  	cost = 10
-   	available_if_capitulated = yes
+	focus = {
+		id = GON_invasion_force
+		icon = GFX_goal_generic_amphibious_assault
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_coastal_protection
+		x = -1
+		y = 1
+		prerequisite = { focus = GON_coastal_protection }
+		cost = 10
+		available_if_capitulated = yes
 		completion_reward = {
 			add_tech_bonus = {
 				name = ITA_marines_and_landing_craft
@@ -1393,148 +1592,1601 @@ continuous_focus_position = { x = 50 y = 2000 }
 				uses = 1
 				technology = transport
 				technology = landing_craft
-				technology = tank_landing_craft
 			}
 		}
-  }
+	}
 
-#Focus for Invade by Air
- 		focus = {
- 		id = invadebyair
- 		icon = GFX_focus_generic_paratrooper
- 		ai_will_do = { factor = 3 }
-  	x =25
-  	y =5
-  	mutually_exclusive = { }
-  	prerequisite = { focus = thefaramirdoctrine}
-  	cost = 10
-   	available_if_capitulated = yes
+	focus = {
+		id = GON_dockyard_effort
+		icon = GFX_goal_generic_construct_naval_dockyard
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_coastal_protection
+		x = 0
+		y = 3
+		prerequisite = { focus = GON_coastal_protection }
+		available = {
+			any_controlled_state = { is_coastal = yes }
+		}
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			random_state_add_building_slot_and_doc_x2 = yes
+			random_state_add_building_slot_and_doc_x2 = yes
+		}
+	}
+
+	#Focus for Military Rearmament
+	focus = {
+		id = GON_military_rearmament
+		icon = GFX_goal_generic_axis_build_infantry
+		ai_will_do = { factor = 5 }
+		x = 28
+		y = 0
+		cost = 5
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		available_if_capitulated = yes
+		completion_reward = { army_experience = 25 }
+	}
+
+	focus = {
+		id = GON_expand_infantry
+		icon = GFX_goal_generic_army_artillery
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_military_rearmament
+		x = -1
+		y = 1
+		prerequisite = { focus = GON_military_rearmament}
+		cost = 10
+		available_if_capitulated = yes
 		completion_reward = {
 			add_tech_bonus = {
-				name = SHI_special_forces_bonus
-				bonus = 0.5
-				uses = 1
-				technology = paratroopers
-				technology = paratroopers2
-				technology = paratroopers3
-			}
-		}
-  }
-
-	#Focus for Infrastructure Effort
- 		focus = {
- 		id = infrastructureeffort
- 		icon = GFX_goal_generic_construct_infrastructure
- 		ai_will_do = { factor = 7 }
-		available = { 13 = { is_controlled_by = GON } 19 = { is_controlled_by = GON } 21 = { is_controlled_by = GON } 22 = { is_controlled_by = GON } }
-  	x =34
-  	y =5
-  	mutually_exclusive = { }
-  	prerequisite = { focus = expandcivilindustry  focus = expandmilitaryindustry}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-				13 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				19 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				21 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				22 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-		}
-  }
-
-	#Focus for Dedicated Invasion Force
- 		focus = {
- 		id = dedicatedinvasionforce
- 		icon = GFX_goal_generic_small_arms
- 		ai_will_do = { factor = 9 }
-  	x =23
-  	y =6
-  	mutually_exclusive = { }
-  	prerequisite = { focus = invadebyland  focus = invadebyair  focus = invadebysea}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { add_manpower = 200000 add_ideas = GON_dedicated_invaders }
-  }
-
-	#Focus for Infrastructure Effort 2
- 		focus = {
- 		id = infrastructureeffort2
- 		icon = GFX_goal_generic_construct_infrastructure
- 		ai_will_do = { factor = 7 }
-		available = { 16 = { is_controlled_by = GON } 17 = { is_controlled_by = GON } 18 = { is_controlled_by = GON } 15 = { is_controlled_by = GON } 20 = { is_controlled_by = GON } 136 = { is_controlled_by = GON } }
-  	x =34
-  	y =6
-  	mutually_exclusive = { }
-  	prerequisite = { focus = infrastructureeffort}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-				16 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				17 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				18 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				15 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				20 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-				136 = {add_building_construction = { type = infrastructure level = 2 instant_build = yes } }
-		}
-  }
-
-	#Focus for Experimental Rocketry
- 		focus = {
- 		id = experimentalrocketry
- 		icon = GFX_focus_rocketry
- 		ai_will_do = { factor = 4 }
-  	x =32
-  	y =7
-  	mutually_exclusive = { }
-  	prerequisite = { focus = thefaramirdoctrine}
-   	prerequisite = { focus =infrastructureeffort2}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = {
-			add_tech_bonus = {
-				name = secret_bonus
+				name = infantry_weapons_bonus
 				bonus = 0.5
 				uses = 2
-				category = lotr_knowledge_magic
+				category = lotr_infantry_weapons
 			}
 		}
-  }
+	}
 
-	#Focus for Rocket Research Compound
- 		focus = {
- 		id = rocketresearchcompound
- 		icon = GFX_focus_research
- 		ai_will_do = { factor = 25 }
-  	x =31
-  	y =8
-  	mutually_exclusive = { }
-  	prerequisite = { focus = experimentalrocketry}
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { add_research_slot = 1 }
-  }
-
-	#Focus for geo_nuclear Effort
- 		focus = {
- 		id = geo_nucleareffort
- 		icon = GFX_focus_wonderweapons
- 		ai_will_do = { factor = 5 }
-  	x =33
-  	y =8
-  	mutually_exclusive = { }
-  	prerequisite = { focus = experimentalrocketry}
-  	cost = 10
-   	available_if_capitulated = yes
+	focus = {
+		id = GON_artillery_improvements
+		icon = GFX_goal_generic_army_artillery2
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_expand_infantry
+		x = 0
+		y = 3
+		prerequisite = { focus = GON_expand_infantry}
+		cost = 10
+		available_if_capitulated = yes
 		completion_reward = {
 			add_tech_bonus = {
-				name = secret_bonus
+				name = ROH_artillery_modernisation
 				bonus = 0.5
 				uses = 1
-				category = lotr_knowledge_magic
+				category = lotr_infantry_archery
 			}
 		}
-  }#End of focuses
+	}
 
+	focus = {
+		id = GON_ship_mounted_catapults
+		icon = GFX_focus_generic_refit_civilian_ships
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_artillery_improvements
+		x = -1
+		y = 1
+		prerequisite = { focus = GON_artillery_improvements }
+		prerequisite = { focus = GON_improved_naval_strategies }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = GON_ship_mounted_catapults
+		}
+	}
 
+	focus = {
+		id = improvedfighters
+		icon = GFX_goal_generic_air_fighter
+		ai_will_do = { factor = 1 }
+		relative_position_id = GON_artillery_improvements
+		x = 1
+		y = 1
+		prerequisite = { focus = GON_artillery_improvements focus = GON_chariots_improvements}
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = fighter_bonus
+				bonus = 0.5
+				uses = 1
+				category = lotr_eagles
+				category = lotr_fellbeasts
+			}
+		}
+	}
 
+	focus = {
+		id = GON_expand_cavalry
+		icon = GFX_goal_generic_cavalry
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_military_rearmament
+		x = 1
+		y = 1
+		prerequisite = { focus = GON_military_rearmament}
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = calvery_bonus
+				bonus = 0.75
+				uses = 1
+				category = lotr_cavalry_heavy
+			}
+			add_tech_bonus = {
+				name = calvery_bonus
+				bonus = 0.75
+				uses = 1
+				category = lotr_cavalry_light
+			}
+		}
+	}
 
+	focus = {
+		id = GON_chariots_improvements
+		icon = GFX_goal_generic_army_motorized
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_expand_cavalry
+		x = 0
+		y = 3
+		prerequisite = { focus = GON_expand_cavalry}
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+					name = ROH_ride_of_the_rohirrim
+					bonus = 0.5
+					uses = 2
+					category = lotr_cavalry_carriages
+				}
+		}
+	}
+
+	focus = {
+		id = GON_counter_haradwaith_forces
+		icon = GFX_goal_generic_attack_allies
+		ai_will_do = { factor = 5 }
+		relative_position_id = GON_military_rearmament
+		x = 0
+		y = 2
+		prerequisite = { focus = GON_military_rearmament}
+		cost = 10
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 15
+			add_tech_bonus = {
+				name = ROH_anti_tank_guns
+				bonus = 0.5
+				uses = 2
+				category = lotr_machines_ballista
+			}
+		}
+	}
+
+	focus = {
+		id = GON_internal_policy_department
+		icon = GFX_focus_generic_improve_the_administration
+		ai_will_do = { factor = 5 }
+		x = 40
+		y = 0
+		cost = 5
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_political_power = 100
+			add_stability = 0.025
+		}
+	}
+
+	focus = {
+		id = GON_prepare_for_the_growing_theat_north
+		icon = GFX_goal_the_white_hand
+		ai_will_do = { 
+			factor = 5
+			modifier = {
+				add = 3
+				could_denethor_paranoid_be_decreased = yes
+			}
+		}
+		relative_position_id = GON_internal_policy_department
+		prerequisite = { focus = GON_internal_policy_department }
+		x = 5
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			ISE = {
+				NOT = {
+					has_government = cooperative
+				}
+			}
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			add_timed_idea = { days = 356 idea = GON_preprare_for_the_worst }
+			denethor_gets_less_paranoid = yes
+		}
+	}
+
+	focus = {
+		id = GON_improve_infrastructure_west
+		icon = GFX_goal_generic_construct_infrastructure
+		ai_will_do = { factor = 5 }
+		relative_position_id = GON_prepare_for_the_growing_theat_north
+		prerequisite = { focus = GON_prepare_for_the_growing_theat_north }
+		x = -1
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			20 = {
+				add_building_construction = {	type = infrastructure level = 2 instant_build = yes }
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 4665
+				}
+			}
+			136 = {
+				add_building_construction = {	type = infrastructure level = 2 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_stay_our_ground
+		icon = GFX_goal_generic_fortify_city
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				add = 5
+				OR = {
+					ISE = { controls_state = 23 }
+					ISE = { controls_state = 77}
+				}
+			}
+		}
+		relative_position_id = GON_prepare_for_the_growing_theat_north
+		prerequisite = { focus = GON_prepare_for_the_growing_theat_north }
+		x = 1
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			ISE = {
+				NOT = {
+					has_government = cooperative
+				}
+			}
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			#Only adds bunkers to the state if it bordering state is owned by isengard
+			if = {
+				limit = {
+					ISE = {
+						controls_state = 23
+					}
+				}
+				20 = {
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 50 }
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6816 }
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 4665 }
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6791 }
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 5418 }
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6789 }
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 38 }
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6783 }
+				}
+			}
+			if = {
+				limit = {
+					ISE = {
+						controls_state = 77
+					}
+				}
+				20 = {
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 4353 }
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6804 }
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 1142 }
+				}
+				136 = {
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 586 }
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 3005 }
+				}
+			}
+			if = {
+				limit = {
+					ISE = {
+						OR = {
+							controls_state = 77
+							controls_state = 23
+						}
+					}
+				}
+				20 = {
+					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6765 }
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_expand_the_military_production
+		icon = GFX_goal_generic_anvil
+		ai_will_do = { factor = 10 }
+		relative_position_id = GON_internal_policy_department
+		prerequisite = { focus = GON_internal_policy_department }
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
+		available_if_capitulated = yes
+		completion_reward = {
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+			}
+			add_tech_bonus = {
+				bonus = 0.5
+				uses = 1
+				category = lotr_labour
+			}
+		}
+	}
+
+	focus = {
+		id = GON_where_is_the_string
+		icon = GFX_goal_generic_windmile
+		ai_will_do = { factor = 5 }
+		relative_position_id = GON_expand_the_military_production
+		prerequisite = { focus = GON_expand_the_military_production }
+		x = 0
+		y = 3
+		cost = 5
+		available = {
+			owns_state = 174
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			174 = {
+				add_resource = {
+					type = tungsten
+					amount = 12
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_library_of_wisdom
+		icon = GFX_goal_generic_windmile
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_where_is_the_string
+		prerequisite = { focus = GON_where_is_the_string }
+		x = -3
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 0.5
+				uses = 2
+				category = lotr_knowledge_scriptorium
+			}
+		}
+	}
+
+	focus = {
+		id = GON_dig_out_the_mountains
+		icon = GFX_focus_generic_steel
+		ai_will_do = { factor = 5 }
+		relative_position_id = GON_where_is_the_string
+		prerequisite = { focus = GON_where_is_the_string }
+		x = -1
+		y = 1
+		cost = 10
+		available = {
+			owns_state = 16
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			16 = {
+				add_resource = {
+					type = steel
+					amount = 15
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_university_of_minas_tirith
+		icon = GFX_focus_research
+		ai_will_do = { factor = 5 }
+		relative_position_id = GON_where_is_the_string
+		prerequisite = { focus = GON_where_is_the_string }
+		x = 1
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_research_slot = 1
+		}
+	}
+
+	focus = {
+		id = GON_construction_research
+		icon = GFX_goal_generic_production
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_where_is_the_string
+		prerequisite = { focus = GON_where_is_the_string }
+		x = 3
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 2
+				category = lotr_labour_construction_industry
+			}
+		}
+	}
+
+	focus = {
+		id = GON_develop_the_south
+		icon = GFX_focus_generic_industry_1
+		ai_will_do = { factor = 5 }
+		relative_position_id = GON_expand_the_military_production
+		prerequisite = { focus = GON_expand_the_military_production }
+		x = -2
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			owns_state = 19
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			19 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+				add_building_construction = {	type = infrastructure level = 2 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_focus_on_militair_south
+		icon = GFX_goal_generic_anvil
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_develop_the_south
+		prerequisite = { focus = GON_develop_the_south }
+		mutually_exclusive = { focus = GON_focus_on_civilian_south }
+		x = -1
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			owns_state = 19
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			19 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_focus_on_civilian_south
+		icon = GFX_goal_generic_windmile
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_develop_the_south
+		prerequisite = { focus = GON_develop_the_south }
+		mutually_exclusive = { focus = GON_focus_on_militair_south }
+		x = 1
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			owns_state = 19
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			19 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_develop_the_west
+		icon = GFX_focus_generic_industry_1
+		ai_will_do = { factor = 6 }
+		relative_position_id = GON_expand_the_military_production
+		prerequisite = { focus = GON_expand_the_military_production }
+		x = 2
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			owns_state = 16
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			16 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+				add_building_construction = {	type = infrastructure level = 2 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_focus_on_militair_west
+		icon = GFX_goal_generic_anvil
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_develop_the_west
+		prerequisite = { focus = GON_develop_the_west }
+		mutually_exclusive = { focus = GON_focus_on_civilian_west }
+		x = -1
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			owns_state = 16
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			16 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_focus_on_civilian_west
+		icon = GFX_goal_generic_windmile
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_develop_the_west
+		prerequisite = { focus = GON_develop_the_west }
+		mutually_exclusive = { focus = GON_focus_on_militair_west }
+		x = 1
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			owns_state = 16
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			16 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+			}
+		}
+	}
+	focus = {
+		id = GON_reinforce_osgilliath
+		icon = GFX_goal_fortify_the_westwall
+		ai_will_do = { factor = 10 }
+		relative_position_id = GON_internal_policy_department
+		prerequisite = { focus = GON_internal_policy_department }
+		x = -7
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = {
+			owns_state = 163
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			163 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 1778
+				}
+				add_building_construction = {type = bunker level = 3 instant_build = yes province = 1778 }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_hit_before_you_get_hit
+		icon = GFX_goal_generic_military_sphere
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_reinforce_osgilliath
+		prerequisite = { focus = GON_reinforce_osgilliath }
+		mutually_exclusive = { focus = GON_defense_is_the_best_attack }
+		available = {
+			is_denethor_paranoid = no
+		}
+		x = -2
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = GON_strike_before_the_enemy_0
+		}
+	}
+
+	focus = {
+		id = GON_rally_the_people
+		icon = GFX_focus_generic_little_entente
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_hit_before_you_get_hit
+		prerequisite = { focus = GON_hit_before_you_get_hit }
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 15
+			custom_effect_tooltip = GON_tooltip_unlocks_prince_of_terror_advisor
+		}
+	}
+
+	focus = {
+		id = GON_hit_now_you_can
+		icon = GFX_goal_generic_small_arms
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_rally_the_people
+		prerequisite = { focus = GON_rally_the_people }
+		x = 0
+		y = 3
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = GON_strike_before_the_enemy_0
+				add_idea = GON_strike_before_the_enemy_1
+			}
+		}
+	}
+
+	focus = {
+		id = GON_modernize_the_military
+		icon = GFX_goal_generic_army_doctrines
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_hit_now_you_can
+		prerequisite = { focus = GON_hit_now_you_can focus = GON_no_step_back }
+		x = 2
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			remove_ideas = GON_weary_armed_forces
+			add_tech_bonus = {
+				bonus = 0.5
+				uses = 2
+				category = lotr_infantry
+			}
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 1
+				category = lotr_support_tech
+			}
+		}
+	}
+
+	focus = {
+		id = GON_defense_is_the_best_attack
+		icon = GFX_goal_lth_strengthenfortifications
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_reinforce_osgilliath
+		prerequisite = { focus = GON_reinforce_osgilliath }
+		mutually_exclusive = { focus = GON_hit_before_you_get_hit }
+		x = 2
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = GON_bunker_focus
+		}
+	}
+
+	focus = {
+		id = GON_prepare_for_the_worse
+		icon = GFX_goal_generic_fortify_city
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_defense_is_the_best_attack
+		prerequisite = { focus = GON_defense_is_the_best_attack }
+		available = {
+			owns_state = 135
+			owns_state = 176
+			owns_state = 173
+			if = {
+				limit = {
+					MOR = {
+						controls_state = 204
+					}
+				}
+				owns_state = 22
+			}
+		}
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available_if_capitulated = yes
+		completion_reward = {
+			135 = {
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4617 }
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 3996 }
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7307 }
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7318 }
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 3545 }
+			}
+			176 = {
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7428 }
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 5388 }
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7791 }
+			}
+			173 = {
+				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 3773 }
+			}
+			if = {
+				limit = {
+					MOR = {
+						controls_state = 204
+					}
+				}
+				22 ={
+					add_building_construction = {	type = bunker level = 2 instant_build = yes province = 2430 }
+					add_building_construction = {	type = bunker level = 2 instant_build = yes province = 6861 }
+					add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4602 }
+					add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4479 }
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_defense_specialist
+		icon = GFX_goal_lth_guardiansofthesilverwood
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_prepare_for_the_worse
+		prerequisite = { focus = GON_prepare_for_the_worse }
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 15
+			custom_effect_tooltip = GON_tooltip_unlocks_defense_advisor
+		}
+	}
+
+	focus = {
+		id = GON_no_step_back
+		icon = GFX_goal_generic_defence
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_defense_specialist
+		prerequisite = { focus = GON_defense_specialist }
+		x = 0
+		y = 2
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = GON_no_step_back_idea
+		}
+	}
+
+	focus = {
+		id = GON_ears_everywhere
+		icon = GFX_focus_generic_secret_service_agency
+		ai_will_do = { factor = 5 }
+		relative_position_id = GON_internal_policy_department
+		prerequisite = { focus = GON_internal_policy_department focus = GON_external_policy_department}
+		x = 8
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			create_intelligence_agency = {
+				name = "Free People of Middle-Earth"
+				icon = GFX_intelligence_agency_logo_generic_2
+			}
+		}
+	}
+
+	focus = {
+		id = GON_expand_the_netwerk
+		icon = GFX_goal_generic_radar
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_ears_everywhere
+		prerequisite = { focus = GON_ears_everywhere }
+		x = 0
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = GON_spies_of_gondor_0
+		}
+	}
+
+	focus = {
+		id = GON_sneaky_peaky
+		icon = GFX_goal_generic_position_armies
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_expand_the_netwerk
+		prerequisite = { focus = GON_expand_the_netwerk }
+		mutually_exclusive = { focus = GON_we_see_everything }
+		x = -1
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = GON_spies_of_gondor_0
+				add_idea = GON_spies_of_gondor_sneaky_peaky
+			}
+		}
+	}
+
+	focus = {
+		id = GON_we_see_everything
+		icon = GFX_goal_generic_territory_or_war
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_expand_the_netwerk
+		prerequisite = { focus = GON_expand_the_netwerk }
+		mutually_exclusive = { focus = GON_sneaky_peaky }
+		x = 1
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = GON_spies_of_gondor_0
+				add_idea = GON_spies_of_gondor_know_it_all
+			}
+		}
+	}
+
+	focus = {
+		id = GON_external_policy_department
+		icon = GFX_focus_generic_improve_the_administration
+		ai_will_do = { factor = 5 }
+		x = 52
+		y = 0
+		cost = 5
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_WAR_SUPPORT }
+		available_if_capitulated = yes
+		completion_reward = {
+			add_political_power	= 100
+			add_war_support = 0.025
+		}
+	}
+
+	focus = {
+		id = GON_improve_relations_with_rohan
+		icon = GFX_goal_rohan
+		ai_will_do = { factor = 5 }
+		relative_position_id = GON_external_policy_department
+		prerequisite = { focus = GON_external_policy_department }
+		x = -1
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			add_opinion_modifier = { target = ROH modifier = large_increase }
+			ROH = {
+				add_opinion_modifier = { target = GON modifier = large_increase }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_help_deal_with_isengard
+		icon = GFX_goal_the_white_hand
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				add = 5
+				ISE = {
+					has_completed_focus = pillagethetownsofrohan
+				}
+			}
+		}
+		relative_position_id = GON_improve_relations_with_rohan
+		prerequisite = { focus = GON_improve_relations_with_rohan }
+		x = 0
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available_if_capitulated = yes
+		available = {
+			the_other_gondor_does_not_exist = yes
+			ISE = { has_completed_focus = quarrelwithrohan }
+		}
+		completion_reward = {
+			add_manpower = -10000
+			add_equipment_to_stockpile = {
+				type = infantry_equipment_0
+				amount = -1000
+			}
+			ROH = {
+				country_event = rohan.8
+			}
+		}
+	}
+
+	focus = {
+		id = GON_where_was_gondor
+		icon = GFX_focus_generic_little_entente
+		ai_will_do = { factor = 5 }
+		relative_position_id = GON_help_deal_with_isengard
+		prerequisite = { focus = GON_help_deal_with_isengard }
+		x = 0
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		available = {
+			the_other_gondor_does_not_exist = yes
+		}
+		completion_reward = {
+			add_ideas = GON_volunteers_against_evil
+		}
+	}
+
+	focus = {
+		id = GON_invite_rohan
+		icon = GFX_goal_generic_major_alliance
+		ai_will_do = { factor = 3 }
+		relative_position_id = GON_where_was_gondor
+		prerequisite = { focus = GON_where_was_gondor }
+		x = 0
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		available = {
+			the_other_gondor_does_not_exist = yes
+		}
+		completion_reward = {
+			ROH = {
+				invite_to_faction = yes
+			}
+		}
+	}
+
+	focus = {
+		id = GON_express_intressed_in_haronder
+		icon = GFX_goal_generic_position_armies
+		ai_will_do = { factor = 4 }
+		relative_position_id = GON_external_policy_department
+		prerequisite = { focus = GON_external_policy_department }
+		x = 1
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_ANNEXATION FOCUS_FILTER_WAR_SUPPORT }
+		available_if_capitulated = yes
+		available = {
+			the_other_gondor_does_not_exist = yes
+		}
+		completion_reward = {
+			add_war_support = 0.05
+			hidden_effect = { news_event = news.399 }
+			add_state_claim = 105
+			add_state_claim = 106
+			add_state_claim = 107
+		}
+	}
+	focus = {
+		id = GON_demand_harondor
+		icon = GFX_goal_generic_forceful_treaty
+		ai_will_do = { 
+			factor = 3
+			modifier = {
+				add = 3
+				HAR = {
+					is_in_faction = no
+				}
+			}
+			modifier = {
+				add = -2
+				is_denethor_paranoid = yes
+			}
+		}
+		relative_position_id = GON_express_intressed_in_haronder
+		prerequisite = { focus = GON_express_intressed_in_haronder }
+		available = {
+			has_war = no
+			threat > 0.15
+			HAR = {
+				controls_state = 105
+				controls_state = 106
+				controls_state = 107
+			}
+		}
+		bypass = {
+			controls_state = 105
+			controls_state = 106
+			controls_state = 107
+		}
+		x = 0
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available_if_capitulated = yes
+		available = {
+			the_other_gondor_does_not_exist = yes
+		}
+		completion_reward = {
+			HAR = {
+				country_event = { id = harad.3 }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_intergrate_harondor
+		icon = GFX_goal_generic_national_unity
+		ai_will_do = { factor = 4 }
+		relative_position_id = GON_demand_harondor
+		prerequisite = { focus = GON_demand_harondor }
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		available = {
+			owns_state = 105
+			owns_state = 106
+			owns_state = 107
+		}
+		available_if_capitulated = yes
+		completion_reward = {
+			105 = { add_compliance = 35 }
+			106 = { add_compliance = 35 }
+			107 = { add_compliance = 35 }
+			105 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+			}
+			107 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+			}
+		}
+	}
+
+	#Focus for ithilien crisis
+	focus = {
+		id = GON_ithilien_crisis
+		icon = GFX_goal_gon_ithilien_crisis
+		relative_position_id = GON_reinforce_osgilliath
+		ai_will_do = { factor = 10 }
+		x = 0
+		y = 2
+		prerequisite = {
+			focus = GON_reinforce_osgilliath
+		}
+		available = {
+			ithc_crisis_is_active = yes
+			tag = GON
+		}
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			set_country_flag = { flag = ithc_focus_cooldown value = 1 days = 90 }
+			# Unlock decisions allowing us to lower the 'raid' level of contested states
+			custom_effect_tooltip = ithilien_crisis_tt
+		}
+  	}
+
+	#Focus for ithilien crisis - Emergency Measures
+	focus = {
+		id = GON_ithc_emergency_measures
+		icon = GFX_goal_gon_ithc_emergency_measures
+		ai_will_do = { factor = 10 }
+		relative_position_id = GON_ithilien_crisis
+		x = 0
+		y = 1
+		prerequisite = { focus = GON_ithilien_crisis }
+		available = {
+			ithc_crisis_is_active = yes
+			NOT = { has_country_flag = ithc_focus_cooldown }
+			tag = GON
+		}
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			set_country_flag = { flag = ithc_focus_cooldown value = 1 days = 90 }
+			# Decrease cost of ithc decisions
+			subtract_from_variable = { ithc_pillage_decision_cost_pp = 50 }
+			custom_effect_tooltip = decrease_ithc_pp_cost_tt
+			# Get event to choose where tp get more power projection
+			country_event = ithc.4
+			# Add compliance in states
+			if = {
+				limit = { 22 = { is_controlled_by = GON } }
+				22 = { add_compliance = 50 }
+			}
+			if = {
+				limit = { 175 = { is_controlled_by = GON } }
+				175 = { add_compliance = 50 }
+			}
+			if = {
+				limit = { 173 = { is_controlled_by = GON } }
+				173 = { add_compliance = 50 }
+			}
+			if = {
+				limit = { 135 = { is_controlled_by = GON } }
+				135 = { add_compliance = 50 }
+			}
+		}
+  	}
+
+	#Focus for ithilien crisis - Hold Firm
+	focus = {
+		id = GON_ithc_hold_firm
+		icon = GFX_goal_gon_ithc_hold_firm
+		ai_will_do = { factor = 10 }
+		relative_position_id = GON_ithilien_crisis
+		x = -1
+		y = 2
+		mutually_exclusive = { focus = GON_ithc_evacuate }
+		prerequisite = { focus = GON_ithc_emergency_measures }
+		available = {
+			ithc_crisis_is_active = yes
+			NOT = { has_country_flag = ithc_focus_cooldown }
+			tag = GON
+		}
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			# add +10 power projection
+			custom_effect_tooltip = increase_power_projection_overall_tt
+		}
+  	}
+
+	#Focus for ithilien crisis - Evacuate the population
+	focus = {
+		id = GON_ithc_evacuate
+		icon = GFX_goal_gon_ithc_evacuate
+		ai_will_do = { factor = 0 }
+		relative_position_id = GON_ithilien_crisis
+		x = 1
+		y = 2
+		mutually_exclusive = { focus = GON_ithc_hold_firm }
+		prerequisite = { focus = GON_ithc_emergency_measures }
+		available = {
+			ithc_crisis_is_active = yes
+			NOT = { has_country_flag = ithc_focus_cooldown }
+			tag = GON
+		}
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			# Unlock decisions to relocate industry and population from ithilien contested states
+			custom_effect_tooltip = ithc_evacuate_tt
+		}
+  	}
+
+	focus = {
+		id = GON_ensure_popular_support
+		icon = GFX_goal_gon_ensure_popular_support
+		ai_will_do = { factor = 0 }
+		prerequisite = { focus = GON_purge_the_crown_loyalists }
+		relative_position_id = GON_purge_the_crown_loyalists
+		x = 6
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			# Add idea that gives revo + unaligned support and takes away coop support
+			add_ideas = GON_popular_support_campaign
+			add_stability = 0.1
+			add_popularity = {
+				ideology = revolutionary
+				popularity = 0.1
+			}
+		}
+	}
+
+	focus = {
+		id = GON_defame_isildurs_lineage
+		icon = GFX_goal_gon_defame_isildurs_lineage
+		ai_will_do = { factor = 0 }
+		prerequisite = { focus = GON_ensure_popular_support }
+		relative_position_id = GON_ensure_popular_support
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			# remove coop support, add stability and war support
+			# lower opinion with Arnor
+			add_political_power = 150
+			add_popularity = {
+				ideology = cooperative
+				popularity = -0.15
+			}
+			add_popularity = {
+				ideology = revolutionary
+				popularity = 0.10
+			}
+			ART = { add_opinion_modifier = { target = ART modifier = medium_decrease } }
+			CAR = { add_opinion_modifier = { target = ART modifier = medium_decrease } }
+			RHD = { add_opinion_modifier = { target = ART modifier = medium_decrease } }
+		}
+	}
+
+	focus = {
+		id = GON_gondor_needs_no_king
+		icon = GFX_goal_gon_gondor_needs_no_king
+		ai_will_do = { factor = 0 }
+		prerequisite = { focus = GON_defame_isildurs_lineage }
+		mutually_exclusive = { focus = GON_the_steward_of_gondor }
+		relative_position_id = GON_ensure_popular_support
+		available = {
+			OR = {
+				revolutionary > 0.4
+				# AI cheat to ensure revo Gondor AI doesnt get stuck
+				hidden_trigger = {
+					is_ai = yes
+					date > "3020.1.1"
+				}
+			}
+		}
+		x = 0
+		y = 2
+		cost = 10
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL FOCUS_FILTER_MANPOWER FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
+		completion_reward = {
+			remove_ideas = generic_unaligned
+
+			if = {
+				limit = { has_idea = GON_kingdom_without_king_1 }
+				remove_ideas = GON_kingdom_without_king_1
+			}
+			if = {
+				limit = { has_idea = GON_kingdom_without_king_0 }
+				remove_ideas = GON_kingdom_without_king_0
+			}
+
+			event_option_tooltip = gondor.25.a
+			hidden_effect = {
+				country_event = { id = gondor.25 hours = 1 }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_purge_the_aristocracy
+		icon = GFX_goal_gon_purge_the_aristocracy
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_gondor_needs_no_king }
+		relative_position_id = GON_gondor_needs_no_king
+		x = 0
+		y = 4
+		cost = 10
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL FOCUS_FILTER_WAR_SUPPORT }
+		completion_reward = {
+			# add revo support
+			add_popularity = {
+				ideology = revolutionary
+				popularity = 0.2
+			}
+			# add stability and ws
+			add_stability = 0.1
+			add_war_support = 0.1
+			# remove Order of the White Rose
+			custom_effect_tooltip = GON_purge_the_aristocracy_tt
+		}
+	}
+	
+	focus = {
+		id = GON_reconquering_arnor
+		icon = GFX_unite_by_force
+		ai_will_do = { factor = 100 }
+		available = {
+			the_other_gondor_does_not_exist = yes
+			ART = {
+				has_country_flag = ART_established_arnor
+			}
+		}
+		prerequisite = { focus = GON_purge_the_aristocracy focus = GON_restructure_the_army }
+		relative_position_id = GON_purge_the_aristocracy
+		x = -4
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available_if_capitulated = yes
+		completion_reward = {
+			create_wargoal = { type = puppet_wargoal_focus target = ART }
+		}
+	}
+
+	focus = {
+		id = GON_power_to_the_unions
+		icon = GFX_focus_SOV_bukharan_republic
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_purge_the_aristocracy }
+		relative_position_id = GON_purge_the_aristocracy
+		x = -2
+		y = 1
+		cost = 10
+		completion_reward = {
+			if = {
+				limit = { has_dlc = "Arms Against Tyranny" }
+				# increase funds to guilds and stuff
+				mio:GON_blacksmith_guild = {
+					add_mio_funds_gain_factor = 0.25
+				}
+				mio:GON_alchemists_guild = {
+					add_mio_funds_gain_factor = 0.25
+				}
+				mio:GON_shipbuilders_guild = {
+					add_mio_funds_gain_factor = 0.25
+				}
+				mio:GON_woodcutters_guild = {
+					add_mio_funds_gain_factor = 0.25
+				}
+			}
+			else = {
+				if = {
+					limit = { has_idea = high_taxes }
+					add_ideas = medium_taxes
+				}
+				add_ideas = LTH_peasant_assembly
+			}
+		}
+	}
+
+	focus = {
+		id = GON_meritocracy
+		icon = GFX_goal_lth_meritbasedadvancement
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_purge_the_aristocracy }
+		relative_position_id = GON_purge_the_aristocracy
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_NAVY_XP FOCUS_FILTER_AIR_XP}
+		completion_reward = {
+			add_ideas = GON_merit_based_advancement
+		}
+	}
+
+	focus = {
+		id = GON_spread_the_revolution
+		icon = GFX_goal_generic_political_pressure
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_purge_the_aristocracy }
+		relative_position_id = GON_purge_the_aristocracy
+		x = 2
+		y = 1
+		cost = 10
+		completion_reward = {
+			if = {
+				limit = {
+					has_dlc = "La Resistance"
+				}
+				add_ideas = GON_idea_spread_the_revolution
+
+			}
+			else = {
+				DAM = {
+					add_popularity = {
+						ideology = revolutionary
+						popularity = 0.10
+					}
+				}
+			}
+			every_neighbor_country  = {
+				add_popularity = {
+					ideology = revolutionary
+					popularity = 0.05
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_spark_revolution_dol_amroth
+		icon = GFX_goal_gon_dam_propaganda
+		ai_will_do = { factor = 3 }
+		available = {
+			DAM = {
+				revolutionary > 0.40
+			}
+		}
+		prerequisite = { focus = GON_spread_the_revolution }
+		relative_position_id = GON_spread_the_revolution
+		x = 0
+		y = 1
+		cost = 10
+		will_lead_to_war_with = DAM
+		completion_reward = {
+			DAM = {
+				start_civil_war = {
+					ideology = revolutionary
+					size = 0.3
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = GON_the_tolfalas_stalemate
+		icon = GFX_focus_spr_masters_of_our_own_fate
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_gondor_needs_no_king }
+		mutually_exclusive = { focus = GON_rally_the_exiled_nobility }
+		relative_position_id = GON_gondor_needs_no_king
+		available = { the_other_gondor_exists = yes }
+		x = -2
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			add_timed_idea = { idea = increased_austerity days = 180 }
+		}
+	}
+
+	focus = {
+		id = GON_prepare_an_invasion_force
+		icon = GFX_focus_SOV_the_comecon
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_the_tolfalas_stalemate }
+		relative_position_id = GON_gondor_needs_no_king
+		available = { the_other_gondor_exists = yes }
+		x = -2
+		y = 2
+		cost = 10
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		completion_reward = {
+			add_equipment_to_stockpile = {
+		        type = infantry_equipment
+		        amount = 2500
+		    }
+			add_manpower = 25000
+			add_equipment_production = {
+				equipment = {
+					type = heavy_cruiser_1
+					creator = "GON"
+				}
+				requested_factories = 1
+				progress = 0.9
+				amount = 1
+			}
+			add_equipment_production = {
+				equipment = {
+					type = heavy_cruiser_1
+					creator = "GON"
+				}
+				requested_factories = 1
+				progress = 0.9
+				amount = 1
+			}
+		}
+	}
+
+	focus = {
+		id = GON_the_peoples_fleet
+		icon = GFX_goal_gon_the_peoples_fleet
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_prepare_an_invasion_force }
+		#prerequisite = { focus = GON_dockyard_effort }
+		relative_position_id = GON_gondor_needs_no_king
+		x = -2
+		y = 3
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = { the_other_gondor_exists = yes }
+		completion_reward = {
+			# massive dockyard bonus
+			random_state_add_building_slot_and_doc_x3 = yes
+			random_state_add_building_slot_and_doc_x3 = yes
+
+			add_timed_idea = {
+				idea = dockyard_focus
+				days = 240
+			}
+		}
+	}
+
+	focus = {
+		id = GON_rally_the_exiled_nobility
+		icon = GFX_focus_POL_expand_polish_intelligence
+		ai_will_do = { factor = 100 }
+		prerequisite = { focus = GON_the_steward_of_gondor }
+		mutually_exclusive = { focus = GON_the_tolfalas_stalemate }
+		relative_position_id = GON_gondor_needs_no_king
+		x = -4
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_WAR_SUPPORT }
+		available = { the_other_gondor_exists = yes }
+		completion_reward = {
+			add_war_support = 0.15
+			14 = {
+				add_manpower = 100000
+			}
+			# Get troops
+			custom_effect_tooltip = GON_rally_the_exiled_nobility_tt
+			hidden_effect = {
+				load_oob = GON_Loyalists
+			}
+		}
+	}
+
+	focus = {
+		id = GON_evacuate_the_treasury
+		icon = GFX_focus_usa_reestablish_the_gold_standard
+		ai_will_do = { factor = 100 }
+		prerequisite = { focus = GON_rally_the_exiled_nobility }
+		relative_position_id = GON_gondor_needs_no_king
+		x = -4
+		y = 2
+		cost = 10
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		available = { the_other_gondor_exists = yes }
+		completion_reward = {
+			# Get a ton of factories on Tolfalas
+			14 = {
+				add_extra_state_shared_building_slots = 8
+				add_building_construction = { type = arms_factory level = 4 instant_build = yes }
+				add_building_construction = { type = industrial_complex level = 4 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = GON_liberate_the_capital_from_the_usurpers
+		icon = GFX_goal_gon_liberate_the_capital_from_the_usurpers
+		ai_will_do = { factor = 3 }
+		prerequisite = { focus = GON_evacuate_the_treasury }
+		relative_position_id = GON_gondor_needs_no_king
+		x = -4
+		y = 3
+		cost = 10
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		available = { the_other_gondor_exists = yes }
+		completion_reward = {
+			if = {
+				limit = { has_war_with = GON }
+				add_relation_modifier = {
+					target = GON
+					modifier = increased_attack_against
+				}
+			}
+			else = {
+				# War against commie GON, if already at war -> attack bonus
+				create_wargoal = {
+					type = annex_everything
+					target = GON
+				}
+			}
+		}
+	}
 }
+

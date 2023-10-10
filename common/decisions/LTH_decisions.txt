@@ -1,0 +1,600 @@
+lothlorien_influence_decisions_category = {
+
+	great_schism_civil_war = {
+		icon = GFX_decision_revolt
+
+	    allowed = {
+			always = no
+		}
+		activation = {
+			always = yes
+		}
+
+		available = {
+	    	always = no
+	    }
+
+		cancel_trigger = {
+			OR = {
+				has_completed_focus = lth_celebornsexile
+				has_completed_focus = lth_mendtheschism
+				has_completed_focus = lth_galadrielsfarewell
+			}
+		}
+		
+		is_good = no
+		days_mission_timeout = 450
+		selectable_mission = no
+		fire_only_once = yes
+		
+		timeout_effect = {
+			custom_effect_tooltip = great_schism_civil_war_tt
+			hidden_effect = {
+				country_event = lothlorien.68
+			}
+		}
+	}
+
+	great_schism_delay_civil_war = {
+		icon = GFX_decision_assembly
+
+	    allowed = {
+			tag = LTH
+		}
+		visible = {
+			has_active_mission = great_schism_civil_war
+		}
+
+		available = {
+	    	always = yes
+	    }
+		
+		cost = 100
+		fire_only_once = yes
+		
+		complete_effect = {
+			add_war_support = -0.05
+			add_days_mission_timeout = {
+				mission = great_schism_civil_war
+				days = 90
+			}
+		}
+	}
+
+	preemptivedepartures_nandor = {
+		icon = GFX_decision_grey_havens
+
+		available = {
+			is_ai = no
+			is_debug = yes
+		}
+
+		visible = {
+			has_idea = LTH_great_schism
+			has_completed_focus = lth_preemtptivedepartures
+			check_variable = { modifier@nandor_influence > 25 }
+		}
+
+		fire_only_once = no
+		days_re_enable = 60
+		cost = 25
+
+		complete_effect = {
+			lthi_send_to_valinor_nandor = yes
+		}
+	}
+
+	preemptivedepartures_noldor = {
+		icon = GFX_decision_grey_havens
+
+		available = {
+			is_ai = no
+			is_debug = yes
+		}
+
+		visible = {
+			has_idea = LTH_great_schism
+			has_completed_focus = lth_preemtptivedepartures
+			check_variable = { modifier@noldor_influence > 25 }
+		}
+
+		fire_only_once = no
+		days_re_enable = 60
+		cost = 25
+
+		complete_effect = {
+			lthi_send_to_valinor_noldor = yes
+		}
+	}
+
+	preemptivedepartures_sindar = {
+		icon = GFX_decision_grey_havens
+
+		available = {
+			is_ai = no
+			is_debug = yes
+		}
+
+		visible = {
+			has_idea = LTH_great_schism
+			has_completed_focus = lth_preemtptivedepartures
+			check_variable = { modifier@sindar_influence > 25 }
+		}
+
+		fire_only_once = no
+		days_re_enable = 60
+		cost = 25
+
+		complete_effect = {
+			lthi_send_to_valinor_sindar = yes
+		}
+	}
+
+	preemptivedepartures_halfelves = {
+		icon = GFX_decision_grey_havens
+
+		available = {
+			is_ai = no
+			is_debug = yes
+		}
+
+		visible = {
+			has_idea = LTH_great_schism
+			has_completed_focus = lth_preemtptivedepartures
+			check_variable = { modifier@halfelves_influence > 25 }
+		}
+
+		fire_only_once = no
+		days_re_enable = 60
+		cost = 25
+
+		complete_effect = {
+			lthi_send_to_valinor_halfelves = yes
+		}
+	}
+
+	leaving_for_valinor = {
+		icon = GFX_decision_grey_havens
+
+        available = {
+			always = no
+        }
+
+		allowed = {
+			always = no
+		}
+
+	    is_good = yes
+	    days_mission_timeout = 120
+	    selectable_mission = no
+	    days_remove = 1
+
+	    timeout_effect = {
+
+	    	random_core_state = {
+				if = {
+					limit = { state_population_k > 100 }
+					add_manpower = -10000
+				}
+			}
+
+			activate_mission = leaving_for_valinor
+	    }
+	}
+
+	# migration treaty
+	enact_migration_treaty = {
+		icon = GFX_decision_generic_cooperation
+
+		target_array = neighbors
+
+		available = {
+			always = yes
+		}
+
+		target_root_trigger = {
+			has_completed_focus = lth_migrationtreaties
+		}
+
+		target_trigger = {
+			FROM = {
+				is_elves = no
+				is_orcs = no
+				NOT = { tag = NEP }
+				NOT = { tag = DAG }
+			}
+		}
+
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 20
+				has_manpower < 20000
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_ai = no }
+			}
+			modifier = {
+				factor = 5
+				is_ally_with = FROM
+			}
+		}
+
+		fire_only_once = yes
+		cost = 100
+
+		complete_effect = {
+			random_core_state = {
+				add_manpower = 50000
+			}
+			lthi_increase_influence_nonelves_intermediate = yes
+		}
+	}
+
+}
+
+foreign_support = {
+	support_mordor_enemy = {
+		icon = GFX_decision_generic_army_1
+
+		allowed = {
+			original_tag = LTH
+		}
+
+		target_root_trigger = {
+			has_completed_focus = lth_supportmordorsenemies
+		}
+		targets = { GON ROH ISE ERE DOR HAR RHU VAL MIR DAL ENT }
+		target_trigger = {
+			FROM = { has_war_with = MOR }
+			FROM = { NOT = { has_war_with = ROOT } }
+		}
+
+		fire_only_once = yes
+		cost = 100
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				FROM = { is_ai = no }
+				factor = 15
+			}
+		}
+
+		complete_effect = {
+			if = {
+				limit = { has_dlc = "Arms Against Tyranny" }
+				FROM = {
+					add_war_support = 0.05
+					add_equipment_subsidy = {
+						cic = 500
+						equipment_type = infantry_equipment
+						seller_tags = { LTH } 
+					}
+					add_equipment_subsidy = {
+						cic = 500
+						equipment_type = artillery_equipment
+						seller_tags = { LTH } 
+					}
+					add_equipment_subsidy = {
+						cic = 500
+						equipment_type = support_equipment
+						seller_tags = { LTH } 
+					}
+				}
+			}
+			else = {
+				FROM = {
+					add_war_support = 0.05
+				}
+				send_equipment = { target = FROM type = infantry_equipment amount = 800 }
+				send_equipment = { target = FROM type = support_equipment amount = 100 }
+			}
+		}
+	}
+}
+
+
+operations = {
+	raid_lothlorien = {
+		icon = GFX_decision_orcs_5
+
+		allowed = {
+			OR = {
+				tag = MOC
+				tag = DGU
+			}
+		}
+
+		visible = {
+			LTH = { is_elves = yes }
+			exists = yes
+			NOT = { is_ally_with = LTH }
+			NOT = { has_war_with = LTH }
+		}
+
+		cost = 100
+		days_re_enable = 300
+		fixed_random_seed = no
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 2
+				has_war = no
+			}
+			modifier = {
+				factor = 2
+				tag = DGU
+			}
+		}
+
+		available = {
+			always = yes
+		}
+
+		complete_effect = {
+			add_manpower = -150
+			set_country_flag = has_raided_lothlorien
+			random_list = {
+				50 = {
+					modifier = {
+						add = -10
+						tag = DGU
+						LTH = { has_completed_focus = lth_thefortressofdolguldur }
+					}
+					modifier = {
+						add = -20
+						tag = DGU
+						LTH = { has_completed_focus = lth_patrolsandriverwardens }
+					}
+					modifier = {
+						add = -15
+						tag = MOC
+						LTH = { has_completed_focus = lth_theminesofmoria }
+					}
+
+					add_timed_idea = {
+						idea = generic_three_civs
+						days = 60
+					}
+					LTH = { country_event = lothlorien.22 }
+				}
+				50 = {
+
+				}
+			}
+		}
+	}
+}
+
+ring_corruption_decisions_bop = {
+	dismantle_nazgul = {
+		icon = GFX_decision_nazgul
+
+		visible = {
+			always = yes
+			#has_completed_focus = lth_dismantlethenazgul
+			#ring_has_the_ring = yes
+		}
+
+		available = {
+			NOT = { is_ally_with = MOR }
+			MOR = { has_government = belligerent }
+			OR = {
+				MOR = { has_character = MOR_Witch_king }
+				MOR = { has_character = MOR_Khamul }
+				MOR = { has_character = MOR_Uvantha }
+				MOR = { has_character = MOR_Hoarmurath }
+				MOR = { has_character = MOR_Dwar }
+				MOR = { has_character = MOR_Adunaphel }
+				MOR = { has_character = MOR_Akhorahil }
+				MOR = { has_character = MOR_Ji_Indur }
+				MOR = { has_character = MOR_Ren }
+			}
+		}
+
+		allowed = {
+			original_tag = LTH
+		}
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 100
+				power_balance_value = {
+					id = ring_corruption_balance
+					value < 0.5
+				}
+			}
+		}
+
+		fire_only_once = no
+		cost = 150
+		is_good = yes
+	    selectable_mission = yes
+	    days_remove = 90
+
+		complete_effect = {
+			hidden_effect = {
+				MOR = { 
+					activate_targeted_decision = {
+						target = MOR
+						decision = dismantle_nazgul_MOR
+					}
+				}	
+			}
+		}
+
+		remove_effect = {
+			# Remove nazgul at the cost of some ring corruption. Should take a long time to complete
+			add_power_balance_value = {
+				id = ring_corruption_balance
+				value = 0.1
+			}
+			MOR = {
+				if = {
+					limit = { MOR_Ren = { is_unit_leader = yes } }
+					MOR_Ren = {
+						custom_effect_tooltip = character_dies_tt
+						hidden_effect = { retire = yes }
+					}
+				}
+				else_if = {
+					limit = { MOR_Ji_Indur = { is_unit_leader = yes } }
+					MOR_Ji_Indur = {
+						custom_effect_tooltip = character_dies_tt
+						hidden_effect = { retire = yes }
+					}
+				}
+				else_if = {
+					limit = { MOR_Akhorahil = { is_unit_leader = yes } }
+					MOR_Akhorahil = {
+						custom_effect_tooltip = character_dies_tt
+						hidden_effect = { retire = yes }
+					}
+				}
+				else_if = {
+					limit = { MOR_Adunaphel = { is_unit_leader = yes } }
+					MOR_Adunaphel = {
+						custom_effect_tooltip = character_dies_tt
+						hidden_effect = { retire = yes }
+					}
+				}
+				else_if = {
+					limit = { MOR_Dwar = { is_unit_leader = yes } }
+					MOR_Dwar = {
+						custom_effect_tooltip = character_dies_tt
+						hidden_effect = { retire = yes }
+					}
+				}
+				else_if = {
+					limit = { MOR_Hoarmurath = { is_unit_leader = yes } }
+					MOR_Hoarmurath = {
+						custom_effect_tooltip = character_dies_tt
+						hidden_effect = { retire = yes }
+					}
+				}
+				else_if = {
+					limit = { MOR_Uvantha = { is_unit_leader = yes } }
+					MOR_Uvantha = {
+						custom_effect_tooltip = character_dies_tt
+						hidden_effect = { retire = yes }
+					}
+				}
+				else_if = {
+					limit = { MOR_Khamul = { is_unit_leader = yes } }
+					MOR_Khamul = {
+						custom_effect_tooltip = character_dies_tt
+						hidden_effect = { retire = yes }
+					}
+				}
+				else_if = {
+					limit = { MOR_Witch_king = { is_unit_leader = yes } }
+					MOR_Witch_king = {
+						custom_effect_tooltip = character_dies_tt
+						hidden_effect = { retire = yes }
+					}
+				}
+			}
+		}
+	}
+}
+
+ring_corruption_decisions = {
+
+	dismantle_nazgul_MOR = {
+		icon = GFX_decision_nazgul
+
+		allowed = {
+			always = no
+		}
+		activation = {
+			always = yes
+		}
+		available = {
+	    	always = no
+	    }
+
+		is_good = no
+		days_mission_timeout = 90
+		selectable_mission = no
+		days_remove = 1
+		fire_only_once = yes
+		
+		timeout_effect = {
+			effect_tooltip = {
+				LTH = {
+					add_power_balance_value = {
+						id = ring_corruption_balance
+						value = 0.1
+					}
+				}
+				if = {
+					limit = { MOR_Ren = { is_unit_leader = yes } }
+					MOR_Ren = {
+						custom_effect_tooltip = character_dies_tt
+						retire = yes
+					}
+				}
+				else_if = {
+					limit = { MOR_Ji_Indur = { is_unit_leader = yes } }
+					MOR_Ji_Indur = {
+						custom_effect_tooltip = character_dies_tt
+						retire = yes
+					}
+				}
+				else_if = {
+					limit = { MOR_Akhorahil = { is_unit_leader = yes } }
+					MOR_Akhorahil = {
+						custom_effect_tooltip = character_dies_tt
+						retire = yes
+					}
+				}
+				else_if = {
+					limit = { MOR_Adunaphel = { is_unit_leader = yes } }
+					MOR_Adunaphel = {
+						custom_effect_tooltip = character_dies_tt
+						retire = yes
+					}
+				}
+				else_if = {
+					limit = { MOR_Dwar = { is_unit_leader = yes } }
+					MOR_Dwar = {
+						custom_effect_tooltip = character_dies_tt
+						retire = yes
+					}
+				}
+				else_if = {
+					limit = { MOR_Hoarmurath = { is_unit_leader = yes } }
+					MOR_Hoarmurath = {
+						custom_effect_tooltip = character_dies_tt
+						retire = yes
+					}
+				}
+				else_if = {
+					limit = { MOR_Uvantha = { is_unit_leader = yes } }
+					MOR_Uvantha = {
+						custom_effect_tooltip = character_dies_tt
+						retire = yes
+					}
+				}
+				else_if = {
+					limit = { MOR_Khamul = { is_unit_leader = yes } }
+					MOR_Khamul = {
+						custom_effect_tooltip = character_dies_tt
+						retire = yes
+					}
+				}
+				else_if = {
+					limit = { MOR_Witch_king = { is_unit_leader = yes } }
+					MOR_Witch_king = {
+						custom_effect_tooltip = character_dies_tt
+						retire = yes
+					}
+				}
+			}
+		}
+	}
+}

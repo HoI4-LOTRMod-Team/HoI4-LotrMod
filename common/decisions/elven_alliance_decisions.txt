@@ -1,0 +1,241 @@
+elven_alliance_decisions_category = {
+
+	starting_vote = {
+		icon = GFX_decision_assembly
+
+        activation = {
+            NOT = { has_global_flag = ea_vote_in_progress }
+			NOT = { has_global_flag = ea_assembly_in_recess }
+			NOT = { ea_resolution_queue_empty = yes }
+			ea_single_member_trigger = yes	# Only run this once
+        }
+		available = {
+            always = yes
+        }
+		visible = {
+			always = yes
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		priority = 100
+
+		fire_only_once = no
+		days_mission_timeout = 0
+		selectable_mission = no
+
+		complete_effect = {
+			# clear previous votes
+			elven_alliance_clear_votes = yes
+
+			# Get next resolution from queue
+			set_variable = { global.ea_current_resolution = global.ea_resolutions_queue^0 }
+			set_variable = { global.ea_current_resolution_proposer = global.ea_proposers_queue^0 }
+			var:global.ea_current_resolution_proposer = {
+				set_variable = {
+					global.ea_current_resolution_target = ea_resolution_target
+				}
+			}
+			remove_from_array = { array = global.ea_resolutions_queue index = 0 }
+			remove_from_array = { array = global.ea_proposers_queue index = 0 }
+
+			# Start vote
+			set_global_flag = ea_vote_in_progress
+
+			for_each_scope_loop = {
+				array = global.elven_alliance_members
+				activate_mission = vote_in_progress
+			}
+		}
+	}
+
+	vote_in_progress = {
+        icon = GFX_decision_assembly
+
+        activation = {
+            #NOT = { has_global_flag = ea_vote_in_progress }
+			#NOT = { has_global_flag = ea_assembly_in_recess }
+			#NOT = { ea_resolution_queue_empty = yes }
+			always = no
+        }
+		available = {
+            always = no
+        }
+		visible = {
+			always = no
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		priority = 100
+
+		fire_only_once = no
+		is_good = yes
+		days_mission_timeout = 70
+		selectable_mission = no
+
+		timeout_effect = {
+            # Count votes and pass resolution
+
+			effect_tooltip = {
+				elven_alliance_vote_effect = yes
+			}
+
+			if = {
+				limit = { ea_single_member_trigger = yes }
+				hidden_effect = {
+					clr_global_flag = ea_vote_in_progress
+					set_global_flag = ea_assembly_in_recess
+
+					for_each_scope_loop = {
+						array = global.elven_alliance_members
+						activate_mission = assembly_in_recess
+						if = {
+							limit = {
+								has_global_flag = ea_alliance_advanced_resolutions_unlocked
+							}
+							add_days_mission_timeout = { mission = assembly_in_recess days = -20 }
+						}
+						if = {
+							limit = {
+								ea_has_alliance_tier_1 = yes
+							}
+							add_days_mission_timeout = { mission = assembly_in_recess days = -20 }
+						}
+					}
+
+					for_each_scope_loop = {
+						array = global.elven_alliance_members
+						elven_alliance_vote_effect = yes
+					}
+
+					clear_variable = global.ea_current_resolution_target
+				}
+			}
+        }
+
+		cancel_trigger = {
+			has_global_flag = ea_vote_vetoed
+        }
+
+		cancel_effect = {
+			clr_global_flag = ea_vote_vetoed
+			clr_global_flag = ea_vote_in_progress
+
+			set_global_flag = ea_assembly_in_recess
+			activate_mission = assembly_in_recess
+
+			clear_variable = global.ea_current_resolution_target
+			hidden_effect = {
+				# shorten recess if alliance advanced resolutions unlocked
+				if = {
+					limit = {
+						ea_single_member_trigger = yes
+						has_global_flag = ea_alliance_advanced_resolutions_unlocked
+					}
+					add_days_mission_timeout = { mission = assembly_in_recess days = -20 }
+				}
+				# shorten recess if alliance advanced resolutions unlocked
+				if = {
+					limit = {
+						ea_single_member_trigger = yes
+						ea_has_alliance_tier_1 = yes
+					}
+					add_days_mission_timeout = { mission = assembly_in_recess days = -20 }
+				}
+			}
+		}
+	}
+
+	assembly_in_recess = {
+        icon = GFX_decision_assembly
+
+		activation = {
+            #has_global_flag = ea_assembly_in_recess
+			always = no
+        }
+        available = {
+            always = no
+        }
+		visible = {
+			always = yes
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		priority = 100
+
+		fire_only_once = no
+
+		is_good = yes
+		days_mission_timeout = 120
+		selectable_mission = no
+
+		timeout_effect = {
+			if = {
+				limit = { ea_single_member_trigger = yes }
+				clr_global_flag = ea_assembly_in_recess	
+			}
+        }
+
+		cancel_trigger = {
+            always = no
+        }
+	}
+
+	# hegemony leader: VETO
+	ea_veto_resolution = {
+        icon = GFX_decision_generic_authority
+		cost = 100
+
+		days_re_enable = 120
+
+        available = {
+            var:global.ea_hegemony_leader = { tag = ROOT }
+        }
+		visible = {
+			has_global_flag = ea_vote_in_progress
+			var:global.ea_hegemony_leader = { tag = ROOT }
+			ea_has_hegemony_tier_1 = yes
+			NOT = { has_global_flag = ea_vote_vetoed }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		fire_only_once = no
+
+		complete_effect = {
+			set_global_flag = ea_vote_vetoed
+		}
+	}
+
+	# Leave assembly
+	ea_leave_assembly = {
+        icon = GFX_decision_generic_4
+		cost = 100
+
+		visible = {
+			is_elven_alliance_member = yes
+			NOT = { ea_is_hegemony_leader = yes }
+			NOT = { ea_has_hegemony_tier_2 = yes }
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		fire_only_once = no
+
+		complete_effect = {
+			elven_alliance_leave = yes
+		}
+	}
+}
