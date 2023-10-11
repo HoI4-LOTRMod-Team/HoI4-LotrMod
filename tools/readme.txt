@@ -1,4 +1,4 @@
-Don't know what you're doing here? Read this: https://github.com/Helliaca/HoI4-LotrMod/wiki/Python-GFX-Scripts
+Don't know what you're doing here? Read this: https://github.com/HoI4-LOTRMod-Team/HoI4-LotrMod/wiki/Python-GFX-Scripts
 
 
 

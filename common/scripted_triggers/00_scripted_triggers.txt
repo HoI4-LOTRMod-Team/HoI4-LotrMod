@@ -349,31 +349,6 @@ has_same_ideology = {
 	}
 }
 
-is_latin_american_country = {
-	OR = {
-		original_tag = CUB
-		original_tag = ARG
-		original_tag = BRA
-		original_tag = URG
-		original_tag = PAR
-		original_tag = CHL
-		original_tag = BOL
-		original_tag = PRU
-		original_tag = ECU
-		original_tag = COL
-		original_tag = VEN
-		original_tag = PAN
-		original_tag = COS
-		original_tag = NIC
-		original_tag = HON
-		original_tag = ELS
-		original_tag = GUA
-		original_tag = MEX
-		original_tag = HAI
-		original_tag = DOM
-	}
-}
-
 has_specialist_level_trigger = {
 	skill > 5
 	skill < 6
@@ -550,7 +525,26 @@ has_any_tanks = {
 }
 
 can_unlock_new_special_forces_tree = {
-	always = no
+	if = {
+		limit = { NOT = { has_variable = sf_trees } }
+		custom_trigger_tooltip = {
+			tooltip = can_unlock_new_special_forces_tree_none
+			NOT = { has_variable = sf_trees }
+		}
+	}
+	else_if = {
+		limit = { check_variable = { sf_trees > 0 } }
+		custom_trigger_tooltip = {
+			tooltip = can_unlock_new_special_forces_tree_more_yes
+			check_variable = { sf_trees > 0 }
+		}
+	}
+	else = {
+		custom_trigger_tooltip = {
+			tooltip = can_unlock_new_special_forces_tree_more_no
+			always = no
+		}
+	}
 }
 # These are to make strength comparisons easier 
 
@@ -579,6 +573,43 @@ FROM_is_twice_as_weak = {
 	strength_ratio = {
 		tag = FROM 
 		ratio > 2
+	}
+}
+
+ai_has_completed_army_doctrine = {
+	is_ai = yes
+	OR = {
+		has_tech = werwolf_guerillas
+		has_tech = modern_blitzkrieg
+		has_tech = air_land_battle
+		has_tech = shock_and_awe
+		has_tech = c3i_theory
+		has_tech = infiltration_in_depth
+		has_tech = continuous_offensive
+		has_tech = guerilla_warfare
+	}
+}
+
+ai_has_completed_air_doctrine = {
+	is_ai = yes
+	OR = {
+		has_tech = offensive_formations
+		has_tech = mass_destruction
+		has_tech = forward_interception
+		has_tech = high_level_bombing
+	}
+}
+
+ai_has_completed_naval_doctrine = {
+	is_ai = yes
+	OR = {
+		has_tech = grand_battlefleet
+		has_tech = submarine_offensive
+		has_tech = floating_airfield
+		has_tech = combined_operations_raiding
+		has_tech = integrated_convoy_defence
+		has_tech = submarine_offensive_bs
+		has_tech = carrier_battlegroups
 	}
 }
 
