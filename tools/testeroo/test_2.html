@@ -15,9 +15,35 @@
         }
 		
 		.image-item {
-			min-width: 100px;
-			min-height: 100px;
-			justify-content: center;
+		  width: 100px; /* Set your desired width */
+		  height: 100px; /* Set your desired height */
+		  overflow: hidden;
+		  position: relative;
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		}
+
+		.image-item img {
+		  object-fit: cover; /* This will make sure the image covers the div */
+		  object-position: center; /* Center the image inside the div */
+		  cursor: pointer;
+		}
+
+		.tooltip {
+		  position: absolute;
+		  bottom: 3px;
+		  background-color: #333;
+		  color: #fff;
+		  padding: 8px 12px;
+		  border-radius: 4px;
+		  opacity: 0;
+		  transition: opacity 0.3s ease;
+		}
+
+		/* Optional: Add hover effect */
+		.image-item:hover {
+		  border: 2px solid #007bff; /* Change border color on hover */
 		}
 		
 		body {
@@ -118,6 +144,32 @@
     <script>
         const searchBar = document.getElementById('search-bar');
         const imageItems = document.querySelectorAll('.image-item');
+
+		imageItems.forEach(item => {
+		  const tooltip = document.createElement('div');
+		  tooltip.classList.add('tooltip');
+		  tooltip.textContent = 'copied to clipboard';
+		  item.appendChild(tooltip);
+
+		  item.addEventListener('click', () => {
+			const imageAlt = item.querySelector('img').getAttribute('alt');
+			copyToClipboard(imageAlt);
+			tooltip.style.opacity = 1;
+			setTimeout(() => {
+			  tooltip.style.opacity = 0;
+			}, 1500);
+		  });
+		});
+
+		function copyToClipboard(text) {
+		  const textarea = document.createElement('textarea');
+		  textarea.value = text;
+		  document.body.appendChild(textarea);
+		  textarea.select();
+		  document.execCommand('copy');
+		  document.body.removeChild(textarea);
+		}
+
 
         searchBar.addEventListener('input', function (event) {
             const searchTerm = event.target.value.toLowerCase();
