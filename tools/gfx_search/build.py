@@ -40,7 +40,7 @@ for cat_str in settings["categories"]:
         image_divs += "\n<div class=\"image-item img-thumbnail\"><img src=\"images/"+cat_str+"/"+gfx+".png"+"\"  loading=\"lazy\" alt=\""+gfx+"\"></div>"
 
     # Insert all elements into a template
-    templatebuilder.write_template("tools/gfx_search/test_template.html", "tools/gfx_search/"+cat_str+".html",
+    templatebuilder.write_template("tools/gfx_search/templates/gfx_search_category_template.html", "tools/gfx_search/"+cat_str+".html",
         {
             "$IMAGE_LIST_TOKEN$": image_divs,
             "$NAV_BAR_TOKEN$": nav_bar,

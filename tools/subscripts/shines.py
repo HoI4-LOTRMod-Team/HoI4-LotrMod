@@ -50,6 +50,9 @@ for root, dirs, files in os.walk("../../gfx/interface/goals"):
 			file_id = file[0:len(file)-4]
 			file_path = os.path.join(root[6:], file).replace('\\', '/')
 			
+			# Ignore the shine-files
+			if file_id == "shine_mask" or file_id == "shine_overlay": continue
+			
 			print(str.replace("FILE_ID", file_id).replace("FILE_PATH", file_path))
 
 
