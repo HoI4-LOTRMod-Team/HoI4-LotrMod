@@ -5,6 +5,6 @@ def parse_gfx_file(gfx_file_path):
         content = file.read()
 
         # Extract sprite entries using regular expressions
-        sprite_entries = re.findall(r'spriteType = \{\s+name = "(.*?)".+?texturefile = "(.*?)".+?\}', content, re.DOTALL)
+        sprite_entries = re.findall(r'spriteType = {\s+name = "?([^"\n]+)"?.+?texturefile = "?([^"\n]+)"?.+?}', content, re.DOTALL)
 
         return sprite_entries
