@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<script src="bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<title>HoI4-LotR GFX Search</title>
+	<style>
+		.image-container {
+			display: flex;
+			flex-wrap: wrap;
+			width: 100%;
+		}
+
+		.image-item {
+			width: $ITEM_SIZE_X_TOKEN$px;
+			height: $ITEM_SIZE_Y_TOKEN$px;
+			overflow: hidden;
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 5px 5px 5px 5px;
+			background-color: #33312a;
+			border-color: #615b48;
+		}
+
+		.btn {
+			margin: 5px 5px 5px 5px;
+		}
+
+		.image-item img {
+			object-fit: cover;
+			/* This will make sure the image covers the div */
+			object-position: center;
+			/* Center the image inside the div */
+			cursor: pointer;
+
+			max-width:100%;
+  			height:auto;
+		}
+
+		.tooltip {
+			position: absolute;
+			bottom: 3px;
+			background-color: #1a1a1a;
+			color: #fff;
+			padding: 8px 12px;
+			border-radius: 4px;
+			opacity: 0;
+			transition: opacity 0.3s ease;
+		}
+
+		/* Optional: Add hover effect */
+		.image-item:hover {
+			border: 2px solid #b97822;
+			/* Change border color on hover */
+		}
+
+		body {
+			overflow-y: scroll;
+			/* Show vertical scrollbar */
+		}
+	</style>
+</head>
+
+<body style="background-color:#23221e;">
+	<div class="container">
+
+		<section class="header">
+			<h1 class="title text-center text-light">HoI4 LotR Mod GFX Search</h1>
+			<h2 class="title text-center text-light">$CATEGORY_NAME_TOKEN$</h1>
+		</section>
+
+		<nav class="navbar navbar-light bg-dark mt-5">
+			<form class="form-inline">
+				<div class="text-light">Search for:&#160;&#160;</div>
+				$NAV_BAR_TOKEN$
+
+			</form>
+		</nav>
+
+		<div class="title text-center text-light mt-5">Search for icons and click on them to copy their GFX entry!</div>
+
+		<div class="input-group form-outline mt-1">
+			<span class="input-group-prepend">
+				<div class="input-group-text bg-transparent border-right-0"
+					style="font-size: 22px; border-color: #615b48;">
+					<i class="fa fa-search"></i>
+				</div>
+			</span>
+			<input type="search" id="search-bar" class="form-control bg-dark text-light"
+				placeholder="Type to search for icons..." aria-label="Search"
+				style="font-size: 22px; border-color: #615b48;" />
+		</div>
+
+
+
+		<div class="image-container mt-3">
+
+			$IMAGE_LIST_TOKEN$
+		</div>
+
+		<div class="text-light mt-5">
+			This website is intended to aid in the development of the fan-made <a href="https://github.com/HoI4-LOTRMod-Team/HoI4-LotrMod">Lord of the Rings Mod</a> for <a href="https://www.paradoxinteractive.com/games/hearts-of-iron-iv/about">Hearts of Iron IV</a>
+			<br>
+			Concept inspired by <a href="https://github.com/Yard1/HoI4-GFX-Search">HoI4-GFX-Search</a> (made by <a href="https://github.com/Yard1">Yard1</a>)
+			<br>
+		</div>
+
+	</div>
+
+	<script>
+		const searchBar = document.getElementById('search-bar');
+		const imageItems = document.querySelectorAll('.image-item');
+
+		imageItems.forEach(item => {
+			const tooltip = document.createElement('div');
+			tooltip.classList.add('tooltip');
+			tooltip.textContent = 'copied to clipboard';
+			item.appendChild(tooltip);
+
+			item.addEventListener('click', () => {
+				const imageAlt = item.querySelector('img').getAttribute('alt');
+				copyToClipboard(imageAlt);
+				tooltip.style.opacity = 1;
+				setTimeout(() => {
+					tooltip.style.opacity = 0;
+				}, 1500);
+			});
+		});
+
+		function copyToClipboard(text) {
+			const textarea = document.createElement('textarea');
+			textarea.value = text;
+			document.body.appendChild(textarea);
+			textarea.select();
+			document.execCommand('copy');
+			document.body.removeChild(textarea);
+		}
+
+
+		searchBar.addEventListener('input', function (event) {
+			const searchTerm = event.target.value.toLowerCase();
+
+			// Loop through all image items and toggle visibility based on search filter
+			imageItems.forEach(item => {
+				const imageAlt = item.querySelector('img').alt.toLowerCase();
+				if (imageAlt.includes(searchTerm)) {
+					item.style.display = 'flex';
+				} else {
+					item.style.display = 'none';
+				}
+			});
+		});
+	</script>
+</body>
+
+</html>
