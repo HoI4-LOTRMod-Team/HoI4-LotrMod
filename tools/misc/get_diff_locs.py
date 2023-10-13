@@ -36,8 +36,8 @@ def load_yaml(file_path):
         print(f"Error loading YAML file {file_path}: {e}")
         return {}
 
-vanilla = load_yaml(r'C:\Program Files (x86)\Steam\steamapps\common\Hearts of Iron IV BETA\localisation\english\tank_modules_l_english.yml')
-custom = load_yaml(r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\tank_modules_l_english.yml')
+vanilla = load_yaml(r'C:\Program Files (x86)\Steam\steamapps\common\Hearts of Iron IV BETA\localisation\english\unit_l_english.yml')
+custom = load_yaml(r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\replace\unit_l_english.yml')
 
 #for key, value in data.items():
 #    print(f"Key: {key}")
