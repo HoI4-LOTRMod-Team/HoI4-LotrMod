@@ -9,6 +9,9 @@ settings = settingsreader.read_json("tools/gfx_search/settings.json")
 # Get a list of all categories
 cat_list = settings["categories"]
 
+# Keep a list of all images, so that we can clean up afterwards
+all_images_list = []
+
 # Process eahc category individually
 for cat_str in settings["categories"]:
     print("Processing: "+cat_str)
@@ -36,8 +39,10 @@ for cat_str in settings["categories"]:
     os.makedirs(output_directory, exist_ok=True)
     image_divs = ""
     for (gfx, file) in gfx_entries:
-        imageconverter.convert_to_png(file, output_directory+"/"+gfx+".png")
+        converted = imageconverter.convert_to_png(file, output_directory+"/"+gfx+".png")
+
         image_divs += "\n<div class=\"image-item img-thumbnail\"><img src=\"images/"+cat_str+"/"+gfx+".png"+"\"  loading=\"lazy\" alt=\""+gfx+"\"></div>"
+        all_images_list += output_directory+"/"+gfx+".png"
 
     # Insert all elements into a template
     templatebuilder.write_template("tools/gfx_search/templates/gfx_search_category_template.html", "tools/gfx_search/"+cat_str+".html",
@@ -49,3 +54,19 @@ for cat_str in settings["categories"]:
             "$CATEGORY_NAME_TOKEN$": str(name)
         }
     )
+
+# Clean up all the images that we don't use
+directory_path = 'relative/path/to/your/directory'
+full_directory_path = os.path.join(os.getcwd(), "tools/gfx_search/images/")
+unusued_images_count = 0
+
+# Get a list of PNG files in the directory
+png_files = [os.path.join(full_directory_path, file) for file in os.listdir(full_directory_path) if file.lower().endswith('.png') and os.path.isfile(os.path.join(full_directory_path, file))]
+
+# Iterate over the PNG files and remove those that are not in images_list
+for file_path in png_files:
+    if file_path not in all_images_list:
+        os.remove(file_path)
+        unusued_images_count += 1
+        #print(f"PNG file '{file_path}' removed.")
+print("Removed "+str(unusued_images_count)+" unused images.")
