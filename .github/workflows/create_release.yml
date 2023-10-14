@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - master
+
+name: Create Release
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get current date and time in CEST, and compatible version from descriptor.mod
+        id: get-version
+        run: |
+          # Read compatible version from descriptor.mod and remove quotes
+          compatible_version=$(grep -oP 'supported_version="\K[0-9]+\.[0-9]+\.\*' descriptor.mod | sed 's/"//g')
+          
+          # Get current date and time in CEST
+          date_time=$(TZ="Europe/Paris" date +'%d-%m-%Y_%H-%M')
+
+          echo "::set-output name=compatible_version::$compatible_version"
+          echo "::set-output name=date_time::$date_time"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.LOTR_MOD_RELEASE_TOKEN }}
+        with:
+          tag_name: ${{ steps.get-version.outputs.date_time }}
+          release_name: ${{ steps.get-version.outputs.date_time }}
+          body: |
+            Compatible HoI4 Version: v${{ steps.get-version.outputs.compatible_version }}
+          draft: false
+          prerelease: false
