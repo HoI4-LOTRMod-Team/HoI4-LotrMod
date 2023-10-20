@@ -25,7 +25,7 @@ set_gameplan_generic = {
                 NOT = { has_government = belligerent }
 			}
 
-            set_country_flag = gamplan_going_belligerent
+            set_country_flag = gameplan_going_belligerent
         }
 
         # REVOLUTIONARY
@@ -139,23 +139,49 @@ set_gameplan_generic = {
 
 
 set_gameplan_ANG = {
-    random_list = {
-        10 = {
-            modifier = {
-                is_historical_focus_on = yes
-                factor=0
+    if = {
+        limit = {
+            has_game_rule = {
+                rule = ANG_AI_BEHAVIOR
+                option = UNALIGNED_HISTORICAL
             }
-            set_country_flag = gamplan_going_belligerent
         }
-        10 = {
-            modifier = {
-                is_historical_focus_on = yes
-                factor=0
+        set_country_flag = gameplan_going_unaligned
+    }else_if = {
+        limit = {
+            has_game_rule = {
+                rule = ANG_AI_BEHAVIOR
+                option = BELLIGERENT_PLAN
             }
-            set_country_flag = gameplan_going_cooperative
         }
-        10 = {
-            set_country_flag = gameplan_going_unaligned
+        set_country_flag = gameplan_going_belligerent
+    }else_if = {
+        limit = {
+            has_game_rule = {
+                rule = ANG_AI_BEHAVIOR
+                option = COOPERATIVE_PLAN
+            }
+        }
+        set_country_flag = gameplan_going_cooperative
+    }else = {
+        random_list = {
+            10 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor=0
+                }
+                set_country_flag = gameplan_going_belligerent
+            }
+            10 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor=0
+                }
+                set_country_flag = gameplan_going_cooperative
+            }
+            10 = {
+                set_country_flag = gameplan_going_unaligned
+            }
         }
     }
 }
@@ -168,7 +194,7 @@ set_gameplan_ART = {
                 is_historical_focus_on = yes
                 factor=0
             }
-            set_country_flag = gamplan_going_belligerent
+            set_country_flag = gameplan_going_belligerent
         }
         10 = {
             modifier = {
@@ -185,18 +211,7 @@ set_gameplan_ART = {
 
 
 set_gameplan_RHU = {
-    random_list = {
-        8 = {
-            set_country_flag = gamplan_going_belligerent
-        }
-        0 = {
-            modifier = {
-                is_historical_focus_on = yes
-                factor=0
-            }
-            set_country_flag = gameplan_going_cooperative
-        }
-    }
+    set_country_flag = gameplan_going_belligerent
 }
 
 
@@ -207,7 +222,7 @@ set_gameplan_ENT = {
                 is_historical_focus_on = yes
                 factor=0
             }
-            set_country_flag = gamplan_going_belligerent
+            set_country_flag = gameplan_going_belligerent
         }
         10 = {
             modifier = {
@@ -237,7 +252,7 @@ set_gameplan_ERE = {
                 is_historical_focus_on = yes
                 factor=0
             }
-            set_country_flag = gamplan_going_belligerent
+            set_country_flag = gameplan_going_belligerent
         }
         6 = {
             modifier = {
@@ -254,23 +269,57 @@ set_gameplan_ERE = {
 
 
 set_gameplan_GON = {
-    random_list = {
-        2 = {
-            modifier = {
-                is_historical_focus_on = yes
-                factor=0
-            }
-            set_country_flag = gameplan_going_revolutionary
+    if = {
+        limit = {
+            has_game_rule = {
+				rule = GON_AI_BEHAVIOR 
+				option = UNALIGNED_PLAN
+			}
         }
-        6 = {
-            modifier = {
-                is_historical_focus_on = yes
-                factor=0
-            }
-            set_country_flag = gameplan_going_unaligned
+        set_country_flag = gameplan_going_unaligned
+    } else_if = {
+        limit = {
+            has_game_rule = {
+				rule = GON_AI_BEHAVIOR 
+				option = REVOLUTIONARY_PLAN
+			}
         }
-        13 = {
-            set_country_flag = gameplan_going_cooperative
+        set_country_flag = gameplan_going_revolutionary
+    } else_if = {
+        limit = {
+            has_game_rule = {
+				rule = GON_AI_BEHAVIOR 
+				option = COOPERATIVE_UNHISTORICAL
+			}
+        }
+        set_country_flag = gameplan_going_cooperative
+    } else_if = {
+        limit = {
+            has_game_rule = {
+				rule = GON_AI_BEHAVIOR 
+				option = COOPERATIVE_PLAN
+			}
+        }
+        set_country_flag = gameplan_going_cooperative
+    } else = {
+        random_list = {
+            2 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor=0
+                }
+                set_country_flag = gameplan_going_revolutionary
+            }
+            6 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor=0
+                }
+                set_country_flag = gameplan_going_unaligned
+            }
+            13 = {
+                set_country_flag = gameplan_going_cooperative
+            }
         }
     }
 }
@@ -278,14 +327,14 @@ set_gameplan_GON = {
 
 set_gameplan_HAR = {
     # There is no alternate paths for HAR afaik
-    set_country_flag = gamplan_going_belligerent
+    set_country_flag = gameplan_going_belligerent
 }
 
 
 set_gameplan_ISE = {
     random_list = {
         65 = {
-            set_country_flag = gamplan_going_belligerent
+            set_country_flag = gameplan_going_belligerent
         }
         15 = {
             modifier = {
@@ -300,62 +349,129 @@ set_gameplan_ISE = {
 
 set_gameplan_LTH = {
     if = {
-        limit = { is_historical_focus_on = yes }
+        limit = { 
+            OR = {
+                is_historical_focus_on = yes 
+                has_game_rule = {
+                    rule = LTH_AI_BEHAVIOR 
+                    option = UNALIGNED_HISTORICAL
+                }
+            }
+        }
 
         set_country_flag = gameplan_going_unaligned
         set_country_flag = gameplan_historical
         set_country_flag = gameplan_limited_intervention
     }
-
     else = {
-        random_list = {
-            # unaligned
-            35 = {
-                set_country_flag = gameplan_going_unaligned
-                random_list = {
-                    8 = {
-                        set_country_flag = gameplan_limited_intervention
-                    }
-                    5 = {
-                        set_country_flag = gameplan_total_isolation
-                    }
+        if = {
+            limit = {
+                has_game_rule = {
+                    rule = LTH_AI_BEHAVIOR 
+                    option = UNALIGNED_UNHISTORICAL
                 }
             }
-            # cooperative
-            12 = {
-                set_country_flag = gameplan_going_cooperative
-                random_list = {
-                    10 = { }
-                    2 = {
-                        set_country_flag = gameplan_white_council
-                    }
-                    2 = {
-                        set_country_flag = gameplan_elven_alliance
-                    }
+            set_country_flag = gameplan_going_unaligned
+            random_list = {
+                8 = {
+                    set_country_flag = gameplan_limited_intervention
+                }
+                5 = {
+                    set_country_flag = gameplan_total_isolation
                 }
             }
-            # belligerent
-            6 = {
-                set_country_flag = gamplan_going_belligerent
-                random_list = {
-                    5 = { }
-                    3 = {
-                        set_country_flag = gameplan_bully_elves
-                    }
-                    3 = {
-                        set_country_flag = gameplan_bully_mortals
-                    }
+        } else_if = {
+            limit = {
+                has_game_rule = {
+                    rule = LTH_AI_BEHAVIOR 
+                    option = COOPERATIVE_UNHISTORICAL
                 }
             }
-            #revo
-            4 = {
-                set_country_flag = gameplan_going_revolutionary
+            set_country_flag = gameplan_going_cooperative
+            random_list = {
+                10 = { }
+                2 = {
+                    set_country_flag = gameplan_white_council
+                }
+                2 = {
+                    set_country_flag = gameplan_elven_alliance
+                }
             }
-            # mix/harmonic ascendancy
-            2 = {
-                set_country_flag = gameplan_going_revolutionary
-                set_country_flag = gamplan_going_belligerent
-                set_country_flag = gamplan_harmonic_ascendancy
+        }else_if = {
+            limit = {
+                has_game_rule = {
+                    rule = LTH_AI_BEHAVIOR 
+                    option = BELLIGERENT_UNHISTORICAL
+                }
+            }
+            set_country_flag = gameplan_going_belligerent
+            random_list = {
+                5 = { }
+                3 = {
+                    set_country_flag = gameplan_bully_elves
+                }
+                3 = {
+                    set_country_flag = gameplan_bully_mortals
+                }
+            }
+        }else_if = {
+            limit = {
+                has_game_rule = {
+                    rule = LTH_AI_BEHAVIOR 
+                    option = REVOLUTIONARY_UNHISTORICAL
+                }
+            }
+            set_country_flag = gameplan_going_revolutionary
+        } else = {
+            random_list = {
+                # unaligned
+                35 = {
+                    set_country_flag = gameplan_going_unaligned
+                    random_list = {
+                        8 = {
+                            set_country_flag = gameplan_limited_intervention
+                        }
+                        5 = {
+                            set_country_flag = gameplan_total_isolation
+                        }
+                    }
+                }
+                # cooperative
+                12 = {
+                    set_country_flag = gameplan_going_cooperative
+                    random_list = {
+                        10 = { }
+                        2 = {
+                            set_country_flag = gameplan_white_council
+                        }
+                        2 = {
+                            set_country_flag = gameplan_elven_alliance
+                        }
+                    }
+                }
+                # belligerent
+                6 = {
+                    set_country_flag = gameplan_going_belligerent
+                    random_list = {
+                        5 = { }
+                        3 = {
+                            set_country_flag = gameplan_bully_elves
+                        }
+                        3 = {
+                            set_country_flag = gameplan_bully_mortals
+                        }
+                    }
+                }
+                #revo
+                4 = {
+                    set_country_flag = gameplan_going_revolutionary
+                }
+                # mix/harmonic ascendancy
+                2 = {
+                    set_country_flag = gameplan_going_revolutionary
+                    set_country_flag = gameplan_going_belligerent
+                    set_country_flag = gamplan_harmonic_ascendancy
+                }
             }
         }
 
@@ -397,7 +513,7 @@ set_gameplan_MIR = {
                 is_historical_focus_on = yes
                 factor=0
             }
-            set_country_flag = gamplan_going_belligerent
+            set_country_flag = gameplan_going_belligerent
         }
         7 = {
             modifier = {
@@ -415,16 +531,34 @@ set_gameplan_MIR = {
 
 
 set_gameplan_MOR = {
-    random_list = {
-        75 = {
-            set_country_flag = gamplan_going_belligerent
-        }
-        15 = {
-            modifier = {
-                is_historical_focus_on = yes
-                factor=0
+    if = {
+        limit = {
+            has_game_rule = {
+                rule = MOR_AI_BEHAVIOR
+                option = BELLIGERENT_HISTORICAL
             }
-            set_country_flag = gameplan_going_revolutionary
+        }
+        set_country_flag = gameplan_going_belligerent
+    }else_if = {
+        limit = {
+            has_game_rule = {
+                rule = MOR_AI_BEHAVIOR
+                option = REVOLUTIONARY_PLAN
+            }
+        }
+        set_country_flag = gameplan_going_revolutionary
+    }else = {
+        random_list = {
+            75 = {
+                set_country_flag = gameplan_going_belligerent
+            }
+            15 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor=0
+                }
+                set_country_flag = gameplan_going_revolutionary
+            }
         }
     }
 }
@@ -447,7 +581,7 @@ set_gameplan_RIV = {
                 is_historical_focus_on = yes
                 factor=0
             }
-            set_country_flag = gamplan_going_belligerent
+            set_country_flag = gameplan_going_belligerent
         }
         15 = {
             modifier = {
@@ -481,7 +615,7 @@ set_gameplan_ROH = {
                 is_historical_focus_on = yes
                 factor=0
             }
-            set_country_flag = gamplan_going_belligerent
+            set_country_flag = gameplan_going_belligerent
         }
         25 = {
             set_country_flag = gameplan_going_cooperative
@@ -497,7 +631,7 @@ set_gameplan_SHI = {
                 is_historical_focus_on = yes
                 factor=0
             }
-            set_country_flag = gamplan_going_belligerent
+            set_country_flag = gameplan_going_belligerent
         }
         15 = {
             set_country_flag = gameplan_going_cooperative
