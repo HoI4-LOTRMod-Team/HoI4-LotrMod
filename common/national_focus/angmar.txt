@@ -22,10 +22,13 @@ shared_focus = industrial_effort
 #Focus for The Fate of Angmar
 focus = {
 	id = ANG_steady_as_we_go
-	icon = GFX_goal_support_unaligned
-	ai_will_do = {
-		factor = 1
-		modifier = { factor = 0 is_going_unaligned = no }
+	icon = GFX_goal_support_unalligned
+	ai_will_do = { 
+		base = 0
+		modifier = {
+			add = 100
+			has_country_flag = gameplan_going_unaligned
+		}
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
 	mutually_exclusive = { focus = thefateofangmar }
@@ -44,6 +47,9 @@ focus = {
 	prerequisite = { focus = ANG_steady_as_we_go }
 	ai_will_do = {
 		factor = 15
+	}
+	available = {
+		has_country_flag = gameplan_going_belligerent
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
 	relative_position_id = ANG_steady_as_we_go
@@ -313,7 +319,16 @@ focus = {
 	id = thefateofangmar
 	icon = GFX_goal_angmar_unaligned
 	search_filters = { FOCUS_FILTER_POLITICAL }
-	ai_will_do = { factor = 4 }
+	ai_will_do = { 
+		base = 0
+		modifier = {
+			add = 100
+			OR = {
+				has_country_flag = gameplan_going_belligerent
+				has_country_flag = gameplan_going_cooperative
+			}
+		}
+	}
 	mutually_exclusive = { focus = ANG_steady_as_we_go }
 	x = 25
 	y = 0
@@ -328,8 +343,11 @@ focus = {
 	icon = GFX_goal_support_cooperative
 	search_filters = { FOCUS_FILTER_POLITICAL }
 	ai_will_do = { 
-		factor = 5
-		modifier = { factor = 0 is_going_cooperative = no }
+		base = 0
+		modifier = {
+			add = 25
+			has_country_flag = gameplan_going_cooperative
+		}
 	}
 	relative_position_id = thefateofangmar
 	x = -4
@@ -1177,9 +1195,13 @@ focus = {
 	completion_reward = {
 		GON = {
 			add_opinion_modifier = { 
-				target = GON
+				target = ANG
 				modifier = medium_increase
 			}
+		}
+		add_opinion_modifier = { 
+			target = GON
+			modifier = medium_increase
 		}
 	}
 }
@@ -1282,8 +1304,11 @@ focus = {
 	relative_position_id = thefateofangmar
 	search_filters = { FOCUS_FILTER_POLITICAL }
 	ai_will_do = { 
-		factor = 5
-		modifier = { factor = 0 is_going_belligerent = no }
+		base = 0
+		modifier = {
+			add = 25
+			has_country_flag = gameplan_going_belligerent
+		}
 	}
 	x = 13
 	y = 1
@@ -1782,7 +1807,7 @@ focus = {
 	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
-		add_stability = 0.10
+		add_stability = 0.025
 		152 = {
 			add_building_construction = {	type = bunker level = 3 instant_build = yes province = 306 }
 		}
@@ -1806,7 +1831,7 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = {
 		#148 1863
-		add_stability = 0.10
+		add_stability = 0.05
 		set_capital = {state = 148}
 		add_state_core = 148
 		148 = {
@@ -1843,7 +1868,13 @@ focus = {
 	id = ANG_reclaim_rhudaur
 	icon = GFX_goal_generic_major_war
 	search_filters = { FOCUS_FILTER_ANNEXATION }
-	ai_will_do = { factor = 8 }
+	ai_will_do = { 
+		factor = 8
+		modifier = {
+			add = -25
+			has_completed_focus = ANG_find_a_new_leader
+		} 
+	}
 	bypass = {
 		controls_state = 62
 		controls_state = 63
@@ -1959,7 +1990,9 @@ focus = {
 	id = ANG_avenge_rivendell
 	icon = GFX_goal_riv_elrond
 	search_filters = { FOCUS_FILTER_ANNEXATION }
-	ai_will_do = { factor = 25 }
+	ai_will_do = { 
+		factor = 5 
+	}
 	available = {
 		RIV = {
 			exists = yes
@@ -1980,7 +2013,7 @@ focus = {
 	id = ANG_expend_to_the_east
 	icon = GFX_goal_generic_more_territorial_claims
 	search_filters = { FOCUS_FILTER_ANNEXATION }
-	ai_will_do = { factor = 25 }
+	ai_will_do = { factor = 5 }
 	available = {
 		VAL = {
 			exists = yes
@@ -2055,7 +2088,7 @@ focus = {
 
 focus = {
 	id = ANG_reorder_production
-	icon = GFX_goal_generic_construct_mil_factory
+	icon = GFX_goal_generic_anvil
 	search_filters = { FOCUS_FILTER_INDUSTRY }
 	ai_will_do = { factor = 25 }
 	relative_position_id = ANG_the_return_of_sauron
