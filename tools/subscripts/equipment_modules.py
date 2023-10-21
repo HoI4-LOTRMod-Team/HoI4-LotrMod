@@ -26,6 +26,14 @@ for root, dirs, files in os.walk("../../gfx/interface/equipmentdesigner/tanks/mo
 			
 			print(str.replace("FILE_ID", file_id).replace("FILE_PATH", file_path))
 
+for root, dirs, files in os.walk("../../gfx/interface/equipmentdesigner/tanks/designer"):
+	for file in files:
+		if file.endswith(".dds"):
+			file_id = file[0:len(file)-4]
+			file_path = os.path.join(root[6:], file).replace('\\', '/')
+			
+			print(str.replace("FILE_ID", file_id).replace("FILE_PATH", file_path))
+
 for root, dirs, files in os.walk("../../gfx/interface/equipmentdesigner/naval/modules"):
 	for file in files:
 		if file.endswith(".dds"):
@@ -34,7 +42,23 @@ for root, dirs, files in os.walk("../../gfx/interface/equipmentdesigner/naval/mo
 			
 			print(str.replace("FILE_ID", file_id).replace("FILE_PATH", file_path))
 
+for root, dirs, files in os.walk("../../gfx/interface/equipmentdesigner/naval/designer"):
+	for file in files:
+		if file.endswith(".dds"):
+			file_id = file[0:len(file)-4]
+			file_path = os.path.join(root[6:], file).replace('\\', '/')
+			
+			print(str.replace("FILE_ID", file_id).replace("FILE_PATH", file_path))
+
 for root, dirs, files in os.walk("../../gfx/interface/equipmentdesigner/planes/modules"):
+	for file in files:
+		if file.endswith(".dds"):
+			file_id = file[0:len(file)-4]
+			file_path = os.path.join(root[6:], file).replace('\\', '/')
+			
+			print(str.replace("FILE_ID", file_id).replace("FILE_PATH", file_path))
+
+for root, dirs, files in os.walk("../../gfx/interface/equipmentdesigner/planes/designer"):
 	for file in files:
 		if file.endswith(".dds"):
 			file_id = file[0:len(file)-4]
