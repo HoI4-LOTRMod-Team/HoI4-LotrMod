@@ -90,10 +90,9 @@ focus = {
 	}
 }
 
-#Focus for reinstate the monarchy
 focus = {
 	id = ART_reinstate_monarchy
-	icon = GFX_focus_hol_the_foundations_of_defense
+	icon = GFX_goal_generic_home_defense
 	ai_will_do = { factor = 5 }
 	bypass = { has_government = cooperative }
 	available = { cooperative > 0.5 }
@@ -108,6 +107,76 @@ focus = {
 }
 
 focus = {
+	id = ART_change_in_law
+	icon = GFX_focus_hol_the_foundations_of_defense
+	ai_will_do = { factor = 5 }
+	relative_position_id = ART_reinstate_monarchy
+	prerequisite = { focus = ART_reinstate_monarchy }
+	x = 0
+	y = 1
+	available = { cooperative > 0.6 }
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = { 
+		if = {
+			limit = {
+				has_idea = weak_centralization
+			}
+			swap_ideas = {
+				remove_idea = weak_centralization
+				add_idea = moderate_centralization
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = moderate_centralization
+			}
+			swap_ideas = {
+				remove_idea = moderate_centralization
+				add_idea = strong_centralization
+			}
+		}
+	}
+}
+
+focus = {
+	id = ART_invest_in_the_shire
+	icon = GFX_goal_generic_windmill
+	ai_will_do = { factor = 3 }
+	available = {
+		SHI = {
+			OR = {
+				is_subject_of = ART
+				is_puppet_of = ART
+			}
+		}
+	}
+	relative_position_id = ART_change_in_law
+	x = 2
+	y = 1
+	prerequisite = { focus = ART_change_in_law }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		SHI = {
+			add_opinion_modifier = { target = ART modifier = large_increase }
+			add_autonomy_ratio = {
+				value = -0.1
+			}
+			random_controlled_state = {
+				add_extra_state_shared_building_slots = 1 
+				add_building_construction = { type = arms_factory level = 1 instant_build = yes } 
+			}
+			random_controlled_state = {
+				add_extra_state_shared_building_slots = 1 
+				add_building_construction = { type = industrial_complex level = 1 instant_build = yes } 
+			}
+		}
+	}
+}
+
+
+focus = {
 	id = ART_enforce_control_over_the_shire
 	icon = GFX_goal_generic_forceful_treaty
 	ai_will_do = { factor = 3 }
@@ -119,10 +188,10 @@ focus = {
 			}
 		}
 	}
-	relative_position_id = ART_reinstate_monarchy
-	x = 2
+	relative_position_id = ART_invest_in_the_shire
+	x = 0
 	y = 1
-	prerequisite = { focus = ART_reinstate_monarchy }
+	prerequisite = { focus = ART_invest_in_the_shire }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -174,10 +243,10 @@ focus = {
 	id = ART_recover_the_army_industry
 	icon = GFX_goal_generic_anvil
 	ai_will_do = { factor = 10 }
-	relative_position_id = ART_reinstate_monarchy
+	relative_position_id = ART_change_in_law
 	x = 5
 	y = 1
-	prerequisite = { focus = ART_reinstate_monarchy focus = banrevolutionary focus = banbelligerent }
+	prerequisite = { focus = ART_change_in_law focus = ART_enforce_new_goverment }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -196,10 +265,10 @@ focus = {
 	id = ART_recover_the_civilian_industry
 	icon = GFX_focus_generic_industry_2
 	ai_will_do = { factor = 10 }
-	relative_position_id = ART_reinstate_monarchy
+	relative_position_id = ART_change_in_law
 	x = 7
 	y = 1
-	prerequisite = { focus = ART_reinstate_monarchy focus = banrevolutionary focus = banbelligerent }
+	prerequisite = { focus = ART_change_in_law focus = ART_enforce_new_goverment }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -233,15 +302,31 @@ focus = {
 		}
 	}
 }
+
+focus = {
+	id = ART_never_sleeping_industry
+	icon = GFX_goal_generic_windmill
+	ai_will_do = { factor = 5 }
+	relative_position_id = ART_expand_the_mines_of_evendium
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_expand_the_mines_of_evendium }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_ideas = ART_never_sleeping_industry
+	}
+}
+
 #Focus for Improve Arnorian Relations
 focus = {
 	id = ART_improve_arnorian_relations
 	icon = GFX_goal_generic_improve_relations
 	ai_will_do = { factor = 3 }
-	relative_position_id = ART_reinstate_monarchy
+	relative_position_id = ART_change_in_law
 	x = 0
 	y = 1
-	prerequisite = { focus = ART_reinstate_monarchy }
+	prerequisite = { focus = ART_change_in_law }
 	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
@@ -361,35 +446,6 @@ focus = {
 	}
 }
 
-#Focus for Reunite_with_gondor
-focus = {
-	id = ART_reunite_with_gondor
-	icon = GFX_goal_gondor
-	ai_will_do = { factor = 8 }
-	relative_position_id = ART_unite_the_kingdom_of_arnor
-	x = 3
-	y = 1
-	prerequisite = { focus =ART_unite_the_kingdom_of_arnor}
-	available = {
-		GON = {
-			has_completed_focus = GON_crown_aragorn_king
-		}
-		NOT = {
-			GON = {
-				has_war_with = ART
-			}
-		}
-	}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		GON = {
-			country_event = { id = arthedain.5 }
-		}
-		custom_effect_tooltip = ART_tooltip_reunite_with_gondor
-	}
-}
-
 focus = {
 	id = ART_unite_by_force
 	icon = GFX_goal_arnor_unite_by_force
@@ -446,6 +502,34 @@ focus = {
 	}
 }
 
+#Focus for Reunite_with_gondor
+focus = {
+	id = ART_reunite_with_gondor
+	icon = GFX_goal_gondor
+	ai_will_do = { factor = 8 }
+	relative_position_id = ART_unite_the_kingdom_of_arnor
+	x = 3
+	y = 1
+	prerequisite = { focus =ART_unite_the_kingdom_of_arnor}
+	available = {
+		GON = {
+			has_completed_focus = GON_crown_aragorn_king
+		}
+		NOT = {
+			GON = {
+				has_war_with = ART
+			}
+		}
+	}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		GON = {
+			country_event = { id = arthedain.5 }
+		}
+		custom_effect_tooltip = ART_tooltip_reunite_with_gondor
+	}
+}
 focus = {
 	id = ART_revenge_against_angmar
 	icon = GFX_goal_generic_major_war
@@ -504,92 +588,172 @@ focus = {
 			completion_reward = { add_ideas = generic_belligerent_intermediate add_ideas = generic_revolutionary_intermediate }
 	 }
 
-	 #Focus for Arthedain Nationalism
-			focus = {
-			id = arthedainnationalism
-			icon = GFX_goal_support_belligerent
-			ai_will_do = { factor = 2 }
-			bypass = { has_government = belligerent }
-			available = { belligerent > 0.3 }
-			cancel_if_invalid = no
-	 	  continue_if_invalid = yes
-			relative_position_id = forgeanewpath
-	 		x =-1
-	 		y =1
-	 		mutually_exclusive = { focus = arthedainrevolutionary}
-	 		prerequisite = { focus = forgeanewpath}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = { set_politics = { ruling_party = belligerent elections_allowed = no } remove_ideas = generic_revolutionary_intermediate add_threat = 3 }
-	 }
+	focus = {
+		id = ART_may_morgoth_guide_us
+		icon = GFX_goal_support_belligerent
+		ai_will_do = { factor = 2 }
+		bypass = { has_government = belligerent }
+		available = { belligerent > 0.35 }
+		cancel_if_invalid = no
+		continue_if_invalid = yes
+		relative_position_id = forgeanewpath
+		x =-1
+		y =1
+		mutually_exclusive = { focus = ART_revolution_time}
+		prerequisite = { focus = forgeanewpath}
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = { set_politics = { ruling_party = belligerent elections_allowed = no } remove_ideas = generic_revolutionary_intermediate }
+	}
 
-	 #Focus for Arthedain Communism
-			focus = {
-			id = arthedainrevolutionary
-			icon = GFX_goal_support_revolutionary
-			ai_will_do = { factor = 2 }
-			bypass = { has_government = revolutionary }
-			available = { revolutionary > 0.3 }
-			cancel_if_invalid = no
-	 	  continue_if_invalid = yes
-			relative_position_id = forgeanewpath
-			x =1
-			y =1
-			mutually_exclusive = { focus = arthedainnationalism}
-			prerequisite = { focus = forgeanewpath}
-			cost = 10
-			available_if_capitulated = yes
-			completion_reward = { set_politics = { ruling_party = revolutionary elections_allowed = no } remove_ideas = generic_belligerent_intermediate }
-	 }
-
-	 #Focus for Ban Communism
-			focus = {
-			id = banrevolutionary
-			icon = GFX_goal_generic_territory_or_war
-			ai_will_do = { factor = 4 }
-			relative_position_id = arthedainnationalism
-	 		x =0
-	 		y =1
-	 		mutually_exclusive = { }
-	 		prerequisite = { focus = arthedainnationalism}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				add_popularity = { ideology = revolutionary popularity = -0.25 }
-				add_ideas = ART_revolutionary_banned
-				add_threat = 1
-			}
-	 }
-
-	 #Focus for Ban Fascism
-			 focus = {
-			 id = banbelligerent
-			 icon = GFX_goal_support_fourth_int
-			 ai_will_do = { factor = 4 }
-			relative_position_id = arthedainrevolutionary
-			 x =0
-			 y =1
-			 mutually_exclusive = { }
-			 prerequisite = { focus = arthedainrevolutionary}
-			 cost = 10
-			 available_if_capitulated = yes
-			 completion_reward = {
-				 add_popularity = { ideology = belligerent popularity = -0.25 }
-				 add_ideas = ART_belligerent_banned
-				 add_threat = 1
-			 }
+	focus = {
+		id = ART_bannish_revolutionaries
+		icon = GFX_goal_generic_revolutionary_chains
+		ai_will_do = { factor = 4 }
+		relative_position_id = ART_may_morgoth_guide_us
+		x =0
+		y =1
+		mutually_exclusive = { }
+		prerequisite = { focus = ART_may_morgoth_guide_us}
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = ART_revolutionary_banned
+			add_stability = -0.025
+			add_political_power = 50
 		}
+	 }
 
+	focus = {
+		id = ART_enforce_new_goverment
+		icon = GFX_goal_goal_generic_demand_territory
+		ai_will_do = { factor = 4 }
+		relative_position_id = ART_bannish_revolutionaries
+		prerequisite = { focus = ART_bannish_revolutionaries focus = ART_bannish_morgoth_followers }
+		x = 1
+		y = 1
+		cost = 10
+		completion_reward = {
+			add_stability = 0.05
+			add_political_power = 75
+			if = {
+				limit = {
+					has_government = belligerent
+				}
+				add_popularity = {
+					ideology = belligerent
+					popularity = 0.1
+				}
+			}else_if = {
+				limit = {
+					has_government = revolutionary
+				}
+				add_popularity = {
+					ideology = revolutionary
+					popularity = 0.1
+				}
+			}
+			if = {
+				limit = {
+					has_idea = weak_centralization
+				}
+				swap_ideas = {
+					remove_idea = weak_centralization
+					add_idea = moderate_centralization
+				}
+			}
+			else_if = {
+				limit = {
+					has_idea = moderate_centralization
+				}
+				swap_ideas = {
+					remove_idea = moderate_centralization
+					add_idea = strong_centralization
+				}
+			}
+		}
+	}
+	 
+	focus = {
+		id = ART_morgoth_worshipper
+		icon = GFX_goal_mor_servant_of_melkor_morgoth
+		ai_will_do = { factor = 4 }
+		relative_position_id = ART_enforce_new_goverment
+		prerequisite = { focus = ART_enforce_new_goverment}
+		x = -2
+		y = 1
+		available = {
+			has_government = belligerent
+		}
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = MOR_servant_morgoth
+		}
+	 }
+
+	focus = {
+		id = ART_revolution_time
+		icon = GFX_goal_gon_pitchfork_and_torch_revolt
+		ai_will_do = { factor = 2 }
+		bypass = { has_government = revolutionary }
+		available = { revolutionary > 0.35 }
+		cancel_if_invalid = no
+		continue_if_invalid = yes
+		relative_position_id = forgeanewpath
+		x = 1
+		y = 1
+		mutually_exclusive = { focus = ART_may_morgoth_guide_us}
+		prerequisite = { focus = forgeanewpath}
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = { set_politics = { ruling_party = revolutionary elections_allowed = no } remove_ideas = generic_belligerent_intermediate }
+	}
+
+	focus = {
+		id = ART_bannish_morgoth_followers
+		icon = GFX_goal_generic_attack_allies
+		ai_will_do = { factor = 4 }
+		prerequisite = { focus = ART_revolution_time}
+		relative_position_id = ART_revolution_time
+		x = 0
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = ART_belligerent_banned
+			add_stability = -0.025
+			add_political_power = 50
+		}
+	}
+
+	focus = {
+		id = ART_peasants_unite
+		icon = GFX_goal_generic_workers_and_farmers_rise_peasantry
+		ai_will_do = { factor = 4 }
+		prerequisite = { focus = ART_enforce_new_goverment}
+		relative_position_id = ART_enforce_new_goverment
+		available = {
+			has_government = revolutionary
+		}
+		x = 2
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = ART_nation_of_the_peasants
+		}
+	}
 	 #Focus for Conquer the Realm of Arnor
 			focus = {
 			id = conquertherealmofarnor
 			icon = GFX_goal_generic_major_war
 			ai_will_do = { factor = 4 }
-			relative_position_id = banrevolutionary
-	 		x =1
-	 		y =1
+			relative_position_id = ART_enforce_new_goverment
+	 		x = 0
+	 		y = 1
 	 		mutually_exclusive = { }
-	 		prerequisite = { focus = banrevolutionary  focus = banbelligerent}
+	 		prerequisite = { focus = ART_enforce_new_goverment }
 	 		cost = 10
 	  	available_if_capitulated = yes
 			completion_reward = {
@@ -612,50 +776,62 @@ focus = {
 	#Focus for Demand Cardolan
 			focus = {
 			id = demandcardolan
-			icon = GFX_goal_generic_major_war
+			icon = GFX_goal_goal_generic_forceful_treaty
 			ai_will_do = { factor = 2 }
-			relative_position_id = banrevolutionary
-	 		x =0
-	 		y =2
+			relative_position_id = conquertherealmofarnor
+	 		x = -1
+	 		y = 1
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = conquertherealmofarnor}
 	 		cost = 10
 	  	available_if_capitulated = yes
 			completion_reward = {
 				CAR = { country_event = { days = 1 id = arthedain.2 } }
-				add_threat = 3
 			}
 	 }
 
-	 #Focus for Demand Rhudaur
 			focus = {
-			id = arg_demandrhudaur
-			icon = GFX_goal_generic_major_war
+			id = ART_demand_rhudaur
+			icon = GFX_goal_goal_generic_forceful_treaty
 			ai_will_do = { factor = 3 }
-			relative_position_id = banbelligerent
-	 		x =0
-	 		y =2
+			relative_position_id = conquertherealmofarnor
+	 		x = 1
+	 		y = 1
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = conquertherealmofarnor}
 	 		cost = 10
 	  	available_if_capitulated = yes
 			completion_reward = {
 				RHD = { country_event = { days = 1 id = arthedain.2 } }
-				add_threat = 2
 			}
 	 }
 
+	focus = {
+		id = ART_ideological_fanaticism
+		icon = GFX_goal_generic_demand_territory
+		prerequisite = { focus = demandcardolan focus = ART_demand_rhudaur }
+		relative_position_id = demandcardolan
+		x = -1
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = ideological_fanaticism_focus
+			set_rule = {
+				can_create_factions = yes
+			}
+		}
+	}
 	 
 	#Focus for Unite the Kingdom of Arnor
 	focus = {
 		id = ART_proclaim_the_kingdom_of_arnor
 		icon = GFX_focus_rom_royal_dictatorship
 		ai_will_do = { factor = 8 }
-		relative_position_id = arg_demandrhudaur
-		x = -1
+		relative_position_id = ART_demand_rhudaur
+		x = 1
 		y = 1
-		prerequisite = { focus = arg_demandrhudaur}
-		prerequisite = { focus = demandcardolan}
+		prerequisite = { focus = demandcardolan focus = ART_demand_rhudaur }
 		available = {
 			controls_state = 62
 			controls_state = 63
@@ -697,7 +873,7 @@ focus = {
 		relative_position_id = ART_unite_the_kingdom_of_arnor
 		x = 12
 		y = 1
-		prerequisite = { focus = ART_proclaim_the_kingdom_of_arnor focus = ART_unite_the_kingdom_of_arnor}
+		prerequisite = { focus = demandcardolan focus = ART_demand_rhudaur focus = ART_unite_the_kingdom_of_arnor}
 		available = {
 			has_country_flag = ART_established_arnor
 			controls_state = 146
