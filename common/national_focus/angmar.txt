@@ -1623,7 +1623,7 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = { 
 		RHD = {
-			add_ideas = ANG_strengthen_bonds
+			add_timed_idea = { days = 365 idea = ANG_strengthen_bonds}
 			add_autonomy_ratio = {
 				value = -0.25
 			}
@@ -1925,7 +1925,7 @@ focus = {
 #Focus for Claim the North
 focus = {
 	id = ANG_reclaim_the_arthedain
-	icon = GFX_goal_generic_major_war
+	icon = GFX_goal_goal_generic_position_armies
 	search_filters = { FOCUS_FILTER_ANNEXATION }
 	ai_will_do = { factor = 8 }	
 	bypass = {
@@ -1940,15 +1940,81 @@ focus = {
 	available_if_capitulated = yes
 	will_lead_to_war_with = ART
 	completion_reward = {
-		add_state_claim = 40
 		add_state_claim = 41
+		add_state_claim = 148 
+		add_state_claim = 146
 	}
 }
 
-#Focus for Claims on Rhudaur
+focus = {
+	id = ANG_rules_of_the_west_coast
+	icon = GFX_goal_goal_generic_occypy_states_coastal
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	ai_will_do = { factor = 3 }
+	relative_position_id = ANG_welcome_back_the_old_master
+	x = 4
+	y = 1
+	prerequisite = { focus = ANG_find_a_new_leader focus = ANG_welcome_back_the_old_master }
+	cost = 10
+	available_if_capitulated = no
+	available = {
+		has_government = Belligerent
+		threat > 0.25
+	}
+	completion_reward = {
+		add_state_claim = 40
+		add_state_claim = 45
+		add_state_claim = 142
+		add_state_claim = 50
+		add_state_claim = 52
+		ART = {
+			country_event = { id = angmar.12 }
+		}
+		LIN = {
+			country_event = { id = angmar.12 }
+		}
+	}
+}
+
+focus = {
+	id = ANG_ruler_by_force
+	icon = GFX_goal_generic_major_war
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	ai_will_do = { factor = 3 }
+	relative_position_id = ANG_rules_of_the_west_coast
+	x = 0
+	y = 1
+	prerequisite = { focus = ANG_rules_of_the_west_coast }
+	cost = 10
+	available_if_capitulated = no
+	available = {
+	}
+	completion_reward = {
+		if = {
+			limit = {
+				NOT = {
+					is_in_faction_with = LIN
+					has_non_aggression_pact_with = LIN
+				}
+			}
+			create_wargoal = { type = take_state_focus target = LIN generator = { 52 142 50 } }
+		}
+		if = {
+			limit = {
+				NOT = {
+					is_in_faction_with = ART
+					has_non_aggression_pact_with = ART
+				}
+			}
+			create_wargoal = { type = take_state_focus target = ART generator = { 40 42 } }
+		}
+	}		
+}
+
+
 focus = {
 	id = ANG_reclaim_rhudaur
-	icon = GFX_goal_generic_major_war
+	icon = GFX_goal_goal_generic_position_armies
 	search_filters = { FOCUS_FILTER_ANNEXATION }
 	ai_will_do = { 
 		factor = 8
@@ -1962,7 +2028,7 @@ focus = {
 		controls_state = 63
 	}
 	relative_position_id = ANG_welcome_back_the_old_master
-	x = 4
+	x = 6
 	y = 1
 	mutually_exclusive = { focus = ANG_demand_submission_rhudaur }
 	prerequisite = { focus = ANG_find_a_new_leader  focus = ANG_welcome_back_the_old_master}
@@ -1978,7 +2044,7 @@ focus = {
 #Focus for Claims on Cardolan
 focus = {
 	id = ANG_reclaim_cardolan
-	icon = GFX_goal_generic_major_war
+	icon = GFX_goal_goal_generic_position_armies
 	search_filters = { FOCUS_FILTER_ANNEXATION }
 	ai_will_do = { factor = 8 }
 	available = {
