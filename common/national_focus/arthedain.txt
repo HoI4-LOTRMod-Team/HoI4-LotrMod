@@ -545,7 +545,6 @@ focus = {
 	x = 4
 	y = 1
 	prerequisite = { focus = ART_industry_of_arthedain }
-	mutually_exclusive = { focus = ART_lean_towareds_the_farmers }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -768,6 +767,12 @@ focus = {
 	icon = GFX_goal_generic_intelligence_exchange
 	ai_will_do = { factor = 3 }
 	available = {
+		SHI = {
+			OR = {
+				is_subject_of = ART
+				is_puppet_of = ART
+			}
+		}
 	}
 	relative_position_id = ART_enforce_control_over_the_shire
 	x = 0
@@ -902,6 +907,35 @@ focus = {
 		SHI = { 
 			country_event = { days = 1 id = arthedain.4 } 
 		}
+	}
+}
+
+focus = {
+	id = ART_invite_heir_of_isildur
+	icon = GFX_goal_gondor_king_aragorn
+	ai_will_do = { factor = 5 }
+	available = {
+		GON = {
+			NOT = { has_completed_focus = GON_invite_aragorn_to_minas_tirith }
+		}
+		custom_trigger_tooltip = {
+			tooltip = ring_aragorn_is_alive_tt
+			NOT = { ring_aragorn_is_dead = yes }
+		}
+		custom_trigger_tooltip = {
+			tooltip = ring_aragorn_not_in_fellowship_tt
+			NOT = { ring_aragorn_in_fellowship = yes }
+		}
+	}
+	mutually_exclusive = { focus = ART_reunite_with_gondor }
+	prerequisite = { focus = ART_unite_the_kingdom_of_arnor }
+	relative_position_id = ART_unite_the_kingdom_of_arnor
+	x = 5
+	y = 1
+	cost = 10
+	available_if_capitulated = no
+	completion_reward = {
+		create_country_leader = { name = "King Aragorn II" picture = "Portrait_Arthedain_King.dds" expire = "3080.1.1" ideology = protective traits = { patriot_king GON_isildur_heir } }
 	}
 }
 
@@ -1073,12 +1107,13 @@ focus = {
 #Focus for Reunite_with_gondor
 focus = {
 	id = ART_reunite_with_gondor
-	icon = GFX_goal_gondor
+	icon = GFX_goal_gon_gondor_angmar_deal
 	ai_will_do = { factor = 8 }
 	relative_position_id = ART_unite_the_kingdom_of_arnor
 	x = 3
 	y = 1
 	prerequisite = { focus =ART_unite_the_kingdom_of_arnor}
+	mutually_exclusive = { focus = ART_invite_heir_of_isildur }
 	available = {
 		GON = {
 			has_completed_focus = GON_crown_aragorn_king
@@ -1097,7 +1132,7 @@ focus = {
 }
 focus = {
 	id = ART_revenge_against_angmar
-	icon = GFX_goal_generic_major_war
+	icon = GFX_goal_angmar_unaligned
 	ai_will_do = { factor = 3 }
 	available = {
 		ANG = {
@@ -1115,6 +1150,29 @@ focus = {
 	available_if_capitulated = no
 	completion_reward = {
 		create_wargoal = { target = ANG type = annex_everything }
+	}
+}
+focus = {
+	id = ART_remove_evil_out_of_mount_gundabad
+	icon = GFX_goal_gundabad_flag
+	ai_will_do = { factor = 3 }
+	available = {
+		GUN = {
+			OR = {
+				has_government = belligerent
+				has_government = revolutionary
+			}
+		}
+	}
+	prerequisite = { focus = ART_revenge_against_angmar }
+	relative_position_id = ART_revenge_against_angmar
+	will_lead_to_war_with = ANG
+	x = 1
+	y = 1
+	cost = 10
+	available_if_capitulated = no
+	completion_reward = {
+		create_wargoal = { target = GUN type = annex_everything }
 	}
 }
 	 #Focus for Let the Rangers Prevail
