@@ -973,36 +973,63 @@ focus = {
 }
 
 focus = {
-	id = ANG_intergrate_trade_within_faction
-	icon = GFX_goal_generic_industry_I
-	search_filters = { FOCUS_FILTER_INDUSTRY }
-	ai_will_do = { factor = 8 }
-	available = { 
-		has_government = cooperative 
-		is_in_faction = yes
-		num_faction_members > 1
-	}
+	id = ANG_republic_of_angmar
+	icon = GFX_goal_lth_burdens_of_leadership
+	ai_will_do = { factor = 3 }
+	available = { has_government = cooperative }
 	relative_position_id = ANG_invite_cardolan
 	x = -1
 	y = 1
-	prerequisite = { focus = ANG_invite_cardolan }
+	prerequisite = { focus = ANG_invite_cardolan focus = ANG_request_control_north_arthedain }
+	mutually_exclusive = { focus = ANG_establish_new_arnor }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		custom_effect_tooltip = "Bonuses are better the more members in the faction there are"
-		152 = {
-			add_extra_state_shared_building_slots = 2
-			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
-			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		#TODO Maybe change leader into some sort of democratic council image?
+		#TODO Change name to Republic of Angmar
+		remove_ideas = ANG_shell_of_a_formor_power
+		set_power_balance = { id = power_balance_ang }
+	}
+}
+
+focus = {
+	id = ANG_nation_of_the_people
+	icon = GFX_goal_lth_election_ballot
+	ai_will_do = { factor = 3 }
+	available = { has_government = cooperative }
+	relative_position_id = ANG_republic_of_angmar
+	x = -1
+	y = 1
+	prerequisite = { focus = ANG_republic_of_angmar }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		set_politics = {
+			ruling_party = cooperative
+			elections_allowed = yes
+			election_frequency = 36
 		}
-		59 = {
-			add_extra_state_shared_building_slots = num_faction_members
-			add_building_construction = { type = industrial_complex level = num_faction_members instant_build = yes }
+		add_popularity = {
+			ideology = cooperative
+			popularity = 0.15
 		}
-		62 = {
-			add_extra_state_shared_building_slots = num_faction_members
-			add_building_construction = { type = arms_factory level = num_faction_members instant_build = yes }
-		}
+		add_political_power = 100
+	}
+}
+
+focus = {
+	id = ANG_army_of_our_nation
+	icon = GFX_goal_lth_defensive_alliance
+	ai_will_do = { factor = 3 }
+	available = { has_government = cooperative }
+	relative_position_id = ANG_nation_of_the_people
+	x = 0
+	y = 1
+	prerequisite = { focus = ANG_nation_of_the_people }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_ideas = ANG_army_of_our_nation
 	}
 }
 
@@ -1015,6 +1042,8 @@ focus = {
 	relative_position_id = ANG_invite_cardolan
 	x = 1
 	y = 1
+	prerequisite = { focus = ANG_invite_cardolan focus = ANG_request_control_north_arthedain }
+	mutually_exclusive = { focus = ANG_republic_of_angmar }
 	available = {
 		OR = {
 			ANG = {
@@ -1031,12 +1060,14 @@ focus = {
 				controls_state = 147
 				controls_state = 148
 			}
+		}
+		NOT = {
 			ART = {
 				is_in_faction_with = ANG
+				has_country_flag = ART_established_arnor
 			}
 		}
 	}
-	prerequisite = { focus = ANG_invite_cardolan focus = ANG_request_control_north_arthedain }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -1059,7 +1090,54 @@ focus = {
 }
 
 focus = {
-	id = ANG_invest_in_new_arnor
+	id = ANG_establish_new_borders
+	icon = GFX_goal_angmar_unaligned
+	ai_will_do = { factor = 10 }
+	relative_position_id = ANG_establish_new_arnor
+	x = 1
+	y = 1
+	prerequisite = { focus = ANG_establish_new_arnor }
+	cost = 10
+	available_if_capitulated = no
+	completion_reward = {
+		ART = {
+			every_owned_state = {
+				limit = { is_core_of = ART }
+				ANG = {
+					add_state_claim = PREV
+				}
+			}
+		}
+	}
+}
+
+focus = {
+	id = ANG_the_true_arnor
+	icon = GFX_goal_angmar_unaligned
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	ai_will_do = { factor = 10 }
+	available = {
+		ART = {
+			has_country_flag = ART_established_arnor
+			NOT = {
+				is_in_faction_with = ANG
+			}
+		}
+	}
+	relative_position_id = ANG_establish_new_borders
+	x = -1
+	y = 1
+	prerequisite = { focus = ANG_establish_new_borders }
+	cost = 10
+	available_if_capitulated = yes
+	will_lead_to_war_with = ART
+	completion_reward = {
+		create_wargoal = { target = ART type = annex_everything }
+	}
+}
+
+focus = {
+	id = ANG_invest_in_our_country
 	icon = GFX_focus_generic_industry_2
 	search_filters = { FOCUS_FILTER_INDUSTRY }
 	ai_will_do = { factor = 8 }
@@ -1086,9 +1164,9 @@ focus = {
 			}
 		}
 	}
-	x = 0
+	x = -1
 	y = 1
-	prerequisite = { focus = ANG_establish_new_arnor }
+	prerequisite = { focus = ANG_establish_new_arnor focus = ANG_republic_of_angmar }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -1117,31 +1195,6 @@ focus = {
 			add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
 			add_building_construction = { type = infrastructure level = 2 instant_build = yes }
 		}
-	}
-}
-
-focus = {
-	id = ANG_the_true_arnor
-	icon = GFX_goal_angmar_unaligned
-	search_filters = { FOCUS_FILTER_ANNEXATION }
-	ai_will_do = { factor = 10 }
-	available = {
-		ART = {
-			has_country_flag = ART_established_arnor
-			NOT = {
-				is_in_faction_with = ANG
-			}
-		}
-	}
-	relative_position_id = ANG_invest_in_new_arnor
-	x = 0
-	y = 1
-	prerequisite = { focus = ANG_invest_in_new_arnor }
-	cost = 10
-	available_if_capitulated = yes
-	will_lead_to_war_with = ART
-	completion_reward = {
-		create_wargoal = { target = ART type = annex_everything }
 	}
 }
 
@@ -1199,6 +1252,37 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = {
 		add_ideas = ANG_protector_of_the_north
+	}
+}
+
+
+focus = {
+	id = ANG_intergrate_trade_within_faction
+	icon = GFX_goal_generic_industry_I
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	ai_will_do = { factor = 8 }
+	available = { 
+		has_government = cooperative 
+		is_in_faction = yes
+		num_faction_members > 1
+	}
+	relative_position_id = ANG_protector_of_the_north
+	x = 1
+	y = 1
+	prerequisite = { focus = ANG_protector_of_the_north focus = ANG_join_gondor }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		#TODO move text to loc file
+		custom_effect_tooltip = "Bonuses are better the more members in the faction there are"
+		59 = {
+			add_extra_state_shared_building_slots = ROOT.num_faction_members
+			add_building_construction = { type = industrial_complex level = ROOT.num_faction_members instant_build = yes }
+		}
+		62 = {
+			add_extra_state_shared_building_slots = ROOT.num_faction_members
+			add_building_construction = { type = arms_factory level = ROOT.num_faction_members instant_build = yes }
+		}
 	}
 }
 
