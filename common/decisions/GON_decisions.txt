@@ -1,0 +1,106 @@
+################
+##### GON ######
+################
+GON_army_of_the_death = {
+	GON_seek_out_the_spooky_ghosts = {
+        icon = GFX_decision_generic_civil_support
+		cost = 200
+
+		visible = {
+
+		}
+
+        available = {
+			163 = { is_controlled_by = GON } 
+			has_war = yes
+        }
+
+		fire_only_once = yes
+        fixed_random_seed = no
+		complete_effect = {
+			news_event = { hours = 12 id = news.365 }
+			set_country_flag = GON_called_on_dead_men_of_dunharrow
+			custom_effect_tooltip = "King of the Dead will be available as a general"
+			custom_effect_tooltip = "10 divisions of ghosts will spawn next to Minas Tirith"
+			add_ideas = GON_army_of_the_death
+			hidden_effect = {
+				load_oob = "GON_Ghosts"
+			}
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	GON_complete_their_oath = {
+        icon = GFX_decision_generic_civil_support
+		cost = 25
+
+		visible = {
+
+		}
+
+        available = {
+			has_idea = GON_army_of_the_death
+			has_country_flag = GON_called_on_dead_men_of_dunharrow
+        }
+
+		fire_only_once = yes
+        fixed_random_seed = no
+		complete_effect = {
+			remove_unit_leader = 13
+			remove_ideas = GON_army_of_the_death
+			set_country_flag = GON_men_of_dunharrow_fullfiled_their_oath
+			delete_unit_template_and_units = { division_template = "Dead Infantry" }
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+
+political_actions = {
+	GON_increase_taxation = {
+        icon = GFX_decision_generic_4
+		cost = 100
+
+		visible = {
+			original_tag = GON
+			NOT = { has_idea = high_taxes }
+		}
+
+        available = {
+			always = yes
+        }
+
+		fire_only_once = yes
+        fixed_random_seed = no
+		complete_effect = {
+			if = {
+				limit = { has_idea = low_taxes }
+				add_ideas = medium_taxes
+			}
+			else_if = {
+				limit = { has_idea = medium_taxes }
+				add_ideas = high_taxes
+			}
+
+			add_stability = -0.1
+			add_popularity = {
+				ideology = unaligned
+				popularity = -0.1
+			}
+			add_popularity = {
+				ideology = revolutionary
+				popularity = 0.1
+			}
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = 25
+				is_going_revolutionary = yes
+				has_completed_focus = GON_defame_isildurs_lineage
+			}
+		}
+	}
+}

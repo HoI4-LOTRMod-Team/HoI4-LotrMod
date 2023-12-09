@@ -26,7 +26,7 @@ country_event = {
 			}
 		}
         add_opinion_modifier = { target = RHU modifier = medium_increase }
-        set_global_flag = RHU_made_contact_with_fascism
+        set_global_flag = RHU_made_contact_with_belligerent
         RHU = {
             add_opinion_modifier = { target = HAR modifier = medium_increase }
             country_event = { id = rhun.2 }
@@ -75,7 +75,7 @@ country_event = {
 			modifier = {
 				add = 25
 				HAR = {
-					has_government = fascism
+					has_government = belligerent
 				}
 			}
 			modifier = {
@@ -114,6 +114,59 @@ country_event = {
 			country_event = { hours = 2 id = rhun.1 } 
 			create_wargoal = {
 				type = puppet_wargoal_focus target = HAR
+			}
+		}
+	}
+}
+
+#Gondor demands control over Haronder
+country_event = {
+	id = harad.3
+	title = harad.3.t
+	desc = harad.3.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = { # Accept
+		name = harad.3.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 25
+				has_war = yes
+			}
+		}
+		GON = {
+			add_opinion_modifier = { target = HAR modifier = medium_increase }
+			transfer_state = 105
+			transfer_state = 106
+			transfer_state = 107
+		}
+	}
+
+	option = { # Deny
+		name = harad.3.b
+		ai_chance = {
+			base = 75
+			modifier = {
+				add = -25
+				FROM = { has_army_size = { size < 30 } }
+			}
+			modifier = {
+				add = 25
+				is_in_faction = yes
+			}
+		}
+		add_war_support = 0.05
+		add_political_power = 100
+		GON = {
+			add_opinion_modifier = { target = HAR modifier = small_decrease }
+			create_wargoal = {
+				type = take_state_focus
+				target = HAR
+				generator = { 105 106 107 }
 			}
 		}
 	}

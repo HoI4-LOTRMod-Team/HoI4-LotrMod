@@ -121,7 +121,7 @@ focus = {
  #Focus for Civilian Construction Effort
 focus = {
 	id = civilianconstructioneffort
-	icon = GFX_goal_generic_construct_civ_factory
+	icon = GFX_goal_generic_windmill
 	ai_will_do = { factor = 4 }
 	x = 2
 	y = 1
@@ -141,7 +141,7 @@ focus = {
  #Focus for Military Construction Effort
 focus = {
 	id = militaryconstructioneffort
-	icon = GFX_goal_generic_construct_mil_factory
+	icon = GFX_goal_generic_anvil
 	ai_will_do = { base = 25 }
 	x = -2
 	y = 1
@@ -312,7 +312,7 @@ focus = {
 
 focus = {
 	id = HAR_build_industry
-	icon = GFX_goal_generic_construct_civ_factory
+	icon = GFX_goal_generic_windmill
 	ai_will_do = {
 		base = 20
 	}
@@ -381,7 +381,7 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		army_experience = 35
+		army_experience = 20
 	}
 }
 
@@ -400,16 +400,10 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = {
 		add_tech_bonus = {
-			name = warbred_mumakil
+			name = armor_bonus
 			bonus = 1.0
 			uses = 1
-			category = cat_heavy_armor
-		}
-		add_tech_bonus = {
-			name = warbred_mumakil
-			bonus = 0.5
-			uses = 1
-			category = cat_medium_armor
+			category = lotr_cavalry_heavy
 		}
 	}
 }
@@ -426,10 +420,9 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		add_tech_bonus = {
-			name =  land_doc_bonus
-			bonus = 0.3
-			uses = 3
+		add_doctrine_cost_reduction = {
+			cost_reduction = 0.5
+			uses = 1
 			category = land_doctrine
 		}
 	}
@@ -438,7 +431,7 @@ focus = {
 
 focus = {
 	id = invest_in_military_industry
-	icon = GFX_goal_generic_construct_mil_factory
+	icon = GFX_goal_generic_anvil
 	ai_will_do = { base = 20 }
 	x = 0
 	y = 1
@@ -498,7 +491,7 @@ focus = {
 
 focus = {
 	id = HAR_expand_military_production
-	icon = GFX_goal_generic_construct_mil_factory
+	icon = GFX_goal_generic_anvil
 	relative_position_id = defend_against_mordor
 	prerequisite = { focus = defend_against_mordor  focus = defense_against_Gondor }
 	x = -1
@@ -624,8 +617,11 @@ focus = {
 
 focus = {
 	id = follow_the_dark_lord
-	icon = GFX_unleashsauron
-	ai_will_do = { factor = 75 }
+	icon = GFX_goal_sauron_eye
+	ai_will_do = {
+		factor = 75
+		modifier = { factor = 0 is_going_belligerent = no }
+	}
 	x = 13
 	y = 1
 	relative_position_id = politicalamelioration
@@ -638,7 +634,7 @@ focus = {
 
 focus = {
 	id = spread_propaganda
-	icon = GFX_goal_support_fascism
+	icon = GFX_goal_support_belligerent
 	ai_will_do = { factor = 25 }
 	x = -2
 	y = 1
@@ -647,7 +643,7 @@ focus = {
 	cost = 5
 	completion_reward = {
 		add_popularity = {
-			ideology = fascism
+			ideology = belligerent
 			popularity = 0.10
 		}
 		add_stability = -0.05
@@ -663,16 +659,16 @@ focus = {
 	relative_position_id = follow_the_dark_lord
 	prerequisite = { focus = follow_the_dark_lord }
 	available = {
-		fascism > 0.6
+		belligerent > 0.6
 	}
 	bypass = {
-		has_government = fascism
+		has_government = belligerent
 	}
 	cost = 10
 	completion_reward = {
 		add_stability = -0.05
 		set_politics = {
-			ruling_party = fascism
+			ruling_party = belligerent
 			elections_allowed = no
 		}
 	}
@@ -680,7 +676,7 @@ focus = {
 
 focus = {
 	id = join_the_dark_pact
-	icon = GFX_focus_generic_treaty
+	icon = GFX_goal_mordor_flag
 	x = 4
 	y = 1
 	relative_position_id = power_to_the_mouth_of_sauron
@@ -689,7 +685,7 @@ focus = {
 	available = {
 		MOR = {
 			is_faction_leader = yes
-			has_government = fascism
+			has_government = belligerent
 		}
 	}
 	bypass = {
@@ -759,7 +755,7 @@ focus = {
 	completion_reward = {
 		if = {
 			limit = {
-				has_global_flag = RHU_made_contact_with_fascism
+				has_global_flag = RHU_made_contact_with_belligerent
 			}
 			add_stability = 0.05
 			add_war_support = 0.05
@@ -773,7 +769,7 @@ focus = {
 
 focus = {
 	id = honor_morgoth_hai
-	icon = GFX_servant_of_melkor
+	icon = GFX_goal_mor_servant_of_melkor_morgoth
 	x = 3
 	y = 1
 	relative_position_id = go_solo
@@ -849,7 +845,7 @@ focus = {
 
 focus = {
 	id = finish_gondor
-	icon = GFX_wargoal_gondor
+	icon = GFX_goal_mor_wargoal_gondor
 	prerequisite = { focus = demand_south_ithilien }
 	x = 0
 	y = 1
@@ -899,7 +895,7 @@ focus = {
 
 focus = {
 	id = HAR_demand_submission_east
-	icon = GFX_wargoal_rhun
+	icon = GFX_goal_mor_wargoal_rhun
 	relative_position_id = HAR_look_to_the_east
 	prerequisite = { focus = HAR_look_to_the_east }
 	x = 0
@@ -914,8 +910,14 @@ focus = {
 		}
 	}
 	available = {
+		RHU = {
+			has_war = no
+		}
 		NOT = {
 			is_in_faction_with = RHU
+		}
+		NOT = {
+			is_puppet_of = RHU
 		}
 	}
 	will_lead_to_war_with = RHU
@@ -929,7 +931,7 @@ focus = {
 
 focus = {
 	id = prepare_for_war_against_mordor
-	icon = GFX_goal_generic_construct_mil_factory
+	icon = GFX_goal_generic_anvil
 	relative_position_id = go_solo
 	prerequisite = { focus = go_solo }
 	x = -1
@@ -949,7 +951,7 @@ focus = {
 
 focus = {
 	id = HAR_ready_the_army
-	icon = GFX_goal_generic_construct_mil_factory
+	icon = GFX_goal_generic_political_pressure
 	relative_position_id = prepare_for_war_against_mordor
 	prerequisite = { focus = prepare_for_war_against_mordor }
 	x = 0
@@ -965,7 +967,7 @@ focus = {
 
 focus = {
 	id = mordor_has_become_weak
-	icon = GFX_wargoal_mordor
+	icon = GFX_goal_rhu_wargoal_mordor
 	x = 0
 	y = 1
 	relative_position_id = HAR_ready_the_army
@@ -987,13 +989,13 @@ focus = {
 	completion_reward = {
 		if = {
 			limit = {
-				MOR = { has_government = fascism }
+				MOR = { has_government = belligerent }
 			}
 			create_wargoal = { type = puppet_wargoal_focus target = MOR }
 		}
 		if = {
 			limit = {
-				MOR = { has_government = communism}
+				MOR = { has_government = revolutionary}
 			}
 			create_wargoal = { type = annex_everything target = MOR }
 		}

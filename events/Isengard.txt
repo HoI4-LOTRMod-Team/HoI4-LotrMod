@@ -27,10 +27,11 @@ country_event = {
 			}
 			modifier = {
 				add = 100
-				ENE = { has_government = fascism }
+				ENE = { has_government = belligerent }
 			}
 		}
  		ISE = { annex_country = { target = ENE } }
+		add_named_threat = { threat = 5 name = "Enedwaith annexed by Isengard" }
 	}
 	option = { # Refuse
 		name = isengard.4.b
@@ -68,7 +69,6 @@ country_event = {
 
 	option = {
 		name = isengard.3.a
-		trigger = { is_ai = no }
 		create_wargoal = { type = annex_everything target = ROH }
 	}
 
@@ -107,9 +107,9 @@ country_event = {
 	option = { # Imprison him
 		name = isengard.1.a
 		ai_chance = {
-			base = 50
+			base = 65
 			modifier = {
-				add = -25
+				add = -15
 				MOR = { has_army_size = { size < 15 } }
 			}
 			modifier = {
@@ -117,21 +117,59 @@ country_event = {
 				MOR = { has_army_size = { size > 20 } }
 			}
 		}
+
+		# Adjust gameplan flag
+		set_country_flag = gameplan_going_belligerent
+		clr_country_flag = gameplan_going_cooperative
+
 		add_ideas = ISE_commited_to_the_dark
 		set_global_flag = gandalf_imprisoned
+
+		# Complete focuses
+		if = {
+			limit = { NOT = { has_completed_focus = thefateofisengard } }
+			complete_national_focus = thefateofisengard
+		}
+		if = {
+			limit = { NOT = { has_completed_focus = waysofthelight } NOT = { has_completed_focus = waysofthedark } }
+			complete_national_focus = waysofthedark
+		}
+
+		complete_national_focus = meetwithgandalf
+		complete_national_focus = imprisongandalf
+
 		hidden_effect = {news_event = { hours = 24 id = news.333 }}
 	}
 	option = { # Unite with him
 		name = isengard.1.b
 		ai_chance = {
-			base = 25
+			base = 15
 			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
 			}
+			modifier = { factor = 0 is_going_cooperative = no }
 		}
 		add_ideas = ISE_commited_to_the_light
 		set_global_flag = gandalf_saruman_united
+
+		# Adjust gameplan flag
+		set_country_flag = gameplan_going_cooperative
+		clr_country_flag = gameplan_going_belligerent
+
+		# Complete focuses
+		if = {
+			limit = { NOT = { has_completed_focus = thefateofisengard } }
+			complete_national_focus = thefateofisengard
+		}
+		if = {
+			limit = { NOT = { has_completed_focus = waysofthelight } NOT = { has_completed_focus = waysofthedark } }
+			complete_national_focus = waysofthelight
+		}
+
+		complete_national_focus = meetwithgandalf
+		complete_national_focus = unitewithgandalf
+
 		hidden_effect = {news_event = { hours = 24 id = news.334 }}
 	}
 }
@@ -149,7 +187,7 @@ country_event = {
 	trigger = {
 		tag = ISE
 		has_global_flag = grima_exiled
-		ISE = { has_government = fascism }
+		ISE = { has_government = belligerent }
 	}
 
 	mean_time_to_happen = {
@@ -158,7 +196,20 @@ country_event = {
 
 	option = {
 		name = isengard.5.a
-		add_ideas = ROH_grima_wormtongue
+
+		add_advisor_role = {
+		    character = ISE_grima
+		    activate = yes
+		    advisor = {
+				idea_token = ISE_grima_chief_advisor
+		        slot = chief_advisor
+		        cost = 150
+		        traits = {
+		            corrupting_manipulator
+		        }
+		    }
+		}
+
 	}
 }
 
@@ -198,163 +249,82 @@ country_event = {
 
 	option = {
 		name = isengard.6.a
-		ISE = { kill_country_leader = yes }
+
+		set_global_flag = saruman_dead
+
+		ISE = {
+			kill_country_leader = yes
+			remove_ideas = saruman_chief_researcher
+			deactivate_advisor = ISE_grima_chief_advisor
+			remove_advisor_role = {
+	  			character = ISE_grima
+	  			slot = chief_advisor
+			}
+		}
 	}
 }
 
-#Hunt for the ring in argonath event
+# Argonath raid (can also be triggered for Mordor)
 country_event = {
 	id = isengard.7
 	title = isengard.7.t
 	desc = isengard.7.d
-	fire_only_once = yes
 	picture = GFX_report_event_ring
-	trigger = {
-		original_tag = ISE
-		NOT = {has_global_flag = ring_found}
-			has_government = fascism
-		date > 3019.11.1
-		date < 3020.1.1
-		has_completed_focus = rebrandisengard
+	
+	is_triggered_only = yes
+
+	# lets go
+	option = {
+		name = isengard.7.a
+		ai_chance = { base = 100}
+
+		add_political_power = -100
+		if = {
+			limit = { tag = ISE }
+			ISE = {complete_national_focus = huntforthering}
+		}
+
+		set_country_flag = {
+		    flag = is_argonath_raid
+		    days = 30
+		    value = 1
+		}
+
+		ring_open_interception_attempt_prompt = yes
 	}
 
-
-			option = {name = isengard.7.a
-			add_political_power = -100
-			ISE = {complete_national_focus = huntfortheringinargonath}
-			trigger = {has_completed_focus = selectthestrongesfew}
-			ai_chance = { base = 100}
-
-			random_list = {
-			10 = {
-				modifier = {
-					add = 30
-					has_global_flag = fs_gondor_1}
-				modifier = {
-					add = 30
-					has_global_flag = fs_mirkwood_1
-				}
-				modifier = {
-					add = 30
-					has_global_flag = fs_erebor_1
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_gondor_2
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_mirkwood_2
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_erebor_2
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_gearedup_lothlorien
-				}
-				ISE = { remove_unit_leader = 147 country_event = { days = 1 id = fs.100}} # TODO: who is unit leader 147???
-				hidden_effect = {
-				random_list = {
-				50 = {if = { limit = { has_global_flag = fs_gondor_2 NOT = { has_global_flag = boromir_dead } } set_global_flag = boromir_dead news_event = { hours = 12 id = news.377 } }
-				if = { limit = { has_global_flag = fs_gondor_1 NOT = { has_global_flag = faramir_dead } } set_global_flag = faramir_dead news_event = { hours = 12 id = news.378 } } }
-				50 = {}
-				}}
+	# nah
+	option = {
+		name = isengard.7.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
 			}
-			90 = {
-				modifier = {
-					add = 60
-					has_global_flag = aragorn_dead
+		}
+
+		add_political_power = -100
+
+		hidden_effect = {
+			# if Mordor bad and exists -> run raid
+			if = {
+				limit = {
+					tag = ISE
+					country_exists = MOR
+					NOT = { MOR = { is_subject = yes } }
 				}
-				news_event = { hours = 12 id = news.373 }
-				set_global_flag = ring_found
-				ISE = { add_ideas = one_true_ring }
-				set_global_flag = saruman_has_ring
-				hidden_effect = {
-				random_list = {
-				50 = {if = { limit = { has_global_flag = fs_gondor_2 NOT = { has_global_flag = boromir_dead } } set_global_flag = boromir_dead news_event = { hours = 12 id = news.377 } }
-
-				if = { limit = { has_global_flag = fs_gondor_1 NOT = { has_global_flag = faramir_dead } } set_global_flag = faramir_dead news_event = { hours = 12 id = news.378 } } }
-				50 = {}
-				}}
-
+				MOR = { country_event = { id = isengard.7 days = 2 } }
 			}
 
+			else = {
+				SHI = {
+					ring_breakup_fellowship = yes
+				}
 			}
-			}
-
-			option = {name = isengard.7.b
-			add_political_power = -100
-			ISE = {complete_national_focus = huntfortheringinargonath}
-			ai_chance = { base = 50}
-
-			random_list = {
-			10 = {
-				modifier = {
-					add = 30
-					has_global_flag = fs_gondor_1}
-				modifier = {
-					add = 30
-					has_global_flag = fs_mirkwood_1
-				}
-				modifier = {
-					add = 30
-					has_global_flag = fs_erebor_1
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_gondor_2
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_mirkwood_2
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_erebor_2
-				}
-				modifier = {
-					add = 60
-					has_global_flag = fs_gearedup_lothlorien
-				}
-				ISE = { country_event = { days = 1 id = fs.100}}
-				hidden_effect = {
-				random_list = {
-				50 = {if = { limit = { has_global_flag = fs_gondor_2 NOT = { has_global_flag = boromir_dead } } set_global_flag = boromir_dead news_event = { hours = 12 id = news.377 } }
-				if = { limit = { has_global_flag = fs_gondor_1 NOT = { has_global_flag = faramir_dead } } set_global_flag = faramir_dead news_event = { hours = 12 id = news.378 } } }
-				50 = {}
-				}}
-			}
-			30 = {
-				modifier = {
-					add = 60
-					has_global_flag = aragorn_dead
-				}
-				news_event = { hours = 12 id = news.373 }
-				set_global_flag = ring_found
-				ISE = { add_ideas = one_true_ring }
-				set_global_flag = saruman_has_ring
-				hidden_effect = {
-				random_list = {
-				50 = {if = { limit = { has_global_flag = fs_gondor_2 NOT = { has_global_flag = boromir_dead } } set_global_flag = boromir_dead news_event = { hours = 12 id = news.377 } }
-
-				if = { limit = { has_global_flag = fs_gondor_1 NOT = { has_global_flag = faramir_dead } } set_global_flag = faramir_dead news_event = { hours = 12 id = news.378 } } }
-				50 = {}
-				}}
-
-			}
-
-			}
-			}
-
-
-	option = {name = isengard.7.c
-				ai_chance = { base = 100
-				modifier = { is_historical_focus_on = yes factor = 0}}}
+		}
+	}
 }
-
-
 
 # Mordor invites Isengard to faction
 country_event = {
@@ -433,13 +403,116 @@ country_event = {
 		add_stability = 0.10
 		add_war_support = 0.10
 		add_popularity = {
-			ideology = fascism
+			ideology = belligerent
 			popularity = -0.05
 		}
 		MOR = {
 			create_wargoal = {
 				type = annex_everything target = ISE
 			}
+		}
+	}
+}
+
+# Fellowship crossing mountains
+country_event = {
+	id = isengard.11
+	title = isengard.11.t
+	desc = isengard.11.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# block path
+	option = {
+		name = isengard.11.a
+		ai_chance = {
+			base = 80
+		}
+		
+		custom_effect_tooltip = isengard.11.a.tt
+
+		hidden_effect = { SHI = { execute_force_fellowship_through_moria = yes } }
+	}
+
+	# let them pass
+	option = {
+		name = isengard.11.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		
+		custom_effect_tooltip = isengard.11.b.tt
+	}
+}
+
+# Angmar (with Sauron as leader) invites Isengard to faction
+country_event = {
+	id = isengard.12
+	title = isengard.12.t
+	desc = isengard.12.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.12.a
+		ai_chance = {
+			factor = 3
+		}
+		MOR = {
+			add_to_faction = ISE
+		}
+	}
+
+	option = {
+		name = isengard.12.b
+	}
+}
+
+
+# The Kingdom of Gondor requests if Isengard will join as a fiefdom 
+country_event = {
+	id = isengard.13
+	title = isengard.13.t
+	desc = isengard.13.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.13.a
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				has_government = belligerent
+			}
+			modifier = {
+				factor = 3
+				has_government = cooperative
+				GON = { has_government = cooperative }
+			}
+		}
+		GON = {
+			set_autonomy = {
+				target = ISE
+				autonomy_state = autonomy_fiefdom
+			}
+		}
+	}
+
+	option = {
+		name = isengard.13.b
+		ai_chance = {
+			factor = 10
+		}
+		GON = {
+			add_opinion_modifier = { target = ISE modifier = large_decrease }
 		}
 	}
 }

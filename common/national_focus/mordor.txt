@@ -1,5 +1,5 @@
 ﻿focus_tree = {
-	id = 'mordor'
+	id = mordor
 	country = {
 		factor=0
 		modifier = {
@@ -9,12 +9,12 @@
 		modifier = {
     	add = 10
     	original_tag = MOR
-    	has_government = fascism
+    	has_government = belligerent
     }
 		modifier = {
     	add = 10
     	original_tag = MOR
-    	has_government = communism
+    	has_government = revolutionary
     }
 	}
 
@@ -24,7 +24,7 @@ default = no
 #Focus for Restore Barad-dûr
 	 focus = {
 	 id = restorebaraddr
-	 icon = GFX_restorebaraddr
+	 icon = GFX_goal_mor_tower_of_barad_dur
 	 ai_will_do = { factor = 100 }
 	 available = { 12 = { is_controlled_by = ROOT } }
 	 bypass = { has_global_flag = mordor_civil_war }
@@ -45,8 +45,8 @@ default = no
 	 completion_reward = {
 	 		add_threat = 5
 	 	 	add_political_power = 25
-			add_resource = { type = oil amount = 25 state = 12 }
-			add_resource = { type = steel amount = 75 state = 12 }
+			add_resource = { type = oil amount = 5 state = 12 }
+			add_resource = { type = steel amount = 10 state = 12 }
 			12 = { add_building_construction = { type = bunker province = 3972 level = 5 instant_build = yes } }
 	 }
 }
@@ -74,9 +74,15 @@ default = no
 #Focus for Resist Sauron
 	 focus = {
 	 id = resistsauron
-	 icon = GFX_resistsauron
-	 ai_will_do = { factor = 25 }
-	 bypass = { has_global_flag = mordor_civil_war has_government = communism}
+	 icon = GFX_goal_mor_azog_orc_revolt
+	 ai_will_do = {
+		factor = 0
+		modifier = {
+			add = 100
+			has_country_flag = gameplan_going_revolutionary
+		}
+	}
+	 bypass = { has_global_flag = mordor_civil_war has_government = revolutionary}
 	 x = -7
 	 y = 1
 	allow_branch = {
@@ -131,7 +137,7 @@ focus = {
 	 search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
 	 completion_reward = {
 			add_popularity = {
-				ideology = communism
+				ideology = revolutionary
 				popularity = 0.10
 			}
 			add_stability = -0.05
@@ -143,11 +149,11 @@ focus = {
 	 id = marchonbaraddr
 	 icon = GFX_focus_YUG_pan_slavic_congress
 	 ai_will_do = { factor = 25 }
-	 bypass = { has_global_flag = mordor_civil_war has_government = communism}
+	 bypass = { has_global_flag = mordor_civil_war has_government = revolutionary}
 	 relative_position_id = seizethemeansofproduction
 	 x = 1
 	 y = 1
-	 available = { communism > 0.60 }
+	 available = { revolutionary > 0.60 }
 	 prerequisite = { focus = seizethemeansofproduction }
 	 cost = 10
 	 available_if_capitulated = yes
@@ -161,13 +167,13 @@ focus = {
 
 focus = {
 	id = request_assistance_moria
-	icon = GFX_beatbacktheorcinvasion
+	icon = GFX_goal_dwarves_soldiers_army
 	ai_will_do = { factor = 50 }
 	prerequisite = { focus = marchonbaraddr }
 	available = {
-		has_government = communism
+		has_government = revolutionary
 		has_civil_war = yes
-		MOA = { has_government = communism}
+		MOC = { has_government = revolutionary}
 
 	}
 	relative_position_id = marchonbaraddr
@@ -175,7 +181,7 @@ focus = {
 	y = 1
 	cost = 5
 	completion_reward = {
-		MOA = {
+		MOC = {
 			country_event = moria.4
 		}
 		#give moria a event where they can choose to help Mordor
@@ -188,16 +194,16 @@ focus = {
 	ai_will_do = { factor = 50 }
 	prerequisite = { focus = request_assistance_moria }
 	available = {
-		has_government = communism
+		has_government = revolutionary
 		is_faction_leader = yes
-		MOA = { has_government = communism}
+		MOC = { has_government = revolutionary}
 	}
 	relative_position_id = request_assistance_moria
 	x = 0
 	y = 1
 	cost = 5
 	completion_reward = {
-		MOA = {
+		MOC = {
 			country_event = moria.5
 		}
 	}
@@ -207,9 +213,9 @@ focus = {
 #Focus for Put Meat back on the Menu!
 	 focus = {
 	 id = putmeatbackonthemenu
-	 icon = GFX_meats_back_on_the_menu
+	 icon = GFX_goal_mor_meat_back_skulls_knife
 	 ai_will_do = { factor = 25 }
-	 available = { has_government = communism }
+	 available = { has_government = revolutionary }
 	 relative_position_id = marchonbaraddr
 	 x = 2
 	 y = 1
@@ -225,14 +231,14 @@ focus = {
 #Focus for A Realm of Orcs!
 	 focus = {
 	 id = arealmoforcs
-	 icon = GFX_goal_support_communism
+	 icon = GFX_goal_support_revolutionary
 	 ai_will_do = { factor = 25 }
 	 relative_position_id  = marchonbaraddr
 	 x = 0
 	 y = 2
 	 available = {
 	 	is_puppet = no
-	 	has_government = communism
+	 	has_government = revolutionary
 		has_civil_war = no
 	}
 	 prerequisite = { focus = marchonbaraddr }
@@ -240,14 +246,15 @@ focus = {
 	 available_if_capitulated = yes
 	 search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
 	 completion_reward = {
-		 add_political_power = 100
-		 add_stability = 0.05
+		add_political_power = 100
+		add_stability = 0.05
+		set_country_flag = MOR_orcs_have_taken_over_mordor
 	}
 }
 
 focus = {
 	id = union_of_working_class
-	icon = GFX_union_of_working_orc_class
+	icon = GFX_goal_union_of_working_orc_class
 	relative_position_id = arealmoforcs
 	x = 2
 	y = 1
@@ -262,7 +269,7 @@ focus = {
 
 focus = {
 	id = rise_orcs_of_dol_guldur
-	icon = GFX_goal_dol_guldur
+	icon = GFX_goal_mor_dol_guldur_flag
 	relative_position_id = union_of_working_class
 	x = 2
 	y = 1
@@ -272,7 +279,7 @@ focus = {
 	available = {
 		MIR = {
 			NOT = {
-				has_government = communism
+				has_government = revolutionary
 				has_completed_focus = purgetheorcsofdolguldur
 			}
 			owns_state = 87
@@ -282,7 +289,7 @@ focus = {
 	completion_reward = {
 		DGU = {
 			set_politics = {
-				ruling_party = communism
+				ruling_party = revolutionary
 				elections_allowed = no
 			}
 			set_state_controller = 87
@@ -318,7 +325,7 @@ focus = {
 	id = spreadtherevolution
 	icon = GFX_focus_generic_join_comintern
 	ai_will_do = { factor = 25 }
-	available = { has_government = communism }
+	available = { has_government = revolutionary }
 	relative_position_id = union_of_working_class
 	x = 0
 	y = 1
@@ -330,7 +337,7 @@ focus = {
 			limit = {
 				NOT = {
 					ROH = {
-						has_government = communism
+						has_government = revolutionary
 					}
 				}
 			}
@@ -346,7 +353,7 @@ focus = {
 			limit = {
 				NOT = {
 					GON = {
-						has_government = communism
+						has_government = revolutionary
 					}
 				}
 			}
@@ -362,7 +369,7 @@ focus = {
 			limit = {
 				NOT = {
 					MIR = {
-						has_government = communism
+						has_government = revolutionary
 					}
 				}
 			}
@@ -377,8 +384,24 @@ focus = {
 		if = {
 			limit = {
 				NOT = {
+					MOC = {
+						has_government = revolutionary
+					}
+				}
+			}
+			MOC = {
+					add_timed_idea = { idea = MOR_influence days = 365 }
+					add_opinion_modifier = {
+					target = MOR
+					modifier = small_increase
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
 					MOA = {
-						has_government = communism
+						has_government = revolutionary
 					}
 				}
 			}
@@ -403,8 +426,8 @@ focus = {
 	prerequisite = { focus = spreadtherevolution }
 	available = {
 		OR = {
-			GON = { communism > 0.55 NOT = { has_government = communism } }
-			GON = { has_government = communism }
+			GON = { revolutionary > 0.55 NOT = { has_government = revolutionary } }
+			GON = { has_government = revolutionary }
 		}
 	}
 	cost = 10
@@ -414,12 +437,12 @@ focus = {
 	completion_reward = {
 		if = {
 			limit = {
-				NOT = { GON = { has_government = communism} }
+				NOT = { GON = { has_government = revolutionary} }
 			}
 			GON = {
-				set_temp_variable = { ideology_val = party_popularity@communism }
+				set_temp_variable = { ideology_val = party_popularity@revolutionary }
 				start_civil_war = {
-					ruling_party = communism
+					ruling_party = revolutionary
 					size = ideology_val
 					capital = 13
 					states = {
@@ -431,7 +454,7 @@ focus = {
 			}
 			every_country = {
 				limit = {
-					has_government = communism
+					has_government = revolutionary
 					has_civil_war = yes
 					original_tag = GON
 				}
@@ -458,10 +481,10 @@ focus = {
 	available = {
 		OR = {
 			ROH = {
-				communism > 0.55
-				NOT = { has_government = communism }
+				revolutionary > 0.55
+				NOT = { has_government = revolutionary }
 			}
-			ROH = { has_government = communism }
+			ROH = { has_government = revolutionary }
 		}
 	}
 	cost = 10
@@ -470,12 +493,12 @@ focus = {
 	completion_reward = {
 		if = {
 			limit = {
-				NOT = { ROH = { has_government = communism} }
+				NOT = { ROH = { has_government = revolutionary} }
 			}
 			ROH = {
-				set_temp_variable = { ideology_val = party_popularity@communism }
+				set_temp_variable = { ideology_val = party_popularity@revolutionary }
 				start_civil_war = {
-					ruling_party = communism
+					ruling_party = revolutionary
 					size = ideology_val
 					capital = 27
 					states = {
@@ -487,7 +510,7 @@ focus = {
 			}
 			every_country = {
 				limit = {
-					has_government = communism
+					has_government = revolutionary
 					has_civil_war = yes
 					original_tag = ROH
 				}
@@ -524,7 +547,7 @@ focus = {
 
 focus = {
 	id = spread_revolution_with_force
-	icon = GFX_wargoal_gondor
+	icon = GFX_goal_mor_wargoal_gondor
 	relative_position_id = prepare_for_violence_revolution
 	x = 0
 	y = 1
@@ -553,7 +576,7 @@ focus = {
 
 focus = {
 	id = spread_revolution_with_force_to_rohan
-	icon = GFX_wargoal_rohan
+	icon = GFX_goal_mor_wargoal_rohan
 	relative_position_id = spread_revolution_with_force
 	x = 0
 	y = 1
@@ -583,7 +606,7 @@ focus = {
 	 id = spread_the_revolution_to_our_neighbors
 	 icon = GFX_focus_generic_join_comintern
 	 ai_will_do = { factor = 25 }
-	 available = { has_government = communism }
+	 available = { has_government = revolutionary }
 	 relative_position_id = union_of_working_class
 	 x = 4
 	 y = 1
@@ -595,7 +618,7 @@ focus = {
 		limit = {
 			NOT = {
 				DAG = {
-					has_government = communism
+					has_government = revolutionary
 				}
 			}
 		}
@@ -611,7 +634,7 @@ focus = {
 		limit = {
 			NOT = {
 				RHU = {
-					has_government = communism
+					has_government = revolutionary
 				}
 			}
 		}
@@ -627,7 +650,7 @@ focus = {
 		limit = {
 			NOT = {
 				HAR = {
-					has_government = communism
+					has_government = revolutionary
 				}
 			}
 		}
@@ -698,7 +721,7 @@ focus = {
 	 id = spread_the_revolution_to_the_north
 	 icon = GFX_focus_generic_join_comintern
 	 ai_will_do = { factor = 25 }
-	 available = { has_government = communism }
+	 available = { has_government = revolutionary }
 	 relative_position_id = support_rohan_revolution
 	 x = 0
 	 y = 1
@@ -714,7 +737,7 @@ focus = {
 			limit = {
 				NOT = {
 					ERE = {
-						has_government = communism
+						has_government = revolutionary
 					}
 				}
 			}
@@ -730,7 +753,7 @@ focus = {
 			limit = {
 				NOT = {
 					DAL = {
-						has_government = communism
+						has_government = revolutionary
 					}
 				}
 			}
@@ -763,13 +786,13 @@ focus = {
 
 focus = {
 	id = reject_morgoth_teachings
-	icon = GFX_stop_melkor_worship
+	icon = GFX_goal_stop_melkor_worship
 	relative_position_id = arealmoforcs
 	x = 8
 	y = 1
 	cost = 10
 	bypass = {
-		has_government = communism
+		has_government = revolutionary
 		NOT = {
 			has_idea = MOR_rejected_morgoth_1
 		}
@@ -820,7 +843,7 @@ focus = {
 	available = {
 		OR = {
 			HAR = {
-				has_government = communism
+				has_government = revolutionary
 				is_in_faction_with = MOR
 			}
 			HAR = {
@@ -832,7 +855,7 @@ focus = {
 		}
 		OR = {
 			RHU = {
-				has_government = communism
+				has_government = revolutionary
 				is_in_faction_with = MOR
 			}
 			RHU = {
@@ -881,7 +904,9 @@ focus = {
 focus = {
 	id = liberateminasmorgul
 	icon = GFX_goal_generic_national_unity
-	ai_will_do = { factor = 1 }
+	ai_will_do = {
+		factor = 0
+	}
 	x = -2
 	y = 1
 	available = {
@@ -907,7 +932,9 @@ focus = {
 focus = {
 	id = integrateintomordor
 	icon = GFX_goal_generic_secret_weapon
-	ai_will_do = { factor = 3 }
+	ai_will_do = {
+		factor = 5
+	}
 	x = 0
 	y = 1
 	relative_position_id = thefateofminasmorgul
@@ -929,7 +956,13 @@ focus = {
 focus = {
 	id = grantautonomy
 	icon = GFX_goal_generic_cavalry
-	ai_will_do = { factor = 5 }
+	ai_will_do = {
+		factor = 2
+		modifier = {
+			factor = 0
+			is_historical_focus_on = yes
+		}
+	}
 	x = 2
 	y = 1
 	relative_position_id = thefateofminasmorgul
@@ -955,7 +988,7 @@ focus = {
  #Focus for A King for a Kingdom
 focus = {
 	id = akingforakingdom
-	icon = GFX_akingforakingdom
+	icon = GFX_goal_witch_king
 	ai_will_do = { factor = 50 }
 	x = 0
 	y = 1
@@ -965,18 +998,34 @@ focus = {
 	available_if_capitulated = yes
 	available = {
 		has_completed_focus = submittosauron
-		has_government = fascism
+		has_government = belligerent
 		ANG = {
 			NOT = {
-				has_completed_focus = welcomebacktheoldmaster
+				has_completed_focus = ANG_welcome_back_the_old_master
 			}
 		}
 	}
 	completion_reward = {
 		add_threat = 1
 		MMO = {
-			create_country_leader = { name = "Witch King" picture = "gfx/leaders/MMO/Portrait_Mordor_Witch.dds" expire = "1980.1.1" ideology = nazism traits = { ringbearer } }
-			recruit_character = MMO_Witch_king
+			add_country_leader_role = {
+			    character = MMO_Witch_king
+			    promote_leader = yes
+			    country_leader = {
+			        ideology = expansionist
+			        expire = "1980.1.1"
+			        traits = { ringbearer }
+			    }
+			}
+			add_field_marshal_role = {
+				character = MMO_Witch_king
+			  	traits = { offensive_doctrine }
+				skill=4
+				attack_skill=4
+				defense_skill=2
+				planning_skill=5
+				logistics_skill=4
+			}
 		}
 		retire_character = MOR_Witch_king
 	}
@@ -985,42 +1034,57 @@ focus = {
  #Focus for Military Effort
 focus = {
 	id = militaryeffort
-	icon = GFX_focus_generic_comMORwealth_build_infantry
-	ai_will_do = { factor = 3 }
-	x = 56
+	icon = GFX_goal_generic_army_doctrines
+	ai_will_do = { 
+		factor = 3 
+		modifier = {
+			add = 10
+			if = {
+				limit = {
+					has_idea = MOR_regaining_power_0
+				}
+			} else_if = {
+				limit = {
+					has_idea = MOR_regaining_power_1
+				}
+			}
+		}
+	}
+	x = 58
 	y = 0
 	search_filters = { FOCUS_FILTER_ARMY_XP }
 	cost = 5
 	available_if_capitulated = yes
-	completion_reward = { army_experience = 25 }
- }
-
-focus = {
-	id = breed_the_trolls
-	icon = GFX_trolls
-	ai_will_do = { factor = 1 }
-	x = 4
-	y = 1
-	relative_position_id = militaryeffort
-	prerequisite = { focus = militaryeffort}
-	cost = 10
-	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_RESEARCH }
-	completion_reward = {
-		add_tech_bonus = {
-			name = special_bonus
-			bonus = 0.5
-			uses = 1
-			technology = troll
+	completion_reward = { 
+		army_experience = 25 
+		if = {
+			limit = {
+				has_idea = MOR_regaining_power_0
+			}
+			swap_ideas = {
+				remove_idea = MOR_regaining_power_0
+				add_idea = MOR_regaining_power_1
+			}
+		} else_if = {
+			limit = {
+				has_idea = MOR_regaining_power_1
+			}
+			swap_ideas = {
+				remove_idea = MOR_regaining_power_1
+				add_idea = MOR_regaining_power_2
+			}
+		} else = {
+			remove_ideas = MOR_regaining_power_2
 		}
 	}
-}
+ }
+
  #Focus for Minimized Death Toll
 focus = {
 	id = minimizeddeathtoll
-	icon = GFX_goal_generic_neutrality_focus
+	icon = GFX_goal_mor_meat_back_skulls_knife
 	ai_will_do = { factor = 2 }
-	x = -2
+	x = -3
 	y = 1
 	relative_position_id = militaryeffort
 	mutually_exclusive = { focus = nopricetoohigh }
@@ -1033,16 +1097,44 @@ focus = {
 	}
 }
 
+ #Focus for Taking care of the wounded
+focus = {
+	id = MOR_take_care_of_the_wounded
+	icon = GFX_goal_mor_meat_back_skulls_knife
+	ai_will_do = { factor = 2 }
+	x = 0
+	y = 1
+	relative_position_id = minimizeddeathtoll
+	prerequisite = { focus = minimizeddeathtoll}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_STABILITY }
+	completion_reward = {
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.5
+			uses = 1
+			category = hospital_tech
+		}
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 1
+			uses = 1
+			technology = tech_field_hospital
+		}
+	}
+}
+
  #Focus for Specialized Units
 focus = {
 	id = specializedunits
-	icon = GFX_establishneworcbreedinggrounds
+	icon = GFX_goal_mor_azog_orc_revolt
 	ai_will_do = { factor = 1 }
-	x = -1
+	x = 1
 	y = 1
-	relative_position_id = minimizeddeathtoll
+	relative_position_id = militaryeffort
 	mutually_exclusive = { focus = calvary_units }
-	prerequisite = { focus = minimizeddeathtoll}
+	prerequisite = { focus = militaryeffort}
 	cost = 10
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_RESEARCH }
@@ -1062,16 +1154,62 @@ focus = {
 	}
 }
 
+focus = {
+	id = breed_the_trolls
+	icon = GFX_mor_troll_warriors
+	ai_will_do = { factor = 1 }
+	x = 0
+	y = 1
+	relative_position_id = specializedunits
+	prerequisite = { focus = specializedunits}
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.5
+			uses = 1
+			technology = troll
+		}
+	}
+}
+
+focus = {
+	id = MOR_specialized_high_command
+	icon = GFX_goal_generic_special_forces
+	ai_will_do = { factor = 1 }
+	x = 0
+	y = 1
+	relative_position_id = breed_the_trolls
+	prerequisite = { focus = breed_the_trolls}
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		add_advisor_role = {
+			character = MOR_acrif
+			activate = no
+			advisor = {
+				idea_token = MOR_acrif_high_command
+				slot = high_command
+				cost = 150
+				traits = { commando_expert }
+			}
+		}
+	}
+}
+
  #Focus for Armored Units
 focus = {
 	id = calvary_units
-	icon = GFX_establishneworcbreedinggrounds
+	icon = GFX_goal_mor_azog_orc_revolt
 	ai_will_do = { factor = 1 }
-	x = 1
+	x = 3
 	y = 1
-	relative_position_id = minimizeddeathtoll
+	relative_position_id = militaryeffort
 	mutually_exclusive = { focus = specializedunits }
-	prerequisite = { focus = minimizeddeathtoll}
+	prerequisite = { focus = militaryeffort}
 	cost = 10
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_RESEARCH }
@@ -1105,7 +1243,6 @@ focus = {
 	x = 0
 	y = 1
 	relative_position_id = calvary_units
-	mutually_exclusive = { }
 	prerequisite = { focus = calvary_units}
 	cost = 10
 	available_if_capitulated = yes
@@ -1120,12 +1257,38 @@ focus = {
 	}
 }
 
+ #Focus for Mechanization Effort
+focus = {
+	id = MOR_armor_specialist
+	icon = GFX_goal_generic_army_tanks
+	ai_will_do = { factor = 2 }
+	x = 0
+	y = 1
+	relative_position_id = mechanizationeffort
+	prerequisite = { focus = mechanizationeffort}
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		add_advisor_role = {
+			character = MOR_gorbag
+			activate = no
+			advisor = {
+				idea_token = MOR_gorbag
+				slot = high_command
+				cost = 150
+				traits = { army_armored_1 }
+			}
+		}
+	}
+}
+
  #Focus for No Price too High
 focus = {
 	id = nopricetoohigh
 	icon = GFX_goal_generic_political_pressure
 	ai_will_do = { factor = 4 }
-	x = 2
+	x = -1
 	y = 1
 	relative_position_id = militaryeffort
 	mutually_exclusive = { focus = minimizeddeathtoll }
@@ -1139,14 +1302,14 @@ focus = {
  #Focus for Establish new orc breeding grounds
 focus = {
 	id = establishneworcbreedinggrounds
-	icon = GFX_establishneworcbreedinggrounds
+	icon = GFX_goal_mor_azog_orc_revolt
 	ai_will_do = { factor = 2 }
 	x = 0
 	y = 1
 	relative_position_id = nopricetoohigh
 	mutually_exclusive = { }
 	prerequisite = { focus = nopricetoohigh}
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_MANPOWER }
 	completion_reward = {
@@ -1162,7 +1325,7 @@ focus = {
  #Focus for Centralized Industry
 		focus = {
 		id = centralizedindustry
-		icon = GFX_goal_generic_construct_civilian
+		icon = GFX_focus_generic_industry_1
 		ai_will_do = { factor = 3 }
 		available = { 12 = { is_controlled_by = ROOT } 6 = { is_controlled_by = ROOT } }
  		x = 42
@@ -1183,8 +1346,8 @@ focus = {
  #Focus for The beating heart
 		focus = {
 		id = thebeatingheart
-		icon = GFX_goal_generic_construct_civilian
-		ai_will_do = { factor = 3 }
+		icon = GFX_focus_generic_industry_2
+		ai_will_do = { factor = 5 }
 		available = { 12 = { is_controlled_by = ROOT } }
  		x = 0
  		y = 1
@@ -1204,7 +1367,7 @@ focus = {
   focus = {
 	 id = research_rural_industry
 	 icon = GFX_goal_generic_production2
-	 ai_will_do = { factor = 3 }
+	 ai_will_do = { factor = 5 }
 	 prerequisite = { focus = thebeatingheart }
 	 relative_position_id = thebeatingheart
 	 x = 0
@@ -1230,8 +1393,8 @@ focus = {
  #Focus for Centralized Militirization
 		focus = {
 		id = centralizedmilitirization
-		icon = GFX_goal_generic_construct_mil_factory
-		ai_will_do = { factor = 3 }
+		icon = GFX_goal_generic_anvil
+		ai_will_do = { factor = 5 }
 		available = { 12 = { is_controlled_by = ROOT } 6 = { is_controlled_by = ROOT } }
  		x = 0
  		y = 1
@@ -1251,10 +1414,10 @@ focus = {
  #Focus for Decentralized Industry
 focus = {
 	id = decentralizedindustry
-	icon = GFX_goal_generic_construct_civilian
+	icon = GFX_focus_generic_industry_1
 	ai_will_do = { factor = 3 }
 	available = { 11 = { is_controlled_by = ROOT } 9 = { is_controlled_by = ROOT } 2 = { is_controlled_by = ROOT } 3 = { is_controlled_by = ROOT } 7 = { is_controlled_by = ROOT } }
-	x = 46
+	x = 48
 	y = 0
 	mutually_exclusive = { focus = centralizedindustry }
 	prerequisite = { }
@@ -1272,6 +1435,59 @@ focus = {
 			3 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
 	}
  }
+
+#Focus for Build animal farms
+focus = {
+	id = MOR_build_animal_farms
+	icon = GFX_goal_generic_windmill
+	ai_will_do = { factor = 1 }
+	available = { 187 = { is_controlled_by = ROOT } 9 = { is_controlled_by = ROOT } }
+	x = 4
+	y = 1
+	relative_position_id = centralizedindustry
+	prerequisite = { focus =  decentralizedindustry focus = centralizedindustry }
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		187 = {
+			add_resource = {
+                type = rubber
+                amount = 5
+            }
+		}
+		9 = {
+			add_resource = {
+                type = rubber
+                amount = 5
+            }
+		}
+
+	}
+}
+
+#Focus for Expand the sawmill industry
+focus = {
+	id = MOR_expand_the_sawmill_industry
+	icon = GFX_goal_resource_wood
+	ai_will_do = { factor = 1 }
+	available = { 120 = { is_controlled_by = ROOT } }
+	x = 0
+	y = 1
+	relative_position_id = MOR_build_animal_farms
+	prerequisite = { focus =  MOR_build_animal_farms }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		120 = {
+			add_resource = {
+                type = chromium
+                amount = 12
+            }
+		}
+	}
+}
 
  #Focus for Global Rail network
 focus = {
@@ -1387,7 +1603,7 @@ focus = {
 
  focus = {
 	 id = improve_industry
-	 icon = GFX_goal_generic_construct_civ_factory
+	 icon = GFX_focus_generic_industry_2
 	 ai_will_do = { factor = 3 }
 	 prerequisite = { focus = decentralizedindustry }
 	 relative_position_id = decentralizedindustry
@@ -1396,11 +1612,11 @@ focus = {
 	 cost = 10
 	 search_filters = { FOCUS_FILTER_INDUSTRY }
 	 completion_reward = {
-		 random_state = {
+		 random_owned_state = {
 			 add_extra_state_shared_building_slots = 2
 			 add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
 		 }
-		 random_state = {
+		 random_owned_state = {
 			add_extra_state_shared_building_slots = 1
 			 add_building_construction = { type = arms_factory level = 1 instant_build = yes }
 		 }
@@ -1436,7 +1652,7 @@ focus = {
  #Focus for deCentralized Militirization
 		focus = {
 		id = decentralizedmilitirization
-		icon = GFX_goal_generic_construct_mil_factory
+		icon = GFX_goal_generic_anvil
 		ai_will_do = { factor = 3 }
 		available = { 11 = { is_controlled_by = ROOT } 9 = { is_controlled_by = ROOT } 2 = { is_controlled_by = ROOT } 3 = { is_controlled_by = ROOT } 7 = { is_controlled_by = ROOT } }
  		x = 0
@@ -1463,11 +1679,10 @@ focus = {
 		id = mor_extraresearchslot
 		icon = GFX_focus_research
 		ai_will_do = { factor = 15 }
- 		x = 2
+ 		x = 3
  		y = 1
 		relative_position_id = centralizedmilitirization
- 		prerequisite = { focus = decentralizedmilitirization focus = centralizedmilitirization }
-		prerequisite = { focus = infrastructure_to_the_east }
+ 		prerequisite = { focus = decentralizedmilitirization focus = centralizedmilitirization focus = infrastructure_to_the_east }
  		cost = 10
   		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_RESEARCH }
@@ -1499,7 +1714,7 @@ focus = {
 		id = wrathofthefellbeasts
 		icon = GFX_goal_generic_build_airforce
 		ai_will_do = { factor = 2 }
- 		x = 50
+ 		x = 51
  		y = 0
  		mutually_exclusive = { }
  		prerequisite = { }
@@ -1575,9 +1790,15 @@ focus = {
 #Focus for Submit to Sauron
 	 focus = {
 	 id = submittosauron
-	 icon = GFX_submittosauron
-	 ai_will_do = { factor = 75 }
-	 available = { has_government = fascism }
+	 icon = GFX_goal_sauron_eye
+	 ai_will_do = {
+		factor = 0
+		modifier = {
+			add = 100
+			has_country_flag = gameplan_going_belligerent
+		}
+	}
+	 available = { has_government = belligerent }
 	 x = 3
 	 y = 1
 	offset = {
@@ -1600,6 +1821,27 @@ focus = {
 	 completion_reward = {
 		add_ideas = MOR_enslaved_nation add_threat = 2
 		mark_focus_tree_layout_dirty = yes
+		if = {
+			limit = {
+				has_idea = MOR_regaining_power_0
+			}
+			swap_ideas = {
+				remove_idea = MOR_regaining_power_0
+				add_idea = MOR_regaining_power_1
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = MOR_regaining_power_1
+			}
+			swap_ideas = {
+				remove_idea = MOR_regaining_power_1
+				add_idea = MOR_regaining_power_2
+			}
+		}
+		else = {
+			remove_ideas = MOR_regaining_power_2
+		}
 	}
 }
 
@@ -1619,6 +1861,27 @@ focus = {
 		army_experience = 25
 		add_threat = 5
 		add_ideas = MOR_middle_earth_conquest
+		if = {
+			limit = {
+				has_idea = MOR_regaining_power_0
+			}
+			swap_ideas = {
+				remove_idea = MOR_regaining_power_0
+				add_idea = MOR_regaining_power_1
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = MOR_regaining_power_1
+			}
+			swap_ideas = {
+				remove_idea = MOR_regaining_power_1
+				add_idea = MOR_regaining_power_2
+			}
+		}
+		else = {
+			remove_ideas = MOR_regaining_power_2
+		}
 	}
 }
 
@@ -1633,12 +1896,12 @@ focus = {
 	prerequisite = { focus = conquestofmiddleearth}
 	cost = 10
 	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_RESEARCH }
+	search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_ARMY_XP }
 	completion_reward = {
-	add_tech_bonus = {
-			name =  land_doc_bonus
-			bonus = 0.3
-			uses = 3
+		army_experience = 10
+		add_doctrine_cost_reduction = {
+			cost_reduction = 0.5
+			uses = 1
 			category = land_doctrine
 		}
 	}
@@ -1682,7 +1945,7 @@ focus = {
 #Focus for Reach out to Isengard
 focus = {
 	id = reach_out_to_isengard
-	icon = GFX_unitewithisengard
+	icon = GFX_goal_ise_the_white_hand_flag
 	ai_will_do = { factor = 3 }
 	x = 1
 	y = 1
@@ -1699,7 +1962,7 @@ focus = {
 		ISE = { add_opinion_modifier = { target = ROOT modifier = large_increase } }
 		ISE = {
 			add_popularity = {
-				ideology = fascism
+				ideology = belligerent
 				popularity = 0.05
 			}
 		}
@@ -1730,11 +1993,17 @@ focus = {
 	cost = 10
 	search_filters = { FOCUS_FILTER_ANNEXATION }
 	will_lead_to_war_with = ISE
+	available = {
+		ISE = {
+			exists = yes
+			is_puppet = no
+		}
+	}
 	completion_reward = {
 		if = {
 			limit = {
 				ISE = {
-					has_government = fascism
+					has_government = belligerent
 				}
 			}
 			ISE = {
@@ -1750,7 +2019,7 @@ focus = {
 
 focus = {
 	id = MOR_core_isengard
-	icon = GFX_unitewithisengard
+	icon = GFX_goal_ise_the_white_hand_flag
 	ai_will_do = {
 		base = 25
 	}
@@ -1783,7 +2052,7 @@ focus = {
 #Invite Isengard
 focus = {
 	id = invite_isengard_to_faction
-	icon = GFX_buildanarmyworthyofmordor
+	icon = GFX_goal_army_uruk_hai
 	ai_will_do = {
 		factor = 10
 		modifier = {
@@ -1801,7 +2070,7 @@ focus = {
 	relative_position_id = reach_out_to_isengard
 	available = {
 		ISE = {
-			has_government = fascism
+			has_government = belligerent
 		}
 	}
 	bypass = {
@@ -1850,7 +2119,7 @@ focus = {
 			}
 		}
 		ISE = {
-			has_government = fascism
+			has_government = belligerent
 			is_in_faction_with = MOR
 		}
 		OR = {
@@ -1870,7 +2139,7 @@ focus = {
 		GON = {
 			NOT = {
 				is_in_faction_with = MOR
-				has_government = fascism
+				has_government = belligerent
 				exists = no
 			}
 		}
@@ -1890,7 +2159,7 @@ focus = {
 #Focus for Reach out to Angmar
 focus = {
 	id = reachouttoangmar
-	icon = GFX_reachouttoangmar
+	icon = GFX_goal_sauron_eye
 	ai_will_do = { factor = 3 }
 	x = -1
 	y = 1
@@ -1902,7 +2171,7 @@ focus = {
 		ANG = {
 			add_opinion_modifier = { target = ROOT modifier = large_increase }
 			add_popularity = {
-				ideology = fascism
+				ideology = belligerent
 				popularity = 0.05
 			}
 		}
@@ -1910,60 +2179,216 @@ focus = {
 }
 
 #Focus to invite Angmar
-#focus = {
-#	id = invite_angmar_to_faction
-#	icon = GFX_goal_generic_dangerous_deal
-#	ai_will_do = { factor = 3 }
-#	x = 0
-#	y = 1
-#	relative_position_id = reachouttoangmar
-#	available = {
-#		ANG = {
-#			has_government = fascism
-#		}
-#	}
-#	prerequisite = { focus = reachouttoangmar}
-#	cost = 10
-#	available_if_capitulated = yes
-#	completion_reward = {
-#		ANG = {
-#			country_event = {
-#				id = angmar.5
-#			}
-#		}
-#	}
-#}
-
 focus = {
-	id = demand_alliance
-	icon = GFX_goal_skull_treaty
-	ai_will_do = {
-		base = 0
-		modifier = {
-			#every_country = {
-			#	limit = {
-			#		has_government = fascism
-			#		NOT = { is_in_faction_with = MOR }
-			#	}
-			#	add = 10
-			#}
-		}
-	}
+	id = invite_angmar_to_faction
+	icon = GFX_goal_angmar_unaligned
+	ai_will_do = { factor = 3 }
 	x = 0
 	y = 1
 	relative_position_id = reachouttoangmar
-	prerequisite = { focus = reachouttoangmar focus = reach_out_to_isengard }
+	available = {
+		ANG = {
+			has_government = belligerent
+		}
+	}
+	bypass = {
+		ANG = {
+			is_in_faction_with = MOR
+		}
+	}
+	prerequisite = { focus = reachouttoangmar}
 	cost = 10
-	search_filters = { FOCUS_FILTER_ANNEXATION }
+	available_if_capitulated = yes
 	completion_reward = {
-		every_country = {
-			limit = {
-				has_government = fascism
-				NOT = { is_in_faction_with = MOR }
-			}
+		ANG = {
 			country_event = {
-				id = mordor.47
+				id = angmar.5
 			}
+		}
+	}
+}
+
+#Anti-elves pact
+focus = {
+	id = MOR_anti_elves_pact_invite
+	icon = GFX_goal_riv_elrond_ring_vilya
+	ai_will_do = { factor = 3 }
+	x = 0
+	y = 1
+	relative_position_id = invite_angmar_to_faction
+	available = {
+		is_in_faction = yes
+		has_government = belligerent
+	}
+	prerequisite = { focus = invite_angmar_to_faction focus = invite_isengard_to_faction}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		set_country_flag = MOR_anti_elves_pact
+		every_other_country = {
+			limit = {
+				is_elves = no
+				NOT = {
+					has_government = cooperative
+				}
+			}
+			country_event = { id = mordor.61 }
+		}
+	}
+}
+
+#Suggesting declaring war on Mirkwood
+focus = {
+	id = MOR_together_we_attack_mirkwood
+	icon = GFX_goal_mir_thranduil
+	ai_will_do = { factor = 3 }
+	x = -2
+	y = 1
+	relative_position_id = MOR_anti_elves_pact_invite
+	will_lead_to_war_with = MIR
+	available = {
+		is_in_faction = yes
+		has_government = belligerent
+		MIR = {
+			NOT = { 
+				has_completed_focus = guidanceofthewisest 
+				has_government = revolutionary
+			}
+		}
+		any_other_country = {
+			has_country_flag = MOR_anti_elves_pact
+			NOT = {
+				OR = {
+					has_government = cooperative
+					has_government = unaligned
+				}
+			}
+			any_neighbor_country = {
+				original_tag = MIR
+			}
+		}
+	}
+	bypass = {
+		has_war_with = MIR
+	}
+	prerequisite = { focus = MOR_anti_elves_pact_invite }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		every_other_country = {
+			limit = {
+				has_country_flag = MOR_anti_elves_pact
+				NOT = {
+					OR = {
+						has_government = cooperative
+						has_government = unaligned
+					}
+				}
+				any_neighbor_country = {
+					original_tag = MIR
+				}
+			}
+			country_event = { id = mordor.62 }
+		}
+	}
+}
+
+#Suggesting declaring war on Lothlorien
+focus = {
+	id = MOR_together_we_attack_lothlorien
+	icon = GFX_goal_lth_galadriel
+	ai_will_do = { factor = 3 }
+	x = 0
+	y = 1
+	relative_position_id = MOR_anti_elves_pact_invite
+	will_lead_to_war_with = LTH
+	available = {
+		is_in_faction = yes
+		has_government = belligerent
+		any_allied_country = {
+			has_country_flag = MOR_anti_elves_pact
+			NOT = {
+				OR = {
+					has_government = cooperative
+					has_government = unaligned
+				}
+			}
+			any_neighbor_country = {
+				original_tag = LTH
+			}
+		}
+	}
+	bypass = {
+		has_war_with = LTH
+	}
+	prerequisite = { focus = MOR_anti_elves_pact_invite }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		every_other_country = {
+			limit = {
+				has_country_flag = MOR_anti_elves_pact
+				NOT = {
+					OR = {
+						has_government = cooperative
+						has_government = unaligned
+					}
+				}
+				any_neighbor_country = {
+					original_tag = LTH
+				}
+			}
+			country_event = { id = mordor.63 }
+		}
+	}
+}
+
+#Suggesting declaring war on Rivendell
+focus = {
+	id = MOR_together_we_attack_rivendell
+	icon = GFX_goal_riv_elrond
+	ai_will_do = { factor = 3 }
+	x = 1
+	y = 1
+	relative_position_id = MOR_together_we_attack_mirkwood
+	will_lead_to_war_with = LTH
+	available = {
+		is_in_faction = yes
+		has_government = belligerent
+		any_allied_country = {
+			has_country_flag = MOR_anti_elves_pact
+			NOT = {
+				OR = {
+					has_government = cooperative
+					has_government = unaligned
+				}
+			}
+			any_neighbor_country = {
+				original_tag = RIV
+			}
+		}
+	}
+	bypass = {
+		has_war_with = RIV 
+	}
+	prerequisite = { focus = MOR_together_we_attack_mirkwood focus = MOR_together_we_attack_lothlorien }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		every_other_country = {
+			limit = {
+				has_country_flag = MOR_anti_elves_pact
+				NOT = {
+					OR = {
+						has_government = cooperative
+						has_government = unaligned
+					}
+				}
+				any_neighbor_country = {
+					original_tag = RIV
+				}
+			}
+			country_event = { id = mordor.64 }
 		}
 	}
 }
@@ -1992,14 +2417,14 @@ focus = {
 #Dol Guldur
 focus = {
 	id = sent_troops_to_dol_guldur
-	icon = GFX_drawclosertothedarkness
+	icon = GFX_focus_generic_little_entente
 	ai_will_do = {
 		factor = 10
 		modifier = {
 			add = 15
 			MIR = {
 				NOT = {
-					has_government = fascism
+					has_government = belligerent
 				}
 			}
 		}
@@ -2043,7 +2468,7 @@ focus = {
 
 focus = {
 	id = set_up_fortress
-	icon = GFX_drawclosertothedarkness
+	icon = GFX_goal_generic_construct_military
 	ai_will_do = {
 		factor = 15
 		modifier = {
@@ -2090,7 +2515,7 @@ focus = {
 				set_state_owner = 87
 				load_oob = "DGU_Orcs"
 				set_politics = {
-					ruling_party = fascism
+					ruling_party = belligerent
 					elections_allowed = no
 				}
 			}
@@ -2105,12 +2530,15 @@ focus = {
 				type = annex_everything target = DGU
 			}
 		}
+		hidden_effect = {
+			add_named_threat = { threat = 3 name = "Dol Guldur seized by orcs" }
+		}
 	}
 }
 
 focus = {
 	id = annex_dol_guldur
-	icon = GFX_drawclosertothedarkness
+	icon = GFX_goal_mor_dark_dol_guldur_fortress
 	ai_will_do = { factor = 15 }
 	relative_position_id = set_up_fortress
 	x = 0
@@ -2122,7 +2550,7 @@ focus = {
 			has_war = no
 			exists = yes
 			is_puppet_of = MOR
-			has_government = fascism
+			has_government = belligerent
 		}
 	}
 	cost = 10
@@ -2133,7 +2561,7 @@ focus = {
 
 focus = {
 	id = reaforce_dol_guldur
-	icon = GFX_goal_dol_guldur
+	icon = GFX_goal_mor_dol_guldur_flag
 	ai_will_do = { factor = 15 }
 	relative_position_id = set_up_fortress
 	x = -2
@@ -2147,7 +2575,7 @@ focus = {
 		#has_manpower = 50000 check doesnt work for some reason
 		DGU = {
 			exists = yes
-			has_government = fascism
+			has_government = belligerent
 		}
 	}
 	cost = 10
@@ -2182,10 +2610,12 @@ focus = {
 	y = 1
 	prerequisite = { focus = reaforce_dol_guldur focus = annex_dol_guldur }
 	available = {
-		DAG = {
-			exists = yes
-			NOT = {
-				is_puppet_of = MOR
+		OR = {
+			DAG = {
+				exists = yes
+				NOT = {
+					is_in_faction_with = MOR
+				}
 			}
 		}
 		OR = {
@@ -2195,6 +2625,16 @@ focus = {
 			}
 			87 = {
 				is_core_of = MOR
+			}
+		}
+		controls_state = 204
+	}
+	bypass = {
+		DAG = {
+			OR = {
+				exists = no
+				is_puppet_of = MOR
+				is_in_faction_with = MOR
 			}
 		}
 	}
@@ -2209,7 +2649,7 @@ focus = {
 	
 focus ={
 	id = MOR_take_mirkwood
-	icon = GFX_burnthefangornforest
+	icon = GFX_goal_burn_fangorn_forest
 	ai_will_do = { factor = 15 }
 	relative_position_id = take_down_the_swamp
 	x = 0
@@ -2234,7 +2674,7 @@ focus ={
 
 focus = {
 	id = MOR_core_dol_guldur
-	icon = GFX_goal_dol_guldur
+	icon = GFX_goal_mor_dol_guldur_flag
 	ai_will_do = { factor = 15 }
 	relative_position_id = annex_dol_guldur
 	x = 0
@@ -2252,13 +2692,13 @@ focus = {
 
 focus = {
 	id = demand_restore_dol_guldur
-	icon = GFX_drawclosertothedarkness
+	icon = GFX_goal_mor_dark_dol_guldur_fortress
 	ai_will_do = {
 		factor = 15
 		modifier = {
 			add = 15
 			MIR = {
-				has_government = fascism
+				has_government = belligerent
 			}
 		}
 	}
@@ -2269,7 +2709,7 @@ focus = {
 	mutually_exclusive = { focus = sent_troops_to_dol_guldur }
 	available = {
 		MIR = {
-			has_government = fascism
+			has_government = belligerent
 			owns_state = 87
 		}
 	}
@@ -2286,7 +2726,7 @@ focus = {
 	id = seekalliesintheeast
 	icon = GFX_goal_generic_dangerous_deal
 	ai_will_do = { factor = 20 }
-	bypass = { has_government = communism }
+	bypass = { has_government = revolutionary }
 	x = 2
 	y = 1
 	relative_position_id = conquestofmiddleearth
@@ -2300,7 +2740,7 @@ focus = {
  #Focus for Enslave the East
 focus = {
 	id = enslavetheeast
-	icon = GFX_wargoal_rhun
+	icon = GFX_goal_mor_wargoal_rhun
 	ai_will_do = {
 		factor = 10
 		modifier = {
@@ -2333,7 +2773,7 @@ focus = {
 			}
 			every_country = {
 				limit = {
-					has_government = fascism
+					has_government = belligerent
 					original_tag = RHU
 				}
 				country_event = mordor.4
@@ -2415,7 +2855,7 @@ focus = {
 
 focus = {
 	id = war_with_dorwinion
-	icon = GFX_wargoal_dorwinion
+	icon = GFX_goal_mor_wargoal_dorwinion
 	ai_will_do = { factor = 10 }
 	x = 0
 	y = 1
@@ -2450,7 +2890,7 @@ focus = {
  #Focus for Enslave the South
 focus = {
 	id = enslavethesouth
-	icon = GFX_wargoal_harad
+	icon = GFX_goal_mor_wargoal_harad
 	ai_will_do = {
 		factor = 10
 		modifier = {
@@ -2490,7 +2930,7 @@ focus = {
 	y = 1
 	relative_position_id = enslavethesouth
 	prerequisite = { focus = enslavethesouth}
-	bypass = { NOT = { has_government = fascism } }
+	bypass = { NOT = { has_government = belligerent } }
 	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
@@ -2550,7 +2990,7 @@ focus = {
 
 focus = {
 	id = honor_morgoth
-	icon = GFX_servant_of_melkor
+	icon = GFX_goal_mor_servant_of_melkor_morgoth
 	x = 2
 	y = 1
 	relative_position_id = submittosauron
@@ -2563,79 +3003,104 @@ focus = {
 	}
 }
 
-#Focus for Hunt for the Ring
-focus = {
-	id = huntforthering
-	icon = GFX_huntforthering
-	ai_will_do = { factor = 100 }
-	x = -2
-	y = 1
-	relative_position_id = submittosauron
-	prerequisite = { focus = submittosauron}
-	cost = 4
-	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_ARMY_XP }
-	completion_reward = { army_experience = 25 }
-}
-
  #Focus for Gather the Nazgûl
 focus = {
 	id = gatherthenazgl
-	icon = GFX_gatherthenazgl
+	icon = GFX_goal_mor_nazgul_ringwraiths
 	ai_will_do = { factor = 100 }
 	x = 0
 	y = 1
-		relative_position_id = submittosauron
+	relative_position_id = submittosauron
 	prerequisite = { focus = submittosauron}
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_ARMY_XP }
 	completion_reward = {
 		army_experience = 10
+		add_named_threat = { threat = 1 name = "Nazguls gathered once more in Minas Morgul" }
 		custom_effect_tooltip = MOR_gather_the_nazgul
-	}
- }
-
-#Focus for Unleash Sauron
-		focus = {
-		id = unleashsauron
-		icon = GFX_unleashsauron
-		ai_will_do = { factor = 20 }
- 		x = -1
- 		y = 1
-		relative_position_id = huntforthering
- 		prerequisite = { focus = huntforthering}
-		available = { has_idea = one_true_ring has_government = fascism	}
- 		cost = 10
-  		available_if_capitulated = yes
-		completion_reward = {
-			retire_character = MOR_sauron_eye
-			create_country_leader = {
-				name = "Sauron"
-				picture = "gfx/leaders/MOR/Portrait_Mordor_Sauron.dds"
-				expire = "1980.1.1"
-				ideology = nazism
-				traits = {
-					ringbearer
-					legacyofmorgoth
+		hidden_effect = {
+			if = {
+				limit = {
+					GON = {
+						is_denethor_paranoid = yes
+					}
+				}
+				GON = {
+					country_event = { id = denethor_paranoid.2 }
 				}
 			}
 		}
+	}
+ }
+
+ #Focus for Obtain the Ring
+focus = {
+	id = obtainthering
+	icon = GFX_goal_the_one_ring
+	ai_will_do = { factor = 100 }
+	x = 0
+	y = 2
+	relative_position_id = gatherthenazgl
+	prerequisite = { focus = torturegollum}
+	available = { ring_has_the_ring = yes }
+	bypass = { ring_has_the_ring = yes }
+	cost = 4
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP }
+	completion_reward = {
+		custom_effect_tooltip = obtainthering_tt
+	}
+}
+
+
+#Focus for Unleash Sauron
+focus = {
+	id = unleashsauron
+	icon = GFX_goal_unleash_sauron
+	ai_will_do = { factor = 35 }
+	x = 0
+	y = 1
+	relative_position_id = obtainthering
+	prerequisite = { focus = obtainthering}
+	available = { ring_has_the_ring = yes has_government = belligerent	}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		retire_character = MOR_sauron_eye
+		add_named_threat = { threat = 25 name = "Sauron obtained the ring" }
+		create_country_leader = {
+			name = "Sauron"
+			picture = "gfx/leaders/MOR/Portrait_Mordor_Sauron.dds"
+			expire = "1980.1.1"
+			ideology = supremacist
+			traits = {
+				ringbearer
+				legacyofmorgoth
+			}
+		}
+	}
 }
 
  #Focus for Torture Gollum
 		focus = {
 		id = torturegollum
-		icon = GFX_torturegollum
+		icon = GFX_goal_mor_golum
 		ai_will_do = { factor = 100 }
- 		x = 1
+ 		x = 0
  		y = 1
-		 relative_position_id = huntforthering
+		relative_position_id = gatherthenazgl
  		mutually_exclusive = { }
- 		prerequisite = { focus = huntforthering}
- 		cost = 2
-  	available_if_capitulated = yes
-		completion_reward = { add_timed_idea = { idea = MOR_intel days = 120 }  }
+ 		prerequisite = { focus = gatherthenazgl}
+ 		cost = 1
+  		available_if_capitulated = yes
+		completion_reward = {
+			if = {
+				limit = { NOT = { has_global_flag = fs_arrived_in_rivendell } }
+				country_event = mordor.53
+			}
+			add_timed_idea = { idea = MOR_intel days = 120 }
+		}
  }
 
 
@@ -2698,24 +3163,6 @@ focus = {
 	}
 }
 
- #Focus for Search the Shire for the Ring
-		focus = {
-		id = searchtheshireforthering
-		icon = GFX_searchtheshireforthering
-		ai_will_do = { factor = 100 }
- 		x = 0
- 		y = 2
-		relative_position_id = gatherthenazgl
-		available = { always = no }
- 		prerequisite = { focus = torturegollum}
-  	prerequisite = { focus =gatherthenazgl}
- 		cost = 2
-  	available_if_capitulated = yes
-		completion_reward = {
-			custom_effect_tooltip = MOR_event_triggert_focus
-		}
- }
-
  #Focus for Establish new supply lines
 focus = {
 	id = establishnewsupplylines
@@ -2738,23 +3185,6 @@ focus = {
 	}
 }
 
- #Focus for Intercept the Ring at the Dead Marshes
-focus = {
-	id = intercepttheringatthedeadmarshes
-	icon = GFX_intercepttheringatthedeadmarshes
-	ai_will_do = { factor = 35 }
-	available = { always = no}
-	x = 0
-	y = 1
-	relative_position_id = searchtheshireforthering
-	prerequisite = { focus = searchtheshireforthering}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		custom_effect_tooltip = MOR_event_triggert_focus
-	}
-}
-
  #Focus for Rally the Troops
 focus = {
 	id = rallythetroops
@@ -2774,24 +3204,55 @@ focus = {
 				date > 3022.1.1
 		}
 	}
-	available = { num_divisions > 40 has_government = fascism }
+	available = { num_divisions > 40 has_government = belligerent }
 	x = 6
 	y = 4
 	relative_position_id = conquestofmiddleearth
 	prerequisite = { focus = establishcontroloverthesouth focus = establishcontrolovertheeast }
 	cost = 10
 	available_if_capitulated = yes
-	completion_reward = { add_timed_idea = { idea = MOR_rallying_cry days = 250 } }
+	completion_reward = { 
+		add_timed_idea = { idea = MOR_rallying_cry days = 250 } 
+	}
+}
+
+focus = {
+	id = demand_alliance
+	icon = GFX_goal_skull_treaty
+	ai_will_do = {
+		base = 3
+	}
+	available = {
+		is_faction_leader = yes
+		threat > 0.5
+	}
+	x = -2
+	y = 1
+	relative_position_id = rallythetroops
+	prerequisite = { focus = rallythetroops }
+	cost = 10
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	completion_reward = {
+		every_country = {
+			limit = {
+				has_government = belligerent
+				NOT = { is_in_faction_with = MOR }
+			}
+			country_event = {
+				id = mordor.47
+			}
+		}
+	}
 }
 
 focus = {
 	id = MOR_claim_black_gate_outskirts
-	icon = GFX_goal_mordor_landscape
+	icon = GFX_goal_mor_mordor_landscape
 	ai_will_do = {
 		factor = 25
 	}
 	available = { 
-		has_government = fascism 
+		has_government = belligerent 
 	}
 	x = 0
 	y = 1
@@ -2809,19 +3270,30 @@ focus = {
 		} else = {
 			204 = { add_compliance = 50 }
 		}
-		
-		add_threat = 1
+		add_named_threat = { threat = 3 name = "Mordor claimed Black Gate" }
 		GON = {
 			add_opinion_modifier = { target = MOR modifier = small_decrease }
 		}
 		news_event = { hours = 6 id = news.386 }
+		hidden_effect = {
+			if = {
+				limit = {
+					GON = {
+						is_denethor_paranoid = yes
+					}
+				}
+				GON = {
+					country_event = { id = denethor_paranoid.4 }
+				}
+			}
+		}
 	}
 }
 
 #Focus for War with Erebor!
 focus = {
 	id = war_with_erebor
-	icon = GFX_wargoal_erebor
+	icon = GFX_goal_mor_wargoal_erebor
 	bypass = {
 		OR = {
 			has_war_with = ERE
@@ -2852,7 +3324,7 @@ focus = {
 			}
 		}
 	}
-	available = { ERE = { NOT = { is_in_faction_with = ROOT } }  has_government = fascism }
+	available = { ERE = { NOT = { is_in_faction_with = ROOT } }  has_government = belligerent }
 	x = 1
 	y = 1
 	relative_position_id = MOR_claim_black_gate_outskirts
@@ -2869,7 +3341,7 @@ focus = {
 
 focus = {
 	id = MOR_invite_erebor
-	icon = GFX_goal_erebor
+	icon = GFX_goal_mor_erebor_flag
 	x = 4
 	y = 1
 	relative_position_id = MOR_claim_black_gate_outskirts
@@ -2877,9 +3349,10 @@ focus = {
 	mutually_exclusive = { focus = war_with_erebor }
 	available = {
 		ERE = {
-			has_government = fascism
+			has_government = belligerent
 			is_in_faction = no
 		}
+		NOT = { has_war_with = ERE }
 	}
 	bypass = {
 		is_in_faction_with = ERE
@@ -2950,7 +3423,7 @@ focus = {
 
 focus = {
 	id = MOR_learn_from_the_dwarves
-	icon = GFX_blamethedwarves
+	icon = GFX_goal_dwarves_soldiers_army
 	x = 0
 	y = 2
 	relative_position_id = MOR_invite_erebor
@@ -2979,7 +3452,7 @@ focus = {
 #Focus for War with Dale!
 focus = {
 	id = war_with_dale
-	icon = GFX_wargoal_dale
+	icon = GFX_goal_mor_wargoal_dale
 	bypass = { has_war_with = DAL }
 	ai_will_do = {
 		factor = 5
@@ -2996,7 +3469,7 @@ focus = {
 			has_war = yes
 		}
 	}
-	available = { DAL = { NOT = { is_in_faction_with = ROOT } } has_government = fascism }
+	available = { DAL = { NOT = { is_in_faction_with = ROOT } } has_government = belligerent }
 	x = -1
 	y = 1
 	relative_position_id = war_with_erebor
@@ -3010,7 +3483,7 @@ focus = {
 
 focus = {
 	id = MOR_prepare_war_with_gondor
-	icon = GFX_meats_back_on_the_menu
+	icon = GFX_goal_mor_meat_back_skulls_knife
 	ai_will_do = {
 		factor = 100
 	}
@@ -3047,7 +3520,7 @@ focus = {
 #Focus for War with Gondor!
 focus = {
 	id = war_with_gondor
-	icon = GFX_wargoal_gondor
+	icon = GFX_goal_mor_wargoal_gondor
 	bypass = {
 		GON = {
 			OR = {
@@ -3105,7 +3578,7 @@ focus = {
 
 focus = {
 	id = core_gondor
-	icon = GFX_restorethekingdom
+	icon = GFX_goal_gondor
 	ai_will_do = { factor = 25 }
 	x = -3
 	y = 1
@@ -3128,7 +3601,7 @@ focus = {
 	#Focus for War with Rohan!
 	focus = {
 		id = war_with_rohan
-		icon = GFX_wargoal_rohan
+		icon = GFX_goal_mor_wargoal_rohan
 		ai_will_do = {
 			factor = 10
 			modifier = {
@@ -3168,7 +3641,7 @@ focus = {
 
 	focus = {
 		id = core_rohan
-		icon = GFX_restoretherealm
+		icon = GFX_goal_generic_position_armies
 		ai_will_do = { factor = 25 }
 		x = 0
 		y = 1
@@ -3188,7 +3661,7 @@ focus = {
 
 	focus = {
 		id = expand_horses
-		icon = GFX_restoretherealm
+		icon = GFX_goal_roh_rohan_flag
 		ai_will_do = { factor = 25 }
 		x = 0
 		y = 1
@@ -3203,46 +3676,64 @@ focus = {
 		}
 	}
 
-	#Conquest of middle-Earth
-	#Focus for War with Rohan!
 	focus = {
-		id = war_with_everyone
-		icon = GFX_goal_generic_maROH_war
-		ai_will_do = { factor = 10	}
+		id = encroach_on_ithilien
+		icon = GFX_goal_mor_encroach_on_ithilien
+		ai_will_do = { factor = 0 }
+		x = 6
+		y = 1
+		relative_position_id = conquestofmiddleearth
+		prerequisite = { focus = conquestofmiddleearth }
+		cost = 10
 		available = {
-			GON = {
-				OR = {
-					exists = no
-					is_puppet_of = MOR
-					has_government = fascism
-				}
-			}
-			ROH = {
-				OR = {
-					exists = no
-					is_puppet_of = MOR
-					has_government = fascism
-				}
-			}
+			ithc_is_available = yes
 		}
-		x = 2
-		y = 2
-		relative_position_id = war_with_rohan
-		prerequisite = { focus = war_with_rohan focus = war_with_dale focus = MOR_learn_from_the_dwarves}
-		cost = 20
-		available_if_capitulated = yes
-		search_filters = { FOCUS_FILTER_ANNEXATION }
 		completion_reward = {
-			every_country = {
-				limit = {
-					NOT = { has_government = fascism }
-					NOT = { tag = NEP }
-					NOT = { is_in_faction_with = MOR }
-				}
-				MOR = {
-					create_wargoal = { type = annex_everything target = PREV }
-				}
-			}
+			set_country_flag = { flag = ithc_focus_cooldown value = 1 days = 90 }
+			ithc_commence_ithilien_crisis = yes
+		}
+	}
+
+	focus = {
+		id = escalate_the_attacks
+		icon = GFX_goal_mor_escalate_the_attacks
+		ai_will_do = { factor = 0 }
+		x = 0
+		y = 1
+		relative_position_id = encroach_on_ithilien
+		prerequisite = { focus = encroach_on_ithilien }
+		cost = 5
+		available = {
+			ithc_crisis_is_active = yes
+			NOT = { has_country_flag = ithc_focus_cooldown }
+		}
+		completion_reward = {
+			set_country_flag = { flag = ithc_focus_cooldown value = 1 days = 90 }
+			country_event = ithc.3
+		}
+	}
+
+	focus = {
+		id = second_wave
+		icon = GFX_goal_mor_second_wave
+		ai_will_do = { factor = 0 }
+		x = 0
+		y = 2
+		relative_position_id = encroach_on_ithilien
+		prerequisite = { focus = escalate_the_attacks }
+		cost = 5
+		available = {
+			ithc_crisis_is_active = yes
+			NOT = { has_country_flag = ithc_focus_cooldown }
+		}
+		completion_reward = {
+			# increase power projection
+			custom_effect_tooltip = increase_power_projection_overall_tt
+			# add war-support
+			add_war_support = 0.05
+			# Decrease cost of ithc decisions
+			subtract_from_variable = { ithc_pillage_decision_cost_pp = 50 }
+			custom_effect_tooltip = decrease_ithc_pp_cost_tt
 		}
 	}
 }

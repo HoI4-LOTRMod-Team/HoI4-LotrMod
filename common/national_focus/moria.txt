@@ -10,6 +10,10 @@ modifier = {
 	add = 10
 	original_tag = MOA
 }
+modifier = {
+	add = 10
+	original_tag = MOC
+}
 }
 
 default = no
@@ -55,7 +59,7 @@ default = no
 	 	factor = 20
 		modifier = {
 			add = 10
-			has_government = democratic
+			has_government = cooperative
 		}
 	 }
 	 available = { has_war = yes }
@@ -78,7 +82,7 @@ default = no
 	 	factor = 20
 		modifier = {
 			add = 10
-			has_government = communism
+			has_government = revolutionary
 		}
 	 }
 	 available = { has_war = yes }
@@ -101,7 +105,7 @@ default = no
 	 	factor = 20
 		modifier = {
 			add = 10
-			has_government = democratic
+			has_government = cooperative
 		}
 	 }
 	 available = { has_war = yes }
@@ -124,7 +128,7 @@ default = no
 	 	factor = 20
 		modifier = {
 			add = 10
-			has_government = communism
+			has_government = revolutionary
 		}
 	 }
 	 available = { has_war = yes }
@@ -205,9 +209,11 @@ default = no
  #Focus for Beat back the Orc Invasion
 		focus = {
 		id = beatbacktheorcinvasion
-		icon = GFX_beatbacktheorcinvasion
+		icon = GFX_goal_army_uruk_hai
 		ai_will_do = { factor = 100 }
-		available = { NOT = { has_civil_war = yes } has_global_flag = moria_civil_war has_government = democratic }
+		available = {
+			OR = { has_civil_war = no MOA = { is_government_in_exile = yes } MOC = { is_government_in_exile = yes } }
+			has_global_flag = moria_civil_war has_government = cooperative }
  		x =2
  		y =1
  		mutually_exclusive = { }
@@ -220,9 +226,9 @@ default = no
  #Focus for Assume Control over Moria
 		focus = {
 		id = assumecontrolovermoria
-		icon = GFX_assumecontrolovermoria
+		icon = GFX_goal_mor_azog_orc_revolt
 		ai_will_do = { factor = 100 }
-		available = { NOT = { has_civil_war = yes } has_global_flag = moria_civil_war has_government = communism }
+		available = { OR = { has_civil_war = no MOA = { is_government_in_exile = yes } MOC = { is_government_in_exile = yes } } NOT = { has_civil_war = yes } has_global_flag = moria_civil_war has_government = revolutionary }
  		x =8
  		y =1
  		mutually_exclusive = { }
@@ -235,7 +241,7 @@ default = no
  #Focus for Restore Stability
 		focus = {
 		id = restorestability
-		icon = GFX_goal_generic_neutrality_focus
+		icon = GFX_goal_support_unaligned
 		ai_will_do = { factor = 100 }
  		x =5
  		y =2
@@ -291,11 +297,11 @@ default = no
  #Focus for Submit to the Balrog
 		focus = {
 		id = submittothebalrog
-		icon = GFX_submittothebalrog
+		icon = GFX_goal_moa_balrog
 		ai_will_do = { factor = 10
 			modifier = {
 				add = 5
-				has_government = communism
+				has_government = revolutionary
 			}
 		}
  		x =6
@@ -303,20 +309,45 @@ default = no
  		mutually_exclusive = {  focus = huntdownthebalrog }
  		prerequisite = { focus = dealwiththebalrog}
  		cost = 10
+		available = { controls_state = 134 }
   	available_if_capitulated = no
 		completion_reward = {
 			news_event = { hours = 48 id = news.361 }
 			if = { limit = { is_puppet = yes } ERE = { end_puppet = ROOT } }
-			set_politics = { ruling_party = fascism elections_allowed = no }
-			add_popularity = { ideology = fascism popularity = 0.8 }
-			remove_ideas = MOA_loose_balrog
-			create_country_leader = {
-				name = "Durin's Bane"
-				picture = "Portrait_Moria_Bane.dds"
-				expire = "1965.1.1"
-				ideology = nazism
-				traits = {}
+			set_politics = { ruling_party = belligerent elections_allowed = no }
+			add_popularity = { ideology = belligerent popularity = 0.8 }
+			remove_durins_bane_from_moria = yes
+
+			if = {
+				limit = { tag = MOA }
+				MOA_bane = {
+					add_country_leader_role = {
+						promote_leader = yes
+						country_leader = {
+        					ideology = domineering
+        					expire = "5000.1.1.1"
+						}
+					}
+				}
 			}
+			else_if = {
+				limit = { tag = MOC }
+				MOC_bane = {
+					add_country_leader_role = {
+						promote_leader = yes
+						country_leader = {
+        					ideology = domineering
+        					expire = "5000.1.1.1"
+						}
+					}
+				}
+			}
+
+			custom_effect_tooltip = submittothebalrog_tt
+			hidden_effect = {
+				load_oob = Moria_Balrog
+			}
+
 			add_threat = 3
 		}
  }
@@ -328,7 +359,7 @@ default = no
 		ai_will_do = { factor = 12
 			modifier = {
 				add = 12
-				has_government = democratic
+				has_government = cooperative
 			}
 		}
  	 	x =2
@@ -337,21 +368,27 @@ default = no
  		prerequisite = { focus = dealwiththebalrog}
  		cost = 10
   	available_if_capitulated = no
+		available = { controls_state = 134 controls_state = 73 }
 		completion_reward = {
-			add_manpower = -50000
-			remove_ideas = MOA_loose_balrog
+			add_manpower = -25000
+			remove_durins_bane_from_moria = yes
+			hidden_effect = {
+				MOA = { MOA_bane = { retire = yes } }
+				MOC = { MOC_bane = { retire = yes } }
+			}
 		}
  }
 
  #Focus for Deal with the Balrog
   	focus = {
   	id = dealwiththebalrog
-  	icon = GFX_submittothebalrog
+  	icon = GFX_goal_moa_balrog
   	ai_will_do = { factor = 15 }
   	x =4
   	y =3
   	mutually_exclusive = {  }
   	prerequisite = { focus = restorestability}
+	available = { controls_state = 134 controls_state = 73 }
   	cost = 10
    	available_if_capitulated = no
 		completion_reward = {
@@ -488,7 +525,7 @@ default = no
  #Focus for MOA_Unite with Sauron
 		focus = {
 		id = nor_unitewithsauron
-		icon = GFX_nor_unitewithsauron
+		icon = GFX_goal_mordor_flag
 		ai_will_do = { factor = 5 }
  		x =5
  		y =5
@@ -521,7 +558,7 @@ default = no
  #Focus for A new Dark Lord
 		focus = {
 		id = anewdarklord
-		icon = GFX_anewdarklord
+		icon = GFX_goal_support_belligerent
 		ai_will_do = { factor = 4 }
  		x =7
  		y =5
@@ -541,6 +578,7 @@ default = no
  		y =5
  		mutually_exclusive = { }
  		prerequisite = { focus = restoretheupperlayers}
+		available = { controls_state = 134 controls_state = 73 }
  		cost = 15
   	available_if_capitulated = no
 		completion_reward = { add_manpower = 120000 }
@@ -555,6 +593,7 @@ default = no
  		y =5
  		mutually_exclusive = { }
  		prerequisite = { focus = ignitetheforges}
+		available = { controls_state = 134 controls_state = 73 }
  		cost = 10
   	available_if_capitulated = yes
 		completion_reward = {
@@ -597,6 +636,7 @@ default = no
  		y =6
  		mutually_exclusive = { focus = getbacktowork }
  		prerequisite = { focus = formtheminersbureau}
+		available = { controls_state = 134 controls_state = 73 }
  		cost = 10
   	available_if_capitulated = yes
 		completion_reward = { add_stability = 0.1 }
@@ -779,6 +819,7 @@ default = no
 		id = resettlethelowerlayers
 		icon = GFX_goal_generic_national_unity
 		ai_will_do = { factor = 10 }
+		available = { controls_state = 134 controls_state = 73 }
  		x =19
  		y =8
  		mutually_exclusive = { }

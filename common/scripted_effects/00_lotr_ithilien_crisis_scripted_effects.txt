@@ -1,0 +1,190 @@
+
+
+# Happens when mordor does the Ithilien crisis focus. Scope is MOR
+ithc_commence_ithilien_crisis = {
+
+	hidden_effect = {
+		GON = { ithc_set_vars = yes }
+		MOR = { ithc_set_vars = yes }
+
+		set_global_flag = ithc_ithilien_crisis_commenced
+
+		GON = { country_event = ithc.1 }
+		MOR = { country_event = ithc.2 }
+	}
+
+	custom_effect_tooltip = ithc_commence_ithilien_crisis_tt
+}
+
+ithc_set_vars = {
+	hidden_effect = {
+		set_variable = { ithc_pillage_decision_cost_pp = 50 }
+	}
+}
+
+ithc_set_vars_long_term = {
+	custom_effect_tooltip = ithc_set_vars_long_term_tt
+
+	set_country_flag = ithc_long_term_vars
+	set_variable = { ithc_bonus_pp = 0 }
+}
+
+ithc_set_vars_short_term = {
+	custom_effect_tooltip = ithc_set_vars_short_term_tt
+
+	set_country_flag = ithc_short_term_vars
+	set_variable = { ithc_bonus_pp = 30 }
+}
+
+# Happens when GON and MOR got to war. Runs on no scope in particular
+ithc_end_ithilien_crisis = {
+	clr_global_flag = ithc_ithilien_crisis_commenced
+}
+
+
+# THIS is the state to run effects on.
+ithc_on_war_with_mordor_effects = {
+
+	# spawn divisions
+	if = {
+		limit = {
+			check_variable = { ithc_pillage_level > 1 }
+			check_variable = { id = 22.id }
+		}
+		MOR = {
+			set_province_controller = 792
+			set_province_controller = 6910
+			set_province_controller = 3515
+			load_oob = "ithc/ithc_slepper_cells_22"
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { ithc_pillage_level > 1 }
+			check_variable = { id = 135.id }
+		}
+		MOR = {
+			set_province_controller = 3840
+			set_province_controller = 7241
+			set_province_controller = 2866
+			load_oob = "ithc/ithc_slepper_cells_135"
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { ithc_pillage_level > 1 }
+			check_variable = { id = 173.id }
+		}
+		MOR = {
+			set_province_controller = 7008
+			set_province_controller = 7029
+			set_province_controller = 7030
+			load_oob = "ithc/ithc_slepper_cells_173"
+		}
+	}
+	else_if = {
+		limit = {
+			check_variable = { ithc_pillage_level > 1 }
+			check_variable = { id = 175.id }
+		}
+		MOR = {
+			set_province_controller = 7180
+			set_province_controller = 3267
+			set_province_controller = 3998
+			load_oob = "ithc/ithc_slepper_cells_175"
+		}
+	}
+	
+	add_core_of = GON
+	clear_variable = ithc_pillage_level
+}
+
+
+# MOR contests a state -> Gon looses core and she shitshow begins
+ithc_contest_state = {
+
+	hidden_effect = {
+		force_enable_resistance = GON
+		start_resistance = yes
+		set_compliance = 50
+
+		set_state_flag = ithc_contested
+
+		set_variable = { ithc_pillage_level = 0 }
+	}
+	effect_tooltip = {
+		start_resistance = yes
+
+		custom_effect_tooltip = ithc_pillage_enable_new_decision_tt
+	}
+}
+
+ithc_begin_pillage_decision = {
+	set_state_flag = ithc_pillage_operation
+
+	add_to_variable = { ROOT.ithc_pillage_decision_cost_pp = 10 }
+}
+
+ithc_begin_unpillage_decision = {
+	set_state_flag = ithc_pillage_operation
+
+	add_to_variable = { ROOT.ithc_pillage_decision_cost_pp = 10 }
+}
+
+ithc_end_pillage_decision = {
+	clr_state_flag = ithc_pillage_operation
+	
+	ithc_increase_pillage_level = yes
+}
+
+ithc_end_unpillage_decision = {
+	clr_state_flag = ithc_pillage_operation
+
+	ithc_decrease_pillage_level = yes
+}
+
+ithc_increase_pillage_level = {
+	add_to_variable  = { ithc_pillage_level = 1 }
+
+	custom_effect_tooltip = ithc_increase_pillage_tt
+	ithc_set_state_modifier = yes
+}
+
+ithc_decrease_pillage_level = {
+	subtract_from_variable  = { ithc_pillage_level = 1 }
+
+	custom_effect_tooltip = ithc_decrease_pillage_tt
+	hidden_effect = {
+		ithc_set_state_modifier = yes	
+	}
+}
+
+ithc_set_state_modifier = {
+	if = {
+		limit = { check_variable = { ithc_pillage_level < 1 } }
+		effect_tooltip = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_1 } }
+	}
+	if = {
+		limit = { check_variable = { ithc_pillage_level = 1 } }
+		effect_tooltip = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_2 } }
+		hidden_effect = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_1 } }
+	}
+	else_if = {
+		limit = { check_variable = { ithc_pillage_level = 2 } }
+		effect_tooltip = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_3 } }
+		hidden_effect = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_2 } }
+	}
+	else_if = {
+		limit = { check_variable = { ithc_pillage_level = 3 } }
+		effect_tooltip = { transfer_state_to = MOR }
+		hidden_effect = { add_dynamic_modifier = { modifier = ithc_pillage_modifier_3 } }
+	}
+	else_if = {
+		limit = { check_variable = { ithc_pillage_level > 3 } }
+		transfer_state_to = MOR
+	}
+}
+
+
+
+

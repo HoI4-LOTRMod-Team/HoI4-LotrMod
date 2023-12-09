@@ -1,0 +1,207 @@
+###########################
+# Erebor Events
+###########################
+
+add_namespace = rhudaur
+
+# General refuse event
+country_event = {
+	id = rhudaur.1
+	title = rhudaur.1.t
+	desc = rhudaur.1.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Okay
+		name = rhudaur.1.a
+	}
+}
+
+# General agree event
+country_event = {
+	id = rhudaur.2
+	title = rhudaur.2.t
+	desc = rhudaur.2.d
+	picture = GFX_report_event_elven_alliance
+
+	is_triggered_only = yes
+
+	option = { # Okay
+		name = rhudaur.2.a
+	}
+}
+
+# Angmar demands submission
+country_event = {
+	id = rhudaur.3
+	title = rhudaur.3.t
+	desc = rhudaur.3.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = rhudaur.3.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = -5
+				has_war = yes
+			}
+			modifier = {
+				factor = -5
+				is_puppet = yes
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = ANG
+					value > 75
+				}
+			}
+			modifier = {
+				add = 5
+				has_non_aggression_pact_with = ANG
+			}
+			modifier = {
+				factor = -999
+				has_war = yes
+			}
+		}
+		add_war_support = -0.10
+		add_stability = -0.05
+		add_political_power = -100
+		add_named_threat = { threat = 3 name = "Rhudaur puppeted by Angmar" }
+		ANG = {
+			puppet = RHD
+		}
+	}
+
+	option = { #no
+		name = rhudaur.3.b
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 999
+				has_war = yes
+			}
+			modifier = {
+				factor = 999
+				is_puppet = yes
+			}			
+			modifier = {
+				add = 999
+				has_war_with = ANG
+			}
+		}
+		add_war_support = 0.10
+		add_stability = 0.05
+		add_political_power = -100
+		add_opinion_modifier = { target = ANG modifier = medium_decrease }
+		ANG = {
+			add_opinion_modifier = { target = RHD modifier = medium_decrease }
+			create_wargoal = {
+				target = RHD
+				type = puppet_wargoal_focus
+			}
+		}
+	}
+}
+
+# Angmar proposes reunification
+country_event = {
+	id = rhudaur.4
+	title = rhudaur.4.t
+	desc = rhudaur.4.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes annex
+		name = rhudaur.4.a
+		ai_chance = {
+			base = 5
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = ANG
+					value > 75
+				}
+			}
+			modifier = {
+				add = 5
+				has_non_aggression_pact_with = ANG
+			}
+			modifier = {
+				add = -5
+				has_war = yes
+			}
+			modifier = {
+				add = -5
+				is_puppet = yes
+			}
+		}
+		ANG = {
+			annex_country = { target = RHD transfer_troops = yes }
+		}
+		hidden_effect = {
+			add_threat = 3
+		}
+	}
+
+	option = { #yes puppet
+		name = rhudaur.4.a
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = ANG
+					value > 50
+				}
+			}
+			modifier = {
+				add = -5
+				has_war = yes
+			}
+			modifier = {
+				add = -5
+				is_puppet = yes
+			}
+		}
+		add_political_power = -100
+		ANG = {
+			puppet = RHD
+		}
+		hidden_effect = {
+			add_threat = 1
+		}
+	}
+
+	option = { #no
+		name = rhudaur.4.b
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				has_war = yes
+			}
+			modifier = {
+				add = -5
+				is_puppet = yes
+			}
+		}
+		add_war_support = 0.10
+		add_stability = 0.05
+		add_political_power = -100
+		add_opinion_modifier = { target = ANG modifier = medium_decrease }
+		ANG = {
+			add_opinion_modifier = { target = RHD modifier = medium_decrease }
+			create_wargoal = {
+				target = RHD
+				type = annex_everything
+			}
+		}
+	}
+}

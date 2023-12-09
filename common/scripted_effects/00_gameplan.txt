@@ -1,0 +1,648 @@
+
+
+set_gameplan_generic = {
+    random_list = {
+        # BELLIGERENT
+        100 = {
+            modifier = {
+                factor = 0
+                NOT = { has_belligerent_path = yes }
+            }
+            modifier = {
+				factor = 2
+				any_neighbor_country = {
+					is_major = yes
+					has_government = belligerent
+				}
+			}
+            modifier = {
+				factor = 3
+                has_government = belligerent
+			}
+			modifier = {
+				factor = 0
+                is_historical_focus_on = yes
+                NOT = { has_government = belligerent }
+			}
+
+            set_country_flag = gameplan_going_belligerent
+        }
+
+        # REVOLUTIONARY
+        100 = {
+            modifier = {
+                factor = 0
+                NOT = { has_revolutionary_path = yes }
+            }
+            modifier = {
+                factor = 0
+                tag = DAG
+            }
+            modifier = {
+				factor = 2
+				any_neighbor_country = {
+					is_major = yes
+					has_government = revolutionary
+				}
+			}
+            modifier = {
+				factor = 3
+                has_government = revolutionary
+			}
+			modifier = {
+				factor = 0
+				AND = {
+					is_historical_focus_on = yes
+					NOT = { has_government = revolutionary }
+				}
+			}
+
+            set_country_flag = gameplan_going_revolutionary
+        }
+
+        # COOPERATIVE
+        100 = {
+            modifier = {
+                factor = 0
+                NOT = { has_cooperative_path = yes }
+            }
+            modifier = {
+                factor = 0
+                tag = DAG
+            }
+            modifier = {
+				factor = 3
+                has_government = cooperative
+			}
+            modifier = {
+				factor = 0
+                is_historical_focus_on = yes
+                NOT = { has_government = cooperative }
+			}
+
+            set_country_flag = gameplan_going_cooperative
+        }
+
+        # UNALIGNED
+        100 = {
+            modifier = {
+                factor = 0
+                has_unaligned_path = no
+            }
+            modifier = {
+				factor = 3
+                has_government = unaligned
+			}
+            modifier = {
+				factor = 0
+                is_historical_focus_on = yes
+                NOT = { has_government = unaligned }
+			}      
+
+            set_country_flag = gameplan_going_unaligned
+        }
+
+        1 = {
+            # This is just here for the countries where none of the above applies
+        }
+    }
+
+    # Choose a gameplan (see ai_strategy_plans)
+    random_list = {
+        15 = {
+            set_country_flag = gameplan_slow_buildup
+        }
+        12 = {
+            set_country_flag = gameplan_fast_rearm
+        }
+        5 = {
+            modifier = {
+                factor = 0
+                OR = {
+                    AND = { has_government = revolutionary is_going_revolutionary = yes }
+                    AND = { has_government = cooperative is_going_cooperative = yes }
+                    AND = { has_government = belligerent is_going_belligerent = yes }
+                    AND = { has_government = unaligned is_going_unaligned = yes }
+                }
+            }
+            modifier = {
+                factor = 0
+                is_historical_focus_on = yes
+            }
+            set_country_flag = gameplan_fast_ideology_switch
+        }
+        3 = {
+
+        }
+    }
+}
+
+
+set_gameplan_ANG = {
+    if = {
+        limit = {
+            has_game_rule = {
+                rule = ANG_AI_BEHAVIOR
+                option = UNALIGNED_HISTORICAL
+            }
+        }
+        set_country_flag = gameplan_going_unaligned
+    }else_if = {
+        limit = {
+            has_game_rule = {
+                rule = ANG_AI_BEHAVIOR
+                option = BELLIGERENT_PLAN
+            }
+        }
+        set_country_flag = gameplan_going_belligerent
+    }else_if = {
+        limit = {
+            has_game_rule = {
+                rule = ANG_AI_BEHAVIOR
+                option = COOPERATIVE_PLAN
+            }
+        }
+        set_country_flag = gameplan_going_cooperative
+    }else = {
+        random_list = {
+            10 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor=0
+                }
+                set_country_flag = gameplan_going_belligerent
+            }
+            10 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor=0
+                }
+                set_country_flag = gameplan_going_cooperative
+            }
+            10 = {
+                set_country_flag = gameplan_going_unaligned
+            }
+        }
+    }
+}
+
+
+set_gameplan_ART = {
+    random_list = {
+        5 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_belligerent
+        }
+        10 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_cooperative
+        }
+        10 = {
+            set_country_flag = gameplan_going_unaligned
+        }
+    }
+}
+
+
+set_gameplan_RHU = {
+    set_country_flag = gameplan_going_belligerent
+}
+
+
+set_gameplan_ENT = {
+    random_list = {
+        5 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_belligerent
+        }
+        10 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_cooperative
+        }
+        20 = {
+            set_country_flag = gameplan_going_unaligned
+        }
+        2 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_revolutionary
+        }
+    }
+}
+
+
+set_gameplan_ERE = {
+    random_list = {
+        6 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_belligerent
+        }
+        6 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_revolutionary
+        }
+        20 = {
+            set_country_flag = gameplan_going_cooperative
+        }
+    }
+}
+
+
+set_gameplan_GON = {
+    if = {
+        limit = {
+            has_game_rule = {
+				rule = GON_AI_BEHAVIOR 
+				option = UNALIGNED_PLAN
+			}
+        }
+        set_country_flag = gameplan_going_unaligned
+    } else_if = {
+        limit = {
+            has_game_rule = {
+				rule = GON_AI_BEHAVIOR 
+				option = REVOLUTIONARY_PLAN
+			}
+        }
+        set_country_flag = gameplan_going_revolutionary
+    } else_if = {
+        limit = {
+            has_game_rule = {
+				rule = GON_AI_BEHAVIOR 
+				option = COOPERATIVE_UNHISTORICAL
+			}
+        }
+        set_country_flag = gameplan_going_cooperative
+    } else_if = {
+        limit = {
+            has_game_rule = {
+				rule = GON_AI_BEHAVIOR 
+				option = COOPERATIVE_PLAN
+			}
+        }
+        set_country_flag = gameplan_going_cooperative
+    } else = {
+        random_list = {
+            2 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor=0
+                }
+                set_country_flag = gameplan_going_revolutionary
+            }
+            6 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor=0
+                }
+                set_country_flag = gameplan_going_unaligned
+            }
+            13 = {
+                set_country_flag = gameplan_going_cooperative
+            }
+        }
+    }
+}
+
+
+set_gameplan_HAR = {
+    # There is no alternate paths for HAR afaik
+    set_country_flag = gameplan_going_belligerent
+}
+
+
+set_gameplan_ISE = {
+    random_list = {
+        65 = {
+            set_country_flag = gameplan_going_belligerent
+        }
+        15 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_cooperative
+        }
+    }
+}
+
+
+set_gameplan_LTH = {
+    if = {
+        limit = { 
+            OR = {
+                is_historical_focus_on = yes 
+                has_game_rule = {
+                    rule = LTH_AI_BEHAVIOR 
+                    option = UNALIGNED_HISTORICAL
+                }
+            }
+        }
+
+        set_country_flag = gameplan_going_unaligned
+        set_country_flag = gameplan_historical
+        set_country_flag = gameplan_limited_intervention
+    }
+    else = {
+        if = {
+            limit = {
+                has_game_rule = {
+                    rule = LTH_AI_BEHAVIOR 
+                    option = UNALIGNED_UNHISTORICAL
+                }
+            }
+            set_country_flag = gameplan_going_unaligned
+            random_list = {
+                8 = {
+                    set_country_flag = gameplan_limited_intervention
+                }
+                5 = {
+                    set_country_flag = gameplan_total_isolation
+                }
+            }
+        } else_if = {
+            limit = {
+                has_game_rule = {
+                    rule = LTH_AI_BEHAVIOR 
+                    option = COOPERATIVE_UNHISTORICAL
+                }
+            }
+            set_country_flag = gameplan_going_cooperative
+            random_list = {
+                10 = { }
+                2 = {
+                    set_country_flag = gameplan_white_council
+                }
+                2 = {
+                    set_country_flag = gameplan_elven_alliance
+                }
+            }
+        }else_if = {
+            limit = {
+                has_game_rule = {
+                    rule = LTH_AI_BEHAVIOR 
+                    option = BELLIGERENT_UNHISTORICAL
+                }
+            }
+            set_country_flag = gameplan_going_belligerent
+            random_list = {
+                5 = { }
+                3 = {
+                    set_country_flag = gameplan_bully_elves
+                }
+                3 = {
+                    set_country_flag = gameplan_bully_mortals
+                }
+            }
+        }else_if = {
+            limit = {
+                has_game_rule = {
+                    rule = LTH_AI_BEHAVIOR 
+                    option = REVOLUTIONARY_UNHISTORICAL
+                }
+            }
+            set_country_flag = gameplan_going_revolutionary
+        } else = {
+            random_list = {
+                # unaligned
+                35 = {
+                    set_country_flag = gameplan_going_unaligned
+                    random_list = {
+                        8 = {
+                            set_country_flag = gameplan_limited_intervention
+                        }
+                        5 = {
+                            set_country_flag = gameplan_total_isolation
+                        }
+                    }
+                }
+                # cooperative
+                12 = {
+                    set_country_flag = gameplan_going_cooperative
+                    random_list = {
+                        10 = { }
+                        2 = {
+                            set_country_flag = gameplan_white_council
+                        }
+                        2 = {
+                            set_country_flag = gameplan_elven_alliance
+                        }
+                    }
+                }
+                # belligerent
+                6 = {
+                    set_country_flag = gameplan_going_belligerent
+                    random_list = {
+                        5 = { }
+                        3 = {
+                            set_country_flag = gameplan_bully_elves
+                        }
+                        3 = {
+                            set_country_flag = gameplan_bully_mortals
+                        }
+                    }
+                }
+                #revo
+                4 = {
+                    set_country_flag = gameplan_going_revolutionary
+                }
+                # mix/harmonic ascendancy
+                2 = {
+                    set_country_flag = gameplan_going_revolutionary
+                    set_country_flag = gameplan_going_belligerent
+                    set_country_flag = gamplan_harmonic_ascendancy
+                }
+            }
+        }
+
+        # 10% chance to rush moria focuses
+        random = {
+            chance = 10
+            set_country_flag = gameplan_rush_moria
+        }
+
+        # 7% chance to rush vales-of-anduin focuses
+        random = {
+            chance = 7
+            set_country_flag = gameplan_rush_vale
+        }
+
+        # 12% chance to go for elronds council
+        random = {
+            chance = 12
+            set_country_flag = gameplan_rush_ring
+        }
+    }
+}
+
+
+set_gameplan_MIR = {
+    random_list = {
+        10 = {
+            set_country_flag = gameplan_going_unaligned
+        }
+        8 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_revolutionary
+        }
+        8 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_belligerent
+        }
+        7 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_cooperative
+            random = {
+                chance = 10
+                set_country_flag = gameplan_elven_alliance
+            }
+        }
+    }
+}
+
+
+set_gameplan_MOR = {
+    if = {
+        limit = {
+            has_game_rule = {
+                rule = MOR_AI_BEHAVIOR
+                option = BELLIGERENT_HISTORICAL
+            }
+        }
+        set_country_flag = gameplan_going_belligerent
+    }else_if = {
+        limit = {
+            has_game_rule = {
+                rule = MOR_AI_BEHAVIOR
+                option = REVOLUTIONARY_PLAN
+            }
+        }
+        set_country_flag = gameplan_going_revolutionary
+    }else = {
+        random_list = {
+            75 = {
+                set_country_flag = gameplan_going_belligerent
+            }
+            15 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor=0
+                }
+                set_country_flag = gameplan_going_revolutionary
+            }
+        }
+    }
+}
+
+
+set_gameplan_MOA = {
+    set_country_flag = gameplan_going_cooperative
+}
+
+
+set_gameplan_MOC = {
+    set_country_flag = gameplan_going_revolutionary
+}
+
+
+set_gameplan_RIV = {
+    random_list = {
+        5 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_belligerent
+        }
+        15 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_cooperative
+            random = {
+                chance = 20
+                set_country_flag = gameplan_elven_alliance
+            }
+        }
+        20 = {
+            set_country_flag = gameplan_going_unaligned
+        }
+        5 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_revolutionary
+        }
+    }
+}
+
+
+set_gameplan_ROH = {
+    random_list = {
+        8 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_belligerent
+        }
+        25 = {
+            set_country_flag = gameplan_going_cooperative
+        }
+    }
+}
+
+
+set_gameplan_SHI = {
+    random_list = {
+        5 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_belligerent
+        }
+        15 = {
+            set_country_flag = gameplan_going_cooperative
+        }
+        5 = {
+            modifier = {
+                is_historical_focus_on = yes
+                factor=0
+            }
+            set_country_flag = gameplan_going_revolutionary
+        }
+    }
+}
+

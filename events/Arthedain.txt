@@ -46,14 +46,22 @@ country_event = {
 	option = { # Accept
 		name = arthedain.2.a
 		ai_chance = {
-			base = 25
+			base = 15
 			modifier = {
 				add = 10
-				THIS = { has_government = fascism }
+				THIS = { has_government = belligerent }
 			}
 			modifier = {
 				has_opinion = { target = ART value > 50 }
 				add = 30
+			}
+			modifier = {
+				add = 15
+				FROM = { has_idea_with_trait = arnor_unification_advocate }
+			}
+			modifier = {
+				add = -999
+				is_puppet = yes
 			}
 		}
  		ART = { annex_country = { target = PREV } }
@@ -90,14 +98,18 @@ country_event = {
 	id = arthedain.3
 	title = arthedain.3.t
 	desc = arthedain.3.d
-	picture = GFX_report_event_alliance
+	picture = GFX_report_event_elven_alliance
 	
 	is_triggered_only = yes
 	
 	option = { #Accept
 		name = arthedain.3.a
 		ai_chance = {
-			base = 80
+			base = 60
+			modifier = {
+				add = 30
+				FROM = { has_idea_with_trait = arnor_unification_advocate }
+			}
 		}
 		ART = { add_to_faction = PREV }
 	}
@@ -107,11 +119,11 @@ country_event = {
 			base = 30
 			modifier = {
 				add = 5000
-				has_government = fascism
+				has_government = belligerent
 			}
 			modifier = {
 				add = 5000
-				has_government = communism
+				has_government = revolutionary
 			}
 			modifier = {
 				add = 300
@@ -139,8 +151,8 @@ country_event = {
 				is_in_faction_with = ART
 			}
 			modifier = {
-				add = 50
-				has_government = democratic
+				add = 30
+				has_government = cooperative
 			}
 			modifier = {
 				has_opinion = { target = ART value > 50 }
@@ -150,35 +162,312 @@ country_event = {
 				has_opinion = { target = ART value > 90 }
 				add = 20
 			}
-		}
-		every_owned_state = {
-			limit = { is_core_of = THIS }
-			add_core_of = ART
-		}
-
-		PREV = {
-			every_unit_leader = {
-				set_nationality = ART
+			modifier = {
+				has_country_flag = arthedain_reformation_encouraged
+				add = 30
+			}
+			modifier = {
+				add = 30
+				FROM = { has_idea_with_trait = arnor_unification_advocate }
+			}
+			modifier = {
+				add = 30
+				is_puppet_of = ART
 			}
 		}
-		ART = { annex_country = { target = PREV transfer_troops = yes} }
+		every_owned_state = {
+			limit = { is_core_of = ROOT }
+			add_core_of = ART
+		}
+		ART = { annex_country = { target = PREV transfer_troops = yes }  }
 	}
 	option = { #Refuse
 		name = arthedain.4.b
 		ai_chance = {
-			base = 10
+			base = 50
 			modifier = {
 				add = 5000
-				has_government = fascism
+				has_government = belligerent
 			}
 			modifier = {
 				add = 5000
-				has_government = communism
+				has_government = revolutionary
 			}
 			modifier = {
 				has_opinion = { target = ART value < 0 }
 				add = 50
 			}
 		}
+	}
+}
+
+# Arthedain asks to reunite with Gondor
+country_event = {
+	id = arthedain.5
+	title = arthedain.5.t
+	desc = arthedain.5.d
+	picture = GFX_report_event_paper
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = arthedain.5.a
+		ai_chance = {
+			base = 60
+		}
+		ART = {
+			dismantle_faction = yes
+			add_stability = 0.10
+		}
+		GON = {
+			add_to_faction = ART
+			add_stability = 0.10
+		}
+	}
+	option = { #Refuse
+		name = arthedain.5.b
+		ai_chance = {
+			base = 15
+		}
+		add_political_power = -100
+		add_stability = -0.10
+	}
+}
+
+# Request to form the 'Grey Company'
+country_event = {
+	id = arthedain.6
+	title = arthedain.6.t
+	desc = arthedain.6.d
+	picture = GFX_report_event_rangers
+	
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = grey_company_formed }
+	}
+	
+	option = { #Accept
+		name = arthedain.6.a
+		ai_chance = {
+			base = 6
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = ART
+					value > 30
+				}
+			}
+			modifier = {
+				factor = 5
+				ART = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 0.25
+				ART = { is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 5
+				OR = {
+					tag = ART
+					tag = RHD
+				}
+			}
+		}
+
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = -800
+		}
+		add_timed_idea = {
+			idea = minor_expense
+			days = 80
+		}
+
+		custom_effect_tooltip = arthedain.6.a_tt
+
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_variable = global.grey_company_supporters } }
+				set_variable = { global.grey_company_supporters = 1 } # We start at 1 because whoever triggered the event/took the focus auto-support this
+			}
+			add_to_variable = { global.grey_company_supporters = 1 }
+
+			if = {
+				limit = {
+					check_variable = { global.grey_company_supporters > 2 }
+					NOT = { has_global_flag = grey_company_formed }
+				}
+				set_global_flag = grey_company_formed
+				ART = { country_event = { id = arthedain.7 days = 12 } }
+				RHD = { country_event = { id = arthedain.7 days = 12 } }
+			}
+		}
+		
+	}
+	option = { #Refuse
+		name = arthedain.6.b
+		
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 3
+				has_opinion = {
+					target = ART
+					value < 0
+				}
+			}
+			modifier = {
+				factor = 3
+				ART = { is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 0.25
+				OR = {
+					tag = ART
+					tag = RHD
+				}
+			}
+		}
+	}
+}
+
+# Grey Company Formed
+country_event = {
+	id = arthedain.7
+	title = arthedain.7.t
+	desc = arthedain.7.d
+	picture = GFX_report_event_rangers
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = arthedain.7.a
+		ai_chance = {
+			base = 60
+		}
+		if = {
+			limit = { tag = ART }
+			load_oob = ART_GreyCompany
+		}
+		else_if = {
+			limit = { tag = RHD }
+			load_oob = RHD_GreyCompany
+		}
+	}
+}
+
+# Gondor invites Arthedain to faction
+country_event = {
+	id = arthedain.8
+	title = arthedain.8.t
+	desc = arthedain.8.d
+	picture = GFX_report_event_gondor
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = arthedain.8.a
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				GON = { has_same_ideology = yes }
+			}
+		}
+		ART = {
+			dismantle_faction = yes
+			add_stability = 0.10
+		}
+		GON = {
+			add_to_faction = ART
+			add_stability = 0.10
+		}
+	}
+	option = { #Refuse
+		name = arthedain.8.b
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				has_war = no
+				GON = { has_war = yes }
+			}
+			modifier = {
+				factor = 5
+				has_government = belligerent
+				has_government = revolutionary
+			}
+			modifier = {
+				factor = 2
+				GON = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				GON = { is_significantly_weaker = yes }
+			}
+		}
+		GON = {
+			add_opinion_modifier = { target = ART modifier = medium_increase }
+		}
+		add_political_power = -100
+		add_stability = -0.05
+	}
+}
+
+# Gondor demands Arthedain become part of Gondor once more
+country_event = {
+	id = arthedain.9
+	title = arthedain.9.t
+	desc = arthedain.9.d
+	picture = GFX_report_event_gondor
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = arthedain.9.a
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				GON = { has_same_ideology = yes }
+			}
+		}
+		GON = {
+			set_autonomy = {
+				target = ART
+				autonomy_state = autonomy_fiefdom
+			}
+		}
+	}
+	option = { #Refuse
+		name = arthedain.9.b
+		ai_chance = {
+			base = 15
+			modifier = {
+				factor = 2
+				has_war = no
+				GON = { has_war = yes }
+			}
+			modifier = {
+				factor = 5
+				has_government = belligerent
+				has_government = revolutionary
+			}
+			modifier = {
+				factor = 2
+				GON = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				GON = { is_significantly_weaker = yes }
+			}
+		}
+		GON = {
+			add_opinion_modifier = { target = ART modifier = medium_increase }
+			create_wargoal = { type = puppet_wargoal_focus target = ART }
+		}
+		add_political_power = -100
+		add_stability = -0.05
 	}
 }

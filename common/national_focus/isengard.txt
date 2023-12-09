@@ -1,5 +1,5 @@
 focus_tree = {
-id = 'isengard'
+id = isengard
 country = {
 	factor=0
 	modifier = {
@@ -10,13 +10,15 @@ country = {
 
 continuous_focus_position = { x = 50 y = 2000 }
 
+shared_focus = whc_rekindlewhitecouncil
+
 default = no
 
 #Custom focuses start here
 #Focus for Fate of Isengard
 		focus = {
 		id = thefateofisengard
-		icon = GFX_goal_generic_CAS
+		icon = GFX_goal_orthanc_destroyed
 		ai_will_do = { factor = 100 }
  		x =4
  		y =0
@@ -30,7 +32,7 @@ default = no
 #Focus for Ways of the Light
 	 focus = {
 	 id = waysofthelight
-	 icon = GFX_waysofthelight
+	 icon = GFX_goal_ise_palantir_covered_up
 	 ai_will_do = { factor = 20 }
 	 x =3
 	 y =1
@@ -44,7 +46,7 @@ default = no
 #Focus for Ways of the Dark
 	 focus = {
 	 id = waysofthedark
-	 icon = GFX_waysofthedark
+	 icon = GFX_goal_saruman_with_palantir
 	 ai_will_do = { factor = 40 }
 	 x =5
 	 y =1
@@ -52,7 +54,9 @@ default = no
 	 prerequisite = { focus = thefateofisengard}
 	 cost = 10
  	 available_if_capitulated = yes
-	 completion_reward = { add_ideas = ISE_ways_of_the_dark }
+	 completion_reward = {
+	 	add_ideas = ISE_ways_of_the_dark
+ 	}
 }
 
 #Focus for Meet with Gandalf
@@ -60,20 +64,20 @@ default = no
 	 id = meetwithgandalf
 	 icon = GFX_goal_generic_improve_relations
 	 ai_will_do = { factor = 100 }
-	 available = { has_country_leader = { ruling_only = yes name = "Saruman" } }
+	 available = { always = no }
 	 x =4
 	 y =2
 	 mutually_exclusive = { }
 	 prerequisite = { focus = waysofthedark  focus = waysofthelight}
 	 cost = 10
 	 available_if_capitulated = yes
-	 completion_reward = { country_event = { days = 0 id = isengard.1 } }
+	 completion_reward = { custom_effect_tooltip = MOR_event_triggert_focus }
 }
 
 #Focus for Unite with Gandalf
 	 focus = {
 	 id = unitewithgandalf
-	 icon = GFX_unitewithgandalf
+	 icon = GFX_goal_meet_with_gandalf
 	 ai_will_do = { factor = 100 }
 	 x =2
 	 y =3
@@ -82,13 +86,13 @@ default = no
 	 prerequisite = { focus = meetwithgandalf}
 	 cost = 0
  	 available_if_capitulated = yes
-	 completion_reward = { }
+	 completion_reward = { custom_effect_tooltip = MOR_event_triggert_focus }
 }
 
 #Focus for A Gift to Gondor
 	focus = {
 	 id = agifttogondor
-	 icon = GFX_goal_generic_national_unity
+	 icon = GFX_goal_gondor
 	 ai_will_do = { factor = 5 }
 	 x =2
 	 y =4
@@ -122,16 +126,16 @@ default = no
 #Focus for Declare Against Sauron
 	 focus = {
 	 id = declareagainstsauron
-	 icon = GFX_goal_support_democracy
+	 icon = GFX_goal_support_cooperative
 	 ai_will_do = { factor = 15 }
-	 available = { democratic > 0.5 }
+	 available = { cooperative > 0.5 }
 	 x =0
 	 y =4
 	 mutually_exclusive = { }
 	 prerequisite = { focus = unitewithgandalf}
 	 cost = 10
  	 available_if_capitulated = yes
-	 completion_reward = { set_politics = { ruling_party = democratic elections_allowed = no } }
+	 completion_reward = { set_politics = { ruling_party = cooperative elections_allowed = no } }
 }
 
 #Focus for Share knowledge with Gandalf
@@ -168,7 +172,7 @@ default = no
 	 }
 }
 
-#Focus for Persuade Enedwaith2 (democratic)
+#Focus for Persuade Enedwaith2 (cooperative)
 	 focus = {
 	 id = persuadeenedwaith2
 	 icon = GFX_goal_generic_dangerous_deal
@@ -180,7 +184,7 @@ default = no
 	 cost = 5
  	 available_if_capitulated = yes
 	 completion_reward = {
-	 		ENE = { add_ideas = generic_democratic }
+	 		ENE = { add_ideas = generic_cooperative }
 	 }
 }
 
@@ -189,7 +193,7 @@ default = no
 	 id = isr_unitewithgondor
 	 icon = GFX_focus_generic_diplomatic_treaty
 	 ai_will_do = { factor = 5 }
-	 available = { OR = { GON = { has_government = democratic }  GON = { has_government = neutrality } } GON = { is_faction_leader = yes } }
+	 available = { OR = { GON = { has_government = cooperative }  GON = { has_government = unaligned } } GON = { is_faction_leader = yes } }
 	 x =0
 	 y =7
 	 mutually_exclusive = { }
@@ -229,7 +233,13 @@ default = no
 	 prerequisite = { focus = anorganicmagic}
 	 cost = 10
  	 available_if_capitulated = yes
-	 completion_reward = { add_tech_bonus = { name = land_doc_bonus bonus = 0.5 uses = 3 category = land_doctrine } }
+	 completion_reward = { 
+		add_doctrine_cost_reduction = {
+			cost_reduction = 0.5
+			uses = 2
+			category = land_doctrine
+		}
+	}
 }
 
 #Focus for Advanced Warfare2
@@ -293,7 +303,7 @@ default = no
 #Focus for Imprison Gandalf
 	 focus = {
 	 id = imprisongandalf
-	 icon = GFX_imprisongandalf
+	 icon = GFX_goal_imprisend_gandalf
 	 ai_will_do = { factor = 100 }
 	 x =6
 	 y =3
@@ -302,28 +312,49 @@ default = no
 	 prerequisite = { focus = meetwithgandalf}
 	 cost = 0
    available_if_capitulated = yes
-	 completion_reward = { add_threat = 5  }
+	 completion_reward = {
+	 	custom_effect_tooltip = MOR_event_triggert_focus
+	 	add_named_threat = { threat = 1 name = "Gandalf being taken prisoner" }
+ 	}
 }
 
 #Focus for Rebrand Isengard
 	 focus = {
 	 id = rebrandisengard
-	 icon = GFX_rebrandisengard
+	 icon = GFX_goal_ise_the_white_hand_flag
 	 ai_will_do = { factor = 100 }
-	 available = { fascism > 0.35 }
+	 available = { 
+		belligerent > 0.35 
+	}
 	 x =6
 	 y =4
 	 mutually_exclusive = {  }
 	 prerequisite = { focus = imprisongandalf}
 	 cost = 10
  	 available_if_capitulated = no
-	 completion_reward = { set_politics = { ruling_party = fascism elections_allowed = no } add_threat = 3 }
+	 completion_reward = {
+	 	lotr_switch_to_orcs = yes
+	 	set_politics = { ruling_party = belligerent elections_allowed = no }
+	 	add_named_threat = { threat = 1 name = "Rebranded Isengard" }
+		hidden_effect = {
+			if = {
+				limit = {
+					GON = {
+						is_denethor_paranoid = yes
+					}
+				}
+				GON = {
+					country_event = { id = denethor_paranoid.4 }
+				}
+			}
+		}
+ 	}
 }
 
 #Focus for Build an army worthy of Mordor
 		focus = {
 		id = buildanarmyworthyofmordor
-		icon = GFX_buildanarmyworthyofmordor
+		icon = GFX_goal_army_uruk_hai
 		ai_will_do = { factor = 70 }
  		x =17
  		y =4
@@ -379,7 +410,7 @@ default = no
 	#Focus for Dig up the Fangorn Forest
 		focus = {
 		id = digupthefangornforest
-		icon = GFX_goal_generic_construction2
+		icon = GFX_focus_generic_steel
 		ai_will_do = { factor = 3 }
 		available = { has_global_flag = ents_burned 31 = { is_controlled_by = ISE } }
 		x =14
@@ -394,7 +425,7 @@ default = no
 	#Focus for Establish Orc Breeding Grounds
 		 focus = {
 		 id = establishorcbreedinggrounds
-		 icon = GFX_establishorcbreedinggrounds
+		 icon = GFX_goal_army_uruk_hai
 		 ai_will_do = { factor = 50 }
 		 x =16
 		 y =5
@@ -408,7 +439,7 @@ default = no
 	#Focus for More Orcs!
 		 focus = {
 		 id = moreorcs
-		 icon = GFX_establishorcbreedinggrounds
+		 icon = GFX_goal_army_uruk_hai
 		 ai_will_do = { factor = 15 }
 		 x =16
 		 y =6
@@ -422,7 +453,7 @@ default = no
 	#Focus for Select the Strongest Few
 		 focus = {
 		 id = selectthestrongesfew
-		 icon = GFX_establishorcbreedinggrounds
+		 icon = GFX_goal_army_uruk_hai
 		 ai_will_do = { factor = 50 }
 		 x =16
 		 y =7
@@ -431,50 +462,80 @@ default = no
 		 cost = 2
 	 	 available_if_capitulated = no
 		 completion_reward = {
-		 	create_corps_commander = {
- 				name = "Uglúk"
- 				picture = "Portrait_Isengard_Ugluk.dds"
+		 	add_corps_commander_role = {
+ 				character = ISE_ugluk
  				traits = { panzer_leader }
- 				skill = 1
+ 				skill = 2
 				attack_skill = 1
 				defense_skill = 2
 				planning_skill = 4
 				logistics_skill = 3
 			}
-			create_corps_commander = {
- 				name = "Lurtz"
- 				id = 147
- 				picture = "Portrait_Isengard_Lurtz.dds"
+			add_advisor_role = {
+				character = ISE_ugluk
+				advisor = {
+					idea_token = ISE_ugluk_high_command
+			        slot = high_command
+			        cost = 150
+			        traits = { army_CombinedArms_1 }
+		        }
+			}
+			add_corps_commander_role = {
+ 				character = ISE_lurtz
  				traits = { ranger trickster }
- 				skill = 3
+ 				skill = 4
 				attack_skill = 5
 				defense_skill = 3
 				planning_skill = 2
 				logistics_skill = 3
 			}
-			create_corps_commander = {
- 				name = "Hargor"
- 				picture = "Portrait_Isengard_Hargor.dds"
+			add_advisor_role = {
+				character = ISE_lurtz
+				advisor = {
+					idea_token = ISE_lurtz_high_command
+			        slot = high_command
+			        cost = 150
+			        traits = { ring_catcher }
+		        }
+			}
+			add_corps_commander_role = {
+ 				character = ISE_hargor
  				traits = { trait_engineer }
- 				skill = 2
+ 				skill = 3
 				attack_skill = 1
 				defense_skill = 2
 				planning_skill = 3
 				logistics_skill = 1
 			}
-			create_corps_commander = {
- 				name = "Mauhur"
- 				picture = "Portrait_Isengard_Mauhur.dds"
+			add_advisor_role = {
+				character = ISE_hargor
+				advisor = {
+					idea_token = ISE_hargor_high_command
+			        slot = high_command
+			        cost = 150
+			        traits = { army_concealment_1 }
+		        }
+			}
+			add_corps_commander_role = {
+ 				character = ISE_mauhur
  				traits = { urban_assault_specialist }
- 				skill = 1
+ 				skill = 2
 				attack_skill = 2
 				defense_skill = 1
 				planning_skill = 3
 				logistics_skill = 2
 			}
-			create_field_marshal = {
- 				name = "Gara"
- 				picture = "Portrait_Isengard_Gara.dds"
+			add_advisor_role = {
+				character = ISE_mauhur
+				advisor = {
+					idea_token = ISE_mauhur_high_command
+			        slot = high_command
+			        cost = 150
+			        traits = { army_commando_1 }
+		        }
+			}
+			add_field_marshal_role = {
+ 				character = ISE_gara
  				traits = { old_guard }
  				skill = 3
 				attack_skill = 2
@@ -482,15 +543,32 @@ default = no
 				planning_skill = 4
 				logistics_skill = 3
 			}
-			create_field_marshal = {
- 				name = "Lugdush"
- 				picture = "Portrait_Isengard_Lugdush.dds"
+			add_advisor_role = {
+				character = ISE_gara
+				advisor = {
+					idea_token = ISE_gara_high_command
+			        slot = army_chief
+			        cost = 150
+			        traits = { army_chief_defensive_1 }
+		        }
+			}
+			add_field_marshal_role = {
+ 				character = ISE_lugdush
  				traits = { offensive_doctrine }
- 				skill = 1
+ 				skill = 2
 				attack_skill = 2
 				defense_skill = 1
 				planning_skill = 1
 				logistics_skill = 2
+			}
+			add_advisor_role = {
+				character = ISE_lugdush
+				advisor = {
+					idea_token = ISE_lugdush_high_command
+			        slot = army_chief
+			        cost = 150
+			        traits = { army_chief_offensive_1 }
+		        }
 			}
 		 }
 	}
@@ -538,7 +616,11 @@ default = no
 	 	 available_if_capitulated = yes
 		 completion_reward = {
 		 	31 = { add_building_construction = { type = air_base level = 2 instant_build = yes } }
-	 		add_tech_bonus = { name = air_doc_bonus bonus = 0.5 uses = 1 category = air_doctrine }
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 1
+				category = air_doctrine
+			}
 		}
 	}
 
@@ -553,7 +635,13 @@ default = no
 		 prerequisite = { focus = militaryresearchcommittee }
 		 cost = 10
 	 	 available_if_capitulated = yes
-		 completion_reward = { add_tech_bonus = { name = land_doc_bonus bonus = 0.5 uses = 3 category = land_doctrine } }
+		 completion_reward = { 
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 2
+				category = land_doctrine
+			}
+		  }
 	}
 
 	#Focus for Advanced Warfare
@@ -597,7 +685,7 @@ default = no
 		id = intensewizardry
 		icon = GFX_focus_wonderweapons
 		ai_will_do = { factor = 2 }
-		available = { has_government = fascism has_country_leader = { ruling_only = yes name = "Saruman" } }
+		available = { has_government = belligerent has_country_leader = { ruling_only = yes name = "Saruman" } }
 		x =19
 		y =9
 		prerequisite = { focus = trainorcscholars }
@@ -617,7 +705,7 @@ default = no
  #Focus for Burn the Fangorn Forest
 		focus = {
 		id = burnthefangornforest
-		icon = GFX_burnthefangornforest
+		icon = GFX_goal_burn_fangorn_forest
 		ai_will_do = { factor = 6 }
  		x =7
  		y =2
@@ -638,7 +726,7 @@ default = no
 #Focus for Protect the Fangorn Forest
 		focus = {
 		id = protectthefangornforest
-		icon = GFX_goal_generic_defence
+		icon = GFX_goal_entwood_forest_nature
 		ai_will_do = { factor = 3 }
 		x =1
 		y =2
@@ -659,7 +747,7 @@ default = no
 		id = claimdominionoverenedwaith
 		icon = GFX_goal_demand_sudetenland
 		ai_will_do = { factor = 15 }
-		available = { has_government = fascism }
+		available = { has_government = belligerent }
 		bypass = { has_war_with = ENE }
  		x =8
  		y =5
@@ -668,7 +756,6 @@ default = no
  		cost = 10
   	available_if_capitulated = no
 		completion_reward = {
-			add_threat = 4
 			add_state_claim = 77
 			add_state_claim = 156
 			add_state_claim = 155
@@ -685,25 +772,35 @@ default = no
 		id = takeeastdunland
 		icon = GFX_goal_generic_major_war
 		ai_will_do = { factor = 20 }
-		available = { has_government = fascism NOT = { has_war_with = ENE } }
+		available = { has_government = belligerent NOT = { has_war_with = ENE } }
 		x =7
 		y =6
-		mutually_exclusive = { }
+		bypass = {
+			controls_state = 77
+			controls_state = 156
+		}
 		prerequisite = { focus = claimdominionoverenedwaith}
 		cost = 5
+		available = {
+			ENE = {
+				controls_state = 77
+				controls_state = 156
+			}
+		}
 		available_if_capitulated = no
 		completion_reward = {
-			ISE = { set_state_owner = 77 }
-			ISE = { set_state_owner = 156 }
+			add_named_threat = { threat = 3 name = "Land seized by Isengard" }
+			transfer_state = 77
+			transfer_state = 156
 		}
 }
 
 #Focus for Subjugate Enedwaith
 	 focus = {
 	 id = subjugateenedwaith
-	 icon = GFX_goal_generic_major_war
+	 icon = GFX_goal_generic_more_territorial_claims
 	 ai_will_do = { factor = 3 }
-	 available = { has_government = fascism }
+	 available = { has_government = belligerent }
 	 bypass = { has_war_with = ENE }
 	 x =8
 	 y =7
@@ -711,19 +808,25 @@ default = no
 	 prerequisite = { focus = claimdominionoverenedwaith}
 	 cost = 10
 	 available_if_capitulated = no
+	 available = {
+		ENE = { is_subject = no }
+	 }
 	 completion_reward = { ENE = { country_event = { days = 1 id = isengard.4 } } }
 }
 
 #Focus for Persuade Enedwaith
 	 focus = {
 	 id = persuadeenedwaith
-	 icon = GFX_goal_generic_war_with_comintern
+	 icon = GFX_goal_support_belligerent
 	 ai_will_do = { factor = 6 }
-	 available = { has_government = fascism NOT = { has_war_with = ENE } }
+	 available = { has_government = belligerent NOT = { has_war_with = ENE } }
 	 x =10
 	 y =7
 	 mutually_exclusive = { focus = subjugateenedwaith}
 	 prerequisite = { focus = claimdominionoverenedwaith}
+	 available = {
+		ENE = { is_subject = no }
+	 }
 	 cost = 10
  	 available_if_capitulated = yes
 	 completion_reward = { ENE = { add_ideas = ISE_sarumans_influence_f } }
@@ -732,9 +835,20 @@ default = no
 #Focus for Strike a Deal with Enedwaith
 	 focus = {
 	 id = strikeadealwithenedwaith
-	 icon = GFX_goal_generic_war_with_comintern
+	 icon = GFX_goal_generic_forceful_treaty
 	 ai_will_do = { factor = 35 }
-	 available = { ENE = {fascism > 0.30} has_government = fascism NOT = { has_war_with = ENE } }
+
+	 available = { 
+		ENE = {
+			OR = {
+				belligerent > 0.70
+				has_government = belligerent
+			}
+		} 
+		NOT = { has_war_with = ENE } 
+		ENE = { is_subject = no }
+	}
+
 	 x =10
 	 y =8
 	 mutually_exclusive = { }
@@ -742,33 +856,41 @@ default = no
 	 cost = 10
  	 available_if_capitulated = yes
 	 completion_reward = {
-	 		news_event = { hours = 24 id = news.364 }
-	 		ENE = { set_politics = { ruling_party = fascism elections_allowed = no } }
-	 		puppet = ENE
+
+		ENE = {
+			country_event = { id = enedwaith.1 }
+		}
 	 }
 }
 
 #Focus for Rally the Tribes of East Dunland
 	 focus = {
 	 id = rallythetribesofeastdunland
-	 icon = GFX_rallythetribesofeastdunland
+	 icon = GFX_goal_saruman_enedwaith_tribes
 	 ai_will_do = { factor = 30 }
-	 available = { has_government = fascism NOT = { has_war_with = ENE } }
+	 available = { 
+		controls_state = 77
+		controls_state = 156
+		has_government = belligerent 
+		NOT = { has_war_with = ENE } 
+	}
 	 x =7
 	 y =8
-	 mutually_exclusive = { }
 	 prerequisite = { focus = takeeastdunland}
 	 cost = 5
  	 available_if_capitulated = yes
 	 completion_reward = {
-	 		ISE = { load_oob = "ISE_Militia" }
+		custom_effect_tooltip = ISE_tooltip_loading_militia
+	 	hidden_effect = {
+			ISE = { load_oob = "ISE_Militia" }
+		}
 	 }
 }
 
 #Focus for Quarrel with Rohan
 	 focus = {
 	 id = quarrelwithrohan
-	 icon = GFX_quarrelwithrohan
+	 icon = GFX_goal_roh_rohan_flag
 	 ai_will_do = { factor = 15 }
 	 x =12
 	 y =4
@@ -779,7 +901,6 @@ default = no
 	 completion_reward = {
 	 	ROH = { add_opinion_modifier = { target = ISE modifier = isr_quarrel } }
 		ISE = { add_opinion_modifier = { target = ROH modifier = isr_quarrel } }
-		add_threat = 2
 		hidden_effect = {news_event = { hours = 48 id = news.335 }}
 	 }
 }
@@ -787,7 +908,7 @@ default = no
 #Focus for Pillage the towns of Rohan
 	 focus = {
 	 id = pillagethetownsofrohan
-	 icon = GFX_establishneworcbreedinggrounds
+	 icon = GFX_goal_mor_azog_orc_revolt
 	 ai_will_do = { factor = 10 }
 	 bypass = { has_war_with = ROH }
 	 x =12
@@ -798,7 +919,7 @@ default = no
 	 cost = 10
  	 available_if_capitulated = yes
 	 completion_reward = {
-		add_threat = 2
+		add_named_threat = { threat = 1 name = "Orc pillaging Rohan villages" }
 		ROH = { add_ideas = ISE_orc_pillage }
 	 }
 }
@@ -806,7 +927,7 @@ default = no
 #Focus for Take the Fords of Isen
 	 focus = {
 	 id = takethefordsofisen
-	 icon = GFX_goal_generic_major_war
+	 icon = GFX_goal_roh_edoras
 	 ai_will_do = { factor = 35 }
 	 bypass = { has_war_with = ROH }
 	 x =12
@@ -817,7 +938,7 @@ default = no
  	 available_if_capitulated = yes
 	 completion_reward = {
 	 	ISE = { set_state_owner = 24 }
-		add_threat = 10
+		add_named_threat = { threat = 5 name = "The annexation of Rohan Gap by Isengard" } 
 		ROH = { add_manpower = -20000 }
 	 	hidden_effect = {
 			if = {
@@ -846,7 +967,6 @@ default = no
 	 bypass = { has_war_with = ROH }
 	 x =12
 	 y =7
-	 mutually_exclusive = { }
 	 prerequisite = { focus = takethefordsofisen}
 	 cost = 10
  	 available_if_capitulated = yes
@@ -856,7 +976,7 @@ default = no
 #Focus for War with Gondor
 	 focus = {
 	 id = isr_warwithgondor
-	 icon = GFX_goal_generic_major_war
+	 icon = GFX_goal_mor_wargoal_gondor
 	 available = { NOT = { is_in_faction_with = GON } }
 	 ai_will_do = {
 	 	factor = 0
@@ -959,25 +1079,46 @@ default = no
 #Focus for Helms Deep Has but one Weakness
 	 focus = {
 	 id = helmsdeephasbutoneweakness
-	 icon = GFX_goal_generic_major_war
+	 icon = GFX_goal_roh_helms_deep_weakness
 	 ai_will_do = { factor = 20 }
-	 available = { has_government = fascism has_country_leader = { ruling_only = yes name = "Saruman" } }
+	 available = {
+	 	has_government = belligerent
+	 	has_country_leader = { ruling_only = yes name = "Saruman" }
+	 	any_country = {
+	 		controls_province = 4628
+	 		has_war_with = ROOT
+	 	}
+ 	}
 	 x =14
 	 y =8
 	 mutually_exclusive = { }
 	 prerequisite = { focus = demandthewestmarch}
 	 cost = 2
  	 available_if_capitulated = yes
-	 completion_reward = { 184 = { remove_building = { type = bunker province = 4628 level = 8 } } }
+	 completion_reward = {
+	 	custom_effect_tooltip = helmsdeephasbutoneweakness_effect_tooltip
+
+	 	hidden_effect = {
+	 		news_event = { hours = 5 id = news.388 }
+			launch_nuke = {
+				province = 4628
+			    state = 184
+			    controller = ROH
+			    use_nuke = no
+			}
+
+	 		184 = { remove_building = { type = bunker province = 4628 level = 2 } }
+ 		}
+	 }
 }
 
 #Focus for Unite with Sauron
 		focus = {
 		id = unitewithsauron
-		icon = GFX_unitewithsauron
+		icon = GFX_goal_mordor_flag
 		ai_will_do = { factor = 6 }
-		available = { has_government = fascism NOT = { ISE = { has_completed_focus = ourownway } } }
-		bypass = { any_country = { original_tag = MOR has_government = fascism is_faction_leader = yes is_in_faction_with = ROOT } }
+		available = { has_government = belligerent NOT = { ISE = { has_completed_focus = ourownway } } }
+		bypass = { any_country = { original_tag = MOR has_government = belligerent is_faction_leader = yes is_in_faction_with = ROOT } }
  		x =6
  		y =5
  		mutually_exclusive = { }
@@ -989,9 +1130,10 @@ default = no
 
  #Focus for Hunt for the Ring in Argonath
 		focus = {
-		id = huntfortheringinargonath
-		icon = GFX_huntfortheringinargonath
-		available = { always = no}
+		id = huntforthering
+		icon = GFX_goal_army_uruk_hai
+		available = { ring_has_the_ring = yes }
+		bypass = { ring_has_the_ring = yes }
 		ai_will_do = { factor = 100 }
  		x =4
  		y =5
@@ -1005,36 +1147,30 @@ default = no
  #Focus for Give the Ring to Sauron
 		focus = {
 		id = givetheringtosauron
-		icon = GFX_givetheringtosauron
+		icon = GFX_goal_unleash_sauron
 		ai_will_do = { factor = 100 }
-		available = { has_government = fascism has_global_flag=saruman_has_ring }
+		available = { has_government = belligerent ring_has_the_ring = yes }
  		x =3
  		y =6
  		mutually_exclusive = { focus = keeptheringforyourself }
- 		prerequisite = { focus = huntfortheringinargonath}
+ 		prerequisite = { focus = huntforthering}
  		cost = 3
   	available_if_capitulated = yes
 		completion_reward = {
-			clr_global_flag = sarman_has_ring
-			set_global_flag = sauron_has_ring
-			random_other_country = {
-				limit = { original_tag = MOR has_government = fascism }
-				add_ideas = one_true_ring
-			}
-			remove_ideas = one_true_ring
+			MOR = { ring_seize_ring = yes }
 		}
  }
 
  #Focus for Keep the Ring for yourself!
 		focus = {
 		id = keeptheringforyourself
-		icon = GFX_goal_demand_sudetenland
+		icon = GFX_goal_the_one_ring
 		ai_will_do = { factor = 100 }
-		available = { has_government = fascism has_global_flag=saruman_has_ring }
+		available = { has_government = belligerent ring_has_the_ring = yes }
  		x =5
  		y =6
  		mutually_exclusive = { focus = givetheringtosauron }
- 		prerequisite = { focus = huntfortheringinargonath}
+ 		prerequisite = { focus = huntforthering}
  		cost = 3
   	available_if_capitulated = yes
  }
@@ -1042,7 +1178,7 @@ default = no
  #Focus for Betray Sauron
 		focus = {
 		id = betraysauron
-		icon = GFX_goal_generic_major_war
+		icon = GFX_goal_sauron_eye
 		ai_will_do = {
 			factor = 0
 			modifier = {
@@ -1055,10 +1191,10 @@ default = no
 			}
 			modifier = {
 					add = 5
-					strength_ratio = { tag = MOR ratio > 0.7 }
+					strength_ratio = { tag = MOR ratio > 1.0 }
 			}
 		}
-		available = { has_government = fascism }
+		available = { has_government = belligerent }
  		x =6
  		y =7
  		mutually_exclusive = { }
@@ -1068,16 +1204,18 @@ default = no
 		completion_reward = {
 			MOR = { remove_from_faction = ISE }
 			MOR = { add_opinion_modifier = { target = ISE modifier = isr_treason } }
+			ISE = { add_opinion_modifier = { target = MOR modifier = isr_treason } }
 			news_event = { id = news.387 }
+			set_country_flag = saruman_betrayed_sauron
 		}
  }
 
  #Focus for Our Own Way
 		focus = {
 		id = ourownway
-		icon = GFX_focus_generic_support_the_left_right
+		icon = GFX_goal_saruman_with_palantir
 		ai_will_do = { factor = 15 }
-		available = { has_government = fascism has_country_leader = { ruling_only = yes name = "Saruman" } if = { limit = { ISE = { has_completed_focus = unitewithsauron } } has_completed_focus = betraysauron } }
+		available = { has_government = belligerent has_country_leader = { ruling_only = yes name = "Saruman" } if = { limit = { ISE = { has_completed_focus = unitewithsauron } } has_completed_focus = betraysauron } }
  		x =5
  		y =8
  		mutually_exclusive = { }
@@ -1103,10 +1241,9 @@ default = no
    	available_if_capitulated = yes
 		completion_reward = {
 			army_experience = 10
-			add_tech_bonus = {
-				name = land_doc_bonus
-				bonus = 0.5
-				uses = 2
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 1
 				category = land_doctrine
 			}
 		}
@@ -1369,7 +1506,7 @@ default = no
 	#Focus for Enhance Civilian Production
 		focus = {
 		id = ISE_enhancecivilianproduction
-		icon = GFX_goal_generic_construct_civ_factory
+		icon = GFX_focus_generic_industry_2
 		ai_will_do = { factor = 3 }
 		x =20
 		y =1
@@ -1392,7 +1529,7 @@ default = no
 	#Focus for Enhance Civilian Production2
 		focus = {
 		id = ISE_enhancecivilianproduction2
-		icon = GFX_goal_generic_construct_civ_factory
+		icon = GFX_focus_generic_industry_3
 		ai_will_do = { factor = 2 }
 		x =20
 		y =2

@@ -17,68 +17,75 @@ country_event = {
 
 	option = { # Support Sauron
 		name = mordor.1.a
+		ai_chance = {
+			base = 0
+		}
 		set_global_flag = mordor_civil_war
 		hidden_effect = {
-			unlock_national_focus = submittosauron
-			complete_national_focus = submittosauron
 			set_capital = { state = 12 }
 			start_civil_war = {
-				ruling_party = fascism
-				ideology = communism
-				size = 0.5
+				ruling_party = belligerent
+				ideology = revolutionary
+				size = 0.65
 				capital = 187
 				states = { 187 3 122 9 8 4 }
 			}
 			random_other_country = {
 				limit = {
 					original_tag = MOR
-					has_government = communism
+					has_government = revolutionary
 				}
 				set_equipment_fraction = 0.5
-				add_ideas = service_by_requirement
-				add_ideas = closed_economy
+				unlock_national_focus = resistsauron
+				complete_national_focus = resistsauron
 			}
 
+			unlock_national_focus = submittosauron
+			complete_national_focus = submittosauron
 			#load_oob = "SPA_Civil_War" #in case we want special oop for fascist mordor
 			set_equipment_fraction = 0.5
 
 			add_popularity = {
-				ideology = fascism
+				ideology = belligerent
 				popularity = 1
 			}
 		}
 	}
 	option = { # Support Orcs
 		name = mordor.1.b
+		ai_chance = {
+			base = 50
+		}
 		set_global_flag = mordor_civil_war
 		hidden_effect = {
 			set_capital = { state = 3 }
 			start_civil_war = {
-				ideology = fascism
-				size = 0.5
+				ideology = belligerent
+				ruling_party = revolutionary
+				size = 0.35
 				capital = 12
 				states = { 10 12 186 2 188 5 6 7 185 11 120 }
 			}
+			unlock_national_focus = resistsauron
+			complete_national_focus = resistsauron
 			random_other_country = {
 				limit = {
 					original_tag = MOR
-					has_government = fascism
+					has_government = belligerent
 				}
 				unlock_national_focus = submittosauron
 				complete_national_focus = submittosauron
-				add_ideas = service_by_requirement
-				add_ideas = closed_economy
 				set_equipment_fraction = 0.5
 			}
 
 			add_ideas = MOR_rejected_morgoth_1
 
 			set_politics = {
-				ruling_party = communism
+				ruling_party = revolutionary
 				elections_allowed = no
 			}
 			add_popularity = {
-				ideology = communism
+				ideology = revolutionary
 				popularity = 1.0
 			}
 			set_equipment_fraction = 0.5
@@ -170,11 +177,17 @@ country_event = {
 	option = { # Accept
 		name = mordor.4.a
 		ai_chance = {
-			base = 50
+			base = 35
+			modifier = {
+				add = 100
+				FROM = {
+					has_idea_with_trait = shadow_of_the_east
+				}
+			}
 			modifier = {
 				add = 25
 				RHU = {
-					has_government = fascism
+					has_government = belligerent
 				}
 			}
 			modifier = {
@@ -247,6 +260,11 @@ country_event = {
 			}
 		}
 		FROM = {
+			hidden_effect = {
+				RHU = {
+					set_country_flag = not_joining_mordor
+				}
+			}
 			create_wargoal = { type = annex_everything target = RHU }
 		}
 	}
@@ -308,7 +326,7 @@ country_event = {
 			modifier = {
 				add = 25
 				HAR = {
-					has_government = fascism
+					has_government = belligerent
 				}
 			}
 			modifier = {
@@ -360,7 +378,7 @@ country_event = {
 		random_list = {
 			70 = {
 				HAR = {
-					set_politics = { ruling_party = fascism elections_allowed = no }
+					set_politics = { ruling_party = belligerent elections_allowed = no }
 					dismantle_faction = yes
 					MOR = { add_to_faction = HAR }
 					if = { limit = { has_global_flag = harad_PEL_faction } MOR = { add_to_faction = PEL } }
@@ -370,7 +388,7 @@ country_event = {
 			}
  			30 = {
 				HAR = {
-					set_politics = { ruling_party = fascism elections_allowed = no }
+					set_politics = { ruling_party = belligerent elections_allowed = no }
 					dismantle_faction = yes
 					MOR = { add_to_faction = HAR }
 					if = { limit = { has_global_flag = harad_KND_faction } MOR = { add_to_faction = KND } }
@@ -395,7 +413,7 @@ country_event = {
 		if = {
 			limit = {
 				HAR = {
-					has_government = fascism
+					has_government = belligerent
 				}
 			}
 			MOR = {
@@ -431,8 +449,8 @@ country_event = {
 		hidden_effect = {
 			set_capital = { state = 115 }
 			start_civil_war = {
-				ruling_party = fascism 			#party in power
-				ideology = neutrality			#party of uprising
+				ruling_party = belligerent 			#party in power
+				ideology = unaligned			#party of uprising
 				size = 0.5				#size
 				capital = 109				#uprising capital
 				states = { 105 106 107 108 109 110 112 113 114 116 }	#uprising states
@@ -440,7 +458,7 @@ country_event = {
 			random_other_country = {
 				limit = {
 					original_tag = HAR
-					has_government = neutrality
+					has_government = unaligned
 				}					#set values of uprsing here
 				set_equipment_fraction = 0.5		#equipment amount to uprising
 				MOR = { add_to_faction = HAR }
@@ -455,7 +473,7 @@ country_event = {
 			random_other_country = {
 				limit = {
 					original_tag = HAR
-					has_government = neutrality
+					has_government = unaligned
 				}
 				if = { limit = { has_global_flag = harad_faction } create_faction = southern_confederacy }
 				if = { limit = { has_global_flag = harad_PEL_faction } add_to_faction = PEL }
@@ -484,8 +502,8 @@ country_event = {
 		hidden_effect = {
 			set_capital = { state = 12 }
 			start_civil_war = {
-				ruling_party = neutrality		#party in power
-				ideology = fascism			#party of uprising
+				ruling_party = unaligned		#party in power
+				ideology = belligerent			#party of uprising
 				size = 0.5				#size
 				capital = 115				#uprising capital
 				states = { 123 117 118 119 115 111 }	#uprising states
@@ -493,7 +511,7 @@ country_event = {
 			random_other_country = {
 				limit = {
 					original_tag = HAR
-					has_government = fascism
+					has_government = belligerent
 				}					#set values of uprsing here
 				set_equipment_fraction = 0.5		#equipment amount to uprising
 				MOR = { add_to_faction = PREV }
@@ -508,108 +526,13 @@ country_event = {
 			random_other_country = {
 				limit = {
 					original_tag = HAR
-					has_government = fascism
+					has_government = belligerent
 				}
 				if = { limit = { has_global_flag = harad_KND_faction } KND = { leave_faction = yes } MOR = { add_to_faction = KND } }
 				if = { limit = { has_global_flag = harad_KND_puppet } puppet = KND }
 			}
 		}
 	}
-}
-
-
-
-country_event = {
-	id = mordor.11
-	title = mordor.11.t
-	desc = mordor.11.d
-	fire_only_once = yes
-	picture = GFX_report_event_ring
-	trigger = { original_tag = MOR
-		NOT= {has_global_flag = ring_found} has_government = fascism date>3022.5.1 date<3022.11.1
-		has_completed_focus = searchtheshireforthering
-	}
-
-
-			option = {name = mordor.11.a
-			add_political_power = -100
-			MOR = {complete_national_focus = intercepttheringatthedeadmarshes}
-			ai_chance = { base = 100}
-
-			random_list = {
-			60 = {
-
-				modifier = {
-					add = 30
-					has_global_flag = fs_gearedup_lothlorien
-				}
-
-
- 		MOR = { country_event = { days = 0 id = fs.100 } }
-
-			}
-			30 = {
-
-			MOR = { country_event = { days = 0 id = mordor.42 } }
-			news_event = { hours = 12 id = news.375 }
-
-
-			}
-
-			}
-			}
-
-
-	option = {name = mordor.11.b
-				ai_chance = { base = 100
-				modifier = { is_historical_focus_on = yes factor = 0}}}
-}
-
-
-country_event = {
-	id = mordor.12
-	title = mordor.12.t
-	desc = mordor.12.d
-	fire_only_once = yes
-	picture = GFX_report_event_ring
-	trigger = { original_tag = MOR
-		NOT = { has_global_flag = ring_found }
-		NOT = { has_global_flag = fellowship_departed }
-		has_completed_focus = gatherthenazgl
-		has_completed_focus = torturegollum
-		date>3018.4.1
-	}
-
-
-			option = {name = mordor.12.a
-			add_political_power = -100
-			MOR = {complete_national_focus = searchtheshireforthering}
-			ai_chance = { base = 100}
-
-			random_list = {
-			19 = {
-
-
-
-
- 		MOR = { country_event = { days = 0 id = fs.100 } }
-
-			}
-			1 = {
-
-			country_event = mordor.42
-			news_event = { hours = 12 id = news.370 }
-
-
-			}
-
-			}
-			}
-
-
-	option = {name = mordor.12.b
-				ai_chance = { base = 100
-				modifier = { is_historical_focus_on = yes factor = 0}}}
 }
 
 #Ring Found!
@@ -625,7 +548,7 @@ country_event = {
 		name = mordor.42.a
 		set_global_flag = ring_found
 		set_global_flag = sauron_has_ring
-		add_ideas = one_true_ring
+		ring_seize_ring = yes
 	}
 }
 
@@ -641,7 +564,7 @@ country_event = {
 	option = {
 		name = mordor.43.a
 		set_global_flag = ring_found
-		add_ideas = one_true_ring
+		ring_seize_ring = yes
 	}
 }
 
@@ -685,7 +608,7 @@ country_event = {
 		name = mordor.45.a
 		add_stability = 0.05
 		MOR = {
-			add_to_faction = MOA
+			add_to_faction = MOC
 		}
 	}
 
@@ -862,7 +785,7 @@ country_event = {
 	}
 }
 
-# declines request for Dol Guldur
+# Rhun request help
 country_event = {
 	id = mordor.50
 	title = mordor.50.t
@@ -878,6 +801,15 @@ country_event = {
 		}
 		RHU = {
 			load_oob = RHU_trolls_reinforcements
+			set_technology = {
+			    troll = 1
+			    popup = no
+			}
+			add_equipment_to_stockpile = {
+			    type = archetype_troll_equipment
+			    amount = 800
+			    producer = RHU
+			}
 		}
 	}
 
@@ -886,7 +818,7 @@ country_event = {
 		ai_chance = {
 			base = 25
 		}
-		add_manpower = -1000
+		add_political_power = -100
 	}
 }
 
@@ -904,9 +836,12 @@ country_event = {
 		ai_chance = {
 			base = 50
 		}
-		add_manpower = -500
+		add_manpower = -1000
+		add_stability = -0.05
 		custom_effect_tooltip = MOR_get_shelob
 		set_global_flag = MOR_allow_shelob
+		#Maybe create a string of events where you keep getting pop-ups that another x amount of orcs disseapered or are killed by shelob
+		#Giving it more of a consequents to choose this and more of a story
 	}
 
 	option = { #decline
@@ -943,5 +878,494 @@ country_event = {
 			base = 10
 		}
 		add_political_power = -50
+	}
+}
+
+# Gollum Tortured
+country_event = {
+	id = mordor.53
+	title = mordor.53.t
+	desc = mordor.53.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# send nazgul
+	option = {
+		name = mordor.53.a
+		ai_chance = {
+			base = 10
+		}
+		custom_effect_tooltip = mordor.53.a_tooltip
+		set_global_flag = fs_nazgul_sent_to_shire
+	}
+
+	# who cares
+	option = {
+		name = mordor.53.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		
+	}
+}
+
+# Bree Ring Hunt
+country_event = {
+	id = mordor.54
+	title = mordor.54.t
+	desc = mordor.54.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.54.a
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+# Weathertop ambush
+country_event = {
+	id = mordor.55
+	title = mordor.55.t
+	desc = mordor.55.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.55.a
+		ai_chance = {
+			base = 12
+		}
+
+		hidden_effect = {
+			ring_execute_weathertop_encounter = yes
+		}
+
+		custom_effect_tooltip = ring_execute_weathertop_encounter_tooltip
+	}
+	# who cares
+	option = {
+		name = mordor.55.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		custom_effect_tooltip = recall_nazgul_from_shire_tooltip
+		clr_global_flag = fs_nazgul_sent_to_shire
+	}
+}
+
+# Weathertop ambush failed
+country_event = {
+	id = mordor.56
+	title = mordor.56.t
+
+	desc = {
+		text = mordor.56.d
+		trigger = {
+			has_global_flag = fs_arwen_sent
+		}
+	}
+	desc = {
+		text = mordor.56.d.noarwen
+	}
+
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# pursue
+	option = {
+		name = mordor.56.a
+		ai_chance = {
+			base = 50
+		}
+
+		custom_effect_tooltip = ring_pursue_arwen_tooltip
+	}
+	# pull back
+	option = {
+		name = mordor.56.b
+		ai_chance = {
+			base = 30
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+
+		custom_effect_tooltip = recall_nazgul_from_shire_tooltip
+		clr_global_flag = fs_nazgul_sent_to_shire
+		add_political_power = -150
+		add_timed_idea = { idea = minor_expense days = 60 }
+	}
+}
+
+# Bruinen encounter success
+country_event = {
+	id = mordor.57
+	title = mordor.57.t
+	desc = mordor.57.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.57.a
+		ai_chance = {
+			base = 50
+		}
+
+		custom_effect_tooltip = recall_nazgul_from_shire_tooltip
+		clr_global_flag = fs_nazgul_sent_to_shire
+
+		FS_arwen = { ring_combat_kill_character = yes }
+		FS_frodo = { ring_combat_kill_character = yes } # This should auto-seize the ring
+		ring_seize_ring = yes
+	}
+}
+
+# Bruinen encounter could not catch up
+country_event = {
+	id = mordor.58
+	title = mordor.58.t
+	desc = mordor.58.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.58.a
+		ai_chance = {
+			base = 50
+		}
+		custom_effect_tooltip = recall_nazgul_from_shire_tooltip
+		clr_global_flag = fs_nazgul_sent_to_shire
+		add_political_power = -200
+		add_timed_idea = { idea = minor_expense days = 90 }
+	}
+}
+
+# Bruinen encounter arwen 
+country_event = {
+	id = mordor.59
+	title = mordor.59.t
+	desc = mordor.59.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.59.a
+		ai_chance = {
+			base = 50
+		}
+
+		custom_effect_tooltip = recall_nazgul_from_shire_tooltip
+		clr_global_flag = fs_nazgul_sent_to_shire
+		add_political_power = -250
+		add_timed_idea = { idea = minor_expense days = 100 }
+	}
+}
+
+#Angmar requests investment
+country_event = {
+	id = mordor.60
+	title = mordor.60.t
+	desc = mordor.60.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	#Accept
+	option = {
+		name = mordor.60.a
+		ai_chance = {
+			base = 30
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = ANG
+					value > 50
+				}
+			}
+			modifier = {
+				factor = -1
+				has_war = yes
+			}
+		}
+		ANG = {
+			add_timed_idea = { idea = ANG_investment  days = 200 }
+			add_opinion_modifier = { target = MOR modifier = medium_increase }
+			add_popularity = { ideology = belligerent popularity = 0.05 } 
+		}
+		add_timed_idea = { idea = MOR_angmar_investment  days = 200 }	
+	}
+
+	#Deny
+	option = {
+		name = mordor.60.b
+		ai_chance = {
+			base = 10
+		}
+		ANG = {
+			add_opinion_modifier = { target = MOR modifier = medium_decrease }
+		}
+	}
+}
+
+#COUNTRY NAME invited to join the anti-elves pact
+country_event = {
+	id = mordor.61
+	title = mordor.61.t
+	desc = mordor.61.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.61.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				has_government = belligerent
+				add = 10
+			}
+			modifier = {
+				is_historical_focus_on = yes
+				NOT = {
+					original_tag = HAR
+					original_tag = RHU
+				}
+				add = -50
+			}
+			modifier = {
+				is_orcs = yes
+				add = 15
+			}
+		}
+		set_country_flag = MOR_anti_elves_pact
+		add_war_support = 0.10
+		add_opinion_modifier = { target = MOR modifier = medium_increase }
+		MOR = {
+			add_opinion_modifier = { target = PREV modifier = medium_increase }
+		}
+		every_other_country = {
+			limit = {
+				is_elves = yes
+			}
+			add_opinion_modifier = { target = PREV modifier = medium_decrease }
+		}
+	}
+
+	option = {
+		name = mordor.61.b
+		ai_chance = {
+			base = 15
+			modifier = {
+				any_neighbor_country = {
+					is_elves = yes
+				}
+				add = -10
+			}
+		}
+		every_other_country = {
+			limit = {
+				is_elves = yes
+			}
+			add_opinion_modifier = { target = PREV modifier = small_increase }
+		}
+	}
+}
+
+#COUNTRY NAME invited to join a war against Mirkwood
+country_event = {
+	id = mordor.62
+	title = mordor.62.t
+	desc = mordor.62.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.62.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = MIR
+					value < 25
+				}
+			}
+			modifier = {
+				add = 5
+				is_in_faction_with = MOR
+			}
+			modifier = {
+				add = -999
+				is_in_faction_with = MIR
+			}
+			modifier = {
+				add = -999
+				has_non_aggression_pact_with = MIR
+			}
+		}
+		add_war_support = 0.10
+		create_wargoal = { type = annex_everything target = MIR }
+		MOR = {
+			add_opinion_modifier = { target = PREV modifier = medium_increase }
+		}
+	}
+
+	option = {
+		name = mordor.62.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = MIR
+					value > 75
+				}
+			}
+		}
+		add_political_power = -100
+		add_war_support = -0.10
+		MOR = {
+			add_opinion_modifier = { target = PREV modifier = medium_decrease }
+		}
+	}
+}
+
+#COUNTRY NAME invited to join a war against Lothlorien
+country_event = {
+	id = mordor.63
+	title = mordor.63.t
+	desc = mordor.63.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.63.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = LTH
+					value < 25
+				}
+			}
+			modifier = {
+				add = 5
+				is_in_faction_with = MOR
+			}
+			modifier = {
+				add = -999
+				is_in_faction_with = LTH
+			}
+			modifier = {
+				add = -999
+				has_non_aggression_pact_with = LTH
+			}
+		}
+				add_war_support = 0.10
+		create_wargoal = { type = annex_everything target = LTH }
+		MOR = {
+			add_opinion_modifier = { target = PREV modifier = medium_increase }
+		}
+	}
+
+	option = {
+		name = mordor.63.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = LTH
+					value > 75
+				}
+			}
+		}
+		add_political_power = -100
+		add_war_support = -0.10
+		MOR = {
+			add_opinion_modifier = { target = PREV modifier = medium_decrease }
+		}
+	}
+}
+
+#COUNTRY NAME invited to join a war against Rivendell
+country_event = {
+	id = mordor.64
+	title = mordor.64.t
+	desc = mordor.64.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.64.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = RIV
+					value < 25
+				}
+			}
+			modifier = {
+				add = 5
+				is_in_faction_with = MOR
+			}
+			modifier = {
+				add = -999
+				is_in_faction_with = RIV
+			}
+			modifier = {
+				add = -999
+				has_non_aggression_pact_with = RIV
+			}
+		}
+				add_war_support = 0.10
+		create_wargoal = { type = annex_everything target = RIV }
+		MOR = {
+			add_opinion_modifier = { target = PREV modifier = medium_increase }
+		}
+	}
+
+	option = {
+		name = mordor.64.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = RIV
+					value > 75
+				}
+			}
+		}
+		add_political_power = -100
+		add_war_support = -0.10
+		MOR = {
+			add_opinion_modifier = { target = PREV modifier = medium_decrease }
+		}
 	}
 }

@@ -1,0 +1,204 @@
+###########################
+# Ring-related Events
+###########################
+
+add_namespace = fs
+
+# balrog encounter delay
+country_event = {
+	id = fs.1005
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate = {
+		SHI = { execute_balrog_encounter = yes }
+	}
+}
+
+# open interception prompt for a country
+# NOTE: Why does this exist? For when we want to let ANOTHER country intercept.
+# Example: NEP = { open_interception_prompt } does not work, because ROOT needs to be the attacked. But NEP = { country_event = fs.1006 } * does work *
+country_event = {
+	id = fs.1006
+
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate = {
+		ring_open_interception_attempt_prompt = yes
+	}
+}
+
+# Ring Seized (notification)
+country_event = {
+	id = fs.101
+	title = fs.101.t
+	desc = fs.101.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = fs.101.a
+		ai_chance = {
+			base = 50
+		}
+		effect_tooltip = {
+			ring_add_ring = yes
+		}
+		hidden_effect = {
+			news_event = { hours = 12 id = news.389 }
+		}
+	}
+}
+
+# Interception attempt failed (notification)
+country_event = {
+	id = fs.102
+	title = fs.102.t
+	desc = fs.102.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = fs.102.a
+		ai_chance = {
+			base = 50
+		}
+	}
+	option = {
+		name = fs.102.b
+		ai_chance = {
+			base = 0
+		}
+		trigger = { NOT = { has_country_flag = ring_details_view_open } }
+		
+		custom_effect_tooltip = fs.102.b.tt
+		hidden_effect = {
+			ring_toggle_details_view = yes
+		}
+	}
+}
+
+# Fellowship enters our territory (notification)
+country_event = {
+	id = fs.103
+	title = fs.103.t
+	desc = fs.103.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# uh-huh
+	option = {
+		name = fs.103.a
+		trigger = { has_global_flag = fs_arrived_in_rivendell }
+
+		ai_chance = {
+			base = 40
+		}
+	}
+	# Unlock early interception attempt
+	option = {
+		name = fs.103.b
+
+		# only show this one if it makes sense
+		trigger = { NOT = { has_global_flag = fs_arrived_in_rivendell } }
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+
+		if = {
+			limit = { is_ai = no }
+
+			add_political_power = -150
+			add_timed_idea = {
+		    	idea = minor_expense
+		    	days = 60
+			}
+		}
+
+		custom_effect_tooltip = fs_early_interception_unlocked_tt
+		set_country_flag = fs_early_interception_unlocked	
+	}
+	# uh-huh
+	option = {
+		name = fs.103.c
+		trigger = { NOT = { has_global_flag = fs_arrived_in_rivendell } }
+
+		ai_chance = {
+			base = 40
+		}
+	}
+}
+
+# Ring destroyed (this runs for Mordor)
+country_event = {
+	id = fs.106
+	title = fs.106.t
+	desc = {
+		text = fs.106.d
+		trigger = { NOT = { has_global_flag = fs_elven_fellowship } }
+	}
+	desc = {
+		text = fs.106.d_elves
+		trigger = { has_global_flag = fs_elven_fellowship }
+	}
+	picture = GFX_report_event_hitler_parade
+
+	fire_only_once = yes
+	
+	is_triggered_only = yes
+
+	option = { # Serve Saruman
+		name = fs.106.a
+		trigger = {
+			ISE = { has_government = belligerent }
+		}
+		ai_chance = {
+			base = 0
+		}
+		dismantle_faction = yes 
+		kill_country_leader = yes
+ 		ISE = { annex_country = { target = MOR } }
+	}
+	option = { # Anarchy
+		name = fs.106.b
+		ai_chance = {
+			base = 15
+		}
+		dismantle_faction = yes 
+		kill_country_leader = yes
+		MOR = { set_politics = { ruling_party = revolutionary elections_allowed = no } }
+		MOR = { add_popularity = { ideology = revolutionary popularity = 1.0 } }
+	}
+	option = { # Elect a new leader
+		name = fs.106.c
+		ai_chance = {
+			base = 3
+		}
+		kill_country_leader = yes
+		add_ideas = MOR_false_king
+	}
+}
+
+# Ring Corruption is High Warning
+country_event = {
+	id = fs.107
+	title = fs.107.t
+	desc = fs.107.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = fs.107.a
+	}
+}

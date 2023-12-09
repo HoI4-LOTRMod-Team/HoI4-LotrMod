@@ -19,7 +19,7 @@ country_event = {
 			base = 50
 			modifier = {
 				add = 30
-				NOT = { ROH = { has_government = democratic } }
+				NOT = { ROH = { has_government = cooperative } }
 			}
 			modifier = {
 				add = -25
@@ -54,13 +54,16 @@ country_event = {
 		tag = ROH
 		OR = {
 			AND = {
-				has_global_flag = gandalf_imprisoned
-				date > 3020.4.1
-			}
-			AND = {
-				NOT = { has_global_flag = gandalf_imprisoned }
+				has_global_flag = fs_gandalf_left_fellowship
 				date > 3020.1.1
 			}
+			# If the fellowship moves south past isengard, Gandalf can take a pit-stop at Rohan lol
+			AND = {
+				check_variable = { global.fs_currentstate = 26 }
+				ring_gandalf_in_fellowship = yes
+			}
+			has_global_flag = fs_ring_seized
+			date > 3022.1.1 # This is here as a stop-gap measure. If gandalf is bugged for some reason, this will keep Rohan remotely playable
 		}
 	}
 
@@ -71,11 +74,8 @@ country_event = {
 	option = { # Let him in
 		name = rohan.6.a
 		ai_chance = {
-			base = 200
-			modifier = {
-				add = 50
-				ROH = { democratic > 0.3 }
-			}
+			base = 250
+			modifier = { factor = 0 is_going_cooperative = no }
 		}
  		set_global_flag = gandalf_allowed_into_rohan
 	}
@@ -84,13 +84,10 @@ country_event = {
 		ai_chance = {
 			base = 100
 			modifier = {
-				add = 50
-				ROH = { fascism > 0.4 }
-			}
-			modifier = {
 				factor = 0
 				is_historical_focus_on = yes
 			}
+			modifier = { factor = 0 is_going_belligerent = no }
 		}
 		set_global_flag = gandalf_denied_access_rohan
 	}
@@ -109,7 +106,7 @@ country_event = {
 
 	option = {
 		name = rohan.4.a
-		ROH_theodred = { retire = yes }
+		retire_character = ROH_theodred
 		hidden_effect = {news_event = { hours = 48 id = news.336 }}
 	}
 
@@ -136,8 +133,8 @@ country_event = {
 	option = {
 		name = rohan.1.a
 		set_global_flag = grima_hired
-		add_ideas = ROH_grima_wormtongue
-		add_popularity = { ideology = democratic popularity = -0.15 }
+		add_ideas = ROH_grima
+		add_popularity = { ideology = cooperative popularity = -0.15 }
 		hidden_effect = {
 			country_event = { days = 20 id=rohan.2 }
 			country_event = { days = 60 id=rohan.3 }
@@ -160,7 +157,7 @@ country_event = {
 
 	option = {
 		name = rohan.2.a
-		set_politics = { ruling_party = neutrality elections_allowed = no }
+		set_politics = { ruling_party = unaligned elections_allowed = no }
 		ROH_theoden = { remove_unit_leader = yes }
 		hidden_effect = { news_event = { hours = 48 id = news.337 } }
 	}
@@ -183,7 +180,12 @@ country_event = {
 		name = rohan.3.a
 
 		add_manpower = -20000
-		ROH_eomer = { remove_unit_leader = yes }
+		ROH_eomer = {
+			remove_unit_leader = yes
+			remove_advisor_role = {
+				slot = chief_advisor
+			}
+		}
 	}
 
 }
@@ -205,5 +207,26 @@ country_event = {
 		set_global_flag = grima_eowyn_married
 		hidden_effect = { news_event = { hours = 48 id = news.338 } }
 	}
+}
 
+# Event for Gondor sending help to deal with Isengard
+country_event = {
+	id = rohan.8
+	title = rohan.8.t
+	desc = rohan.8.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.8.a
+		add_manpower = 10000
+		add_equipment_to_stockpile = {
+			type = infantry_equipment_0
+			amount = 1000
+		}
+		add_opinion_modifier = { target = GON modifier = medium_increase }
+	}
 }

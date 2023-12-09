@@ -1,0 +1,241 @@
+
+
+
+ea_is_voting_yes = {
+	is_in_array = { global.elven_alliance_members_in_favour = THIS }
+}
+
+ea_is_voting_no = {
+	is_in_array = { global.elven_alliance_members_against = THIS }
+}
+
+ea_is_abstaining = {
+	is_in_array = { global.elven_alliance_members_abstain = THIS }
+}
+
+ea_is_hegemony_leader = {
+    check_variable = {
+        global.ea_hegemony_leader = THIS
+    }
+}
+
+ea_is_resolution_proposer = {
+    check_variable = {
+        global.ea_current_resolution_proposer = THIS
+    }
+}
+
+is_elven_alliance_member = {
+    has_country_flag = is_elven_alliance_member
+}
+
+is_elven_alliance_member_no_tt = {
+    hidden_trigger = {
+        has_country_flag = is_elven_alliance_member
+    }
+}
+
+is_sanctioned_by_elven_alliance = {
+    has_country_flag = ea_is_sanctioned
+}
+
+is_not_sanctioned_by_elven_alliance = {
+    NOT = { is_sanctioned_by_elven_alliance = yes }
+}
+
+ea_can_vote = {
+    has_political_power > 5
+    is_not_sanctioned_by_elven_alliance = yes
+}
+
+is_at_war_with_elven_alliance_member = {
+    custom_trigger_tooltip = {
+        tooltip = "[THIS.GetName] is at war with an Elven Assembly member"
+        any_of_scopes = {
+            array = global.elven_alliance_members
+            has_war_with = PREV
+        }
+    }
+}
+
+is_not_at_war_with_elven_alliance_member = {
+    custom_trigger_tooltip = {
+        tooltip = "[THIS.GetName] is not at war with an Elven Assembly member"
+        is_at_war_with_elven_alliance_member = no
+    }
+}
+
+is_at_war_with_elven_alliance = {
+    custom_trigger_tooltip = {
+        tooltip = "[THIS.GetName] is at war with all Elven Assembly members"
+        all_of_scopes = {
+            array = global.elven_alliance_members
+            has_war_with = PREV
+        }
+    }
+}
+
+elven_alliance_exists = {
+    has_global_flag = ea_alliance_resolutions_unlocked
+}
+
+can_invite_to_elven_alliance = {
+    custom_trigger_tooltip = {
+        tooltip = "The current Expansion Resolution allows [THIS.GetName] to invite new members"
+        OR = {
+            is_elves = yes
+            AND = {
+                has_global_flag = { flag = ea_resolution_expansion_passed value = 2 }
+                is_men = yes
+            }
+            has_global_flag = { flag = ea_resolution_expansion_passed value = 3 }
+        }
+    }
+}
+
+can_propose_resolutions_elven_alliance = {
+    custom_trigger_tooltip = {
+        tooltip = "The current Assembly Resolution allows [THIS.GetName] to make proposals"
+        OR = {
+            is_elves = yes
+            ea_has_alliance_tier_1 = yes
+        }
+    }
+}
+
+can_be_invited_to_elven_alliance = {
+    custom_trigger_tooltip = {
+        tooltip = "The current Expansion Resolution allows [THIS.GetName] to be invited"
+        OR = {
+            is_elves = yes
+            AND = {
+                has_global_flag = { flag = ea_resolution_expansion_passed value = 1 }
+                is_men = yes
+            }
+            AND = {
+                has_global_flag = { flag = ea_resolution_expansion_passed value = 2 }
+                is_orcs = no
+            }
+            has_global_flag = { flag = ea_resolution_expansion_passed value = 3 }
+        }
+    }
+}
+
+ea_more_than_2_resolutions_in_queue = {
+    check_variable = { global.ea_proposers_queue^num > 2 }
+}
+
+ea_has_resolution_in_queue = {
+    is_in_array = { global.ea_proposers_queue = THIS }
+}
+
+ea_resolution_queue_empty = {
+    check_variable = { global.ea_proposers_queue^num < 1 }
+}
+
+# This is true for a single EA member. No guarantee on which one
+ea_single_member_trigger = {
+    check_variable = {
+        var:global.elven_alliance_members^0 = ROOT
+    }
+}
+
+ea_make_leader_proposal_in_queue = {
+    is_in_array = {
+        array = global.ea_resolutions_queue
+        value = token:ea_resolution_make_leader
+    }
+}
+
+
+elven_alliance_has_at_least_5_members = {
+    custom_trigger_tooltip = {
+        tooltip = "The Assembly has at least 5 members"
+        check_variable = {
+            global.elven_alliance_members^num > 4
+        }
+    }
+}
+
+elven_alliance_has_at_least_8_members = {
+    custom_trigger_tooltip = {
+        tooltip = "The Assembly has at least 8 members"
+        check_variable = {
+            global.elven_alliance_members^num > 7
+        }
+    }
+}
+
+elven_alliance_has_at_least_10_members = {
+    custom_trigger_tooltip = {
+        tooltip = "The Assembly has at least 10 members"
+        check_variable = {
+            global.elven_alliance_members^num > 9
+        }
+    }
+}
+
+ea_is_current_resolution_target = {
+    check_variable = { global.ea_resolution_target = THIS }
+}
+
+
+ea_has_alliance_tier_1 = {
+    has_global_flag = { flag = ea_resolution_alliance_passed value > 0 }
+}
+
+ea_has_alliance_tier_2 = {
+    has_global_flag = { flag = ea_resolution_alliance_passed value > 1 }
+}
+
+ea_has_alliance_tier_3 = {
+    has_global_flag = { flag = ea_resolution_alliance_passed value > 2 }
+}
+
+ea_has_expansion_tier_1 = {
+    has_global_flag = { flag = ea_resolution_expansion_passed value > 0 }
+}
+
+ea_has_expansion_tier_2 = {
+    has_global_flag = { flag = ea_resolution_expansion_passed value > 1 }
+}
+
+ea_has_expansion_tier_3 = {
+    has_global_flag = { flag = ea_resolution_expansion_passed value > 2 }
+}
+
+ea_has_hegemony_tier_1 = {
+    has_global_flag = { flag = ea_resolution_hegemony_passed value > 0 }
+}
+
+ea_has_hegemony_tier_2 = {
+    has_global_flag = { flag = ea_resolution_hegemony_passed value > 1 }
+}
+
+ea_has_hegemony_tier_3 = {
+    has_global_flag = { flag = ea_resolution_hegemony_passed value > 2 }
+}
+
+ea_has_martial_tier_1 = {
+    has_global_flag = { flag = ea_resolution_martial_passed value > 0 }
+}
+
+ea_has_martial_tier_2 = {
+    has_global_flag = { flag = ea_resolution_martial_passed value > 1 }
+}
+
+ea_has_martial_tier_3 = {
+    has_global_flag = { flag = ea_resolution_martial_passed value > 2 }
+}
+
+ea_has_union_tier_1 = {
+    has_global_flag = { flag = ea_resolution_union_passed value > 0 }
+}
+
+ea_has_union_tier_2 = {
+    has_global_flag = { flag = ea_resolution_union_passed value > 1 }
+}
+
+ea_has_union_tier_3 = {
+    has_global_flag = { flag = ea_resolution_union_passed value > 2 }
+}

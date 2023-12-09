@@ -54,7 +54,7 @@ focus = {
 
 focus = {
     id = RHU_develop_military_north
-    icon = GFX_goal_generic_construct_mil_factory
+    icon = GFX_goal_generic_anvil
     x = 0
     y = 1
     relative_position_id = RHU_develop_the_north
@@ -96,7 +96,7 @@ focus = {
 
 focus = {
     id = RHU_develop_military_east
-    icon = GFX_goal_generic_construct_mil_factory
+    icon = GFX_goal_generic_anvil
     x = 0
     y = 1
     relative_position_id = RHU_develop_the_east
@@ -136,7 +136,7 @@ focus = {
 
 focus = {
     id = RHU_develop_military_south
-    icon = GFX_goal_generic_construct_mil_factory
+    icon = GFX_goal_generic_anvil
     x = 0
     y = 1
     relative_position_id = RHU_develop_the_south
@@ -276,7 +276,7 @@ focus = {
     completion_reward = {
         add_tech_bonus = {
 			name = lotr_infantry_archery
-			ahead_reduction = 0.5
+			ahead_reduction = 1
 			uses = 1
 			category = lotr_infantry_archery_crossbow
 		}
@@ -339,8 +339,8 @@ focus = {
     completion_reward = {
         add_tech_bonus = {
 			name = lotr_machines_ballista
-			ahead_reduction = 0.5
-			uses = 2
+			bonus = 0.5
+			uses = 1
 			category = lotr_machines_ballista
 		}
     }
@@ -364,11 +364,11 @@ focus = {
 }
 
 ###########
-## Fascism
+## belligerent
 ###########
 focus = {
     id = RHU_follow_the_dark_lord
-    icon = GFX_unleashsauron
+    icon = GFX_goal_sauron_eye
     mutually_exclusive = { focus = RHU_follow_the_wizards}
     x = 19
     y = 0
@@ -378,19 +378,25 @@ focus = {
         modifier = {
             add = 25
             MOR = {
-                has_government = fascism
+                has_government = belligerent
             }
         }
+        modifier = { factor = 0 is_going_belligerent = no }
     }
-
+	allow_branch = {
+        NOT = {
+            has_completed_focus = RHU_follow_the_wizards
+        }
+    }
     completion_reward = {
         add_ideas = HAR_follower_of_the_dark_lord
+        mark_focus_tree_layout_dirty = yes
     }
 }
 
 focus = {
 	id = RHU_kill_the_blue_wizards
-	icon = GFX_goal_support_fascism
+	icon = GFX_goal_support_belligerent
 	ai_will_do = { factor = 50 }
 	x = -2
 	y = 1
@@ -399,7 +405,7 @@ focus = {
 	cost = 5
 	completion_reward = {
 		add_popularity = {
-			ideology = fascism
+			ideology = belligerent
 			popularity = 0.05
 		}
 		add_stability = -0.05
@@ -411,7 +417,7 @@ focus = {
 focus = {
 	id = power_to_khamul
 	ai_will_do = { factor = 50 }
-	icon = GFX_goal_khamul
+	icon = GFX_goal_rhu_nazghul_ringwraith_khamul
 	x = 0
 	y = 1
 	relative_position_id = RHU_follow_the_dark_lord
@@ -420,20 +426,20 @@ focus = {
         base = 25
         modifier = {
             add = 25
-            fascism > 0.55
+            belligerent > 0.55
         }
     }
 	available = {
-		fascism > 0.55
+		belligerent > 0.55
 	}
 	bypass = {
-		has_government = fascism
+		has_government = belligerent
 	}
 	cost = 10
 	completion_reward = {
 		add_stability = 0.05
 		set_politics = {
-			ruling_party = fascism
+			ruling_party = belligerent
 			elections_allowed = no
 		}
 	}
@@ -441,7 +447,7 @@ focus = {
 
 focus = {
 	id = RHU_join_the_dark_pact
-	icon = GFX_focus_generic_treaty
+	icon = GFX_goal_mordor_flag
 	x = 4
 	y = 1
     relative_position_id = power_to_khamul
@@ -451,7 +457,7 @@ focus = {
 	available = {
 		MOR = {
 			is_faction_leader = yes
-			has_government = fascism
+			has_government = belligerent
 		}
         NOT = {
             is_puppet = yes
@@ -465,12 +471,22 @@ focus = {
         modifier = {
             add = 5
             MOR = {
-                has_government = fascism
+                has_government = belligerent
             }
         }
         modifier = {
             add = -99
+            has_country_flag = not_joining_mordor
+        }
+        modifier = {
+            add = -99
             has_war_with = MOR
+        }
+        modifier = {
+            add = -99
+            MOR = {
+                has_completed_focus = resistsauron
+            }
         }
     }
 	cost = 5
@@ -500,14 +516,14 @@ focus = {
         modifier = {
             factor = -5
             MOR = {
-                has_government = Fascism
+                has_government = belligerent
             }
         }
         modifier = {
             factor = 25
             MOR = {
                 NOT = {
-                    has_government = fascism
+                    has_government = belligerent
                 }
             }
         }
@@ -529,12 +545,15 @@ focus = {
 	completion_reward = {
 		add_stability = 0.10
         add_ideas = RHU_alone_we_will_fight
+        MOR = {
+            retire_character = MOR_Khamul
+        }
 	}
 }
 
 focus = {
     id = RHU_declare_sauron_weak
-    icon = GFX_stop_melkor_worship
+    icon = GFX_goal_stop_melkor_worship
 	x = -1
 	y = 1
 	relative_position_id = RHU_go_solo
@@ -548,10 +567,11 @@ focus = {
 	cost = 5
 	completion_reward = {
         news_event = { hours = 6 id = news.384 }
+        add_named_threat = { threat = 3 name = "Khamul declares himself the new Dark Lord" }
         if = {
             limit = {
                 MOR = {
-                    has_government = fascism
+                    has_government = belligerent
                 }
             }
             MOR = {
@@ -566,7 +586,7 @@ focus = {
 
 focus = {
 	id = RHU_the_new_dark_lord
-	icon = GFX_unleashsauron
+	icon = GFX_goal_unleash_sauron
 	x = -1
 	y = 1
 	relative_position_id = RHU_declare_sauron_weak
@@ -611,7 +631,7 @@ focus = {
     completion_reward = {
         every_country = {
             limit = {
-                NOT = { has_government = fascism }
+                NOT = { has_government = belligerent }
             }
             RHU = {
                 create_wargoal = { type = annex_everything target = PREV }
@@ -633,7 +653,7 @@ focus = {
 	ai_will_do = {
         base = 25
     }
-	cost = 10
+	cost = 5
     will_lead_to_war_with = MOR
 	completion_reward = {
         HAR = {
@@ -841,7 +861,7 @@ focus = {
 	completion_reward = {
         create_faction = eastlands_alliance
         add_political_power = 100
-        custom_effect_tooltip = RHU_unlock_fascisme_support_decisions
+        custom_effect_tooltip = RHU_unlock_belligerente_support_decisions
 	}
 }
 
@@ -857,7 +877,7 @@ focus = {
     ai_will_do = { factor = 25 }
     available = {
         HAR = {
-            has_government = fascism
+            has_government = belligerent
             is_puppet = no
         }
     }
@@ -878,7 +898,7 @@ focus = {
 
 focus = {
     id = RHU_ally_dorwinion
-    icon = GFX_goal_dorwinion
+    icon = GFX_goal_rhu_dorwinion_flag
     x = 0
     y = 1
     relative_position_id = RHU_ally_harad
@@ -887,7 +907,7 @@ focus = {
     cost = 5
     available = {
         DOR = {
-            has_government = fascism
+            has_government = belligerent
             is_puppet = no
         }
     }
@@ -900,7 +920,7 @@ focus = {
 
 focus = {
 	id = RHU_honor_morgoth
-	icon = GFX_servant_of_melkor
+	icon = GFX_goal_mor_servant_of_melkor_morgoth
 	x = 2
 	y = 1
 	relative_position_id = RHU_join_the_dark_pact
@@ -917,7 +937,7 @@ focus = {
 
 focus = {
     id = RHU_take_dorwinion
-    icon = GFX_wargoal_dorwinion
+    icon = GFX_goal_mor_wargoal_dorwinion
     x = 2
     y = 1
     bypass	= {
@@ -949,7 +969,7 @@ focus = {
 
 focus = {
     id = RHU_build_vineyards
-    icon = GFX_grapes
+    icon = GFX_goal_mor_grapes
     x = 0
     y = 1
     relative_position_id = RHU_take_dorwinion
@@ -1039,7 +1059,7 @@ focus = {
 
 focus = {
     id = RHU_invaded_mordor
-    icon = GFX_wargoal_mordor
+    icon = GFX_goal_rhu_wargoal_mordor
 	x = 0
 	y = 1
 	relative_position_id = RHU_increase_supply
@@ -1111,7 +1131,7 @@ focus = {
 
 focus = {
     id = RHU_lay_claim_on_the_iron
-    icon = GFX_wargoal_erebor
+    icon = GFX_goal_mor_wargoal_erebor
     x = 0
     y = 1
     relative_position_id = RHU_look_to_our_neighbours
@@ -1154,7 +1174,7 @@ focus = {
 
 focus = {
     id = RHU_ask_mordor_for_trolls
-    icon = GFX_trolls
+    icon = GFX_mor_troll_warriors
     x = 0
     y = 1
     relative_position_id = RHU_join_research_group
@@ -1177,17 +1197,34 @@ focus = {
 # democrate
 focus = {
     id = RHU_follow_the_wizards
-    icon = GFX_goal_the_blue_wizards
+    icon = GFX_goal_rhu_the_blue_wizards
     mutually_exclusive = { focus = RHU_follow_the_dark_lord }
     x = 30
     y = 0
     cost = 10
     ai_will_do = {
         base = 0
+        modifier = { factor = 0 is_going_cooperative = no }
     }
-
+    offset = {
+		x = -15
+		y = 0
+		trigger = {
+			has_game_rule = {
+				rule = obsolete_focus_branches_visibility
+				option = HIDE
+			}
+			has_completed_focus = RHU_follow_the_wizards
+		}
+	}
+	allow_branch = {
+        NOT = {
+            has_completed_focus = RHU_follow_the_dark_lord
+        }
+    }
     completion_reward = {
         add_ideas = RHU_change_in_politics_1
+        mark_focus_tree_layout_dirty = yes
     }
 }
 
@@ -1212,7 +1249,7 @@ focus = {
 
 focus = {
     id = RHU_dale_support
-    icon = GFX_goal_dale
+    icon = GFX_goal_rhu_dale_flag
     x = -2
     y = 1
     relative_position_id = RHU_spread_the_word
@@ -1220,11 +1257,11 @@ focus = {
     ai_will_do = { factor = 25 }
     available = {
         DAL = {
-            has_government = democratic
+            has_government = cooperative
         }
         RHU = {
             NOT = {
-                has_government = democratic
+                has_government = cooperative
             }
         }
     }
@@ -1232,7 +1269,7 @@ focus = {
     completion_reward = {
         add_political_power = 75
         add_popularity = {
-            ideology = democratic
+            ideology = cooperative
             popularity = 0.05
         }
     }
@@ -1240,7 +1277,7 @@ focus = {
 
 focus = {
     id = RHU_dorwinion_support
-    icon = GFX_goal_dorwinion
+    icon = GFX_goal_rhu_dorwinion_flag
     x = 2
     y = 1
     relative_position_id = RHU_spread_the_word
@@ -1248,11 +1285,11 @@ focus = {
     ai_will_do = { factor = 25 }
     available = {
         DOR = {
-            has_government = democratic
+            has_government = cooperative
         }
         RHU = {
             NOT = {
-                has_government = democratic
+                has_government = cooperative
             }
         }
     }
@@ -1260,7 +1297,7 @@ focus = {
     completion_reward = {
         add_political_power = 75
         add_popularity = {
-            ideology = democratic
+            ideology = cooperative
             popularity = 0.05
         }
     }
@@ -1268,7 +1305,7 @@ focus = {
 
 focus = {
     id = RHU_civil_war
-    icon = GFX_goal_rhun_civil_war
+    icon = GFX_goal_rhu_rhun_civil_war
     x = 0
     y = 1
     relative_position_id = RHU_spread_the_word
@@ -1276,7 +1313,7 @@ focus = {
     ai_will_do = { factor = 25 }
     cost = 10
     bypass = {
-        has_government = democratic
+        has_government = cooperative
     }
     available = {
         custom_trigger_tooltip = {
@@ -1306,7 +1343,7 @@ focus = {
     available = {
         has_civil_war = yes
         DOR = {
-            has_government = democratic
+            has_government = cooperative
         }
     }
     cost = 10
@@ -1330,8 +1367,24 @@ focus = {
         has_civil_war = no
     }
     completion_reward = {
-        delete_unit_template_and_units = { division_template = "Dorwinion Volunteers Division" }
-        delete_unit_template_and_units = { division_template = "Militia Division" }
+        if = {
+            limit = {
+                has_template = "Dorwinion Volunteers Division"
+            }
+            delete_unit_template_and_units = { division_template = "Dorwinion Volunteers Division" }
+        }
+        if = {
+            limit = {
+                has_template = "Militia Division"
+            }
+            delete_unit_template_and_units = { division_template = "Militia Division" }
+        }
+        if = {
+            limit = {
+                has_template = "Free people of Harad Division"
+            }
+            delete_unit_template_and_units = { division_template = "Free people of Harad Division" }
+        }
         swap_ideas = {
 			remove_idea = RHU_change_in_politics_2
 			add_idea = RHU_change_in_politics_3
@@ -1361,7 +1414,7 @@ focus = {
 
 focus = {
     id = RHU_learn_from_the_wizards
-    icon = GFX_goal_the_blue_wizards
+    icon = GFX_goal_rhu_the_blue_wizards
     x = 0
     y = 1
     relative_position_id = RHU_see_the_light
@@ -1390,7 +1443,7 @@ focus = {
         create_faction = RHU_the_easter_defense_pact
         every_country = {
             limit = {
-                has_government = democratic
+                has_government = cooperative
                 is_neighbor_of = RHU
             }
             add_opinion_modifier = { target = RHU modifier = small_increase }
@@ -1416,8 +1469,8 @@ focus = {
     available = {
         DOR = {
             OR = {
-                has_government = democratic
-                has_government = neutrality
+                has_government = cooperative
+                has_government = unaligned
             }
             exists = yes
             is_puppet = no
@@ -1448,8 +1501,8 @@ focus = {
     available = {
         ROH = {
             OR = {
-                has_government = democratic
-                has_government = neutrality
+                has_government = cooperative
+                has_government = unaligned
             }
             exists = yes
             is_puppet = no
@@ -1474,8 +1527,8 @@ focus = {
     bypass = {
         ERE = {
             OR = {
-                has_government = fascism
-                has_government = communism
+                has_government = belligerent
+                has_government = revolutionary
                 is_puppet = yes
                 exists = no
             }
@@ -1484,8 +1537,8 @@ focus = {
     available = {
         ERE = {
             OR = {
-                has_government = democratic
-                has_government = neutrality
+                has_government = cooperative
+                has_government = unaligned
             }
             exists = yes
             is_puppet = no
@@ -1510,8 +1563,8 @@ focus = {
     bypass = {
         DAL = {
             OR = {
-                has_government = fascism
-                has_government = communism
+                has_government = belligerent
+                has_government = revolutionary
                 is_puppet = yes
                 exists = no
             }
@@ -1520,8 +1573,8 @@ focus = {
     available = {
         DAL = {
             OR = {
-                has_government = democratic
-                has_government = neutrality
+                has_government = cooperative
+                has_government = unaligned
             }
             is_puppet = no
             exists = yes
@@ -1656,8 +1709,8 @@ focus = {
         every_country = {
             limit = {
                 OR = {
-                    has_government = democratic
-                    has_government = neutrality
+                    has_government = cooperative
+                    has_government = unaligned
                 }
                 NOT = {
                     is_in_faction_with = RHU
@@ -1675,7 +1728,7 @@ focus = {
 
 focus = {
     id = RHU_preempty_the_threat
-    icon = GFX_wargoal_mordor
+    icon = GFX_goal_rhu_wargoal_mordor
     x = 0
     y = 1
     relative_position_id = RHU_invite_to_all
@@ -1686,8 +1739,8 @@ focus = {
     available = {
         MOR = {
             OR = {
-                has_government = fascism
-                has_government = communism
+                has_government = belligerent
+                has_government = revolutionary
             }
         }
     }
@@ -1713,7 +1766,7 @@ focus = {
             OR = {
                 exists = no
                 is_puppet = yes
-                has_government = democratic
+                has_government = cooperative
             }
         }
     }
@@ -1727,7 +1780,7 @@ focus = {
 #########
 focus = {
     id = RHU_defend_freedom
-    icon = GFX_goal_generic_neutrality_focus
+    icon = GFX_goal_unalligned
     x = 8
     y = 1
     relative_position_id = RHU_see_the_light
@@ -1755,7 +1808,7 @@ focus = {
             limit = {
                 DOR = {
                     NOT = {
-                        has_government = fascism
+                        has_government = belligerent
                     }
                 }
             }
@@ -1768,7 +1821,7 @@ focus = {
             limit = {
                 HAR = {
                     NOT = {
-                        has_government = fascism
+                        has_government = belligerent
                     }
                 }
             }
@@ -1810,8 +1863,8 @@ focus = {
                 ERE = {
                     NOT = {
                         OR = {
-                            has_government = fascism
-                            has_government = communism
+                            has_government = belligerent
+                            has_government = revolutionary
                         }
                     }
                 }
@@ -1825,7 +1878,7 @@ focus = {
             limit = {
                 DAL = {
                     NOT = {
-                        has_government = fascism
+                        has_government = belligerent
                     }
                 }
             }
@@ -1847,14 +1900,14 @@ focus = {
     bypass = {
         GON = {
             NOT = {
-                has_government = democratic
-                has_government = neutrality
+                has_government = cooperative
+                has_government = unaligned
             }
         }
         ROH = {
             NOT = {
-                has_government = democratic
-                has_government = neutrality
+                has_government = cooperative
+                has_government = unaligned
             }
         }
     }
@@ -1866,8 +1919,8 @@ focus = {
                 GON = {
                     NOT = {
                         OR = {
-                            has_government = fascism
-                            has_government = communism
+                            has_government = belligerent
+                            has_government = revolutionary
                         }
                     }
                 }
@@ -1882,8 +1935,8 @@ focus = {
                 ROH = {
                     NOT = {
                         OR = {
-                            has_government = fascism
-                            has_government = communism
+                            has_government = belligerent
+                            has_government = revolutionary
                         }
                     }
                 }
@@ -1983,7 +2036,7 @@ focus = {
 
 focus = {
     id = RHU_attack_mordor
-    icon = GFX_wargoal_mordor
+    icon = GFX_goal_rhu_wargoal_mordor
     x = 0
     y = 2
     bypass = {
@@ -2009,8 +2062,8 @@ focus = {
 }
 
 focus = {
-    id = RHU_defeat_fascisme
-    icon = GFX_unleashsauron
+    id = RHU_defeat_belligerente
+    icon = GFX_goal_mor_tower_of_barad_dur
     x = 0
     y = 1
     relative_position_id = RHU_attack_mordor
@@ -2018,13 +2071,20 @@ focus = {
     ai_will_do = { factor = 25 }
     cost = 10
     completion_reward = {
-        every_country = {
+        every_other_country = {
             limit = {
-                has_government = fascism
+                has_government = belligerent
+                NOT = {
+                    original_tag = RHU
+                }
             }
-            create_wargoal = {
-                type = puppet_wargoal_focus  target = PREV
+            RHU = {
+                create_wargoal = {
+                    type = puppet_wargoal_focus  
+                    target = PREV
+                }
             }
         }
     }
+}
 }

@@ -14,7 +14,7 @@ focus_tree = {
 #############################################default focuses
 shared_focus = army_effort
 shared_focus = aviation_effort
-shared_focus = naval_effort
+shared_focus = generic_naval_effort
 shared_focus = industrial_effort
 
 	#Custom focuses start here
@@ -23,14 +23,13 @@ shared_focus = industrial_effort
  		id = thefateoftheshire
  		icon = GFX_goal_generic_CAS
  		ai_will_do = { factor = 5 }
-		relative_position_id = industrial_effort
-  	x =10
-  	y =0
-  	mutually_exclusive = { }
-  	prerequisite = { }
-  	cost = 10
-   	available_if_capitulated = yes
-		completion_reward = { add_political_power = 50 add_ideas = civilian_economy }
+		x =	25
+		y =	0
+		mutually_exclusive = { }
+		prerequisite = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = { add_political_power = 50 }
   }
 
 	#Focus for A Different Approach
@@ -52,7 +51,10 @@ shared_focus = industrial_effort
 			focus = {
 			id = traditionalhobbitpacifism
 			icon = GFX_goal_generic_national_unity
-			ai_will_do = { factor = 10 }
+			ai_will_do = {
+				factor = 10
+				modifier = { factor = 0 is_going_cooperative = no }
+			}
 		relative_position_id = thefateoftheshire
 	 		x =-3
 	 		y =1
@@ -68,7 +70,7 @@ shared_focus = industrial_effort
 	 #Focus for Maintain Relations with Arthedain
 			focus = {
 			id = maintainrelationswitharthedain
-			icon = GFX_goal_unknown
+			icon = GFX_goal_generic_improve_relations
 			ai_will_do = { factor = 3 }
 		relative_position_id = traditionalhobbitpacifism
 	 		x =-2
@@ -86,7 +88,7 @@ shared_focus = industrial_effort
 	 #Focus for Improve Relations with Rhudaur
 			focus = {
 			id = improverelationswithrhudaur
-			icon = GFX_goal_unknown
+			icon = GFX_goal_generic_improve_relations
 			ai_will_do = { factor = 4 }
 		relative_position_id = traditionalhobbitpacifism
 	 		x =0
@@ -104,9 +106,12 @@ shared_focus = industrial_effort
 	 #Focus for Empower the Hobbit Proletariat
 			focus = {
 			id = empowerthehobbitproletariat
-			icon = GFX_goal_support_communism
-			ai_will_do = { factor = 4 }
-			available = { communism > 0.3 }
+			icon = GFX_goal_support_revolutionary
+			ai_will_do = {
+				factor = 4
+				modifier = { factor = 0 is_going_revolutionary = no }
+			}
+			available = { revolutionary > 0.3 }
 			cancel_if_invalid = no
 	 	  continue_if_invalid = yes
 		relative_position_id = adifferentapproach
@@ -116,13 +121,13 @@ shared_focus = industrial_effort
 	 		prerequisite = { focus = adifferentapproach}
 	 		cost = 10
 	  	available_if_capitulated = yes
-			completion_reward = { SHI = { set_politics = { ruling_party = communism elections_allowed = no } } remove_ideas = SHI_different_approach add_ideas = generic_communism_intermediate }
+			completion_reward = { set_politics = { ruling_party = revolutionary elections_allowed = no } remove_ideas = SHI_different_approach add_ideas = generic_revolutionary_intermediate }
 	 }
 
 	 #Focus for Improve Relations with Cardolan
 			focus = {
 			id = improverelationswithcardolan
-			icon = GFX_goal_unknown
+			icon = GFX_goal_generic_improve_relations
 			ai_will_do = { factor = 4 }
 		relative_position_id = traditionalhobbitpacifism
 	 		x =2
@@ -141,8 +146,11 @@ shared_focus = industrial_effort
 			focus = {
 			id = empowertheshirriffs
 			icon = GFX_goal_rhineland
-			ai_will_do = { factor = 15 }
-			available = { fascism > 0.3 }
+			ai_will_do = {
+				factor = 15
+				modifier = { factor = 0 is_going_belligerent = no }
+			}
+			available = { belligerent > 0.3 }
 			cancel_if_invalid = no
 	 	  continue_if_invalid = yes
 		relative_position_id = adifferentapproach
@@ -152,13 +160,13 @@ shared_focus = industrial_effort
 	 		prerequisite = { focus = adifferentapproach}
 	 		cost = 10
 	  	available_if_capitulated = yes
-			completion_reward = { add_threat = 2 SHI = { set_politics = { ruling_party = fascism elections_allowed = no } } remove_ideas = SHI_different_approach add_ideas = generic_fascism_intermediate }
+			completion_reward = { add_threat = 2 set_politics = { ruling_party = belligerent elections_allowed = no } remove_ideas = SHI_different_approach add_ideas = generic_belligerent_intermediate }
 	 }
 
 	 #Focus for Encourage a Reformation of Arthedain
 			focus = {
 			id = encourageareformationofarthedain
-			icon = GFX_goal_unknown
+			icon = GFX_goal_support_cooperative
 			ai_will_do = { factor = 25 }
 		relative_position_id = maintainrelationswitharthedain
 	 		x =-1
@@ -168,7 +176,7 @@ shared_focus = industrial_effort
 	 		cost = 10
 	  	available_if_capitulated = yes
 			completion_reward = {
-				ART = { add_popularity = { ideology = democratic popularity = 0.1 } }
+				ART = { add_popularity = { ideology = cooperative popularity = 0.1 } }
 				set_global_flag = arthedain_reformation_encouraged
 			}
 	 }
@@ -201,7 +209,7 @@ shared_focus = industrial_effort
 			focus = {
 			id = introducethirdbreakfast
 			icon = GFX_goal_generic_consumer_goods
-			ai_will_do = { factor = 7 }
+			ai_will_do = { factor = 4 }
 		relative_position_id = traditionalhobbitpacifism
 	 		x =-1
 	 		y =2
@@ -237,12 +245,14 @@ shared_focus = industrial_effort
 	 #Focus for Conspire with Saruman
 			focus = {
 			id = conspirewithsaruman
-			icon = GFX_waysofthedark
+			icon = GFX_goal_roh_trust_saruman
 			ai_will_do = { factor = 5 }
-			available = { NOT = { has_completed_focus = seekourowndestiny } ISE = { is_in_faction = yes } NOT = { is_puppet = yes } ISE = { has_country_leader = { ruling_only = yes name = "Saruman" } } ISE = { has_government = fascism } }
+
+			available = { NOT = { has_completed_focus = seekourowndestiny } ISE = { is_in_faction = yes } NOT = { is_puppet = yes } ISE = { has_country_leader = { ruling_only = yes name = "Saruman" } } ISE = { has_government = belligerent } }
 		relative_position_id = empowertheshirriffs
 	 		x =-2
 	 		y =1
+
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = empowertheshirriffs}
 	 		cost = 10
@@ -271,7 +281,7 @@ shared_focus = industrial_effort
 			completion_reward = {
 				add_threat = 1
 				army_experience = 10
-				add_ideas = war_economy
+				add_ideas = strong_centralization
 				add_autonomy_ratio = {
 					value = 0.5
 					localization = SHI_display_of_strength
@@ -282,7 +292,7 @@ shared_focus = industrial_effort
 	 #Focus for Appropriate the Farmland
 			focus = {
 			id = appropriatethefarmland
-			icon = GFX_goal_unknown
+			icon = GFX_goal_generic_construct_civ_factory
 			ai_will_do = { factor = 5 }
 		relative_position_id = empowerthehobbitproletariat
 	 		x =0
@@ -314,10 +324,12 @@ shared_focus = industrial_effort
 			id = abandonourdunedainoverlords
 			icon = GFX_goal_tfv_sever_ties_with_uk
 			ai_will_do = { factor = 2 }
-			available = { OR = { has_government = fascism has_government = communism } }
+
+			available = { OR = { has_government = belligerent has_government = revolutionary } }
 		relative_position_id = questionarthedainsstrength
 	 		x =0
 	 		y =1
+
 	 		mutually_exclusive = { }
 	 		prerequisite = { focus = questionarthedainsstrength}
 	 		cost = 10
@@ -374,7 +386,7 @@ shared_focus = industrial_effort
 	 		prerequisite = { focus = adisplayofstrength}
 	 		cost = 10
 	  	available_if_capitulated = yes
-			completion_reward = { add_ideas = SHI_unquestioned_authority add_ideas = service_by_requirement }
+			completion_reward = { add_ideas = SHI_unquestioned_authority add_ideas = limited_levy }
 	 }
 
 	 #Focus for Militarize the Hobbits!
@@ -390,19 +402,19 @@ shared_focus = industrial_effort
 	 		cost = 10
 	  	available_if_capitulated = yes
 			completion_reward = {
-				784 = {
+				43 = {
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = arms_factory	level = 1	instant_build = yes }
 				}
-				785 = {
+				44 = {
 					add_extra_state_shared_building_slots = 2
 					add_building_construction = { type = arms_factory	level = 2	instant_build = yes }
 				}
-				783 = {
+				42 = {
 					add_extra_state_shared_building_slots = 2
 					add_building_construction = { type = arms_factory	level = 2	instant_build = yes }
 				}
-				779 = {
+				38 = {
 					add_extra_state_shared_building_slots = 1
 					add_building_construction = { type = arms_factory	level = 1	instant_build = yes }
 				}
@@ -427,7 +439,7 @@ shared_focus = industrial_effort
 	 #Focus for Unite with Isengard
 			focus = {
 			id = SHI_unitewithisengard
-			icon = GFX_unitewithisengard
+			icon = GFX_goal_ise_the_white_hand_flag
 			ai_will_do = { factor = 3 }
 		relative_position_id = conspirewithsaruman
 	 		x =0
@@ -442,7 +454,7 @@ shared_focus = industrial_effort
 	 #Focus for Encourage Isengard Sovereignty
 			focus = {
 			id = SHI_encourageisengardsovereignity
-			icon = GFX_unitewithisengard
+			icon = GFX_goal_army_uruk_hai
 			ai_will_do = { factor = 0 }
 		relative_position_id = conspirewithsaruman
 			x =0
@@ -457,7 +469,7 @@ shared_focus = industrial_effort
 	 #Focus for Stay true to Saruman
 			focus = {
 			id = SHI_staytruetosaruman
-			icon = GFX_unitewithisengard
+			icon = GFX_goal_saruman_with_palantir
 			ai_will_do = { factor = 0 }
 		relative_position_id = SHI_encourageisengardsovereignity
 			x =-1
@@ -472,7 +484,7 @@ shared_focus = industrial_effort
 	 #Focus for Betray Isengard
 			focus = {
 			id = SHI_betrayisengard
-			icon = GFX_unitewithsauron
+			icon = GFX_goal_sauron_eye
 			ai_will_do = { factor = 0 }
 		relative_position_id = SHI_encourageisengardsovereignity
 			x =1
@@ -542,8 +554,8 @@ shared_focus = industrial_effort
 			id = transformthehobbitholesintobunkers
 			icon = GFX_goal_generic_fortify_city
 			ai_will_do = { factor = 4 }
-			available = { 783 = { is_controlled_by = SHI } 785 = { is_controlled_by = SHI } 784 = { is_controlled_by = SHI } 779 = { is_controlled_by = SHI } }
-		relative_position_id = militarizethehobbits
+			available = { 42 = { is_controlled_by = SHI } 44 = { is_controlled_by = SHI } 43 = { is_controlled_by = SHI } 38 = { is_controlled_by = SHI } }
+	 		relative_position_id = militarizethehobbits
 	 		x =0
 	 		y =3
 	 		mutually_exclusive = { }
@@ -551,16 +563,16 @@ shared_focus = industrial_effort
 	 		cost = 10
 	  	available_if_capitulated = yes
 			completion_reward = {
-				783 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 9159 } }
-				785 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 11344 } }
-				784 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 11363 } }
-				784 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 9245 } }
-				784 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 6409 } }
-				779 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 6362 } }
-				779 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 378 } }
-				779 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 214 } }
-				779 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 3387 } }
-				779 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 11248 } }
+				42 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 1641 } }
+				42 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 4984 } }
+				42 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 6036 } }
+				42 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 4336 } }
+				43 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 2895 } }
+				43 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 1304 } }
+				43 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 2167 } }
+				38 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 1661 } }
+				44 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 4937 } }
+				42 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 1457 } }
 			}
 	 }
 
@@ -789,7 +801,7 @@ shared_focus = industrial_effort
 			completion_reward = {
 				add_stability = 0.15
 				add_popularity = {
-					ideology = fascism
+					ideology = belligerent
 					popularity = -0.2
 				}
 			}
@@ -829,7 +841,173 @@ shared_focus = industrial_effort
 			}
 	 }
 
+	 focus = {
+		id = SHI_rally_the_hobbits
+		icon = GFX_goal_generic_military_sphere
+		ai_will_do = { 
+			factor = 5
+			modifier = {
+				has_completed_focus = adifferentapproach
+				add = 10
+			}
+		}
+		relative_position_id = thefateoftheshire
+		x = 14
+		y = 1
+		prerequisite = { focus = thefateoftheshire }
+		available = {
+			has_idea = SHI_pacifist_country_0
+		}
+		cost = 10
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_WAR_SUPPORT }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = SHI_pacifist_country_0
+				add_idea = SHI_pacifist_country_1
+			}
+		}
+	 }
 
+	 focus = {
+		id = SHI_rally_the_hobbits_2
+		icon = GFX_focus_generic_strike_at_democracy1
+		ai_will_do = { 
+			factor = 3
+			modifier = {
+				OR = {
+					has_completed_focus = empowerthehobbitproletariat
+					has_completed_focus = empowertheshirriffs
+				}
+				add = 10
+			}
+		}
+		relative_position_id = SHI_rally_the_hobbits
+		x = 0
+		y = 1
+		prerequisite = { focus = SHI_rally_the_hobbits }
+		available = {
+			has_idea = SHI_pacifist_country_1
+		}
+		cost = 10
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_INDUSTRY FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = SHI_pacifist_country_1
+				add_idea = SHI_pacifist_country_2
+			}
+		}
+	 }
+
+	focus = {
+		id = SHI_hobbitisme
+		icon = GFX_focus_generic_little_entente
+		ai_will_do = { factor = 10 }
+		relative_position_id = SHI_rally_the_hobbits_2
+		x = 0
+		y = 1
+		prerequisite = { focus = SHI_rally_the_hobbits_2 }
+		available = {
+			has_idea = SHI_pacifist_country_2
+		}
+		cost = 10
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_INDUSTRY FOCUS_FILTER_STABILITY }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = SHI_pacifist_country_2
+				add_idea = SHI_war_hungry_0
+			}
+		}
+	}
+
+	focus = {
+		id = SHI_focus_on_expansion
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { 
+			factor = 3 
+			modifier = {
+				OR = {
+					has_completed_focus = empowerthehobbitproletariat
+					has_completed_focus = empowertheshirriffs
+				}
+				add = 10
+			}
+		}
+		relative_position_id = SHI_hobbitisme
+		x = -1
+		y = 1
+		prerequisite = { focus = SHI_hobbitisme }
+		mutually_exclusive = { focus = SHI_focus_on_military_industry }
+		available = {
+			has_idea = SHI_war_hungry_0
+			NOT = { 
+				OR = {
+					has_government = cooperative 
+					has_government = unaligned
+				}
+			}
+		}
+		cost = 10
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = SHI_war_hungry_0
+				add_idea = SHI_war_hungry_1
+			}
+		}
+	}
+
+	focus = {
+		id = SHI_focus_on_military_industry
+		icon = GFX_goal_generic_production2
+		ai_will_do = { 
+			factor = 5 
+			modifier = {
+				OR = {
+					has_completed_focus = empowerthehobbitproletariat
+					has_completed_focus = empowertheshirriffs
+				}
+				add = 10
+			}
+		}
+		relative_position_id = SHI_hobbitisme
+		x = 1
+		y = 1
+		prerequisite = { focus = SHI_hobbitisme }
+		mutually_exclusive = { focus = SHI_focus_on_expansion }
+		available = {
+			has_idea = SHI_war_hungry_0
+		}
+		cost = 10
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = SHI_war_hungry_0
+				add_idea = SHI_war_hungry_2
+			}
+		}
+	}
+
+	focus = {
+		id = SHI_reclaim_our_old_territory
+		icon = GFX_goal_generic_more_territorial_claims
+		ai_will_do = { factor = 10 }
+		relative_position_id = SHI_focus_on_military_industry
+		x = -1
+		y = 1
+		prerequisite = { focus = SHI_focus_on_military_industry focus = SHI_focus_on_expansion }
+		cost = 10
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			add_state_claim = 70
+			add_state_claim = 72
+		}
+	}
 
 	 #End of focuses
 
