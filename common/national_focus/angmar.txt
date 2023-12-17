@@ -934,8 +934,8 @@ focus = {
 		}
 	}
 	mutually_exclusive = { focus = ANG_orthanc_give_back_to_gondor }
-	relative_position_id = ANG_enslave_the_uruk_hai
-	x = 1
+	relative_position_id = ANG_saruman_has_betrayed_us
+	x = 0
 	y = 1
 	prerequisite = { focus = ANG_enslave_the_uruk_hai focus = ANG_saruman_has_betrayed_us }
 	cost = 10
@@ -960,7 +960,7 @@ focus = {
 	}
 	mutually_exclusive = { focus = ANG_reinstate_orthanc}
 	relative_position_id = ANG_enslave_the_uruk_hai
-	x = -1
+	x = 0
 	y = 1
 	prerequisite = { focus = ANG_enslave_the_uruk_hai }
 	cost = 5
@@ -1013,6 +1013,10 @@ focus = {
 			ideology = cooperative
 			popularity = 0.15
 		}
+		add_power_balance_value = {
+			id = power_balance_ang
+			value = -0.25
+		}
 		add_political_power = 100
 	}
 }
@@ -1030,6 +1034,102 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = {
 		add_ideas = ANG_army_of_our_nation
+	}
+}
+
+focus = {
+	id = ANG_mountain_pass
+	icon = GFX_goal_a_land_of_mountains
+	ai_will_do = { factor = 3 }
+	relative_position_id = ANG_army_of_our_nation
+	x = 0
+	y = 1
+	prerequisite = { focus = ANG_army_of_our_nation focus = ANG_the_true_arnor }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		VAL = { country_event = { id = anduin.1 }}
+		custom_effect_tooltip = ANG_tooltip_demand_northen_states_anduin
+	}
+}
+
+focus = {
+	id = ANG_wood_and_string_mirkwood
+	icon = GFX_goal_lth_extend_citizenship
+	ai_will_do = { factor = 3 }
+	available = {
+		any_neighbor_country = {
+			tag = MIR
+		}
+	}
+	relative_position_id = ANG_army_of_our_nation
+	x = 2
+	y = 1
+	prerequisite = { focus = ANG_army_of_our_nation focus = ANG_the_true_arnor }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		MIR = { country_event = { id = mirkwood.13 }}
+		custom_effect_tooltip = ANG_tooltip_request_resources_mirkwood
+	}
+}
+
+focus = {
+	id = ANG_core_east_world
+	icon = GFX_goal_lth_adminstration
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	ai_will_do = { factor = 10 }
+	relative_position_id = ANG_the_true_arnor
+	available = {
+		OR = {
+			controls_state = 61
+			AND = {
+				controls_state = 69
+				controls_state = 68
+				controls_state = 196
+			}
+		}
+	}
+	x = 0
+	y = 1
+	prerequisite = { focus = ANG_the_true_arnor focus = ANG_army_of_our_nation }
+	cost = 10
+	available_if_capitulated = yes
+	will_lead_to_war_with = ART
+	completion_reward = {
+		if = {
+			limit = {
+				controls_state = 61
+			}
+			add_state_core = 61
+		}
+		if = {
+			limit = {
+				controls_state = 69
+				controls_state = 68
+				controls_state = 196
+			}
+			add_state_core = 69
+			add_state_core = 68
+			add_state_core = 196
+		}
+		
+	}
+}
+
+
+focus = {
+	id = ANG_wisdom_of_centries
+	icon = GFX_goal_lth_research_cooperation
+	ai_will_do = { factor = 3 }
+	relative_position_id = ANG_mountain_pass
+	x = 2
+	y = 1
+	prerequisite = { focus = ANG_mountain_pass focus = ANG_core_east_world }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_research_slot = 1
 	}
 }
 
@@ -1091,7 +1191,7 @@ focus = {
 
 focus = {
 	id = ANG_establish_new_borders
-	icon = GFX_goal_angmar_unaligned
+	icon = GFX_goal_lth_treaty_invitation
 	ai_will_do = { factor = 10 }
 	relative_position_id = ANG_establish_new_arnor
 	x = 1
@@ -1117,15 +1217,25 @@ focus = {
 	search_filters = { FOCUS_FILTER_ANNEXATION }
 	ai_will_do = { factor = 10 }
 	available = {
-		ART = {
-			has_country_flag = ART_established_arnor
-			NOT = {
-				is_in_faction_with = ANG
+		OR = {
+			ART = {
+				has_country_flag = ART_established_arnor
+				NOT = {
+					is_in_faction_with = ANG
+				}
+			}
+			ART = {
+				OR = {
+					has_government = belligerent
+					has_government = revolutionary
+					has_government = unaligned
+				}
 			}
 		}
+
 	}
 	relative_position_id = ANG_establish_new_borders
-	x = -1
+	x = 0
 	y = 1
 	prerequisite = { focus = ANG_establish_new_borders }
 	cost = 10
@@ -1437,6 +1547,8 @@ focus = {
 				id = gondor.17
 			}
 		} 
+		custom_effect_tooltip = GENERIC_custom_tooltip_if_they_accept
+		event_option_tooltip = gondor.17.a
 	}
 }
 
@@ -1463,6 +1575,8 @@ focus = {
 				id = gondor.18
 			}
 		} 
+		custom_effect_tooltip = GENERIC_custom_tooltip_if_they_accept
+		event_option_tooltip = gondor.18.a
 	}
 }
 #Focus for Seek former Glory
@@ -1830,6 +1944,8 @@ focus = {
 		MOR = {
 			country_event = { id = mordor.60 }
 		}
+		custom_effect_tooltip = GENERIC_custom_tooltip_if_they_accept
+		event_option_tooltip = mordor.60.a
 	}
 }
 
