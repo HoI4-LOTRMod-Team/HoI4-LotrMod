@@ -326,8 +326,8 @@ ring_destroy_ring = {
 	# Remove BOPs
 	var:global.fs_ring_owner = {
 		if = {
-			limit = { has_power_balance = { id = ring_corruption_balance } }
-			remove_power_balance = { id = ring_corruption_balance }
+			limit = { has_variable = global.ring_corruption_percentage }
+			clear_variable = global.ring_corruption_percentage
 		}
 	}
 
@@ -1027,35 +1027,6 @@ ring_interception_disengage_check = {
 	}
 }
 
-
-ring_increase_corruption = {
-	add_power_balance_value = {
-		id = ring_corruption_balance
-		value = 0.1
-	}
-}
-
-ring_increase_corruption_2 = {
-	add_power_balance_value = {
-		id = ring_corruption_balance
-		value = 0.2
-	}
-}
-
-ring_decrease_corruption = {
-	add_power_balance_value = {
-		id = ring_corruption_balance
-		value = 0.1
-	}
-}
-
-ring_decrease_corruption_2 = {
-	add_power_balance_value = {
-		id = ring_corruption_balance
-		value = 0.2
-	}
-}
-
 ring_give_sauron_ring = {
 	custom_effect_tooltip = corruption_bad_corrupted_tt
 	hidden_effect = {
@@ -1128,7 +1099,7 @@ ring_remove_ring = {
 		limit = { has_idea = one_true_ring_2 }
 		remove_ideas = one_true_ring_2
 	}
-	remove_power_balance = { id = ring_corruption_balance }
+	clear_variable = global.ring_corruption_percentage
 }
 
 ring_add_ring = {
@@ -1140,16 +1111,17 @@ ring_add_ring = {
 		add_ideas = one_true_ring
 	}
 	# add BOP to new owner
-	if = {
-		limit = { NOT = { tag = MOR } } # MOR can't corrupt themselves lol
-		set_power_balance = {
-			id = ring_corruption_balance
-			set_default = yes
-		}
-	}
-	ring_update_bop_values = yes
+	#if = {
+	#	limit = { NOT = { tag = MOR } } # MOR can't corrupt themselves lol
+	#	set_power_balance = {
+	#		id = ring_corruption_balance
+	#		set_default = yes
+	#	}
+	#}
+	#ring_update_bop_values = yes
+	set_variable = { ring_corruption_percentage = 0 }
 	MOR = {
-		ring_update_bop_values = yes
+		#ring_update_bop_values = yes
 	}
 }
 
@@ -1223,4 +1195,24 @@ ring_set_ring_attitude = {
 			}
 		}
 	}
+}
+
+ring_corruption_percentage_down = {
+	subtract_from_variable = { global.ring_corruption_percentage = 10 }
+	custom_effect_tooltip = GENERIC_ring_corruption_decrease_10
+}
+
+ring_corruption_percentage_down_20 = {
+	subtract_from_variable = { global.ring_corruption_percentage = 20 }
+	custom_effect_tooltip = GENERIC_ring_corruption_decrease_20
+}
+
+ring_corruption_percentage_up = {
+	add_to_variable = { global.ring_corruption_percentage = 10 }
+	custom_effect_tooltip = GENERIC_ring_corruption_increase_10
+}
+
+ring_corruption_percentage_up_20 = {
+	add_to_variable = { global.ring_corruption_percentage = 20 }
+	custom_effect_tooltip = GENERIC_ring_corruption_increase_20
 }

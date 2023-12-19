@@ -919,32 +919,6 @@ focus = {
 	}
 }
 
-#Focus reinstate orthanc
-focus = {
-	id = ANG_reinstate_orthanc
-	icon = GFX_goal_orthanc_destroyed
-	search_filters = { FOCUS_FILTER_MANPOWER }
-	ai_will_do = { factor = 8 }
-	available = { 
-		OR = {
-			controls_state = 31
-			ISE = {
-				is_puppet_of = ANG
-			}
-		}
-	}
-	mutually_exclusive = { focus = ANG_orthanc_give_back_to_gondor }
-	relative_position_id = ANG_saruman_has_betrayed_us
-	x = 0
-	y = 1
-	prerequisite = { focus = ANG_enslave_the_uruk_hai focus = ANG_saruman_has_betrayed_us }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_state_core = 31
-	}
-}
-
 focus = {
 	id = ANG_orthanc_give_back_to_gondor
 	icon = GFX_goal_gondor
@@ -1041,10 +1015,20 @@ focus = {
 	id = ANG_mountain_pass
 	icon = GFX_goal_a_land_of_mountains
 	ai_will_do = { factor = 3 }
+	prerequisite = { focus = ANG_army_of_our_nation focus = ANG_the_true_arnor }
 	relative_position_id = ANG_army_of_our_nation
 	x = 0
 	y = 1
-	prerequisite = { focus = ANG_army_of_our_nation focus = ANG_the_true_arnor }
+	available = {
+		NOT = {
+			has_war_with = VAL
+		}
+		NOT = {
+			controls_state = 69
+            controls_state = 68
+            controls_state = 196
+		}
+	}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -1061,6 +1045,10 @@ focus = {
 		any_neighbor_country = {
 			tag = MIR
 		}
+		MIR = {
+			controls_state = 85
+		}
+		NOT = { has_war_with = MIR }
 	}
 	relative_position_id = ANG_army_of_our_nation
 	x = 2
@@ -1073,50 +1061,6 @@ focus = {
 		custom_effect_tooltip = ANG_tooltip_request_resources_mirkwood
 	}
 }
-
-focus = {
-	id = ANG_core_east_world
-	icon = GFX_goal_lth_adminstration
-	search_filters = { FOCUS_FILTER_ANNEXATION }
-	ai_will_do = { factor = 10 }
-	relative_position_id = ANG_the_true_arnor
-	available = {
-		OR = {
-			controls_state = 61
-			AND = {
-				controls_state = 69
-				controls_state = 68
-				controls_state = 196
-			}
-		}
-	}
-	x = 0
-	y = 1
-	prerequisite = { focus = ANG_the_true_arnor focus = ANG_army_of_our_nation }
-	cost = 10
-	available_if_capitulated = yes
-	will_lead_to_war_with = ART
-	completion_reward = {
-		if = {
-			limit = {
-				controls_state = 61
-			}
-			add_state_core = 61
-		}
-		if = {
-			limit = {
-				controls_state = 69
-				controls_state = 68
-				controls_state = 196
-			}
-			add_state_core = 69
-			add_state_core = 68
-			add_state_core = 196
-		}
-		
-	}
-}
-
 
 focus = {
 	id = ANG_wisdom_of_centries
@@ -1245,6 +1189,50 @@ focus = {
 		create_wargoal = { target = ART type = annex_everything }
 	}
 }
+
+focus = {
+	id = ANG_core_east_world
+	icon = GFX_goal_lth_adminstration
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	ai_will_do = { factor = 10 }
+	relative_position_id = ANG_the_true_arnor
+	available = {
+		OR = {
+			controls_state = 61
+			AND = {
+				controls_state = 69
+				controls_state = 68
+				controls_state = 196
+			}
+		}
+	}
+	x = 0
+	y = 1
+	prerequisite = { focus = ANG_the_true_arnor focus = ANG_army_of_our_nation }
+	cost = 10
+	available_if_capitulated = yes
+	will_lead_to_war_with = ART
+	completion_reward = {
+		if = {
+			limit = {
+				controls_state = 61
+			}
+			add_state_core = 61
+		}
+		if = {
+			limit = {
+				controls_state = 69
+				controls_state = 68
+				controls_state = 196
+			}
+			add_state_core = 69
+			add_state_core = 68
+			add_state_core = 196
+		}
+		
+	}
+}
+
 
 focus = {
 	id = ANG_invest_in_our_country
@@ -1383,8 +1371,7 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		#TODO move text to loc file
-		custom_effect_tooltip = "Bonuses are better the more members in the faction there are"
+		custom_effect_tooltip = ANG_tooltip_more_members_better_bonus
 		if = {
 			limit = {
 				num_faction_members < 5
@@ -1925,6 +1912,35 @@ focus = {
 		create_wargoal = { target = ISE type = annex_everything }
 	}
 }
+
+
+
+#Focus reinstate orthanc
+focus = {
+	id = ANG_reinstate_orthanc
+	icon = GFX_goal_orthanc_destroyed
+	search_filters = { FOCUS_FILTER_MANPOWER }
+	ai_will_do = { factor = 8 }
+	available = { 
+		OR = {
+			controls_state = 31
+			ISE = {
+				is_puppet_of = ANG
+			}
+		}
+	}
+	mutually_exclusive = { focus = ANG_orthanc_give_back_to_gondor }
+	relative_position_id = ANG_saruman_has_betrayed_us
+	x = 0
+	y = 1
+	prerequisite = { focus = ANG_enslave_the_uruk_hai focus = ANG_saruman_has_betrayed_us }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_state_core = 31
+	}
+}
+
 
 focus = {
 	id = ANG_request_investment
