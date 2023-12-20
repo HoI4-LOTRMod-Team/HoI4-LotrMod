@@ -296,6 +296,10 @@ focus = {
 			category = lotr_men_secrets_rangers
 		}
 		army_experience = 25
+		add_popularity = {
+			ideology = unaligned
+			popularity = 0.03
+		}
 	}
 }
 
@@ -379,17 +383,10 @@ focus = {
 	x = 0
 	y = 1
 	prerequisite = { focus = ART_develop_coastal_states }
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
 		navy_experience = 25
-		add_tech_bonus = {
-			name = cr_bonus
-			bonus = 0.75
-			ahead_reduction = 2
-			uses = 2
-			category = lotr_sailing_galley
-		}
 	}
 }
 
@@ -405,6 +402,13 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = {
 		navy_experience = 25
+		add_tech_bonus = {
+			name = cr_bonus
+			bonus = 0.75
+			ahead_reduction = 2
+			uses = 2
+			category = lotr_sailing_galley
+		}
 	}
 }
 
@@ -599,7 +603,7 @@ focus = {
 	prerequisite = { focus = ART_the_fate_of_arthedain}
 	cost = 5
 	available_if_capitulated = yes
-	completion_reward = { add_ideas = generic_cooperative }
+	completion_reward = { add_timed_idea = { idea = generic_cooperative days = 365 } }
 }
 
 #Focus for Unite the country
@@ -616,9 +620,10 @@ focus = {
 	completion_reward = { 
 		add_popularity = {
 			ideology = cooperative
-			popularity = 0.10
+			popularity = 0.075
 		}
 		add_stability = 0.10
+		add_political_power = 100
 	}
 }
 
@@ -635,42 +640,30 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = { 
 		add_popularity = {
-			ideology = cooperative
-			popularity = 0.10
+			ideology = unaligned
+			popularity = -0.05
 		}
 		add_stability = 0.05
-		add_war_support = 0.10
+		add_war_support = 0.05
 	}
-}
-
-focus = {
-	id = ART_reinstate_monarchy
-	icon = GFX_goal_generic_home_defense
-	ai_will_do = { factor = 5 }
-	bypass = { has_government = cooperative }
-	available = { cooperative > 0.5 }
-	relative_position_id = ART_convince_the_rangers
-	x = -1
-	y = 1
-	prerequisite = { focus = ART_convince_the_rangers }
-	prerequisite = { focus = ART_unite_the_country }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { set_politics = { ruling_party = cooperative elections_allowed = no } }
 }
 
 focus = {
 	id = ART_change_in_law
 	icon = GFX_focus_hol_the_foundations_of_defense
 	ai_will_do = { factor = 5 }
-	relative_position_id = ART_reinstate_monarchy
-	prerequisite = { focus = ART_reinstate_monarchy }
-	x = 0
+	relative_position_id = ART_convince_the_rangers
+	prerequisite = { focus = ART_convince_the_rangers }
+	prerequisite = { focus = ART_unite_the_country }
+	x = -1
 	y = 1
-	available = { cooperative > 0.6 }
 	cost = 5
 	available_if_capitulated = yes
 	completion_reward = { 
+		add_popularity = {
+			ideology = cooperative
+			popularity = 0.05
+		}
 		if = {
 			limit = {
 				has_idea = weak_centralization
@@ -693,6 +686,22 @@ focus = {
 }
 
 focus = {
+	id = ART_reinstate_monarchy
+	icon = GFX_goal_generic_home_defense
+	ai_will_do = { factor = 5 }
+	bypass = { has_government = cooperative }
+	available = { cooperative > 0.65 }
+	relative_position_id = ART_change_in_law
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_change_in_law }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { set_politics = { ruling_party = cooperative elections_allowed = no } }
+}
+
+
+focus = {
 	id = ART_invest_in_the_shire
 	icon = GFX_goal_generic_windmill
 	ai_will_do = { factor = 3 }
@@ -704,10 +713,10 @@ focus = {
 			}
 		}
 	}
-	relative_position_id = ART_change_in_law
+	relative_position_id = ART_reinstate_monarchy
 	x = 2
 	y = 1
-	prerequisite = { focus = ART_change_in_law }
+	prerequisite = { focus = ART_reinstate_monarchy }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -802,10 +811,10 @@ focus = {
 	id = ART_improve_arnorian_relations
 	icon = GFX_goal_generic_improve_relations
 	ai_will_do = { factor = 3 }
-	relative_position_id = ART_change_in_law
+	relative_position_id = ART_reinstate_monarchy
 	x = 0
 	y = 1
-	prerequisite = { focus = ART_change_in_law }
+	prerequisite = { focus = ART_reinstate_monarchy }
 	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
@@ -937,6 +946,30 @@ focus = {
 	available_if_capitulated = no
 	completion_reward = {
 		create_country_leader = { name = "King Aragorn II" picture = "Portrait_Arthedain_King.dds" expire = "3080.1.1" ideology = protective traits = { patriot_king GON_isildur_heir } }
+	}
+}
+
+focus = {
+	id = ART_reinstate_isildurs_heir_gondor
+	icon = GFX_goal_mor_wargoal_gondor
+	ai_will_do = { factor = 5 }
+	available = {
+		GON = {
+			NOT = {
+				has_government = cooperative
+			}
+			has_completed_focus = GON_delegitimize_aragorns_claim
+		}
+	}
+	prerequisite = { focus = ART_invite_heir_of_isildur }
+	relative_position_id = ART_invite_heir_of_isildur
+	x = 0
+	y = 1
+	cost = 10
+	available_if_capitulated = no
+	will_lead_to_war_with = GON
+	completion_reward = {
+		create_wargoal = { target = GON type = puppet_wargoal_focus }
 	}
 }
 
