@@ -589,6 +589,24 @@ focus = {
 	completion_reward = { add_political_power = 100 }
 }
 
+#Focus for Let the Rangers Prevail
+focus = {
+	id = lettherangersprevail
+	icon = GFX_goal_rangers_of_the_north
+	ai_will_do = {
+		factor = 0
+		modifier = { factor = 0 is_going_unaligned = no }
+	}
+	relative_position_id = ART_the_fate_of_arthedain
+	x =0
+	y =1
+	mutually_exclusive = { focus = forgeanewpath focus=ART_support_the_monarchists}
+	prerequisite = { focus = ART_the_fate_of_arthedain}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { add_ideas = generic_unaligned }
+}
+
 #Focus for Support the monarchists
 focus = {
 	id = ART_support_the_monarchists
@@ -604,7 +622,10 @@ focus = {
 	prerequisite = { focus = ART_the_fate_of_arthedain}
 	cost = 5
 	available_if_capitulated = yes
-	completion_reward = { add_ideas = ART_generic_cooperative }
+	completion_reward = { 
+		add_ideas = ART_generic_cooperative
+		custom_effect_tooltip = ART_tooltip_political_unrest
+	}
 }
 
 #Focus for Unite the country
@@ -653,17 +674,35 @@ focus = {
 	id = ART_campaign_investment
 	icon = GFX_goal_lth_treaty_invitation
 	ai_will_do = { factor = 3 }
-	relative_position_id = ART_convince_the_rangers
-	x = 1
+	relative_position_id = lettherangersprevail
+	x = 0
 	y = 1
-	prerequisite = { focus = ART_convince_the_rangers}
+	prerequisite = { focus = ART_support_the_monarchists focus = forgeanewpath }
 	cost = 5
 	available_if_capitulated = yes
 	completion_reward = { 
 		add_timed_idea = { idea = ART_political_campaign_investment days = 365 }
-		add_popularity = {
-			ideology = cooperative
-			popularity = 0.05
+		if = {
+			limit = {
+				has_completed_focus = ART_support_the_monarchists
+			}
+			add_popularity = {
+				ideology = cooperative
+				popularity = 0.05
+			}
+		}
+		else_if = {
+			limit = {
+				has_completed_focus = forgeanewpath
+			}
+			add_popularity = {
+				ideology = revolutionary
+				popularity = 0.025
+			}
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.025
+			}
 		}
 	}
 }
@@ -1260,40 +1299,26 @@ focus = {
 		create_wargoal = { target = GUN type = annex_everything }
 	}
 }
-	 #Focus for Let the Rangers Prevail
- 			focus = {
- 			id = lettherangersprevail
- 			icon = GFX_goal_rangers_of_the_north
- 			ai_will_do = {
-				factor = 0
-				modifier = { factor = 0 is_going_unaligned = no }
-			}
-			relative_position_id = ART_the_fate_of_arthedain
- 	 		x =0
- 	 		y =1
- 	 		mutually_exclusive = { focus = forgeanewpath focus=ART_support_the_monarchists}
- 	 		prerequisite = { focus = ART_the_fate_of_arthedain}
- 	 		cost = 10
- 	  	available_if_capitulated = yes
- 			completion_reward = { add_ideas = generic_unaligned }
- 	 }
 
 	 #Focus for Forge a new Path
-			focus = {
-			id = forgeanewpath
-			icon = GFX_goal_generic_demand_territory
-			ai_will_do = {
-				factor = 3
-				modifier = { factor = 0 is_going_belligerent = no }
-			}
-			relative_position_id = ART_the_fate_of_arthedain
-	 		x =4
-	 		y =1
-	 		mutually_exclusive = { focus = ART_support_the_monarchists focus = lettherangersprevail}
-	 		prerequisite = { focus = ART_the_fate_of_arthedain}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = { add_ideas = generic_belligerent_intermediate add_ideas = generic_revolutionary_intermediate }
+	focus = {
+		id = forgeanewpath
+		icon = GFX_goal_generic_demand_territory
+		ai_will_do = {
+			factor = 3
+			modifier = { factor = 0 is_going_belligerent = no }
+		}
+		relative_position_id = ART_the_fate_of_arthedain
+		x =4
+		y =1
+		mutually_exclusive = { focus = ART_support_the_monarchists focus = lettherangersprevail}
+		prerequisite = { focus = ART_the_fate_of_arthedain}
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = { 
+			add_ideas = ART_a_new_path 
+			custom_effect_tooltip = ART_tooltip_political_unrest
+		}
 	 }
 
 	focus = {
@@ -1311,7 +1336,7 @@ focus = {
 		prerequisite = { focus = forgeanewpath}
 		cost = 10
 		available_if_capitulated = yes
-		completion_reward = { set_politics = { ruling_party = belligerent elections_allowed = no } remove_ideas = generic_revolutionary_intermediate }
+		completion_reward = { set_politics = { ruling_party = belligerent elections_allowed = no } remove_ideas = ART_a_new_path clr_country_flag =  ART_political_unrest }
 	}
 
 	focus = {
@@ -1415,7 +1440,7 @@ focus = {
 		prerequisite = { focus = forgeanewpath}
 		cost = 10
 		available_if_capitulated = yes
-		completion_reward = { set_politics = { ruling_party = revolutionary elections_allowed = no } remove_ideas = generic_belligerent_intermediate }
+		completion_reward = { set_politics = { ruling_party = revolutionary elections_allowed = no } remove_ideas = ART_a_new_path clr_country_flag =  ART_political_unrest }
 	}
 
 	focus = {

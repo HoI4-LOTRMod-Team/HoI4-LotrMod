@@ -630,7 +630,10 @@ country_event = {
 	trigger = {
 		tag = ART
 		has_country_flag = ART_political_unrest
-		has_completed_focus = ART_support_the_monarchists
+		OR = {
+			has_completed_focus = ART_support_the_monarchists
+			has_completed_focus = forgeanewpath
+		}
 	}
 
 	option = {
@@ -656,7 +659,10 @@ country_event = {
 	trigger = {
 		tag = ART
 		has_country_flag = ART_political_unrest
-		has_completed_focus = ART_support_the_monarchists
+		OR = {
+			has_completed_focus = ART_support_the_monarchists
+			has_completed_focus = forgeanewpath
+		}
 	}
 
 
@@ -724,5 +730,76 @@ country_event = {
 		ai_chance = {
 			base = 50
 		}
+	}
+}
+
+# Ask COUNTRY for support
+country_event = {
+	id = arthedain.21
+	title = arthedain.21.t
+	desc = arthedain.21.d
+	picture = GFX_report_event_paper
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = arthedain.21.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 25
+				OR = {
+					has_completed_focus = nationalism_focus
+					has_completed_focus = ANG_seek_former_glory
+					has_completed_focus = submittosauron
+				}
+			}
+			modifier = {
+				add = 10
+				has_opinion = { target = ART value > 75 }
+			}
+			modifier = {
+				add = 15
+				has_non_aggression_pact_with = ART
+			}
+		}
+		ART = {
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.15
+			}
+			add_opinion_modifier = { target = ROOT modifier = medium_increase }
+		}
+		add_opinion_modifier = { target = ART modifier = medium_increase }
+		news_event = { id = arthedain.22 }
+	}
+	option = { #Refuse
+		name = arthedain.21.b
+		ai_chance = {
+			base = 15
+			modifier = {
+				add = 25
+				has_completed_focus = liberty_ethos
+			}
+		}
+		ART = {
+			add_opinion_modifier = { target = ROOT modifier = small_decrease }
+		}
+		add_political_power = -25
+	}
+}
+
+news_event = {
+	id = arthedain.22
+	title = arthedain.22.t
+	desc = arthedain.22.d
+	picture = GFX_news_event_fs_200
+
+	major = yes
+
+	is_triggered_only = yes
+	
+	option = {
+		name = arthedain.22.a
 	}
 }
