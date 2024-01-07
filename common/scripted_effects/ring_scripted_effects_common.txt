@@ -1120,6 +1120,8 @@ ring_add_ring = {
 	#}
 	#ring_update_bop_values = yes
 	set_variable = { ring_corruption_percentage = 0 }
+	set_variable = { ring_corruption_belligerent = 0 }
+	set_variable = { ring_corruption_stability = 0 }
 	MOR = {
 		#ring_update_bop_values = yes
 	}
@@ -1199,20 +1201,119 @@ ring_set_ring_attitude = {
 
 ring_corruption_percentage_down = {
 	subtract_from_variable = { global.ring_corruption_percentage = 10 }
+	ring_corruption_idea_checker = yes
 	custom_effect_tooltip = GENERIC_ring_corruption_decrease_10
 }
 
 ring_corruption_percentage_down_20 = {
 	subtract_from_variable = { global.ring_corruption_percentage = 20 }
+	ring_corruption_idea_checker = yes
 	custom_effect_tooltip = GENERIC_ring_corruption_decrease_20
 }
 
 ring_corruption_percentage_up = {
 	add_to_variable = { global.ring_corruption_percentage = 10 }
+	ring_corruption_idea_checker = yes
 	custom_effect_tooltip = GENERIC_ring_corruption_increase_10
 }
 
 ring_corruption_percentage_up_20 = {
 	add_to_variable = { global.ring_corruption_percentage = 20 }
+	ring_corruption_idea_checker = yes
 	custom_effect_tooltip = GENERIC_ring_corruption_increase_20
+}
+
+ring_corruption_idea_checker = {
+	if = {
+		limit = {
+			check_variable = {
+				global.ring_corruption_percentage > 75
+			}
+			NOT = { has_idea = idea_ring_corruption_bad_high }
+		}
+		ring_corruption_idea_remover = yes
+		add_ideas = idea_ring_corruption_bad_high
+	}
+	else_if = {
+		limit = {
+			check_variable = {
+				global.ring_corruption_percentage < 75
+			}
+			check_variable = {
+				global.ring_corruption_percentage > 50
+			}
+			NOT = { has_idea = idea_ring_corruption_bad_low }
+		}
+		ring_corruption_idea_remover = yes
+		add_ideas = idea_ring_corruption_bad_low
+	}
+	else_if = {
+		limit = {
+			check_variable = {
+				global.ring_corruption_percentage < 50
+			}
+			check_variable = {
+				global.ring_corruption_percentage > 25
+			}
+			NOT = { has_idea = idea_ring_corruption_corruption_neutral }
+		}
+		ring_corruption_idea_remover = yes
+		add_ideas = idea_ring_corruption_corruption_neutral
+	}
+	else_if = {
+		limit = {
+			check_variable = {
+				global.ring_corruption_percentage < 25
+			}
+			check_variable = {
+				global.ring_corruption_percentage > 15
+			}
+			NOT = { has_idea = idea_ring_corruption_corruption_good_low }
+		}
+		ring_corruption_idea_remover = yes
+		add_ideas = idea_ring_corruption_corruption_good_low
+	}
+	else_if = {
+		limit = {
+			check_variable = {
+				global.ring_corruption_percentage < 25
+			}
+			NOT = { has_idea = idea_ring_corruption_good_high }
+		}
+		ring_corruption_idea_remover = yes
+		add_ideas = idea_ring_corruption_good_high
+	}
+}
+
+ring_corruption_idea_remover = {
+	if = {
+		limit = {
+			has_idea = idea_ring_corruption_good_high
+		}
+		remove_ideas = idea_ring_corruption_good_high
+	}
+	else_if = {
+		limit = {
+			has_idea = idea_ring_corruption_corruption_good_low
+		}
+		remove_ideas = idea_ring_corruption_corruption_good_low
+	}
+	else_if = {
+		limit = {
+			has_idea = idea_ring_corruption_corruption_neutral
+		}
+		remove_ideas = idea_ring_corruption_corruption_neutral
+	}
+	else_if = {
+		limit = {
+			has_idea = idea_ring_corruption_bad_low
+		}
+		remove_ideas = idea_ring_corruption_bad_low
+	}
+	else_if = {
+		limit = {
+			has_idea = idea_ring_corruption_bad_high
+		}
+		remove_ideas = idea_ring_corruption_bad_high
+	}
 }
