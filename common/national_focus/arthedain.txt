@@ -123,6 +123,24 @@ focus = {
 	}
 }
 
+
+focus = {
+	id = ART_glory_to_the_rangers
+	icon = GFX_goal_arnor
+	ai_will_do = { factor = 4 }
+	cost = 10
+	x = 1
+	y = 1
+	relative_position_id = ART_research_agremeent_rohan
+	prerequisite = { focus = ART_research_agremeent_rohan }
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP }
+	completion_reward = {
+		rangers_of_the_north_idea_upgrade = yes
+		army_experience = 15
+	}
+}
+
 focus = {
 	id = ART_glory_to_arnor
 	icon = GFX_goal_arnor
@@ -131,7 +149,7 @@ focus = {
 		NOT = { has_idea = ART_broken_kingdom }
 	}
 	cost = 10
-	x = 0
+	x = -1
 	y = 1
 	relative_position_id = ART_research_agremeent_rohan
 	prerequisite = { focus = ART_research_agremeent_rohan }
@@ -790,6 +808,10 @@ focus = {
 		set_politics = { ruling_party = cooperative elections_allowed = no }
 		add_stability = 0.025
 		add_political_power = 100
+		add_popularity = {
+			ideology = cooperative
+			popularity = 0.10
+		}
 		clr_country_flag =  ART_political_unrest
 	}
 }
@@ -974,7 +996,10 @@ focus = {
 	relative_position_id = ART_mutual_defense_pact
 	x = 0
 	y = 1
-	prerequisite = { focus = ART_mutual_defense_pact}
+	prerequisite = { focus = ART_mutual_defense_pact }
+	bypass = {
+		is_in_faction = yes
+	}
 	cost = 5
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_POLITICAL }
@@ -1051,7 +1076,10 @@ focus = {
 	ai_will_do = { factor = 5 }
 	available = {
 		GON = {
-			NOT = { has_completed_focus = GON_invite_aragorn_to_minas_tirith }
+			NOT = { 
+				has_completed_focus = GON_invite_aragorn_to_minas_tirith 
+			}
+			has_completed_focus = GON_enforce_militair_loyalty
 		}
 		custom_trigger_tooltip = {
 			tooltip = ring_aragorn_is_alive_tt
@@ -1135,6 +1163,13 @@ focus = {
 					is_in_faction_with = ART
 				}
 			}
+			SHI = {
+				exists = yes
+				NOT = {
+					is_puppet_of = ART
+					is_in_faction_with = ART
+				}
+			}
 		}
 	}
 	bypass = {
@@ -1147,6 +1182,13 @@ focus = {
 				}
 			}
 			CAR = {
+				OR = {
+					is_puppet_of = ART
+					is_in_faction_with = ART
+					exists = no
+				}
+			}
+			ART  ={
 				OR = {
 					is_puppet_of = ART
 					is_in_faction_with = ART
@@ -1186,6 +1228,18 @@ focus = {
 				}
 			}
 			create_wargoal = { target = CAR type = annex_everything }
+		}
+		if = {
+			limit = {
+				SHI = {
+					exists = yes
+					NOT = {
+						is_puppet_of = ART
+						is_in_faction_with = ART
+					}
+				}
+			}
+			create_wargoal = { target = SHI type = annex_everything }
 		}
 	}
 }
@@ -1268,11 +1322,55 @@ focus = {
 	}
 }
 
+focus = {
+	id = ART_core_shire
+	icon = GFX_goal_arnor
+	ai_will_do = { factor = 10 }
+	relative_position_id = ART_unite_by_force
+	x = 0
+	y = 2
+	prerequisite = { focus = ART_unite_by_force }
+	available = {
+		SHI = {
+			OR = {
+				exists = no
+				is_puppet_of = ART
+			}
+		}
+	}
+	cost = 10
+	search_filters = { FOCUS_FILTER_MANPOWER }
+	completion_reward = {
+		if = {
+			limit = {
+				SHI = {
+					is_puppet_of = ART
+				}
+			}
+			SHI = {
+				every_owned_state = {
+					add_core_of = ART
+				}
+			}
+		} else = {
+			every_owned_state = {
+				limit = { is_core_of = SHI }
+				add_core_of = ART
+			}
+		}
+	}
+}
 #Focus for Reunite_with_gondor
 focus = {
 	id = ART_reunite_with_gondor
 	icon = GFX_goal_gon_gondor_angmar_deal
-	ai_will_do = { factor = 8 }
+	ai_will_do = { 
+		factor = 8 
+		modifier = {
+			factor = 0
+			is_in_faction_with = GON
+		}
+	}
 	relative_position_id = ART_unite_the_kingdom_of_arnor
 	x = 3
 	y = 1
@@ -1281,7 +1379,9 @@ focus = {
 	available = {
 		GON = {
 			has_completed_focus = GON_crown_aragorn_king
-			NOT = { has_war_with = ART }
+			NOT = { 
+				has_war_with = ART
+			}
 		}
 		is_puppet = no
 	}
@@ -1302,6 +1402,7 @@ focus = {
 		ANG = {
 			NOT = {
 				has_government = cooperative
+				is_in_faction_with = ART
 			}
 		}
 	}
@@ -1326,6 +1427,9 @@ focus = {
 			OR = {
 				has_government = belligerent
 				has_government = revolutionary
+			}
+			NOT = {
+				is_in_faction_with = ART
 			}
 		}
 	}
