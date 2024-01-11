@@ -6,3 +6,5 @@ Feel free to contribute!
 Steam Page: https://steamcommunity.com/sharedfiles/filedetails/?id=1314446921
 
 ![map iamge](https://steamuserimages-a.akamaihd.net/ugc/923672954383658533/1E762B7F6EC2386F7A6BD1CD71DCACF4F5C54EB4/)
+
+**Important Note:** Several parts of this mod are licensed *exclusively* to this project. Do not re-use any assets from this repository in other projects without express permission from the authors.
