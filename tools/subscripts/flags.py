@@ -13,10 +13,10 @@ large_size = (82, 52)
 medium_size = (41, 26)
 small_size = (10, 7)
 
-# Function to resize and save the image
+# Function to resize and save the image using Pillow
 def resize_and_save(image_path, output_dir, size, format='tga'):
     with Image.open(image_path) as img:
-        img = img.resize(size, Image.ANTIALIAS)
+        img = img.resize(size, Image.Resampling.LANCZOS)
         output_file = os.path.splitext(os.path.basename(image_path))[0] + ('.' + format if format else '')
         output_path = os.path.join(output_dir, output_file)
         img.save(output_path)
