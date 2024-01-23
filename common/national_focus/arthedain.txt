@@ -1033,6 +1033,9 @@ focus = {
 focus = {
 	id = ART_ask_rhudaur_to_join
 	icon = GFX_goal_rhudaur_unite
+	available = {
+		is_in_faction = yes
+	}
 	ai_will_do = { 
 		factor = 3 
 		modifier = {
@@ -1042,10 +1045,9 @@ focus = {
 	}
 	bypass = {
 		OR = {
-			has_war_with = RHD
-			RHD = {
-				is_puppet_of = ART
-			}
+			has_war_with = ART
+			RHD = { is_puppet_of = ART }
+			is_in_faction_with = ART
 		}
 	}
 	relative_position_id = ART_form_an_alliance
@@ -1070,12 +1072,14 @@ focus = {
 			CAR = { has_government = cooperative }
 		}
 	}
+	available = {
+		is_in_faction = yes
+	}
 	bypass = {
 		OR = {
-			has_war_with = CAR
-			CAR = {
-				is_puppet_of = ART
-			}
+			has_war_with = ART
+			CAR = { is_puppet_of = ART }
+			is_in_faction_with = ART
 		}
 	}
 	relative_position_id = ART_form_an_alliance
@@ -1105,6 +1109,10 @@ focus = {
 		news_event = { hours = 48 id = news.353 }
 		set_cosmetic_tag = ARN
 		set_country_flag = ART_established_arnor
+		swap_ideas = {
+			remove_idea = ART_earendur_legacy_0
+			add_idea = ART_earendur_legacy_1
+		}
 		RHD = { 
 			country_event = { days = 1 id = arthedain.4 } 
 		}
@@ -1405,14 +1413,10 @@ focus = {
 		}
 	}
 	available = {
-		ANG = {
-			NOT = {
-				has_government = cooperative
-			}
+		OR = {
+			ANG = { NOT = { has_government = cooperative } }
+			ANG = { NOT = { is_in_faction_with = ART } }
 		}
-	}
-	bypass = {
-		is_in_faction_with = ANG
 	}
 	prerequisite = { focus = ART_unite_the_kingdom_of_arnor }
 	relative_position_id = ART_unite_the_kingdom_of_arnor
@@ -1478,6 +1482,7 @@ focus = {
 		search_filters = { FOCUS_FILTER_REVOLUTIONARY }
 		completion_reward = { 
 			add_ideas = ART_a_new_path 
+			remove_ideas = ART_earendur_legacy_0
 			custom_effect_tooltip = ART_tooltip_political_unrest
 		}
 	 }
@@ -1627,15 +1632,53 @@ focus = {
 			add_ideas = ART_united_we_stand
 		}
 	}
+	
+	focus = {
+		id = ART_expand_the_government
+		icon = GFX_goal_generic_improve_the_administration
+		ai_will_do = { factor = 4 }
+		prerequisite = { focus = ART_enforce_new_goverment}
+		relative_position_id = ART_enforce_new_goverment
+		available = {
+			OR = {
+				has_government = revolutionary
+				has_government = belligerent
+			}
+		}
+		x = 0
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			if = {
+				limit = {
+					has_government = belligerent
+				}
+				custom_effect_tooltip = ART_tooltip_unlock_ewald_duerg
+			}
+			else_if = {
+				limit = {
+					has_government = revolutionary
+				}
+				custom_effect_tooltip = ART_tooltip_unlock_helga_banes
+			}
+			else = {
+				custom_effect_tooltip = ART_tooltip_unlock_ideology_related_advisor
+			}
+			add_political_power = 50
+		}
+	}
+
 	 #Focus for Conquer the Realm of Arnor
 	focus = {
 		id = conquertherealmofarnor
 		icon = GFX_goal_generic_major_war
 		ai_will_do = { factor = 4 }
-		relative_position_id = ART_enforce_new_goverment
+		relative_position_id = ART_expand_the_government
 		x = 0
 		y = 1
-		prerequisite = { focus = ART_enforce_new_goverment }
+		prerequisite = { focus = ART_expand_the_government }
 		cost = 10
 		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_ANNEXATION }
