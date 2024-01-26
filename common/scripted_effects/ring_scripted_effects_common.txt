@@ -1119,9 +1119,12 @@ ring_add_ring = {
 	#	}
 	#}
 	#ring_update_bop_values = yes
-	set_variable = { ring_corruption_percentage = 0 }
+	set_variable = { ring_corruption_percentage = 15 }
 	set_variable = { ring_corruption_belligerent = 0 }
 	set_variable = { ring_corruption_stability = 0 }
+	set_variable = { ring_corruption_attack_bonus = 0 }
+	set_variable = { ring_corruption_defense_bonus = 0 }
+	add_ideas = idea_ring_corruption_good_high
 	MOR = {
 		#ring_update_bop_values = yes
 	}
@@ -1201,29 +1204,56 @@ ring_set_ring_attitude = {
 
 ring_corruption_percentage_down = {
 	subtract_from_variable = { global.ring_corruption_percentage = 10 }
+	if = {
+		limit = {
+			check_variable = { global.ring_corruption_percentage < 0 }
+		}
+		set_variable = { global.ring_corruption_percentage = 0 }
+	}
 	ring_corruption_idea_checker = yes
 	custom_effect_tooltip = GENERIC_ring_corruption_decrease_10
 }
 
 ring_corruption_percentage_down_20 = {
 	subtract_from_variable = { global.ring_corruption_percentage = 20 }
+	if = {
+		limit = {
+			check_variable = { global.ring_corruption_percentage < 0 }
+		}
+		set_variable = { global.ring_corruption_percentage = 0 }
+	}
 	ring_corruption_idea_checker = yes
 	custom_effect_tooltip = GENERIC_ring_corruption_decrease_20
 }
 
 ring_corruption_percentage_up = {
 	add_to_variable = { global.ring_corruption_percentage = 10 }
+	if = {
+		limit = {
+			check_variable = { var = global.ring_corruption_percentage  value = 100  compare = greater_than_or_equals }
+		}
+		ring_give_sauron_ring = yes
+		set_variable = { global.ring_corruption_percentage = 100 }
+	}
 	ring_corruption_idea_checker = yes
 	custom_effect_tooltip = GENERIC_ring_corruption_increase_10
 }
 
 ring_corruption_percentage_up_20 = {
 	add_to_variable = { global.ring_corruption_percentage = 20 }
+	if = {
+		limit = {
+			check_variable = { var = global.ring_corruption_percentage  value = 100  compare = greater_than_or_equals }
+		}
+		ring_give_sauron_ring = yes
+		set_variable = { global.ring_corruption_percentage = 100 }
+	}
 	ring_corruption_idea_checker = yes
 	custom_effect_tooltip = GENERIC_ring_corruption_increase_20
 }
 
 ring_corruption_idea_checker = {
+	#I know how it looks but believe me it works
 	if = {
 		limit = {
 			check_variable = {
@@ -1236,9 +1266,7 @@ ring_corruption_idea_checker = {
 	}
 	else_if = {
 		limit = {
-			check_variable = {
-				global.ring_corruption_percentage < 75
-			}
+			check_variable = { var = global.ring_corruption_percentage  value = 75  compare = less_than_or_equals }
 			check_variable = {
 				global.ring_corruption_percentage > 50
 			}
@@ -1249,35 +1277,30 @@ ring_corruption_idea_checker = {
 	}
 	else_if = {
 		limit = {
+			check_variable = { var = global.ring_corruption_percentage  value = 50  compare = less_than_or_equals }
 			check_variable = {
-				global.ring_corruption_percentage < 50
+				global.ring_corruption_percentage > 20
 			}
-			check_variable = {
-				global.ring_corruption_percentage > 25
-			}
-			NOT = { has_idea = idea_ring_corruption_corruption_neutral }
+			NOT = { has_idea = idea_ring_corruption_neutral }
 		}
 		ring_corruption_idea_remover = yes
-		add_ideas = idea_ring_corruption_corruption_neutral
+		add_ideas = idea_ring_corruption_neutral
 	}
 	else_if = {
 		limit = {
+			
+			check_variable = { var = global.ring_corruption_percentage  value = 20  compare = less_than_or_equals }
 			check_variable = {
-				global.ring_corruption_percentage < 25
+				global.ring_corruption_percentage > 10
 			}
-			check_variable = {
-				global.ring_corruption_percentage > 15
-			}
-			NOT = { has_idea = idea_ring_corruption_corruption_good_low }
+			NOT = { has_idea = idea_ring_corruption_good_low }
 		}
 		ring_corruption_idea_remover = yes
-		add_ideas = idea_ring_corruption_corruption_good_low
+		add_ideas = idea_ring_corruption_good_low
 	}
 	else_if = {
 		limit = {
-			check_variable = {
-				global.ring_corruption_percentage < 25
-			}
+			check_variable = { var = global.ring_corruption_percentage  value = 10  compare = less_than_or_equals }
 			NOT = { has_idea = idea_ring_corruption_good_high }
 		}
 		ring_corruption_idea_remover = yes
@@ -1294,15 +1317,15 @@ ring_corruption_idea_remover = {
 	}
 	else_if = {
 		limit = {
-			has_idea = idea_ring_corruption_corruption_good_low
+			has_idea = idea_ring_corruption_good_low
 		}
-		remove_ideas = idea_ring_corruption_corruption_good_low
+		remove_ideas = idea_ring_corruption_good_low
 	}
 	else_if = {
 		limit = {
-			has_idea = idea_ring_corruption_corruption_neutral
+			has_idea = idea_ring_corruption_neutral
 		}
-		remove_ideas = idea_ring_corruption_corruption_neutral
+		remove_ideas = idea_ring_corruption_neutral
 	}
 	else_if = {
 		limit = {
