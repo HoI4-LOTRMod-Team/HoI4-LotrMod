@@ -13,22 +13,639 @@ focus_tree = {
 	reset_on_civilwar = no
 
 ##############shared focuses
-shared_focus = army_effort
-shared_focus = aviation_effort
-shared_focus = naval_effort
-shared_focus = industrial_effort
 
-#Custom focuses start here
-#Focus for The Fate of Arthedain
 focus = {
-	id = ART_the_fate_of_arthedain
-	icon = GFX_goal_generic_CAS
-	ai_will_do = { factor = 5 }
-	x = 22
+	id = ART_rangers_of_the_north
+	icon = GFX_goal_generic_sabres
+	ai_will_do = { factor = 4 }
+	x = 2
 	y = 0
 	cost = 5
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		army_experience = 5
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.25
+			uses = 2
+			category = lotr_infantry
+		}
+		add_ideas = ART_rangers_of_the_north_0
+	}
+}
+
+focus = {
+	id = ART_militair_research
+	icon = GFX_goal_lth_defensive_alliance
+	ai_will_do = { factor = 4 }
+	cost = 10
+	x = 0
+	y = 1
+	relative_position_id = ART_rangers_of_the_north
+	prerequisite = { focus = ART_rangers_of_the_north }
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		army_experience = 5
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.5
+			uses = 2
+			category = lotr_infantry_weapons
+		}
+	}
+}
+
+focus = {
+	id = ART_rangers_school
+	icon = GFX_goal_lth_open_books_culture
+	ai_will_do = { factor = 4 }
+	cost = 5
+	x = -1
+	y = 1
+	relative_position_id = ART_militair_research
+	prerequisite = { focus = ART_militair_research }
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP }
+	completion_reward = {
+		army_experience = 5
+		rangers_of_the_north_idea_upgrade = yes
+	}
+}
+
+focus = {
+	id = ART_support
+	icon = GFX_goal_generic_arrows
+	ai_will_do = { factor = 4 }
+	cost = 5
+	x = 1
+	y = 1
+	relative_position_id = ART_militair_research
+	prerequisite = { focus = ART_militair_research }
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		army_experience = 5
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.75
+			uses = 1
+			category = lotr_support_tech
+		}
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.5
+			uses = 1
+			category = lotr_support_tech
+		}
+	}
+}
+
+focus = {
+	id = ART_research_agremeent_rohan
+	icon = GFX_goal_roh_rohan_flag
+	ai_will_do = {
+		factor = 4
+	}
+	cost = 5
+	x = -1
+	y = 1
+	relative_position_id = ART_support
+	prerequisite = { focus = ART_support focus = ART_rangers_school }
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		ROH = {
+			country_event = { id = rohan.9 days = 5 }
+		}
+		custom_effect_tooltip = ART_tooltip_research_agremeent_rohan
+	}
+}
+
+
+focus = {
+	id = ART_glory_to_the_rangers
+	icon = GFX_goal_generic_sword_arrow_and_shield
+	ai_will_do = { factor = 4 }
+	cost = 10
+	x = 1
+	y = 1
+	relative_position_id = ART_research_agremeent_rohan
+	prerequisite = { focus = ART_research_agremeent_rohan }
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP }
+	completion_reward = {
+		rangers_of_the_north_idea_upgrade = yes
+		army_experience = 15
+	}
+}
+
+focus = {
+	id = ART_glory_to_arnor
+	icon = GFX_goal_arnor
+	ai_will_do = { factor = 15 }
+	available = {
+		NOT = { has_idea = ART_broken_kingdom }
+	}
+	cost = 10
+	x = -1
+	y = 1
+	relative_position_id = ART_research_agremeent_rohan
+	prerequisite = { focus = ART_research_agremeent_rohan }
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_STABILITY }
+	completion_reward = {
+		add_ideas = ART_arnors_glory
+	}
+}
+
+focus = {
+	id = ART_industry_of_arthedain
+	icon = GFX_goal_generic_nature_trees
+	ai_will_do = {
+		factor = 4
+		modifier = {
+			add = 15
+			date < 3019.1.1
+		}
+	}
+	x = 7
+	y = 0
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.5
+			uses = 2
+			category = lotr_labour
+		}
+	}
+}
+
+focus = {
+	id = ART_lean_towareds_the_farmers
+	icon = GFX_goal_lth_other_people_association
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_industry_of_arthedain
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_industry_of_arthedain }
+	mutually_exclusive = { focus = ART_lean_towareds_the_rangers }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_REVOLUTIONARY FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+		}
+		custom_effect_tooltip = ART_tooltip_unlock_farmer_advisor
+		add_popularity = {
+			ideology = revolutionary
+			popularity = 0.03
+		}
+	}
+}
+
+focus = {
+	id = ART_appease_the_farmers
+	icon = GFX_goal_generic_windmill
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_lean_towareds_the_farmers
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_lean_towareds_the_farmers }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_REVOLUTIONARY}
+	completion_reward = {
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = synthetic_refinery level = 2 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = synthetic_refinery level = 1 instant_build = yes }
+		}
+		39 = {
+			add_resource = {
+				type = oil
+				amount = 25
+			}
+		}
+		add_popularity = {
+			ideology = revolutionary
+			popularity = 0.03
+		}
+	}
+}
+
+focus = {
+	id = ART_peasants_based_industry
+	icon = GFX_goal_gon_ensure_popular_support_peasant_farmer
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_appease_the_farmers
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_appease_the_farmers }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_STABILITY }
+	completion_reward = {
+		add_ideas = ART_nation_of_the_peasants
+	}
+}
+
+focus = {
+	id = ART_lean_towareds_the_rangers
+	icon = GFX_goal_rangers_of_the_north
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_industry_of_arthedain
+	x = -2
+	y = 1
+	prerequisite = { focus = ART_industry_of_arthedain }
+	prerequisite = { focus = ART_rangers_of_the_north }
+	mutually_exclusive = { focus = ART_lean_towareds_the_farmers }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_UNALIGNED }
+	completion_reward = {
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+		custom_effect_tooltip = ART_tooltip_unlock_ranger_general
+		add_popularity = {
+			ideology = unaligned
+			popularity = 0.03
+		}
+	}
+}
+
+focus = {
+	id = ART_follow_the_rangers
+	icon = GFX_goal_lth_generic_archers
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_lean_towareds_the_rangers
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_lean_towareds_the_rangers }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH FOCUS_FILTER_UNALIGNED FOCUS_FILTER_ARMY_XP }
+	completion_reward = {
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.75
+			uses = 1
+			category = lotr_infantry_archery
+		}
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.5
+			uses = 1
+			category = lotr_men_secrets_rangers
+		}
+		rangers_of_the_north_idea_upgrade = yes
+		army_experience = 25
+		add_popularity = {
+			ideology = unaligned
+			popularity = 0.03
+		}
+	}
+}
+
+
+focus = {
+	id = ART_militair_production
+	icon = GFX_goal_generic_anvil
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_follow_the_rangers
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_follow_the_rangers }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+		}
+			random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = ART_develop_fornost
+	icon = GFX_goal_lth_defensive_perimeter_castle
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_industry_of_arthedain
+	x = 2
+	y = 1
+	prerequisite = { focus = ART_industry_of_arthedain }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		add_political_power = 50
+		148 = {
+			add_extra_state_shared_building_slots = 3
+			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+			add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+		}
+		148 = {
+			add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1863 }
+		}
+	}
+}
+
+focus = {
+	id = ART_develop_coastal_states
+	icon = GFX_goal_lth_river_ships_navigation
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_develop_fornost
+	x = 2
+	y = 1
+	prerequisite = { focus = ART_develop_fornost }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		45 = {
+			add_extra_state_shared_building_slots = 3
+			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+			add_building_construction = { type = dockyard level = 2 instant_build = yes }
+		}
+		40 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = dockyard level = 1 instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = ART_navy_of_arnor
+	icon = GFX_goal_gon_the_peoples_fleet_ship
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_develop_coastal_states
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_develop_coastal_states }
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_NAVY_XP }
+	completion_reward = {
+		navy_experience = 25
+	}
+}
+
+focus = {
+	id = ART_flagship_of_the_navy
+	icon = GFX_goal_lth_river_ships
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_navy_of_arnor
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_navy_of_arnor }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_NAVY_XP FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		navy_experience = 25
+		add_tech_bonus = {
+			name = cr_bonus
+			bonus = 0.75
+			ahead_reduction = 2
+			uses = 2
+			category = lotr_sailing_galley
+		}
+	}
+}
+
+focus = {
+	id = ART_improve_the_infrastructure
+	icon = GFX_goal_generic_infrastructure_investment
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_develop_fornost
+	x = 4
+	y = 1
+	prerequisite = { focus = ART_develop_fornost }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		every_owned_state = {
+			limit = {
+				infrastructure < 5
+			}
+			add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+		}
+	}
+}
+
+
+focus = {
+	id = ART_invest_in_puppets
+	icon = GFX_goal_lth_investment
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_improve_the_infrastructure
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_improve_the_infrastructure focus = ART_develop_coastal_states }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		every_subject_country = {
+			limit = {
+				exists = yes
+			}
+			add_autonomy_ratio = {
+				value = -0.1
+			}
+			every_owned_state = {
+				limit = {
+					infrastructure < 5
+				}
+				random_select_amount = 3
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+			}
+		}
+	}
+}
+
+focus = {
+	id = ART_expand_the_mines_of_evendium
+	icon = GFX_goal_generic_mining_industry
+	ai_will_do = { factor = 5 }
+	relative_position_id = ART_develop_fornost
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_develop_fornost }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		46 = {
+			add_resource = {
+                type = steel
+                amount = 12
+            }
+		}
+	}
+}
+
+focus = {
+	id = ART_never_sleeping_industry
+	icon = GFX_goal_generic_urban_city
+	ai_will_do = { factor = 5 }
+	relative_position_id = ART_expand_the_mines_of_evendium
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_expand_the_mines_of_evendium }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		add_ideas = ART_never_sleeping_industry
+	}
+}
+
+
+focus = {
+	id = ART_university_of_fornost
+	icon = GFX_goal_lth_library_caras_galadhon
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_never_sleeping_industry
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_never_sleeping_industry }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		add_research_slot = 1
+	}
+}
+
+focus = {
+	id = ART_develop_the_south
+	icon = GFX_goal_lth_burdens_of_leadership
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_university_of_fornost
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_university_of_fornost }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		39 = {
+			add_extra_state_shared_building_slots = 4
+			add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+		48 = {
+			add_extra_state_shared_building_slots = 3
+			add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = ART_goverment_investing_industry
+	icon = GFX_goal_generic_coins_money
+	ai_will_do = { factor = 4 }
+	relative_position_id = ART_industry_of_arthedain
+	x = 4
+	y = 1
+	prerequisite = { focus = ART_industry_of_arthedain }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		add_timed_idea = {
+			days = 365
+			idea = ART_goverment_investing_in_industry
+		}
+	}
+}
+
+focus = {
+	id = ART_research_agremeent_gondor
+	icon = GFX_goal_gondor
+	ai_will_do = { factor = 4 }
+	cost = 5
+	x = 6
+	y = 1
+	relative_position_id = ART_industry_of_arthedain
+	prerequisite = { focus = ART_industry_of_arthedain }
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		GON = {
+			country_event = { id = gondor.26 days = 5 }
+		}
+		custom_effect_tooltip = ART_tooltip_research_agremeent_gondor
+	}
+}
+
+focus = {
+	id = ART_the_fate_of_arthedain
+	icon = GFX_goal_arnor
+	ai_will_do = { factor = 5 }
+	x = 20
+	y = 0
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_POLITICAL }
 	completion_reward = { add_political_power = 100 }
+}
+
+#Focus for Let the Rangers Prevail
+focus = {
+	id = lettherangersprevail
+	icon = GFX_goal_rangers_of_the_north
+	ai_will_do = {
+		factor = 0
+		modifier = { factor = 0 is_going_unaligned = no }
+	}
+	relative_position_id = ART_the_fate_of_arthedain
+	x =0
+	y =1
+	mutually_exclusive = { focus = forgeanewpath focus=ART_support_the_monarchists}
+	prerequisite = { focus = ART_the_fate_of_arthedain}
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_UNALIGNED }
+	completion_reward = { add_ideas = generic_unaligned }
 }
 
 #Focus for Support the monarchists
@@ -40,13 +657,17 @@ focus = {
 		modifier = { factor = 0 is_going_cooperative = no }
 	}
 	relative_position_id = ART_the_fate_of_arthedain
-	x = -2
+	x = -4
 	y = 1
 	mutually_exclusive = { focus = forgeanewpath focus = lettherangersprevail}
 	prerequisite = { focus = ART_the_fate_of_arthedain}
 	cost = 5
 	available_if_capitulated = yes
-	completion_reward = { add_ideas = generic_cooperative }
+	search_filters = { FOCUS_FILTER_COOPERATIVE }
+	completion_reward = { 
+		add_ideas = ART_generic_cooperative
+		custom_effect_tooltip = ART_tooltip_political_unrest
+	}
 }
 
 #Focus for Unite the country
@@ -60,12 +681,14 @@ focus = {
 	prerequisite = { focus = ART_support_the_monarchists}
 	cost = 5
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_COOPERATIVE FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
 	completion_reward = { 
 		add_popularity = {
 			ideology = cooperative
-			popularity = 0.10
+			popularity = 0.075
 		}
 		add_stability = 0.10
+		add_political_power = 100
 	}
 }
 
@@ -80,68 +703,144 @@ focus = {
 	prerequisite = { focus = ART_support_the_monarchists}
 	cost = 5
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
 	completion_reward = { 
 		add_popularity = {
-			ideology = cooperative
-			popularity = 0.10
+			ideology = unaligned
+			popularity = -0.05
 		}
 		add_stability = 0.05
-		add_war_support = 0.10
+		add_war_support = 0.05
 	}
 }
 
 focus = {
-	id = ART_reinstate_monarchy
-	icon = GFX_goal_generic_home_defense
-	ai_will_do = { factor = 5 }
-	bypass = { has_government = cooperative }
-	available = { cooperative > 0.5 }
-	relative_position_id = ART_convince_the_rangers
-	x = -1
+	id = ART_campaign_investment
+	icon = GFX_goal_lth_treaty_invitation
+	ai_will_do = { factor = 3 }
+	relative_position_id = lettherangersprevail
+	x = 0
 	y = 1
-	prerequisite = { focus = ART_convince_the_rangers }
-	prerequisite = { focus = ART_unite_the_country }
-	cost = 10
+	prerequisite = { focus = ART_support_the_monarchists focus = forgeanewpath }
+	cost = 5
 	available_if_capitulated = yes
-	completion_reward = { set_politics = { ruling_party = cooperative elections_allowed = no } }
+	search_filters = { FOCUS_FILTER_POLITICAL }
+	completion_reward = { 
+		add_timed_idea = { idea = ART_political_campaign_investment days = 365 }
+		if = {
+			limit = {
+				has_completed_focus = ART_support_the_monarchists
+			}
+			add_popularity = {
+				ideology = cooperative
+				popularity = 0.05
+			}
+		}
+		else_if = {
+			limit = {
+				has_completed_focus = forgeanewpath
+			}
+			add_popularity = {
+				ideology = revolutionary
+				popularity = 0.025
+			}
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.025
+			}
+		}
+	}
 }
 
 focus = {
 	id = ART_change_in_law
 	icon = GFX_focus_hol_the_foundations_of_defense
 	ai_will_do = { factor = 5 }
-	relative_position_id = ART_reinstate_monarchy
-	prerequisite = { focus = ART_reinstate_monarchy }
-	x = 0
+	relative_position_id = ART_convince_the_rangers
+	prerequisite = { focus = ART_convince_the_rangers }
+	prerequisite = { focus = ART_unite_the_country }
+	x = -1
 	y = 1
-	available = { cooperative > 0.6 }
 	cost = 5
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_COOPERATIVE FOCUS_FILTER_POLITICAL }
 	completion_reward = { 
-		if = {
-			limit = {
-				has_idea = weak_centralization
-			}
-			swap_ideas = {
-				remove_idea = weak_centralization
-				add_idea = moderate_centralization
-			}
+		add_popularity = {
+			ideology = cooperative
+			popularity = 0.05
 		}
-		else_if = {
-			limit = {
-				has_idea = moderate_centralization
-			}
-			swap_ideas = {
-				remove_idea = moderate_centralization
-				add_idea = strong_centralization
-			}
-		}
+		increase_centralization = yes
 	}
 }
 
 focus = {
+	id = ART_reinstate_monarchy
+	icon = GFX_goal_lth_executive_vigour
+	ai_will_do = { 
+		factor = 3 
+		modifier = {
+			add = -999
+			has_war = yes
+		}
+	}
+	bypass = { has_government = cooperative }
+	available = { cooperative > 0.55 }
+	relative_position_id = ART_change_in_law
+	cancel_if_invalid = no
+	x = 0
+	y = 1
+	prerequisite = { focus = ART_change_in_law }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_COOPERATIVE FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL}
+	completion_reward = { 
+		set_politics = { ruling_party = cooperative elections_allowed = no }
+		add_stability = 0.025
+		add_political_power = 100
+		add_popularity = {
+			ideology = cooperative
+			popularity = 0.10
+		}
+		clr_country_flag =  ART_political_unrest
+	}
+}
+
+focus = {
+	id = ART_ranger_network
+	icon = GFX_goal_generic_spy_agency_eye
+	ai_will_do = { 
+		factor = 5 
+		modifier = {
+			factor = 0
+			has_intelligence_agency = yes
+		}
+	}
+	relative_position_id = ART_reinstate_monarchy
+	x = -2
+	y = 1
+	prerequisite = { focus = ART_reinstate_monarchy }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_ARMY_XP }
+	completion_reward = { 
+		if = {
+			limit = { has_dlc = "La Resistance" }
+			create_intelligence_agency = {
+				name = "Rangers of Arthedain"
+				icon = GFX_intelligence_agency_logo_generic_2
+			}
+		}
+		else = {
+			add_ideas = ART_ranger_network
+		}
+		army_experience = 10
+	}
+}
+
+
+focus = {
 	id = ART_invest_in_the_shire
-	icon = GFX_goal_generic_windmill
+	icon = GFX_goal_invest_in_the_shire
 	ai_will_do = { factor = 3 }
 	available = {
 		SHI = {
@@ -151,12 +850,13 @@ focus = {
 			}
 		}
 	}
-	relative_position_id = ART_change_in_law
+	relative_position_id = ART_reinstate_monarchy
 	x = 2
 	y = 1
-	prerequisite = { focus = ART_change_in_law }
+	prerequisite = { focus = ART_reinstate_monarchy }
 	cost = 10
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_POLITICAL }
 	completion_reward = {
 		SHI = {
 			add_opinion_modifier = { target = ART modifier = large_increase }
@@ -194,6 +894,7 @@ focus = {
 	prerequisite = { focus = ART_invest_in_the_shire }
 	cost = 10
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_POLITICAL }
 	completion_reward = {
 		add_opinion_modifier = { target = SHI modifier = small_increase }
 		SHI = {
@@ -214,6 +915,12 @@ focus = {
 	icon = GFX_goal_generic_intelligence_exchange
 	ai_will_do = { factor = 3 }
 	available = {
+		SHI = {
+			OR = {
+				is_subject_of = ART
+				is_puppet_of = ART
+			}
+		}
 	}
 	relative_position_id = ART_enforce_control_over_the_shire
 	x = 0
@@ -221,6 +928,7 @@ focus = {
 	prerequisite = { focus = ART_enforce_control_over_the_shire }
 	cost = 10
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_POLITICAL }
 	completion_reward = {
 		SHI = {
 			add_opinion_modifier = { target = ART modifier = large_increase }
@@ -238,97 +946,18 @@ focus = {
 		}
 	}
 }
-
-focus = {
-	id = ART_recover_the_army_industry
-	icon = GFX_goal_generic_anvil
-	ai_will_do = { factor = 10 }
-	relative_position_id = ART_change_in_law
-	x = 5
-	y = 1
-	prerequisite = { focus = ART_change_in_law focus = ART_enforce_new_goverment }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		random_owned_state = { 
-			add_extra_state_shared_building_slots = 2 
-			add_building_construction = { type = arms_factory level = 2 instant_build = yes } 
-		}
-		random_owned_state = { 
-			add_extra_state_shared_building_slots = 1 
-			add_building_construction = { type = arms_factory level = 1 instant_build = yes } 
-		}
-	}
-}
-
-focus = {
-	id = ART_recover_the_civilian_industry
-	icon = GFX_focus_generic_industry_2
-	ai_will_do = { factor = 10 }
-	relative_position_id = ART_change_in_law
-	x = 7
-	y = 1
-	prerequisite = { focus = ART_change_in_law focus = ART_enforce_new_goverment }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		random_owned_state = { 
-			add_extra_state_shared_building_slots = 2 
-			add_building_construction = { type = industrial_complex level = 2 instant_build = yes } 
-		}
-		random_owned_state = { 
-			add_extra_state_shared_building_slots = 2 
-			add_building_construction = { type = industrial_complex level = 2 instant_build = yes } 
-		}
-	}
-}
-
-focus = {
-	id = ART_expand_the_mines_of_evendium
-	icon = GFX_focus_generic_steel
-	ai_will_do = { factor = 5 }
-	relative_position_id = ART_recover_the_civilian_industry
-	x = -1
-	y = 1
-	prerequisite = { focus = ART_recover_the_army_industry focus = ART_recover_the_civilian_industry }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		46 = {
-			add_resource = {
-                type = steel
-                amount = 12
-            }
-		}
-	}
-}
-
-focus = {
-	id = ART_never_sleeping_industry
-	icon = GFX_goal_generic_windmill
-	ai_will_do = { factor = 5 }
-	relative_position_id = ART_expand_the_mines_of_evendium
-	x = 0
-	y = 1
-	prerequisite = { focus = ART_expand_the_mines_of_evendium }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_ideas = ART_never_sleeping_industry
-	}
-}
-
 #Focus for Improve Arnorian Relations
 focus = {
 	id = ART_improve_arnorian_relations
 	icon = GFX_goal_generic_improve_relations
 	ai_will_do = { factor = 3 }
-	relative_position_id = ART_change_in_law
+	relative_position_id = ART_reinstate_monarchy
 	x = 0
 	y = 1
-	prerequisite = { focus = ART_change_in_law }
+	prerequisite = { focus = ART_reinstate_monarchy }
 	cost = 5
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_POLITICAL }
 	completion_reward = {
 		CAR = { add_opinion_modifier = { target = ART modifier = large_increase } }
 		RHD = { add_opinion_modifier = { target = ART modifier = large_increase } }
@@ -341,7 +970,21 @@ focus = {
 focus = {
 	id = ART_mutual_defense_pact
 	icon = GFX_goal_generic_defence
-	ai_will_do = { factor = 3 }
+	ai_will_do = { 
+		factor = 3
+		modifier = {
+			add = 3
+			CAR = { has_government = cooperative }
+		}
+		modifier = {
+			add = 3
+			RHD = { has_government = cooperative }
+		}
+		modifier = {
+			add = 3
+			ANG = { has_government = belligerent }
+		}
+	}
 	relative_position_id = ART_improve_arnorian_relations
 	x = 0
 	y = 1
@@ -358,14 +1001,29 @@ focus = {
 focus = {
 	id = ART_form_an_alliance
 	icon = GFX_goal_generic_national_unity
-	ai_will_do = { factor = 5 }
+	ai_will_do = { 
+		factor = 5 
+		modifier = {
+			add = 3
+			CAR = { has_government = cooperative }
+		}
+		modifier = {
+			add = 3
+			RHD = { has_government = cooperative }
+		}
+	}
 	relative_position_id = ART_mutual_defense_pact
 	x = 0
 	y = 1
-	prerequisite = { focus = ART_mutual_defense_pact}
+	prerequisite = { focus = ART_mutual_defense_pact }
+	bypass = {
+		is_in_faction = yes
+	}
 	cost = 5
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_POLITICAL }
 	completion_reward = {
+		#TODO add something for when they are already in a faction
 		create_faction = "arnor_coalition"
 		add_political_power = 50
 	}
@@ -374,8 +1032,24 @@ focus = {
 #Focus for Ask Rhudaur to join
 focus = {
 	id = ART_ask_rhudaur_to_join
-	icon = GFX_goal_generic_improve_relations
-	ai_will_do = { factor = 3 }
+	icon = GFX_goal_rhudaur_unite
+	available = {
+		is_in_faction = yes
+	}
+	ai_will_do = { 
+		factor = 3 
+		modifier = {
+			add = 3
+			RHD = { has_government = cooperative }
+		}
+	}
+	bypass = {
+		OR = {
+			RHD = { has_war_with = ART }
+			RHD = { is_puppet_of = ART }
+			RHD = { is_in_faction_with = ART }
+		}
+	}
 	relative_position_id = ART_form_an_alliance
 	x = -1
 	y = 1
@@ -390,8 +1064,24 @@ focus = {
 #Focus for Ask Cardolan to join
 focus = {
 	id = ART_ask_cardolan_to_join
-	icon = GFX_goal_generic_improve_relations
-	ai_will_do = { factor = 3 }
+	icon = GFX_goal_cardolan_unite
+	ai_will_do = { 
+		factor = 3 
+		modifier = {
+			add = 3
+			CAR = { has_government = cooperative }
+		}
+	}
+	available = {
+		is_in_faction = yes
+	}
+	bypass = {
+		OR = {
+			CAR = { has_war_with = ART }
+			CAR = { is_puppet_of = ART }
+			CAR = { is_in_faction_with = ART }
+		}
+	}
 	relative_position_id = ART_form_an_alliance
 	x = 1
 	y = 1
@@ -419,6 +1109,10 @@ focus = {
 		news_event = { hours = 48 id = news.353 }
 		set_cosmetic_tag = ARN
 		set_country_flag = ART_established_arnor
+		swap_ideas = {
+			remove_idea = ART_earendur_legacy_0
+			add_idea = ART_earendur_legacy_1
+		}
 		RHD = { 
 			country_event = { days = 1 id = arthedain.4 } 
 		}
@@ -432,8 +1126,65 @@ focus = {
 }
 
 focus = {
+	id = ART_invite_heir_of_isildur
+	icon = GFX_goal_gondor_king_aragorn
+	ai_will_do = { factor = 5 }
+	available = {
+		GON = {
+			NOT = { 
+				has_completed_focus = GON_invite_aragorn_to_minas_tirith 
+			}
+			has_completed_focus = GON_enforce_militair_loyalty
+		}
+		custom_trigger_tooltip = {
+			tooltip = ring_aragorn_is_alive_tt
+			NOT = { ring_aragorn_is_dead = yes }
+		}
+		custom_trigger_tooltip = {
+			tooltip = ring_aragorn_not_in_fellowship_tt
+			NOT = { ring_aragorn_in_fellowship = yes }
+		}
+	}
+	mutually_exclusive = { focus = ART_reunite_with_gondor }
+	prerequisite = { focus = ART_unite_the_kingdom_of_arnor }
+	relative_position_id = ART_unite_the_kingdom_of_arnor
+	x = 5
+	y = 1
+	cost = 10
+	available_if_capitulated = no
+	completion_reward = {
+		create_country_leader = { name = "King Aragorn II" picture = "Portrait_Arthedain_King.dds" expire = "3080.1.1" ideology = protective traits = { patriot_king GON_isildur_heir } }
+	}
+}
+
+focus = {
+	id = ART_reinstate_isildurs_heir_gondor
+	icon = GFX_goal_mor_wargoal_gondor
+	ai_will_do = { factor = 5 }
+	available = {
+		GON = {
+			NOT = {
+				has_government = cooperative
+			}
+			has_completed_focus = GON_delegitimize_aragorns_claim
+		}
+	}
+	prerequisite = { focus = ART_invite_heir_of_isildur }
+	relative_position_id = ART_invite_heir_of_isildur
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	x = 0
+	y = 1
+	cost = 10
+	available_if_capitulated = no
+	will_lead_to_war_with = GON
+	completion_reward = {
+		create_wargoal = { target = GON type = puppet_wargoal_focus }
+	}
+}
+
+focus = {
 	id = ART_wisdom_of_all_of_arnor
-	icon = GFX_focus_research
+	icon = GFX_goal_lth_research_cooperation
 	ai_will_do = { factor = 4 }
 	relative_position_id = ART_unite_the_kingdom_of_arnor
 	prerequisite = { focus = ART_unite_the_kingdom_of_arnor}
@@ -441,6 +1192,7 @@ focus = {
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_RESEARCH }
 	completion_reward = {
 		add_research_slot = 1
 	}
@@ -466,6 +1218,35 @@ focus = {
 					is_in_faction_with = ART
 				}
 			}
+			SHI = {
+				exists = yes
+				NOT = {
+					is_puppet_of = ART
+					is_in_faction_with = ART
+				}
+			}
+		}
+	}
+	bypass = {
+		AND = {
+			RHD = {
+				OR = {
+					is_puppet_of = ART
+					exists = no
+				}
+			}
+			CAR = {
+				OR = {
+					is_puppet_of = ART
+					exists = no
+				}
+			}
+			SHI  ={
+				OR = {
+					is_puppet_of = ART
+					exists = no
+				}
+			}
 		}
 	}
 	prerequisite = { focus = ART_unite_the_kingdom_of_arnor }
@@ -474,6 +1255,7 @@ focus = {
 	y = 1
 	cost = 10
 	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_ANNEXATION }
 	completion_reward = {
 		if = {
 			limit = {
@@ -499,27 +1281,124 @@ focus = {
 			}
 			create_wargoal = { target = CAR type = annex_everything }
 		}
+		if = {
+			limit = {
+				SHI = {
+					exists = yes
+					NOT = {
+						is_puppet_of = ART
+						is_in_faction_with = ART
+					}
+				}
+			}
+			create_wargoal = { target = SHI type = annex_everything }
+		}
 	}
 }
 
+focus = {
+	id = ART_core_rhudaur
+	icon = GFX_goal_gon_ithilien_defensive_planning
+	ai_will_do = { factor = 50 }
+	relative_position_id = ART_unite_by_force
+	x = -1
+	y = 1
+	prerequisite = { focus = ART_unite_by_force }
+	available = {
+		RHD = {
+			exists = no
+			all_core_state = {
+				is_controlled_by = ROOT
+			}
+		}
+		
+	}
+	cost = 10
+	search_filters = { FOCUS_FILTER_MANPOWER }
+	completion_reward = {
+		every_owned_state = {
+			limit = { is_core_of = RHD }
+			add_core_of = ART
+		}
+	}
+}
+
+focus = {
+	id = ART_core_cardolan
+	icon = GFX_goal_gon_ithilien_defensive_planning
+	ai_will_do = { factor = 50 }
+	relative_position_id = ART_unite_by_force
+	x = 1
+	y = 1
+	prerequisite = { focus = ART_unite_by_force }
+	available = {
+		CAR = {
+			exists = no
+			all_core_state = {
+				is_controlled_by = ROOT
+			}
+		}
+	}
+	cost = 10
+	search_filters = { FOCUS_FILTER_MANPOWER }
+	completion_reward = {
+		every_owned_state = {
+			limit = { is_core_of = CAR }
+			add_core_of = ART
+		}
+	}
+}
+
+focus = {
+	id = ART_core_shire
+	icon = GFX_goal_gon_ithilien_defensive_planning
+	ai_will_do = { factor = 50 }
+	relative_position_id = ART_unite_by_force
+	x = 0
+	y = 2
+	prerequisite = { focus = ART_unite_by_force }
+	available = {
+		SHI = {
+			exists = no
+			all_core_state = {
+				is_controlled_by = ROOT
+			}
+		}
+	}
+	cost = 10
+	search_filters = { FOCUS_FILTER_MANPOWER }
+	completion_reward = {
+		every_owned_state = {
+			limit = { is_core_of = SHI }
+			add_core_of = ART
+		}
+	}
+}
 #Focus for Reunite_with_gondor
 focus = {
 	id = ART_reunite_with_gondor
-	icon = GFX_goal_gondor
-	ai_will_do = { factor = 8 }
+	icon = GFX_goal_gon_gondor_angmar_deal
+	ai_will_do = { 
+		factor = 8 
+		modifier = {
+			factor = 0
+			is_in_faction_with = GON
+		}
+	}
 	relative_position_id = ART_unite_the_kingdom_of_arnor
 	x = 3
 	y = 1
 	prerequisite = { focus =ART_unite_the_kingdom_of_arnor}
+	mutually_exclusive = { focus = ART_invite_heir_of_isildur }
 	available = {
 		GON = {
 			has_completed_focus = GON_crown_aragorn_king
-		}
-		NOT = {
-			GON = {
+			NOT = { 
 				has_war_with = ART
 			}
 		}
+		is_puppet = no
+		NOT = { is_in_faction_with = GON }
 	}
 	cost = 10
 	available_if_capitulated = yes
@@ -532,13 +1411,18 @@ focus = {
 }
 focus = {
 	id = ART_revenge_against_angmar
-	icon = GFX_goal_generic_major_war
-	ai_will_do = { factor = 3 }
+	icon = GFX_goal_wargoal_angmar_unaligned
+	ai_will_do = { 
+		factor = 3 
+		modifier = {
+			add = -999
+			has_war = yes
+		}
+	}
 	available = {
-		ANG = {
-			NOT = {
-				has_government = cooperative
-			}
+		OR = {
+			ANG = { NOT = { has_government = cooperative } }
+			ANG = { NOT = { is_in_faction_with = ART } }
 		}
 	}
 	prerequisite = { focus = ART_unite_the_kingdom_of_arnor }
@@ -547,45 +1431,67 @@ focus = {
 	x = 1
 	y = 1
 	cost = 10
+	search_filters = { FOCUS_FILTER_ANNEXATION }
 	available_if_capitulated = no
 	completion_reward = {
 		create_wargoal = { target = ANG type = annex_everything }
 	}
 }
-	 #Focus for Let the Rangers Prevail
- 			focus = {
- 			id = lettherangersprevail
- 			icon = GFX_goal_rangers_of_the_north
- 			ai_will_do = {
-				factor = 0
-				modifier = { factor = 0 is_going_unaligned = no }
+focus = {
+	id = ART_remove_evil_out_of_mount_gundabad
+	icon = GFX_goal_wargoal_gundabad
+	ai_will_do = { 
+		factor = 3 
+		modifier = {
+			add = -999
+			has_war = yes
+		}
+	}
+	available = {
+		GUN = {
+			OR = {
+				has_government = belligerent
+				has_government = revolutionary
 			}
-			relative_position_id = ART_the_fate_of_arthedain
- 	 		x =4
- 	 		y =1
- 	 		mutually_exclusive = { focus = forgeanewpath focus=ART_support_the_monarchists}
- 	 		prerequisite = { focus = ART_the_fate_of_arthedain}
- 	 		cost = 10
- 	  	available_if_capitulated = yes
- 			completion_reward = { add_ideas = generic_unaligned }
- 	 }
+			NOT = {
+				is_in_faction_with = ART
+			}
+		}
+	}
+	prerequisite = { focus = ART_revenge_against_angmar }
+	relative_position_id = ART_revenge_against_angmar
+	will_lead_to_war_with = ANG
+	x = 1
+	y = 1
+	cost = 10
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	completion_reward = {
+		create_wargoal = { target = GUN type = annex_everything }
+	}
+}
 
 	 #Focus for Forge a new Path
-			focus = {
-			id = forgeanewpath
-			icon = GFX_goal_generic_demand_territory
-			ai_will_do = {
-				factor = 3
-				modifier = { factor = 0 is_going_belligerent = no }
-			}
-			relative_position_id = ART_the_fate_of_arthedain
-	 		x =10
-	 		y =1
-	 		mutually_exclusive = { focus = ART_support_the_monarchists focus = lettherangersprevail}
-	 		prerequisite = { focus = ART_the_fate_of_arthedain}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = { add_ideas = generic_belligerent_intermediate add_ideas = generic_revolutionary_intermediate }
+	focus = {
+		id = forgeanewpath
+		icon = GFX_goal_generic_demand_territory
+		ai_will_do = {
+			factor = 3
+			modifier = { factor = 0 is_going_belligerent = no }
+		}
+		relative_position_id = ART_the_fate_of_arthedain
+		x =4
+		y =1
+		mutually_exclusive = { focus = ART_support_the_monarchists focus = lettherangersprevail}
+		prerequisite = { focus = ART_the_fate_of_arthedain}
+		cost = 5
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_REVOLUTIONARY }
+		completion_reward = { 
+			add_ideas = ART_a_new_path 
+			remove_ideas = ART_earendur_legacy_0
+			custom_effect_tooltip = ART_tooltip_political_unrest
+		}
 	 }
 
 	focus = {
@@ -603,7 +1509,8 @@ focus = {
 		prerequisite = { focus = forgeanewpath}
 		cost = 10
 		available_if_capitulated = yes
-		completion_reward = { set_politics = { ruling_party = belligerent elections_allowed = no } remove_ideas = generic_revolutionary_intermediate }
+		search_filters = {  }
+		completion_reward = { set_politics = { ruling_party = belligerent elections_allowed = no } remove_ideas = ART_a_new_path clr_country_flag =  ART_political_unrest }
 	}
 
 	focus = {
@@ -613,10 +1520,10 @@ focus = {
 		relative_position_id = ART_may_morgoth_guide_us
 		x =0
 		y =1
-		mutually_exclusive = { }
 		prerequisite = { focus = ART_may_morgoth_guide_us}
 		cost = 5
 		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			add_ideas = ART_revolutionary_banned
 			add_stability = -0.025
@@ -633,6 +1540,7 @@ focus = {
 		x = 1
 		y = 1
 		cost = 10
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			add_stability = 0.05
 			add_political_power = 75
@@ -653,24 +1561,7 @@ focus = {
 					popularity = 0.1
 				}
 			}
-			if = {
-				limit = {
-					has_idea = weak_centralization
-				}
-				swap_ideas = {
-					remove_idea = weak_centralization
-					add_idea = moderate_centralization
-				}
-			}
-			else_if = {
-				limit = {
-					has_idea = moderate_centralization
-				}
-				swap_ideas = {
-					remove_idea = moderate_centralization
-					add_idea = strong_centralization
-				}
-			}
+			increase_centralization = yes
 		}
 	}
 	 
@@ -687,6 +1578,7 @@ focus = {
 		}
 		cost = 10
 		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
 		completion_reward = {
 			add_ideas = MOR_servant_morgoth
 		}
@@ -707,7 +1599,8 @@ focus = {
 		prerequisite = { focus = forgeanewpath}
 		cost = 10
 		available_if_capitulated = yes
-		completion_reward = { set_politics = { ruling_party = revolutionary elections_allowed = no } remove_ideas = generic_belligerent_intermediate }
+		search_filters = { FOCUS_FILTER_REVOLUTIONARY }
+		completion_reward = { set_politics = { ruling_party = revolutionary elections_allowed = no } remove_ideas = ART_a_new_path clr_country_flag =  ART_political_unrest }
 	}
 
 	focus = {
@@ -720,6 +1613,7 @@ focus = {
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		completion_reward = {
 			add_ideas = ART_belligerent_banned
 			add_stability = -0.025
@@ -740,70 +1634,109 @@ focus = {
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_MANPOWER }
 		completion_reward = {
-			add_ideas = ART_nation_of_the_peasants
+			add_ideas = ART_united_we_stand
 		}
 	}
-	 #Focus for Conquer the Realm of Arnor
-			focus = {
-			id = conquertherealmofarnor
-			icon = GFX_goal_generic_major_war
-			ai_will_do = { factor = 4 }
-			relative_position_id = ART_enforce_new_goverment
-	 		x = 0
-	 		y = 1
-	 		mutually_exclusive = { }
-	 		prerequisite = { focus = ART_enforce_new_goverment }
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				#Cardolan
-				add_state_claim = 35 
-				add_state_claim = 36 
-				add_state_claim = 144 
-				add_state_claim = 145 
-				add_state_claim = 149 
-				add_state_claim = 150
-				#Rhudaur
-				add_state_claim = 62 
-				add_state_claim = 63 
-				add_state_claim = 64
-				add_state_claim = 151 
-				add_threat = 3
+	
+	focus = {
+		id = ART_expand_the_government
+		icon = GFX_goal_generic_improve_the_administration
+		ai_will_do = { factor = 4 }
+		prerequisite = { focus = ART_enforce_new_goverment}
+		relative_position_id = ART_enforce_new_goverment
+		available = {
+			OR = {
+				has_government = revolutionary
+				has_government = belligerent
 			}
+		}
+		x = 0
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			if = {
+				limit = {
+					has_government = belligerent
+				}
+				custom_effect_tooltip = ART_tooltip_unlock_ewald_duerg
+			}
+			else_if = {
+				limit = {
+					has_government = revolutionary
+				}
+				custom_effect_tooltip = ART_tooltip_unlock_helga_banes
+			}
+			else = {
+				custom_effect_tooltip = ART_tooltip_unlock_ideology_related_advisor
+			}
+			add_political_power = 50
+		}
+	}
+
+	 #Focus for Conquer the Realm of Arnor
+	focus = {
+		id = conquertherealmofarnor
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 4 }
+		relative_position_id = ART_expand_the_government
+		x = 0
+		y = 1
+		prerequisite = { focus = ART_expand_the_government }
+		cost = 10
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			#Cardolan
+			add_state_claim = 35 
+			add_state_claim = 36 
+			add_state_claim = 144 
+			add_state_claim = 145 
+			add_state_claim = 149 
+			add_state_claim = 150
+			#Rhudaur
+			add_state_claim = 62 
+			add_state_claim = 63 
+			add_state_claim = 64
+			add_state_claim = 151 
+			add_threat = 3
+		}
 	 }
 
 	#Focus for Demand Cardolan
-			focus = {
-			id = demandcardolan
-			icon = GFX_goal_goal_generic_forceful_treaty
-			ai_will_do = { factor = 2 }
-			relative_position_id = conquertherealmofarnor
-	 		x = -1
-	 		y = 1
-	 		mutually_exclusive = { }
-	 		prerequisite = { focus = conquertherealmofarnor}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				CAR = { country_event = { days = 1 id = arthedain.2 } }
-			}
+	focus = {
+		id = demandcardolan
+		icon = GFX_goal_goal_generic_forceful_treaty
+		ai_will_do = { factor = 2 }
+		relative_position_id = conquertherealmofarnor
+		x = -1
+		y = 1
+		prerequisite = { focus = conquertherealmofarnor}
+		cost = 10
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			CAR = { country_event = { days = 1 id = arthedain.2 } }
+		}
 	 }
 
-			focus = {
-			id = ART_demand_rhudaur
-			icon = GFX_goal_goal_generic_forceful_treaty
-			ai_will_do = { factor = 3 }
-			relative_position_id = conquertherealmofarnor
-	 		x = 1
-	 		y = 1
-	 		mutually_exclusive = { }
-	 		prerequisite = { focus = conquertherealmofarnor}
-	 		cost = 10
-	  	available_if_capitulated = yes
-			completion_reward = {
-				RHD = { country_event = { days = 1 id = arthedain.2 } }
-			}
+	focus = {
+		id = ART_demand_rhudaur
+		icon = GFX_goal_goal_generic_forceful_treaty
+		ai_will_do = { factor = 3 }
+		relative_position_id = conquertherealmofarnor
+		x = 1
+		y = 1
+		prerequisite = { focus = conquertherealmofarnor}
+		cost = 10
+		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+		completion_reward = {
+			RHD = { country_event = { days = 1 id = arthedain.2 } }
+		}
 	 }
 
 	focus = {
@@ -815,6 +1748,7 @@ focus = {
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT }
 		completion_reward = {
 			add_ideas = ideological_fanaticism_focus
 			set_rule = {
@@ -848,6 +1782,7 @@ focus = {
 		}
 		cost = 10
 		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_MANPOWER }
 		completion_reward = {
 			set_cosmetic_tag = ARN
 			set_country_flag = ART_established_arnor
@@ -871,13 +1806,15 @@ focus = {
 		icon = GFX_goal_generic_fortify_city
 		ai_will_do = { factor = 8 }
 		relative_position_id = ART_unite_the_kingdom_of_arnor
-		x = 12
+		x = 8
 		y = 1
+		cost = 10
 		prerequisite = { focus = demandcardolan focus = ART_demand_rhudaur focus = ART_unite_the_kingdom_of_arnor}
 		available = {
 			has_country_flag = ART_established_arnor
 			controls_state = 146
 		}
+		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY }
 		completion_reward = {
 			set_capital = { state = 146 }
 			add_stability = 0.10

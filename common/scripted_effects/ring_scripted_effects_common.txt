@@ -326,8 +326,8 @@ ring_destroy_ring = {
 	# Remove BOPs
 	var:global.fs_ring_owner = {
 		if = {
-			limit = { has_power_balance = { id = ring_corruption_balance } }
-			remove_power_balance = { id = ring_corruption_balance }
+			limit = { has_variable = global.ring_corruption_percentage }
+			clear_variable = global.ring_corruption_percentage
 		}
 	}
 
@@ -1027,35 +1027,6 @@ ring_interception_disengage_check = {
 	}
 }
 
-
-ring_increase_corruption = {
-	add_power_balance_value = {
-		id = ring_corruption_balance
-		value = 0.1
-	}
-}
-
-ring_increase_corruption_2 = {
-	add_power_balance_value = {
-		id = ring_corruption_balance
-		value = 0.2
-	}
-}
-
-ring_decrease_corruption = {
-	add_power_balance_value = {
-		id = ring_corruption_balance
-		value = 0.1
-	}
-}
-
-ring_decrease_corruption_2 = {
-	add_power_balance_value = {
-		id = ring_corruption_balance
-		value = 0.2
-	}
-}
-
 ring_give_sauron_ring = {
 	custom_effect_tooltip = corruption_bad_corrupted_tt
 	hidden_effect = {
@@ -1128,7 +1099,7 @@ ring_remove_ring = {
 		limit = { has_idea = one_true_ring_2 }
 		remove_ideas = one_true_ring_2
 	}
-	remove_power_balance = { id = ring_corruption_balance }
+	clear_variable = global.ring_corruption_percentage
 }
 
 ring_add_ring = {
@@ -1140,16 +1111,22 @@ ring_add_ring = {
 		add_ideas = one_true_ring
 	}
 	# add BOP to new owner
-	if = {
-		limit = { NOT = { tag = MOR } } # MOR can't corrupt themselves lol
-		set_power_balance = {
-			id = ring_corruption_balance
-			set_default = yes
-		}
-	}
-	ring_update_bop_values = yes
+	#if = {
+	#	limit = { NOT = { tag = MOR } } # MOR can't corrupt themselves lol
+	#	set_power_balance = {
+	#		id = ring_corruption_balance
+	#		set_default = yes
+	#	}
+	#}
+	#ring_update_bop_values = yes
+	set_variable = { ring_corruption_percentage = 15 }
+	set_variable = { ring_corruption_belligerent = 0 }
+	set_variable = { ring_corruption_stability = 0 }
+	set_variable = { ring_corruption_attack_bonus = 0 }
+	set_variable = { ring_corruption_defense_bonus = 0 }
+	add_ideas = idea_ring_corruption_good_high
 	MOR = {
-		ring_update_bop_values = yes
+		#ring_update_bop_values = yes
 	}
 }
 
@@ -1222,5 +1199,144 @@ ring_set_ring_attitude = {
 				set_country_flag = fs_friendly_attitude
 			}
 		}
+	}
+}
+
+ring_corruption_percentage_down = {
+	subtract_from_variable = { global.ring_corruption_percentage = 10 }
+	if = {
+		limit = {
+			check_variable = { global.ring_corruption_percentage < 0 }
+		}
+		set_variable = { global.ring_corruption_percentage = 0 }
+	}
+	ring_corruption_idea_checker = yes
+	custom_effect_tooltip = GENERIC_ring_corruption_decrease_10
+}
+
+ring_corruption_percentage_down_20 = {
+	subtract_from_variable = { global.ring_corruption_percentage = 20 }
+	if = {
+		limit = {
+			check_variable = { global.ring_corruption_percentage < 0 }
+		}
+		set_variable = { global.ring_corruption_percentage = 0 }
+	}
+	ring_corruption_idea_checker = yes
+	custom_effect_tooltip = GENERIC_ring_corruption_decrease_20
+}
+
+ring_corruption_percentage_up = {
+	add_to_variable = { global.ring_corruption_percentage = 10 }
+	if = {
+		limit = {
+			check_variable = { var = global.ring_corruption_percentage  value = 100  compare = greater_than_or_equals }
+		}
+		ring_give_sauron_ring = yes
+		set_variable = { global.ring_corruption_percentage = 100 }
+	}
+	ring_corruption_idea_checker = yes
+	custom_effect_tooltip = GENERIC_ring_corruption_increase_10
+}
+
+ring_corruption_percentage_up_20 = {
+	add_to_variable = { global.ring_corruption_percentage = 20 }
+	if = {
+		limit = {
+			check_variable = { var = global.ring_corruption_percentage  value = 100  compare = greater_than_or_equals }
+		}
+		ring_give_sauron_ring = yes
+		set_variable = { global.ring_corruption_percentage = 100 }
+	}
+	ring_corruption_idea_checker = yes
+	custom_effect_tooltip = GENERIC_ring_corruption_increase_20
+}
+
+ring_corruption_idea_checker = {
+	#I know how it looks but believe me it works
+	if = {
+		limit = {
+			check_variable = {
+				global.ring_corruption_percentage > 75
+			}
+			NOT = { has_idea = idea_ring_corruption_bad_high }
+		}
+		ring_corruption_idea_remover = yes
+		add_ideas = idea_ring_corruption_bad_high
+	}
+	else_if = {
+		limit = {
+			check_variable = { var = global.ring_corruption_percentage  value = 75  compare = less_than_or_equals }
+			check_variable = {
+				global.ring_corruption_percentage > 50
+			}
+			NOT = { has_idea = idea_ring_corruption_bad_low }
+		}
+		ring_corruption_idea_remover = yes
+		add_ideas = idea_ring_corruption_bad_low
+	}
+	else_if = {
+		limit = {
+			check_variable = { var = global.ring_corruption_percentage  value = 50  compare = less_than_or_equals }
+			check_variable = {
+				global.ring_corruption_percentage > 20
+			}
+			NOT = { has_idea = idea_ring_corruption_neutral }
+		}
+		ring_corruption_idea_remover = yes
+		add_ideas = idea_ring_corruption_neutral
+	}
+	else_if = {
+		limit = {
+			
+			check_variable = { var = global.ring_corruption_percentage  value = 20  compare = less_than_or_equals }
+			check_variable = {
+				global.ring_corruption_percentage > 10
+			}
+			NOT = { has_idea = idea_ring_corruption_good_low }
+		}
+		ring_corruption_idea_remover = yes
+		add_ideas = idea_ring_corruption_good_low
+	}
+	else_if = {
+		limit = {
+			check_variable = { var = global.ring_corruption_percentage  value = 10  compare = less_than_or_equals }
+			NOT = { has_idea = idea_ring_corruption_good_high }
+		}
+		ring_corruption_idea_remover = yes
+		add_ideas = idea_ring_corruption_good_high
+	}
+}
+
+ring_corruption_idea_remover = {
+	if = {
+		limit = {
+			has_idea = idea_ring_corruption_good_high
+		}
+		remove_ideas = idea_ring_corruption_good_high
+	}
+	else_if = {
+		limit = {
+			has_idea = idea_ring_corruption_good_low
+		}
+		remove_ideas = idea_ring_corruption_good_low
+	}
+	else_if = {
+		limit = {
+			has_idea = idea_ring_corruption_neutral
+		}
+		remove_ideas = idea_ring_corruption_neutral
+	}
+	else_if = {
+		limit = {
+			has_idea = idea_ring_corruption_bad_low
+		}
+		remove_ideas = idea_ring_corruption_bad_low
+	}
+	else_if = {
+		limit = {
+			has_idea = idea_ring_corruption_bad_high
+		}
+		remove_ideas = idea_ring_corruption_bad_high
 	}
 }
