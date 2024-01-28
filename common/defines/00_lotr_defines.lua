@@ -22,3 +22,6 @@ NDefines.NCharacter.EXPERT_ADVISOR_MIN_RANK = 5
 NDefines.NCharacter.GENIUS_ADVISOR_MIN_RANK = 7
 
 NDefines.NMilitary.SLOWEST_SPEED = 3
+
+
+NDefines.NMilitary.BASE_FORT_PENALTY = -0.4
