@@ -25,3 +25,5 @@ NDefines.NMilitary.SLOWEST_SPEED = 3
 
 
 NDefines.NMilitary.BASE_FORT_PENALTY = -0.4
+
+NDefines.NBuildings.AIRBASE_CAPACITY_MULT = 10
