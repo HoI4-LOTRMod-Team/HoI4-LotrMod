@@ -27,3 +27,8 @@ NDefines.NMilitary.SLOWEST_SPEED = 3
 NDefines.NMilitary.BASE_FORT_PENALTY = -0.4
 
 NDefines.NBuildings.AIRBASE_CAPACITY_MULT = 10
+
+
+NDefines.NNavy.SHORE_BOMBARDMENT_CAP = 0.75
+NDefines.NNavy.HEAVY_GUN_ATTACK_TO_SHORE_BOMBARDMENT = 0.3,  -- heavy gun attack value is divided by this value * 100 and added to shore bombardment modifier
+NDefines.NNavy.LIGHT_GUN_ATTACK_TO_SHORE_BOMBARDMENT = 0.15, -- light gun attack value is divided by this value * 100 and added to shore bombardment modifier
