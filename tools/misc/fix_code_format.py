@@ -29,5 +29,13 @@ def reformat_code(file_path):
         file.writelines(formatted_lines)
 
 # Replace 'your_code_file.txt' with the path to your actual code file
+input_file = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\moria.txt'
+reformat_code(input_file)
+input_file = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\erebor.txt'
+reformat_code(input_file)
 input_file = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\rivendell.txt'
+reformat_code(input_file)
+input_file = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\isengard.txt'
+reformat_code(input_file)
+input_file = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\mirkwood.txt'
 reformat_code(input_file)
