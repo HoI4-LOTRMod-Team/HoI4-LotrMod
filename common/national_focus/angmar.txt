@@ -398,7 +398,7 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { 
-		add_ideas = ANG_orc_lead_industry
+		add_ideas = ANG_orc_lead_industry_0
 	}
 }
 
@@ -2847,10 +2847,8 @@ focus = {
 		if = {
 			limit = {
 				ISE = {
-					OR = {
-						has_government = belligerent
-						has_government = unaligned
-					}
+					has_government = belligerent
+					exists = yes
 					NOT = {
 						has_war_with = ANG
 					}
@@ -2860,6 +2858,9 @@ focus = {
 			ISE = {
 				country_event = { id = isengard.12 }
 			}
+		}
+		else = {
+			add_political_power = 50
 		}
 	}
 } 
@@ -2898,10 +2899,10 @@ focus = {
 	search_filters = { FOCUS_FILTER_ANNEXATION }
 	icon = GFX_goal_witch_king
 	ai_will_do = { factor = 25 }
-	relative_position_id = ANG_new_allies
-	x = 0
+	relative_position_id = ANG_tell_the_world
+	x = 1
 	y = 1
-	prerequisite = { focus = ANG_new_allies }
+	prerequisite = { focus = ANG_tell_the_world }
 	cost = 10
 	completion_reward = {
 		add_state_claim = 40
@@ -2913,6 +2914,42 @@ focus = {
 		add_state_claim = 150
 	}
 } 
+	 		
+focus = {
+	id = ANG_retake_mordor
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	icon = GFX_goal_rhu_wargoal_mordor
+	ai_will_do = { factor = 25 }
+	relative_position_id = ANG_revenge_the_witch_king
+	x = 0
+	y = 1
+	prerequisite = { focus = ANG_revenge_the_witch_king }
+	will_lead_to_war_with = MOR
+	cost = 5
+	completion_reward = {
+		create_wargoal = { target = MOR type = annex_everything }
+	}
+} 
+	 		
+focus = {
+	id = ANG_control_mordor
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	icon = GFX_goal_mor_mordor_landscape
+	ai_will_do = { factor = 25 }
+	relative_position_id = ANG_retake_mordor
+	x = 0
+	y = 1
+	prerequisite = { focus = ANG_retake_mordor }
+	cost = 10
+	completion_reward = {
+		MOR = {
+			every_owned_state = {
+				limit = { is_core_of = MOR }
+				add_core_of = ANG
+			}
+		}
+	}
+} 
 
 focus = {
 	id = ANG_learn_from_the_civil_war
@@ -2920,12 +2957,12 @@ focus = {
 	search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_RESEARCH }
 	ai_will_do = { factor = 25 }
 	relative_position_id = ANG_tell_the_world
-	x = 1
+	x = 3
 	y = 1
 	prerequisite = { focus = ANG_tell_the_world }
 	cost = 10
 	completion_reward = {
-		army_experience = 10
+		army_experience = 25
 		add_doctrine_cost_reduction = {
 			name = land_doc_bonus
 			cost_reduction = 0.75
@@ -2963,7 +3000,7 @@ focus = {
 	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
 	ai_will_do = { factor = 25 }
 	relative_position_id = ANG_tell_the_world
-	x = 3
+	x = 5
 	y = 1
 	prerequisite = { focus = ANG_tell_the_world }
 	cost = 10
@@ -2972,15 +3009,14 @@ focus = {
 	}
 }
 
-#Focus for Unleash Sauron
 focus = {
 	id = ANG_unleash_sauron
 	icon = GFX_goal_lth_sauron_unleashed_with_ring
 	ai_will_do = { factor = 20 }
-	x = 5
+	x = 0
 	y = 1
-	relative_position_id = ANG_tell_the_world
-	prerequisite = { focus = ANG_tell_the_world}
+	relative_position_id = ANG_honor_morgoth_sauron
+	prerequisite = { focus = ANG_honor_morgoth_sauron}
 	available = { ring_has_the_ring = yes has_government = belligerent	}
 	cost = 10
 	available_if_capitulated = yes
@@ -2998,6 +3034,28 @@ focus = {
 		}
 	}
 }
+
+focus = {
+	id = ANG_pressure_orcs
+	icon = GFX_goal_generic_anvil
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_STABILITY }
+	ai_will_do = { factor = 25 }
+	available = {
+		has_idea = ANG_orc_lead_industry_0
+	}
+	relative_position_id = ANG_tell_the_world
+	x = 7
+	y = 1
+	prerequisite = { focus = ANG_tell_the_world }
+	cost = 10
+	completion_reward = {
+		swap_ideas = {
+			add_idea = ANG_orc_lead_industry_1
+			remove_idea = ANG_orc_lead_industry_0
+		}
+	}
+}
+
 	 #End of focuses
 
 }
