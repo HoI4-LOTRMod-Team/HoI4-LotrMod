@@ -42,5 +42,5 @@ def process_instant_text_boxes(input_file):
 
 # Example usage:
 # Assuming your input file is named 'input.txt'
-input_file = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\interface\countrytechtreeview.gui'
+input_file = r'C:\Users\kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\interface\lotr_ring_interception_form.gui'
 process_instant_text_boxes(input_file)

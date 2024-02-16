@@ -56,7 +56,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 		x = 1
 		y = 1
 		cost = 10
-		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_REVOLUTIONARY FOCUS_FILTER_UNALIGNED }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_REVOLUTIONARY FOCUS_FILTER_UNALIGNED FOCUS_FILTER_DENETHOR_PARANOIA }
 		completion_reward = {
 			add_stability = -0.1
 			add_popularity = {
@@ -88,7 +88,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 		x = -1
 		y = 1
 		cost = 10
-		search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_UNALIGNED }
+		search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_UNALIGNED FOCUS_FILTER_DENETHOR_PARANOIA }
 		completion_reward = {
 			army_experience = 25
 			add_popularity = {
@@ -122,7 +122,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 					popularity = 0.075
 				}
 			}
-			custom_effect_tooltip = "Lowers the change of Dol Amroth leaving Gondor"
+			custom_effect_tooltip = GON_tooltip_lower_change_of_dol_amroth_leaving
 			hidden_effect = {
 				DAM = {
 					set_country_flag = denethor_supporters
@@ -162,7 +162,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 					popularity = 0.1
 				}
 			}
-			custom_effect_tooltip = "Ensures Dol Amroth not leaving Gondor"
+			custom_effect_tooltip = GON_tooltip_dol_amroth_wont_leave
 		}
 	}
 
@@ -298,6 +298,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 		ai_will_do = { factor = 100 }
 		available = {
 			has_global_flag = faramir_dead
+			has_war = yes
 		}
 		prerequisite = { focus = GON_the_steward_of_gondor }
 		relative_position_id = GON_the_steward_of_gondor
@@ -307,8 +308,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 		search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_ARMY_XP FOCUS_FILTER_WAR_SUPPORT }
 		available_if_capitulated = yes
 		completion_reward = {
-			add_stability = 0.10
-			add_war_support = 0.10
+			add_ideas = GON_faramir_legacy
 			army_experience = 25
 		}
 	}
@@ -535,11 +535,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_COOPERATIVE }
 		available_if_capitulated = yes
 		completion_reward = {
-			add_stability = 0.05
-			add_popularity = {
-				ideology = cooperative
-				popularity = 0.05
-			}
+			add_timed_idea = { days = 150 idea = GON_rally_of_the_people }
 		}
 	}
 
@@ -696,7 +692,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 		x = 0
 		y = 1
 		prerequisite = { focus = GON_limit_denethor_political_power }
-		cost = 5
+		cost = 3
 		available_if_capitulated = yes
 		available = {
 			custom_trigger_tooltip = {
@@ -817,6 +813,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 		available_if_capitulated = yes
 		completion_reward = {
 			remove_ideas =  GON_denethor_loyalists
+			add_political_power = 100
 		}
 	}
 
@@ -1158,15 +1155,91 @@ continuous_focus_position = { x = 50 y = 1700 }
 		mutually_exclusive = { focus = GON_annex_minas_ithil }
 		x = -1
 		y = 1
-		cost = 10
+		cost = 5
 		search_filters = { FOCUS_FILTER_ANNEXATION }
 		available = {
-			controls_state = 5
+			OR = {
+				has_government = cooperative
+				has_government = unaligned
+			}
+			OR = {
+				controls_state = 5
+				MMO = {
+					is_puppet_of = GON
+				}
+			}
+			has_war = no
+			if = {
+				limit = {
+					NOT = { MMO = { is_puppet_of = GON } }
+				}
+				5 = {
+					compliance > 50
+					resistance < 10
+				}
+			}
 			the_other_gondor_does_not_exist = yes
 		}
 		available_if_capitulated = yes
 		completion_reward = {
-			puppet = MMO
+			custom_effect_tooltip = GON_tooltip_this_will_puppet_and_rename_minas_morgul
+			hidden_effect = {
+				if = {
+					limit = {
+						controls_state = 5
+						NOT = { MMO = { is_puppet_of = GON }}
+					}
+					hidden_effect = {
+						release = MMO #for some reason this has to be done first
+					}
+					puppet = MMO
+					MMO = {
+						set_cosmetic_tag = MIT
+					}
+				}
+				else_if = {
+					limit = {
+						MMO = { is_puppet_of = GON }
+					}
+					MMO = {
+						set_cosmetic_tag = MIT
+					}
+				}
+			}
+			MMO = {		
+				add_popularity = {
+					ideology = belligerent
+					popularity = -0.25
+				}
+				add_popularity = {
+					ideology = revolutionary
+					popularity = -0.25
+				}
+				if = {
+					limit = {
+						GON = { has_government = cooperative }
+					}	
+					add_popularity = {
+						ideology = cooperative
+						popularity = 0.25
+					}
+				}
+				else_if = {
+					limit = {
+						GON = { has_government = unaligned }
+					}
+					add_popularity = {
+						ideology = unaligned
+						popularity = 0.25
+					}
+				}
+				set_province_name = { id = 6967 name = "Minas Ithil"}
+				random_owned_state = {
+					add_extra_state_shared_building_slots = 3
+					add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+					add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+				}
+			}
 		}
 	}
 
@@ -1180,13 +1253,19 @@ continuous_focus_position = { x = 50 y = 1700 }
 		x = 1
 		y = 1
 		cost = 10
-		search_filters = { FOCUS_FILTER_ANNEXATION }
+		search_filters = { FOCUS_FILTER_ANNEXATION FOCUS_FILTER_STABILITY }
 		available = {
 			controls_state = 5
+			has_war = no
+			5 = {
+				compliance > 60
+				resistance < 10
+			}
 			the_other_gondor_does_not_exist = yes
 		}
 		available_if_capitulated = yes
 		completion_reward = {
+			add_stability = 0.05
 			add_state_core = 5
 		}
 	}
@@ -1694,7 +1773,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 	}
 
 	focus = {
-		id = improvedfighters
+		id = GON_improved_eagles
 		icon = GFX_goal_generic_bird
 		ai_will_do = { factor = 1 }
 		relative_position_id = GON_artillery_improvements
@@ -1703,13 +1782,20 @@ continuous_focus_position = { x = 50 y = 1700 }
 		prerequisite = { focus = GON_artillery_improvements focus = GON_chariots_improvements}
 		cost = 10
 		available_if_capitulated = yes
+		search_filters = { FOCUS_FILTER_RESEARCH }
 		completion_reward = {
+			air_experience = 15
+			add_tech_bonus = {
+				name = fighter_bonus
+				bonus = 0.75
+				uses = 1
+				category = lotr_eagles
+			}
 			add_tech_bonus = {
 				name = fighter_bonus
 				bonus = 0.5
 				uses = 1
-				category = lotr_eagles
-				category = lotr_fellbeasts
+				technology = fighter_eagle
 			}
 		}
 	}
@@ -1896,14 +1982,14 @@ continuous_focus_position = { x = 50 y = 1700 }
 					}
 				}
 				20 = {
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 50 }
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6816 }
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 4665 }
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6791 }
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 5418 }
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6789 }
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 38 }
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6783 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 50 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 6816 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 4665 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 6791 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 5418 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 6789 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 38 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 6783 }
 				}
 			}
 			if = {
@@ -1913,13 +1999,13 @@ continuous_focus_position = { x = 50 y = 1700 }
 					}
 				}
 				20 = {
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 4353 }
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6804 }
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 1142 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 4353 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 6804 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 1142 }
 				}
 				136 = {
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 586 }
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 3005 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 586 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 3005 }
 				}
 			}
 			if = {
@@ -1932,7 +2018,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 					}
 				}
 				20 = {
-					add_building_construction = {type = bunker level = 2 instant_build = yes province = 6765 }
+					add_building_construction = {type = bunker level = 3 instant_build = yes province = 6765 }
 				}
 				denethor_gets_less_paranoid = yes
 			}
@@ -2359,19 +2445,19 @@ continuous_focus_position = { x = 50 y = 1700 }
 		available_if_capitulated = yes
 		completion_reward = {
 			135 = {
-				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4617 }
-				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 3996 }
-				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7307 }
-				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7318 }
-				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 3545 }
+				add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4617 }
+				add_building_construction = {	type = bunker level = 3 instant_build = yes province = 3996 }
+				add_building_construction = {	type = bunker level = 3 instant_build = yes province = 7307 }
+				add_building_construction = {	type = bunker level = 3 instant_build = yes province = 7318 }
+				add_building_construction = {	type = bunker level = 3 instant_build = yes province = 3545 }
 			}
 			176 = {
-				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7428 }
-				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 5388 }
-				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 7791 }
+				add_building_construction = {	type = bunker level = 3 instant_build = yes province = 7428 }
+				add_building_construction = {	type = bunker level = 3 instant_build = yes province = 5388 }
+				add_building_construction = {	type = bunker level = 3 instant_build = yes province = 7791 }
 			}
 			173 = {
-				add_building_construction = {	type = bunker level = 2 instant_build = yes province = 3773 }
+				add_building_construction = {	type = bunker level = 3 instant_build = yes province = 3773 }
 			}
 			if = {
 				limit = {
@@ -2380,10 +2466,10 @@ continuous_focus_position = { x = 50 y = 1700 }
 					}
 				}
 				22 ={
-					add_building_construction = {	type = bunker level = 2 instant_build = yes province = 2430 }
-					add_building_construction = {	type = bunker level = 2 instant_build = yes province = 6861 }
-					add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4602 }
-					add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4479 }
+					add_building_construction = {	type = bunker level = 3 instant_build = yes province = 2430 }
+					add_building_construction = {	type = bunker level = 3 instant_build = yes province = 6861 }
+					add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4602 }
+					add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4479 }
 				}
 			}
 		}
@@ -2429,7 +2515,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 		prerequisite = { focus = GON_internal_policy_department focus = GON_external_policy_department}
 		x = 8
 		y = 1
-		cost = 10
+		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
 			if = {
