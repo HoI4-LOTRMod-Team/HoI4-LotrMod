@@ -91,6 +91,486 @@ focus_tree = {
 	}
 
 	focus = {
+		id = ISE_influence_neighbouring_tribes
+		icon = GFX_goal_meet_with_gandalf
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_imprison_gandalf
+		x = 1
+		y = 1
+		#prerequisite = { focus = ISE_imprison_gandalf}
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = { 
+			add_opinion_modifier = { target = DUN modifier = medium_increase }
+			add_opinion_modifier = { target = ENE modifier = medium_increase }
+			DUN = {
+				add_opinion_modifier = { target = ISE modifier = medium_increase }
+				add_popularity = {
+					ideology = belligerent
+					popularity = 0.05
+				}
+			}
+			ENE = {
+				add_opinion_modifier = { target = ISE modifier = medium_increase }
+				add_popularity = {
+					ideology = belligerent
+					popularity = 0.05
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_they_will_listen
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_influence_neighbouring_tribes
+		x = -1
+		y = 1
+		prerequisite = { focus = ISE_influence_neighbouring_tribes}
+		mutually_exclusive = { focus = ISE_increase_control }
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = {
+			create_wargoal = { target = DUN type = puppet_wargoal_focus }
+			create_wargoal = { target = ENE type = puppet_wargoal_focus }
+		}
+	}
+
+	focus = {
+		id = ISE_increase_control
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_influence_neighbouring_tribes
+		x = 1
+		y = 1
+		prerequisite = { focus = ISE_influence_neighbouring_tribes}
+		mutually_exclusive = { focus = ISE_they_will_listen }
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = {
+			DUN = {
+				add_timed_idea = { idea = ISE_influencing_tribes days = 365 }
+			}
+			ENE = {
+				add_timed_idea = { idea = ISE_influencing_tribes days = 365 }
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_make_contact_with_supports
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_increase_control
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_increase_control}
+		cost = 5
+		available_if_capitulated = no
+		completion_reward = {
+			custom_effect_tooltip = "This will make sure they start as a ??? instead of a fiefdom"
+			set_country_flag = ISE_has_made_contact_with_supports
+			DUN = {
+				add_popularity = {
+					ideology = belligerent
+					popularity = 0.05
+				}
+			}
+			ENE = {
+				add_popularity = {
+					ideology = belligerent
+					popularity = 0.05
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_civil_war_DUN
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_increase_control
+		prerequisite = { focus = ISE_increase_control}
+		x = 1
+		y = 2
+		cost = 10
+		available_if_capitulated = no
+		available = {
+			DUN = { belligerent > 0.5 }
+			DUN = { has_government = belligerent }
+		}
+		completion_reward = {
+			if = {
+				limit = {
+					DUN = { NOT = { has_government = belligerent } }
+				}
+				custom_effect_tooltip = "Make a civil war happend"
+				hidden_effect = {
+					set_politics = { ruling_party = belligerent elections_allowed = no }
+				}
+				if = {
+					limit = {
+						has_country_flag = ISE_has_made_contact_with_supports
+					}
+					set_autonomy = {
+						target = DUN
+						autonomy_state = autonomy_puppet
+						end_wars = no
+						end_civil_wars = no
+					}
+				}
+				else = {
+					set_autonomy = {
+						target = DUN
+						autonomy_state = autonomy_fiefdom
+						end_wars = no
+						end_civil_wars = no
+					}
+				}
+				DUN = {
+					start_civil_war = {
+						ruling_party = belligerent
+						ideology = unaligned
+						size = 0.4
+					}
+				}
+				hidden_effect = {
+					DUN = {
+						set_popularities = {
+							cooperative = 0
+							belligerent = 100
+							revolutionary = 0
+							unaligned = 0
+						}
+					}
+				}
+			}
+			else = {
+				DUN = { country_event = { id = dunland.1 } }
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_civil_war_ERE
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_increase_control
+		prerequisite = { focus = ISE_increase_control}
+		x = -1
+		y = 2
+		cost = 10
+		available_if_capitulated = no
+		available = {
+			OR = {
+				ENE = { belligerent > 0.5 }
+				ENE = { has_government = belligerent }
+			}
+		}
+		completion_reward = {
+			if = {
+				limit = {
+					ENE = { NOT = { has_government = belligerent } }
+				}
+				custom_effect_tooltip = "Make a civil war happend"
+				hidden_effect = {
+					set_politics = { ruling_party = belligerent elections_allowed = no }
+				}
+				if = {
+					limit = {
+						has_country_flag = ISE_has_made_contact_with_supports
+					}
+					set_autonomy = {
+						target = ENE
+						autonomy_state = autonomy_puppet
+						end_wars = no
+						end_civil_wars = no
+					}
+				}
+				else = {
+					set_autonomy = {
+						target = ENE
+						autonomy_state = autonomy_fiefdom
+						end_wars = no
+						end_civil_wars = no
+					}
+				}
+				ENE = {
+					start_civil_war = {
+						ruling_party = belligerent
+						ideology = unaligned
+						size = 0.4
+					}
+				}
+				hidden_effect = {
+					ENE = {
+						set_popularities = {
+							cooperative = 0
+							belligerent = 100
+							revolutionary = 0
+							unaligned = 0
+						}
+					}
+				}
+			}
+			else = {
+				DUN = { country_event = { id = enedwaith.2 } }
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_iron_fist
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 100 }
+		available = {
+			OR = {
+				DUN = { is_puppet_of = ISE }
+				ERE = { is_puppet_of = ISE }
+			}
+		}
+		relative_position_id = ISE_civil_war_ERE
+		prerequisite = { focus = ISE_civil_war_ERE focus = ISE_civil_war_DUN  focus = ISE_they_will_listen }
+		x = -1
+		y = 1
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = {
+			if = {
+				limit = {
+					DUN = { is_puppet_of = ISE }
+				}
+				DUN = {
+					add_popularity = {
+						ideology = belligerent
+						popularity = 0.1
+					}
+					add_autonomy_ratio = {
+						value = -0.3
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					ENE = { is_puppet_of = ISE }
+				}
+				ENE = {
+					add_popularity = {
+						ideology = belligerent
+						popularity = 0.1
+					}
+					add_autonomy_ratio = {
+						value = -0.3
+					}
+				}
+			}
+			else = {
+				custom_effect_tooltip = "This will increase popularity and reduce autonomy for Enedwaith and Dunland if puppeted"
+			}
+			if = {
+				limit = {
+					DUN = {
+						exists = no
+						all_core_state = {
+							is_controlled_by = ROOT
+						}
+					}
+				}
+				every_owned_state = {
+					limit = { is_core_of = DUN }
+					add_compliance = 15
+				}
+			}
+			else_if = {
+				limit = {
+					ENE = {
+						exists = no
+						all_core_state = {
+							is_controlled_by = ROOT
+						}
+					}
+				}
+				every_owned_state = {
+					limit = { is_core_of = ENE }
+					add_compliance = 15
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_rally_the_tribes
+		icon = GFX_goal_generic_major_war
+		ai_will_do = { factor = 100 }
+		available = {
+			OR = {
+				DUN = { 
+					is_puppet_of = ISE
+					exists = yes
+				}
+				ERE = { 
+					is_puppet_of = ISE 
+					exists = yes
+				}
+			}
+		}
+		relative_position_id = ISE_iron_fist
+		prerequisite = { focus = ISE_iron_fist }
+		x = 0
+		y = 1
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = {
+			custom_effect_tooltip = ISE_tooltip_loading_militia
+			hidden_effect = {
+				ISE = { load_oob = "ISE_Militia" }
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_expand_isengard_logistics
+		icon = GFX_goal_generic_position_armies
+		ai_will_do = { factor = 5 }
+		available = { 31 = { is_controlled_by = ISE } }
+		x = 35
+		y = 6
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			31 = { 
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {	type = infrastructure level = 2 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_enhance_weapon_production
+		icon = GFX_goal_generic_anvil
+		ai_will_do = { factor = 4 }
+		x = -1
+		y = 1
+		relative_position_id = ISE_expand_isengard_logistics
+		prerequisite = { focus = ISE_expand_isengard_logistics }
+		available = { 31 = { is_controlled_by = ISE } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_offsite_building = { type = arms_factory level = 1 }
+			31 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_fires_of_isengard
+		icon = GFX_goal_generic_anvil
+		ai_will_do = { factor = 4 }
+		x = 0
+		y = 1
+		relative_position_id = ISE_enhance_weapon_production
+		prerequisite = { focus = ISE_enhance_weapon_production }
+		available = { 31 = { is_controlled_by = ISE } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = ISE_the_fires_of_isengard_0
+		}
+	}
+
+	focus = {
+		id = ISE_enhance_civilian_production
+		icon = GFX_focus_generic_industry_2
+		ai_will_do = { factor = 3 }
+		x = 1
+		y = 1
+		relative_position_id = ISE_expand_isengard_logistics
+		prerequisite = { focus = ISE_expand_isengard_logistics }
+		available = { 31 = { is_controlled_by = ISE } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_offsite_building = { type = industrial_complex level = 1 }
+			31 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = industrial_complex level = 2 instant_build = yes }
+			}
+			add_tech_bonus = {
+				name = construction_tech_bonus
+				bonus = 0.5
+				uses = 1
+				category = lotr_labour_construction
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_enhance_civilian_production_2
+		icon = GFX_focus_generic_industry_2
+		ai_will_do = { factor = 3 }
+		x = 0
+		y = 1
+		relative_position_id = ISE_enhance_civilian_production
+		prerequisite = { focus = ISE_enhance_civilian_production }
+		available = { 31 = { is_controlled_by = ISE } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			custom_effect_tooltip = "Will unlock advisor that gives bonuses to consumer goods, food (and construction?)"
+		}
+	}
+	#Focus for Transport Lines
+	focus = {
+		id = transportlines
+		icon = GFX_goal_generic_infrastructure_investment
+		ai_will_do = { factor = 7 }
+		x =22
+		y =1
+		prerequisite = { focus = expandisengardlogistics }
+		mutually_exclusive = { }
+		available = { 31 = { is_controlled_by = ISE } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			31 = {
+				if = {
+					limit = { is_controlled_by = ISE }
+					add_building_construction = {
+						type = infrastructure
+						level = 3
+						instant_build = yes
+					}
+				}
+			}
+			158 = {
+				if = {
+					limit = { is_controlled_by = ISE }
+					add_building_construction = {
+						type = infrastructure
+						level = 3
+						instant_build = yes
+					}
+				}
+			}
+			159 = {
+				if = {
+					limit = { is_controlled_by = ISE }
+					add_building_construction = {
+						type = infrastructure
+						level = 3
+						instant_build = yes
+					}
+				}
+			}
+		}
+	}
+
+
+	focus = {
 		id = ISE_unite_with_gandalf
 		icon = GFX_goal_meet_with_gandalf
 		ai_will_do = { factor = 100 }
