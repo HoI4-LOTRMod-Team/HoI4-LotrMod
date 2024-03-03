@@ -1,0 +1,620 @@
+#Used by Enedwaith and Dunland
+#Political part of the focus tree
+shared_focus = {
+    id = tribes_political_start
+    icon = GFX_focus_hol_the_foundations_of_defense
+    x = 25
+    y = 0
+    cost = 5
+    search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL  }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_stability = 0.025
+        add_political_power = 100
+    }
+}
+
+shared_focus = {
+    id = tribes_steady_as_it_goes
+    icon = GFX_goal_support_unaligned
+    relative_position_id = tribes_political_start
+    prerequisite = { focus = tribes_political_start }
+    x = -4
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL FOCUS_FILTER_UNALIGNED }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_stability = 0.025
+        add_timed_idea = { idea = generic_unaligned days = 365 }
+    }
+}
+
+shared_focus = {
+    id = tribes_staying_neutral
+    icon = GFX_goal_lth_equal_union
+    relative_position_id = tribes_steady_as_it_goes
+    prerequisite = { focus = tribes_steady_as_it_goes }
+    x = 0
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_POLITICAL }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_ideas = unaligned_idea
+    }
+}
+
+shared_focus = {
+    id = tribes_unifying_the_tribes
+    icon = GFX_goal_saruman_enedwaith_tribes
+    relative_position_id = tribes_staying_neutral
+    prerequisite = { focus = tribes_staying_neutral }
+    x = 0
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        swap_ideas = { remove_idea = tribes_not_united_tribes_0 add_idea = tribes_not_united_tribes_1}
+    }
+}
+
+shared_focus = {
+    id = tribes_unified_government
+    icon = GFX_goal_generic_improve_the_administration
+    relative_position_id = tribes_unifying_the_tribes
+    prerequisite = { focus = tribes_unifying_the_tribes }
+    x = 0
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_POLITICAL }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		add_political_power = 100
+		increase_centralization = yes
+    }
+}
+
+shared_focus = {
+    id = tribes_one_country
+    icon = GFX_goal_goal_generic_national_unity
+    relative_position_id = tribes_unified_government
+    prerequisite = { focus = tribes_unified_government }
+    x = 0
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY FOCUS_FILTER_MANPOWER }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		swap_ideas = { remove_idea = tribes_not_united_tribes_1 add_idea = tribes_united_country}
+    }
+}
+
+shared_focus = {
+    id = tribes_industrial_investment
+    icon = GFX_goal_generic_windmill
+    relative_position_id = tribes_staying_neutral
+    prerequisite = { focus = tribes_staying_neutral }
+    x = 3
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_INDUSTRY }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 3
+			add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+		}
+    }
+}
+
+shared_focus = {
+    id = tribes_country_development_plan
+    icon = GFX_goal_lth_adminstration
+    relative_position_id = tribes_industrial_investment
+    prerequisite = { focus = tribes_industrial_investment focus = tribes_one_ruling_government }
+    x = 0
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_INDUSTRY }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		if = {
+            limit = {
+                tag = DUN
+            }
+            32 = {
+			    add_extra_state_shared_building_slots = 1
+                add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+            }
+            78 = {
+                add_extra_state_shared_building_slots = 2
+            }
+        }else = {
+            random_owned_state = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+            }
+            random_owned_state = {
+                add_extra_state_shared_building_slots = 2
+            }
+        }
+    }
+}
+
+shared_focus = {
+    id = tribes_civilian_development_plan
+    icon = GFX_goal_generic_windmill
+    mutually_exclusive = { focus = tribes_production_development_plan }
+    relative_position_id = tribes_country_development_plan
+    prerequisite = { focus = tribes_country_development_plan }
+    x = -1
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_INDUSTRY }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		add_ideas = tribes_civilian_development_plan
+    }
+}
+
+shared_focus = {
+    id = tribes_production_development_plan
+    icon = GFX_goal_generic_anvil
+    mutually_exclusive = { focus = tribes_civilian_development_plan }
+    relative_position_id = tribes_country_development_plan
+    prerequisite = { focus = tribes_country_development_plan }
+    x = 1
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_INDUSTRY }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		add_ideas = tribes_production_development_plan
+    }
+}
+
+shared_focus = {
+    id = tribes_wisedom_of_the_tribes
+    icon = GFX_goal_focus_research
+    relative_position_id = tribes_production_development_plan
+    prerequisite = { focus = tribes_production_development_plan focus = tribes_civilian_development_plan }
+    x = -1
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_RESEARCH }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		add_research_slot = 1
+    }
+}
+
+shared_focus = {
+    id = tribes_worry_of_the_threat
+    icon = GFX_goal_ise_the_white_hand_flag
+    relative_position_id = tribes_staying_neutral
+    prerequisite = { focus = tribes_staying_neutral }
+    x = -2
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_ARMY_XP }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    available = {
+        ISE = {
+            has_completed_focus = ISE_influence_neighbouring_tribes
+        }
+    }
+
+    completion_reward = {
+		add_war_support = 0.05
+        army_experience = 25
+    }
+}
+
+shared_focus = {
+    id = tribes_build_up_defense
+    icon = GFX_goal_lth_defensive_perimeter_castle
+    relative_position_id = tribes_worry_of_the_threat
+    prerequisite = { focus = tribes_worry_of_the_threat }
+    x = 0
+    y = 1
+    cost = 10
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		add_ideas = deterrence
+    }
+}
+
+shared_focus = {
+    id = tribes_strong_willed_people
+    icon = GFX_goal_generic_allies_build_infantry
+    relative_position_id = tribes_build_up_defense
+    prerequisite = { focus = tribes_build_up_defense }
+    x = 0
+    y = 1
+    cost = 10
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		add_ideas = tribes_strong_willed_people
+    }
+}
+
+shared_focus = {
+    id = tribes_only_one_true_way
+    icon = GFX_goal_support_belligerent
+    relative_position_id = tribes_political_start
+    prerequisite = { focus = tribes_political_start }
+    x = 4
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_BELLIGERENT }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_war_support = 0.025
+        add_timed_idea = { idea = generic_belligerent days = 365 }
+    }
+}
+
+shared_focus = {
+    id = tribes_rally_support
+    icon = GFX_goal_support_the_left_right
+    relative_position_id = tribes_only_one_true_way
+    prerequisite = { focus = tribes_only_one_true_way }
+    x = -1
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_popularity = {
+            ideology = belligerent
+            popularity = 0.075
+        }
+        add_stability = -0.025
+        custom_effect_tooltip = "This will unlock a advisor to boost belligerent"
+    }
+}
+
+shared_focus = {
+    id = tribes_unite_the_tribes
+    icon = GFX_goal_saruman_enedwaith_tribes
+    relative_position_id = tribes_only_one_true_way
+    prerequisite = { focus = tribes_only_one_true_way }
+    x = 1
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_BELLIGERENT FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_popularity = {
+            ideology = belligerent
+            popularity = 0.1
+        }
+        swap_ideas = { remove_idea = tribes_not_united_tribes_0 add_idea = tribes_not_united_tribes_1 }
+    }
+}
+
+shared_focus = {
+    id = tribes_one_ruling_government
+    icon = GFX_goal_goal_generic_demand_territory
+    relative_position_id = tribes_unite_the_tribes
+    prerequisite = { focus = tribes_unite_the_tribes focus = tribes_rally_support }
+    x = -1
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_POLITICAL }
+
+    available = {
+        belligerent > 0.5
+    }
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        increase_centralization = yes
+		set_politics = {
+			ruling_party = belligerent
+			elections_allowed = yes
+		}
+    }
+}
+
+shared_focus = {
+    id = tribes_saruman_did_nothing_wrong
+    icon = GFX_goal_ise_the_white_hand_flag
+    mutually_exclusive = { focus = tribes_stand_strong_alone}
+    relative_position_id = tribes_one_ruling_government
+    prerequisite = { focus = tribes_one_ruling_government }
+    x = -1
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
+
+    available = {
+        ISE = {
+            has_government = belligerent
+        }
+    }
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_political_power = 100
+        add_popularity = {
+            ideology = belligerent
+            popularity = 0.1
+        }
+        add_opinion_modifier = { target = ISE modifier = medium_increase }
+        ISE = {
+            add_opinion_modifier = { target = ROOT modifier = medium_increase }
+        }
+    }
+}
+
+shared_focus = {
+    id = tribes_seek_non_agression_ise
+    icon = GFX_goal_goal_tripartite_pact
+    relative_position_id = tribes_saruman_did_nothing_wrong
+    prerequisite = { focus = tribes_saruman_did_nothing_wrong }
+    x = 0
+    y = 1
+    cost = 5
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        custom_effect_tooltip = "Propose non-agression pact with Isengard"
+    }
+}
+
+shared_focus = {
+    id = tribes_request_joining_faction
+    icon = GFX_goal_union_of_working_orc_class
+    relative_position_id = tribes_seek_non_agression_ise
+    prerequisite = { focus = tribes_seek_non_agression_ise }
+    x = 0
+    y = 1
+    cost = 5
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        custom_effect_tooltip = "Request joining faction Isengard"
+        #Make it so that Isengard can say yes, no, demand them to be puppeted
+    }
+}
+
+shared_focus = {
+    id = tribes_army_for_our_lord
+    icon = GFX_goal_generic_sword_arrow_and_shield
+    relative_position_id = tribes_request_joining_faction
+    prerequisite = { focus = tribes_request_joining_faction }
+    x = 0
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_MANPOWER }
+
+    available = {
+        OR = {
+            is_in_faction_with = ISE
+            is_puppet_of = ISE
+        }
+    }
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_ideas = tribes_army_for_our_lord
+    }
+}
+
+shared_focus = {
+    id = tribes_stand_strong_alone
+    icon = GFX_goal_support_the_left_right
+    mutually_exclusive = { focus = tribes_saruman_did_nothing_wrong}
+    relative_position_id = tribes_one_ruling_government
+    prerequisite = { focus = tribes_one_ruling_government }
+    x = 1
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_BELLIGERENT }
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_war_support = 0.1
+        add_popularity = {
+            ideology = belligerent
+            popularity = 0.1
+        }
+        custom_effect_tooltip = "You wont be able to hire advisor Hornold"
+    }
+}
+
+shared_focus = {
+    id = tribes_setup_centralized_army
+    icon = GFX_goal_support_the_left_right
+    relative_position_id = tribes_stand_strong_alone
+    prerequisite = { focus = tribes_stand_strong_alone }
+    x = 0
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_ARMY_XP FOCUS_FILTER_MANPOWER }
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        army_experience = 25
+        increase_levies = yes
+    }
+}
+
+shared_focus = {
+    id = tribes_expanding_our_lands
+    icon = GFX_goal_goal_generic_occypy_states_ongoing_war
+    relative_position_id = tribes_setup_centralized_army
+    prerequisite = { focus = tribes_setup_centralized_army }
+    x = 0
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_ANNEXATION }
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        if = {
+            limit = {
+                tag = DUN
+            }
+            create_wargoal = { target = ENE type = annex_everything }
+        }
+        else_if = {
+            limit = {
+                tag = ENE
+            }
+            create_wargoal = { target = DUN type = annex_everything }
+        }
+    }
+}
+
+shared_focus = {
+    id = tribes_army_of_our_lands
+    icon = GFX_goal_generic_strike_at_democracy1
+    relative_position_id = tribes_setup_centralized_army
+    prerequisite = { focus = tribes_setup_centralized_army }
+    x = 2
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_MANPOWER }
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_ideas = tribes_army_of_our_lands
+    }
+}
