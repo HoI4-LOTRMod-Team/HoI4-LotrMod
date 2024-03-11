@@ -5,6 +5,7 @@ Github repository for the [*Lord of the Rings Mod*](https://steamcommunity.com/s
 ## Links
 
 Steam Page: https://steamcommunity.com/sharedfiles/filedetails/?id=1314446921
+
 Discord Server: https://discord.gg/XdQ3GbACPW
 
 ## Download
