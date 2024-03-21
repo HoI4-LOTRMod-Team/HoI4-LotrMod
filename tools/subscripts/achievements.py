@@ -7,7 +7,7 @@ def process_files(directory):
     not_eligible_suffix = "_not_eligible"
     
     # Load the crossout image
-    with Image(filename='crossout.png') as crossout_img:
+    with Image(filename=r'subscripts\res\crossout.png') as crossout_img:
         # Iterate through all .dds files in the given directory
         for filename in os.listdir(directory):
             if filename.endswith(".dds") and not filename.endswith(grey_suffix + ".dds") and not filename.endswith(not_eligible_suffix + ".dds"):
@@ -30,5 +30,5 @@ def process_files(directory):
                     img.save(filename=not_eligible_file_path)
 
 if __name__ == "__main__":
-    directory = r'C:\Users\kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\gfx\achievements'
+    directory = r'..\gfx\achievements'
     process_files(directory)
