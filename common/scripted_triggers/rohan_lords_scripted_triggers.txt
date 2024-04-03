@@ -61,7 +61,9 @@ region_1_trigger_1 = {
 	}
 	else_if = {
 		limit = { ROH_derngar = { is_region_1_leader = yes } }
-		always = yes
+		all_allied_country = {
+			is_elves = no
+		}
 	}
 	else = {
 		# gamgar
@@ -76,7 +78,9 @@ region_1_trigger_2 = {
 	}
 	else_if = {
 		limit = { ROH_derngar = { is_region_1_leader = yes } }
-		always = yes
+		any_enemy_country = {
+			is_elves = yes
+		}
 	}
 	else = {
 		# gamgar
@@ -91,7 +95,10 @@ region_1_trigger_3 = {
 	}
 	else_if = {
 		limit = { ROH_derngar = { is_region_1_leader = yes } }
-		always = yes
+		strength_ratio = {
+    		tag = LTH
+    		ratio > 2
+		}
 	}
 	else = {
 		# gamgar
@@ -106,7 +113,10 @@ region_1_trigger_4 = {
 	}
 	else_if = {
 		limit = { ROH_derngar = { is_region_1_leader = yes } }
-		always = yes
+		custom_trigger_tooltip = {
+			tooltip = "Was supported in Landsmeet"
+			# TODO
+		}
 	}
 	else = {
 		# gamgar
@@ -122,7 +132,13 @@ region_2_trigger_1 = {
 	}
 	else_if = {
 		limit = { ROH_widgelred = { is_region_2_leader = yes } }
-		always = yes
+		custom_trigger_tooltip = {
+			tooltip = grima_is_in_charge_tt
+			OR = {
+				ROH_grima = { is_hired_as_advisor = yes }
+				ROH_grima = { is_country_leader = yes }
+			}
+		}
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
@@ -148,7 +164,7 @@ region_2_trigger_2 = {
 	}
 	else_if = {
 		limit = { ROH_widgelred = { is_region_2_leader = yes } }
-		always = yes
+		NOT = { is_ally_with = GON }
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
@@ -167,7 +183,7 @@ region_2_trigger_3 = {
 	}
 	else_if = {
 		limit = { ROH_widgelred = { is_region_2_leader = yes } }
-		always = yes
+		has_government = belligerent
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
@@ -195,7 +211,10 @@ region_2_trigger_4 = {
 	}
 	else_if = {
 		limit = { ROH_widgelred = { is_region_2_leader = yes } }
-		always = yes
+		has_opinion = {
+			target = ISE
+			value > 50
+		}
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
@@ -217,76 +236,96 @@ region_2_trigger_4 = {
 region_3_trigger_1 = {
 	if = {
 		limit = { ROH_theodred = { is_region_3_leader = yes } }
-		always = yes
+		ROH_theoden = { is_country_leader = yes }
 	}
 	else_if = {
 		limit = { ROH_frumbold = { is_region_3_leader = yes } }
-		always = yes
+		OR = {
+			is_in_faction_with = ISE
+			num_divisions_in_states = {
+    			count < 3
+	    		states = { 28 24 26 }
+			}
+		}
 	}
 	else_if = {
 		limit = { ROH_erkenbrand = { is_region_3_leader = yes } }
-		always = yes
+		all_core_state = { is_controlled_by = ROH }
 	}
 	else = {
 		# fenmund
-		always = yes
+		has_war = no
 	}
 }
 
 region_3_trigger_2 = {
 	if = {
 		limit = { ROH_theodred = { is_region_3_leader = yes } }
-		always = yes
+		is_subject = no
 	}
 	else_if = {
 		limit = { ROH_frumbold = { is_region_3_leader = yes } }
-		always = yes
+		has_built = { type = bunker value < 3 }
+		has_built = { type = castle value < 1 }
 	}
 	else_if = {
 		limit = { ROH_erkenbrand = { is_region_3_leader = yes } }
-		always = yes
+		strength_ratio = {
+			tag = ISE
+			ratio > 1
+		}
 	}
 	else = {
 		# fenmund
-		always = yes
+		has_stability > 0.75
 	}
 }
 
 region_3_trigger_3 = {
 	if = {
 		limit = { ROH_theodred = { is_region_3_leader = yes } }
-		always = yes
+		all_allied_country = {
+			NOT = { has_government = belligerent }	
+		}
 	}
 	else_if = {
 		limit = { ROH_frumbold = { is_region_3_leader = yes } }
-		always = yes
+		ISE = { has_same_ideology = yes }
 	}
 	else_if = {
 		limit = { ROH_erkenbrand = { is_region_3_leader = yes } }
-		always = yes
+		cooperative > 0.5
+		NOT = { has_government = belligerent }
 	}
 	else = {
 		# fenmund
-		always = yes
+		unaligned > 0.35
 	}
 }
 
 region_3_trigger_4 = {
 	if = {
 		limit = { ROH_theodred = { is_region_3_leader = yes } }
-		always = yes
+		all_core_state = { is_controlled_by = ROH }
 	}
 	else_if = {
 		limit = { ROH_frumbold = { is_region_3_leader = yes } }
-		always = yes
+		OR = {
+			is_in_faction_with = ISE
+			23 = { is_controlled_by = ISE }
+		}
 	}
 	else_if = {
 		limit = { ROH_erkenbrand = { is_region_3_leader = yes } }
-		always = yes
+		# TODO: has called a landsmeet
+		custom_trigger_tooltip = {
+			tooltip = "has called a Landsmeet"
+			always = no
+		}
 	}
 	else = {
 		# fenmund
-		always = yes
+		any_claim = no
 	}
 }
 
@@ -298,7 +337,7 @@ region_4_trigger_1 = {
 	}
 	else_if = {
 		limit = { ROH_erkenbrand = { is_region_4_leader = yes } }
-		always = yes
+		all_core_state = { is_controlled_by = ROH }
 	}
 	else_if = {
 		limit = { ROH_herethain = { is_region_4_leader = yes } }
@@ -317,7 +356,10 @@ region_4_trigger_2 = {
 	}
 	else_if = {
 		limit = { ROH_erkenbrand = { is_region_4_leader = yes } }
-		always = yes
+		strength_ratio = {
+			tag = ISE
+			ratio > 1
+		}
 	}
 	else_if = {
 		limit = { ROH_herethain = { is_region_4_leader = yes } }
@@ -336,7 +378,8 @@ region_4_trigger_3 = {
 	}
 	else_if = {
 		limit = { ROH_erkenbrand = { is_region_4_leader = yes } }
-		always = yes
+		cooperative > 0.5
+		NOT = { has_government = belligerent }
 	}
 	else_if = {
 		limit = { ROH_herethain = { is_region_4_leader = yes } }
@@ -355,7 +398,11 @@ region_4_trigger_4 = {
 	}
 	else_if = {
 		limit = { ROH_erkenbrand = { is_region_4_leader = yes } }
-		always = yes
+		# TODO: has called a landsmeet
+		custom_trigger_tooltip = {
+			tooltip = "has called a Landsmeet"
+			always = no
+		}
 	}
 	else_if = {
 		limit = { ROH_herethain = { is_region_4_leader = yes } }
