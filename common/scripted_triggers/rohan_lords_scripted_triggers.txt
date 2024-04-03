@@ -12,7 +12,7 @@ is_region_1_leader = {
 	custom_trigger_tooltip = {
 		tooltip = is_region_1_leader_tt
 		check_variable = {
-			var:ROH.region_1_leader = PREV
+			var:ROH.region_1_leader = THIS
 		}
 	}
 }
@@ -21,7 +21,7 @@ is_region_2_leader = {
 	custom_trigger_tooltip = {
 		tooltip = is_region_2_leader_tt
 		check_variable = {
-			var:ROH.region_2_leader = PREV
+			var:ROH.region_2_leader = THIS
 		}
 	}
 }
@@ -30,7 +30,7 @@ is_region_3_leader = {
 	custom_trigger_tooltip = {
 		tooltip = is_region_3_leader_tt
 		check_variable = {
-			var:ROH.region_3_leader = PREV
+			var:ROH.region_3_leader = THIS
 		}
 	}
 }
@@ -39,7 +39,7 @@ is_region_4_leader = {
 	custom_trigger_tooltip = {
 		tooltip = is_region_4_leader_tt
 		check_variable = {
-			var:ROH.region_4_leader = PREV
+			var:ROH.region_4_leader = THIS
 		}
 	}
 }
@@ -48,7 +48,7 @@ is_region_5_leader = {
 	custom_trigger_tooltip = {
 		tooltip = is_region_5_leader_tt
 		check_variable = {
-			var:ROH.region_5_leader = PREV
+			var:ROH.region_5_leader = THIS
 		}
 	}
 }
@@ -126,11 +126,18 @@ region_2_trigger_1 = {
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
-		always = yes
+		OR = {
+			ROH_theoden = { is_country_leader = yes }
+			ROH_theodred = { is_country_leader = yes }
+			ROH_eowyn = { is_country_leader = yes }
+		}
 	}
 	else = {
 		# herumod
-		always = yes
+		has_built = {
+			type = arms_factory
+			value > 25
+		}
 	}
 }
 
@@ -145,11 +152,11 @@ region_2_trigger_2 = {
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
-		always = yes
+		has_stability > 0.65
 	}
 	else = {
 		# herumod
-		always = yes
+		NOT = { has_government = cooperative }
 	}
 }
 
@@ -164,11 +171,20 @@ region_2_trigger_3 = {
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
-		always = yes
+		OR = {
+			has_moderate_centralization_or_less = yes
+			AND = {
+				has_war = yes
+				has_strong_centralization_or_less = yes
+			}
+		}
 	}
 	else = {
 		# herumod
-		always = yes
+		OR = {
+			is_faction_leader = yes
+			is_in_faction = no
+		}
 	}
 }
 
@@ -183,11 +199,17 @@ region_2_trigger_4 = {
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
-		always = yes
+		OR = {
+			has_low_taxes_or_less = yes
+			AND = {
+				has_war = yes
+				has_medium_taxes_or_less = yes
+			}
+		}
 	}
 	else = {
 		# herumod
-		always = yes
+		has_war = yes
 	}
 }
 
