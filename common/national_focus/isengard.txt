@@ -105,18 +105,103 @@ focus_tree = {
 			add_opinion_modifier = { target = ENE modifier = medium_increase }
 			DUN = {
 				add_opinion_modifier = { target = ISE modifier = medium_increase }
-				add_popularity = {
-					ideology = belligerent
-					popularity = 0.05
+				if = {
+					limit = {
+						has_government = cooperative
+					}
+					add_popularity = {
+						ideology = cooperative
+						popularity = 0.05
+					}
+				}else_if = {
+					limit = {
+						has_government = belligerent
+					}
+					add_popularity = {
+						ideology = belligerent
+						popularity = 0.05
+					}
 				}
 			}
 			ENE = {
 				add_opinion_modifier = { target = ISE modifier = medium_increase }
-				add_popularity = {
-					ideology = belligerent
-					popularity = 0.05
+				if = {
+					limit = {
+						has_government = cooperative
+					}
+					add_popularity = {
+						ideology = cooperative
+						popularity = 0.05
+					}
+				}else_if = {
+					limit = {
+						has_government = belligerent
+					}
+					add_popularity = {
+						ideology = belligerent
+						popularity = 0.05
+					}
 				}
 			}
+		}
+	}
+	
+	focus = {
+		id = ISE_increase_relations
+		icon = GFX_goal_goal_generic_improve_relations
+		available = {
+			has_government = cooperative
+		}
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_influence_neighbouring_tribes
+		x = 5
+		y = 1
+		prerequisite = { focus = ISE_influence_neighbouring_tribes}
+		mutually_exclusive = { focus = ISE_increase_control }
+		cost = 5
+		available_if_capitulated = no
+		completion_reward = {
+			DUN = {
+				add_opinion_modifier = { target = ISE modifier = small_increase }
+				add_relation_modifier = {
+					target = ISE
+					modifier = isengard_dun_ene_relation_improvement
+				}
+			}
+			ENE = {
+				add_opinion_modifier = { target = ISE modifier = small_increase }
+				add_relation_modifier = {
+					target = ISE
+					modifier = isengard_dun_ene_relation_improvement
+				}
+			}
+			add_relation_modifier = {
+				target = DUN
+				modifier = isengard_dun_ene_relation_improvement
+			}
+			add_relation_modifier = {
+				target = ENE
+				modifier = isengard_dun_ene_relation_improvement
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_misty_mountains_pact
+		icon = GFX_goal_goal_generic_improve_relations
+		available = {
+			has_government = cooperative
+		}
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_increase_relations
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_increase_relations}
+		mutually_exclusive = { focus = ISE_increase_control }
+		cost = 5
+		available_if_capitulated = no
+		completion_reward = {
+			
 		}
 	}
 
@@ -668,11 +753,13 @@ focus_tree = {
 
 	focus = {
 		id = ISE_burn_the_fangorn_forest
-		icon = GFX_goal_generic_position_armies
+		icon = GFX_goal_burn_fangorn_forest
 		ai_will_do = { factor = 5 }
 		available = { 31 = { is_controlled_by = ISE } }
+		prerequisite = { focus = ISE_expand_isengard_logistics }
+		mutually_exclusive = { focus = ISE_befriend_entwood }
 		relative_position_id = ISE_expand_isengard_logistics
-		x = -8
+		x = 3
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
@@ -685,6 +772,25 @@ focus_tree = {
 			add_resource = { type = chromium amount = 45 state = 31 }
 
 			fires_of_isengard_increase = yes
+		}
+	}
+
+	focus = {
+		id = ISE_ever_demanding_industry
+		icon = GFX_goal_goal_generic_occypy_states_ongoing_war
+		ai_will_do = { factor = 5 }
+		available = {
+			arms_factory > 40
+			threat > 0.4
+		}
+		prerequisite = { focus = ISE_burn_the_fangorn_forest }
+		relative_position_id = ISE_burn_the_fangorn_forest
+		x = 0
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			create_wargoal = { target = ENT type = annex_everything }
 		}
 	}
 
@@ -896,49 +1002,86 @@ focus_tree = {
 		}
 	}
 
-	#Focus for Transport Lines
+	#Entwood focuses
 	focus = {
-		id = transportlines
-		icon = GFX_goal_generic_infrastructure_investment
-		ai_will_do = { factor = 7 }
-		x =22
-		y =1
-		prerequisite = { focus = expandisengardlogistics }
-		mutually_exclusive = { }
-		available = { 31 = { is_controlled_by = ISE } }
+		id = ISE_befriend_entwood
+		icon = GFX_goal_entwood_flag
+		ai_will_do = { factor = 5 }
+		mutually_exclusive = { focus = ISE_burn_the_fangorn_forest }
+		relative_position_id = ISE_expand_isengard_logistics
+		x = 5
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			ENT = { 
+				add_opinion_modifier = { target = ISE modifier = medium_increase } 
+				add_relation_modifier = {
+					target = ISE
+					modifier = isengard_entwood_relation_improvement
+				}
+			}
+			add_opinion_modifier = { target = ENT modifier = medium_increase } 
+			add_relation_modifier = {
+    			target = ENT
+    			modifier = isengard_entwood_relation_improvement
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_expand_the_relations
+		icon = GFX_goal_entwood_treebeard
+		ai_will_do = { factor = 5 }
+		relative_position_id = ISE_befriend_entwood
+		prerequisite = { focus = ISE_befriend_entwood }
+		x = 0
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			ENT = { country_event = { id = entwood.10 }}
+			custom_effect_tooltip = GENERIC_custom_tooltip_if_they_accept
+			ISE = {
+				event_option_tooltip = isengard.15.a
+			}
+			ENT = {
+				event_option_tooltip = entwood.10.a
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_against_all_evil
+		icon = GFX_goal_lth_raised_fist_blue
+		ai_will_do = { factor = 5 }
+		available = {
+			has_government = cooperative
+			ENT = {
+				NOT = {
+					OR = {
+						has_government = belligerent
+						has_government = revolutionary
+					}
+				}
+			}
+			any_other_country = {
+		NOT = { tag = ENT }
+		OR = {
+			has_government = belligerent
+			has_government = revolutionary
+		}
+				has_war_with = ISE
+			}
+		}
+		relative_position_id = ISE_expand_the_relations
+		prerequisite = { focus = ISE_expand_the_relations }
+		x = 0
+		y = 1
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			31 = {
-				if = {
-					limit = { is_controlled_by = ISE }
-					add_building_construction = {
-						type = infrastructure
-						level = 3
-						instant_build = yes
-					}
-				}
-			}
-			158 = {
-				if = {
-					limit = { is_controlled_by = ISE }
-					add_building_construction = {
-						type = infrastructure
-						level = 3
-						instant_build = yes
-					}
-				}
-			}
-			159 = {
-				if = {
-					limit = { is_controlled_by = ISE }
-					add_building_construction = {
-						type = infrastructure
-						level = 3
-						instant_build = yes
-					}
-				}
-			}
+			
 		}
 	}
 
@@ -2394,164 +2537,4 @@ focus_tree = {
 			}
 		}
 	}
-
-	#Focus for Expand Isengard Logistics
-	focus = {
-		id = expandisengardlogistics
-		icon = GFX_goal_generic_position_armies
-		ai_will_do = { factor = 5 }
-		available = { 31 = { is_controlled_by = ISE } }
-		x =20
-		y =0
-		prerequisite = { }
-		mutually_exclusive = { }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			31 = { add_extra_state_shared_building_slots = 1	}
-		}
-	}
-
-	#Focus for Enhance Weapon Production
-	focus = {
-		id = ISE_enhanceweaponproduction
-		icon = GFX_goal_generic_anvil
-		ai_will_do = { factor = 4 }
-		x =18
-		y =1
-		prerequisite = { focus = expandisengardlogistics }
-		mutually_exclusive = { }
-		available = { 31 = { is_controlled_by = ISE } }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_offsite_building = { type = arms_factory level = 2 }
-		}
-	}
-
-	#Focus for Enhance Weapon Production2
-	focus = {
-		id = ISE_enhanceweaponproduction2
-		icon = GFX_goal_generic_anvil
-		ai_will_do = { factor = 3 }
-		x =18
-		y =2
-		prerequisite = { focus = ISE_enhanceweaponproduction }
-		mutually_exclusive = { }
-		available = { 31 = { is_controlled_by = ISE } }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_offsite_building = { type = arms_factory level = 1 }
-		}
-	}
-
-
-	#Focus for Enhance Civilian Production
-	focus = {
-		id = ISE_enhancecivilianproduction
-		icon = GFX_focus_generic_industry_2
-		ai_will_do = { factor = 3 }
-		x =20
-		y =1
-		prerequisite = { focus = expandisengardlogistics }
-		mutually_exclusive = { }
-		available = { 31 = { is_controlled_by = ISE } }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_offsite_building = { type = industrial_complex level = 2 }
-			add_tech_bonus = {
-				name = construction_tech_bonus
-				bonus = 0.5
-				uses = 1
-				category = lotr_labour_construction
-			}
-		}
-	}
-
-	#Focus for Enhance Civilian Production2
-	focus = {
-		id = ISE_enhancecivilianproduction2
-		icon = GFX_focus_generic_industry_3
-		ai_will_do = { factor = 2 }
-		x =20
-		y =2
-		prerequisite = { focus = ISE_enhancecivilianproduction }
-		prerequisite = { focus = transportlines }
-		available = { 31 = { is_controlled_by = ISE } }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_offsite_building = { type = industrial_complex level = 2 }
-			add_tech_bonus = {
-				name = construction_tech_bonus
-				bonus = 0.5
-				uses = 1
-				category = lotr_labour_construction
-			}
-		}
-	}
-
-	#Focus for Transport Lines
-	focus = {
-		id = transportlines
-		icon = GFX_goal_generic_infrastructure_investment
-		ai_will_do = { factor = 7 }
-		x =22
-		y =1
-		prerequisite = { focus = expandisengardlogistics }
-		mutually_exclusive = { }
-		available = { 31 = { is_controlled_by = ISE } }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			31 = {
-				if = {
-					limit = { is_controlled_by = ISE }
-					add_building_construction = {
-						type = infrastructure
-						level = 3
-						instant_build = yes
-					}
-				}
-			}
-			158 = {
-				if = {
-					limit = { is_controlled_by = ISE }
-					add_building_construction = {
-						type = infrastructure
-						level = 3
-						instant_build = yes
-					}
-				}
-			}
-			159 = {
-				if = {
-					limit = { is_controlled_by = ISE }
-					add_building_construction = {
-						type = infrastructure
-						level = 3
-						instant_build = yes
-					}
-				}
-			}
-		}
-	}
-
-	#Focus for Extra Research Slot
-	focus = {
-		id = ISE_extraresearchslot
-		icon = GFX_focus_research
-		ai_will_do = { factor = 8 }
-		x =20
-		y =3
-		prerequisite = { focus = ISE_enhanceweaponproduction2 }
-		prerequisite = { focus = ISE_enhancecivilianproduction2 }
-		mutually_exclusive = { }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { add_research_slot = 1	}
-	}
-
 }
