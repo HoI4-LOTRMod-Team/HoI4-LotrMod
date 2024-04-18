@@ -105,13 +105,24 @@ country_event = {
 	option = { #Accept
 		name = arthedain.3.a
 		ai_chance = {
-			base = 60
+			base = 30
 			modifier = {
-				add = 30
+				add = 15
 				FROM = { has_idea_with_trait = arnor_unification_advocate }
 			}
+			modifier = {
+				add = 15
+				has_opinion = { target = ART value > 75 }
+			}
+			modifier = {
+				add = 10
+				has_non_aggression_pact_with = ART
+			}
 		}
-		ART = { add_to_faction = PREV }
+		ART = { 
+			add_to_faction = PREV 
+			country_event = { id = arthedain.12 }
+		}
 	}
 	option = { #Refuse
 		name = arthedain.3.b
@@ -126,9 +137,18 @@ country_event = {
 				has_government = revolutionary
 			}
 			modifier = {
-				add = 300
+				add = 100
 				is_in_faction = yes
+				has_war = no
+				is_puppet = no
 			}
+			modifier = {
+				add = 5000
+				has_completed_focus = generic_unaligned_focus
+			}
+		}
+		ART = { 
+			country_event = { id = arthedain.13 }
 		}
 	}
 }
@@ -155,31 +175,30 @@ country_event = {
 				has_government = cooperative
 			}
 			modifier = {
-				has_opinion = { target = ART value > 50 }
-				add = 30
-			}
-			modifier = {
-				has_opinion = { target = ART value > 90 }
-				add = 20
+				has_opinion = { target = ART value > 75 }
+				add = 15
 			}
 			modifier = {
 				has_country_flag = arthedain_reformation_encouraged
 				add = 30
 			}
 			modifier = {
-				add = 30
+				add = 20
 				FROM = { has_idea_with_trait = arnor_unification_advocate }
 			}
 			modifier = {
-				add = 30
+				add = 300
 				is_puppet_of = ART
 			}
+			modifier = {
+				add = -999
+				has_war_with = ART
+			}
 		}
-		every_owned_state = {
-			limit = { is_core_of = ROOT }
-			add_core_of = ART
+		ART = { 
+			country_event = { id = arthedain.14 }
+			annex_country = { target = PREV transfer_troops = yes }  
 		}
-		ART = { annex_country = { target = PREV transfer_troops = yes }  }
 	}
 	option = { #Refuse
 		name = arthedain.4.b
@@ -194,9 +213,12 @@ country_event = {
 				has_government = revolutionary
 			}
 			modifier = {
-				has_opinion = { target = ART value < 0 }
-				add = 50
+				has_opinion = { target = ART value < 25 }
+				add = 25
 			}
+		}
+		ART = {
+			country_event = { id = arthedain.15 }
 		}
 	}
 }
@@ -469,5 +491,363 @@ country_event = {
 		}
 		add_political_power = -100
 		add_stability = -0.05
+	}
+}
+
+#Gondor agreed on research agremeent suggestion
+country_event = {
+	id = arthedain.10
+	title = arthedain.10.t
+	desc = arthedain.10.d
+	picture = GFX_report_event_generic_reading
+	
+	is_triggered_only = yes
+	
+	option = { #That is great
+		name = arthedain.10.a
+		add_opinion_modifier = { target = GON modifier = small_increase }
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.75
+			uses = 1
+			category = lotr_knowledge_scriptorium
+		}
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.5
+			uses = 1
+			category = lotr_labour_metalworking
+		}
+		ai_chance = {
+			base = 60
+		}
+	}
+}
+
+#Rohan/Gondor denied research agremeent suggestion
+country_event = {
+	id = arthedain.11
+	title = arthedain.11.t
+	desc = arthedain.11.d
+	picture = GFX_report_event_horseman_wanderer
+	
+	is_triggered_only = yes
+	
+	option = { #That is sad to hear
+		name = arthedain.11.a
+		ai_chance = {
+			base = 60
+		}
+	}
+}
+
+#COUNTRY NAME accepts invite to faction
+country_event = {
+	id = arthedain.12
+	title = arthedain.12.t
+	desc = arthedain.12.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = arthedain.12.a
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+#COUNTRY NAME declines invite to faction
+country_event = {
+	id = arthedain.13
+	title = arthedain.13.t
+	desc = arthedain.13.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = arthedain.13.a
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+
+#COUNTRY NAME accepts reunification of Arnor
+country_event = {
+	id = arthedain.14
+	title = arthedain.14.t
+	desc = arthedain.14.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = arthedain.14.a
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+#COUNTRY NAME refuses reunification of Arnor
+country_event = {
+	id = arthedain.15
+	title = arthedain.15.t
+	desc = arthedain.15.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = arthedain.15.a
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+#A periode of unrest has started
+country_event = {
+	id = arthedain.16
+	title = arthedain.16.t
+	desc = arthedain.16.d
+	picture = GFX_report_event_peasant_revolt
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = ART
+		has_completed_focus = ART_the_fate_of_arthedain
+		NOT = { has_country_flag = ART_political_unrest }
+	}
+
+	mean_time_to_happen  = { days = 10 }
+
+	option = {
+		name = arthedain.16.a
+		add_stability = -0.05
+		set_country_flag = ART_political_unrest
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+#Rangers hold a meeting
+country_event = {
+	id = arthedain.17
+	title = arthedain.17.t
+	desc = arthedain.17.d
+	picture = GFX_report_event_army_camp
+	mean_time_to_happen = { days = 125 }
+	trigger = {
+		tag = ART
+		has_country_flag = ART_political_unrest
+		OR = {
+			has_completed_focus = ART_support_the_monarchists
+			has_completed_focus = forgeanewpath
+		}
+	}
+
+	option = {
+		name = arthedain.17.a
+		add_stability = -0.015
+		add_popularity = {
+			ideology = unaligned
+			popularity = 0.0015
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+#Rangers victory over bandits
+country_event = {
+	id = arthedain.18
+	title = arthedain.18.t
+	desc = arthedain.18.d
+	picture = GFX_report_event_fight
+	mean_time_to_happen = { days = 175 }
+	trigger = {
+		tag = ART
+		has_country_flag = ART_political_unrest
+		OR = {
+			has_completed_focus = ART_support_the_monarchists
+			has_completed_focus = forgeanewpath
+		}
+	}
+
+
+	option = {
+		name = arthedain.18.a
+		add_stability = 0.025
+		add_war_support = 0.025
+		add_popularity = {
+			ideology = unaligned
+			popularity = 0.015
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+#Unrest in the capital
+country_event = {
+	id = arthedain.19
+	title = arthedain.19.t
+	desc = arthedain.19.d
+	picture = GFX_report_event_peasant_revolt
+	fire_only_once = yes
+	mean_time_to_happen = { days = 25 }
+	trigger = {
+		tag = ART
+		has_country_flag = ART_political_unrest
+		OR = {
+			has_completed_focus = ART_support_the_monarchists
+			has_completed_focus = forgeanewpath
+		}
+	}
+
+	option = {
+		name = arthedain.19.a
+		add_stability = -0.025
+		add_political_power = -25
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+#Gathering of the public
+country_event = {
+	id = arthedain.20
+	title = arthedain.20.t
+	desc = arthedain.20.d
+	picture = GFX_report_event_market
+	mean_time_to_happen = { days = 75 }
+	trigger = {
+		tag = ART
+		has_country_flag = ART_political_unrest
+		OR = {
+			has_completed_focus = ART_support_the_monarchists
+			has_completed_focus = forgeanewpath
+		}
+	}
+
+	option = {
+		name = arthedain.20.a
+		add_stability = 0.025
+		add_political_power = 50
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+# Ask COUNTRY for support
+country_event = {
+	id = arthedain.21
+	title = arthedain.21.t
+	desc = arthedain.21.d
+	picture = GFX_report_event_horseman_wanderer
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = arthedain.21.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 25
+				OR = {
+					has_completed_focus = nationalism_focus
+					has_completed_focus = ANG_seek_former_glory
+					has_completed_focus = submittosauron
+				}
+			}
+			modifier = {
+				add = 10
+				has_opinion = { target = ART value > 75 }
+			}
+			modifier = {
+				add = 15
+				has_non_aggression_pact_with = ART
+			}
+		}
+		ART = {
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.1
+			}
+			add_opinion_modifier = { target = ROOT modifier = medium_increase }
+		}
+		add_opinion_modifier = { target = ART modifier = medium_increase }
+		news_event = { id = arthedain.22 }
+	}
+	option = { #Refuse
+		name = arthedain.21.b
+		ai_chance = {
+			base = 15
+			modifier = {
+				add = 25
+				has_completed_focus = liberty_ethos
+			}
+		}
+		ART = {
+			add_opinion_modifier = { target = ROOT modifier = small_decrease }
+		}
+		add_political_power = -25
+	}
+}
+
+news_event = {
+	id = arthedain.22
+	title = arthedain.22.t
+	desc = arthedain.22.d
+	picture = GFX_news_event_diplomacy
+
+	major = yes
+
+	is_triggered_only = yes
+	
+	option = {
+		name = arthedain.22.a
+	}
+}
+
+#Rohan agreed on research agremeent suggestion
+country_event = {
+	id = arthedain.23
+	title = arthedain.23.t
+	desc = arthedain.23.d
+	picture = GFX_report_event_generic_reading
+	
+	is_triggered_only = yes
+	
+	option = { #That is great
+		name = arthedain.23.a
+		add_opinion_modifier = { target = ROH modifier = small_increase }
+		army_experience = 10
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.75
+			uses = 1
+			category = lotr_cavalry
+		}
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.5
+			uses = 1
+			category = lotr_cavalry_light
+		}
+		ai_chance = {
+			base = 60
+		}
 	}
 }

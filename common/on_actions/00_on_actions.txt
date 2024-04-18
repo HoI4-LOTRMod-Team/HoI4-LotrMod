@@ -176,8 +176,60 @@ on_actions = {
 
 	#FROM is war target
 	on_declare_war = {
+		#For the MOR_not_my_dark_lord_test achievement
 		effect = {
+			if = {
+				limit = {
+					tag = MOR
+					FROM = {
+						original_tag = ANG
+					}
+				}
+				set_global_flag = orcs_of_mordor_declared_war_on_ANG_flag
+			}
+		}
+	}
 
+	#ROOT is winner #FROM is loser
+	on_peaceconference_ended = {
+		#For the MOR_not_my_dark_lord achievement
+		effect = {
+			if = {
+				limit = {
+					tag = MOR
+					has_global_flag = orcs_of_mordor_declared_war_on_ANG_flag
+					FROM = {
+						original_tag = ANG
+					}
+				}
+				set_global_flag = orcs_of_mordor_won_war_against_ANG_flag
+			}
+		}
+		#For the ISE_a_wizard_is_never_late achievement
+		effect = {
+			if = {
+				limit = {
+					tag = ISE
+					has_government = cooperative
+					FROM = {
+						original_tag = MOR
+					}
+				}
+				set_global_flag = ISE_won_war_against_MOR_flag
+			}
+		}
+		#For the GON_one_does_simply_walk_into_mordor achievement
+		effect = {
+			if = {
+				limit = {
+					tag = GON
+					has_government = cooperative
+					FROM = {
+						original_tag = MOR
+					}
+				}
+				set_global_flag = GON_won_war_against_MOR_flag
+			}
 		}
 	}
 
@@ -299,7 +351,20 @@ on_actions = {
 	#ROOT is new controller #FROM is old controller #FROM.FROM is state ID
 	on_state_control_changed = {
 		effect = {
-
+			if = {
+				limit = {
+					tag = GON
+					FROM = {
+						tag = MOR
+					}
+					fellowship_is_active = yes
+					MOR = { fellowship_in_core_territory = yes }
+					FROM.FROM = {
+						state = 2
+					}
+				}
+				set_country_flag = GON_taken_black_gate_from_MOR_achievement_flag
+			}
 		}
 	}
 }
