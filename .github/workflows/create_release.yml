@@ -27,6 +27,13 @@ jobs:
           echo "compatible_version=$compatible_version" >> $GITHUB_OUTPUT
           echo "date_time=$date_time" >> $GITHUB_OUTPUT
 
+      - name: Read patch notes
+        id: patch-notes
+        run: |
+          # Read the contents of patch_notes.txt
+          patch_notes=$(cat patch_notes.txt)
+          echo "patch_notes=$patch_notes" >> $GITHUB_OUTPUT
+
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1.13.0
@@ -37,5 +44,7 @@ jobs:
           name: ${{ steps.get-version.outputs.date_time }}
           body: |
             Compatible HoI4 Version: v${{ steps.get-version.outputs.compatible_version }}
+            
+            ${{ steps.patch-notes.outputs.patch_notes }}
           draft: false
           prerelease: false

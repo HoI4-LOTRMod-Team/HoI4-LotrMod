@@ -157,7 +157,7 @@ country_event = {
 					ring_gandalf_in_fellowship = yes
 				}
 				modifier = {
-					factor = 0.1
+					factor = 0.5
 					is_historical_focus_on = yes
 				}
 
@@ -184,10 +184,6 @@ country_event = {
 					factor = 0
 					check_variable = { global.fs_members^num < 3 }
 				}
-				modifier = {
-					factor = 2
-					is_historical_focus_on = yes
-				}
 
 				# response event
 				GON = { country_event = { id = gondor.10 days = 3 } }
@@ -197,23 +193,23 @@ country_event = {
 			5 = {
 				# Only Boromir and Frodo even alive
 				modifier = {
-					add = 100
+					add = 1000
 					check_variable = { global.fs_members^num < 3 }
 				}
 				modifier = {
-					add = 50
+					add = 100
 					check_variable = { global.fs_members^num < 4 }
 				}
 				modifier = {
-					add = 35
+					add = 50
 					check_variable = { global.fs_members^num < 5 }
 				}
 				modifier = {
-					add = 15
+					add = 20
 					check_variable = { global.fs_members^num < 6 }
 				}
 				modifier = {
-					factor = 0.1
+					factor = 0.5
 					is_historical_focus_on = yes
 				}
 
@@ -313,7 +309,33 @@ country_event = {
 	option = {
 		name = gondor.7.a
 		ai_chance = {
-			base = 50
+			base = 25
+			modifier = {
+				add = 10
+				has_government = cooperative
+				FROM = { has_government = cooperative }
+			}
+			modifier = {
+				add = 10
+				has_government = unaligned
+				FROM = { has_government = unaligned }
+			}
+			modifier = {
+				add = 10
+				has_government = revolutionary
+				FROM = { has_government = revolutionary }
+			}
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
+			modifier = {
+				add = 10
+				has_non_aggression_pact_with = FROM
+			}
 		}
 		GON = {
 			add_to_faction = FROM
@@ -324,6 +346,17 @@ country_event = {
 		name = gondor.7.b
 		ai_chance = {
 			base = 10
+			modifier = {
+				add = 999
+				FROM = { has_government = belligerent }
+			}
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = FROM
+					value < 25
+				}
+			}
 		}
 		add_political_power = -50
 	}
@@ -956,4 +989,80 @@ country_event = {
 	}
 }
 
+#Arthedain suggestes research sharing agremeent
+country_event = {
+	id = gondor.26
+	title = gondor.26.t
+	desc = gondor.26.d
+	picture = GFX_report_event_generic_reading
 
+	is_triggered_only = yes
+
+	option = { #Yes
+		name = gondor.26.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 500
+				is_in_faction_with = ART
+			}
+			modifier = {
+				add = 15
+				has_opinion = { target = ART value > 50 }
+			}
+			modifier = {
+				add = 5
+				has_government = cooperative
+				ART = {
+					has_government = cooperative
+				}
+			}
+			modifier = {
+				add = -10
+				has_government = cooperative
+				ART = {
+					OR = {
+						has_government = belligerent
+						has_government = revolutionary
+					}
+				}
+			}
+		}
+		add_opinion_modifier = { target = ART modifier = small_increase }
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.75
+			uses = 1
+			category = lotr_knowledge_scriptorium
+		}
+		add_tech_bonus = {
+			name = industrial_bonus
+			bonus = 0.5
+			uses = 1
+			category = lotr_labour_metalworking
+		}
+		ART = {
+			country_event = { id = arthedain.10 }
+			event_option_tooltip = arthedain.10.a
+		}
+	}
+	option = { #No
+		name = gondor.26.b
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 15
+				has_opinion = { target = ART value < 0 }
+			}
+			modifier = {
+				add = 10
+				has_government = cooperative
+				NOT = { ART = { has_government = cooperative } }
+			}
+		}
+		ART = {
+			add_opinion_modifier = { target = GON modifier = small_decrease }
+			country_event = { id = arthedain.11 }
+		}
+	}
+}

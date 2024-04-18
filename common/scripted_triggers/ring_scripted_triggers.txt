@@ -2,6 +2,78 @@ can_attempt_ring_interception = {
 	controls_state = global.fs_currentstate
 }
 
+# @docs(Ring): The ring has been destroyed
+ring_has_been_destroyed = {
+	has_global_flag = fs_ring_destroyed
+}
+
+# @docs(Ring): The ring has been seized by a country at some point
+ring_has_been_seized = {
+	has_global_flag = fs_ring_seized
+}
+
+# @docs(Ring): The fellowship has left the shire
+fellowship_has_started = {
+	has_global_flag = fs_started
+}
+
+# @docs(Ring): The fellowship has left the shire, *and* the ring has neither been destroyed nor seized
+fellowship_is_active = {
+	ring_has_been_destroyed = no
+	ring_has_been_seized = no
+	fellowship_has_started = yes
+}
+
+
+# @docs(Ring): True if the fellowship is currently in a state controlled by THIS
+fellowship_in_controlled_territory = {
+	custom_trigger_tooltip = {
+		tooltip = "The Fellowship is in a controlled state."
+		if = {
+			limit = { has_variable = global.fs_currentstate }
+			var:global.fs_currentstate = {
+				is_controlled_by = PREV
+			}
+		}
+		else = {
+			has_variable = global.fs_currentstate
+		}
+	}
+}
+
+# @docs(Ring): True if the fellowship is currently in a core state of THIS (does not have to be controlled)
+fellowship_in_core_territory = {
+	custom_trigger_tooltip = {
+		tooltip = "The Fellowship is in a core state."
+		if = {
+			limit = { has_variable = global.fs_currentstate }
+			var:global.fs_currentstate = {
+				is_core_of = PREV
+			}
+		}
+		else = {
+			has_variable = global.fs_currentstate
+		}
+	}
+}
+
+# @docs(Ring): True if the fellowship is currently in a core state of THIS, controlled by THIS
+fellowship_in_controlled_core_territory = {
+	custom_trigger_tooltip = {
+		tooltip = "The Fellowship is in a core and controlled state."
+		if = {
+			limit = { has_variable = global.fs_currentstate }
+			var:global.fs_currentstate = {
+				is_controlled_by = PREV
+				is_core_of = PREV
+			}
+		}
+		else = {
+			has_variable = global.fs_currentstate
+		}
+	}
+}
+
 
 ring_frodo_is_dead = {
 	SHI = {

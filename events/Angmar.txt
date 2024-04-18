@@ -5,7 +5,7 @@
 add_namespace = angmar
 
 
-#
+# NOT USED ATM
 country_event = {
 	id = angmar.1
 	title = angmar.1.t
@@ -24,7 +24,7 @@ country_event = {
 	}
 }
 
-# Communists Execute Coup (Angmar only)
+# NOT USED ATM
 country_event = {
 	id = angmar.2
 	title = political.3.t
@@ -60,7 +60,7 @@ country_event = {
 	}
 }
 
-# Fascist Coup d'état (Angmar only)
+# NOT USED ATM
 country_event = {
 	id = angmar.3
 	title = political.9.t
@@ -96,7 +96,7 @@ country_event = {
 	}
 }
 
-#democrats take over
+# NOT USED ATM
 country_event = {
 	id = angmar.4
 	title = political.17.t
@@ -226,10 +226,20 @@ country_event = {
 				add = -999
 				is_puppet = yes
 			}
+			modifier = {
+				add = -999
+				has_war_with = ANG
+			}
+			modifier = {
+				add = -5
+				NOT = { has_government = cooperative }
+			}
 		}
 		ANG = {
 			add_to_faction = ROOT
+			add_opinion_modifier = { target = ROOT modifier = medium_increase }
 		}
+		add_opinion_modifier = { target = ANG modifier = medium_increase }
 	}
 
 	option = {
@@ -243,6 +253,13 @@ country_event = {
 					value < 10
 				}
 			}
+			modifier = {
+				add = 10
+				is_in_faction = yes
+			}
+		}
+		ANG = {
+			add_opinion_modifier = { target = ROOT modifier = small_decrease }
 		}
 		add_political_power = -50
 	}
@@ -433,5 +450,183 @@ country_event = {
 		ai_chance = {
 			base = 10
 		}
+	}
+}
+
+#Claims on the coast states warning for involved countries
+#Relevant countries are Lindon and Arthedain
+country_event = {
+	id = angmar.12
+	title = angmar.12.t
+	desc = angmar.12.d
+	picture = GFX_report_event_ship2
+
+	is_triggered_only = yes
+	option = { 
+		name = angmar.12.a
+		add_war_support = 0.05
+		add_opinion_modifier = { target = ANG modifier = medium_decrease }
+		hidden_effect = {
+			add_named_threat = { threat = 3 name = "Angmar has announced claimes on the west coast" }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#Vales of Anduin refuses
+country_event = {
+	id = angmar.13
+	title = angmar.13.t
+	desc = angmar.13.d
+	picture = GFX_report_event_ship2
+
+	is_triggered_only = yes
+	option = { 
+		name = angmar.13.a
+		add_political_power = -50
+		add_opinion_modifier = { target = FROM modifier = small_decrease }
+		if = {
+			limit = {
+				has_power_balance = {
+					id = power_balance_ang
+				}
+			}
+			add_power_balance_value = {
+				id = power_balance_ang
+				value = 0.25
+			}
+		}else = {
+			add_war_support = 0.05
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#Mirkwood accepted
+country_event = {
+	id = angmar.14
+	title = angmar.14.t
+	desc = angmar.14.d
+	picture = GFX_report_event_ship2
+
+	is_triggered_only = yes
+	option = { 
+		name = angmar.14.a
+		add_political_power = 50
+		add_opinion_modifier = { target = FROM modifier = small_increase }
+		if = {
+			limit = {
+				has_power_balance = {
+					id = power_balance_ang
+				}
+			}
+			add_power_balance_value = {
+				id = power_balance_ang
+				value = -0.25
+			}
+		}else = {
+			add_stability = 0.05
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#Mirkwood refuses to give rights to resources
+country_event = {
+	id = angmar.15
+	title = angmar.15.t
+	desc = angmar.15.d
+	picture = GFX_report_event_ship2
+
+	is_triggered_only = yes
+	option = { 
+		name = angmar.15.a
+		add_political_power = -50
+		add_opinion_modifier = { target = FROM modifier = small_decrease }
+		if = {
+			limit = {
+				has_power_balance = {
+					id = power_balance_ang
+				}
+			}
+			add_power_balance_value = {
+				id = power_balance_ang
+				value = 0.25
+			}
+		}else = {
+			add_war_support = 0.05
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#Anduin accepted
+country_event = {
+	id = angmar.16
+	title = angmar.16.t
+	desc = angmar.16.d
+	picture = GFX_report_event_ship2
+
+	is_triggered_only = yes
+	option = { 
+		name = angmar.16.a
+		add_political_power = 50
+		add_opinion_modifier = { target = FROM modifier = small_increase }
+		if = {
+			limit = {
+				has_power_balance = {
+					id = power_balance_ang
+				}
+			}
+			add_power_balance_value = {
+				id = power_balance_ang
+				value = -0.25
+			}
+		}else = {
+			add_stability = 0.05
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+# Necromancer arriving in Angmar
+news_event = {
+	id = angmar.17
+	title = angmar.17.t
+	desc = angmar.17.d
+	picture = GFX_news_event_ring_shire
+
+	mean_time_to_happen = { days = 15 }
+	fire_only_once = yes
+	trigger = {
+		tag = ANG
+		NOT = {
+			OR = {
+				has_completed_focus = ANG_stay_true_to_the_people
+				has_completed_focus = ANG_steady_as_we_go
+				has_completed_focus = ANG_unite_with_sauron
+				has_completed_focus = ANG_our_own_empire
+			}
+		}
+		MOR = {
+			has_completed_focus = arealmoforcs
+		}
+	}
+
+	option = {
+		name = angmar.17.a
+		set_country_flag = ANG_necromancer_path_unlocked
+		custom_effect_tooltip = ANG_tooltip_new_path_unlocked
+		mark_focus_tree_layout_dirty = yes
 	}
 }
