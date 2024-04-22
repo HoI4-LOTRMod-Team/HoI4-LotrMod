@@ -95,7 +95,7 @@ focus_tree = {
 		icon = GFX_goal_mordor_flag
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_imprison_gandalf
-		x = 3
+		x = 4
 		y = 1
 		prerequisite = { focus = ISE_imprison_gandalf}
 		cost = 5
@@ -111,13 +111,51 @@ focus_tree = {
 	}
 
 	focus = {
-		id = ISE_collabiration_with_mordor
-		icon = GFX_goal_mordor_deal
+		id = ISE_rebrand_isengard
+		icon = GFX_goal_ise_the_white_hand_flag
 		ai_will_do = { factor = 100 }
+		available = { 
+			belligerent > 0.35 
+		}
 		relative_position_id = ISE_increase_relations_with_sauron
 		x = 0
 		y = 1
-		prerequisite = { focus = ISE_increase_relations_with_sauron}
+		prerequisite = { focus = ISE_increase_relations_with_sauron }
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = {
+			lotr_switch_to_orcs = yes
+			set_politics = { ruling_party = belligerent elections_allowed = no }
+			add_named_threat = { threat = 1 name = "Rebranded Isengard" }
+			every_neighbor_country = {
+				limit = {
+					NOT = { has_government = belligerent }
+				}
+				add_opinion_modifier = { target = PREV modifier = medium_decrease }
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						GON = {
+							is_denethor_paranoid = yes
+						}
+					}
+					GON = {
+						country_event = { id = denethor_paranoid.4 }
+					}
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_collabiration_with_mordor
+		icon = GFX_goal_mordor_deal
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_rebrand_isengard
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_rebrand_isengard}
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -138,10 +176,10 @@ focus_tree = {
 			MOR = { has_government = belligerent }
 			NOT = { has_war_with = MOR }
 		}
-		relative_position_id = ISE_increase_relations_with_sauron
+		relative_position_id = ISE_rebrand_isengard
 		x = 2
 		y = 1
-		prerequisite = { focus = ISE_increase_relations_with_sauron}
+		prerequisite = { focus = ISE_rebrand_isengard}
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -262,7 +300,8 @@ focus_tree = {
 		x = 0
 		y = 1
 		mutually_exclusive = { }
-		prerequisite = { focus = ISE_betray_sauron focus = keeptheringforyourself }
+		prerequisite = { focus = ISE_betray_sauron }
+		prerequisite = { focus = keeptheringforyourself }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -549,7 +588,7 @@ focus_tree = {
 				add_ideas = ISE_the_white_hand_agency
 			}
 			add_political_power = 100
-			custom_effect_tooltip = "This will unlock dicisions"
+			custom_effect_tooltip = ISE_tooltip_infiltration_decisions
 		}
 	}
 
@@ -1704,39 +1743,6 @@ focus_tree = {
 		}
 	}
 
-	#Focus for Rebrand Isengard
-	focus = {
-		id = rebrandisengard
-		icon = GFX_goal_ise_the_white_hand_flag
-		ai_will_do = { factor = 100 }
-		available = { 
-			belligerent > 0.35 
-		}
-		x =6
-		y =4
-		mutually_exclusive = {  }
-		prerequisite = { focus = imprisongandalf}
-		cost = 10
-		available_if_capitulated = no
-		completion_reward = {
-			lotr_switch_to_orcs = yes
-			set_politics = { ruling_party = belligerent elections_allowed = no }
-			add_named_threat = { threat = 1 name = "Rebranded Isengard" }
-			hidden_effect = {
-				if = {
-					limit = {
-						GON = {
-							is_denethor_paranoid = yes
-						}
-					}
-					GON = {
-						country_event = { id = denethor_paranoid.4 }
-					}
-				}
-			}
-		}
-	}
-
 	#Focus for Military Research Committee
 	focus = {
 		id = ISE_military_research_committee
@@ -1877,8 +1883,6 @@ focus_tree = {
 		ai_will_do = { factor = 15 }
 		x =12
 		y =4
-		mutually_exclusive = { }
-		prerequisite = { focus = imprisongandalf}
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1898,7 +1902,6 @@ focus_tree = {
 		y =5
 		mutually_exclusive = { }
 		prerequisite = { focus = quarrelwithrohan}
-		prerequisite = { focus = rebrandisengard}
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
