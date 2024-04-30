@@ -33,7 +33,7 @@ NDefines.NMilitary.BASE_FORT_PENALTY = -0.4
 NDefines.NBuildings.AIRBASE_CAPACITY_MULT = 10
 
 -- Max slots shared by factories
-NDefines.NBuildings.MAX_SHARED_SLOTS = 30
+NDefines.NBuildings.MAX_SHARED_SLOTS = 26
 
 
 -- Shore bombardment buff (this is 3x vanilla)
