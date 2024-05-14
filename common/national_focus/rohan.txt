@@ -1,1126 +1,599 @@
 focus_tree = {
-id = rohan
-country = {
-	factor=0
-	modifier = {
-		add = 10
-		tag = ROH
-	}
-}
-
-default = no
-
-continuous_focus_position = { x = 50 y = 2000 }
-
-
-#Custom focuses start here
-#Focus for Fate of Rohan
-focus = {
-	id = thefateofrohan
-	icon = GFX_goal_generic_CAS
-	ai_will_do = { factor = 100 }
-	x =5
-	y =0
-	mutually_exclusive = { }
-	prerequisite = { }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { add_political_power = 100 }
-}
-
-#Focus for Accept Grima Wormtongue into the King's service
-focus = {
-	id = acceptgrimawormtongueintothekingsservice
-	icon = GFX_goal_roh_grima_wormtongue
-	ai_will_do = { factor = 100 }
-	available = { has_global_flag = grima_hired }
-	x =5
-	y =1
-	mutually_exclusive = { }
-	prerequisite = { focus = thefateofrohan}
-	cost = 0
-	available_if_capitulated = yes
-	completion_reward = {	}
-}
-
-#Focus for Deny access to Gandalf
-focus = {
-	id = denyaccesstogandalf
-	icon = GFX_goal_generic_small_arms
-	ai_will_do = { factor = 100 }
-	available = { has_global_flag = gandalf_denied_access_rohan }
-	x =2
-	y =2
-	mutually_exclusive = { focus = allowgandalfintothekingshalls }
-	prerequisite = { focus = acceptgrimawormtongueintothekingsservice}
-	cost = 0
-	available_if_capitulated = yes
-	completion_reward = {
-		custom_effect_tooltip = ROH_gandalf_tt
-	}
-}
-
-#Focus for Allow Gandalf into the King's Halls
-focus = {
-	id = allowgandalfintothekingshalls
-	icon = GFX_goal_roh_allow_gandalf_into_rohan
-	ai_will_do = { factor = 100 }
-	available = { has_global_flag = gandalf_allowed_into_rohan }
-	x =7
-	y =2
-	mutually_exclusive = { focus = denyaccesstogandalf }
-	prerequisite = { focus = acceptgrimawormtongueintothekingsservice}
-	cost = 0
-	available_if_capitulated = yes
-	completion_reward = {
-		custom_effect_tooltip = ROH_gandalf_tt
-		set_country_flag = path_going_cooperative
-	}
-}
-
-#Focus for Exile Grima
-focus = {
-	id = exilegrima
-	icon = GFX_goal_roh_grima_wormtongue
-	ai_will_do = { factor = 50 }
-	x =6
-	y =3
-	mutually_exclusive = { focus = executegrima}
-	prerequisite = { focus = allowgandalfintothekingshalls}
-	cost = 1
-	available_if_capitulated = yes
-	completion_reward = {
-		retire_character = ROH_grima
-		set_global_flag = grima_exiled
-		hidden_effect = { news_event = { hours = 48 id = news.341 } }
-	}
-}
-
-#Focus for Execute Grima
-focus = {
-	id = executegrima
-	icon = GFX_goal_roh_grima_wormtongue
-	ai_will_do = { factor = 50 }
-	x =8
-	y =3
-	mutually_exclusive = { focus = exilegrima }
-	prerequisite = { focus = allowgandalfintothekingshalls}
-	cost = 1
-	available_if_capitulated = yes
-	completion_reward = {
-		retire_character = ROH_grima
-		set_global_flag = grima_executed
-		hidden_effect = { news_event = { hours = 48 id = news.342 } }
-	}
-}
-
-#Focus for Restore the Realm
-focus = {
-	id = restoretherealm
-	icon = GFX_goal_roh_sick_theoden
-	ai_will_do = { factor = 100 }
-	x =7
-	y =4
-	mutually_exclusive = { }
-	prerequisite = { focus = executegrima  focus = exilegrima}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		set_politics = { ruling_party = cooperative elections_allowed = no }
-		add_stability = 0.05
-		add_ideas = ROH_reformed_realm
-		add_field_marshal_role = {
-			character = ROH_theoden
-			traits={ fast_planner inspirational_leader }
-			skill=5
-			attack_skill=4
-			defense_skill=2
-			planning_skill=5
-			logistics_skill=3
-		}
-	}
-}
-
-#Focus for Encourage the Ents to seek vengance
-focus = {
-	id = encouragetheentstoseekvengance
-	icon = GFX_goal_ent_throwing_rock
-	ai_will_do = {
-		factor = 0
+	id = rohan
+	country = {
+		factor=0
 		modifier = {
-			add = 12
-			has_government = cooperative
+			add = 10
+			tag = ROH
 		}
 	}
-	available = { has_global_flag = ents_burned }
- 	x =1
- 	y =1
- 	mutually_exclusive = { }
- 	prerequisite = { focus = thefateofrohan}
- 	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { set_global_flag = ents_encouraged }
-}
 
-#Focus for Wed Grima to Eowyn
-focus = {
-	id = wedgrimatoeowyn
-	icon = GFX_goal_roh_eowyn_sorrow
-	ai_will_do = { factor = 30 }
-	x =1
-	y =4
-	mutually_exclusive = { }
-	prerequisite = { focus = denyaccesstogandalf}
-	cost = 1
-	available_if_capitulated = yes
-	completion_reward = {
-		add_popularity = { ideology = belligerent popularity = 0.05 }
-		country_event = { days = 0 id = rohan.7 }
-	}
-}
+	default = no
 
-#Focus for Get rid of Theodred
-focus = {
-	id = getridoftheodred
-	icon = GFX_goal_roh_theodred
-	ai_will_do = { factor = 30 }
-	bypass = { has_global_flag = theodred_dead }
-	available = { belligerent > 0.2 }
-	x =3
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = denyaccesstogandalf}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_threat = 2
-		if = {
-			limit = { NOT = { has_global_flag = theodred_dead } }
-			news_event = { hours = 48 id = news.340 }
-		}
-		set_global_flag = theodred_dead
-		retire_character = ROH_theodred
-	}
-}
+	continuous_focus_position = { x = 50 y = 2000 }
 
-#Focus for Assasinate Eomer
-focus = {
-	id = assasinateeomer
-	icon = GFX_goal_roh_eomer
-	ai_will_do = { factor = 30 }
-	available = { belligerent > 0.3 }
-	x =3
-	y =4
-	mutually_exclusive = { }
-	prerequisite = { focus = denyaccesstogandalf}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_threat = 1
-		set_global_flag = eomer_dead
-		ROH_eomer = { retire = yes }
-	}
-}
-
-#Focus for Get Rid of Theoden
-focus = {
-	id = getridoftheoden
-	icon = GFX_goal_roh_sick_theoden
-	ai_will_do = { factor = 30 }
-	available = { belligerent > 0.45 }
-	x =2
-	y =5
-	mutually_exclusive = { }
-	prerequisite = { focus = assasinateeomer}
-	prerequisite = { focus = wedgrimatoeowyn}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_threat = 3
-		kill_country_leader = yes
-		set_politics = { ruling_party = belligerent elections_allowed = no }
-		hidden_effect = { news_event = { hours = 48 id = news.339 } }
-		ROH_theoden = { retire = yes }
-		ROH_theoden_old = { retire = yes }
-		hidden_effect = {
-			if = {
-				limit = {
-					GON = {
-						is_denethor_paranoid = yes
-					}
-				}
-				GON = {
-					country_event = { id = denethor_paranoid.7 }
-				}
-			}
+	focus = {
+		id = ROH_accept_grima
+		icon = GFX_goal_unknown
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =0
+		y =0
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Welcome back Eomer
-focus = {
-	id = welcomebackeomer
-	icon = GFX_goal_roh_eomer
-	ai_will_do = { factor = 15 }
-	available = { 183 = { is_controlled_by = ROH } }
-	x =7
-	y =5
-	mutually_exclusive = { }
-	prerequisite = { focus = restoretherealm}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		ROH = { load_oob = "ROH_Riders" }
-
-		ROH_eomer = {
-			add_corps_commander_role = {
-			    traits={ panzer_leader }
-				skill=4
-				attack_skill=4
-				defense_skill=1
-				planning_skill=3
-				logistics_skill=2
-			}
-			add_advisor_role  = {
-				advisor = {
-					idea_token = ROH_eomer_chief_advisor
-					slot = chief_advisor 
-					cost = 150
-					traits = { lord_of_the_mark }
-				}
-			}
+	focus = {
+		id = ROH_stuff_1
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_accept_grima
+		prerequisite = { focus = ROH_accept_grima }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-5
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Rule in Eowyn's Name
-focus = {
-	id = ruleineowynsname
-	icon = GFX_goal_roh_grima_wormtongue
-	ai_will_do = { factor = 15 }
-	available = { has_government = belligerent }
-	x =1
-	y =6
-	mutually_exclusive = { focus = crowngrimakingofrohan }
-	prerequisite = { focus = getridoftheoden}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { add_country_leader_trait = puppet_queen }
-}
-
-#Focus for Crown Grima King of Rohan
-focus = {
-	id = crowngrimakingofrohan
-	icon = GFX_focus_rom_royal_dictatorship
-	available = { has_government = belligerent }
-	ai_will_do = { factor = 15 }
-	x =3
-	y =6
-	mutually_exclusive = { focus = ruleineowynsname}
-	prerequisite = { focus = getridoftheoden}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { retire_country_leader = yes }
-}
-
-#Focus for Unite with Isengard
-focus = {
-	id = unitewithisengard
-	icon = GFX_goal_ise_the_white_hand_flag
-	ai_will_do = { factor = 5 }
-	available = { ROH = { has_government = belligerent } ISE = { is_in_faction = yes } NOT = { is_puppet = yes } ISE = { has_country_leader = { ruling_only = yes name = "Saruman" } } ISE = { has_government = belligerent } }
-	x =2
-	y =7
-	mutually_exclusive = { }
-	prerequisite = { focus = ruleineowynsname  focus = crowngrimakingofrohan}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		white_peace = ISE
-		if = {
-			limit = { ISE = { is_faction_leader = yes } }
-			ISE = { add_to_faction = ROH }
-			else = { MOR = { add_to_faction = ROH } }
+	focus = {
+		id = ROH_stuff_2
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_stuff_1
+		prerequisite = { focus = ROH_stuff_1 }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =0
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Support Aragorn's Claim
-focus = {
-	id = supportaragornsclaim
-	icon = GFX_goal_tfv_strengthen_commonwealth_ties
-	available = { NOT = { has_global_flag = aragorn_dead } }
-	ai_will_do = { factor = 5 }
-	x =9
-	y =5
-	mutually_exclusive = { }
-	prerequisite = { focus = restoretherealm}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { set_global_flag = aragorns_claim_supported }
-}
-
-#Focus for Prepare for War
-focus = {
-	id = prepareforwar
-	icon = GFX_focus_secret_rearmament
-	ai_will_do = { factor = 15 }
-	x =5
-	y =6
-	mutually_exclusive = { }
-	prerequisite = { focus = restoretherealm  focus = getridoftheoden}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		army_experience = 30
-		add_ideas = extensive_conscription
-	}
-}
-
-#Focus for Bunker down in Helm's Deep
-focus = {
-	id = bunkerdowninhelmsdeep
-	icon = GFX_goal_roh_helms_deep
-	available = { 26 = { is_controlled_by = ROH } }
-	ai_will_do = { factor = 10 }
-	x =4
-	y =7
-	mutually_exclusive = { focus = remaininedoras}
-	prerequisite = { focus = prepareforwar}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		set_capital = { state = 184 }
-		184 = { add_extra_state_shared_building_slots = 2 }
-	}
-}
-
-#Focus for Fortify Helm's Deep
-focus = {
-	id = fortifyhelmsdeep
-	icon = GFX_goal_generic_construct_military
-	ai_will_do = { factor = 10 }
-	available = { 26 = { is_controlled_by = ROH } }
-	x =4
-	y =8
-	mutually_exclusive = { }
-	prerequisite = { focus = bunkerdowninhelmsdeep}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		184 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 2180 } }
-		184 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4975 } }
-		184 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 2483 } }
-		184 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 6762 } }
-		184 = { add_building_construction = {	type = bunker level = 2 instant_build = yes province = 4628 } }
-	}
-}
-
-#Focus for Helm's Deep Airport
-focus = {
-	id = helmsdeepairport
-	icon = GFX_goal_generic_build_airforce
-	ai_will_do = { factor = 2 }
-	available = { 26 = { is_controlled_by = ROH } }
-	x =2
-	y =8
-	mutually_exclusive = { }
-	prerequisite = { focus = bunkerdowninhelmsdeep}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		184 = {
-			add_building_construction = {
-				type = air_base
-				level = 2
-				instant_build = yes
-			}
+	focus = {
+		id = ROH_stuff_3
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_stuff_1
+		prerequisite = { focus = ROH_stuff_2 }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-1
+		y =2
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Remain in Edoras
-focus = {
-	id = remaininedoras
-	icon = GFX_goal_roh_edoras
-	available = { 25 = { is_controlled_by = ROH } }
-	ai_will_do = { factor = 10 }
-	x =6
-	y =7
-	mutually_exclusive = { focus = bunkerdowninhelmsdeep }
-	prerequisite = { focus = prepareforwar}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { 183 = { add_extra_state_shared_building_slots = 2 } }
-}
-
-#Focus for Fortify Edoras
-focus = {
-	id = fortifyedoras
-	icon = GFX_goal_generic_construct_military
-	ai_will_do = { factor = 10 }
-	available = { 25 = { is_controlled_by = ROH } }
-	x =6
-	y =8
-	mutually_exclusive = { }
-	prerequisite = { focus = remaininedoras}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		183 = { add_building_construction = {	type = castle level = 1 instant_build = yes province = 6760 } }
-	}
-}
-
-#Focus for Edoras Railway Station
-focus = {
-	id = edorasrailwaystation
-	icon = GFX_goal_generic_infrastructure_investment
-	ai_will_do = { factor = 1 }
-	available = { 25 = { is_controlled_by = ROH } }
-	x =8
-	y =8
-	mutually_exclusive = { }
-	prerequisite = { focus = remaininedoras}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		183 = {
-			add_building_construction = {
-				type = infrastructure
-				level = 3
-				instant_build = yes
-			}
+	focus = {
+		id = ROH_stuff_4
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_stuff_1
+		prerequisite = { focus = ROH_stuff_2 }
+		prerequisite = { focus = ROH_get_rid_of_theodred }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =1
+		y =3
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Cleanse the Orc Invasion
-focus = {
-	id = cleansetheorcinvasion
-	icon = GFX_goal_roh_rohan_flag
-	ai_will_do = { factor = 30 }
-	available = { has_idea = ISE_orc_pillage }
-	x =5
-	y =9
-	mutually_exclusive = { }
-	prerequisite = { focus = fortifyedoras focus = fortifyhelmsdeep }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		remove_ideas = ISE_orc_pillage
-	}
-}
-
-#Focus for rohanian trade reforms
-focus = {
-	id = rohaniantradereforms
-	icon = GFX_goal_generic_trade
-	available = { }
-	ai_will_do = { factor = 3 }
-	x =10
-	y =1
-	mutually_exclusive = { }
-	prerequisite = { focus = thefateofrohan}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { add_ideas = ROH_trade_reforms }
-}
-
-#Focus for adaptable exports
-focus = {
-	id = adaptableexports
-	icon = GFX_focus_generic_self_management
-	available = { }
-	ai_will_do = { factor = 3 }
-	x =10
-	y =2
-	mutually_exclusive = { }
-	prerequisite = { focus = rohaniantradereforms}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { add_ideas = ROH_adaptable_exports }
-}
-
-#Focus for Mutual Benfit Act
-focus = {
-	id = mutualbenefitact
-	icon = GFX_goal_tripartite_pact
-	available = { }
-	ai_will_do = { factor = 4 }
-	x =10
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = adaptableexports}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { add_ideas = ROH_mutual_benefit_pact }
-}
-
-#Focus for Technology Trading
-focus = {
-	id = technologytrading
-	icon = GFX_goal_generic_scientific_exchange
-	available = { }
-	ai_will_do = { factor = 8 }
-	x =10
-	y =4
-	mutually_exclusive = { }
-	prerequisite = { focus = mutualbenefitact}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { add_research_slot = 1 }
-}
-
-#Focus for Rohanian Renovation Programme
-focus = {
-	id = rohanianrenovationprogramme
-	icon = GFX_goal_generic_construction
-	available = { }
-	ai_will_do = { factor = 2 }
-	x =14
-	y =1
-	mutually_exclusive = { }
-	prerequisite = { focus = thefateofrohan}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-				name = ROH_industrial_revitalization
-				bonus = 0.5
-				uses = 1
-				category = lotr_labour_construction_industry
-			}
- 	}
-}
-
-#Focus for Develop the East
-focus = {
-	id = developtheeast
-	icon = GFX_goal_generic_construction
-	available = { }
-	ai_will_do = { factor = 2 }
-	available = { 25 = { is_controlled_by = ROH } }
-	x =12
-	y =2
-	mutually_exclusive = { }
-	prerequisite = { focus = rohanianrenovationprogramme}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		25 = { add_extra_state_shared_building_slots = 2 }
-		25 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
-	}
-}
-
-#Focus for Expansion of New Towns
-focus = {
-	id = expansionofnewtowns
-	icon = GFX_goal_generic_construct_civilian
-	available = { }
-	ai_will_do = { factor = 2 }
-	available = { 25 = { is_controlled_by = ROH } }
-	x =12
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = developtheeast}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		25 = {add_building_construction = { type = infrastructure level = 5 instant_build = yes } }
-	}
-}
-
-#Focus for Industrialize the eastern fold
-focus = {
-	id = industrializetheeasternfold
-	icon = GFX_goal_generic_construct_mil_factory
-	available = { }
-	ai_will_do = { factor = 3 }
-	available = { 25 = { is_controlled_by = ROH } }
-	x =12
-	y =4
-	mutually_exclusive = { }
-	prerequisite = { focus = expansionofnewtowns}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		25 = { add_extra_state_shared_building_slots = 4 }
-		25 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
-		25 = {add_building_construction = { type = arms_factory level = 2 instant_build = yes } }
-	}
-}
-
-#Focus for Develop the West
-focus = {
-	id = developthewest
-	icon = GFX_focus_generic_industry_1
-	available = { }
-	ai_will_do = { factor = 1 }
-	available = { 26 = { is_controlled_by = ROH } 23 = { is_controlled_by = ROH } }
-	x =14
-	y =2
-	mutually_exclusive = { }
-	prerequisite = { focus = rohanianrenovationprogramme}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		26 = { add_extra_state_shared_building_slots = 1 }
-		26 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
-		23 = { add_extra_state_shared_building_slots = 1 }
-		23 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
-	}
-}
-
-#Focus for Expand the Mining Industry
-focus = {
-	id = expandtheminingindustry
-	icon = GFX_goal_generic_construction2
-	available = { }
-	ai_will_do = { factor = 2 }
-	available = { 26 = { is_controlled_by = ROH } 23 = { is_controlled_by = ROH } }
-	x =14
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = developthewest}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_resource = { type = steel amount = 25 state = 23 }
-	}
-}
-
-#Focus for Establish a rail network
-focus = {
-	id = establisharailnetwork
-	icon = GFX_goal_generic_construct_civilian
-	available = { }
-	ai_will_do = { factor = 2 }
-	available = { 26 = { is_controlled_by = ROH } }
-	x =14
-	y =4
-	mutually_exclusive = { }
-	prerequisite = { focus = expandtheminingindustry}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { 26 = {add_building_construction = { type = infrastructure level = 5 instant_build = yes } } }
-}
-
-#Focus for Develop Civilian Industry
-focus = {
-	id = developcivilianindustry
-	icon = GFX_focus_generic_industry_3
-	available = { 26 = { is_controlled_by = ROH } 27 = { is_controlled_by = ROH } 25 = { is_controlled_by = ROH } 28 = { is_controlled_by = ROH } }
-	available = { }
-	ai_will_do = { factor = 2 }
-	x =11
-	y =5
-	mutually_exclusive = { focus = developmilitaryindustry }
-	prerequisite = { focus = establisharailnetwork}
-	prerequisite = { focus = industrializetheeasternfold}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		25 = { add_extra_state_shared_building_slots = 1 }
-		25 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
-		26 = { add_extra_state_shared_building_slots = 1 }
-		26 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
-		27 = { add_extra_state_shared_building_slots = 1 }
-		27 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
-		28 = { add_extra_state_shared_building_slots = 1 }
-		28 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
-	}
-}
-
-#Focus for Develop Military Industry
-focus = {
-	id = developmilitaryindustry
-	icon = GFX_goal_generic_construct_mil_factory
-	available = { }
-	ai_will_do = { factor = 2 }
-	available = { 26 = { is_controlled_by = ROH } 27 = { is_controlled_by = ROH } 25 = { is_controlled_by = ROH } 28 = { is_controlled_by = ROH } }
-	x =13
-	y =5
-	mutually_exclusive = { focus = developcivilianindustry }
-	prerequisite = { focus = establisharailnetwork}
-	prerequisite = { focus = industrializetheeasternfold}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		25 = { add_extra_state_shared_building_slots = 1 }
-		25 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
-		26 = { add_extra_state_shared_building_slots = 1 }
-		26 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
-		27 = { add_extra_state_shared_building_slots = 1 }
-		27 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
-		28 = { add_extra_state_shared_building_slots = 1 }
-		28 = {add_building_construction = { type = arms_factory level = 1 instant_build = yes } }
-	}
-}
-
-#Focus for Expand the University of Edoras
-focus = {
-	id = expandtheuniversityofedoras
-	icon = GFX_focus_research
-	available = { }
-	ai_will_do = { factor = 8 }
-	x =12
-	y =6
-	mutually_exclusive = { }
-	prerequisite = { focus = developcivilianindustry focus = developmilitaryindustry }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { add_research_slot = 1 }
-}
-
-#Focus for Develop the North
-focus = {
-	id = developthenorth
-	icon = GFX_focus_generic_industry_1
-	available = { }
-	ai_will_do = { factor = 1 }
-	available = { 30 = { is_controlled_by = ROH } }
-	x =16
-	y =2
-	mutually_exclusive = { }
-	prerequisite = { focus = rohanianrenovationprogramme}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		30 = { add_extra_state_shared_building_slots = 2 }
-		30 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
-	}
-}
-
-#Focus for Invest in the Wold
-focus = {
-	id = investinthewold
-	icon = GFX_focus_generic_industry_2
-	available = { }
-	ai_will_do = { factor = 1 }
-	available = { 30 = { is_controlled_by = ROH } }
-	x =16
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = developthenorth}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { add_resource = { type = oil amount = 10 state = 30 } }
-}
-
-#Focus for Army Modernization
-focus = {
-	id = armymodernization
-	icon = GFX_goal_generic_axis_build_infantry
-	available = { }
-	ai_will_do = { factor = 2 }
-	x =20
-	y =1
-	mutually_exclusive = { }
-	prerequisite = { focus = thefateofrohan}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { army_experience = 25 }
-}
-
-#Focus for Standardization of Equipment
-focus = {
-	id = standardizationofequipment
-	icon = GFX_goal_generic_small_arms
-	available = { }
-	ai_will_do = { factor = 2 }
-	x =18
-	y =2
-	mutually_exclusive = { }
-	prerequisite = { focus = armymodernization}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = ROH_standardisation_of_equipment
-			bonus = 0.5
-			uses = 1
-			category = lotr_infantry_weapons
+	focus = {
+		id = ROH_stuff_5
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_accept_grima
+		prerequisite = { focus = ROH_accept_grima }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-2
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Modernized Artillery
-focus = {
-	id = modernizedartillery
-	icon = GFX_goal_generic_army_artillery2
-	available = { }
-	ai_will_do = { factor = 2 }
-	x =18
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = standardizationofequipment}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = ROH_artillery_modernisation
-			bonus = 0.5
-			uses = 1
-			category = lotr_infantry_archery
+	focus = {
+		id = ROH_get_rid_of_theodred
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_stuff_5
+		prerequisite = { focus = ROH_stuff_5 }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-1
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Anti Tank Weapons
-focus = {
-	id = antitankweapons
-	icon = GFX_goal_generic_army_tanks
-	available = { }
-	ai_will_do = { factor = 1 }
-	x =18
-	y =5
-	mutually_exclusive = { }
-	prerequisite = { focus = modernizedartillery}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = ROH_anti_tank_guns
-			bonus = 0.5
-			uses = 1
-			category = lotr_machines_ballista
+	focus = {
+		id = ROH_get_rid_of_eomer
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_stuff_5
+		prerequisite = { focus = ROH_stuff_5 }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =1
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Ride of the Rohirrim
-focus = {
-	id = rideoftherohirrim
-	icon = GFX_goal_generic_cavalry
-	available = { }
-	ai_will_do = { factor = 2 }
-	x =20
-	y =2
-	mutually_exclusive = { }
-	prerequisite = { focus = armymodernization}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-				name = ROH_ride_of_the_rohirrim
-				bonus = 0.5
-				uses = 2
-				category = lotr_cavalry_carriages
-			}
-	}
-}
-
-#Focus for Armored Horses
-focus = {
-	id = armoredhorses
-	icon = GFX_focus_generic_license_production
-	available = { }
-	ai_will_do = { factor = 2 }
-	x =20
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = rideoftherohirrim}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = ROH_armored_horses
-			bonus = 0.5
-			uses = 1
-			category = lotr_cavalry
+	focus = {
+		id = ROH_wormtongue_cabinet
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_stuff_5
+		prerequisite = { focus = ROH_get_rid_of_eomer }
+		prerequisite = { focus = ROH_get_rid_of_theodred }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =0
+		y =3
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Mobility Focus
-focus = {
-	id = mobilityfocus
-	icon = GFX_goal_generic_army_motorized
-	available = { }
-	ai_will_do = { factor = 1 }
-	x =21
-	y =4
-	mutually_exclusive = { focus = resistancefocus }
-	prerequisite = { focus = armoredhorses}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = ROH_mobility_focus
-			bonus = 0.5
-			uses = 2
-			category = lotr_cavalry_light
+	focus = {
+		id = ROH_anti_wormtongue_stuff
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_accept_grima
+		prerequisite = { focus = ROH_accept_grima }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =6
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Resistance Focus
-focus = {
-	id = resistancefocus
-	icon = GFX_goal_generic_defence
-	available = { }
-	ai_will_do = { factor = 1 }
-	x =19
-	y =4
-	mutually_exclusive = { focus = mobilityfocus }
-	prerequisite = { focus = armoredhorses}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = ROH_resistance_focus
-			bonus = 0.5
-			uses = 2
-			category = lotr_machines_siege_equipment
+	focus = {
+		id = ROH_stuff_6
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_anti_wormtongue_stuff
+		prerequisite = { focus = ROH_anti_wormtongue_stuff }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-1
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Rohanian Eagles
-focus = {
-	id = rohanianeagles
-	icon = GFX_goal_generic_air_fighter2
-	available = { }
-	ai_will_do = { factor = 1 }
-	x =22
-	y =2
-	mutually_exclusive = { }
-	prerequisite = { focus = armymodernization}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_doctrine_cost_reduction = {
-			cost_reduction = 0.75
-			uses = 1
-			category = air_doctrine
+	focus = {
+		id = ROH_stuff_7
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_anti_wormtongue_stuff
+		prerequisite = { focus = ROH_anti_wormtongue_stuff }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =1
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Air Base Expansion
-focus = {
-	id = airbaseexpansion
-	icon = GFX_goal_generic_position_armies
-	available = { }
-	ai_will_do = { factor = 3 }
-	available = { 27 = { is_controlled_by = ROH } 28 = { is_controlled_by = ROH } }
-	x =22
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = rohanianeagles}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		27 = {
-			add_building_construction = {
-				type = air_base
-				level = 2
-				instant_build = yes
-			}
-		}
-		28 = {
-			add_building_construction = {
-				type = air_base
-				level = 2
-				instant_build = yes
-			}
+	focus = {
+		id = ROH_gandalfs_arrival
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_accept_grima
+		prerequisite = { focus = ROH_accept_grima }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =2
+		y =3
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Heavy Fighters
-focus = {
-	id = heavyfighters
-	icon = GFX_goal_generic_air_bomber
-	available = { }
-	ai_will_do = { factor = 1 }
-	x =22
-	y =5
-	mutually_exclusive = { }
-	prerequisite = { focus = airbaseexpansion}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = ROH_heavy_fighters
-			bonus = 0.5
-			uses = 1
-			category = lotr_eagles
-			category = lotr_fellbeasts
+	focus = {
+		id = ROH_let_gandalf_in
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_gandalfs_arrival
+		prerequisite = { focus = ROH_gandalfs_arrival }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =2
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Radar Stations
-focus = {
-	id = radarstations
-	icon = GFX_goal_generic_radar
-	available = { }
-	ai_will_do = { factor = 1 }
-	x =22
-	y =6
-	mutually_exclusive = { }
-	prerequisite = { focus = heavyfighters }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = ROH_radar_statios
-			bonus = 0.75
-			uses = 1
-			category = lotr_knowledge_intrigue_network
+	focus = {
+		id = ROH_deny_gandalf_entrance
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_gandalfs_arrival
+		prerequisite = { focus = ROH_gandalfs_arrival }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-2
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Rocket Development
-focus = {
-	id = rocketdevelopment
-	icon = GFX_focus_rocketry
-	available = { }
-	ai_will_do = { factor = 2 }
-	x =20
-	y =7
-	mutually_exclusive = { }
-	prerequisite = { focus = radarstations }
-	prerequisite = { focus = antitankweapons }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = ROH_rocket_development
-			bonus = 0.5
-			uses = 1
-			category = lotr_knowledge_magic
+	focus = {
+		id = ROH_the_kings_death
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_deny_gandalf_entrance
+		prerequisite = { focus = ROH_deny_gandalf_entrance focus = ROH_wormtongue_cabinet }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-2
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
 
-#Focus for Super Weapon Effort
-focus = {
-	id = superweaponeffort
-	icon = GFX_focus_wonderweapons
-	available = { }
-	ai_will_do = { factor = 3 }
-	x =20
-	y =8
-	mutually_exclusive = { }
-	prerequisite = { focus = rocketdevelopment }
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		add_tech_bonus = {
-			name = ROH_super_weapon_effort
-			bonus = 0.5
-			uses = 1
-			category = lotr_knowledge_magic
+	focus = {
+		id = ROH_pull_the_strings
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_deny_gandalf_entrance
+		prerequisite = { focus = ROH_deny_gandalf_entrance focus = ROH_wormtongue_cabinet }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =0
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
 		}
 	}
-}
+
+	focus = {
+		id = ROH_belligerent_rohan
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_deny_gandalf_entrance
+		prerequisite = { focus = ROH_pull_the_strings focus = ROH_the_kings_death }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-1
+		y =2
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_rule_in_eowyns_name
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_belligerent_rohan
+		prerequisite = { focus = ROH_belligerent_rohan }
+		prerequisite = { focus = ROH_the_kings_death }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-4
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_crown_grima_king
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_belligerent_rohan
+		prerequisite = { focus = ROH_belligerent_rohan }
+		prerequisite = { focus = ROH_the_kings_death }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-2
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_stuff_8
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_belligerent_rohan
+		prerequisite = { focus = ROH_rule_in_eowyns_name focus = ROH_crown_grima_king }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-3
+		y =2
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_stuff_9
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_belligerent_rohan
+		prerequisite = { focus = ROH_stuff_8 }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-3
+		y =4
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_follow_the_white_wizard
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_belligerent_rohan
+		prerequisite = { focus = ROH_belligerent_rohan }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =0
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_stuff_1_0
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_follow_the_white_wizard
+		prerequisite = { focus = ROH_follow_the_white_wizard }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-1
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_stuff_1_1
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_follow_the_white_wizard
+		prerequisite = { focus = ROH_follow_the_white_wizard }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =1
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_stuff_1_2
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_follow_the_white_wizard
+		prerequisite = { focus = ROH_stuff_1_0 focus = ROH_stuff_1_1 }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =0
+		y =2
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_stuff_1_3
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_follow_the_white_wizard
+		prerequisite = { focus = ROH_stuff_1_2 }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =0
+		y =3
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_resist_saruman
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_belligerent_rohan
+		prerequisite = { focus = ROH_belligerent_rohan }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =4
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_our_own_way
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_resist_saruman
+		prerequisite = { focus = ROH_resist_saruman }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-1
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_stuff_1_4
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_resist_saruman
+		prerequisite = { focus = ROH_our_own_way }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-1
+		y =2
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_stuff_1_5
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_resist_saruman
+		prerequisite = { focus = ROH_our_own_way }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =-1
+		y =3
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_turn_to_mordor
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_resist_saruman
+		prerequisite = { focus = ROH_resist_saruman }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =1
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_stuff_1_6
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_resist_saruman
+		prerequisite = { focus = ROH_turn_to_mordor }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =1
+		y =3
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
+
+	focus = {
+		id = ROH_stuff_1_7
+		icon = GFX_goal_unknown
+		relative_position_id = ROH_belligerent_rohan
+		prerequisite = { focus = ROH_stuff_9 focus = ROH_stuff_1_3 focus = ROH_stuff_1_5 focus = ROH_stuff_1_6 }
+		available = { }
+		ai_will_do = { factor = 0 }
+		x =0
+		y =5
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			# TODO
+		}
+	}
 
 
-
-### HORSELORDS
+	### HORSELORDS
 
 	focus = {
 		id = ROH_horselords_of_rohan
@@ -1754,5 +1227,10 @@ focus = {
 			# TODO: Allow us to go higher than medium taxes
 		}
 	}
+
+
+
+
+
 
 }
