@@ -20,7 +20,7 @@ Note that downloading the mod from sources other than the Steam workwhop will re
 
 If you want to contribute to this project, feel free to get in touch through discord or open a pull request!
 
-Not that by opening a pull-request you grant us a perpetual permission to use the contents therein for this mod (unless explicitly agreed otherwise). Please stick with CC/public domain resources, give credit where necessary, or make sure you have an appropriate license for external assets.
+Note that by opening a pull-request you grant us a perpetual permission to use the contents therein for this mod (unless explicitly agreed otherwise). Please stick with CC/public domain resources, give credit where necessary, or make sure you have an appropriate license for external assets.
 
 Note: The `dev` branch and the derivatives thereof are our working branches. The `master` branch reflects what is live on the workshop and is only commited to when a new patch is released.
 
