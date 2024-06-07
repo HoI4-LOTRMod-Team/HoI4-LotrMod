@@ -1,4 +1,15 @@
 
+# @docs(Ring): Disables the "stealth" check on ring interceptions for THIS (country)
+ring_disable_stealth_check = {
+	custom_effect_tooltip = "ring_disable_stealth_check_tt"
+	set_country_flag = ring_no_stealth_check
+}
+
+# @docs(Ring): Makes it so if THIS attacks the fellowship, they get 2 extra attacks
+ring_get_extra_attacks = {
+	custom_effect_tooltip = "ring_get_extra_attacks_tt"
+	set_country_flag = ring_extra_attacks_unlocked
+}
 
 # Clears the current queue of states the fellowship will travel through (the pathstack)
 ring_clear_pathstack = {
@@ -562,6 +573,23 @@ ring_execute_interception_attempt = {
     	}
 	}
 
+	# Special case: some countries get extra attacks through focuses/preparations etc.
+	if = {
+		limit = {
+			ROOT = { has_country_flag = ring_extra_attacks_unlocked }
+		}
+		for_loop_effect = {
+			end = 1
+			value = temp_attempt
+
+			if = {
+				limit = { check_variable = { fs_interception_cancelled = 0 } }
+
+				ring_interception_single_attempt = yes
+			}
+		}
+	}
+
 	# special case: if this is orcs attacking with cave-troll, the troll keeps fighting for a while longer
 	if = {
 		limit = {
@@ -661,6 +689,9 @@ ring_interception_detection_check = {
 		# Argonath raid does not require stealth-check
 		limit = {
 			NOT = { has_country_flag = is_argonath_raid }
+
+			# Some countries can disable the stealth check
+			NOT = { has_country_flag = ring_no_stealth_check }
 
 			# neither does Lothlorien
 			ROOT = { NOT = { tag = LTH } }
