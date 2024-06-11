@@ -15,7 +15,9 @@ focus_tree = {
 	focus = {
 		id = ROH_accept_grima
 		icon = GFX_goal_unknown
-		available = { }
+		available = {
+			autocompleted_on_event = yes
+		}
 		ai_will_do = { factor = 0 }
 		x =0
 		y =0
@@ -47,7 +49,8 @@ focus_tree = {
 		completion_reward = {
 			# TODO
 			move_bop_to_grima = yes
-			# grima will hire advisors twice as fast, make advisors 2x as expensive
+			# grima will hire 2 political advisors
+			add_ideas = ROH_wormtongue_influence
 		}
 	}
 
@@ -65,8 +68,11 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			move_bop_to_grima = yes
+			swap_ideas = {
+				remove_idea = ROH_wormtongue_influence
+				add_idea = ROH_wormtongue_influence_2
+			}
 			# every grima sympaziser gets extra army capacity, the others less.
-			# something else, like improving an idea or something
 			every_unit_leader = {
 				limit = { has_trait = wormtongue_sympathizer }
 				add_trait = {
@@ -276,6 +282,23 @@ focus_tree = {
 		completion_reward = {
 			# TODO
 			# national spirit
+			if = {
+				limit = { has_idea = ROH_wormtongue_influence }
+				swap_ideas = {
+					remove_idea = ROH_wormtongue_influence
+					add_idea = ROH_wormtongue_cabinet
+				}
+			}
+			else_if = {
+				limit = { has_idea = ROH_wormtongue_influence_2 }
+				swap_ideas = {
+					remove_idea = ROH_wormtongue_influence_2
+					add_idea = ROH_wormtongue_cabinet
+				}
+			}
+			else = {
+				add_ideas = ROH_wormtongue_cabinet
+			}
 			# permanently remove certain advisors and generals
 		}
 	}
@@ -621,7 +644,7 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			# TODO
-			# Get rid of advisors and generals sympathetic to wormtongue
+			# Unlock decisions to remove grima's advisors
 		}
 	}
 
