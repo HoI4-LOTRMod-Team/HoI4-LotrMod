@@ -30,8 +30,12 @@ jobs:
       - name: Read patch notes
         id: patch-notes
         run: |
-          # Read the contents of patch_notes.txt and base64 encode it
-          patch_notes=$(cat patch_notes.txt | base64)
+          # Read the contents of patch_notes.txt
+          patch_notes=$(cat patch_notes.txt)
+          # Escape newline characters to be compatible with GitHub Actions output
+          patch_notes="${patch_notes//'%'/'%25'}"
+          patch_notes="${patch_notes//$'\n'/'%0A'}"
+          patch_notes="${patch_notes//$'\r'/'%0D'}"
           echo "patch_notes=$patch_notes" >> $GITHUB_OUTPUT
 
       - name: Create Release
@@ -45,6 +49,6 @@ jobs:
           body: |
             Compatible HoI4 Version: v${{ steps.get-version.outputs.compatible_version }}
             
-            $(echo '${{ steps.patch-notes.outputs.patch_notes }}' | base64 --decode)
+            ${{ steps.patch-notes.outputs.patch_notes }}
           draft: false
           prerelease: false
