@@ -5,10 +5,28 @@ ring_disable_stealth_check = {
 	set_country_flag = ring_no_stealth_check
 }
 
+# @docs(Ring): Makes it so if THIS attacks the fellowship, they get 1 extra attack
+ring_get_extra_1_attacks = {
+	custom_effect_tooltip = "ring_get_extra_1_attacks_tt"
+	THIS = { add_to_variable = {
+		fs_bonus_attacks_on_next_interception = 1
+	} }
+}
+
 # @docs(Ring): Makes it so if THIS attacks the fellowship, they get 2 extra attacks
-ring_get_extra_attacks = {
-	custom_effect_tooltip = "ring_get_extra_attacks_tt"
-	set_country_flag = ring_extra_attacks_unlocked
+ring_get_extra_2_attacks = {
+	custom_effect_tooltip = "ring_get_extra_2_attacks_tt"
+	THIS = { add_to_variable = {
+		fs_bonus_attacks_on_next_interception = 2
+	} }
+}
+
+# @docs(Ring): Makes it so if THIS attacks the fellowship, they get 3 extra attacks
+ring_get_extra_3_attacks = {
+	custom_effect_tooltip = "ring_get_extra_3_attacks_tt"
+	THIS = { add_to_variable = {
+		fs_bonus_attacks_on_next_interception = 3
+	} }
 }
 
 # Clears the current queue of states the fellowship will travel through (the pathstack)
@@ -573,10 +591,33 @@ ring_execute_interception_attempt = {
     	}
 	}
 
-	# Special case: some countries get extra attacks through focuses/preparations etc.
+	# Execute bonus attacks the country has unlocked
 	if = {
 		limit = {
-			ROOT = { has_country_flag = ring_extra_attacks_unlocked }
+			ROOT = { check_variable = { fs_bonus_attacks_on_next_interception > 0 } }
+		}
+		for_loop_effect = {
+			start = 0
+			end = var:fs_bonus_attacks_on_next_interception
+			compare = less_than
+			add = 1
+			
+			if = {
+				limit = { check_variable = { fs_interception_cancelled = 0 } }
+
+				ring_interception_single_attempt = yes
+			}
+		}
+		# reset bonus attacks
+		ROOT = { set_variable = { fs_bonus_attacks_on_next_interception = 0 } }
+	}
+
+	# Special case: Rohan helping isengard, granting up to 3 extra attacks
+	if = {
+		limit = {
+			tag = ISE
+			has_country_flag = is_argonath_raid
+			ROH = { has_country_flag = fs_rohan_coordinating_with_isengard }
 		}
 		for_loop_effect = {
 			end = 1
