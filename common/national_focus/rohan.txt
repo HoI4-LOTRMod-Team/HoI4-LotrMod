@@ -316,6 +316,7 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			# add stability
+			move_bop_to_theoden = yes
 			add_stability = 0.1
 		}
 	}
@@ -333,8 +334,10 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# TODO: Add "Has done this focus" as a demand to several Horselords
 			# increase effect of warlords, decrease centralization, something else
+			move_bop_to_theoden = yes
+			decrease_centralization = yes
 		}
 	}
 
@@ -354,6 +357,7 @@ focus_tree = {
 			# Can't really make a militarisitc tyranny without money, can we? lol
 			# lower taxes, disable increasing taxes for some time
 			disallow_medium_and_low_taxes_1y = yes
+			move_bop_to_theoden = yes
 		}
 	}
 
@@ -370,8 +374,9 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# add national spirit
+			add_ideas = ROH_idea_defensive_measures
+			move_bop_to_theoden = yes
 		}
 	}
 
@@ -388,9 +393,21 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# change national spirit
-			# possibly: make it harder for isengard to fuck shit up
+			if = {
+				limit = { has_idea = ROH_idea_dm_military_vigilance }
+				swap_ideas = {
+					remove_idea = ROH_idea_dm_military_vigilance
+					add_idea = ROH_idea_dm_curb_influence_and_military_vigilance
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = ROH_idea_defensive_measures
+					add_idea = ROH_idea_dm_curb_influence
+				}
+			}
+			# TODO: make it harder for isengard to fuck shit up
 		}
 	}
 
@@ -407,8 +424,21 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# change national spirit
+			if = {
+				limit = { has_idea = ROH_idea_dm_curb_influence }
+				swap_ideas = {
+					remove_idea = ROH_idea_dm_curb_influence
+					add_idea = ROH_idea_dm_curb_influence_and_military_vigilance
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = ROH_idea_defensive_measures
+					add_idea = ROH_idea_dm_military_vigilance
+				}
+			}
+			# TODO: Possibly unlock radar, and then build some radars in next focus?
 		}
 	}
 
@@ -442,8 +472,15 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# add more castle/fort to helms deep
+			184 = {
+				add_building_construction = {
+					type = castle
+					level = 2
+					instant_build = yes
+					province = 4628
+				}
+			}
 		}
 	}
 
@@ -460,8 +497,8 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# you no longer get nuked if Isengard does the thing
+			# (TODO: tooltip and actual effect)
 		}
 	}
 
@@ -478,8 +515,15 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# add more castle/fort in Edoras
+			183 = {
+				add_building_construction = {
+					type = castle
+					level = 1
+					instant_build = yes
+					province = 6760
+				}
+			}
 		}
 	}
 
@@ -496,8 +540,20 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# add forges and mils in edoras
+			183 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = foundry
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
 		}
 	}
 
@@ -515,9 +571,9 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
-			# abolish the position of chief advisor
+			move_bop_to_theoden = yes
 			# make it more expensive to declare small council members
+			add_ideas = ROH_the_kings_council
 		}
 	}
 
@@ -534,8 +590,8 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# autocompleted on gandralf arrival. pop event
+			custom_effect_tooltip = autocompleted_on_event_tt
 		}
 	}
 
@@ -552,8 +608,34 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
-			# somehwere there should be a "wizards wisdom" focus or smth that gives tech slot
+			# Gandalf becomes a poggers advisor that gives a tech slot and everything
+			# but then leaves once MOR declares war on GON
+			add_advisor_role = {
+				character = ROH_gandalf
+				activate = yes
+				advisor = {
+					slot = political_advisor
+					cost = 150
+					idea_token = ROH_gandalf_token_political_advisor
+					traits = {
+						air_chief_ground_support_2
+					}
+					on_add = {
+						add_research_slot = 1
+					}
+					on_remove = {
+						hidden_effect = {
+							add_research_slot = -1
+						}
+					}
+				}
+			}
+
+			set_country_flag = has_gandalf_as_advisor
+
+			remove_power_balance = {
+    			id = power_balance_wormtongue
+			}
 		}
 	}
 
@@ -570,8 +652,19 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# abolish the position of chief advisor
+			custom_effect_tooltip = ROH_purge_the_rot_tt
+			hidden_effect = {
+				ROH_grima = { remove_advisor_role = { slot = chief_advisor } }
+				ROH_eowyn = { remove_advisor_role = { slot = chief_advisor } }
+				ROH_theodred = { remove_advisor_role = { slot = chief_advisor } }
+				ROH_eomer = { remove_advisor_role = { slot = chief_advisor } }
+				ROH_leocred = { remove_advisor_role = { slot = chief_advisor } }
+			}
 			# get rid of wormtongue "manually", donly doable if BOP is won
+			remove_power_balance = {
+    			id = power_balance_wormtongue
+			}
 		}
 	}
 
