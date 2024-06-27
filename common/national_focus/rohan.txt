@@ -1233,9 +1233,19 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# change to belligerent
+			set_politics = {
+				ruling_party = belligerent
+			}
 			# add truce with isengard
+			if = {
+				limit = { has_war_with = ISE ISE = { has_government = belligerent } }
+				# TODO: Does this work? Also, what about factions and all that crap, and also: this should be an event send to ISE, not out of nowhere
+				set_truce = {
+					target = ISE
+					days = 90
+				}
+			}
 		}
 	}
 
@@ -1270,8 +1280,32 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# change eowyn's traits
+			# Give advisor grima a better trait
+			remove_advisor_role = {
+				character = ROH_grima
+				slot = chief_advisor
+			}
+			add_advisor_role = {
+				character = ROH_grima
+				activate = yes
+				advisor = {
+					slot = chief_advisor
+					idea_token = ROH_grima_chief_advisor2
+					traits = {
+						absolute_power
+					}
+				}
+			}
+			# add national spirit or something, maybe add trait to theoden
+			ROH_eowyn = {
+				remove_trait = {
+					trait = inexperienced_monarch
+				}
+				add_trait = {
+					trait = puppet_queen
+				}
+			}
 		}
 	}
 
@@ -1288,8 +1322,17 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# grima becomes leader
+			# TODO: what about non-aligned / cooperative party now?
+			# Prolly should have an on_action if changed to coop that gets rid of grima
+			add_country_leader_role = {
+				character = ROH_grima
+				promote_leader = yes
+				country_leader = {
+					ideology = expansionist
+					#traits = {  } # TODO: prolly want some traits
+				}
+			}
 		}
 	}
 
@@ -1342,9 +1385,12 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
-			# gain a research slot
-			# become saruman's puppet
+			# TODO: if Rohan doesn't do this focus or the resist one, Isengard can force a decision by using a focus of their own
+
+			ISE = {
+				puppet = ROH
+			}
+			add_ideas = ROH_isengard_protectorate
 		}
 	}
 
@@ -1379,8 +1425,9 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
-			# get a bunch of orc generals and maybe some divs?
+			load_oob = ROH_Isengard_enforcers
+
+			# TODO: maybe get a bunch of generals and stuff too idk
 		}
 	}
 
@@ -1397,8 +1444,14 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# add military factories and stuff
+			random_state_add_building_slot_and_mil_x2 = yes
+			random_state_add_building_slot_and_mil_x2 = yes
+
+			swap_ideas = {
+				remove_idea = ROH_isengard_protectorate
+				add_idea = ROH_isengard_protectorate_2
+			}
 		}
 	}
 
@@ -1415,7 +1468,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# TODO: unlock some high level advisors and force them in. Ambassadors that cant be fired and cant be hired if not puppet of saruman
 		}
 	}
 
@@ -1432,8 +1485,14 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# TODO: Give Isengard an event that can make them even more mad, potentially get claims in Rohan
 			# very bad opinions
+			ISE = {
+				add_opinion_modifier = {
+					target = ISE
+					modifier = faction_traitor
+				}
+			}
 		}
 	}
 
@@ -1450,8 +1509,8 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# create own faction
+			create_faction = "Rohan Alliance"
 		}
 	}
 
@@ -1468,8 +1527,47 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# buncha claims and wargoals?
+			if = {
+				limit = {
+					NOT = { is_ally_with = LTH }
+					country_exists = LTH
+				}
+				every_state = {
+					limit = { is_owned_by = LTH }
+					add_claim_by = ROH
+				}
+			}
+			if = {
+				limit = {
+					NOT = { is_ally_with = ENT }
+					country_exists = ENT
+				}
+				every_state = {
+					limit = { is_owned_by = ENT }
+					add_claim_by = ROH
+				}
+			}
+			if = {
+				limit = {
+					NOT = { is_ally_with = ENE }
+					country_exists = ENE
+				}
+				every_state = {
+					limit = { is_owned_by = ENE }
+					add_claim_by = ROH
+				}
+			}
+			if = {
+				limit = {
+					NOT = { is_ally_with = GON }
+					country_exists = GON
+				}
+				every_state = {
+					limit = { is_owned_by = GON }
+					add_claim_by = ROH
+				}
+			}
 		}
 	}
 
@@ -1486,8 +1584,8 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
-			# spirit?
+			# TODO: maybe we want to switch this for an existing one?
+			add_ideas = ROH_horselord_supremacy
 		}
 	}
 
@@ -1504,8 +1602,8 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# ask to join dark pact
+			MOR = { ask_to_join_faction = yes }
 		}
 	}
 
