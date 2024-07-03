@@ -45,7 +45,7 @@ shared_focus = {
 
 shared_focus = {
     id = tribes_tribel_traditions
-    icon = GFX_goal_support_unaligned
+    icon = GFX_goal_generic_treaty
     mutually_exclusive = { focus = tribes_only_one_true_way }
     relative_position_id = tribes_steady_as_it_goes
     prerequisite = { focus = tribes_steady_as_it_goes }
@@ -88,10 +88,10 @@ shared_focus = {
 
 shared_focus = {
     id = tribes_unifying_the_tribes
-    icon = GFX_goal_saruman_enedwaith_tribes
+    icon = GFX_goal_goal_generic_national_unity
     relative_position_id = tribes_staying_neutral
     prerequisite = { focus = tribes_staying_neutral }
-    x = 0
+    x = 1
     y = 1
     cost = 10
     search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
@@ -108,11 +108,32 @@ shared_focus = {
 }
 
 shared_focus = {
+    id = tribes_rallying_the_tribes
+    icon = GFX_goal_union_of_working_orc_class
+    relative_position_id = tribes_unifying_the_tribes
+    prerequisite = { focus = tribes_unifying_the_tribes }
+    x = -1
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_POLITICAL }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_timed_idea = { days = 100 idea = tribes_rallying_the_tribes }
+    }
+}
+
+shared_focus = {
     id = tribes_unified_government
     icon = GFX_goal_generic_improve_the_administration
     relative_position_id = tribes_unifying_the_tribes
     prerequisite = { focus = tribes_unifying_the_tribes }
-    x = 0
+    x = 1
     y = 1
     cost = 10
     search_filters = { FOCUS_FILTER_POLITICAL }
@@ -131,14 +152,15 @@ shared_focus = {
 
 shared_focus = {
     id = tribes_one_country
-    icon = GFX_goal_goal_generic_national_unity
+    icon = GFX_goal_goal_generic_demand_territory
     relative_position_id = tribes_unified_government
     prerequisite = { focus = tribes_unified_government }
-    x = 0
+    prerequisite = { focus = tribes_rallying_the_tribes }
+    x = -1
     y = 1
     cost = 10
     search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL FOCUS_FILTER_INDUSTRY FOCUS_FILTER_MANPOWER }
-    
+    available = { NOT = { has_idea = tribes_rallying_the_tribes }}
     available_if_capitulated = yes
 
     ai_will_do = {
@@ -176,12 +198,108 @@ shared_focus = {
     }
 }
 
+
 shared_focus = {
-    id = tribes_industrial_investment
-    icon = GFX_goal_generic_windmill
+    id = tribes_offense_is_the_best_defense
+    icon = GFX_goal_goal_generic_political_pressure
+    relative_position_id = tribes_there_is_no_other_way
+    prerequisite = { focus = tribes_there_is_no_other_way }
+    x = 0
+    y = 1
+    cost = 10
+    search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        custom_effect_tooltip = "Gains wargoal against neighboring countries that have increased world tension"
+        every_neighbor_country = {
+            limit = {
+                has_added_tension_amount > 1
+            }
+            create_wargoal = { target = PREV type = annex_everything }
+        }
+    }
+}
+
+shared_focus = {
+    id = tribes_worry_of_the_threat
+    icon = GFX_goal_army_uruk_hai
     relative_position_id = tribes_staying_neutral
     prerequisite = { focus = tribes_staying_neutral }
-    x = 3
+    x = -2
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_ARMY_XP }
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    available = {
+        ISE = {
+            has_completed_focus = ISE_influence_neighbouring_tribes
+        }
+    }
+
+    completion_reward = {
+		add_war_support = 0.05
+        army_experience = 25
+    }
+}
+
+shared_focus = {
+    id = tribes_build_up_defense
+    icon = GFX_goal_goal_generic_defence
+    relative_position_id = tribes_worry_of_the_threat
+    prerequisite = { focus = tribes_worry_of_the_threat }
+    x = 0
+    y = 1
+    cost = 10
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		add_ideas = deterrence
+    }
+}
+
+shared_focus = {
+    id = tribes_strong_willed_people
+    icon = GFX_goal_generic_soldier_rearmament
+    relative_position_id = tribes_build_up_defense
+    prerequisite = { focus = tribes_build_up_defense focus = tribes_one_country }
+    x = 0
+    y = 2
+    cost = 10
+    
+    available_if_capitulated = yes
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+		add_ideas = tribes_strong_willed_people
+    }
+}
+
+
+shared_focus = {
+    id = tribes_traditional_industry
+    icon = GFX_goal_generic_farmland
+    relative_position_id = tribes_staying_neutral
+    prerequisite = { focus = tribes_staying_neutral }
+    x = 4
     y = 1
     cost = 10
     search_filters = { FOCUS_FILTER_INDUSTRY }
@@ -193,22 +311,28 @@ shared_focus = {
     }
 
     completion_reward = {
-		random_owned_state = {
-			add_extra_state_shared_building_slots = 1
-			add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+        add_tech_bonus = {
+			name = tradition_industrial_bonus
+			bonus = 0.75
+			uses = 1
+			category = lotr_labour_farming
 		}
 		random_owned_state = {
 			add_extra_state_shared_building_slots = 3
-			add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+			add_building_construction = { type = synthetic_refinery level = 3 instant_build = yes }
+		}
+		random_owned_state = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
 		}
     }
 }
 
 shared_focus = {
     id = tribes_country_development_plan
-    icon = GFX_goal_lth_adminstration
-    relative_position_id = tribes_industrial_investment
-    prerequisite = { focus = tribes_industrial_investment focus = tribes_one_ruling_government }
+    icon = GFX_goal_lth_investment
+    relative_position_id = tribes_traditional_industry
+    prerequisite = { focus = tribes_traditional_industry focus = tribes_one_ruling_government }
     x = 0
     y = 1
     cost = 5
@@ -221,13 +345,13 @@ shared_focus = {
     }
 
     completion_reward = {
+        #Making sure that in DUN both the states get extra building slots
 		if = {
             limit = {
                 tag = DUN
             }
             32 = {
-			    add_extra_state_shared_building_slots = 1
-                add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
+			    add_extra_state_shared_building_slots = 2
             }
             78 = {
                 add_extra_state_shared_building_slots = 2
@@ -241,6 +365,7 @@ shared_focus = {
                 add_extra_state_shared_building_slots = 2
             }
         }
+        add_timed_idea = { days = 365 idea = tribes_industrial_development_plan }
     }
 }
 
@@ -306,74 +431,6 @@ shared_focus = {
 
     completion_reward = {
 		add_research_slot = 1
-    }
-}
-
-shared_focus = {
-    id = tribes_worry_of_the_threat
-    icon = GFX_goal_ise_the_white_hand_flag
-    relative_position_id = tribes_staying_neutral
-    prerequisite = { focus = tribes_staying_neutral }
-    x = -2
-    y = 1
-    cost = 5
-    search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_ARMY_XP }
-    
-    available_if_capitulated = yes
-
-    ai_will_do = {
-        factor = 2
-    }
-
-    available = {
-        ISE = {
-            has_completed_focus = ISE_influence_neighbouring_tribes
-        }
-    }
-
-    completion_reward = {
-		add_war_support = 0.05
-        army_experience = 25
-    }
-}
-
-shared_focus = {
-    id = tribes_build_up_defense
-    icon = GFX_goal_lth_defensive_perimeter_castle
-    relative_position_id = tribes_worry_of_the_threat
-    prerequisite = { focus = tribes_worry_of_the_threat }
-    x = 0
-    y = 1
-    cost = 10
-    
-    available_if_capitulated = yes
-
-    ai_will_do = {
-        factor = 2
-    }
-
-    completion_reward = {
-		add_ideas = deterrence
-    }
-}
-
-shared_focus = {
-    id = tribes_strong_willed_people
-    icon = GFX_goal_generic_allies_build_infantry
-    relative_position_id = tribes_build_up_defense
-    prerequisite = { focus = tribes_build_up_defense }
-    x = 0
-    y = 1
-    cost = 10
-    
-    available_if_capitulated = yes
-
-    ai_will_do = {
-        factor = 2
-    }
-
-    completion_reward = {
-		add_ideas = tribes_strong_willed_people
     }
 }
 
@@ -532,7 +589,7 @@ shared_focus = {
 
 shared_focus = {
     id = tribes_request_joining_faction
-    icon = GFX_goal_union_of_working_orc_class
+    icon = GFX_goal_isengard_deal
     relative_position_id = tribes_seek_non_agression_ise
     prerequisite = { focus = tribes_seek_non_agression_ise }
     x = 0
@@ -551,7 +608,7 @@ shared_focus = {
 
 shared_focus = {
     id = tribes_army_for_our_lord
-    icon = GFX_goal_generic_sword_arrow_and_shield
+    icon = GFX_goal_lth_white_council_saruman_with_palantir
     relative_position_id = tribes_request_joining_faction
     prerequisite = { focus = tribes_request_joining_faction }
     x = 0
@@ -577,7 +634,7 @@ shared_focus = {
 
 shared_focus = {
     id = tribes_stand_strong_alone
-    icon = GFX_goal_support_the_left_right
+    icon = GFX_goal_goal_demand_sudetenland
     mutually_exclusive = { focus = tribes_saruman_did_nothing_wrong}
     relative_position_id = tribes_one_ruling_government
     prerequisite = { focus = tribes_one_ruling_government }
@@ -602,7 +659,7 @@ shared_focus = {
 
 shared_focus = {
     id = tribes_setup_centralized_army
-    icon = GFX_goal_generic_strike_at_democracy1
+    icon = GFX_goal_generic_sword_arrow_and_shield
     relative_position_id = tribes_stand_strong_alone
     prerequisite = { focus = tribes_stand_strong_alone }
     x = 0
