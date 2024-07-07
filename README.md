@@ -28,6 +28,8 @@ We recommend looking through our [Wiki pages](https://github.com/HoI4-LOTRMod-Te
 
 We also recommend using our custom [GFX Search Tool](https://hoi4-lotrmod-team.github.io/HoI4-LotrMod) to find appropriate images/icons for your focuses, events etc.
 
-### Disclaimer
+**NOTE:** Several parts of this mod are licensed *exclusively* to this project. Do not re-use or re-upload any assets from this repository in or to any other projects without express permission from the authors.
 
-Several parts of this mod are licensed *exclusively* to this project. Do not re-use or re-upload any assets from this repository in or to any other projects without express permission from the authors.
+## Disclaimer
+
+This mod utilizes characters and events from "The Lord of the Rings" (LOTR) books and movies. It is a non-commercial, volunteer-based project and does not accept any form of donations. This mods contents are heavily transformative, constitute a parody and do not negatively impact the potential market for the original works, nor can they serve as a substitute for them. Accordingly, any references made within this mod to the LOTR intellectual property are protected under the fair use doctrine (U.S. Code 17 107).
