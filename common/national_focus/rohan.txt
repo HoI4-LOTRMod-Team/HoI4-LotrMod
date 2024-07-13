@@ -190,7 +190,7 @@ focus_tree = {
 		relative_position_id = ROH_corrupt_the_court
 		prerequisite = { focus = ROH_restructure_the_military }
 		prerequisite = { focus = ROH_get_rid_of_theodred }
-		available = { }
+		available = { threat > 0.2 }
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =3
@@ -198,7 +198,10 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			move_bop_to_grima = yes
+			if = {
+				limit = { rohan_has_bop = yes }
+				roh_add_intermediate_grima_drift = yes
+			}
 			# national spirit
 			add_ideas = ROH_fear_propaganda
 		}
@@ -217,13 +220,13 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# add negative trait to Theoden, give PP or something
-			ROH_theoden = {
-				add_country_leader_trait = isolated_and_paranoid
+			# add negative trait to Theoden
+			swap_ruler_traits = {
+				remove = afflicted
+				add = isolated_and_paranoid
 			}
-			# TODO: maybe make some advisors un-hireable
-
-			# TODO: unlocks ROH_bop_backroom_assassinations decision
+			roh_add_intermediate_grima_drift = yes
+			unlock_decision_tooltip = ROH_bop_backroom_assassinations
 		}
 	}
 
@@ -664,10 +667,22 @@ focus_tree = {
 				}
 			}
 
-			set_country_flag = has_gandalf_as_advisor
+			roh_end_bop_struggle = yes
 
-			remove_power_balance = {
-    			id = power_balance_wormtongue
+			set_country_leader_portrait = {
+				portrait = GFX_portrait_rohan_theoden
+			}
+			if = {
+				limit = { has_country_leader_with_trait = afflicted }
+				remove_country_leader_trait = afflicted
+			}
+			if = {
+				limit = { has_country_leader_with_trait = isolated_and_paranoid }
+				remove_country_leader_trait = isolated_and_paranoid
+			}
+
+			hidden_effect = {
+				country_event = { id = rohan.88 days = 80 }	
 			}
 		}
 	}
@@ -690,6 +705,8 @@ focus_tree = {
 
 			hidden_effect = {
 				country_event = rohan.86
+
+				country_event = { id = rohan.88 days = 80 }
 			}
 		}
 	}
@@ -708,6 +725,13 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
+			ROH_grima = {
+				retire = yes
+			}
+			hidden_effect = {
+				set_global_flag = grima_exiled
+				hidden_effect = { news_event = { hours = 48 id = news.341 } }
+			}
 			# give theoden "merciful" trait
 			add_ideas = ROH_anti_eorl_plot_3
 			ROH_theoden = {
@@ -725,6 +749,7 @@ focus_tree = {
 		prerequisite = { focus = ROH_let_gandalf_in }
 		available = {
 			NOT = { has_global_flag = fs_fellowship_breakup }
+			NOT = { has_completed_focus = ROH_prepare_a_ring_interception }
 		}
 		ai_will_do = { factor = 0 }
 		x =3
@@ -734,7 +759,10 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			# event that lets us choose between heal, speed or something else
-			country_event = rohan.76
+			custom_effect_tooltip = ROH_support_the_fellowship_tt
+			hidden_effect = {
+				country_event = rohan.76	
+			}
 		}
 	}
 
@@ -760,7 +788,10 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			# send some boys to reinforce fellowship before Saruman's boys ambush
-			country_event = rohan.77
+			custom_effect_tooltip = ROH_defend_the_fellowship_from_isengard_tt
+			hidden_effect = {
+				country_event = rohan.77	
+			}
 		}
 	}
 
@@ -778,6 +809,9 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			# Unlock decisions to remove grima's advisors
+			unlock_decision_tooltip = ROH_purge_grima_conspirors_small_council
+			unlock_decision_tooltip = ROH_purge_grima_conspirors_council_of_study
+			unlock_decision_tooltip = ROH_purge_grima_conspirors_war_council
 		}
 	}
 
@@ -794,9 +828,10 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# Get rid of political maluses
+			# TODO
 			# Lower isengard raid maluses
+			# TODO?
 		}
 	}
 
@@ -813,7 +848,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# add some barracks and shit lol
+			# add some barracks
 			random_owned_state = {
 				add_building_construction = {
 					type = barracks
@@ -868,17 +903,9 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			# get a bunch of cavalry for free
-			add_equipment_to_stockpile = {
-				type = light_cavalry_chassis_0
-				amount = 300
-			}
-			add_equipment_to_stockpile = {
-				type = lancer_cavalry_chassis_0
-				amount = 200
-			}
-			add_equipment_to_stockpile = {
-				type = heavy_cavalry_chassis_0
-				amount = 150
+			add_timed_idea = {
+				idea = ROH_equine_requisitions
+				days = 210
 			}
 		}
 	}
@@ -954,9 +981,8 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
-			# get rid of maluses completely
-			# add new spirit
+			# doubles effects of cohesion
+			custom_effect_tooltip = ROH_eorlingas_united_tt
 		}
 	}
 
@@ -1047,7 +1073,9 @@ focus_tree = {
 		icon = GFX_goal_ROH_two_kings_alliance
 		relative_position_id = ROH_alliance_building
 		prerequisite = { focus = ROH_towards_gondor }
-		available = { }
+		available = {
+			# if aragorn is king
+		}
 		ai_will_do = { factor = 0 }
 		x =1
 		y =2
@@ -1055,7 +1083,15 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: deepen alliance
+			# deepen alliance (this is pretty half-assed ngl)
+			ROH = {
+				give_guarantee = GON
+				army_experience = 100
+			}
+			GON = {
+				give_guarantee = ROH
+				army_experience = 100
+			}
 		}
 	}
 
@@ -1064,7 +1100,9 @@ focus_tree = {
 		icon = GFX_goal_ROH_loth_ise_alliance_unity
 		relative_position_id = ROH_alliance_building
 		prerequisite = { focus = ROH_alliance_building }
-		available = { }
+		available = {
+			# only if isengard went good-guy
+		}
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =1
@@ -1072,7 +1110,26 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			create_faction = "Union of Calenardhon"
+			create_faction = ROH_loth_ise_alliance
+		}
+	}
+
+	focus = {
+		id = ROH_invite_the_ents
+		icon = GFX_goal_entwood_treebeard
+		relative_position_id = ROH_alliance_building
+		prerequisite = { focus = ROH_alliance_building }
+		available = {
+			# needs good opinion withs ents, needs isengard burned ents etc...
+		}
+		ai_will_do = { factor = 0 }
+		x =-3
+		y =1
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			ENT = { invite_to_faction = yes }
 		}
 	}
 
@@ -1126,6 +1183,16 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
+			# This if is here just so the tooltip makes sense
+			if = {
+				limit = { is_faction_leader = no }
+				effect_tooltip = {
+					ROH = {
+						add_to_tech_sharing_group = calenardhon_research_group
+						add_political_power = 100
+					}
+				}
+			}
 			# research group
 			every_country = {
 				limit = {
@@ -1152,6 +1219,11 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			add_ideas = ROH_anti_eorl_plot_3
+
+			ROH_grima = { kill_character = yes }
+
+			set_global_flag = grima_executed
+			hidden_effect = { news_event = { hours = 48 id = news.342 } }
 			# give theoden "merciless" trait
 			ROH_theoden = {
 				add_trait = {

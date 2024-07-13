@@ -157,11 +157,15 @@ country_event = {
 
 	option = {
 		name = rohan.2.a
-		# TODO: unlocks ROH_bop_administer_medicine decision
-
+		unlock_decision_tooltip = ROH_bop_administer_medicine
 		set_politics = { ruling_party = unaligned elections_allowed = no }
 		ROH_theoden = { remove_unit_leader = yes }
 		hidden_effect = { news_event = { hours = 48 id = news.337 } }
+
+		set_country_leader_portrait = {
+			portrait = GFX_portrait_rohan_theoden_old
+		}
+		add_country_leader_trait = afflicted
 	}
 
 }
@@ -871,7 +875,7 @@ country_event = {
 
 	trigger = {
 		tag = ROH
-		has_country_flag = has_gandalf_as_advisor
+		ROH_gandalf = { is_hired_as_advisor = yes }
 		MOR = { has_war_with = GON }
 	}
 
@@ -1291,6 +1295,18 @@ country_event = {
 		}
 		# get rid of wormtongue "manually", donly doable if BOP is won
 		roh_end_bop_struggle = yes
+
+		set_country_leader_portrait = {
+			portrait = GFX_portrait_rohan_theoden
+		}
+		if = {
+			limit = { has_country_leader_with_trait = afflicted }
+			remove_country_leader_trait = afflicted
+		}
+		if = {
+			limit = { has_country_leader_with_trait = isolated_and_paranoid }
+			remove_country_leader_trait = isolated_and_paranoid
+		}
 	}
 }
 
@@ -1401,5 +1417,31 @@ country_event = {
 		}
 
 		FROM = { roh_add_minor_grima_drift = yes }
+	}
+}
+
+# Force player to choose what to do with Grima
+country_event = {
+	id = rohan.88
+	title = rohan.88.t
+	desc = rohan.88.d
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_completed_focus = ROH_execute_grima }
+		NOT = { has_completed_focus = ROH_exile_grima }
+	}
+
+	option = {
+		name = rohan.88.a
+
+		complete_national_focus = ROH_execute_grima
+	}
+
+	option = {
+		name = rohan.88.a
+
+		complete_national_focus = ROH_exile_grima
 	}
 }
