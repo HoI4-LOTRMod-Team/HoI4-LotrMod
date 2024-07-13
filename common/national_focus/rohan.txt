@@ -285,24 +285,15 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			# national spirit
-			if = {
-				limit = { has_idea = ROH_wormtongue_influence }
-				swap_ideas = {
-					remove_idea = ROH_wormtongue_influence
-					add_idea = ROH_wormtongue_cabinet
-				}
-			}
-			else_if = {
-				limit = { has_idea = ROH_wormtongue_influence_2 }
-				swap_ideas = {
-					remove_idea = ROH_wormtongue_influence_2
-					add_idea = ROH_wormtongue_cabinet
-				}
-			}
-			else = {
-				add_ideas = ROH_wormtongue_cabinet
-			}
-			# TODO: permanently remove certain advisors and generals
+			add_ideas = ROH_wormtongue_cabinet
+			roh_end_bop_struggle = yes
+
+			# permanently remove certain advisors and generals
+			ROH_gamling = { retire = yes }
+			ROH_grimbold = { retire = yes }
+			ROH_erkenbrand = { retire = yes }
+			# TODO: deal with lords situation if Erkenbrand is lord
+
 		}
 	}
 
@@ -1237,7 +1228,12 @@ focus_tree = {
 		relative_position_id = ROH_gandalfs_arrival
 		prerequisite = { focus = ROH_gandalfs_arrival }
 		mutually_exclusive = { focus = ROH_purge_the_rot focus = ROH_let_gandalf_in focus = ROH_wormtongue_cabinet }
-		available = { }
+		available = { 
+			custom_trigger_tooltip = {
+				tooltip = autocompleted_on_event_tt
+				always = no
+			}
+		}
 		ai_will_do = { factor = 0 }
 		x =5
 		y =1
@@ -1245,7 +1241,14 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			custom_effect_tooltip = autocompleted_on_event_tt
+			roh_end_bop_struggle = yes
+
+			hidden_effect = {
+				if = {
+					limit = { ROH_eomer = { is_unit_leader = yes } }
+					ROH_eomer = { retire = yes }
+				}
+			}
 		}
 	}
 
@@ -1267,11 +1270,26 @@ focus_tree = {
 				kill_character = yes
 			}
 			# TODO: newspaper
-			ROH_eowyn = {
-				add_trait = {
-					trait = inexperienced_monarch
+			hidden_effect = {
+				# just making sure eomer and theodred dont exist anymore
+				if = {
+					limit = { ROH_eomer = { is_unit_leader = yes } }
+					ROH_eomer = { retire = yes }
+				}
+				if = {
+					limit = { ROH_theodred = { is_unit_leader = yes } }
+					ROH_theodred = { kill_character = yes }
 				}
 			}
+			set_country_leader_portrait = {
+				portrait = GFX_portrait_rohan_eowyn_puppet
+			}
+			ROH_eowyn = {
+				remove_advisor_role = {
+					slot = chief_advisor
+				}
+			}
+			add_country_leader_trait = inexperienced_monarch
 			add_timed_idea = {
 				idea = melancholic_mood
 				days = 240
@@ -1308,7 +1326,7 @@ focus_tree = {
 					}
 				}
 			}
-			# add national spirit or something, maybe add trait to theoden
+			# add trait to theoden
 			ROH_theoden = {
 				add_trait = {
 					trait = puppet_king
