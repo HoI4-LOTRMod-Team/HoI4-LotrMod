@@ -272,6 +272,7 @@ focus_tree = {
 		relative_position_id = ROH_isolate_the_king
 		prerequisite = { focus = ROH_get_rid_of_eomer }
 		prerequisite = { focus = ROH_get_rid_of_theodred }
+		mutually_exclusive = { focus = ROH_purge_the_rot focus = ROH_let_gandalf_in focus = ROH_deny_gandalf_entrance }
 		available = { }
 		ai_will_do = { factor = 0 }
 		x =0
@@ -315,11 +316,12 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: unlock ROH_bop_conduct_public_assemblies decision
+			unlock_decision_tooltip = ROH_bop_conduct_public_assemblies
 
 			# add stability
-			move_bop_to_theoden = yes
 			add_stability = 0.1
+
+			roh_add_minor_theoden_drift = yes
 		}
 	}
 
@@ -337,11 +339,12 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			# TODO: Add "Has done this focus" as a demand to several Horselords
-			# increase effect of warlords, decrease centralization, something else
-			move_bop_to_theoden = yes
+			
 			decrease_centralization = yes
 
-			# TODO: Unlocks ROH_bop_form_secret_resistance_movement decision
+			roh_add_intermediate_theoden_drift = yes
+
+			unlock_decision_tooltip = ROH_bop_form_secret_resistance_movement
 		}
 	}
 
@@ -350,7 +353,7 @@ focus_tree = {
 		icon = GFX_goal_ROH_enact_tax_cuts_money
 		relative_position_id = ROH_maintain_stability
 		prerequisite = { focus = ROH_maintain_stability }
-		available = { }
+		available = { rohan_has_bop = yes }
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =1
@@ -361,7 +364,8 @@ focus_tree = {
 			# Can't really make a militarisitc tyranny without money, can we? lol
 			# lower taxes, disable increasing taxes for some time
 			disallow_medium_and_low_taxes_1y = yes
-			move_bop_to_theoden = yes
+
+			roh_add_intermediate_theoden_drift = yes
 		}
 	}
 
@@ -378,11 +382,12 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: unlock ROH_bop_corruption_crackdown decision
+			unlock_decision_tooltip = ROH_bop_corruption_crackdown
 
 			# add national spirit
 			add_ideas = ROH_idea_defensive_measures
-			move_bop_to_theoden = yes
+
+			roh_add_minor_theoden_drift = yes
 		}
 	}
 
@@ -414,6 +419,8 @@ focus_tree = {
 				}
 			}
 			# TODO: make it harder for isengard to fuck shit up
+
+			roh_add_minor_theoden_drift = yes
 		}
 	}
 
@@ -445,6 +452,7 @@ focus_tree = {
 				}
 			}
 			# TODO: Possibly unlock radar, and then build some radars in next focus?
+			roh_add_minor_theoden_drift = yes
 		}
 	}
 
@@ -461,7 +469,16 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# TODO: possibly something with the Isengard point system
+
+			# TODO: possibly make it more diffcult to get collaboration or something, idk
+
+			add_manpower = 50000
+			add_doctrine_cost_reduction = {
+				cost_reduction = 1.0
+				uses = 1
+				category = land_doctrine
+			}
 		}
 	}
 
@@ -470,7 +487,9 @@ focus_tree = {
 		icon = GFX_goal_ROH_reinforce_helms_deep
 		relative_position_id = ROH_secure_the_riddermark
 		prerequisite = { focus = ROH_secure_the_riddermark }
-		available = { }
+		available = {
+			has_tech = construction1
+		}
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =1
@@ -495,7 +514,9 @@ focus_tree = {
 		icon = GFX_goal_roh_helms_deep_weakness
 		relative_position_id = ROH_secure_the_riddermark
 		prerequisite = { focus = ROH_reinforce_helms_deep }
-		available = { }
+		available = {
+			has_tech = construction2
+		}
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =2
@@ -504,7 +525,8 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			# you no longer get nuked if Isengard does the thing
-			# (TODO: tooltip and actual effect)
+			# TODO: implement
+			custom_effect_tooltip = ROH_reinforce_the_deeping_wall_tt
 		}
 	}
 
@@ -513,7 +535,9 @@ focus_tree = {
 		icon = GFX_goal_ROH_reinforce_edoras
 		relative_position_id = ROH_secure_the_riddermark
 		prerequisite = { focus = ROH_secure_the_riddermark }
-		available = { }
+		available = {
+			has_tech = construction1
+		}
 		ai_will_do = { factor = 0 }
 		x =1
 		y =1
@@ -538,7 +562,9 @@ focus_tree = {
 		icon = GFX_goal_ROH_forge_construction
 		relative_position_id = ROH_secure_the_riddermark
 		prerequisite = { focus = ROH_reinforce_edoras }
-		available = { }
+		available = {
+			has_tech = foundry_tech
+		}
 		ai_will_do = { factor = 0 }
 		x =1
 		y =2
@@ -577,9 +603,10 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			move_bop_to_theoden = yes
 			# make it more expensive to declare small council members
 			add_ideas = ROH_the_kings_council
+
+			roh_add_major_theoden_drift = yes
 		}
 	}
 
@@ -610,7 +637,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =-5
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_purge_the_rot focus = ROH_wormtongue_cabinet focus = ROH_deny_gandalf_entrance }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -650,26 +677,19 @@ focus_tree = {
 		icon = GFX_goal_ROH_purge_the_rot
 		relative_position_id = ROH_let_gandalf_in
 		prerequisite = { focus = ROH_form_the_kings_council }
+		
 		available = { }
 		ai_will_do = { factor = 0 }
 		x =-2
 		y =0
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_let_gandalf_in focus = ROH_deny_gandalf_entrance focus = ROH_wormtongue_cabinet }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# abolish the position of chief advisor
-			custom_effect_tooltip = ROH_purge_the_rot_tt
+			event_option_tooltip = rohan.86.a
+
 			hidden_effect = {
-				ROH_grima = { remove_advisor_role = { slot = chief_advisor } }
-				ROH_eowyn = { remove_advisor_role = { slot = chief_advisor } }
-				ROH_theodred = { remove_advisor_role = { slot = chief_advisor } }
-				ROH_eomer = { remove_advisor_role = { slot = chief_advisor } }
-				ROH_leocred = { remove_advisor_role = { slot = chief_advisor } }
-			}
-			# get rid of wormtongue "manually", donly doable if BOP is won
-			remove_power_balance = {
-    			id = power_balance_wormtongue
+				country_event = rohan.86
 			}
 		}
 	}
@@ -679,11 +699,12 @@ focus_tree = {
 		icon = GFX_goal_ROH_exile_grima
 		relative_position_id = ROH_let_gandalf_in
 		prerequisite = { focus = ROH_let_gandalf_in }
+		mutually_exclusive = { focus = ROH_execute_grima }
 		available = { }
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_execute_grima }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1012,7 +1033,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_loth_ise_alliance }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1047,7 +1068,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_towards_gondor }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1126,7 +1147,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_exile_grima }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1145,6 +1166,7 @@ focus_tree = {
 		icon = GFX_goal_ROH_deny_gandalf_entrance
 		relative_position_id = ROH_gandalfs_arrival
 		prerequisite = { focus = ROH_gandalfs_arrival }
+		mutually_exclusive = { focus = ROH_purge_the_rot focus = ROH_let_gandalf_in focus = ROH_wormtongue_cabinet }
 		available = { }
 		ai_will_do = { factor = 0 }
 		x =5
@@ -1166,7 +1188,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_pull_the_strings }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1196,7 +1218,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_the_kings_death }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1281,7 +1303,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =-5
 		y =2
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_claim_crown_through_matrimony }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1323,7 +1345,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =-3
 		y =2
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_the_puppet_queen }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1386,7 +1408,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =0
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_resist_saruman }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1486,7 +1508,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =4
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_pledge_to_saruman }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1510,7 +1532,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_turn_to_mordor }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1603,7 +1625,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_our_own_way }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -2331,7 +2353,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =-2
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_urban_development }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -2385,7 +2407,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =2
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_rural_development }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -2496,7 +2518,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_light_cavalry }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -2539,7 +2561,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_heavy_cavalry }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -2931,7 +2953,18 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			GON = {
+				add_opinion_modifier = {
+					target = ROH
+					modifier = medium_increase
+				}
+			}
+			ROH = {
+				add_opinion_modifier = {
+					target = ROH
+					modifier = medium_increase
+				}
+			}
 		}
 	}
 
@@ -2940,6 +2973,7 @@ focus_tree = {
 		icon = GFX_goal_gondor_denethor
 		relative_position_id = ROH_white_mountain_diplomacy
 		prerequisite = { focus = ROH_white_mountain_diplomacy }
+		mutually_exclusive = { focus = ROH_support_aragorns_claim }
 		available = { }
 		ai_will_do = { factor = 0 }
 		x =-1
@@ -2948,7 +2982,13 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			GON = {
+				add_popularity = {
+					ideology = unaligned
+					popularity = 0.1
+				}
+			}
+			roh_add_intermediate_grima_drift = yes
 		}
 	}
 
@@ -2957,6 +2997,7 @@ focus_tree = {
 		icon = GFX_goal_gondor_king_aragorn
 		relative_position_id = ROH_white_mountain_diplomacy
 		prerequisite = { focus = ROH_white_mountain_diplomacy }
+		mutually_exclusive = { focus = ROH_support_denethors_claim }
 		available = { }
 		ai_will_do = { factor = 0 }
 		x =1
@@ -2965,7 +3006,13 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			GON = {
+				add_popularity = {
+					ideology = cooperative
+					popularity = 0.1
+				}
+			}
+			roh_add_intermediate_theoden_drift = yes
 		}
 	}
 
@@ -2982,7 +3029,19 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# TODO: I want some kind of cool/special interaction here
+
+			add_relation_modifier = {
+    			target = DAM
+    			modifier = eomer_lothiriel_marriage
+			}
+
+			DAM = {
+				add_relation_modifier = {
+					target = ROH
+					modifier = eomer_lothiriel_marriage
+				}
+			}
 		}
 	}
 
@@ -2999,7 +3058,17 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			add_relation_modifier = {
+    			target = GON
+    			modifier = faramir_eowyn_marriage
+			}
+
+			GON = {
+				add_relation_modifier = {
+					target = ROH
+					modifier = faramir_eowyn_marriage
+				}
+			}
 		}
 	}
 
@@ -3016,7 +3085,19 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			every_country = {
+				limit = {
+					OR = {
+						is_center = yes
+						original_tag = DOR
+					}
+					is_orcs = no
+				}
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = small_increase
+				}
+			}
 		}
 	}
 
@@ -3033,7 +3114,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			DOR = { roh_send_bop_delegation = yes }
 		}
 	}
 
@@ -3050,7 +3131,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			DAL = { roh_send_bop_delegation = yes }
 		}
 	}
 
@@ -3060,7 +3141,12 @@ focus_tree = {
 		relative_position_id = ROH_cross_anduin_diplomacy
 		prerequisite = { focus = ROH_befriend_dale }
 		prerequisite = { focus = ROH_befriend_dorwinion }
-		available = { }
+		available = {
+			OR = {
+				DOR = { has_country_flag = has_accepted_cross_anduin_diplo }
+				DAL = { has_country_flag = has_accepted_cross_anduin_diplo }
+			}
+		}
 		ai_will_do = { factor = 0 }
 		x =0
 		y =2
@@ -3068,7 +3154,56 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			if = {
+				limit = {
+					has_dlc = "Arms Against Tyranny"
+				}
+				custom_effect_tooltip = ROH_expanded_trade_network_tt
+
+				if = {
+					limit = {
+						OR = {
+							DOR = { has_country_flag = has_accepted_cross_anduin_diplo }
+							DAL = { has_country_flag = has_accepted_cross_anduin_diplo }
+						}
+					}
+					custom_effect_tooltip = generic_current_effects
+				}
+				if = {
+					limit = { DOR = { has_country_flag = has_accepted_cross_anduin_diplo } }
+					ROH = { add_cic = 500 }
+					DOR = { add_cic = 500 }
+				}
+				if = {
+					limit = { DAL = { has_country_flag = has_accepted_cross_anduin_diplo } }
+					ROH = { add_cic = 500 }
+					DAL = { add_cic = 500 }
+				}
+			}
+
+			else = {
+				custom_effect_tooltip = ROH_expanded_trade_network_no_aat_tt
+
+				if = {
+					limit = {
+						OR = {
+							DOR = { has_country_flag = has_accepted_cross_anduin_diplo }
+							DAL = { has_country_flag = has_accepted_cross_anduin_diplo }
+						}
+					}
+					custom_effect_tooltip = generic_current_effects
+				}
+				if = {
+					limit = { DOR = { has_country_flag = has_accepted_cross_anduin_diplo } }
+					ROH = { add_ideas = improved_trade }
+					DOR = { add_ideas = improved_trade }
+				}
+				if = {
+					limit = { DAL = { has_country_flag = has_accepted_cross_anduin_diplo } }
+					ROH = { add_ideas = improved_trade }
+					DAL = { add_ideas = improved_trade }
+				}
+			}
 		}
 	}
 

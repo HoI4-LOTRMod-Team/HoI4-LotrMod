@@ -1266,3 +1266,140 @@ country_event = {
 		# TODO: Add idea that lowers output, construction and some other stuff
 	}
 }
+
+# King's Council decides to abolish position of chief advisor. King returns to his senses. What to do with Grima?
+country_event = {
+	id = rohan.86
+	title = rohan.86.t
+	desc = rohan.86.d
+
+	picture = GFX_report_event_negotiations
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.86.a
+
+		# abolish the position of chief advisor
+		custom_effect_tooltip = ROH_purge_the_rot_tt
+		hidden_effect = {
+			ROH_grima = { remove_advisor_role = { slot = chief_advisor } }
+			ROH_eowyn = { remove_advisor_role = { slot = chief_advisor } }
+			ROH_theodred = { remove_advisor_role = { slot = chief_advisor } }
+			ROH_eomer = { remove_advisor_role = { slot = chief_advisor } }
+			ROH_leocred = { remove_advisor_role = { slot = chief_advisor } }
+		}
+		# get rid of wormtongue "manually", donly doable if BOP is won
+		roh_end_bop_struggle = yes
+	}
+}
+
+# Send delegation to country
+# NOTE: This is a 1:1 copy-paste from lotr_generic.6, except that you get BOP modifier if they accept
+country_event = {
+	id = rohan.87
+	title = lotr_generic.6.t
+	desc = lotr_generic.6.d
+	picture = GFX_report_event_elven_alliance
+
+	is_triggered_only = yes
+
+	option = { # Shower them with gifts
+		name = lotr_generic.6.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = FROM
+					value > 30
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 0.25
+				FROM = { is_going_different_path_as_root = yes }
+			}
+		}
+		
+		add_timed_idea = {
+			idea = minor_expense
+			days = 60
+		}
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = large_increase
+			}
+		}
+
+		FROM = { roh_add_intermediate_theoden_drift = yes }
+
+		set_country_flag = has_accepted_cross_anduin_diplo
+	}
+
+	option = { # Give them the common courtesies
+		name = lotr_generic.6.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = FROM
+					value > 15
+				}
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { is_going_different_path_as_root = yes }
+			}
+		}
+		
+		add_political_power = 50
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = medium_increase
+			}
+		}
+
+		FROM = { roh_add_intermediate_theoden_drift = yes }
+
+		set_country_flag = has_accepted_cross_anduin_diplo
+	}
+
+	option = { # They're not welcome here
+		name = lotr_generic.6.c
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_going_different_path_as_root = yes }
+			}
+		}
+		
+		add_political_power = -50
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = medium_decrease
+			}
+		}
+
+		FROM = { roh_add_minor_grima_drift = yes }
+	}
+}
