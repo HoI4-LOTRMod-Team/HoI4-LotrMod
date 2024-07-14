@@ -1281,6 +1281,7 @@ focus_tree = {
 					ROH_theodred = { kill_character = yes }
 				}
 			}
+			add_ideas = ROH_questionable_legitimacy_3
 			set_country_leader_portrait = {
 				portrait = GFX_portrait_rohan_eowyn_puppet
 			}
@@ -1332,6 +1333,7 @@ focus_tree = {
 					trait = puppet_king
 				}
 			}
+			add_ideas = ROH_questionable_legitimacy_1
 		}
 	}
 
@@ -1355,11 +1357,9 @@ focus_tree = {
 			# add truce with isengard
 			if = {
 				limit = { has_war_with = ISE ISE = { has_government = belligerent } }
-				# TODO: Does this work? Also, what about factions and all that crap, and also: this should be an event send to ISE, not out of nowhere
-				set_truce = {
-					target = ISE
-					days = 90
-				}
+				ISE = { country_event = rohan.89 }
+				custom_effect_tooltip = if_they_accept
+				event_option_tooltip = rohan.89.a
 			}
 		}
 	}
@@ -1378,7 +1378,10 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			swap_ideas = {
+				remove_idea = ROH_questionable_legitimacy_3
+				add_idea = ROH_questionable_legitimacy_2
+			}
 		}
 	}
 
@@ -1439,7 +1442,7 @@ focus_tree = {
 		completion_reward = {
 			# grima becomes leader
 			# TODO: what about non-aligned / cooperative party now?
-			# Prolly should have an on_action if changed to coop that gets rid of grima
+			# TODO: Prolly should have an on_action if changed to coop that gets rid of grima
 			add_country_leader_role = {
 				character = ROH_grima
 				promote_leader = yes
@@ -1448,6 +1451,7 @@ focus_tree = {
 					#traits = {  } # TODO: prolly want some traits
 				}
 			}
+			# TODO: newspaper event
 		}
 	}
 
@@ -1464,8 +1468,10 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
-			# remove a bad idea or lower it or something
+			swap_ideas = {
+				remove_idea = ROH_questionable_legitimacy_2
+				add_idea = ROH_questionable_legitimacy_1
+			}
 		}
 	}
 
@@ -1500,8 +1506,6 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: if Rohan doesn't do this focus or the resist one, Isengard can force a decision by using a focus of their own
-
 			ISE = {
 				puppet = ROH
 			}
@@ -1600,13 +1604,8 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: Give Isengard an event that can make them even more mad, potentially get claims in Rohan
-			# very bad opinions
 			ISE = {
-				add_opinion_modifier = {
-					target = ISE
-					modifier = faction_traitor
-				}
+				country_event = rohan.90
 			}
 		}
 	}
@@ -1752,7 +1751,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			remove_ideas = ROH_questionable_legitimacy_1
 		}
 	}
 
@@ -2463,8 +2462,13 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# agriculture tech bonuses
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_labour_farming
+				uses = 2
+				bonus = 0.5
+			}
 		}
 	}
 
@@ -2481,8 +2485,23 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# build a bunch of silos
+			random_owned_state = {
+				limit = { fuel_silo < 1 }
+				add_building_construction = {
+					type = fuel_silo
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_owned_state = {
+				limit = { fuel_silo < 1 }
+				add_building_construction = {
+					type = fuel_silo
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 
@@ -2514,11 +2533,105 @@ focus_tree = {
 		x =2
 		y =1
 		mutually_exclusive = { }
-		cost = 10
+		cost = 15
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			custom_effect_tooltip = ROH_road_network_expansion_tt
 			# increase infrastrucure, maybe add some railways
+			hidden_effect = {
+				if = {
+					limit = { controls_state = 177 controls_state = 182 }
+					build_railway = {
+						level = 1
+						start_province = 4227
+						target_province = 3517
+						build_only_on_allied = yes
+					}
+				}
+				if = {
+					limit = { controls_state = 30 controls_state = 178 }
+					build_railway = {
+						level = 1
+						start_province = 1910
+						target_province = 6563
+						build_only_on_allied = yes
+					}
+					build_railway = {
+						level = 1
+						start_province = 1910
+						target_province = 495
+						build_only_on_allied = yes
+					}
+					30 = {
+						add_building_construction = {
+							type = supply_node
+							level = 1
+							instant_build = yes
+							province = 1910
+						}
+					}
+					30 = {
+						add_building_construction = {
+							type = supply_node
+							level = 1
+							instant_build = yes
+							province = 6563
+						}
+					}
+				}
+				if = {
+					limit = { controls_state = 180 }
+					build_railway = {
+						level = 1
+						start_province = 4103
+						target_province = 6441
+						build_only_on_allied = yes
+					}
+					180 = {
+						add_building_construction = {
+							type = supply_node
+							level = 1
+							instant_build = yes
+							province = 6441
+						}
+					}
+				}
+				if = {
+					limit = { controls_state = 178 controls_state = 26 }
+					build_railway = {
+						level = 2
+						start_province = 495
+						target_province = 5512
+						build_only_on_allied = yes
+					}
+				}
+				if = {
+					limit = { controls_state = 184 controls_state = 23 }
+					build_railway = {
+						level = 1
+						start_province = 4628
+						target_province = 5444
+						build_only_on_allied = yes
+					}
+					180 = {
+						add_building_construction = {
+							type = supply_node
+							level = 1
+							instant_build = yes
+							province = 5444
+						}
+					}
+				}
+				if = {
+					limit = { controls_state = 183 controls_state = 26 }
+					build_railway = {
+						level = 1
+						start_province = 6760
+						target_province = 5512
+						build_only_on_allied = yes
+					}
+				}
+			}
 		}
 	}
 
@@ -2535,8 +2648,30 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# add market to edoras, maybe some trade bonus and market subsidies
+			random_owned_state = {
+				limit = { markets < 1 }
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = markets
+					level = 1
+					instant_build = yes
+				}
+			}
+			if = {
+				limit = { has_dlc = "Arms Against Tyranny" }
+				add_cic = 500
+			}
+			else = {
+				random_owned_state = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
 		}
 	}
 
@@ -2553,7 +2688,23 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# build infra in places where there is none
+			random_core_state = {
+				limit = { is_controlled_by = ROOT infrastructure < 3 }
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			random_core_state = {
+				limit = { is_controlled_by = ROOT infrastructure < 3 }
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 
@@ -2898,8 +3049,42 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
-			# get better castle contruction depending on how many castles gondor has or smth
+			# get better castle contruction depending on how many castles gondor has in minas tirith
+			if = {
+				limit = { 163 = { is_controlled_by = GON } castle > 2 }
+				custom_effect_tooltip = ROH_replicate_numenorean_castles_3_tt
+				hidden_effect = {
+					add_tech_bonus = {
+						name = special_bonus
+						ahead_reduction = 3
+						uses = 1
+						category = lotr_labour_construction
+					}
+				}
+			}
+			else_if = {
+				limit = { 163 = { is_controlled_by = GON } castle > 1 }
+				custom_effect_tooltip = ROH_replicate_numenorean_castles_2_tt
+				hidden_effect = {
+					add_tech_bonus = {
+						name = special_bonus
+						ahead_reduction = 2
+						uses = 1
+						category = lotr_labour_construction
+					}
+				}
+			}
+			else = {
+				custom_effect_tooltip = ROH_replicate_numenorean_castles_1_tt
+				hidden_effect = {
+					add_tech_bonus = {
+						name = special_bonus
+						ahead_reduction = 1
+						uses = 1
+						category = lotr_labour_construction
+					}
+				}
+			}	
 		}
 	}
 
@@ -2916,8 +3101,17 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
 			# steal siege tech from orcs
+			steal_random_tech_bonus = {
+				category = lotr_machines_siege_equipment
+				ahead_reduction = 0.8
+				bonus = 1.2
+				base_bonus = 1.1
+				dynamic = yes
+				name = special_bonus
+				target = MOR
+				uses = 2
+			}
 		}
 	}
 
@@ -2998,7 +3192,37 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# Gondor, Dorwinion, Dale, Rhun, Harad, Angmar
+			# each who has > 10 opinion of us will send a specialized research-advisor that will becojme available to us
+			# current scholars we will receive:
+			# ... a list
+			custom_effect_tooltip = ROH_attract_foreign_scholars_tt
+
+			if = {
+				limit = { GON = { exists = yes has_opinion = { target = ROOT value > 10 } NOT = { has_war_with = ROOT } } }
+				set_country_flag = gon_scholar_unlocked
+				custom_effect_tooltip = gon_scholar_tt
+			}
+			if = {
+				limit = { DOR = { exists = yes has_opinion = { target = ROOT value > 10 } NOT = { has_war_with = ROOT } } }
+				set_country_flag = dor_scholar_unlocked
+				custom_effect_tooltip = dor_scholar_tt
+			}
+			if = {
+				limit = { ERE = { exists = yes has_opinion = { target = ROOT value > 10 } NOT = { has_war_with = ROOT } } }
+				set_country_flag = ere_scholar_unlocked
+				custom_effect_tooltip = ere_scholar_tt
+			}
+			if = {
+				limit = { RIV = { exists = yes has_opinion = { target = ROOT value > 10 } NOT = { has_war_with = ROOT } } }
+				set_country_flag = riv_scholar_unlocked
+				custom_effect_tooltip = riv_scholar_tt
+			}
+			if = {
+				limit = { ANG = { exists = yes has_opinion = { target = ROOT value > 10 } NOT = { has_war_with = ROOT } } }
+				set_country_flag = ang_scholar_unlocked
+				custom_effect_tooltip = ang_scholar_tt
+			}
 		}
 	}
 
