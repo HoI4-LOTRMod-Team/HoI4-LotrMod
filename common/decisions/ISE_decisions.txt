@@ -108,6 +108,58 @@ ISE_palantir_decisions = {
 }
 
 ISE_pillage_rohan = {
+    ISE_establish_camps = {
+        icon = GFX_decision_generic_2
+		cost = 150
+        visible = {
+            #has_completed_focus = ISE_establish_camps_in_the_area
+            FROM = { 
+                owner = { tag = ROH } 
+            }
+        }
+        available = {
+           #has_completed_focus = ISE_establish_camps_in_the_area
+           FROM = { 
+                owner = { tag = ROH } 
+           }
+        }
+        state_target = yes
+        targets = { 23 24 }
+		days_remove = 50
+		fire_only_once = yes
+        fixed_random_seed = no
+		remove_effect = {
+            if = {
+                limit = {
+                    check_variable = { FROM.id = 23.id }
+                }
+                increase_west_march_influence_20 = yes
+            }
+            else_if = {
+                limit = {
+                    check_variable = { FROM.id = 24.id }
+                }
+                increase_rohan_gap_influence_20 = yes
+            }
+            FROM = {
+                owner = {
+                    add_stability = -0.01
+                    random_list = {
+                        75 = {
+                            increase_orc_pillaging = yes
+                            add_stability = -0.015
+                        }
+                        25 = {
+                            add_war_support = 0.015
+                        }
+                    }
+                }
+            }
+		}
+		ai_will_do = {
+			factor = 2
+		}
+    }
     ISE_pillage_villages = {
         icon = GFX_decision_generic_2
 		cost = 150
@@ -133,10 +185,11 @@ ISE_pillage_rohan = {
                 owner = {
                     add_stability = -0.01
                     random_list = {
-                        75 = {
+                        50 = {
+                            increase_orc_pillaging = yes
                             add_stability = -0.015
                         }
-                        25 = {
+                        50 = {
                             add_war_support = 0.015
                         }
                     }
@@ -171,13 +224,13 @@ ISE_pillage_rohan = {
             #Increase influence
             if = {
                 limit = {
-                    FROM = 23
+                    check_variable = { FROM.id = 23.id }
                 }
                 increase_west_march_influence = yes
             }
             else_if = {
                 limit = {
-                    FROM = 24
+                    check_variable = { FROM.id = 24.id }
                 }
                 increase_rohan_gap_influence = yes
             }
@@ -186,12 +239,12 @@ ISE_pillage_rohan = {
 			factor = 2
 		}
     }
-    ISE_annex_west_march = {
+    ISE_annex_state = {
         icon = GFX_decision_generic_2
 		cost = 200
 
         state_target = yes
-        targets = { 23 }
+        targets = { 23, 24 }
         available = {
             check_variable = { global.influence_west_march > 10}
         }
@@ -200,27 +253,18 @@ ISE_pillage_rohan = {
 		fire_only_once = no
         fixed_random_seed = no
 		remove_effect = {
-            transfer_state = 23
-		}
-		ai_will_do = {
-			factor = 2
-		}
-    }
-    ISE_annex_rohan_gap = {
-        icon = GFX_decision_generic_2
-		cost = 200
-
-        state_target = yes
-        targets = { 24 }
-        available = {
-            check_variable = { global.influence_rohan_gap > 10}
-        }
-		days_remove = 50
-        days_re_enable = 100
-		fire_only_once = no
-        fixed_random_seed = no
-		remove_effect = {
-            transfer_state = 24
+            if = {
+                limit = {
+                    check_variable = { FROM.id = 23.id }
+                }
+                transfer_state = 23
+            }
+            else_if = {
+                limit = {
+                    check_variable = { FROM.id = 24.id }
+                }  
+                transfer_state = 24
+            }
 		}
 		ai_will_do = {
 			factor = 2
