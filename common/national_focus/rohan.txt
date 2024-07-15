@@ -1999,12 +1999,25 @@ focus_tree = {
 		x =0
 		y =3
 		mutually_exclusive = { }
-		prerequisite = { focus = ROH_deal_with_westemnet }
+		prerequisite = { focus = ROH_appoint_theodreds_successor }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: add 1 mil and 1 civ
+			custom_effect_tooltip = ROH_westemnet_industry_tt
+			# add 1 mil and 1 civ
 			# If Fenmund is governor, add 3 civs instead
+			hidden_effect = {
+				if = {
+					limit = { ROH_fenmund = { is_region_3_leader = yes } }
+					28 = { add_building_slot_and_civ = yes }
+					26 = { add_building_slot_and_civ = yes }
+					24 = { add_building_slot_and_civ = yes }
+				}
+				else = {
+					28 = { add_building_slot_and_civ = yes }
+					26 = { add_building_slot_and_mil = yes }
+				}
+			}
 		}
 	}
 
@@ -2051,7 +2064,11 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: Give Isengard some stuff, make it so that if Isengard declares war, they get some hefty debuffs at the start
+			# Give Isengard some stuff, make it so that if Isengard declares war, they get some hefty debuffs at the start
+			hidden_effect = {
+				ISE = { country_event = rohan.91 }
+			}
+			event_option_tooltip = rohan.91.a
 		}
 	}
 
@@ -2085,7 +2102,31 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			hidden_effect = {
+				build_railway = {
+					level = 1
+					start_province = 4103
+					target_province = 6441
+					build_only_on_allied = yes
+				}
+				180 = {
+					add_building_construction = {
+						type = supply_node
+						level = 1
+						instant_build = yes
+						province = 6441
+					}
+				}
+				178 = {
+					add_building_construction = {
+						type = supply_node
+						level = 1
+						instant_build = yes
+						province = 3594
+					}
+				}
+			}
+			custom_effect_tooltip = ROH_wold_build_supplyline_tt
 		}
 	}
 
@@ -2102,7 +2143,15 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			30 = {
+				add_resource = { type = oil amount = 10 }
+			}
+			180 = {
+				add_resource = { type = oil amount = 3 }
+			}
+			178 = {
+				add_resource = { type = oil amount = 5 }
+			}
 		}
 	}
 
@@ -2140,6 +2189,10 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			# TODO: add infrastructure
+			30 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			179 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			180 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+			178 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
 		}
 	}
 
@@ -2173,7 +2226,22 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			27 = {
+				add_resource = {
+					type = chromium
+					amount = 8
+				}
+				add_resource = {
+					type = tungsten
+					amount = 8
+				}
+			}
+			182 = {
+				add_resource = {
+					type = steel
+					amount = 12
+				}
+			}
 		}
 	}
 
@@ -2349,7 +2417,45 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			custom_effect_tooltip = ROH_military_consolidation
+			hidden_effect = {
+				if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_mil } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_mil
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer
+					}
+				}
+				else_if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_pol_mil } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol_mil
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol
+					}
+				}
+				else_if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_eco_mil } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_eco_mil
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_eco
+					}
+				}
+				else_if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_pol_mil_eco } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol_mil_eco
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol_eco
+					}
+				}
+			}
 		}
 	}
 
@@ -2366,7 +2472,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# TODO Get 1-2 divisons from every region with good approval
 		}
 	}
 
@@ -2434,7 +2540,46 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: Allow us to go above Strong centralization
+			custom_effect_tooltip = ROH_wartime_centralization_tt
+			# Allow us to go above Strong centralization
+			hidden_effect = {
+				if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_pol } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer
+					}
+				}
+				else_if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_pol_mil } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol_mil
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_mil
+					}
+				}
+				else_if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_pol_eco } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol_eco
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_eco
+					}
+				}
+				else_if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_pol_mil_eco } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol_mil_eco
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_eco_mil
+					}
+				}
+			}
 		}
 	}
 
@@ -2468,7 +2613,12 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: All regions get a little investment
+			# All regions get a little investment
+			rohan_lords_invest_in_region_1_5p = yes
+			rohan_lords_invest_in_region_2_5p = yes
+			rohan_lords_invest_in_region_3_5p = yes
+			rohan_lords_invest_in_region_4_5p = yes
+			rohan_lords_invest_in_region_5_5p = yes
 		}
 	}
 
@@ -2502,7 +2652,47 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: Allow us to go higher than medium taxes
+			# Allow us to go higher than medium taxes
+			custom_effect_tooltip = ROH_wartime_economy_tt
+			# Allow us to go above Strong centralization
+			hidden_effect = {
+				if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_eco } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_eco
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer
+					}
+				}
+				else_if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_eco_mil } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_eco_mil
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_mil
+					}
+				}
+				else_if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_pol_eco } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol_eco
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol
+					}
+				}
+				else_if = {
+					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_pol_mil_eco } }
+					remove_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol_mil_eco
+					}
+					add_dynamic_modifier = {
+						modifier = realm_cohesion_dynamic_modifer_pol_mil
+					}
+				}
+			}
 		}
 	}
 
@@ -2654,23 +2844,6 @@ focus_tree = {
 							level = 1
 							instant_build = yes
 							province = 6563
-						}
-					}
-				}
-				if = {
-					limit = { controls_state = 180 }
-					build_railway = {
-						level = 1
-						start_province = 4103
-						target_province = 6441
-						build_only_on_allied = yes
-					}
-					180 = {
-						add_building_construction = {
-							type = supply_node
-							level = 1
-							instant_build = yes
-							province = 6441
 						}
 					}
 				}
