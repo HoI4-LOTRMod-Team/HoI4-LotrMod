@@ -2661,7 +2661,6 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: Remove malus on political power
 			custom_effect_tooltip = ROH_political_consolidation_tt
 			# Allow us to go above Strong centralization
 			hidden_effect = {
@@ -2706,19 +2705,34 @@ focus_tree = {
 	}
 
 	focus = {
-		id = ROH_purge_wormtongue_loyalists
+		id = ROH_political_propaganda
 		icon = GFX_goal_goal_generic_political_pressure
 		relative_position_id = ROH_political_consolidation
 		available = { }
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_suppress_opposition }
 		prerequisite = { focus = ROH_political_consolidation }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			if = {
+				limit = { has_government = belligerent }
+				add_popularity = { ideology = belligerent popularity = 0.1 }
+			}
+			else_if = {
+				limit = { has_government = revolutionary }
+				add_popularity = { ideology = revolutionary popularity = 0.1 }
+			}
+			else_if = {
+				limit = { has_government = cooperative }
+				add_popularity = { ideology = cooperative popularity = 0.1 }
+			}
+			else_if = {
+				limit = { has_government = unaligned }
+				add_popularity = { ideology = unaligned popularity = 0.1 }
+			}
 		}
 	}
 
@@ -2730,12 +2744,12 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_political_propaganda }
 		prerequisite = { focus = ROH_political_consolidation }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			add_political_power = 150 # Award for the most creative focus effect goes to...
 		}
 	}
 
@@ -2748,11 +2762,15 @@ focus_tree = {
 		x =0
 		y =2
 		mutually_exclusive = { }
-		prerequisite = { focus = ROH_suppress_opposition focus = ROH_purge_wormtongue_loyalists }
+		prerequisite = { focus = ROH_suppress_opposition focus = ROH_political_propaganda }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# unlock decision
+			add_stability = 0.05
+			set_variable = { wartime_taxation_malus = -0.01 }
+			unlock_decision_tooltip = ROH_wartime_taxation
+			custom_effect_tooltip = ROH_wartime_centralization_tt
 		}
 	}
 
@@ -2821,7 +2839,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =-1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_selective_investments }
 		prerequisite = { focus = ROH_economic_consolidation }
 		cost = 10
 		available_if_capitulated = yes
@@ -2843,7 +2861,7 @@ focus_tree = {
 		ai_will_do = { factor = 0 }
 		x =1
 		y =1
-		mutually_exclusive = { }
+		mutually_exclusive = { focus = ROH_broad_investments }
 		prerequisite = { focus = ROH_economic_consolidation }
 		cost = 10
 		available_if_capitulated = yes
@@ -2869,7 +2887,11 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO
+			# unlock decision
+			add_war_support = 0.05
+			set_variable = { wartime_political_measures_malus = -0.01 }
+			unlock_decision_tooltip = ROH_wartime_political_measures
+			custom_effect_tooltip = ROH_wartime_economy_tt
 		}
 	}
 
