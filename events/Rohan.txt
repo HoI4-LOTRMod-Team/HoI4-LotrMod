@@ -1450,7 +1450,7 @@ country_event = {
 	}
 }
 
-# Rohan offers truce to Isengard (after Grima gains power)
+# Rohan stands down (after Grima gains power)
 country_event = {
 	id = rohan.89
 	title = rohan.89.t
@@ -1468,18 +1468,16 @@ country_event = {
 				days = 90
 			}
 		}
-		# TODO: deal with factions and all that crap, also territory etc.
 
-		# POSSIBLE OPTION: Instead of a "truce", maybe I can add temporary -100% attack targeted modifiers to both countries?
+		# begin timer that lets Isengard force ROH to choose pledge or resist
+		# TODO: tooltip
+		ISE = { country_event = { id = rohan.94 days = 70 } }
 
-		# TODO: begin timer that lets Isengard force ROH to choose pledge or resist focus
-	}
+		# Set temporary truce:
+		ROH = { add_timed_idea = { idea = ROH_temp_truce days = 90 } }
+		ISE = { add_timed_idea = { idea = ISE_temp_truce days = 90 } }
 
-	# fuck off
-	option = {
-		name = rohan.89.b
-
-		
+		# TODO: news event
 	}
 }
 
@@ -1649,5 +1647,59 @@ country_event = {
 	option = {
 		name = rohan.93.f
 		add_political_power = 100
+	}
+}
+
+# Let isengard force Rohan to choose a side (resist or submit)
+country_event = {
+	id = rohan.94
+	title = rohan.94.t
+	desc = rohan.94.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		ISE = { exists = yes }
+		ISE = { has_capitulated = yes }
+		ROH = { exists = yes }
+		ROH = { has_capitulated = yes }
+	}
+
+	#
+	option = {
+		name = rohan.94.a
+		country_event = { id = rohan.95 }
+	}
+}
+
+# Rohan forced to submit or resist
+country_event = {
+	id = rohan.95
+	title = rohan.95.t
+	desc = rohan.95.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		ISE = { exists = yes }
+		ISE = { has_capitulated = yes }
+		ROH = { exists = yes }
+		ROH = { has_capitulated = yes }
+	}
+
+	# submit
+	option = {
+		name = rohan.95.a
+		complete_national_focus = ROH_pledge_to_saruman
+	}
+
+	# resist
+	option = {
+		name = rohan.95.b
+		complete_national_focus = ROH_resist_saruman
 	}
 }

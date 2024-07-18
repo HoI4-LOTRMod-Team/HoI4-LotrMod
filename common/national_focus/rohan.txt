@@ -1358,7 +1358,6 @@ focus_tree = {
 			if = {
 				limit = { has_war_with = ISE ISE = { has_government = belligerent } }
 				ISE = { country_event = rohan.89 }
-				custom_effect_tooltip = if_they_accept
 				event_option_tooltip = rohan.89.a
 			}
 		}
@@ -1506,9 +1505,26 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			ISE = {
-				puppet = ROH
+			# Set state flags for negotiate terms
+			every_state = {
+				limit = { is_controlled_by = ROH is_owned_by = ISE }
+				set_state_flag = truce_controlled_by_ROH
 			}
+			every_state = {
+				limit = { is_controlled_by = ISE is_owned_by = ROH }
+				set_state_flag = truce_controlled_by_ISE
+			}
+
+			ISE = {
+				puppet = {
+					target = ROH
+					#end_wars = yes # Ned this?
+				}
+			}
+
+			# TODO: give ISE all the territory they occupy + west
+			# first need to test what actually happens when mid-war puppeting and stuff
+
 			add_ideas = ROH_isengard_protectorate
 		}
 	}
@@ -1525,9 +1541,14 @@ focus_tree = {
 		mutually_exclusive = { }
 		cost = 10
 		available_if_capitulated = yes
+		cancelable = no
+		cancel_if_invalid = no
 		completion_reward = {
-			# TODO
+			# TODO: tooltip
 			# back and forth-events with isengard to choose our puppetry level
+		}
+		select_effect = {
+			country_event = rohannegotiations.1
 		}
 	}
 
