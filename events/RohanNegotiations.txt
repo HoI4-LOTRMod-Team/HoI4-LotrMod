@@ -27,7 +27,11 @@ country_event = {
 	option = {
 		name = rohannegotiations.1.a
 		
-		ISE = { country_event = { id = rohannegotiations.2 days = 5 } }
+		custom_effect_tooltip = rohannegotiations.1.a_tt
+
+		hidden_effect = {
+			ISE = { country_event = { id = rohannegotiations.2 days = 5 } }
+		}
 	}
 }
 
@@ -50,18 +54,26 @@ country_event = {
 		ISE = { has_capitulated = no }
 	}
 	
+	# TODO: Make it ISE chooses territory more likely if ROH is a player
+
 	# They can choose territory
 	option = {
 		name = rohannegotiations.2.a
 		
-		ROH = { country_event = { id = rohannegotiations.3 days = 5 } }
+		custom_effect_tooltip = rohannegotiations.2.a_tt
+		hidden_effect = {
+			ROH = { country_event = { id = rohannegotiations.3 days = 5 } }	
+		}
 	}
 
 	# They can choose autonomy
 	option = {
 		name = rohannegotiations.2.b
-		
-		ROH = { country_event = { id = rohannegotiations.6 days = 5 } }
+
+		custom_effect_tooltip = rohannegotiations.2.b_tt
+		hidden_effect = {
+			ROH = { country_event = { id = rohannegotiations.6 days = 5 } }
+		}
 	}
 }
 
@@ -72,8 +84,6 @@ country_event = {
 	title = rohannegotiations.3.t
 
 	desc = rohannegotiations.3.d
-
-	picture = GFX_report_event_intense_diplomatic_negotiations
 	
 	is_triggered_only = yes
 	fire_only_once = yes
@@ -88,29 +98,146 @@ country_event = {
 	# Freezer borders in their current state
 	option = {
 		name = rohannegotiations.3.a
+
+		set_global_flag = ise_roh_negotiations_roh_freezes_borders
+
+		custom_effect_tooltip = rohannegotiations.3.a_tt
+
+		# Rohan relnquishies all claims to isengard states
+		every_state = {
+			limit = {
+				is_core_of = ROH
+				is_controlled_by = ISE
+			}
+			remove_core_of = ROH
+			add_core_of = ISE
+		}
+		every_state = {
+			limit = {
+				is_core_of = ISE
+				is_controlled_by = ROH
+			}
+			remove_core_of = ISE
+			add_core_of = ROH
+		}
 		
-		ISE = { country_event = { id = rohannegotiations.4 days = 5 } }
+		hidden_effect = {
+			ISE = { country_event = { id = rohannegotiations.4 days = 5 } }	
+		}
 	}
 
 	# We'll have everything lmao
-	option = {
-		name = rohannegotiations.3.b
-		
-		ISE = { country_event = { id = rohannegotiations.4 days = 5 } }
-	}
+	#option = {
+	#	name = rohannegotiations.3.b
+	#	
+	#	ISE = { country_event = { id = rohannegotiations.4 days = 5 } }
+	#}
 
 	# ISE can have west
 	option = {
 		name = rohannegotiations.3.c
+
+		set_global_flag = ise_roh_negotiations_roh_gives_west
+
+		custom_effect_tooltip = rohannegotiations.3.c_tt
+
+		24 = {
+			remove_core_of = ROH
+			add_core_of = ISE
+			if = {
+				limit = { is_controlled_by = ROH }
+				transfer_state_to = ISE
+			}
+		}
+
+		23 = {
+			remove_core_of = ROH
+			add_core_of = ISE
+			if = {
+				limit = { is_controlled_by = ROH }
+				transfer_state_to = ISE
+			}
+		}
+
+		every_state = {
+			limit = {
+				has_state_flag = truce_controlled_by_ISE
+				is_controlled_by = ISE
+				NOT = { check_variable = { id = 23.id } }
+				NOT = { check_variable = { id = 24.id } }
+			}
+			transfer_state_to = ROH
+		}
+
+		every_state = {
+			limit = {
+				has_state_flag = truce_controlled_by_ROH
+				is_controlled_by = ROH
+				NOT = { check_variable = { id = 23.id } }
+				NOT = { check_variable = { id = 24.id } }
+			}
+			transfer_state_to = ISE
+		}
 		
-		ISE = { country_event = { id = rohannegotiations.4 days = 5 } }
+		hidden_effect = {
+			ISE = { country_event = { id = rohannegotiations.4 days = 5 } }	
+		}
 	}
 
 	# ISE can have west and Wold puppet
 	option = {
 		name = rohannegotiations.3.e
+
+		set_global_flag = ise_roh_negotiations_roh_gives_west_and_wold
+
+		custom_effect_tooltip = rohannegotiations.3.e_tt
+
+		24 = {
+			remove_core_of = ROH
+			add_core_of = ISE
+			if = {
+				limit = { is_controlled_by = ROH }
+				transfer_state_to = ISE
+			}
+		}
+
+		23 = {
+			remove_core_of = ROH
+			add_core_of = ISE
+			if = {
+				limit = { is_controlled_by = ROH }
+				transfer_state_to = ISE
+			}
+		}
+
+		every_state = {
+			limit = {
+				has_state_flag = truce_controlled_by_ISE
+				is_controlled_by = ISE
+				NOT = { check_variable = { id = 23.id } }
+				NOT = { check_variable = { id = 24.id } }
+			}
+			transfer_state_to = ROH
+		}
+
+		every_state = {
+			limit = {
+				has_state_flag = truce_controlled_by_ROH
+				is_controlled_by = ROH
+				NOT = { check_variable = { id = 23.id } }
+				NOT = { check_variable = { id = 24.id } }
+			}
+			transfer_state_to = ISE
+		}
+
+		ROH = {
+			release_on_controlled = WOL
+		}
+		ISE = { puppet = { target = WOL } }
 		
-		ISE = { country_event = { id = rohannegotiations.4 days = 5 } }
+		hidden_effect = {
+			ISE = { country_event = { id = rohannegotiations.4 days = 5 } }	
+		}
 	}
 }
 
@@ -120,9 +247,19 @@ country_event = {
 	id = rohannegotiations.4
 	title = rohannegotiations.4.t
 
-	desc = rohannegotiations.4.d
-
-	picture = GFX_report_event_intense_diplomatic_negotiations
+	desc = {
+		text = rohannegotiations.4.d_1
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_freezes_borders
+		}
+	}
+	desc = {
+		text = rohannegotiations.4.d_2
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_gives_west
+		}
+	}
+	desc = rohannegotiations.4.d_3
 	
 	is_triggered_only = yes
 	fire_only_once = yes
@@ -134,10 +271,19 @@ country_event = {
 		ISE = { has_capitulated = no }
 	}
 	
+	# TODO: make it more likely for Saru to choose a high autonomy if ise_roh_negotiations_roh_gives_west_and_wold flag is set
+
 	# Puppet
 	option = {
 		name = rohannegotiations.4.a
-		
+		trigger = {
+			NOT = { has_global_flag = ise_roh_negotiations_roh_gives_west_and_wold }
+		}
+
+		set_global_flag = ise_roh_negotiations_ise_chooses_puppet
+
+		# no need to change anything
+
 		ISE = { country_event = { id = rohannegotiations.5 days = 5 } }
 		ROH = { country_event = { id = rohannegotiations.5 days = 5 } }
 	}
@@ -145,7 +291,14 @@ country_event = {
 	# bulwark
 	option = {
 		name = rohannegotiations.4.b
+
+		set_global_flag = ise_roh_negotiations_ise_chooses_bulwark
 		
+		set_autonomy = {
+			target = ROH
+			autonomy_state = autonomy_bulwark
+		}
+
 		ISE = { country_event = { id = rohannegotiations.5 days = 5 } }
 		ROH = { country_event = { id = rohannegotiations.5 days = 5 } }
 	}
@@ -153,6 +306,13 @@ country_event = {
 	# autonomous tributary
 	option = {
 		name = rohannegotiations.4.c
+
+		set_global_flag = ise_roh_negotiations_ise_chooses_tributary
+
+		set_autonomy = {
+			target = ROH
+			autonomy_state = autonomy_autonomous_tributary
+		}
 		
 		ISE = { country_event = { id = rohannegotiations.5 days = 5 } }
 		ROH = { country_event = { id = rohannegotiations.5 days = 5 } }
@@ -161,6 +321,27 @@ country_event = {
 	# Autonomous tributarty, but we also take helms deep!
 	option = {
 		name = rohannegotiations.4.e
+		trigger = {
+			23 = { is_controlled_by = ISE }
+			24 = { is_controlled_by = ISE }
+			NOT = { has_global_flag = ise_roh_negotiations_roh_gives_west_and_wold }
+		}
+
+		set_global_flag = ise_roh_negotiations_ise_chooses_tributary_and_helmsdeep
+
+		set_autonomy = {
+			target = ROH
+			autonomy_state = autonomy_autonomous_tributary
+		}
+
+		184 = {
+			if = {
+				limit = { is_controlled_by = ROH }
+				transfer_state_to = ISE
+			}
+			remove_core_of = ROH
+			add_core_of = ISE
+		}
 		
 		ISE = { country_event = { id = rohannegotiations.5 days = 5 } }
 		ROH = { country_event = { id = rohannegotiations.5 days = 5 } }
@@ -173,9 +354,88 @@ country_event = {
 	id = rohannegotiations.5
 	title = rohannegotiations.5.t
 
-	desc = rohannegotiations.5.d
+	desc = {
+		text = rohannegotiations.5.d_11
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_freezes_borders
+			has_global_flag = ise_roh_negotiations_ise_chooses_puppet
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_12
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_freezes_borders
+			has_global_flag = ise_roh_negotiations_ise_chooses_bulwark
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_13
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_freezes_borders
+			has_global_flag = ise_roh_negotiations_ise_chooses_tributary
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_14
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_freezes_borders
+			has_global_flag = ise_roh_negotiations_ise_chooses_tributary_and_helmsdeep
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_21
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_gives_west
+			has_global_flag = ise_roh_negotiations_ise_chooses_puppet
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_22
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_gives_west
+			has_global_flag = ise_roh_negotiations_ise_chooses_bulwark
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_23
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_gives_west
+			has_global_flag = ise_roh_negotiations_ise_chooses_tributary
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_24
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_gives_west
+			has_global_flag = ise_roh_negotiations_ise_chooses_tributary_and_helmsdeep
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_31
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_gives_west_and_wold
+			has_global_flag = ise_roh_negotiations_ise_chooses_puppet
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_32
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_gives_west_and_wold
+			has_global_flag = ise_roh_negotiations_ise_chooses_bulwark
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_33
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_gives_west_and_wold
+			has_global_flag = ise_roh_negotiations_ise_chooses_tributary
+		}
+	}
+	desc = {
+		text = rohannegotiations.5.d_34
+	}
 
-	picture = GFX_report_event_intense_diplomatic_negotiations
+	picture = GFX_report_event_grima_saruman
 	
 	is_triggered_only = yes
 	fire_only_once = yes
@@ -200,8 +460,6 @@ country_event = {
 	title = rohannegotiations.6.t
 
 	desc = rohannegotiations.6.d
-
-	picture = GFX_report_event_intense_diplomatic_negotiations
 	
 	is_triggered_only = yes
 	fire_only_once = yes
@@ -216,22 +474,50 @@ country_event = {
 	# puppet
 	option = {
 		name = rohannegotiations.6.a
+
+		set_global_flag = ise_roh_negotiations_roh_chooses_puppet
+
+		custom_effect_tooltip = rohannegotiations.6.a_tt
 		
-		ISE = { country_event = { id = rohannegotiations.7 days = 5 } }
+		hidden_effect = {
+			ISE = { country_event = { id = rohannegotiations.7 days = 5 } }
+		}
 	}
 
 	# bulwark
 	option = {
 		name = rohannegotiations.6.b
+
+		set_global_flag = ise_roh_negotiations_roh_chooses_bulwark
 		
-		ISE = { country_event = { id = rohannegotiations.7 days = 5 } }
+		set_autonomy = {
+			target = ROH
+			autonomy_state = autonomy_bulwark
+		}
+
+		custom_effect_tooltip = rohannegotiations.6.a_tt
+
+		hidden_effect = {
+			ISE = { country_event = { id = rohannegotiations.7 days = 5 } }
+		}
 	}
 
 	# autonomous tribute
 	option = {
 		name = rohannegotiations.6.c
+
+		set_global_flag = ise_roh_negotiations_roh_chooses_tributary
+
+		set_autonomy = {
+			target = ROH
+			autonomy_state = autonomy_autonomous_tributary
+		}
+
+		custom_effect_tooltip = rohannegotiations.6.a_tt
 		
-		ISE = { country_event = { id = rohannegotiations.7 days = 5 } }
+		hidden_effect = {
+			ISE = { country_event = { id = rohannegotiations.7 days = 5 } }
+		}
 	}
 }
 
@@ -241,9 +527,19 @@ country_event = {
 	id = rohannegotiations.7
 	title = rohannegotiations.7.t
 
-	desc = rohannegotiations.7.d
-
-	picture = GFX_report_event_intense_diplomatic_negotiations
+	desc = {
+		text = rohannegotiations.7.d_1
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_chooses_puppet
+		}
+	}
+	desc = {
+		text = rohannegotiations.7.d_2
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_chooses_bulwark
+		}
+	}
+	desc = rohannegotiations.7.d_3
 	
 	is_triggered_only = yes
 	fire_only_once = yes
@@ -256,16 +552,36 @@ country_event = {
 	}
 	
 	# they can have everything
-	option = {
-		name = rohannegotiations.4.a
-		
-		ISE = { country_event = { id = rohannegotiations.8 days = 5 } }
-		ROH = { country_event = { id = rohannegotiations.8 days = 5 } }
-	}
+	#option = {
+	#	name = rohannegotiations.4.a
+	#	
+	#	ISE = { country_event = { id = rohannegotiations.8 days = 5 } }
+	#	ROH = { country_event = { id = rohannegotiations.8 days = 5 } }
+	#}
 
 	# freeze borders
 	option = {
-		name = rohannegotiations.4.a
+		name = rohannegotiations.7.a
+
+		set_global_flag = ise_roh_negotiations_ise_freezes_borders
+
+		# Rohan relnquishies all claims to isengard states
+		every_state = {
+			limit = {
+				is_core_of = ROH
+				is_controlled_by = ISE
+			}
+			remove_core_of = ROH
+			add_core_of = ISE
+		}
+		every_state = {
+			limit = {
+				is_core_of = ISE
+				is_controlled_by = ROH
+			}
+			remove_core_of = ISE
+			add_core_of = ROH
+		}
 		
 		ISE = { country_event = { id = rohannegotiations.8 days = 5 } }
 		ROH = { country_event = { id = rohannegotiations.8 days = 5 } }
@@ -273,7 +589,47 @@ country_event = {
 
 	# we take west
 	option = {
-		name = rohannegotiations.4.a
+		name = rohannegotiations.7.b
+
+		set_global_flag = ise_roh_negotiations_ise_takes_west
+
+		24 = {
+			remove_core_of = ROH
+			add_core_of = ISE
+			if = {
+				limit = { is_controlled_by = ROH }
+				transfer_state_to = ISE
+			}
+		}
+
+		23 = {
+			remove_core_of = ROH
+			add_core_of = ISE
+			if = {
+				limit = { is_controlled_by = ROH }
+				transfer_state_to = ISE
+			}
+		}
+
+		every_state = {
+			limit = {
+				has_state_flag = truce_controlled_by_ISE
+				is_controlled_by = ISE
+				NOT = { check_variable = { id = 23.id } }
+				NOT = { check_variable = { id = 24.id } }
+			}
+			transfer_state_to = ROH
+		}
+
+		every_state = {
+			limit = {
+				has_state_flag = truce_controlled_by_ROH
+				is_controlled_by = ROH
+				NOT = { check_variable = { id = 23.id } }
+				NOT = { check_variable = { id = 24.id } }
+			}
+			transfer_state_to = ISE
+		}
 		
 		ISE = { country_event = { id = rohannegotiations.8 days = 5 } }
 		ROH = { country_event = { id = rohannegotiations.8 days = 5 } }
@@ -281,7 +637,52 @@ country_event = {
 
 	# we take west and wold
 	option = {
-		name = rohannegotiations.4.a
+		name = rohannegotiations.7.c
+
+		set_global_flag = ise_roh_negotiations_ise_takes_west_and_wold
+
+		24 = {
+			remove_core_of = ROH
+			add_core_of = ISE
+			if = {
+				limit = { is_controlled_by = ROH }
+				transfer_state_to = ISE
+			}
+		}
+
+		23 = {
+			remove_core_of = ROH
+			add_core_of = ISE
+			if = {
+				limit = { is_controlled_by = ROH }
+				transfer_state_to = ISE
+			}
+		}
+
+		every_state = {
+			limit = {
+				has_state_flag = truce_controlled_by_ISE
+				is_controlled_by = ISE
+				NOT = { check_variable = { id = 23.id } }
+				NOT = { check_variable = { id = 24.id } }
+			}
+			transfer_state_to = ROH
+		}
+
+		every_state = {
+			limit = {
+				has_state_flag = truce_controlled_by_ROH
+				is_controlled_by = ROH
+				NOT = { check_variable = { id = 23.id } }
+				NOT = { check_variable = { id = 24.id } }
+			}
+			transfer_state_to = ISE
+		}
+
+		ROH = {
+			release_on_controlled = WOL
+		}
+		ISE = { puppet = { target = WOL } }
 		
 		ISE = { country_event = { id = rohannegotiations.8 days = 5 } }
 		ROH = { country_event = { id = rohannegotiations.8 days = 5 } }
@@ -294,9 +695,67 @@ country_event = {
 	id = rohannegotiations.8
 	title = rohannegotiations.8.t
 
-	desc = rohannegotiations.8.d
+	desc = {
+		text = rohannegotiations.8.d_11
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_chooses_puppet
+			has_global_flag = ise_roh_negotiations_ise_freezes_borders
+		}
+	}
+	desc = {
+		text = rohannegotiations.8.d_12
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_chooses_puppet
+			has_global_flag = ise_roh_negotiations_ise_takes_west
+		}
+	}
+	desc = {
+		text = rohannegotiations.8.d_13
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_chooses_puppet
+			has_global_flag = ise_roh_negotiations_ise_takes_west_and_wold
+		}
+	}
+	desc = {
+		text = rohannegotiations.8.d_21
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_chooses_bulwark
+			has_global_flag = ise_roh_negotiations_ise_freezes_borders
+		}
+	}
+	desc = {
+		text = rohannegotiations.8.d_22
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_chooses_bulwark
+			has_global_flag = ise_roh_negotiations_ise_takes_west
+		}
+	}
+	desc = {
+		text = rohannegotiations.8.d_23
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_chooses_bulwark
+			has_global_flag = ise_roh_negotiations_ise_takes_west_and_wold
+		}
+	}
+	desc = {
+		text = rohannegotiations.8.d_31
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_chooses_tributary
+			has_global_flag = ise_roh_negotiations_ise_freezes_borders
+		}
+	}
+	desc = {
+		text = rohannegotiations.8.d_32
+		trigger = {
+			has_global_flag = ise_roh_negotiations_roh_chooses_tributary
+			has_global_flag = ise_roh_negotiations_ise_takes_west
+		}
+	}
+	desc = {
+		text = rohannegotiations.8.d_33
+	}
 
-	picture = GFX_report_event_intense_diplomatic_negotiations
+	picture = GFX_report_event_grima_saruman
 	
 	is_triggered_only = yes
 	fire_only_once = yes
