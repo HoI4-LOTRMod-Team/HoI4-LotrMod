@@ -100,6 +100,7 @@ country_event = {
 }
 
 # Theodred dies
+# TODO_I: Still need to implement Theodred dying on the field of battle event
 country_event = {
 	id = rohan.4
 	title = rohan.4.t
@@ -187,10 +188,22 @@ country_event = {
 
 		move_bop_to_grima = yes
 		add_manpower = -20000
-		ROH_eomer = { retire = yes }
+		ROH_eomer = {
+			remove_unit_leader_role = yes
+			remove_country_leader_role = {
+				ideology = federative
+			}
+			remove_country_leader_role = {
+				ideology = isolationist
+			}
+			remove_country_leader_role = {
+				ideology = expansionist
+			}
+			remove_advisor_role = {
+				slot = chief_advisor
+			}
+		}
 		rohan_lords_replace_characters_on_retired = yes
-		
-		# TODO: Do we have a Eomer returns from exile? where?
 	}
 
 }
@@ -215,6 +228,7 @@ country_event = {
 }
 
 # Event for Gondor sending help to deal with Isengard
+# TODO_I When how what?
 country_event = {
 	id = rohan.8
 	title = rohan.8.t
@@ -310,43 +324,6 @@ country_event = {
 	}
 }
 
-# Grima Wormtongue doing stuff
-country_event = {
-	id = rohan.10
-
-	hidden = yes
-
-	trigger = {
-		original_tag = ROH
-		has_idea = ROH_grima
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
-	immediate = {
-		random_list = {
-			10 = {
-				# hire an advisor
-				grima_hire_advisor = yes
-			}
-			10 = {
-				# promote someone on his side ???
-				grima_banish_rival = yes
-			}
-			10 = {
-				# fuck around with lords
-				grima_replace_horselord = yes
-			}
-			10 = {
-				# random shit
-				grima_misc_actions = yes
-			}
-		}
-	}
-}
-
 # Getting rid of Theodred "manually"
 country_event = {
 	id = rohan.11
@@ -381,14 +358,11 @@ country_event = {
 
 	option = {
 		name = rohan.12.a
-		# TODO
+		ROH_eomer = { kill_character = yes }
+
+		rohan_lords_replace_characters_on_death = yes
 	}
 }
-
-
-
-
-
 
 # chief advisor
 country_event = {
@@ -920,7 +894,7 @@ country_event = {
 	option = {
 		name = rohan.76.b
 
-		# TODO: tooltip
+		custom_effect_tooltip = rohan.76.b_tt
 
 		# give them speed
 		clr_global_flag = fs_on_boat
@@ -1472,14 +1446,14 @@ country_event = {
 		}
 
 		# begin timer that lets Isengard force ROH to choose pledge or resist
-		# TODO: tooltip
-		ISE = { country_event = { id = rohan.94 days = 70 } }
+		custom_effect_tooltip = rohan.89.a_tt
+		hidden_effect = {
+			ISE = { country_event = { id = rohan.94 days = 70 } }
+		}
 
 		# Set temporary truce:
 		ROH = { add_timed_idea = { idea = ROH_temp_truce days = 90 } }
 		ISE = { add_timed_idea = { idea = ISE_temp_truce days = 90 } }
-
-		# TODO: news event
 	}
 
 	# You want peace? Too bad!
@@ -1502,27 +1476,33 @@ country_event = {
 	option = {
 		name = rohan.90.a
 
-		add_opinion_modifier = {
-			target = FROM
-			modifier = large_decrease
-		}
-		send_embargo = FROM
+		# Offer truce that freezes territory in place
+		ROH = { country_event = { id = rohan.103 days = 1 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = rohan.103.a
 	}
 
 	# oof
 	option = {
 		name = rohan.90.b
 
-		# TODO: Keep territory that was held at/before truce
-
-		# TODO: Response events for all of these
+		add_war_support = 0.05
+		add_timed_idea = {
+			idea = increased_attack
+			days = 90
+		}
 	}
 
 	# :rage:
 	option = {
 		name = rohan.90.c
 
-		# TODO: Keep territory and claim everything or something
+		add_political_power = -150
+		add_stability = -0.05
+
+		ROH = {
+			every_core_state = { add_claim_by = ISE }
+		}
 	}
 }
 
@@ -1881,5 +1861,122 @@ country_event = {
 		name = rohan.101.a
 
 		ROH_grima = { retire = yes }
+	}
+}
+
+# Eomer returns
+country_event = {
+	id = rohan.102
+	title = rohan.102.t
+	desc = rohan.102.d
+
+	fire_only_once = yes
+
+	trigger = {
+		has_defensive_war = yes
+		ROH_eomer = { is_unit_leader = no }
+		ROH_eomer = { is_alive = yes }
+		controls_province = 4628
+		has_government = cooperative
+	}
+
+	mean_time_to_happen = {
+		days = 200
+		# Eomer comes back a lot quicker if the enemy controls provinces right outside Helms deep
+		modifier = {
+			factor = 0.05
+			OR = {
+				NOT = { controls_province = 2483 }
+				NOT = { controls_province = 6762 }
+			}
+		}
+	}
+
+	picture = GFX_report_event_eomer_attack
+
+	option = {
+		name = rohan.102.a
+
+		load_oob = ROH_EomerReinforcements
+
+		ROH_eomer = {
+			add_corps_commander_role = {
+				traits={ eorl_loyalist_p panzer_leader }
+				skill=4
+				attack_skill=3
+				defense_skill=2
+				planning_skill=3
+				logistics_skill=2
+			}
+			add_country_leader_role = {
+				promote_leader = no
+				country_leader = { ideology = federative }
+			}
+			add_country_leader_role = {
+				promote_leader = no
+				country_leader = { ideology = isolationist }
+			}
+			add_country_leader_role = {
+				promote_leader = no
+				country_leader = { ideology = expansionist }
+			}
+
+			add_advisor_role = {
+				activate = no
+				advisor = {
+					idea_token = ROH_eomer
+					slot = chief_advisor 
+					cost = 150
+					traits = { lord_of_the_mark }
+				}
+			}
+		}
+	}
+}
+
+# Isengard offers a truce
+country_event = {
+	id = rohan.103
+	title = rohan.103.t
+	desc = rohan.103.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_grima_saruman
+
+	option = {
+		name = rohan.103.a
+
+		#TODO: news event
+
+		ROH = {
+			# Set state flags for negotiate terms
+			every_state = {
+				limit = { is_controlled_by = ROH is_owned_by = ISE }
+				set_state_flag = truce_controlled_by_ROH
+			}
+			every_state = {
+				limit = { is_controlled_by = ISE is_owned_by = ROH }
+				set_state_flag = truce_controlled_by_ISE
+			}
+
+			white_peace = ISE
+
+			# give ISE all the territory they occupy + west
+			every_state = {
+				limit = { has_state_flag = truce_controlled_by_ISE }
+				transfer_state_to = ISE
+			}
+			every_state = {
+				limit = { has_state_flag = truce_controlled_by_ROH }
+				transfer_state_to = ROH
+			}
+		}
+	}
+
+	option = {
+		name = rohan.103.b
 	}
 }
