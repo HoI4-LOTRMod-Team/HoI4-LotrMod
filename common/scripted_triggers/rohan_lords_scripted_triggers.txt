@@ -57,19 +57,30 @@ is_region_5_leader = {
 region_1_trigger_1 = {
 	if = {
 		limit = { ROH_frumdor = { is_region_1_leader = yes } }
-		has_high_trade = yes
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_open_market_policy_tt
+			has_high_trade = yes
+		}
 	}
 	else_if = {
 		limit = { ROH_derngar = { is_region_1_leader = yes } }
-		all_allied_country = {
-			is_elves = no
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_misstrust_of_elves_tt
+			all_allied_country = {
+				is_elves = no
+			}
 		}
 	}
 	else = {
 		# gamgar
-		has_opinion = {
-    		target = LTH
-    		value > 30
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_lorien_appeasement_tt
+			LTH = {
+				has_opinion = {
+					target = ROOT
+					value > 30
+				}
+			}
 		}
 	}
 }
@@ -77,19 +88,29 @@ region_1_trigger_1 = {
 region_1_trigger_2 = {
 	if = {
 		limit = { ROH_frumdor = { is_region_1_leader = yes } }
-		always = yes
-		# TODO: has X farms in the wold
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_agricultural_development_tt
+			178 = { synthetic_refinery > 0 }
+			179 = { synthetic_refinery > 0 }
+			180 = { synthetic_refinery > 0 }
+			30 = { synthetic_refinery > 0 }
+		}
 	}
 	else_if = {
 		limit = { ROH_derngar = { is_region_1_leader = yes } }
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_court_influence_derngar_tt
+			ROH_derngar = { is_hired_as_advisor = yes }
+		}
 		any_enemy_country = {
 			is_elves = yes
 		}
 	}
 	else = {
 		# gamgar
-		all_enemy_country = {
-			is_elves = no
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_court_influence_gamgar_tt
+			ROH_gamgar = { is_hired_as_advisor = yes }
 		}
 	}
 }
@@ -97,35 +118,61 @@ region_1_trigger_2 = {
 region_1_trigger_3 = {
 	if = {
 		limit = { ROH_frumdor = { is_region_1_leader = yes } }
-		always = yes
-		# TODO: is Importing at least X resources
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_foreign_imports_tt
+			set_temp_variable = { temp_imports = resource_imported@tungsten }
+			add_to_temp_variable = { temp_imports = resource_imported@chromium }
+			add_to_temp_variable = { temp_imports = resource_imported@steel }
+			add_to_temp_variable = { temp_imports = resource_imported@oil }
+			add_to_temp_variable = { temp_imports = resource_imported@rubber }
+			add_to_temp_variable = { temp_imports = resource_imported@aluminium }
+			check_variable = { temp_imports > 60 }
+		}
 	}
 	else_if = {
 		limit = { ROH_derngar = { is_region_1_leader = yes } }
-		strength_ratio = {
-    		tag = LTH
-    		ratio > 2
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_superiority_in_numbers_tt
+			strength_ratio = {
+				tag = LTH
+				ratio > 2
+			}
 		}
 	}
 	else = {
 		# gamgar
-		is_in_faction = yes
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_elven_guidance_tt
+			any_allied_country = {
+				is_elves = yes
+			}
+		}
 	}
 }
 
 region_1_trigger_4 = {
 	if = {
 		limit = { ROH_frumdor = { is_region_1_leader = yes } }
-		always = yes
-		# TODO: food stockpike is full
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_food_security_tt
+			fuel_ratio > 0.99
+		}
 	}
 	else_if = {
 		limit = { ROH_derngar = { is_region_1_leader = yes } }
-		ROH_derngar = { is_hired_as_advisor = yes }
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_preemptive_strike_tt
+			any_enemy_country = {
+				is_elves = yes
+			}
+		}
 	}
 	else = {
 		# gamgar
-		ROH_gamgar = { is_hired_as_advisor = yes }
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_archery_improvements_tt
+			has_tech = artillery4
+		}
 	}
 }
 
@@ -133,18 +180,23 @@ region_1_trigger_4 = {
 region_2_trigger_1 = {
 	if = {
 		limit = { ROH_eomer = { is_region_2_leader = yes } }
-		always = yes
-		# TODO:
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_loyal_advisorship_tt
+			grima_wormtongue_is_hired = no
+		}
 	}
 	else_if = {
 		limit = { ROH_leofred = { is_region_2_leader = yes } }
-		# TODO: his hired son as treasurer
-		always = yes
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_nepotistic_favours_tt
+			# TODO: has hired son as advisor
+			always = no
+		}
 	}
 	else_if = {
 		limit = { ROH_widgelred = { is_region_2_leader = yes } }
 		custom_trigger_tooltip = {
-			tooltip = grima_is_in_charge_tt
+			tooltip = roh_demands_wormtongue_empowerment_tt
 			OR = {
 				ROH_grima = { is_hired_as_advisor = yes }
 				ROH_grima = { is_country_leader = yes }
@@ -153,17 +205,24 @@ region_2_trigger_1 = {
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
-		OR = {
-			ROH_theoden = { is_country_leader = yes }
-			ROH_theodred = { is_country_leader = yes }
-			ROH_eowyn = { is_country_leader = yes }
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_house_of_eorl_rule_tt
+			OR = {
+				ROH_theoden = { is_country_leader = yes }
+				ROH_eomer = { is_country_leader = yes }
+				ROH_theodred = { is_country_leader = yes }
+				ROH_eowyn = { is_country_leader = yes }
+			}
 		}
 	}
 	else = {
 		# herumod
-		has_built = {
-			type = arms_factory
-			value > 25
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_rearmament_tt
+			has_built = {
+				type = arms_factory
+				value > 25
+			}
 		}
 	}
 }
@@ -171,56 +230,84 @@ region_2_trigger_1 = {
 region_2_trigger_2 = {
 	if = {
 		limit = { ROH_eomer = { is_region_2_leader = yes } }
-		always = yes
-		# TODO:
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_territorial_integrity_tt
+			all_core_state = {
+				is_controlled_by = ROOT
+			}
+		}
 	}
 	else_if = {
 		limit = { ROH_leofred = { is_region_2_leader = yes } }
-		has_volunteer_army = yes
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_volunteer_army_tt
+			has_volunteer_army = yes
+		}
 	}
 	else_if = {
 		limit = { ROH_widgelred = { is_region_2_leader = yes } }
-		NOT = { is_ally_with = GON }
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_gondor_skepticism_tt
+			NOT = { is_ally_with = GON }
+		}
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
-		has_stability > 0.65
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_stability_priority_tt
+			has_stability > 0.8
+		}
 	}
 	else = {
 		# herumod
-		NOT = { has_government = cooperative }
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_self_sufficiency_tt
+			NOT = { has_government = cooperative }
+		}
 	}
 }
 
 region_2_trigger_3 = {
 	if = {
 		limit = { ROH_eomer = { is_region_2_leader = yes } }
-		always = yes
-		# TODO:
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_noble_governance_tt
+			has_government = cooperative
+		}
 	}
 	else_if = {
 		limit = { ROH_leofred = { is_region_2_leader = yes } }
-		# TODO: has more civs in Eastemnet than in westemnet or wold
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_civilian_industry_tt
+			OR = {
+				27 = { industrial_complex > 5 }
+				177 = { industrial_complex > 5 }
+				182 = { industrial_complex > 5 }
+			}
+		}
 	}
 	else_if = {
 		limit = { ROH_widgelred = { is_region_2_leader = yes } }
-		has_government = belligerent
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_aggressive_stance_tt
+			has_government = belligerent
+		}
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
-		OR = {
-			has_moderate_centralization_or_less = yes
-			AND = {
-				has_war = yes
-				has_strong_centralization_or_less = yes
-			}
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_local_empowerment_tt
+			has_completed_focus = ROH_power_to_provincial_governors
 		}
 	}
 	else = {
 		# herumod
-		OR = {
-			is_faction_leader = yes
-			is_in_faction = no
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_alone_or_on_top_tt
+			OR = {
+				is_faction_leader = yes
+				is_in_faction = no
+			}
 		}
 	}
 }
@@ -228,34 +315,52 @@ region_2_trigger_3 = {
 region_2_trigger_4 = {
 	if = {
 		limit = { ROH_eomer = { is_region_2_leader = yes } }
-		always = yes
-		# TODO:
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_riders_blood_tt
+			has_army_size = {
+				size > 9
+				type = armor
+			}
+		}
 	}
 	else_if = {
 		limit = { ROH_leofred = { is_region_2_leader = yes } }
-		# TODO: has completed Eastemnet focuses first
-		always = yes
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_local_empowerment_tt
+			has_completed_focus = ROH_power_to_provincial_governors
+		}
 	}
 	else_if = {
 		limit = { ROH_widgelred = { is_region_2_leader = yes } }
-		has_opinion = {
-			target = ISE
-			value > 50
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_isengard_appeasement_tt
+			ISE = {
+				has_opinion = {
+					target = ROH
+					value > 29
+				}
+			}
 		}
 	}
 	else_if = {
 		limit = { ROH_elfhelm = { is_region_2_leader = yes } }
-		OR = {
-			has_low_taxes_or_less = yes
-			AND = {
-				has_war = yes
-				has_medium_taxes_or_less = yes
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_low_taxation_tt
+			OR = {
+				has_low_taxes_or_less = yes
+				AND = {
+					has_war = yes
+					has_medium_taxes_or_less = yes
+				}
 			}
 		}
 	}
 	else = {
 		# herumod
-		has_war = yes
+		custom_trigger_tooltip = {
+			tooltip = roh_demands_fighting_spirit_tt
+			has_war = yes
+		}
 	}
 }
 
@@ -536,7 +641,7 @@ rohan_lords_controls_region_2 = {
 		OR = {
 			controls_state = 27
 			controls_state = 177
-			controls_state = 27
+			controls_state = 182
 		}
 	}
 }
