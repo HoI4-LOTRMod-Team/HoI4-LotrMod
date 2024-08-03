@@ -1114,7 +1114,7 @@ focus_tree = {
 				threat > 0.1
 			}
 		}
-		x =-1
+		x =-2
 		y =1
 		mutually_exclusive = { }
 		cost = 10
@@ -1687,8 +1687,8 @@ focus_tree = {
 	focus = {
 		id = ROH_support_the_fellowship
 		icon = GFX_goal_lth_fellowship_of_ring
-		relative_position_id = ROH_let_gandalf_in
-		prerequisite = { focus = ROH_let_gandalf_in }
+		relative_position_id = ROH_secure_the_riddermark
+		prerequisite = { focus = ROH_secure_the_riddermark }
 		available = {
 			NOT = { has_global_flag = fs_fellowship_breakup }
 			NOT = { has_completed_focus = ROH_prepare_a_ring_interception }
@@ -1718,8 +1718,8 @@ focus_tree = {
 	focus = {
 		id = ROH_defend_the_fellowship_from_isengard
 		icon = GFX_goal_ROH_defend_protect_shield_the_fellowship_ring
-		relative_position_id = ROH_let_gandalf_in
-		prerequisite = { focus = ROH_let_gandalf_in }
+		relative_position_id = ROH_support_the_fellowship
+		prerequisite = { focus = ROH_support_the_fellowship }
 		available = {
 			OR = {
 				ROH_elfhelm = { is_unit_leader = yes }
@@ -1737,7 +1737,7 @@ focus_tree = {
 				has_country_flag = fs_friendly_attitude
 			}
 		}
-		x =3
+		x =0
 		y =2
 		mutually_exclusive = { }
 		cost = 10
@@ -1943,7 +1943,7 @@ focus_tree = {
 	}
 
 	focus = {
-		id = ROH_eorlingas_united2
+		id = ROH_liberate_the_people
 		icon = GFX_goal_ROH_eorlingas_united
 		relative_position_id = ROH_eorlingas_united
 		prerequisite = { focus = ROH_eorlingas_united }
@@ -1955,7 +1955,8 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: something very end-game epic/formable nation type thing
+			# something very end-game epic/formable nation type thing
+			custom_effect_tooltip = ROH_liberate_the_people_tt
 		}
 	}
 
@@ -2288,7 +2289,34 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: something with eagles presumably
+			# something with eagles presumably
+			if = {
+				limit = { has_completed_focus = ROH_technological_coherence }
+				add_tech_bonus = {
+					name = special_bonus
+					category = lotr_eagles
+					uses = 1
+					bonus = 0.5
+				}
+			}
+			else_if = {
+				limit = { has_completed_focus = ROH_technological_edge }
+				add_tech_bonus = {
+					name = special_bonus
+					category = lotr_eagles
+					uses = 1
+					bonus = 0.5
+					ahead_reduction = 1.0
+				}
+			}
+			else = {
+				add_tech_bonus = {
+					name = special_bonus
+					category = lotr_eagles
+					uses = 2
+					bonus = 0.5
+				}
+			}
 		}
 	}
 
@@ -2350,7 +2378,33 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: something idk
+			if = {
+				limit = { has_completed_focus = ROH_technological_coherence }
+				add_tech_bonus = {
+					name = special_bonus
+					category = lotr_knowledge_magic
+					uses = 1
+					bonus = 0.5
+				}
+			}
+			else_if = {
+				limit = { has_completed_focus = ROH_technological_edge }
+				add_tech_bonus = {
+					name = special_bonus
+					category = lotr_knowledge_magic
+					uses = 1
+					bonus = 0.5
+					ahead_reduction = 1.0
+				}
+			}
+			else = {
+				add_tech_bonus = {
+					name = special_bonus
+					category = lotr_knowledge_magic
+					uses = 2
+					bonus = 0.5
+				}
+			}
 		}
 	}
 
@@ -3016,7 +3070,14 @@ focus_tree = {
 		icon = GFX_goal_lth_hand_grabbing_crown
 		relative_position_id = ROH_consolidation_of_power
 		prerequisite = { focus = ROH_consolidation_of_power }
-		available = { }
+		available = {
+			all_state = {
+				OR = {
+					NOT = { is_claimed_by = ROH }
+					is_owned_by = ROH
+				}
+			}
+		}
 		ai_will_do = { factor = 25 }
 		x =0
 		y =2
@@ -3024,7 +3085,12 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			# TODO: Some epic formable nation type thing
+			# Some epic formable nation type thing
+			every_state = {
+				limit = { is_claimed_by = ROH }
+				add_core_of = ROH
+			}
+			set_cosmetic_tag = ROHEMPIRE
 		}
 	}
 
