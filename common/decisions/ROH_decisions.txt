@@ -12,11 +12,11 @@ ROH_wormtongue_corruption = {
         }
 
 		activation = {
-        	grima_wormtongue_is_hired = yes
+        	rohan_has_bop = yes
     	}
 
 	    cancel_trigger = {
-	        grima_wormtongue_is_hired = no
+	        rohan_has_bop = no
 	    }
 
 	    is_good = yes
@@ -28,8 +28,95 @@ ROH_wormtongue_corruption = {
 	    timeout_effect = {
 			grima_make_move = yes
 
-			add_to_variable = {
-				ROH_grima_wormtongue_move_duration = 5
+			if = {
+				limit = {
+					power_balance_value = { id = power_balance_wormtongue value > 0.6 }
+				}
+				add_to_variable = {
+					ROH_grima_wormtongue_move_duration = 8
+				}
+			}
+			else_if = {
+				limit = {
+					power_balance_value = { id = power_balance_wormtongue value > 0.3 }
+				}
+				add_to_variable = {
+					ROH_grima_wormtongue_move_duration = 5
+				}
+			}
+			else_if = {
+				limit = {
+					power_balance_value = { id = power_balance_wormtongue value > -0.3 }
+				}
+				add_to_variable = {
+					ROH_grima_wormtongue_move_duration = 4
+				}
+			}
+			else = {
+				add_to_variable = {
+					ROH_grima_wormtongue_move_duration = 3
+				}
+			}
+	    }
+	}
+
+	ROH_resistance_move = {
+        icon = GFX_decision_dwarves_elves_men
+
+		allowed = {
+			tag = ROH
+		}
+		
+		available = {
+			always = no
+        }
+
+		activation = {
+        	rohan_has_bop = yes
+			has_country_flag = ROH_bop_resistance_movement
+    	}
+
+	    cancel_trigger = {
+	        rohan_has_bop = no
+	    }
+
+	    is_good = yes
+	    days_mission_timeout = var:ROH_resistance_move_duration
+	    selectable_mission = no
+	    days_remove = 1
+		priority = 90
+
+	    timeout_effect = {
+			resistance_make_move = yes
+
+			if = {
+				limit = {
+					power_balance_value = { id = power_balance_wormtongue value < -0.6 }
+				}
+				add_to_variable = {
+					ROH_resistance_move_duration = 13
+				}
+			}
+			else_if = {
+				limit = {
+					power_balance_value = { id = power_balance_wormtongue value < -0.3 }
+				}
+				add_to_variable = {
+					ROH_resistance_move_duration = 7
+				}
+			}
+			else_if = {
+				limit = {
+					power_balance_value = { id = power_balance_wormtongue value < 0.3 }
+				}
+				add_to_variable = {
+					ROH_resistance_move_duration = 6
+				}
+			}
+			else = {
+				add_to_variable = {
+					ROH_resistance_move_duration = 4
+				}
 			}
 	    }
 	}

@@ -7,6 +7,7 @@ hire_grima_wormtongue = {
 	add_ideas = ROH_grima
 
 	set_variable = { ROH_grima_wormtongue_move_duration = 25 }
+	set_variable = { ROH_resistance_move_duration = 35 }
 
 	add_popularity = { ideology = cooperative popularity = -0.15 }
 	hidden_effect = {
@@ -125,18 +126,70 @@ improve_royal_guard = {
 
 
 move_bop_to_grima = {
-	add_power_balance_value = {
-		id = power_balance_wormtongue
-		value = 0.1
-		tooltip_side = grima_wormtongue
+	if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value > 0.6 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = 0.025
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else_if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value > 0.3 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = 0.05
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else_if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value > -0.3 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = 0.075
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else = {
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = 0.1
+			tooltip_side = grima_wormtongue
+		}
 	}
 }
 
 move_bop_to_theoden = {
-	add_power_balance_value = {
-		id = power_balance_wormtongue
-		value = -0.1
-		tooltip_side = king_theoden
+	if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value < -0.6 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = -0.025
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else_if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value < -0.3 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = -0.05
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else_if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value < 0.3 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = -0.075
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else = {
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = -0.1
+			tooltip_side = grima_wormtongue
+		}
 	}
 }
 
@@ -149,10 +202,10 @@ grima_make_move = {
 			limit = { NOT = { has_idea = ROH_neutral_foreign_policy } }
 
 			random_list = {
-				50 = {
+				60 = {
 					country_event = rohan.78
 				}
-				50 = {
+				40 = {
 					random_list = {
 						20 = { grima_hire_advisor = yes }
 						8 = { grima_banish_rival = yes }
@@ -169,6 +222,77 @@ grima_make_move = {
 				10 = { grima_replace_horselord = yes }
 				7 = { grima_misc_actions = yes }
 			}	
+		}
+	}
+}
+
+resistance_make_move = {
+	custom_effect_tooltip = resistance_make_move_tt
+	hidden_effect = {
+		random_list = {
+			10 = {
+				country_event = rohan.105
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					ROH_eomer = { is_unit_leader = no }
+				}
+				country_event = rohan.106
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					ROH_hama = { is_unit_leader = no }
+				}
+				country_event = rohan.107
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					NOT = { controls_state = 184 }
+				}
+				country_event = rohan.108
+			}
+			10 = {
+				country_event = rohan.109
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					NOT = {
+						has_country_leader_with_trait = afflicted
+						has_country_leader_with_trait = isolated_and_paranoid
+					}
+				}
+				country_event = rohan.110
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					OR = {
+						ROH_eomer = { is_dead = yes }
+						ROH_eomer = { is_unit_leader = yes }
+					}
+				}
+				country_event = rohan.111
+			}
+			10 = {
+				country_event = rohan.112
+			}
+			10 = {
+				country_event = rohan.113
+			}
+			10 = {
+				country_event = rohan.114
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					ROH_eomer = { is_unit_leader = no }
+				}
+				country_event = rohan.115
+			}
 		}
 	}
 }
