@@ -81,6 +81,17 @@ country_event = {
 			base = 250
 			modifier = { factor = 0 is_going_cooperative = no }
 		}
+		trigger = {
+			NOT = { has_completed_focus = ROH_wormtongue_cabinet }
+			NOT = { has_completed_focus = ROH_deny_gandalf_entrance }
+			NOT = {
+				is_ai = no
+				power_balance_value = {
+					id = power_balance_wormtongue
+					value > 0.9
+				}
+			}
+		}
  		set_global_flag = gandalf_allowed_into_rohan
 		complete_national_focus = ROH_let_gandalf_in
 	}
@@ -93,6 +104,17 @@ country_event = {
 				is_historical_focus_on = yes
 			}
 			modifier = { factor = 0 is_going_belligerent = no }
+		}
+		trigger = {
+			NOT = { has_completed_focus = ROH_purge_the_rot }
+			NOT = { has_completed_focus = ROH_let_gandalf_in }
+			NOT = {
+				is_ai = no
+				power_balance_value = {
+					id = power_balance_wormtongue
+					value < -0.9
+				}
+			}
 		}
 		set_global_flag = gandalf_denied_access_rohan
 		complete_national_focus = ROH_deny_gandalf_entrance
@@ -1465,7 +1487,19 @@ country_event = {
 			}
 		}
 
-		complete_national_focus = ROH_execute_grima
+		effect_tooltip = {
+			add_ideas = ROH_anti_eorl_plot_3
+			ROH_grima = { kill_character = yes }
+			set_global_flag = grima_executed
+			ROH_theoden = {
+				add_trait = {
+					trait = the_merciless
+				}
+			}
+		}
+		hidden_effect = {
+			complete_national_focus = ROH_execute_grima	
+		}
 	}
 
 	option = {
@@ -1474,7 +1508,20 @@ country_event = {
 			base = 7
 		}
 
-		complete_national_focus = ROH_exile_grima
+		effect_tooltip = {
+			ROH_grima = {
+				retire = yes
+			}
+			add_ideas = ROH_anti_eorl_plot_3
+			ROH_theoden = {
+				add_trait = {
+					trait = the_merciful
+				}
+			}
+		}
+		hidden_effect = {
+			complete_national_focus = ROH_exile_grima	
+		}
 	}
 }
 
@@ -2043,7 +2090,6 @@ country_event = {
 	fire_only_once = yes
 
 	trigger = {
-		has_defensive_war = yes
 		ROH_eomer = { is_unit_leader = no }
 		ROH_eomer = { is_alive = yes }
 		controls_province = 4628
@@ -2053,6 +2099,14 @@ country_event = {
 	mean_time_to_happen = {
 		days = 200
 		# Eomer comes back a lot quicker if the enemy controls provinces right outside Helms deep
+		modifier = {
+			factor = 0.5
+			has_defensive_war = yes
+		}
+		modifier = {
+			factor = 0.5
+			surrender_progress > 0.2
+		}
 		modifier = {
 			factor = 0.05
 			OR = {
