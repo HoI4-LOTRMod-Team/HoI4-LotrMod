@@ -24,7 +24,7 @@ NDefines.NCharacter.EXPERT_ADVISOR_MIN_RANK = 5
 NDefines.NCharacter.GENIUS_ADVISOR_MIN_RANK = 7
 
 -- lowered minimum land-unit speed
-NDefines.NMilitary.SLOWEST_SPEED = 3
+NDefines.NMilitary.SLOWEST_SPEED = 2
 
 -- increased fort penalty (because they're castles now)
 NDefines.NMilitary.BASE_FORT_PENALTY = -0.4
