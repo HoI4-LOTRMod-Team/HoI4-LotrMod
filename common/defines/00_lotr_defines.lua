@@ -51,3 +51,12 @@ NDefines.NDiplomacy.TENSION_TIME_SCALE_START_DATE = "3018.1.1.12"	-- Starting at
 
 -- Base speed of manpower mobilization  #in 1/1000 of 1 %
 NDefines.NCountry.BASE_MOBILIZATION_SPEED = 0.005
+
+-- Increased XP gain from training air-wings (because we have so few planes)
+NDefines.NAir.AIR_WING_COUNTRY_XP_FROM_TRAINING_FACTOR = 0.15
+NDefines.NAir.AIR_WING_XP_AIR_VS_AIR_COMBAT_GAIN = 8.0
+NDefines.NAir.AIR_WING_XP_GROUND_MISSION_COMPLETED_GAIN = 2.8
+NDefines.NAir.AIR_WING_XP_RECON_MISSION_COMPLETED_GAIN = 0.5
+
+-- Increased army XP from training units (slightly)
+NDefines.NMilitary.UNIT_EXPERIENCE_PER_TRAINING_DAY = 0.002
