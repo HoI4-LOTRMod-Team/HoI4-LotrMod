@@ -2764,7 +2764,7 @@ focus_tree = {
 				effect_tooltip = {
 					ROH = {
 						add_to_tech_sharing_group = calenardhon_research_group
-						add_political_power = 100
+						army_experience = 100
 					}
 				}
 			}
@@ -2775,7 +2775,7 @@ focus_tree = {
 					exists = yes
 				}
 				add_to_tech_sharing_group = calenardhon_research_group
-				add_political_power = 100
+				army_experience = 100
 			}
 		}
 	}
@@ -2875,12 +2875,16 @@ focus_tree = {
 			set_country_leader_portrait = {
 				portrait = GFX_portrait_rohan_eowyn_puppet
 			}
-			ROH_eowyn = {
-				remove_advisor_role = {
-					slot = chief_advisor
+			hidden_effect = {
+				ROH_eowyn = {
+					remove_advisor_role = {
+						slot = chief_advisor
+					}
 				}
 			}
-			add_country_leader_trait = inexperienced_monarch
+			ROH_eowyn = {
+				add_country_leader_trait = inexperienced_monarch
+			}
 			add_timed_idea = {
 				idea = melancholic_mood
 				days = 240
@@ -2990,9 +2994,29 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			swap_ideas = {
-				remove_idea = ROH_questionable_legitimacy_3
-				add_idea = ROH_questionable_legitimacy_2
+			if = { # for the tooltip
+				limit = { NOT = { has_completed_focus = ROH_the_kings_death } }
+				swap_ideas = {
+					remove_idea = ROH_questionable_legitimacy_3
+					add_idea = ROH_questionable_legitimacy_2
+				}
+			}
+			else_if = {
+				limit = { has_idea = ROH_questionable_legitimacy_3 }
+				swap_ideas = {
+					remove_idea = ROH_questionable_legitimacy_3
+					add_idea = ROH_questionable_legitimacy_2
+				}
+			}
+			else_if = {
+				limit = { has_idea = ROH_questionable_legitimacy_2 }
+				swap_ideas = {
+					remove_idea = ROH_questionable_legitimacy_2
+					add_idea = ROH_questionable_legitimacy_1
+				}
+			}
+			else = {
+				remove_ideas = ROH_questionable_legitimacy_1
 			}
 		}
 	}
@@ -3082,9 +3106,29 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			swap_ideas = {
-				remove_idea = ROH_questionable_legitimacy_2
-				add_idea = ROH_questionable_legitimacy_1
+			if = { # for the tooltip
+				limit = { NOT = { has_completed_focus = ROH_the_kings_death } }
+				swap_ideas = {
+					remove_idea = ROH_questionable_legitimacy_2
+					add_idea = ROH_questionable_legitimacy_1
+				}
+			}
+			else_if = {
+				limit = { has_idea = ROH_questionable_legitimacy_3 }
+				swap_ideas = {
+					remove_idea = ROH_questionable_legitimacy_3
+					add_idea = ROH_questionable_legitimacy_2
+				}
+			}
+			else_if = {
+				limit = { has_idea = ROH_questionable_legitimacy_2 }
+				swap_ideas = {
+					remove_idea = ROH_questionable_legitimacy_2
+					add_idea = ROH_questionable_legitimacy_1
+				}
+			}
+			else = {
+				remove_ideas = ROH_questionable_legitimacy_1
 			}
 		}
 	}
@@ -3223,6 +3267,19 @@ focus_tree = {
 		completion_reward = {
 			# unlock some high level advisors and force them in. Ambassadors that cant be fired and cant be hired if not puppet of saruman
 			custom_effect_tooltip = ROH_sarumans_ambassadors_tt
+			hidden_effect = {
+				ROH_leocred = { set_can_be_fired_in_advisor_role = { value = yes } }
+				ROH_fengel = { set_can_be_fired_in_advisor_role = { value = yes } }
+				ROH_heostor = { set_can_be_fired_in_advisor_role = { value = yes } }
+				ROH_widgelred = { set_can_be_fired_in_advisor_role = { value = yes } }
+				ROH_frumbold = { set_can_be_fired_in_advisor_role = { value = yes } }
+				ROH_grimbeam = { set_can_be_fired_in_advisor_role = { value = yes } }
+				ROH_erkenor = { set_can_be_fired_in_advisor_role = { value = yes } }
+				ROH_freca = { set_can_be_fired_in_advisor_role = { value = yes } }
+				ROH_heoere = { set_can_be_fired_in_advisor_role = { value = yes } }
+				ROH_herethain = { set_can_be_fired_in_advisor_role = { value = yes } }
+				ROH_leoheort = { set_can_be_fired_in_advisor_role = { value = yes } }
+			}
 		}
 	}
 
@@ -3343,7 +3400,7 @@ focus_tree = {
 		id = ROH_horselord_supremacy
 		icon = GFX_goal_ROH_horselord_supremacy
 		relative_position_id = ROH_resist_saruman
-		prerequisite = { focus = ROH_our_own_way }
+		prerequisite = { focus = ROH_unchecked_ambition }
 		available = { }
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
 		ai_will_do = { factor = 15 }
@@ -3439,7 +3496,23 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			remove_ideas = ROH_questionable_legitimacy_1
+			if = {
+				limit = { has_idea = ROH_questionable_legitimacy_3 }
+				swap_ideas = {
+					remove_idea = ROH_questionable_legitimacy_3
+					add_idea = ROH_questionable_legitimacy_2
+				}
+			}
+			else_if = {
+				limit = { has_idea = ROH_questionable_legitimacy_2 }
+				swap_ideas = {
+					remove_idea = ROH_questionable_legitimacy_2
+					add_idea = ROH_questionable_legitimacy_1
+				}
+			}
+			else = {
+				remove_ideas = ROH_questionable_legitimacy_1
+			}
 		}
 	}
 
@@ -3449,12 +3522,8 @@ focus_tree = {
 		relative_position_id = ROH_consolidation_of_power
 		prerequisite = { focus = ROH_consolidation_of_power }
 		available = {
-			all_state = {
-				OR = {
-					NOT = { is_claimed_by = ROH }
-					is_owned_by = ROH
-				}
-			}
+			owns_all_claimed_states = yes
+			has_completed_focus = ROH_unchecked_ambition
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
 		ai_will_do = { factor = 100 }
@@ -3651,7 +3720,10 @@ focus_tree = {
 		completion_reward = {
 			rohan_set_horselords_cooldown = yes
 			# Get some units or manpower or something
-			load_oob = ROH_Dunelending_volunteers
+			custom_effect_tooltip = ROH_gather_dunelending_volunteers_tt
+			hidden_effect = {
+				load_oob = ROH_Dunelending_volunteers	
+			}
 			ENE = { add_manpower = -25000 } # TODO_I: should be DUN
 		}
 	}
@@ -4558,7 +4630,7 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			rohan_set_horselords_cooldown = yes
-			custom_effect_tooltip = ROH_military_consolidation
+			custom_effect_tooltip = ROH_military_consolidation_tt
 			hidden_effect = {
 				if = {
 					limit = { has_dynamic_modifier = { modifier = realm_cohesion_dynamic_modifer_mil } }
@@ -5381,7 +5453,7 @@ focus_tree = {
 		x =2
 		y =1
 		mutually_exclusive = { }
-		cost = 15
+		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
 			rohan_set_research_tree_cooldown = yes
@@ -6143,7 +6215,7 @@ focus_tree = {
 		x =-1
 		y =1
 		mutually_exclusive = { }
-		cost = 10
+		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
 			rohan_set_research_tree_cooldown = yes
@@ -6191,7 +6263,7 @@ focus_tree = {
 		x =1
 		y =1
 		mutually_exclusive = { }
-		cost = 10
+		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
 			rohan_set_research_tree_cooldown = yes
@@ -6309,7 +6381,7 @@ focus_tree = {
 		x =0
 		y =4
 		mutually_exclusive = { }
-		cost = 10
+		cost = 15
 		available_if_capitulated = yes
 		completion_reward = {
 			rohan_set_research_tree_cooldown = yes
@@ -6495,6 +6567,9 @@ focus_tree = {
 				has_completed_focus = ROH_let_gandalf_in
 				has_completed_focus = ROH_purge_the_rot
 			}
+		}
+		bypass = {
+			GON = { has_completed_focus = GON_wed_faramir_to_eowyn }
 		}
 		
 		ai_will_do = { factor = 10 }
