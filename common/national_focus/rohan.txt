@@ -2345,7 +2345,7 @@ focus_tree = {
 					combat_breakthrough = 2.0
 					cannot_retreat_while_attacking = 1.0
 								
-					days = 14
+					days = 7
 					tooltip = "DEATH!"
 				}
 			}
@@ -2847,7 +2847,7 @@ focus_tree = {
 		bypass = {
 			ROH_theoden = { is_country_leader = no }
 		}
-		ai_will_do = { factor = 100 }
+		ai_will_do = { factor = 120 }
 		x =-1
 		y =1
 		mutually_exclusive = { focus = ROH_pull_the_strings }
@@ -2899,7 +2899,7 @@ focus_tree = {
 		prerequisite = { focus = ROH_deny_gandalf_entrance focus = ROH_wormtongue_cabinet }
 		available = { }
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
-		ai_will_do = { factor = 100 }
+		ai_will_do = { factor = 80 }
 		x =1
 		y =1
 		mutually_exclusive = { focus = ROH_the_kings_death }
@@ -2920,13 +2920,12 @@ focus_tree = {
 					traits = {
 						absolute_power
 					}
+					can_be_fired = no
 				}
 			}
 			# add trait to theoden
 			ROH_theoden = {
-				add_trait = {
-					trait = puppet_king
-				}
+				add_country_leader_trait = puppet_king
 			}
 			add_ideas = ROH_questionable_legitimacy_1
 		}
@@ -3160,6 +3159,9 @@ focus_tree = {
 		relative_position_id = ROH_the_shadow_over_rohan
 		prerequisite = { focus = ROH_the_shadow_over_rohan }
 		available = { ise_is_evil = yes }
+		bypass = {
+			is_subject_of = ISE
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
 		ai_will_do = {
 			factor = 30
@@ -3170,9 +3172,9 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			ISE = { country_event = { id = rohan.96 days = 3 } }
+			ISE = { country_event = { id = rohan.96 days = 2 } }
 			custom_effect_tooltip = if_they_accept_newline_tt
-			event_option_tooltip = rohan.98
+			event_option_tooltip = rohan.98.a
 		}
 	}
 
@@ -3288,7 +3290,9 @@ focus_tree = {
 		icon = GFX_goal_ROH_resist_saruman
 		relative_position_id = ROH_the_shadow_over_rohan
 		prerequisite = { focus = ROH_the_shadow_over_rohan }
-		available = { }
+		available = {
+			NOT = { is_subject_of = ISE }
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
 		ai_will_do = { factor = 15 }
 		x =4
@@ -3312,6 +3316,7 @@ focus_tree = {
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
 		bypass = {
 			is_in_faction = yes
+			NOT = { is_in_faction_with = MOR }
 		}
 		ai_will_do = {
 			factor = 10
@@ -4013,6 +4018,10 @@ focus_tree = {
 			rohan_lords_controls_region_3 = yes
 			ROH_frumbold = { is_region_3_leader = yes }
 			rohan_horselords_tree_cooldown = yes
+			ISE = { has_government = belligerent }
+			NOT = { has_war_with = ISE }
+			NOT = { is_ally_with = ISE }
+			NOT = { is_subject_of = ISE }
 		}
 		search_filters = { FOCUS_FILTER_ROH_LORDS }
 		ai_will_do = {
@@ -4026,7 +4035,7 @@ focus_tree = {
 		y =2
 		mutually_exclusive = { }
 		prerequisite = { focus = ROH_appoint_theodreds_successor }
-		cost = 10
+		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
 			rohan_set_horselords_cooldown = yes
@@ -4620,6 +4629,10 @@ focus_tree = {
 				factor = 2
 				has_manpower < 100000
 			}
+			modifier = {
+				factor = 3
+				has_war = yes
+			}
 		}
 		search_filters = { FOCUS_FILTER_ROH_LORDS }
 		x =0
@@ -4689,11 +4702,7 @@ focus_tree = {
 		}
 		search_filters = { FOCUS_FILTER_ROH_LORDS }
 		ai_will_do = {
-			factor = 10
-			modifier = {
-				factor = 2
-				has_war = yes
-			}
+			factor = 20
 			modifier = {
 				factor = 2
 				any_enemy_country = {
@@ -4704,12 +4713,16 @@ focus_tree = {
 				factor = 2
 				surrender_progress > 0.05
 			}
+			modifier = {
+				factor = 2
+				num_divisions < 30
+			}
 		}
 		x =0
 		y =2
 		mutually_exclusive = { }
 		prerequisite = { focus = ROH_military_consolidation }
-		cost = 10
+		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
 			rohan_set_horselords_cooldown = yes
@@ -4777,6 +4790,18 @@ focus_tree = {
 					}
 				}
 			}
+			else_if = {
+				limit = { is_ai = yes controls_state = 30 }
+				hidden_effect = {
+					30 = {
+						create_unit = {
+							division = "name = \"Men of the Wold\" division_template = \"Summoned Banner (Elite)\" start_manpower_factor = 1.0"
+							owner = ROH
+							count = 2
+						}
+					}
+				}
+			}
 			if = {
 				limit = { check_variable = { region_2_demands_met > 3 } controls_state = 27 }
 				custom_effect_tooltip = roh_call_banners_region_2_elite_tt
@@ -4797,6 +4822,18 @@ focus_tree = {
 					27 = {
 						create_unit = {
 							division = "name = \"Men of the Eastemnet\" division_template = \"Summoned Banner (Elite)\" start_manpower_factor = 1.0"
+							owner = ROH
+							count = 2
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = { is_ai = yes controls_state = 27 }
+				hidden_effect = {
+					27 = {
+						create_unit = {
+							division = "name = \"Men of the Wold\" division_template = \"Summoned Banner (Elite)\" start_manpower_factor = 1.0"
 							owner = ROH
 							count = 2
 						}
@@ -4829,6 +4866,18 @@ focus_tree = {
 					}
 				}
 			}
+			else_if = {
+				limit = { is_ai = yes controls_state = 28 }
+				hidden_effect = {
+					28 = {
+						create_unit = {
+							division = "name = \"Men of the Wold\" division_template = \"Summoned Banner (Elite)\" start_manpower_factor = 1.0"
+							owner = ROH
+							count = 2
+						}
+					}
+				}
+			}
 			if = {
 				limit = { check_variable = { region_4_demands_met > 3 } controls_state = 23 }
 				custom_effect_tooltip = roh_call_banners_region_4_elite_tt
@@ -4849,6 +4898,18 @@ focus_tree = {
 					23 = {
 						create_unit = {
 							division = "name = \"Men of the Westmarch\" division_template = \"Summoned Banner (Elite)\" start_manpower_factor = 1.0"
+							owner = ROH
+							count = 2
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = { is_ai = yes controls_state = 23 }
+				hidden_effect = {
+					23 = {
+						create_unit = {
+							division = "name = \"Men of the Wold\" division_template = \"Summoned Banner (Elite)\" start_manpower_factor = 1.0"
 							owner = ROH
 							count = 2
 						}
