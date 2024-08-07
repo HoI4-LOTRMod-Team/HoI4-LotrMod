@@ -3,7 +3,7 @@ import re
 import math
 
 # Define the directories to search
-directories = ['common', 'history']
+directories = ['common', 'history', 'events']
 
 # Define the tokens and operators
 tokens = [
@@ -18,11 +18,10 @@ tokens = [
 
 operators = ['<', '>', '=']
 
-# Create a regex pattern to match the required format
-pattern = re.compile(r'[\s{\n](' + '|'.join(tokens) + r')\s*(' + '|'.join(map(re.escape, operators)) + r')\s*(\d+)')
+# Create a regex pattern to match the required format, including negative numbers
+pattern = re.compile(r'[\s{\n](' + '|'.join(tokens) + r')\s*(' + '|'.join(map(re.escape, operators)) + r')\s*(-?\d+)')
 
 def process_file(file_path):
-    print(f'Processing file: {file_path}...')
     with open(file_path, 'r') as file:
         content = file.read()
 
