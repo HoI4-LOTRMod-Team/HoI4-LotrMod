@@ -44,7 +44,12 @@ technologies = {
 	library = {
 
 		# small boost to research speed
-		research_speed_factor = 0.05
+		research_speed_factor = 0.02
+
+		enable_building = {
+			building = library
+			level = 1
+		}
 
 		path = {
 			leads_to_tech = calendar
@@ -309,6 +314,10 @@ technologies = {
 
 		path = {
 			leads_to_tech = basic_decryption
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = barracks_tech
 			research_cost_coeff = 1
 		}
 
@@ -673,10 +682,6 @@ technologies = {
 			explosive_caskets_module
 		}
 
-		air_nav_efficiency = 0.15
-		air_strategic_bomber_bombing_factor = 0.15
-		air_cas_efficiency = 0.15
-
 		heavy_armor = {
 			soft_attack = 0.1
 			fort = {
@@ -688,15 +693,15 @@ technologies = {
 		}
 
 		path = {
-			leads_to_tech = nuclear_reactor
+			leads_to_tech = nukes
 			research_cost_coeff = 1
 		}
 
 		research_cost = 1
-		start_year = 3023
+		start_year = 3022
 		folder = {
 			name = electronics_folder
-			position = { x = 2 y = 10 }
+			position = { x = 2 y = 8 }
 		}
 
 		ai_will_do = {
@@ -745,13 +750,12 @@ technologies = {
 
 	experimental_rockets = {
 
-		enable_building = {
-			building = rocket_site
-			level = 2
-		}
+		air_nav_efficiency = 0.15
+		air_strategic_bomber_bombing_factor = 0.15
+		air_cas_efficiency = 0.15
 
 		path = {
-			leads_to_tech = rocket_engines
+			leads_to_tech = nukes
 			research_cost_coeff = 1
 		}
 
@@ -761,107 +765,6 @@ technologies = {
 		folder = {
 			name = electronics_folder
 			position = { x = 0 y = 8 }
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		categories = {
-			lotr_knowledge
-			lotr_knowledge_alchemy
-			lotr_knowledge_magic
-		}
-	}
-
-	rocket_engines = {
-
-		show_equipment_icon = yes
-
-		# can build v1s/rocket planes
-		enable_equipments = {
-			guided_missile_equipment_1
-		}
-
-		path = {
-			leads_to_tech = improved_rocket_engines
-			research_cost_coeff = 1
-		}
-
-		research_cost = 1
-		start_year = 3023
-
-		folder = {
-			name = electronics_folder
-			position = { x = 0 y = 10 }
-		}
-			folder = {
-			name = secret_weapons_folder
-			position = { x = 10 y = 0 }
-		}
-
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		categories = {
-			lotr_knowledge
-			lotr_knowledge_alchemy
-			lotr_knowledge_magic
-		}
-	}
-
-	improved_rocket_engines = {
-
-		show_equipment_icon = yes
-
-		# can build v2s
-
-		enable_equipments = {
-			guided_missile_equipment_2
-		}
-
-		path = {
-			leads_to_tech = advanced_rocket_engines
-			research_cost_coeff = 1
-		}
-
-		research_cost = 1
-		start_year = 3025
-
-		folder = {
-			name = electronics_folder
-			position = { x = 0 y = 14 }
-		}
-
-		ai_will_do = {
-			factor = 0
-		}
-
-		categories = {
-			lotr_knowledge
-			lotr_knowledge_alchemy
-			lotr_knowledge_magic
-		}
-	}
-
-	advanced_rocket_engines = {
-
-		show_equipment_icon = yes
-
-		# can build ICBMs?
-
-		enable_equipments = {
-			guided_missile_equipment_3
-		}
-
-		research_cost = 1
-		start_year = 3026
-
-		folder = {
-			name = electronics_folder
-			position = { x = 0 y = 16 }
 		}
 
 		ai_will_do = {
@@ -920,7 +823,7 @@ technologies = {
 		}
 
 		start_year = 3021
-		research_cost = 5
+		research_cost = 3
 
 		folder = {
 			name = electronics_folder
@@ -953,30 +856,42 @@ technologies = {
 		}
 	}
 
-	nuclear_reactor = {
+	nukes = {
 
-		# can build reactors
-		enable_building = {
-			building = nuclear_reactor
-			level = 1
+		nuclear_production = 1
+
+		show_effect_as_desc = yes
+		on_research_complete = {
+			add_nuclear_bombs = 1
 		}
 
-		start_year = 3025
+		start_year = 3023
 		research_cost = 5
 
 		folder = {
 			name = electronics_folder
-			position = { x = 2 y = 14 }
+			position = { x = 1 y = 10 }
 		}
 
 		path = {
-			leads_to_tech = nukes
+			leads_to_tech = nuclear_reactor
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = advanced_rocket_engines
 			research_cost_coeff = 1
 		}
 
 		ai_will_do = {
-			factor = 3
+			factor = 1
+			modifier = {
+				factor = 10
+				is_major = yes
+				date > "3023.1.1"
+			}
 		}
+
+		allow = { ROOT = { num_of_factories > 30 amount_research_slots > 3 } }
 
 		categories = {
 			nuclear
@@ -989,21 +904,53 @@ technologies = {
 		}
 	}
 
-	nukes = {
+	nuclear_reactor = {
 
-		start_year = 3026
+		start_year = 3025
 		research_cost = 5
+
+		show_effect_as_desc = yes
+
+		on_research_complete = {
+			add_nuclear_bombs = 2
+			unlock_decision_tooltip = focus_explosives_production_on
+			hidden_effect = {
+				add_ideas = TECH_continuous_explosives_production
+			}
+		}
+
+		nuclear_production_factor = 0.25
 
 		folder = {
 			name = electronics_folder
-			position = { x = 2 y = 16 }
+			position = { x = 2 y = 14 }
+		}
+
+		XOR = {
+			advanced_rocket_engines
+		}
+
+		path = {
+			leads_to_tech = rocket_engines
+			research_cost_coeff = 1
 		}
 
 		ai_will_do = {
-			factor = 10
+			factor = 1
+			modifier = {
+				factor = 5
+				is_major = yes
+				date > "3025.1.1"
+			}
+			modifier = {
+				factor = 2
+				is_major = yes
+				date > "3025.1.1"
+				amount_research_slots > 4
+			}
 		}
 
-		nuclear_production = 1
+		allow = { ROOT = { is_major = yes } }
 
 		categories = {
 			lotr_knowledge
@@ -1011,6 +958,88 @@ technologies = {
 			lotr_knowledge_magic
 		}
 	}
+
+	advanced_rocket_engines = {
+
+		nuclear_production_factor = 0.75
+
+		show_effect_as_desc = yes
+
+		on_research_complete = {
+			add_nuclear_bombs = 1
+			unlock_decision_tooltip = focus_explosives_production_on
+			hidden_effect = {
+				add_ideas = TECH_continuous_explosives_production
+			}
+		}
+
+		XOR = {
+			nuclear_reactor
+		}
+
+		research_cost = 5
+		start_year = 3025
+
+		path = {
+			leads_to_tech = rocket_engines
+			research_cost_coeff = 1
+		}
+
+		folder = {
+			name = electronics_folder
+			position = { x = 0 y = 14 }
+		}
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 5
+				is_major = yes
+				date > "3025.1.1"
+			}
+			modifier = {
+				factor = 2
+				is_major = yes
+				date > "3025.1.1"
+				amount_research_slots > 4
+			}
+		}
+
+		#allow = { ROOT = { is_major = yes } }
+
+		categories = {
+			lotr_knowledge
+			lotr_knowledge_alchemy
+			lotr_knowledge_magic
+		}
+	}
+
+	rocket_engines = {
+
+		custom_modifier_tooltip = continuous_explosives_production_tt
+
+		research_cost = 9999
+		start_year = 3026
+
+		folder = {
+			name = electronics_folder
+			position = { x = 1 y = 16 }
+		}
+
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		allow = { ROOT = { is_major = yes num_of_factories > 60 } }
+
+		categories = {
+			lotr_knowledge
+			lotr_knowledge_alchemy
+			lotr_knowledge_magic
+		}
+	}
+
 
 	### INFORMATION
 
@@ -1020,6 +1049,10 @@ technologies = {
 
 		path = {
 			leads_to_tech = counter_espionage
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = local_network
 			research_cost_coeff = 1
 		}
 
@@ -1052,6 +1085,11 @@ technologies = {
 			research_cost_coeff = 1
 		}
 
+		path = {
+			leads_to_tech = barracks_tech
+			research_cost_coeff = 1
+		}
+
 		research_cost = 1
 		start_year = 3021
 		folder = {
@@ -1078,6 +1116,10 @@ technologies = {
 
 		path = {
 			leads_to_tech = local_network
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = basic_encryption
 			research_cost_coeff = 1
 		}
 
@@ -1117,25 +1159,21 @@ technologies = {
 		}
 
 		path = {
-			leads_to_tech = basic_encryption
-			research_cost_coeff = 1
-		}
-		path = {
 			leads_to_tech = decimetric_radar
 			research_cost_coeff = 1
 		}
 
 		research_cost = 1
-		start_year = 3021
+		start_year = 3019
 		folder = {
 			name = electronics_folder
-			position = { x = 26 y = 6 }
+			position = { x = 24 y = 2 }
 		}
 
 		ai_will_do = {
-			factor = 3
+			factor = 4
 
-			modifier = { factor = 2 date > "3021.1.1" } modifier = { factor = 3 date > "3022.1.1" } modifier = { factor = 5 date > "3023.1.1" }
+			modifier = { factor = 2 date > "3019.1.1" } modifier = { factor = 3 date > "3020.1.1" } modifier = { factor = 5 date > "3021.1.1" }
 		}
 
 		categories = {
@@ -1158,7 +1196,7 @@ technologies = {
 		}
 		folder = {
 			name = electronics_folder
-			position = { x = 24 y = 8 }
+			position = { x = 26 y = 8 }
 		}
 
 		path = {
@@ -1197,7 +1235,7 @@ technologies = {
 
 		folder = {
 			name = electronics_folder
-			position = { x = 24 y = 12 }
+			position = { x = 26 y = 12 }
 		}
 
 		path = {
@@ -1236,7 +1274,7 @@ technologies = {
 
 		folder = {
 			name = electronics_folder
-			position = { x = 24 y = 16 }
+			position = { x = 26 y = 16 }
 		}
 
 		ai_will_do = {
@@ -1275,7 +1313,7 @@ technologies = {
 
 		folder = {
 			name = electronics_folder
-			position = { x = 21 y = 8 }
+			position = { x = 22 y = 8 }
 		}
 
 		ai_will_do = {
@@ -1310,7 +1348,7 @@ technologies = {
 
 		folder = {
 			name = electronics_folder
-			position = { x = 21 y = 12 }
+			position = { x = 22 y = 12 }
 		}
 
 		ai_will_do = {
@@ -1340,7 +1378,7 @@ technologies = {
 
 		folder = {
 			name = electronics_folder
-			position = { x = 21 y = 16 }
+			position = { x = 22 y = 16 }
 		}
 
 		ai_will_do = {
@@ -1366,19 +1404,27 @@ technologies = {
 			leads_to_tech = improved_decimetric_radar
 			research_cost_coeff = 1
 		}
+		path = {
+			leads_to_tech = basic_encryption
+			research_cost_coeff = 1
+		}
+		path = {
+			leads_to_tech = basic_decryption
+			research_cost_coeff = 1
+		}
 
 		research_cost = 1.5
-		start_year = 3022
+		start_year = 3021
 
 		folder = {
 			name = electronics_folder
-			position = { x = 26 y = 8 }
+			position = { x = 24 y = 6 }
 		}
 
 		ai_will_do = {
-			factor = 1
+			factor = 3
 			modifier = {
-				date < "3020.1.1"
+				date < "3021.1.1"
 				factor = 0.5
 			}
 		}
@@ -1404,7 +1450,7 @@ technologies = {
 		}
 
 		path = {
-			leads_to_tech = centimetric_radar
+			leads_to_tech = improved_centimetric_radar
 			research_cost_coeff = 1
 		}
 
@@ -1413,51 +1459,13 @@ technologies = {
 
 		folder = {
 			name = electronics_folder
-			position = { x = 26 y = 10 }
+			position = { x = 24 y = 10 }
 		}
 
 		ai_will_do = {
 			factor = 1
 			modifier = {
-				date < "3021.1.1"
-				factor = 0.5
-			}
-		}
-
-		categories = {
-			lotr_knowledge
-			lotr_knowledge_intrigue_network
-			lotr_knowledge_intrigue
-		}
-	}
-
-	centimetric_radar = {
-
-		# radar boost in air/sea combat depends on radar level
-		enable_building = {
-			building = radar_station
-			level = 4
-		}
-
-		static_anti_air_hit_chance_factor = 0.2
-
-		path = {
-			leads_to_tech = improved_centimetric_radar
-			research_cost_coeff = 1
-		}
-
-		research_cost = 2.5
-		start_year = 3024
-
-		folder = {
-			name = electronics_folder
-			position = { x = 26 y = 12 }
-		}
-
-		ai_will_do = {
-			factor = 1
-			modifier = {
-				date < "3024.1.1"
+				date < "3022.1.1"
 				factor = 0.5
 			}
 		}
@@ -1479,17 +1487,12 @@ technologies = {
 
 		static_anti_air_hit_chance_factor = 0.2
 
-		path = {
-			leads_to_tech = advanced_centimetric_radar
-			research_cost_coeff = 1
-		}
-
 		research_cost = 2.5
 		start_year = 3025
 
 		folder = {
 			name = electronics_folder
-			position = { x = 26 y = 14 }
+			position = { x = 24 y = 14 }
 		}
 
 		ai_will_do = {
@@ -1507,27 +1510,88 @@ technologies = {
 		}
 	}
 
-	advanced_centimetric_radar = {
+	barracks_tech = {
 
-		# radar boost in air/sea combat depends on radar level
 		enable_building = {
-			building = radar_station
-			level = 6
+			building = barracks
+			level = 2
 		}
 
-		static_anti_air_hit_chance_factor = 0.2
-
-		research_cost = 2.5
-		start_year = 3026
+		research_cost = 2.0
+		start_year = 3022
 
 		folder = {
 			name = electronics_folder
-			position = { x = 26 y = 16 }
+			position = { x = 20 y = 8 }
+		}
+
+		path = {
+			leads_to_tech = barracks_tech2
+			research_cost_coeff = 1
 		}
 
 		ai_will_do = {
 			factor = 1
+			modifier = {
+				date < "3022.1.1"
+				factor = 0.5
+			}
 		}
+
+		categories = {
+			lotr_knowledge
+			lotr_knowledge_intrigue_network
+			lotr_knowledge_intrigue
+		}
+	}
+
+	barracks_tech2 = {
+
+		enable_building = {
+			building = barracks
+			level = 3
+		}
+
+		research_cost = 2.5
+		start_year = 3025
+
+		folder = {
+			name = electronics_folder
+			position = { x = 20 y = 14 }
+		}
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				date < "3025.1.1"
+				factor = 0.5
+			}
+		}
+
+		categories = {
+			lotr_knowledge
+			lotr_knowledge_intrigue_network
+			lotr_knowledge_intrigue
+		}
+	}
+
+	# legacy
+	centimetric_radar = {
+
+		research_cost = 2.5
+		start_year = 3024
+
+		categories = {
+			lotr_knowledge
+			lotr_knowledge_intrigue_network
+			lotr_knowledge_intrigue
+		}
+	}
+
+	advanced_centimetric_radar = {
+
+		research_cost = 2.5
+		start_year = 3024
 
 		categories = {
 			lotr_knowledge

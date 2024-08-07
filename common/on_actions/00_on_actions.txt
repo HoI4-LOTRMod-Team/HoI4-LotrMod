@@ -174,39 +174,20 @@ on_actions = {
 		}
 	}
 
-	#FROM is war target
-	on_declare_war = {
-		#For the MOR_not_my_dark_lord_test achievement
-		effect = {
-			if = {
-				limit = {
-					tag = MOR
-					FROM = {
-						original_tag = ANG
-					}
-				}
-				set_global_flag = orcs_of_mordor_declared_war_on_ANG_flag
-			}
-		}
-	}
-
 	#ROOT is winner #FROM is loser
 	on_peaceconference_ended = {
-		#For the MOR_not_my_dark_lord achievement
 		effect = {
+			#For the MOR_not_my_dark_lord achievement
 			if = {
 				limit = {
 					tag = MOR
-					has_global_flag = orcs_of_mordor_declared_war_on_ANG_flag
 					FROM = {
 						original_tag = ANG
 					}
 				}
-				set_global_flag = orcs_of_mordor_won_war_against_ANG_flag
+				set_global_flag = orcs_of_mordor_won_war_against_ANG_achievement_flag
 			}
-		}
-		#For the ISE_a_wizard_is_never_late achievement
-		effect = {
+			#For the ISE_a_wizard_is_never_late achievement
 			if = {
 				limit = {
 					tag = ISE
@@ -217,9 +198,7 @@ on_actions = {
 				}
 				set_global_flag = ISE_won_war_against_MOR_flag
 			}
-		}
-		#For the GON_one_does_simply_walk_into_mordor achievement
-		effect = {
+			#For the GON_one_does_simply_walk_into_mordor achievement
 			if = {
 				limit = {
 					tag = GON
@@ -278,6 +257,25 @@ on_actions = {
 				}
 				set_global_flag = gondor_has_fallen
 				add_to_variable = { global.ring_mor_max_attempts = 1 }
+				
+				# Amroth
+				if = {
+					limit = {
+						DAM = { is_ai = no }
+						DAM = { has_capitulated = no }
+						DAM = { exists = yes }
+						ROH = { exists = yes }
+						ROH = { has_capitulated = no }
+						DAM = { NOT = { has_war_with = ROH } }
+						ROH = { has_completed_focus = ROH_wed_eomer_to_lothiriel }
+						ROH = { ROH_eomer = { is_alive = yes } }
+						ROH = {
+							NOT = { has_government = revolutionary }
+							NOT = { is_subject = no }
+						}
+					}
+					ROH = { country_event = { id = dolamroth.3 days = 7 } }
+				}
 			}
 			if = {
 				limit = {
@@ -334,7 +332,7 @@ on_actions = {
 				limit = { FROM = { ring_has_the_ring = yes } }
 
 				# transfer the ring from loser to winner
-				FROM = { ring_seize_ring = yes }
+				ROOT = { ring_seize_ring = yes }
 			}
 			## LOTR mod specific stuff ends here
 		}
@@ -343,7 +341,26 @@ on_actions = {
 	#Not run on a specific country.
 	on_startup = {
 		effect = {
-			
+			ROH = {
+				if = {
+					limit = {
+						is_ai = no
+						is_ironman = yes
+						NOT = {
+							has_completed_custom_achievement = {
+								mod = lotr_achievements
+								achievement = ROH_my_horse_is_amazing
+							}
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = ACHIEVEMENT_my_horse_is_amazing
+					}
+					add_dynamic_modifier = {
+						modifier = ACHIEVEMENT_never_in_faction
+					}
+				}
+			}
 		}
 	}
 
@@ -362,7 +379,7 @@ on_actions = {
 						state = 2
 					}
 				}
-				set_country_flag = GON_taken_black_gate_from_MOR_achievement_flag
+				set_global_flag = GON_taken_black_gate_from_MOR_achievement_flag
 			}
 		}
 	}

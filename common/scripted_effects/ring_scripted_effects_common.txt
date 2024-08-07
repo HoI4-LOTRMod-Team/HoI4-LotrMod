@@ -1,4 +1,33 @@
 
+# @docs(Ring): Disables the "stealth" check on ring interceptions for THIS (country)
+ring_disable_stealth_check = {
+	custom_effect_tooltip = "ring_disable_stealth_check_tt"
+	set_country_flag = ring_no_stealth_check
+}
+
+# @docs(Ring): Makes it so if THIS attacks the fellowship, they get 1 extra attack
+ring_get_extra_1_attacks = {
+	custom_effect_tooltip = "ring_get_extra_1_attacks_tt"
+	THIS = { add_to_variable = {
+		fs_bonus_attacks_on_next_interception = 1
+	} }
+}
+
+# @docs(Ring): Makes it so if THIS attacks the fellowship, they get 2 extra attacks
+ring_get_extra_2_attacks = {
+	custom_effect_tooltip = "ring_get_extra_2_attacks_tt"
+	THIS = { add_to_variable = {
+		fs_bonus_attacks_on_next_interception = 2
+	} }
+}
+
+# @docs(Ring): Makes it so if THIS attacks the fellowship, they get 3 extra attacks
+ring_get_extra_3_attacks = {
+	custom_effect_tooltip = "ring_get_extra_3_attacks_tt"
+	THIS = { add_to_variable = {
+		fs_bonus_attacks_on_next_interception = 3
+	} }
+}
 
 # Clears the current queue of states the fellowship will travel through (the pathstack)
 ring_clear_pathstack = {
@@ -74,7 +103,7 @@ ring_curse_member = {
 }
 
 
-#  @docs(Ring): Gives a random fellowship member +2 hp and +2 attack
+# @docs(Ring): Gives a random fellowship member +2 hp and +2 attack
 ring_gear_up_random_member = {
 	custom_effect_tooltip = ring_gear_up_random_member_tt
 
@@ -96,17 +125,21 @@ ring_gear_up_random_member = {
 }
 
 
-#  @docs(Ring): Sets the health of a fellowship member (THIS) to their max-health
+# @docs(Ring): Sets the health of a fellowship member (THIS) to their max-health
 ring_heal_fellowship_member = {
 	set_variable = { health = army_defense_level }
 }
 
 
-# Opens/Closes the details view
+# @docs(Ring): Opens/Closes the details view
 ring_toggle_details_view = {
 	if = {
 		limit = { has_country_flag = elven_alliance_details_view_open }
 		clr_country_flag = elven_alliance_details_view_open
+	}
+	if = {
+		limit = { has_country_flag = rohan_lords_details_view_open }
+		clr_country_flag = rohan_lords_details_view_open
 	}
 	if = {
 		limit = { has_country_flag = ring_details_view_open }
@@ -140,9 +173,10 @@ ring_trim_eventlog = {
 }
 
 
-# Adds the current scope as a member of the fellowship (logs it to the eventlog as well)
+# @docs(Ring): Adds the current scope as a member of the fellowship (logs it to the eventlog as well)
 ring_add_member_to_fellowship = {
 
+	custom_effect_tooltip = ring_add_member_to_fellowship_tt
 	if = {
 		limit = { check_variable = { global.fs_members^num < 12 } } # Do not allow more than 12 members. the UI won't work.
 
@@ -156,7 +190,7 @@ ring_add_member_to_fellowship = {
 }
 
 
-# Adds/Removes the current scope as a member of the hunting party of ROOT
+# @docs(Ring): Adds/Removes the current scope as a member of the hunting party of ROOT
 ring_toggle_member_to_hunting_party = {
 
 	if = {
@@ -169,7 +203,7 @@ ring_toggle_member_to_hunting_party = {
 }
 
 
-# Adds the current scope as a member of the hunting party of ROOT
+# @docs(Ring): Adds the current scope as a member of the hunting party of ROOT
 ring_add_member_to_hunting_party = {
 
 	if = {
@@ -192,7 +226,7 @@ ring_add_member_to_hunting_party = {
 }
 
 
-# Adds the current scope as a member of the fellowship, but does NOT log this to the eventlog
+# @docs(Ring): Adds the current scope as a member of the fellowship, but does NOT log this to the eventlog
 ring_add_member_to_fellowship_nolog = {
 
 	if = {
@@ -214,7 +248,7 @@ ring_add_member_to_fellowship_nolog = {
 }
 
 
-# Removes the current scope from the fellowship
+# @docs(Ring): Removes the current scope from the fellowship
 ring_remove_member_from_fellowship = {
 
 	if = {
@@ -230,7 +264,7 @@ ring_remove_member_from_fellowship = {
 }
 
 
-# Removes the current scope from the fellowship, but does NOT log this to the eventlog
+# @docs(Ring): Removes the current scope from the fellowship, but does NOT log this to the eventlog
 ring_remove_member_from_fellowship_nolog = {
 
 	if = {
@@ -240,7 +274,7 @@ ring_remove_member_from_fellowship_nolog = {
 }
 
 
-# Removes the current scope from the hunting party of ROOT
+# @docs(Ring): Removes the current scope from the hunting party of ROOT
 ring_remove_member_from_hunting_party = {
 
 	if = {
@@ -252,14 +286,14 @@ ring_remove_member_from_hunting_party = {
 }
 
 
-# Clears all members from the fellowship, does NOT add an entry to the eventlog
+# @docs(Ring): Clears all members from the fellowship, does NOT add an entry to the eventlog
 ring_clear_fellowship_members = {
 
 	clear_array = global.fs_members
 }
 
 
-# Clears the hunting party of ROOT
+# @docs(Ring): Clears the hunting party of ROOT
 ring_clear_hunting_party = {
 
 	for_each_scope_loop = {
@@ -540,6 +574,8 @@ ring_abort_interception_attempt = {
 # Executes an interception attempt by the current scope
 ring_execute_interception_attempt = {
 
+	set_country_flag = fs_has_attacked_fellowship
+
 	set_temp_variable = { fs_interception_cancelled = 0 }
 
 	# Maximum amount of casualties before disengaging
@@ -566,6 +602,46 @@ ring_execute_interception_attempt = {
 
 	    	ring_interception_single_attempt = yes
     	}
+	}
+
+	# Execute bonus attacks the country has unlocked
+	if = {
+		limit = {
+			ROOT = { check_variable = { fs_bonus_attacks_on_next_interception > 0 } }
+		}
+		for_loop_effect = {
+			start = 0
+			end = var:fs_bonus_attacks_on_next_interception
+			compare = less_than
+			add = 1
+			
+			if = {
+				limit = { check_variable = { fs_interception_cancelled = 0 } }
+
+				ring_interception_single_attempt = yes
+			}
+		}
+		# reset bonus attacks
+		ROOT = { set_variable = { fs_bonus_attacks_on_next_interception = 0 } }
+	}
+
+	# Special case: Rohan helping isengard, granting up to 3 extra attacks
+	if = {
+		limit = {
+			tag = ISE
+			has_country_flag = is_argonath_raid
+			ROH = { has_country_flag = fs_rohan_coordinating_with_isengard }
+		}
+		for_loop_effect = {
+			end = 1
+			value = temp_attempt
+
+			if = {
+				limit = { check_variable = { fs_interception_cancelled = 0 } }
+
+				ring_interception_single_attempt = yes
+			}
+		}
 	}
 
 	# special case: if this is orcs attacking with cave-troll, the troll keeps fighting for a while longer
@@ -667,6 +743,9 @@ ring_interception_detection_check = {
 		# Argonath raid does not require stealth-check
 		limit = {
 			NOT = { has_country_flag = is_argonath_raid }
+
+			# Some countries can disable the stealth check
+			NOT = { has_country_flag = ring_no_stealth_check }
 
 			# neither does Lothlorien
 			ROOT = { NOT = { tag = LTH } }
@@ -865,7 +944,7 @@ ring_combat_kill_character = {
 		ring_remove_member_from_fellowship_nolog = yes
 
 		# This makes the character unusable by everyone
-		retire = yes
+		kill_character = yes
 
 		# check if frodo is dead
 		ROOT = {
@@ -881,7 +960,7 @@ ring_combat_kill_character = {
 		log = "[?var:SHI.temp_attacker.GetName] killed [?var:temp_defender.GetName]"
 		if = {
 			limit = {
-				is_character = FS_boromir
+				check_variable = {var:SHI.temp_defender = FS_boromir}
 				check_variable = {var:SHI.temp_attacker = ISE_lurtz}
 			}
 			log = "Got lurtz_killed_boromir_while_attacking_the_fellowship_the_achievement_flag achievement"

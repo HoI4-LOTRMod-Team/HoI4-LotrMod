@@ -292,6 +292,53 @@ country_event = {
 		    value = 1
 		}
 
+		
+		hidden_effect = {
+			# If Rohan has secured the riddermark, this costs 20k manpower
+			if = {
+				limit = { tag = ISE ROH = { has_completed_focus = ROH_secure_the_riddermark NOT = { is_ally_with = ISE } } }
+				add_manpower = -20000
+			}
+
+			# If Rohan is coordinationg with ISE, they get extra generals AND attacks
+			if = {
+				limit = { 
+					tag = ISE
+					ROH = { 
+						has_country_flag = fs_rohan_coordinating_with_isengard
+						OR = {
+							ROH_habold = { is_unit_leader = yes }
+							ROH_deorhelm = { is_unit_leader = yes }
+							ROH_brego = { is_unit_leader = yes }
+						}
+					}
+				}
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_rohan_helps_at_argonath }
+				ring_trim_eventlog = yes
+
+				ROH = {
+					if = {
+						limit = { ROH_habold = { is_unit_leader = yes } }
+						ROH_habold = { ring_add_member_to_hunting_party = yes }
+						ISE = { ring_get_extra_1_attacks = yes }
+					}
+					if = {
+						limit = { ROH_deorhelm = { is_unit_leader = yes } }
+						ROH_deorhelm = { ring_add_member_to_hunting_party = yes }
+						ISE = { ring_get_extra_1_attacks = yes }
+					}
+					if = {
+						limit = { ROH_brego = { is_unit_leader = yes } }
+						ROH_brego = { ring_add_member_to_hunting_party = yes }
+						ISE = { ring_get_extra_1_attacks = yes }
+					}
+				}
+			}
+		}
+
 		ring_open_interception_attempt_prompt = yes
 	}
 
