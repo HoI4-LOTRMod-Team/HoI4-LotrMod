@@ -52,6 +52,13 @@ NDefines.NDiplomacy.TENSION_TIME_SCALE_START_DATE = "3018.1.1.12"	-- Starting at
 -- Better supply from motorization
 NDefines.NSupply.SUPPLY_HUB_FULL_MOTORIZATION_BONUS = 3.0
 
+-- Lowering attrition damage
+NDefines.NSupply.SUPPLY_THRESHOLD_FOR_ARMY_ATTRITION = 0.28        -- at 28% supply army starts to suffer attrition
+NDefines.NMilitary.ATTRITION_DAMAGE_ORG = 0.07					   -- damage from attrition to Organisation
+NDefines.NMilitary.ATTRITION_EQUIPMENT_LOSS_CHANCE = 0.07		   -- Chance for loosing equipment when suffer attrition. Scaled up the stronger attrition is. Then scaled down by equipment reliability.
+NDefines.NMilitary.ATTRITION_EQUIPMENT_PER_TYPE_LOSS_CHANCE = 0.07 -- Chance for loosing equipment when suffer attrition. Scaled up the stronger attrition is. Then scaled down by equipment reliability.
+NDefines.NMilitary.ATTRITION_WHILE_MOVING_FACTOR = 0.8
+
 -- Base speed of manpower mobilization  #in 1/1000 of 1 %
 NDefines.NCountry.BASE_MOBILIZATION_SPEED = 0.005
 
@@ -62,4 +69,12 @@ NDefines.NAir.AIR_WING_XP_GROUND_MISSION_COMPLETED_GAIN = 2.8
 NDefines.NAir.AIR_WING_XP_RECON_MISSION_COMPLETED_GAIN = 0.5
 
 -- Increased army XP from training units (slightly)
-NDefines.NMilitary.UNIT_EXPERIENCE_PER_TRAINING_DAY = 0.002
+NDefines.NMilitary.UNIT_EXPERIENCE_PER_TRAINING_DAY = 0.0025
+
+-- TODO
+-- AI template unit management related
+-- NDefines.NAI.UPGRADE_DIVISION_RELUCTANCE = 7
+-- NDefines.NAI.UPGRADE_PERCENTAGE_OF_FORCES = 0.03
+-- NDefines.NAI.WANTED_UNITS_WEIGHT_FRONTS_WANT = 0.35
+-- NDefines.NAI.WANTED_UNITS_WEIGHT_MANPOWER = 0.3
+-- NDefines.NAI.WANTED_UNITS_MIN_DEFENCE_FACTOR = 0.4
