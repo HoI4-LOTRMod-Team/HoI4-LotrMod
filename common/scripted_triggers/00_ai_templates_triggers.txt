@@ -4,6 +4,42 @@
 
 
 
+# raw infantry, desperate times
+ai_infantry_template_defcon_0 = {
+	always = yes
+}
+
+# Can afford just infantry and supp equipment
+ai_infantry_template_defcon_1_supp = {
+	always = yes
+}
+
+# Can afford just infantry and arty
+ai_infantry_template_defcon_1_arty = {
+	always = yes
+}
+
+# Actually normal divisions
+ai_infantry_template_defcon_2 = {
+	always = yes
+}
+
+# Luxury divisions
+ai_infantry_template_defcon_3 = {
+	always = no
+}
+
+# giga-buff big boi divisions
+ai_infantry_template_defcon_4 = {
+	always = no
+}
+
+
+
+
+
+
+
 
 target_7_2_strat = {
 	always = no
@@ -26,6 +62,127 @@ ai_wants_more_divisions = {
 		ai_wants_divisions > num_divisions
 	}
 }
+
+
+ai_has_under_25p_wanted_divs = {
+set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.25 }
+	check_variable = {
+		temp_divs > num_divisions
+	}
+}
+
+ai_has_under_50p_wanted_divs = {
+	set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.5 }
+	check_variable = {
+		temp_divs > num_divisions
+	}
+}
+
+ai_has_under_75p_wanted_divs = {
+	set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.75 }
+	check_variable = {
+		temp_divs > num_divisions
+	}
+}
+
+ai_has_under_100p_wanted_divs = {
+	check_variable = {
+		ai_wants_divisions > num_divisions
+	}
+}
+
+
+
+
+ai_has_over_25p_wanted_divs = {
+set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.25 }
+	check_variable = {
+		temp_divs < num_divisions
+	}
+}
+
+ai_has_over_50p_wanted_divs = {
+	set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.5 }
+	check_variable = {
+		temp_divs < num_divisions
+	}
+}
+
+ai_has_over_75p_wanted_divs = {
+	set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.75 }
+	check_variable = {
+		temp_divs < num_divisions
+	}
+}
+
+ai_has_over_100p_wanted_divs = {
+	check_variable = {
+		ai_wants_divisions < num_divisions
+	}
+}
+
+
+
+
+ai_has_less_than_wanted_divs = {
+	check_variable = {
+		ai_wants_divisions > num_divisions
+	}
+}
+
+
+
+ai_can_afford_tungsten = {
+	OR = {
+		check_variable = { resource@tungsten > 4 }
+		num_of_available_civilian_factories > 12
+	}
+}
+
+ai_can_afford_rubber = {
+	OR = {
+		check_variable = { resource@rubber > 4 }
+		num_of_available_civilian_factories > 12
+	}
+}
+
+
+
+
+ai_defcon_2_use_arty = {
+	has_tech = interwar_artillery # can't use arty without the research
+	OR = {
+		# the immense priviledge of having string in our country
+		tungsten > 7
+
+		# we're rich enough to trade for string
+		num_of_available_civilian_factories > 24
+
+		# elves like bows
+		#is_elves = yes # Ive toggled this out because elves all start with enough string anyway
+
+		# We happen to have some spare arty
+		#stockpile_ratio = {
+		#	archetype = artillery_equipment
+		#	ratio > 0.15
+		#}
+
+		# We have historically produced more arty
+		check_variable = {
+			total_equipment_produced_artillery > total_equipment_produced_support
+		}
+
+		# We don't have any rubber anyway
+		rubber < 6
+	}
+}
+
 
 
 
