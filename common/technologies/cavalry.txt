@@ -56,6 +56,26 @@ technologies = {
 			factor = 10
 
 			modifier = {
+				factor = 3
+				OR = {
+					target_chariots_strat = yes
+					target_heavy_cav_chariots_strat = yes
+					target_heavy_cav_strat = yes
+				}
+				amount_research_slots > 3
+			}
+
+			modifier = {
+				factor = 1.5
+				OR = {
+					target_chariots_strat = yes
+					target_heavy_cav_chariots_strat = yes
+					target_heavy_cav_strat = yes
+				}
+				amount_research_slots > 2
+			}
+
+			modifier = {
 				factor = 2
 				OR = {
 					target_chariots_strat = yes
@@ -101,6 +121,13 @@ technologies = {
 			position = {  x = 5 y = 8  }
 		}
 		
+		on_research_complete_limit = {
+			NOT = {	has_template_containing_unit = archer_chariot }
+		}
+		on_research_complete = {
+			hidden_effect = { load_oob = "unlock_archer_chariot_cav" }
+			custom_effect_tooltip = UNLOCK_DIVISION_TEMPLATE
+		}
 
 		path = {
 			leads_to_tech = archer_chariot_unit2
@@ -182,6 +209,14 @@ technologies = {
 			research_cost_coeff = 1
 		}
 
+		on_research_complete_limit = {
+			NOT = {	has_template_containing_unit = chariot }
+		}
+		on_research_complete = {
+			hidden_effect = { load_oob = "unlock_chariot_cav" }
+			custom_effect_tooltip = UNLOCK_DIVISION_TEMPLATE
+		}
+
 		research_cost = 2
 		start_year = 3019
 		folder = {
@@ -201,6 +236,31 @@ technologies = {
 
 		ai_will_do = {
 			factor = 2
+
+			modifier = { # worth rushing
+				factor = 20
+				OR = {
+					target_heavy_cav_strat = yes
+					target_heavy_cav_chariots_strat = yes
+				}
+				amount_research_slots > 2
+				num_of_military_factories > 11
+				date > "3018.5.1"
+				date < "3029.1.1"
+			}
+
+			modifier = {
+				factor = 10
+				target_chariots_strat = yes
+				amount_research_slots > 2
+			}
+
+			modifier = {
+				factor = 4
+				target_heavy_cav_chariots_strat = yes
+				amount_research_slots > 2
+			}
+
 			modifier = {
 				factor = 10
 				OR = {
@@ -417,6 +477,14 @@ technologies = {
 			name = armour_folder
 			position = {  x = -3 y = 8  }
 		}
+
+		on_research_complete_limit = {
+			NOT = {	has_template_containing_unit = archer_cavalry }
+		}
+		on_research_complete = {
+			hidden_effect = { load_oob = "unlock_archer_cav" }
+			custom_effect_tooltip = UNLOCK_DIVISION_TEMPLATE
+		}
 		
 
 		path = {
@@ -541,27 +609,9 @@ technologies = {
 		}
 		on_research_complete_limit = {
 			NOT = {	has_template_containing_unit = light_cavalry }
-			NOT = {	has_template_containing_unit = heavy_cavalry }
-			NOT = {	has_template_containing_unit = lancer_cavalry }
 		}
 		on_research_complete = {
-			hidden_effect = {
-				if = {
-					limit = {
-						has_tech = horse_drawn_infantry
-					}
-
-					load_oob = "unlock_cav2"
-				}
-				if = {
-					limit = {
-						NOT = { has_tech = horse_drawn_infantry }
-					}
-
-					load_oob = "unlock_cav"
-				}
-			}
-
+			hidden_effect = { load_oob = "unlock_cav" }
 			custom_effect_tooltip = UNLOCK_DIVISION_TEMPLATE
 		}
 
@@ -581,7 +631,7 @@ technologies = {
 		ai_will_do = {
 			factor = 1
 			modifier = {
-				factor = 5
+				factor = 10
 				OR = {
 					target_light_cav_strat = yes
 					target_heavy_cav_strat = yes
@@ -630,29 +680,12 @@ technologies = {
 
 		on_research_complete_limit = {
 			NOT = {	has_template_containing_unit = light_cavalry }
-			NOT = {	has_template_containing_unit = heavy_cavalry }
-			NOT = {	has_template_containing_unit = lancer_cavalry }
 		}
 		on_research_complete = {
-			hidden_effect = {
-				if = {
-					limit = {
-						has_tech = horse_drawn_infantry
-					}
-
-					load_oob = "unlock_cav2"
-				}
-				if = {
-					limit = {
-						NOT = { has_tech = horse_drawn_infantry }
-					}
-
-					load_oob = "unlock_cav"
-				}
-			}
-
+			hidden_effect = { load_oob = "unlock_cav" }
 			custom_effect_tooltip = UNLOCK_DIVISION_TEMPLATE
 		}
+		
 
 		path = {
 			leads_to_tech = light_cav2_bonus
@@ -685,19 +718,38 @@ technologies = {
 		ai_will_do = {
 			factor = 1
 			modifier = {
+				factor = 2
+				OR = {
+					target_heavy_cav_strat = yes
+					target_heavy_cav_chariots_strat = yes
+				}
+			}
+			modifier = {
 				factor = 5
-				target_light_cav_strat = yes
+				OR = {
+					target_light_cav_strat = yes
+					target_heavy_cav_strat = yes
+					target_heavy_cav_chariots_strat = yes
+				}
 			}
 			modifier = {
 				factor = 4
 				num_of_military_factories > 8
-				target_light_cav_strat = yes
+				OR = {
+					target_light_cav_strat = yes
+					target_heavy_cav_strat = yes
+					target_heavy_cav_chariots_strat = yes
+				}
 			}
 			modifier = {
 				factor = 3
 				num_of_military_factories > 16
 				date > "3019.1.1"
-				target_light_cav_strat = yes
+				OR = {
+					target_light_cav_strat = yes
+					target_heavy_cav_strat = yes
+					target_heavy_cav_chariots_strat = yes
+				}
 			}
 		}
 
@@ -814,6 +866,15 @@ technologies = {
 			name = armour_folder
 			position = {  x = 4 y = 6  }
 		}
+
+		on_research_complete_limit = {
+			NOT = {	has_template_containing_unit = lancer_cavalry }
+		}
+		on_research_complete = {
+			hidden_effect = { load_oob = "unlock_lancer_cav" }
+			custom_effect_tooltip = UNLOCK_DIVISION_TEMPLATE
+		}
+		
 		
 
 		path = {
@@ -1086,6 +1147,22 @@ technologies = {
 			name = armour_folder
 			position = {  x = 6 y = 6  }
 		}
+
+		on_research_complete_limit = {
+			NOT = {	has_template_containing_unit = heavy_cavalry}
+		}
+		on_research_complete = {
+			hidden_effect = {
+				if = {
+					limit = { has_tech = horse_drawn_infantry }
+					load_oob = "unlock_heavy_cav2"
+				}
+				else = {
+					load_oob = "unlock_heavy_cav"
+				}
+			}
+			custom_effect_tooltip = UNLOCK_DIVISION_TEMPLATE
+		}
 		
 
 		ai_will_do = {
@@ -1096,6 +1173,25 @@ technologies = {
 					target_heavy_cav_strat = yes
 					target_heavy_cav_chariots_strat = yes
 				}
+			}
+			modifier = { # worth rushing
+				factor = 20
+				OR = {
+					target_heavy_cav_strat = yes
+					target_heavy_cav_chariots_strat = yes
+				}
+				num_of_military_factories > 11
+				OR = {
+					amount_research_slots > 3
+					tag = MOR
+				}
+				date > "3019.3.1"
+				date < "3020.1.1"
+			}
+			modifier = {
+				factor = 10
+				target_heavy_cav_strat = yes
+				amount_research_slots > 2
 			}
 			modifier = {
 				factor = 4
@@ -1150,6 +1246,22 @@ technologies = {
 		folder = {
 			name = armour_folder
 			position = {  x = 6 y = 9  }
+		}
+
+		on_research_complete_limit = {
+			NOT = {	has_template_containing_unit = heavy_cavalry}
+		}
+		on_research_complete = {
+			hidden_effect = {
+				if = {
+					limit = { has_tech = horse_drawn_infantry }
+					load_oob = "unlock_heavy_cav2"
+				}
+				else = {
+					load_oob = "unlock_heavy_cav"
+				}
+			}
+			custom_effect_tooltip = UNLOCK_DIVISION_TEMPLATE
 		}
 		
 

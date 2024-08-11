@@ -78,4 +78,4 @@ NDefines.NMilitary.UNIT_EXPERIENCE_PER_TRAINING_DAY = 0.0025
 -- NDefines.NAI.WANTED_UNITS_WEIGHT_FRONTS_WANT = 0.35
 -- NDefines.NAI.WANTED_UNITS_WEIGHT_MANPOWER = 0.3
 -- NDefines.NAI.WANTED_UNITS_MIN_DEFENCE_FACTOR = 0.4
-NDefines.NAI.DAYS_BETWEEN_CHECK_BEST_TEMPLATE = 1       -- Recalculate desired best template to upgrade with this many days inbetween.
+NDefines.NAI.DAYS_BETWEEN_CHECK_BEST_TEMPLATE = 14       -- Recalculate desired best template to upgrade with this many days inbetween.
