@@ -71,11 +71,11 @@ NDefines.NAir.AIR_WING_XP_RECON_MISSION_COMPLETED_GAIN = 0.5
 -- Increased army XP from training units (slightly)
 NDefines.NMilitary.UNIT_EXPERIENCE_PER_TRAINING_DAY = 0.0025
 
--- TODO
 -- AI template unit management related
--- NDefines.NAI.UPGRADE_DIVISION_RELUCTANCE = 7
+NDefines.NAI.UPGRADE_DIVISION_RELUCTANCE = 5
 -- NDefines.NAI.UPGRADE_PERCENTAGE_OF_FORCES = 0.03
--- NDefines.NAI.WANTED_UNITS_WEIGHT_FRONTS_WANT = 0.35
--- NDefines.NAI.WANTED_UNITS_WEIGHT_MANPOWER = 0.3
--- NDefines.NAI.WANTED_UNITS_MIN_DEFENCE_FACTOR = 0.4
-NDefines.NAI.DAYS_BETWEEN_CHECK_BEST_TEMPLATE = 14       -- Recalculate desired best template to upgrade with this many days inbetween.
+NDefines.NAI.WANTED_UNITS_WEIGHT_FRONTS_WANT = 0.4
+NDefines.NAI.WANTED_UNITS_WEIGHT_MANPOWER = 0.3
+NDefines.NAI.WANTED_UNITS_MIN_DEFENCE_FACTOR = 0.6
+NDefines.NAI.DAYS_BETWEEN_CHECK_BEST_TEMPLATE = 28       -- Recalculate desired best template to upgrade with this many days inbetween.
+NDefines.NAI.DESIRE_USE_XP_TO_UPDATE_LAND_TEMPLATE = 5.0    -- How quickly is desire to update/create templates accumulated?
