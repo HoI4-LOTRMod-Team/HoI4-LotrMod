@@ -16,13 +16,19 @@ default_unit_production = {
 	ai_strategy = {
 		type = equipment_production_factor
 		id = artillery
-		value = 30
+		value = 25
 	}
 
 	ai_strategy = {
 		type = equipment_production_factor
 		id = support
 		value = 12
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = armor
+		value = 15
 	}
 }
 
@@ -42,19 +48,19 @@ default_surplus_management = {
 	ai_strategy = {
 		type = equipment_production_surplus_management
 		id = support_equipment
-		value = 5
+		value = 8
 	}
 
 	ai_strategy = {
 		type = equipment_production_surplus_management
 		id = artillery_equipment
-		value = 5
+		value = 8
 	}
 
 	ai_strategy = {  # Potentially move into a "specialization" strategy
 		type = equipment_production_surplus_management
 		id = anti_tank_equipment
-		value = 3
+		value = 5
 	}
 
 	ai_strategy = {
@@ -63,6 +69,141 @@ default_surplus_management = {
 		value = 5
 	}
 }
+
+surplus_management_light_cav = {
+	enable = {
+		target_light_cav_strat = yes
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_production_surplus_management
+		id = light_cavalry_chassis
+		value = 8
+	}
+}
+
+surplus_management_catapults = {
+	enable = {
+		target_catapults_strat = yes
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_production_surplus_management
+		id = catapult_chassis
+		value = 8
+	}
+}
+
+surplus_management_heavy_cav = {
+	enable = {
+		OR = {
+			target_heavy_cav_strat = yes
+			target_heavy_cav_chariots_strat = yes
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_production_surplus_management
+		id = heavy_cavalry_chassis
+		value = 8
+	}
+}
+
+surplus_management_siege_machines = {
+	enable = {
+		target_siege_machines_strat = yes
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_production_surplus_management
+		id = siege_machine_chassis
+		value = 8
+	}
+}
+
+surplus_management_chariots = {
+	enable = {
+		OR = {
+			target_heavy_cav_chariots_strat = yes
+			target_chariots_strat = yes
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_production_surplus_management
+		id = chariot_chassis
+		value = 8
+	}
+}
+
+focus_on_more_armor = {
+	enable = {
+		num_of_military_factories > 10
+	}
+	abort = {
+		always = no
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = armor
+		value = 15
+	}
+}
+
+focus_on_more_armor = {
+	enable = {
+		num_of_military_factories > 12
+		has_equipment = { infantry_equipment > 3000 }
+	}
+	abort = {
+		always = no
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = armor
+		value = 25
+	}
+}
+
+focus_on_more_armor = {
+	enable = {
+		num_of_military_factories > 15
+		has_equipment = { infantry_equipment > 6000 }
+	}
+	abort = {
+		always = no
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = armor
+		value = 25
+	}
+}
+
+focus_on_more_armor = {
+	enable = {
+		num_of_military_factories > 20
+		has_equipment = { infantry_equipment > 10000 }
+	}
+	abort = {
+		always = no
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = armor
+		value = 50
+	}
+}
+
 
 default_pp_spend_amount = {
 	enable = {
@@ -285,13 +426,28 @@ DEFAULT_early_template_design = {
 	ai_strategy = {
 		type = template_prio
 		id = push
-		value = -25
+		value = -15
 	}
 
 	ai_strategy = {
 		type = template_prio
 		id = infantry
-		value = 60
+		value = 35
+	}
+}
+
+DEFAULT_late_template_design = {
+	enable = {
+		date > 3020.1.1
+	}
+	abort = {
+		always = no
+	}
+
+	ai_strategy = {
+		type = template_prio
+		id = push
+		value = 15
 	}
 }
 
@@ -557,6 +713,20 @@ dont_build_light_cav_unless_its_our_strat = {
 	}
 }
 
+dont_build_light_cav_unless_its_our_strat_2 = {
+	enable = {
+		target_light_cav_strat = no
+		date > "3020.1.1"
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = light_cavalry_chassis
+		value = -5
+	}
+}
+
 prioritize_template_with_high_strats = {
 	enable = {
 		target_siege_machines_strat = yes
@@ -590,7 +760,7 @@ prioritize_template_with_specific_strats = {
 
 heavy_cav_strat_produce_equipment = {
 	enable = {
-		num_of_military_factories > 15
+		num_of_military_factories > 11
 		has_equipment = { heavy_cavalry_chassis < 600 }
 	}
 	abort = {
