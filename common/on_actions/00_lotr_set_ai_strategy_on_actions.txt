@@ -48,20 +48,62 @@ on_actions = {
 			if = {
 				limit = { is_ai = yes }
 
-				# Build up combat area
-				# TODO
-				random_controlled_state = {
+				# Mark a state to be eligible for a railway
+				if = {
 					limit = {
-						ROOT = {
-							divisions_in_state = {
-								type = infantry
-								size > 20
-								state = PREV
+						is_major = yes
+						any_controlled_state = {
+							ROOT = {
+								divisions_in_state = {
+									type = infantry
+									size > 7
+									state = PREV
+								}
+								NOT = {
+									has_railway_connection = {
+										start_state = capital
+										target_state = PREV
+									}
+								}
+								can_build_railway = {
+									start_state = capital
+									target_state = PREV
+								}
 							}
+							any_neighbor_state = {
+								controller = { has_war_with = ROOT }
+							}
+						} 
+					}
+					set_country_flag = ai_build_railway_enabled
+				}
+
+				# Mark eligibility to build air bases
+				if = {
+					limit = {
+						is_major = yes
+						has_deployed_air_force_size = { size > 0 }
+						num_of_civilian_factories > 20
+					}
+					set_temp_variable = { temp_max_prio = -999 }
+					for_each_scope_loop = {
+						array = controlled_states
+						
+						if = {
+							limit = {
+								check_variable = { temp_max_prio < mtth:state_air_base_priority }
+							}
+							set_temp_variable = { temp_max_prio = mtth:state_air_base_priority }
 						}
 					}
-					log = "[THIS.GetName]"
-				} 
+					if = {
+						limit = {
+							check_variable = { temp_max_prio > 10 }
+						}
+						set_country_flag = ai_build_air_base_enabled
+					}
+				}
+				
 
 				# Decide between tall or wide
 
