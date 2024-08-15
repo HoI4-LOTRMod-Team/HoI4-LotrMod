@@ -123,8 +123,29 @@ debug_decisions = {
 		cost = 0
 
 		complete_effect = {
-			ROH = { add_ideas = ROH_temp_truce }
-			ISE = { add_ideas = ISE_temp_truce }
+			#log = "[THIS.GetName]"
+
+			set_temp_variable = { temp_max_prio = -999 }
+			set_temp_variable = { temp_max_state = capital }
+
+			for_each_scope_loop = {
+				array = controlled_states
+				
+				if = {
+					limit = {
+						check_variable = { temp_max_prio < mtth:state_air_base_priority }
+					}
+					set_temp_variable = { temp_max_prio = mtth:state_air_base_priority }
+					set_temp_variable = { temp_max_state = THIS }
+				}
+			}
+
+			var:temp_max_state = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+				}
+			}
 		}
 	}
 
@@ -221,7 +242,7 @@ debug_decisions = {
 		icon = generic_research
 
 		available = {
-			is_ai = no
+			#is_ai = no
 			is_debug = yes
 		}
 
@@ -230,8 +251,7 @@ debug_decisions = {
 		cost = 0
 		
 		complete_effect = {
-			set_variable = { global.influence_rohan_gap = 0 }
-			set_variable = { global.influence_west_march = 0 }
+			log = "[?max_manpower_k]"
 		}
 	}
 		
