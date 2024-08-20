@@ -186,10 +186,13 @@ def Parse_List(text, i, parent=None):
 #print(obj)
 
 # Select all focuses that are loose
-loose_focuses = obj.Where(lambda x: x.id == "focus" and not x.Contains("relative_position_id"))
+focuses = obj.Where(lambda x: x.id == "focus")
+loose_focuses = focuses.Where(lambda x: not x.Contains("relative_position_id"))
 
 for focus in loose_focuses.value:
-    preq = focus.Get("prerequisite").Get("focus")
+    preq = focus.Get("prerequisite").Get("focus").id
+
+    preq_f = focuses.Where(lambda x: x.id == preq).First()
 
 print(loose_focuses)
 
