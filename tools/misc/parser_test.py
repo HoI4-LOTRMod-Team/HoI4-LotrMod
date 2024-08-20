@@ -126,9 +126,34 @@ def Parse_RootPObjList(raw:str):
 
 # Example usage
 text = """
-identifier1 = value1
-identifier2 < {nested {block} content}
-identifier3 > simple_value
+focus_tree = {
+	id = ered_luin
+	country = {
+		factor=0
+		modifier = {
+			add = 10
+			tag = ELU
+		}
+	}
+
+
+	default = no
+
+	continuous_focus_position = { x = 100 y = 3000 }
+
+	#Custom focuses start here
+	focus = {
+		id = thefateoferedluin
+		icon = GFX_goal_a_land_of_mountains
+		ai_will_do = { factor = 100 }
+		x = 10
+		y = 0
+		mutually_exclusive = { }
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = { add_political_power = 100 }
+	}
+}
 """
 
 
