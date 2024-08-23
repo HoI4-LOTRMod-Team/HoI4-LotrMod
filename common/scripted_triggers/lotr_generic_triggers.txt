@@ -1,4 +1,119 @@
+# @docs(Genetic): checks if the given character is alive and available
+is_alive = {
+	check_variable = { isdead = 0 }
+}
 
+
+# @docs(Generic): checks if THIS has a trade law of free trade or export focus
+has_high_trade = {
+	custom_trigger_tooltip = {
+		tooltip = has_high_trade_tt
+		has_low_trade = no
+	}
+}
+
+# @docs(Generic): checks if THIS has a trade law of closed economy or limited eyports
+has_low_trade = {
+	custom_trigger_tooltip = {
+		tooltip = has_low_trade_tt
+		OR = {
+			has_idea = limited_exports
+			has_idea = closed_economy
+			has_idea = protectionist_trade
+		}
+	}
+}
+
+
+# @docs(Generic): checks if THIS has a levy law above volunteer service
+has_mandatory_conscription = {
+	custom_trigger_tooltip = {
+		tooltip = has_mandatory_conscription_tt
+		has_volunteer_army = no
+	}
+}
+
+# @docs(Generic): checks if THIS has a levy law of volunteer service or below
+has_volunteer_army = {
+	custom_trigger_tooltip = {
+		tooltip = has_volunteer_army_tt
+		OR = {
+			has_idea = no_standing_army
+			has_idea = priviledged_service
+			has_idea = volunteer_service
+		}
+	}
+}
+
+# @docs(Generic): checks if THIS has a levy law of limited levy or below
+has_low_conscription = {
+	custom_trigger_tooltip = {
+		tooltip = has_low_conscription_tt
+		OR = {
+			has_idea = no_standing_army
+			has_idea = priviledged_service
+			has_idea = volunteer_service
+			has_idea = limited_levy
+		}
+	}
+}
+
+
+# @docs(Generic): checks if THIS has a centralization law of strong or more
+has_strong_centralization_or_higher = {
+	custom_trigger_tooltip = {
+		tooltip = has_strong_centralization_or_higher_tt
+		has_moderate_centralization_or_less = no
+	}
+}
+
+# @docs(Generic): checks if THIS has a centralization law of moderate or less
+has_moderate_centralization_or_less = {
+	custom_trigger_tooltip = {
+		tooltip = has_moderate_centralization_or_less_tt
+		OR = {
+			has_idea = moderate_centralization
+			has_idea = weak_centralization
+			has_idea = no_centralization
+		}
+	}
+}
+
+# @docs(Generic): checks if THIS has a centralization law of strong or less
+has_strong_centralization_or_less = {
+	custom_trigger_tooltip = {
+		tooltip = has_strong_centralization_or_less_tt
+		OR = {
+			has_idea = strong_centralization
+			has_idea = moderate_centralization
+			has_idea = weak_centralization
+			has_idea = no_centralization
+		}
+	}
+}
+
+# @docs(Generic): checks if THIS has a tax law of low or less
+has_low_taxes_or_less = {
+	custom_trigger_tooltip = {
+		tooltip = has_low_taxes_or_less_tt
+		OR = {
+			has_idea = low_taxes
+			has_idea = no_taxes
+		}
+	}
+}
+
+# @docs(Generic): checks if THIS has a tax law of medium or less
+has_medium_taxes_or_less = {
+	custom_trigger_tooltip = {
+		tooltip = has_medium_taxes_or_less_tt
+		OR = {
+			has_idea = medium_taxes
+			has_idea = low_taxes
+			has_idea = no_taxes
+		}
+	}
+}
 
 
 # @docs(Generic): checks if THIS has the same race as ROOT
@@ -8,6 +123,16 @@ is_same_race = {
 		AND = { ROOT = { is_elves = yes } is_elves = yes }
 		AND = { ROOT = { is_orcs = yes } is_orcs = yes }
 		AND = { ROOT = { is_dwarves= yes } is_dwarves = yes }
+	}
+}
+
+# @docs(Generic): checks if THIS has the same ideology as ROOT
+is_same_ideology = {
+	OR = {
+		AND = { ROOT = { has_government = cooperative } has_government = cooperative }
+		AND = { ROOT = { has_government = belligerent } has_government = belligerent }
+		AND = { ROOT = { has_government = revolutionary } has_government = revolutionary }
+		AND = { ROOT = { has_government = unaligned } has_government = unaligned }
 	}
 }
 
@@ -53,3 +178,104 @@ is_significantly_stronger = {
 	}
 }
 
+# @docs(Generic): Always false, provides tooltip about requiring event
+autocompleted_on_event = {
+	custom_trigger_tooltip = {
+		tooltip = autocompleted_on_event_tt
+		always = no
+	}
+}
+
+# @docs(Generic): Checks if the given character is dead
+is_dead = {
+	custom_trigger_tooltip = {
+		tooltip = is_dead_tt
+		has_character_flag = is_dead
+	}
+}
+
+# @docs(Generic): Checks if the given character is alive
+is_alive = {
+	custom_trigger_tooltip = {
+		tooltip = is_alive_tt
+		is_dead = no
+	}
+}
+
+# @docs(Generic): ROOT has a good opinion of THIS
+we_like_them = {
+	ROOT = { has_opinion = { target = PREV value > 35 } }
+}
+
+# @docs(Generic): THIS has a good opinion of ROOT
+they_like_us = {
+	THIS = { has_opinion = { target = ROOT value > 35 } }
+}
+
+# @docs(Generic): ROOT has a bad opinion of THIS
+we_dont_like_them = {
+	ROOT = { has_opinion = { target = PREV value > 35 } }
+}
+
+# @docs(Generic): THIS has a bad opinion of ROOT
+they_dont_like_us = {
+	THIS = { has_opinion = { target = ROOT value > 35 } }
+}
+
+# @docs(Generic): THIS owns all states they have claimed
+owns_all_claimed_states = {
+	custom_trigger_tooltip = {
+		tooltip = owns_all_claimed_states_tt
+		all_state = {
+			OR = {
+				NOT = { is_claimed_by = PREV }
+				is_owned_by = PREV
+			}
+		}
+	}
+}
+
+# @docs(Generic): THIS is a country with a lot of factories
+above_avg_factories = {
+	custom_trigger_tooltip = {
+		tooltip = above_avg_factories_tt
+		check_variable = { num_of_factories > global.avg_num_of_factories }
+	}
+}
+
+# @docs(Generic): THIS is a country with a lot of factories
+below_avg_factories = {
+	custom_trigger_tooltip = {
+		tooltip = below_avg_factories_tt
+		check_variable = { num_of_factories < global.avg_num_of_factories }
+	}
+}
+
+# @docs(Generic): THIS has less than 50% of the factories the average country has
+is_poor_country = {
+	set_temp_variable = { temp_factories = global.avg_num_of_factories }
+	multiply_temp_variable = { temp_factories = 0.5 }
+	custom_trigger_tooltip = {
+		tooltip = is_poor_country_tt
+		check_variable = { num_of_factories < temp_factories }
+	}
+}
+
+# @docs(Generic): THIS has more than 2x the factories the average country has
+is_rich_country = {
+	set_temp_variable = { temp_factories = global.avg_num_of_factories }
+	multiply_temp_variable = { temp_factories = 2.0 }
+	custom_trigger_tooltip = {
+		tooltip = is_rich_country_tt
+		check_variable = { num_of_factories > temp_factories }
+	}
+}
+
+# @docs(Generic): THIS has between 50% and 200% of the factories the average country has
+is_med_country = {
+	custom_trigger_tooltip = {
+		tooltip = is_med_country_tt
+		is_poor_country = no
+		is_rich_country = no
+	}
+}

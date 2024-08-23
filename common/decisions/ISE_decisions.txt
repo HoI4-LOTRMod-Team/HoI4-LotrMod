@@ -1,0 +1,273 @@
+################
+##### ISE ######
+################
+ISE_infiltrating_DUN_ENE = {
+	ISE_propaganda = {
+        icon = GFX_decision_generic_2
+		cost = 100
+
+        state_target = yes
+        targets = { 78 32 154 157 79 155 156 77 }
+        visible = {
+            OR = {
+                FROM = { 
+                    owner = { tag = DUN } 
+                    DUN = {
+                        NOT = { is_puppet_of = ISE }
+                        exists = yes
+                    }
+                }
+                FROM = { 
+                    owner = { tag = ENE }
+                    ENE = {
+                        NOT = { is_puppet_of = ISE }
+                        exists = yes
+                    }
+                }
+           }
+        }
+        available = {
+           OR = {
+                FROM = { 
+                    owner = { tag = DUN } 
+                    DUN = {
+                        NOT = { is_puppet_of = ISE }
+                        exists = yes
+                    }
+                }
+                FROM = { 
+                    owner = { tag = ENE }
+                    ENE = {
+                        NOT = { is_puppet_of = ISE }
+                        exists = yes
+                    }
+                }
+           }
+        }
+		days_remove = 50
+        days_re_enable = 50
+		fire_only_once = no
+        fixed_random_seed = no
+		remove_effect = {
+            FROM = {
+                owner = {
+                    add_popularity = {
+                        ideology = belligerent
+                        popularity = 0.05
+                    }
+                    add_stability = -0.01
+                }
+            }
+		}
+		ai_will_do = {
+			factor = 2
+		}
+	}
+}
+
+ISE_palantir_decisions = {
+    ISE_fight_against_sauron_influence = {
+        icon = GFX_decision_generic_civil_support
+		cost = 100
+        fixed_random_seed = no
+		days_remove = 50
+		remove_effect = {
+            palantir_decrease = yes
+		}
+		ai_will_do = {
+			factor = 100
+		}
+    }
+    ISE_use_the_palantir = {
+        icon = GFX_decision_generic_civil_support
+		cost = 75
+        fixed_random_seed = no
+		days_remove = 50
+		remove_effect = {
+            palantir_increase = yes
+		}
+		ai_will_do = {
+			factor = 100
+		}
+    }
+    ISE_give_in = {
+        icon = GFX_decision_generic_civil_support
+		cost = 150
+        fixed_random_seed = no
+		days_remove = 25
+        available = {
+            has_government = belligerent
+        }
+		remove_effect = {
+            palantir_give_in = yes
+		}
+		ai_will_do = {
+			factor = 100
+		}
+    }
+}
+
+ISE_pillage_rohan = {
+    ISE_establish_camps = {
+        icon = GFX_decision_generic_2
+		cost = 150
+        visible = {
+            #has_completed_focus = ISE_establish_camps_in_the_area
+            FROM = { 
+                owner = { tag = ROH } 
+            }
+        }
+        available = {
+           #has_completed_focus = ISE_establish_camps_in_the_area
+           FROM = { 
+                owner = { tag = ROH } 
+           }
+        }
+        state_target = yes
+        targets = { 23 24 }
+		days_remove = 50
+		fire_only_once = yes
+        fixed_random_seed = no
+		remove_effect = {
+            if = {
+                limit = {
+                    check_variable = { FROM.id = 23.id }
+                }
+                increase_west_march_influence_20 = yes
+            }
+            else_if = {
+                limit = {
+                    check_variable = { FROM.id = 24.id }
+                }
+                increase_rohan_gap_influence_20 = yes
+            }
+            FROM = {
+                owner = {
+                    add_stability = -0.01
+                    random_list = {
+                        75 = {
+                            increase_orc_pillaging = yes
+                            add_stability = -0.015
+                        }
+                        25 = {
+                            add_war_support = 0.015
+                        }
+                    }
+                }
+            }
+		}
+		ai_will_do = {
+			factor = 2
+		}
+    }
+    ISE_pillage_villages = {
+        icon = GFX_decision_generic_2
+		cost = 150
+
+        state_target = yes
+        targets = { 23 24 }
+        visible = {
+           FROM = { 
+                owner = { tag = ROH } 
+           }
+        }
+        available = {
+           FROM = { 
+                owner = { tag = ROH } 
+           }
+        }
+		days_remove = 50
+        days_re_enable = 100
+		fire_only_once = no
+        fixed_random_seed = no
+		remove_effect = {
+            FROM = {
+                owner = {
+                    add_stability = -0.01
+                    random_list = {
+                        50 = {
+                            increase_orc_pillaging = yes
+                            add_stability = -0.015
+                        }
+                        50 = {
+                            add_war_support = 0.015
+                        }
+                    }
+                }
+            }
+		}
+		ai_will_do = {
+			factor = 2
+		}
+	}
+    ISE_incease_influence_rohan = {
+        icon = GFX_decision_generic_2
+		cost = 175
+
+        state_target = yes
+        targets = { 23 24 }
+        visible = {
+           FROM = { 
+                owner = { tag = ROH } 
+           }
+        }
+        available = {
+           FROM = { 
+                owner = { tag = ROH } 
+           }
+        }
+		days_remove = 50
+        days_re_enable = 100
+		fire_only_once = no
+        fixed_random_seed = no
+		remove_effect = {
+            #Increase influence
+            if = {
+                limit = {
+                    check_variable = { FROM.id = 23.id }
+                }
+                increase_west_march_influence = yes
+            }
+            else_if = {
+                limit = {
+                    check_variable = { FROM.id = 24.id }
+                }
+                increase_rohan_gap_influence = yes
+            }
+		}
+		ai_will_do = {
+			factor = 2
+		}
+    }
+    ISE_annex_state = {
+        icon = GFX_decision_generic_2
+		cost = 200
+
+        state_target = yes
+        targets = { 23, 24 }
+        available = {
+            check_variable = { global.influence_west_march > 10}
+        }
+		days_remove = 50
+        days_re_enable = 100
+		fire_only_once = no
+        fixed_random_seed = no
+		remove_effect = {
+            if = {
+                limit = {
+                    check_variable = { FROM.id = 23.id }
+                }
+                transfer_state = 23
+            }
+            else_if = {
+                limit = {
+                    check_variable = { FROM.id = 24.id }
+                }  
+                transfer_state = 24
+            }
+		}
+		ai_will_do = {
+			factor = 2
+		}
+    }
+}

@@ -4,7 +4,7 @@
 
 add_namespace = isengard
 
-# Saruman Demands Enedwaith Total Submission
+# NOT IN USE ANYMORE
 country_event = {
 	id = isengard.4
 	title = isengard.4.t
@@ -56,6 +56,7 @@ country_event = {
 	}
 }
 
+# NOT USED AT THE MOMENT
 # Rohan Refuses to Give up the Westmarch
 country_event = {
 	id = isengard.3
@@ -74,6 +75,7 @@ country_event = {
 
 }
 
+# NOT USED AT THE MOMENT
 # Rohan Gives up the Westmarch
 country_event = {
 	id = isengard.2
@@ -135,8 +137,8 @@ country_event = {
 			complete_national_focus = waysofthedark
 		}
 
-		complete_national_focus = meetwithgandalf
-		complete_national_focus = imprisongandalf
+		complete_national_focus = ISE_meet_with_gandalf
+		complete_national_focus = ISE_imprison_gandalf
 
 		hidden_effect = {news_event = { hours = 24 id = news.333 }}
 	}
@@ -281,13 +283,60 @@ country_event = {
 		add_political_power = -100
 		if = {
 			limit = { tag = ISE }
-			ISE = {complete_national_focus = huntforthering}
+			ISE = {complete_national_focus = ISE_hunt_for_the_ring }
 		}
 
 		set_country_flag = {
 		    flag = is_argonath_raid
 		    days = 30
 		    value = 1
+		}
+
+		
+		hidden_effect = {
+			# If Rohan has secured the riddermark, this costs 20k manpower
+			if = {
+				limit = { tag = ISE ROH = { has_completed_focus = ROH_secure_the_riddermark NOT = { is_ally_with = ISE } } }
+				add_manpower = -3000
+			}
+
+			# If Rohan is coordinationg with ISE, they get extra generals AND attacks
+			if = {
+				limit = { 
+					tag = ISE
+					ROH = { 
+						has_country_flag = fs_rohan_coordinating_with_isengard
+						OR = {
+							ROH_habold = { is_unit_leader = yes }
+							ROH_deorhelm = { is_unit_leader = yes }
+							ROH_brego = { is_unit_leader = yes }
+						}
+					}
+				}
+
+				add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+				add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+				add_to_array = { global.fs_eventlog = token:fs_rohan_helps_at_argonath }
+				ring_trim_eventlog = yes
+
+				ROH = {
+					if = {
+						limit = { ROH_habold = { is_unit_leader = yes } }
+						ROH_habold = { ring_add_member_to_hunting_party = yes }
+						ISE = { ring_get_extra_1_attacks = yes }
+					}
+					if = {
+						limit = { ROH_deorhelm = { is_unit_leader = yes } }
+						ROH_deorhelm = { ring_add_member_to_hunting_party = yes }
+						ISE = { ring_get_extra_1_attacks = yes }
+					}
+					if = {
+						limit = { ROH_brego = { is_unit_leader = yes } }
+						ROH_brego = { ring_add_member_to_hunting_party = yes }
+						ISE = { ring_get_extra_1_attacks = yes }
+					}
+				}
+			}
 		}
 
 		ring_open_interception_attempt_prompt = yes
@@ -537,5 +586,91 @@ country_event = {
 		GON = {
 			add_opinion_modifier = { target = ISE modifier = large_decrease }
 		}
+	}
+}
+
+# Request for help in their civil war
+country_event = {
+	id = isengard.14
+	title = isengard.14.t
+	desc = isengard.14.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #helping out
+		name = isengard.14.a
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				has_government = belligerent
+			}
+			modifier = {
+				factor = 3
+				has_government = cooperative
+				GON = { has_government = cooperative }
+			}
+		}
+			random_other_country = {
+				limit = {
+					OR = {
+						AND = {
+							original_tag = ENE
+							NOT = { has_government = belligerent }
+						}
+						AND = {
+							original_tag = DUN
+							NOT = { has_government = belligerent }
+						}
+					}
+				}
+				ISE = {
+					declare_war_on = {
+						target = PREV
+						type = annex_everything
+					}
+				}
+			}
+	}
+
+	option = { #refusing to help
+		name = isengard.14.b
+		ai_chance = {
+			factor = 10
+		}
+		
+	}
+}
+
+# Entwood agrees to expand relations
+country_event = {
+	id = isengard.15
+	title = isengard.15.t
+	desc = isengard.15.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.15.a
+		ISE = {
+			add_opinion_modifier = { target = ENT modifier = small_increase } 
+		}
+	}
+}
+
+# Entwood refuses to expand relations
+country_event = {
+	id = isengard.16
+	title = isengard.16.t
+	desc = isengard.16.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.16.a
+		add_opinion_modifier = { target = ENT modifier = small_decrease } 
 	}
 }

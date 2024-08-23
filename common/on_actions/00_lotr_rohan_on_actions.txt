@@ -1,0 +1,78 @@
+on_actions = {
+	
+	on_weekly_ROH  = {
+
+		effect = {
+			rohan_lords_update_regions = yes
+
+			rohan_lords_apply_cohesion_drift = yes
+		}
+	}
+
+	on_monthly_ROH = {
+		effect = {
+			#rohan_lords_apply_cohesion_drift = yes
+		}
+	}
+
+	on_ruling_party_change = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = ROH
+					ROH_grima = { is_country_leader = yes }
+					NOT = { has_government = belligerent }
+				}
+				# Grima deposed
+				country_event = rohan.101
+			}
+		}
+	}
+
+	on_capitulation_immediate = {
+		effect = {
+			if = {
+				limit = {
+					ROOT = { tag = ISE }
+					FROM = { tag = ROH }
+					ROH = {
+						has_country_leader = {
+							character = ROH_theoden
+							ruling_only = yes
+						}
+					}
+				}
+				ROH = { country_event = rohan.116 }
+			}
+		}
+	}
+
+	on_war_relation_added = {
+		effect = {
+			# ISE declares war on ROH
+			if = {
+				limit = { ROOT = { original_tag = ISE } FROM = { original_tag = ROH } }
+
+				# Isengard appeaser: Isengard looses 300pp and 10 stability
+				if = {
+					limit = {
+						FROM = { has_idea_with_trait = isengard_appeaser }
+					}
+					ROOT = {
+						country_event = { id = rohan.84 days = 7 random_days = 14 }
+					}
+				}
+
+				# Concessions to isengard: Isengard 
+				if = {
+					limit = {
+						FROM = { has_completed_focus = ROH_concessions_to_isengard }
+					}
+					ROOT = {
+						country_event = { id = rohan.85 days = 3 random_days = 7 }
+					}
+				}
+			}
+		}
+	}
+}
