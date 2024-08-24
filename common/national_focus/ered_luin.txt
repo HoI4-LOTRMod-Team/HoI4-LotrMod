@@ -93,6 +93,13 @@ focus_tree = {
 			factor = 15
 		}
 		available = { }
+		bypass = {
+			OR = {
+				ERE = { exists = no }
+				ERE = { has_war_with = ROOT }
+				ERE = { is_subject = yes }
+			}
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_UNALIGNED }
 		x = 0
 		y = 1
@@ -101,7 +108,7 @@ focus_tree = {
 		cost = 5
 		completion_reward = {
 			ERE = {
-				country_event = emynengrin.1 
+				country_event = emynengrin.1
 			} 
 		}
 	}
@@ -121,7 +128,7 @@ focus_tree = {
 		mutually_exclusive = { focus = ELU_establish_a_council }
 		prerequisite = { focus = ELU_invite_durinvii_to_the_throne }
 		relative_position_id = ELU_old_kingdom_not_forgotten
-		cost = 5
+		cost = 10
 		completion_reward = {
 			set_party_name = {
 				ideology = unaligned
@@ -172,7 +179,7 @@ focus_tree = {
 		mutually_exclusive = { focus = ELU_durins_coronation }
 		prerequisite = { focus = ELU_invite_durinvii_to_the_throne }
 		relative_position_id = ELU_old_kingdom_not_forgotten
-		cost = 5
+		cost = 10
 		completion_reward = {
 			set_party_name = {
 				ideology = unaligned
@@ -197,19 +204,13 @@ focus_tree = {
 		ai_will_do = {
 			factor = 15
 		}
-		available = {
-			has_country_leader = {
-				character = ELU_DurinVII
-				ruling_only = yes 
-			} 
-		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_UNALIGNED }
 		x = 1
 		y = 4
 		mutually_exclusive = { }
 		prerequisite = { focus = ELU_durins_coronation }
 		relative_position_id = ELU_old_kingdom_not_forgotten
-		cost = 10
+		cost = 5
 		completion_reward = {
 			remove_ideas = ELU_disjointed_purpose
 
@@ -232,21 +233,13 @@ focus_tree = {
 		ai_will_do = {
 			factor = 15
 		}
-		available = {
-			NOT = {
-				has_country_leader = {
-					character = ELU_DurinVII
-					ruling_only = yes 
-				} 
-			} 
-		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_UNALIGNED }
 		x = -1
 		y = 4
 		mutually_exclusive = { }
 		prerequisite = { focus = ELU_establish_a_council }
 		relative_position_id = ELU_old_kingdom_not_forgotten
-		cost = 10
+		cost = 5
 		completion_reward = {
 			remove_ideas = ELU_disjointed_purpose
 			increase_centralization = yes
@@ -308,6 +301,10 @@ focus_tree = {
 			}
 		}
 		available = { }
+		bypass = {
+			NOT = { controls_state = 142 }
+			NOT = { controls_state = 139 }
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_COOPERATIVE FOCUS_FILTER_REVOLUTIONARY }
 		x = -1
 		y = 1
@@ -316,17 +313,23 @@ focus_tree = {
 		relative_position_id = ELU_age_of_the_miners
 		cost = 10
 		completion_reward = {
-			142 = {
-				add_resource = {
-					type = steel
-					amount = 20 
-				} 
+			if = {
+				limit = { controls_state = 142 }
+				142 = {
+					add_resource = {
+						type = steel
+						amount = 20 
+					} 
+				}
 			}
-			139 = {
-				add_resource = {
-					type = steel
-					amount = 20 
-				} 
+			if = {
+				limit = { controls_state = 139 }
+				139 = {
+					add_resource = {
+						type = steel
+						amount = 20 
+					} 
+				}
 			} 
 		}
 	}
@@ -342,6 +345,9 @@ focus_tree = {
 			}
 		}
 		available = { }
+		bypass = {
+			NOT = { controls_state = 139 }
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_COOPERATIVE FOCUS_FILTER_REVOLUTIONARY }
 		x = 1
 		y = 1
@@ -543,7 +549,10 @@ focus_tree = {
 		relative_position_id = ELU_a_change_in_course
 		cost = 5
 		completion_reward = {
-			add_ideas = ELU_abolished_unions 
+			add_timed_idea = {
+				idea = ELU_abolished_unions
+				days = 400
+			}
 		}
 	}
 
@@ -591,7 +600,10 @@ focus_tree = {
 		relative_position_id = ELU_a_change_in_course
 		cost = 5
 		completion_reward = {
-			add_ideas = ELU_dwarvish_supremacy
+			swap_ideas = {
+				remove_idea = ELU_supressing_radicalism
+				add_idea = ELU_dwarvish_supremacy
+			}
 		}
 	}
 
@@ -733,8 +745,14 @@ focus_tree = {
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_FARMING }
 		available = { 
-			ART = { controls_state = 53 }
+			ART = {
+				controls_state = 53
+				is_subject = no
+			}
 			NOT = { has_war_with = ART }
+		}
+		bypass = {
+			controls_state = 53
 		}
 		x = -1
 		y = 1
@@ -743,19 +761,9 @@ focus_tree = {
 		prerequisite = { focus = elu_agriculture_department }
 		cost = 10
 		completion_reward = {
-			53 = { add_core_of = ELU }
-			53 = { remove_core_of = ART }
-			53 = { transfer_state_to = ELU }
-			add_timed_idea = {
-				idea = ELU_lune_payments
-				days = 60 
-			}
-			ART = {
-				add_timed_idea = {
-					idea = ELU_lune_payments_receive
-					days = 60 
-				} 
-			}
+			ART = { country_event = eredevent.16 }
+			custom_effect_tooltip = if_they_accept_newline_tt
+			event_option_tooltip = eredevent.16.a
 		}
 	}
 
@@ -771,9 +779,9 @@ focus_tree = {
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_FARMING }
 		available = { 
-			139 = { is_controlled_by = ELU }
-			142 = { is_controlled_by = ELU }
-			49 = { is_controlled_by = ELU } 
+			controls_state = 139
+			controls_state = 142
+			controls_state = 49 
 		}
 		x = -1
 		y = 2
@@ -931,7 +939,10 @@ focus_tree = {
 		id = elu_preparesupplylines
 		icon = GFX_goal_ROH_wold_build_supplyline
 		ai_will_do = { factor = 10 }
-		available = { controls_state = 139 }
+		available = {
+			controls_state = 139
+			controls_state = 49
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		x = 0
 		y = 1
@@ -967,11 +978,27 @@ focus_tree = {
 	focus = {
 		id = elu_operationglimmerpeakassault
 		icon = GFX_goal_goal_generic_major_war
-		ai_will_do = { factor = 10 }
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				has_war = yes
+				alliance_strength_ratio < 2.0
+			}
+			modifier = {
+				factor = 0.2
+				has_war = yes
+			}
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		available = {
 			country_exists = LIN
-			is_subject = no 
+			is_subject = no
+			NOT = { is_ally_with = LIN }
+			is_neighbor_of = LIN
+		}
+		bypass = {
+			has_war_with = LIN
 		}
 		will_lead_to_war_with = LIN
 		x = 0
@@ -1029,16 +1056,26 @@ focus_tree = {
 		mutually_exclusive = { }
 		prerequisite = { focus = ELU_army_restoration_act }
 		cost = 5
-		completion_reward = { 
-			set_technology = {
-				goat_riders = 1 
+		completion_reward = {
+			if = {
+				limit = { has_tech = goat_riders }
+				add_equipment_to_stockpile = {
+					type = goat_rider_equipment_1
+					amount = 500 
+					producer = ELU 
+				} 
 			}
-			custom_effect_tooltip = ELU_1_tt
-			add_equipment_to_stockpile = {
-				type = goat_rider_equipment_1
-				amount = 500 
-				producer = ELU 
-			} 
+			else = {
+				set_technology = {
+					goat_riders = 1 
+				}
+				custom_effect_tooltip = ELU_1_tt
+				add_equipment_to_stockpile = {
+					type = goat_rider_equipment_1
+					amount = 500 
+					producer = ELU 
+				}
+			}
 		}
 
 
@@ -1091,6 +1128,9 @@ focus_tree = {
 		y = 3
 		relative_position_id = ELU_age_of_conquest
 		mutually_exclusive = { }
+		available = {
+			controls_state = 142
+		}
 		prerequisite = { focus = ELU_better_goat_armor }
 		prerequisite = { focus = ELU_better_goat_armor2 }
 		cost = 10
@@ -1148,22 +1188,34 @@ focus_tree = {
 		relative_position_id = ELU_age_of_conquest
 		cost = 5
 		completion_reward = {
-			ART = {
-				add_stability = -0.1
-				add_war_support = -0.1 
+			if = {
+				limit = { NOT = { is_ally_with = ART } }
+				ART = {
+					event_option_tooltip = eredevent.18.a
+					hidden_effect = { country_event = eredevent.18 }
+				}
 			}
-			CAR = {
-				add_stability = -0.1
-				add_war_support = -0.1 
+			if = {
+				limit = { NOT = { is_ally_with = CAR } }
+				CAR = {
+					event_option_tooltip = eredevent.18.a
+					hidden_effect = { country_event = eredevent.18 }
+				}
 			}
-			RHD = {
-				add_stability = -0.1
-				add_war_support = -0.1 
+			if = {
+				limit = { NOT = { is_ally_with = RHD } }
+				RHD = {
+					event_option_tooltip = eredevent.18.a
+					hidden_effect = { country_event = eredevent.18 }
+				}
 			}
-			ANG = {
-				add_stability = -0.1
-				add_war_support = -0.1 
-			} 
+			if = {
+				limit = { NOT = { is_ally_with = ANG } }
+				ANG = {
+					event_option_tooltip = eredevent.18.a
+					hidden_effect = { country_event = eredevent.18 }
+				}
+			}
 		}
 
 	}
@@ -1180,7 +1232,9 @@ focus_tree = {
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		available = {
-			country_exists = ART 
+			country_exists = ART
+			NOT = { is_ally_with = ART }
+			is_subject = no
 		}
 		x = -1
 		y = 1
@@ -1189,12 +1243,10 @@ focus_tree = {
 		prerequisite = { focus = elu_destabilizemen }
 		cost = 5
 		completion_reward = {
-			ART = {
-				add_timed_idea = {
-					idea = ELU_goblin_pillaging
-					days = 365 
-				} 
-			} 
+			event_option_tooltip = eredevent.19.a
+			hidden_effect = {
+				ART = { country_event = eredevent.19 }
+			}
 		}
 	}
 
@@ -1211,7 +1263,10 @@ focus_tree = {
 		available = { 
 			NOT = {
 				has_completed_focus = elu_operationglimmerpeakassault 
-			} 
+			}
+			country_exists = ART
+			NOT = { is_ally_with = ART }
+			is_subject = no
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		x = 1
@@ -1241,6 +1296,7 @@ focus_tree = {
 			NOT = {
 				has_completed_focus = elu_tacklearthedain
 				RHD = { is_in_faction_with = ART } 
+				is_ally_with = RHD
 			}
 			country_exists = RHD
 			is_subject = no 
@@ -1252,20 +1308,39 @@ focus_tree = {
 		prerequisite = { focus = elu_destabilizemen }
 		cost = 5
 		completion_reward = {
-			RHD = {
-				add_popularity = {
-					ideology = belligerent
-					popularity = 0.25 
-				}
-				add_timed_idea = {
-					idea = generic_belligerent
-					days = 365 
-				}
-				add_opinion_modifier = {
-					target = ART
-					modifier = faction_traitor 
+			if = {
+				limit = { RHD = { is_ai = no } } # Lessen effect against human players
+				RHD = {
+					add_popularity = {
+						ideology = belligerent
+						popularity = 0.1
+					}
+					add_timed_idea = {
+						idea = generic_belligerent
+						days = 120
+					}
+					add_opinion_modifier = {
+						target = ART
+						modifier = faction_traitor 
+					} 
 				} 
-			} 
+			}
+			else = {
+				RHD = {
+					add_popularity = {
+						ideology = belligerent
+						popularity = 0.25
+					}
+					add_timed_idea = {
+						idea = generic_belligerent
+						days = 365
+					}
+					add_opinion_modifier = {
+						target = ART
+						modifier = faction_traitor 
+					} 
+				} 
+			}
 		}
 
 	}
@@ -1284,6 +1359,7 @@ focus_tree = {
 		available = {
 			NOT = {
 				has_completed_focus = elu_tacklearthedain 
+				is_ally_with = SHI
 			}
 			is_subject = no 
 		}
@@ -1294,6 +1370,27 @@ focus_tree = {
 		prerequisite = { focus = elu_destabilizemen }
 		cost = 5
 		completion_reward = {
+			if = {
+				limit = { SHI = { is_ai = no } } # Lessen effect against human players
+					SHI = {
+						add_timed_idea = {
+						idea = generic_belligerent
+						days = 120
+					}
+					add_popularity = {
+						ideology = belligerent
+						popularity = 0.1 
+					}
+					add_timed_idea = {
+						idea = generic_revolutionary
+						days = 120
+					}
+					add_popularity = {
+						ideology = revolutionary
+						popularity = 0.1 
+					} 
+				} 
+			}
 			SHI = {
 				add_timed_idea = {
 					idea = generic_belligerent
@@ -1338,13 +1435,20 @@ focus_tree = {
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		available = {
 			NOT = { is_ally_with = ART }
-			NOT = { is_ally_with = RHD }
+			is_neighbor_of = ART
 			is_subject = no
 			country_exists = RHD
 			country_exists = ART
+			country_exists = SHI
 			RHD = {
 				is_subject = no 
+			}
+			SHI = {
+				is_subject = no 
 			} 
+		}
+		bypass = {
+			has_war_with = ART
 		}
 		will_lead_to_war_with = ART
 		x = 0
@@ -1397,12 +1501,10 @@ focus_tree = {
 		prerequisite = { focus = ELU_makeadealwithelves focus = ELU_makeadealwithgoblinraiders }
 		cost = 5
 		completion_reward = {
-			CAR = {
-				add_timed_idea = {
-					idea = ELU_market_recession
-					days = 180 
-				} 
-			} 
+			event_option_tooltip = eredevent.20.a
+			hidden_effect = {
+				CAR = { country_event = eredevent.20 }
+			}
 		}
 
 	}
@@ -1426,10 +1528,14 @@ focus_tree = {
 				alliance_strength_ratio < 0.8
 			}
 		}
+		bypass = {
+			has_war_with = CAR
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		will_lead_to_war_with = CAR
 		available = {
 			country_exists = ANG
+			is_neighbor_of = CAR
 			NOT = { is_ally_with = CAR }
 			OR = {
 				controls_state = 148
@@ -1477,8 +1583,12 @@ focus_tree = {
 				alliance_strength_ratio < 0.8
 			}
 		}
+		bypass = {
+			has_war_with = ANG
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		available = {
+			is_neighbor_of = ANG
 			country_exists = ANG
 			is_subject = no
 			OR = {
@@ -1524,8 +1634,12 @@ focus_tree = {
 				alliance_strength_ratio < 0.8
 			}
 		}
+		bypass = {
+			has_war_with = GUN
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		available = {
+			is_neighbor_of = GUN
 			country_exists = GUN 
 			is_subject = no
 			NOT = {
@@ -1598,7 +1712,7 @@ focus_tree = {
 			army_experience = 25
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
-				amount = 5000
+				amount = 2500
 				producer = ELU 
 			} 
 		}
@@ -1645,12 +1759,22 @@ focus_tree = {
 		relative_position_id = ELU_army_defense_act
 		mutually_exclusive = { }
 		prerequisite = { focus = ELU_army_defense_act }
+		available = {
+			country_exists = DUN
+			NOT = { has_war_with = DUN }
+			DUN = {
+				has_opinion = {
+					target = ROOT
+					value > -10
+				}
+			}
+		}
 		cost = 5
 		completion_reward = {
-			DUN = {
-				add_ideas = ELU_dunland_trade 
+			event_option_tooltip = eredevent.21.a
+			hidden_effect = {
+				DUN = { country_event = eredevent.21 }
 			}
-			add_ideas = ELU_dunland_trade 
 		}
 	}
 
@@ -1675,19 +1799,12 @@ focus_tree = {
 		prerequisite = { focus = ELU_age_of_prosperity }
 		relative_position_id = ELU_age_of_prosperity
 		cost = 3
+		available = {
+			country_exists = LIN
+		}
 		available_if_capitulated = yes
 		completion_reward = {
-			add_opinion_modifier = {
-				target = LIN
-				modifier = huge_increase 
-			}
-
-			LIN = { 
-				add_opinion_modifier = {
-					target = ELU
-					modifier = huge_increase 
-				} 
-			} 
+			LIN = { send_delegation_to_country = yes }
 		}
 	}
 
@@ -1705,8 +1822,11 @@ focus_tree = {
 				LIN = { is_ai = no }
 			}
 		}
-		available = { controls_state = 139 }
-		available = { 54 = { is_controlled_by = LIN } }
+		available = {
+			controls_state = 139
+			54 = { is_controlled_by = LIN }
+			NOT = { has_war_with = LIN }
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_COOPERATIVE FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		x = 0
 		y = 1
@@ -1716,49 +1836,9 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			ELU = {
-				add_political_power = 50
-				add_popularity = {
-					ideology = cooperative
-					popularity = 0.05 
-				}
-
-				139 = {
-					add_extra_state_shared_building_slots = 6
-					add_building_construction = {
-						type = arms_factory
-						level = 3
-						instant_build = yes 
-					}
-					add_building_construction = {
-						type = industrial_complex
-						level = 3
-						instant_build = yes 
-					} 
-				} 
-			}
-
-			LIN = {
-				add_political_power = 50
-				add_popularity = {
-					ideology = cooperative
-					popularity = 0.05 
-				}
-
-				54 = {
-					add_extra_state_shared_building_slots = 6
-					add_building_construction = {
-						type = arms_factory
-						level = 3
-						instant_build = yes 
-					}
-					add_building_construction = {
-						type = industrial_complex
-						level = 3
-						instant_build = yes 
-					} 
-				} 
-			} 
+			LIN = { country_event = eredevent.25 }
+			custom_effect_tooltip = if_they_accept_newline_tt
+			event_option_tooltip = eredevent.25.a
 		}
 	}
 
@@ -1778,21 +1858,17 @@ focus_tree = {
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_COOPERATIVE FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		available = {
+			NOT = { has_war_with = LIN }
+			country_exists = LIN
 			ELU = {
 				NOT = {
 					has_government = belligerent 
 				}
-				OR = {
-					belligerent < 0.5 
-				} 
 			}
 			LIN = {
 				NOT = {
 					has_government = belligerent 
 				}
-				OR = {
-					belligerent < 0.5 
-				} 
 			} 
 		}
 		x = 0
@@ -1803,11 +1879,7 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			diplomatic_relation = {
-				country = LIN
-				relation = non_aggression_pact
-				active = yes 
-			} 
+			LIN = { invite_to_non_aggession_pact = yes }
 		}
 	}
 
@@ -1829,7 +1901,20 @@ focus_tree = {
 				LIN = { is_ai = no }
 			}
 		}
-		available = { }
+		available = {
+			NOT = { has_war_with = LIN }
+			country_exists = LIN
+			ELU = {
+				NOT = {
+					has_government = belligerent 
+				}
+			}
+			LIN = {
+				NOT = {
+					has_government = belligerent 
+				}
+			} 
+		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_COOPERATIVE FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		x = 0
 		y = 3
@@ -1874,22 +1959,34 @@ focus_tree = {
 		relative_position_id = ELU_age_of_prosperity
 		cost = 10
 		completion_reward = {
-			ART = {
-				add_stability = 0.1
-				add_war_support = 0.1 
+			if = {
+				limit = { NOT = { has_war_with = ART } }
+				ART = {
+					event_option_tooltip = eredevent.22.a
+					hidden_effect = { country_event = eredevent.22 }
+				}
 			}
-			CAR = {
-				add_stability = 0.1
-				add_war_support = 0.1 
+			if = {
+				limit = { NOT = { has_war_with = CAR } }
+				CAR = {
+					event_option_tooltip = eredevent.22.a
+					hidden_effect = { country_event = eredevent.22 }
+				}
 			}
-			RHD = {
-				add_stability = 0.1
-				add_war_support = 0.1 
+			if = {
+				limit = { NOT = { has_war_with = RHD } }
+				RHD = {
+					event_option_tooltip = eredevent.22.a
+					hidden_effect = { country_event = eredevent.22 }
+				}
 			}
-			ANG = {
-				add_stability = 0.1
-				add_war_support = 0.1 
-			} 
+			if = {
+				limit = { NOT = { has_war_with = ANG } }
+				ANG = {
+					event_option_tooltip = eredevent.22.a
+					hidden_effect = { country_event = eredevent.22 }
+				}
+			}
 		}
 	}
 
@@ -1915,12 +2012,12 @@ focus_tree = {
 		prerequisite = { focus = elu_strengthenmen }
 		cost = 5
 		completion_reward = {
-			CAR = {
-				add_timed_idea = {
-					idea = ELU_bull_market
-					days = 180 
-				} 
-			} 
+			event_option_tooltip = eredevent.23.a
+			hidden_effect = { 
+				CAR = {
+					country_event = eredevent.23
+				}
+			}
 		}
 	}
 
@@ -1972,10 +2069,25 @@ focus_tree = {
 				factor = 2
 				RHD = { is_ai = no }
 			}
+			modifier = {
+				factor = 0
+				has_equipment = {
+					infantry_equipment < 7000
+				}
+			}
+			modifier = {
+				factor = 2
+				has_equipment = {
+					infantry_equipment > 10000
+				}
+			}
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_COOPERATIVE FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		available = {
-			country_exists = ART 
+			country_exists = ART
+			has_equipment = {
+				infantry_equipment > 6000
+			}
 		}
 		x = -2
 		y = 2
@@ -1984,39 +2096,57 @@ focus_tree = {
 		prerequisite = { focus = ELU_bolster_bree_market }
 		cost = 5
 		completion_reward = {
-			send_equipment = {
-				equipment = infantry_equipment
-				amount = 5000
-				target = ART 
+			if = {
+				limit = {
+					NOT = { has_war_with = ART }
+					country_exists = ART
+				}
+				send_equipment = {
+					equipment = infantry_equipment
+					amount = 3000
+					target = ART 
+				}
+				ART = {
+					add_opinion_modifier = {
+						target = ELU
+						modifier = medium_increase 
+					} 
+				}
 			}
-			CAR = {
-				add_opinion_modifier = {
-					target = ELU
-					modifier = medium_increase 
-				} 
+			if = {
+				limit = {
+					NOT = { has_war_with = CAR }
+					country_exists = CAR
+				}
+				send_equipment = {
+					equipment = infantry_equipment
+					amount = 2000
+					target = CAR 
+				}
+				CAR = {
+					add_opinion_modifier = {
+						target = ELU
+						modifier = medium_increase 
+					} 
+				}
 			}
-			send_equipment = {
-				equipment = infantry_equipment
-				amount = 5000
-				target = CAR 
+			if = {
+				limit = {
+					NOT = { has_war_with = RHD }
+					country_exists = RHD
+				}
+				send_equipment = {
+					equipment = infantry_equipment
+					amount = 1000
+					target = RHD 
+				}
+				RHD = {
+					add_opinion_modifier = {
+						target = ELU
+						modifier = medium_increase 
+					} 
+				}
 			}
-			RHD = {
-				add_opinion_modifier = {
-					target = ELU
-					modifier = medium_increase 
-				} 
-			}
-			send_equipment = {
-				equipment = infantry_equipment
-				amount = 5000
-				target = ART 
-			}
-			RHD = {
-				add_opinion_modifier = {
-					target = ELU
-					modifier = medium_increase 
-				} 
-			} 
 		}
 	}
 
@@ -2041,11 +2171,28 @@ focus_tree = {
 				factor = 2
 				ROH = { is_ai = no }
 			}
+			modifier = {
+				factor = 0
+				has_equipment = {
+					infantry_equipment < 7000
+				}
+			}
+			modifier = {
+				factor = 2
+				has_equipment = {
+					infantry_equipment > 10000
+				}
+			}
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_COOPERATIVE FOCUS_FILTER_UNALIGNED FOCUS_FILTER_REVOLUTIONARY }
 		available = {
-			country_exists = GON
-			country_exists = ROH 
+			has_equipment = {
+				infantry_equipment > 6000
+			}
+			OR = {
+				country_exists = GON
+				country_exists = ROH 
+			}
 		}
 		x = 1
 		y = 2
@@ -2054,28 +2201,40 @@ focus_tree = {
 		prerequisite = { focus = ELU_bolster_bree_market }
 		cost = 5
 		completion_reward = {
-			send_equipment = {
-				equipment = infantry_equipment
-				amount = 10000
-				target = ROH 
+			if = {
+				limit = {
+					NOT = { has_war_with = GON }
+					country_exists = GON
+				}
+				send_equipment = {
+					equipment = infantry_equipment
+					amount = 3000
+					target = GON 
+				}
+				GON = {
+					add_opinion_modifier = {
+						target = ELU
+						modifier = medium_increase 
+					} 
+				}
 			}
-			ROH = {
-				add_opinion_modifier = {
-					target = ELU
-					modifier = medium_increase 
-				} 
+			if = {
+				limit = {
+					NOT = { has_war_with = ROH }
+					country_exists = ROH
+				}
+				send_equipment = {
+					equipment = infantry_equipment
+					amount = 3000
+					target = ROH 
+				}
+				ROH = {
+					add_opinion_modifier = {
+						target = ELU
+						modifier = medium_increase 
+					} 
+				}
 			}
-			send_equipment = {
-				equipment = infantry_equipment
-				amount = 10000
-				target = GON 
-			}
-			GON = {
-				add_opinion_modifier = {
-					target = ELU
-					modifier = medium_increase 
-				} 
-			} 
 		}
 	}
 
@@ -2097,6 +2256,8 @@ focus_tree = {
 		available = { GON = { has_war_with_major = yes } }
 		available = {
 			country_exists = GON 
+			NOT = { has_war_with = GON }
+			GON = { is_subject = no }
 		}
 		x = 1
 		y = 1
@@ -2105,9 +2266,12 @@ focus_tree = {
 		prerequisite = { focus = elu_strengthenmen }
 		cost = 5
 		completion_reward = {
-			GON = {
-				add_ideas = ELU_financial_payments_GON 
-			} 
+			event_option_tooltip = eredevent.24.a
+			hidden_effect = { 
+				GON = {
+					country_event = eredevent.24
+				}
+			}
 		}
 	}
 
