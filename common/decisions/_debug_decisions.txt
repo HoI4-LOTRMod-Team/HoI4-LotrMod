@@ -123,29 +123,26 @@ debug_decisions = {
 		cost = 0
 
 		complete_effect = {
-			#log = "[THIS.GetName]"
-
-			set_temp_variable = { temp_max_prio = -999 }
-			set_temp_variable = { temp_max_state = capital }
-
-			for_each_scope_loop = {
-				array = controlled_states
-				
-				if = {
-					limit = {
-						check_variable = { temp_max_prio < mtth:state_air_base_priority }
+			random_character = {
+				limit = {
+					OR = {
+						is_character_slot = political_advisor
+						is_character_slot = treasurer
+						is_character_slot = spymaster
+						#is_character_slot = chief_advisor # Don't want ideology advisors to become belli king
 					}
-					set_temp_variable = { temp_max_prio = mtth:state_air_base_priority }
-					set_temp_variable = { temp_max_state = THIS }
 				}
-			}
-
-			var:temp_max_state = {
-				add_building_construction = {
-					type = air_base
-					level = 1
+				log = "[THIS.GetName]"
+				add_country_leader_role = {
+					character = THIS
+					promote_leader = yes
+					country_leader = {
+						ideology = expansionist
+						expire = "1965.1.1.1"
+						traits = { ELU_skilled_politician }
+					}
 				}
-			}
+			}	
 		}
 	}
 
