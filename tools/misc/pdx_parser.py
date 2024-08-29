@@ -143,7 +143,6 @@ class VirtualPObj(PObj):
         self.level = original.level
 
 
-
 def skip_whitespace(s, i):
     j = i
     while i < len(s) and (s[i].isspace() or s[i] == "#"):
@@ -195,7 +194,7 @@ def skip_until_literal_closed(s, i):
 operators = ["=", "<", ">"]
 
 
-def Parse_PObj(text, i, parent=None):
+def Parse_PObj(text, i=0, parent=None):
     ret = PObj()
 
     j = i
@@ -238,7 +237,7 @@ def Parse_PObj(text, i, parent=None):
 
 
 
-def Parse_List(text, i, parent=None):
+def Parse_List(text, i=0, parent=None):
     ret = []
 
     while(i < len(text)):
@@ -249,6 +248,21 @@ def Parse_List(text, i, parent=None):
             break
 
     return ret
+
+
+def ParseObjFromFile(input_file):
+    with open(input_file, 'r') as file:
+        content = file.read()
+
+        (obj, _) = Parse_PObj(content, 0)
+        return obj
+    
+
+def ParseListFromFile(input_file):
+    with open(input_file, 'r') as file:
+        content = file.read()
+
+        return Parse_List(content, 0)
     
 
 
