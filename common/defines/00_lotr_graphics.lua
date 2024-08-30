@@ -17,19 +17,14 @@ NDefines.NGraphics.TRAIT_LINE_NON_ASSIGNED_COLOR = { 0.6, 0.6, 0.6 } -- Color fo
 NDefines.NGraphics.TRAIT_LINE_HIGHLIGHT_COLOR = { 1.0, 1.0, 1.0 } -- Color for parent dependency lines to the parents when hovering over a trait.
 NDefines.NGraphics.TRAIT_INVALID_FOR_ASSIGNMENT_COLOR = { 0.8, 0.3, 0.3 }
 
--- Onmap colors
-NDefines.NGraphics.FRIEND_COLOR  = {0.7, 0.9, 0.7}
-NDefines.NGraphics.ENEMY_COLOR   = {1.0, 0.7, 0.7}
-NDefines.NGraphics.NEUTRAL_COLOR = {1.0, 1.0, 1.0}
-
---NDefines.NGraphics.MAP_ICONS_GROUP_CAM_DISTANCE = 90.0 -- camera distance at which the icons begin to group up
---NDefines.NGraphics.MAP_ICONS_STATE_GROUP_CAM_DISTANCE = 400.0 -- Camera distance at which the icons begin to group up on state level
---NDefines.NGraphics.MAP_ICONS_STRATEGIC_GROUP_CAM_DISTANCE = 500 -- second camera distance at which the icons begin to group up
---NDefines.NGraphics.UNITS_ICONS_DISTANCE_CUTOFF = 1200
---NDefines.NGraphics.MAP_ICONS_STRATEGIC_AREA_HUGE = 300
---NDefines.NGraphics.MAP_ICONS_STATE_HUGE = 120
---NDefines.NGraphics.MAPICON_GROUP_PASSES = 25 -- how many mapicons get processed per frame for grouping. more = quicker response, fewer = better performance
---NDefines.NGraphics.MAP_ICONS_GROUP_SPLIT_SELECTED_LIMIT = 5   -- Maximum number of units selected that will cause icon stacks to split
---NDefines.NGraphics.MAP_ICONS_COARSE_COUNTRY_GROUPING_DISTANCE = 500 -- Distance at which icon grouping becomes very coarse and merges different types of units
---NDefines.NGraphics.MAP_ICONS_COARSE_COUNTRY_GROUPING_DISTANCE_STRATEGIC = 500 -- Distance at which icon grouping becomes very coarse and merges different types of units for strategic mapmodes
+-- Onmap icon grouping
+NDefines.NGraphics.MAP_ICONS_GROUP_CAM_DISTANCE = 90.0 -- camera distance at which the icons begin to group up
+NDefines.NGraphics.MAP_ICONS_STATE_GROUP_CAM_DISTANCE = 350.0 -- Camera distance at which the icons begin to group up on state level
+NDefines.NGraphics.MAP_ICONS_STRATEGIC_GROUP_CAM_DISTANCE = 500 -- second camera distance at which the icons begin to group up
+NDefines.NGraphics.UNITS_ICONS_DISTANCE_CUTOFF = 1000
+NDefines.NGraphics.MAP_ICONS_STRATEGIC_AREA_HUGE = 300
+NDefines.NGraphics.MAP_ICONS_STATE_HUGE = 120
+NDefines.NGraphics.MAP_ICONS_GROUP_SPLIT_SELECTED_LIMIT = 5   -- Maximum number of units selected that will cause icon stacks to split
+NDefines.NGraphics.MAP_ICONS_COARSE_COUNTRY_GROUPING_DISTANCE = 500 -- Distance at which icon grouping becomes very coarse and merges different types of units
+NDefines.NGraphics.MAP_ICONS_COARSE_COUNTRY_GROUPING_DISTANCE_STRATEGIC = 500 -- Distance at which icon grouping becomes very coarse and merges different types of units for strategic mapmodes
 
