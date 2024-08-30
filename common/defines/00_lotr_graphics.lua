@@ -16,3 +16,8 @@ NDefines.NGraphics.TRAIT_LINE_ASSIGNED_COLOR = { 1.0, 1.0, 0.0 } -- Color for pa
 NDefines.NGraphics.TRAIT_LINE_NON_ASSIGNED_COLOR = { 0.6, 0.6, 0.6 } -- Color for parent dependency lines when the parent is not assigned assigned.
 NDefines.NGraphics.TRAIT_LINE_HIGHLIGHT_COLOR = { 1.0, 1.0, 1.0 } -- Color for parent dependency lines to the parents when hovering over a trait.
 NDefines.NGraphics.TRAIT_INVALID_FOR_ASSIGNMENT_COLOR = { 0.8, 0.3, 0.3 }
+
+-- Onmap colors
+NDefines.NGraphics.FRIEND_COLOR  = {0.7, 0.9, 0.7}
+NDefines.NGraphics.ENEMY_COLOR   = {1.0, 0.7, 0.7}
+NDefines.NGraphics.NEUTRAL_COLOR = {1.0, 1.0, 1.0}
