@@ -28,3 +28,7 @@ NDefines.NGraphics.MAP_ICONS_GROUP_SPLIT_SELECTED_LIMIT = 5   -- Maximum number 
 NDefines.NGraphics.MAP_ICONS_COARSE_COUNTRY_GROUPING_DISTANCE = 500 -- Distance at which icon grouping becomes very coarse and merges different types of units
 NDefines.NGraphics.MAP_ICONS_COARSE_COUNTRY_GROUPING_DISTANCE_STRATEGIC = 500 -- Distance at which icon grouping becomes very coarse and merges different types of units for strategic mapmodes
 
+NDefines.NGraphics.FRIEND_COLOR  = {1.0, 1.0, 1.0}
+NDefines.NGraphics.ENEMY_COLOR   = {1.0, 0.7, 0.7}
+NDefines.NGraphics.NEUTRAL_COLOR = {0.8, 0.8, 0.8}
+
