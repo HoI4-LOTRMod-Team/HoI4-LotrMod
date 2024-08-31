@@ -32,7 +32,7 @@ def process_dds_files(directory):
                 print(f"Processed and saved {filename}")
 
 # Specify the directory containing the .dds files
-directory = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\gfx\interface\counters\divisions_small'
+directory = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\gfx\texticons'
 
 # Run the processing function
 process_dds_files(directory)
