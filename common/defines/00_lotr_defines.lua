@@ -93,3 +93,14 @@ NDefines.NAI.DESIRE_USE_XP_TO_UPDATE_LAND_TEMPLATE = 8.0    -- How quickly is de
 
 -- Avoice Equipment over-abundance
 NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.2 -- How much equipment from deployed divisions will be transferred on capitulation
+
+-- Division Designer
+NDefines.NMilitary.MAX_DIVISION_BRIGADE_WIDTH = 6			-- Max width of regiments in division designer.
+NDefines.NMilitary.MAX_DIVISION_BRIGADE_HEIGHT = 4		-- Max height of regiments in division designer.
+NDefines.NMilitary.MIN_DIVISION_BRIGADE_HEIGHT = 3		-- Min height of regiments in division designer.
+NDefines.NMilitary.MAX_DIVISION_SUPPORT_WIDTH = 5			-- Max width of support in division designer.
+NDefines.NMilitary.MAX_DIVISION_SUPPORT_HEIGHT = 1		-- Max height of support in division designer.
+
+-- Training divisions
+NDefines.NProduction.MIN_POSSIBLE_TRAINING_MANPOWER = 3000	-- How many deployment lines minimum can be training
+NDefines.NProduction.MIN_FIELD_TO_TRAINING_MANPOWER_RATIO = 0.5
