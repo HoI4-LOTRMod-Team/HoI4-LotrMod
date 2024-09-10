@@ -325,7 +325,7 @@ country_event = {
 		
 		add_timed_idea = {
 			idea = minor_expense
-			days = 60
+			days = 30
 		}
 		FROM = {
 			add_opinion_modifier = {
@@ -390,7 +390,7 @@ country_event = {
 		FROM = {
 			add_opinion_modifier = {
 				target = ROOT
-				modifier = medium_decrease
+				modifier = small_decrease
 			}
 		}
 	}
@@ -1062,7 +1062,7 @@ country_event = {
 	}
 }
 
-# Generic rejected invitation to join major Alliance
+# Non aggression pact invitation
 country_event = {
 	id = lotr_generic.13
 	title = lotr_generic.13.t
@@ -1074,60 +1074,108 @@ country_event = {
 	
 	option = {
 		name = lotr_generic.13.a
-		trigger = {
-			AND = {
-				FROM = {
-					has_government = cooperative
-				}
-				has_government = cooperative
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 2
+				FROM = { we_like_them = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_ai = yes }
+				FROM = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 2
+				has_war = yes
+			}
+			modifier = {
+				factor = 2
+				FROM = { has_same_ideology = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_ai = no }
+			}
+		}
+
+		diplomatic_relation = {
+			country = FROM
+			relation = non_aggression_pact
+			active = yes
+		}
+
+		hidden_effect = {
+			FROM = { country_event = { id = lotr_generic.14 days = 1 random_days = 1 } }
+		}
+	}
+
+	option = {
+		name = lotr_generic.13.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				FROM = { we_dont_like_them = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_ai = yes }
+				FROM = { is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_significantly_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { has_same_ideology = no }
+			}
+		}
+
+		add_political_power = -50
+
+		hidden_effect = {
+			FROM = { country_event = { id = lotr_generic.15 days = 1 random_days = 1 } }
+		}
+		
+	}
+}
+
+# NA pact accepted
+country_event = {
+	id = lotr_generic.14
+	title = lotr_generic.14.t
+	desc = lotr_generic.14.d
+
+	is_triggered_only = yes
+	
+	option = {
+		name = lotr_generic.14.a
+
+		effect_tooltip = {
+			diplomatic_relation = {
+				country = FROM
+				relation = non_aggression_pact
+				active = yes
 			}
 		}
 	}
+}
+
+# NA pact rejected
+country_event = {
+	id = lotr_generic.15
+	title = lotr_generic.15.t
+	desc = lotr_generic.15.d
+
+	is_triggered_only = yes
+	
 	option = {
-		name = lotr_generic.10.b
-		trigger = {
-			AND = {
-				FROM = {
-					has_government = belligerent
-				}
-				has_government = belligerent
-			}
-		}
-	}
-	option = {
-		name = lotr_generic.10.c
-		trigger = {
-			AND = {
-				FROM = {
-					has_government = revolutionary
-				}
-				has_government = revolutionary
-			}
-		}
-	}
-	option = {
-		name = lotr_generic.10.e
-		trigger = {
-			NOT = {
-				AND = {
-					FROM = {
-						has_government = cooperative
-					}
-					has_government = cooperative
-				}
-				AND = {
-					FROM = {
-						has_government = belligerent
-					}
-					has_government = belligerent
-				}
-				AND = {
-					FROM = {
-						has_government = revolutionary
-					}
-					has_government = revolutionary
-				}
-			}
-		}
+		name = lotr_generic.15.a
 	}
 }
