@@ -1,3 +1,5 @@
+#!gfx:interface\auto_generated\lotr_goals.gfx
+
 focus_tree = {
 	id = rohan
 	country = {
@@ -93,7 +95,7 @@ focus_tree = {
 		completion_reward = {
 			# Scout out narrow mountain passes
 			217 = {
-				add_manpower = 150000
+				add_manpower = 15000
 			}
 		}
 	}
@@ -2608,6 +2610,10 @@ focus_tree = {
 				factor = 3
 				LTH = { is_ai = no }
 			}
+			modifier = {
+				factor = 3
+				target_air_focus = yes
+			}
 		}
 		x =0
 		y =2
@@ -3729,7 +3735,7 @@ focus_tree = {
 			hidden_effect = {
 				load_oob = ROH_Dunelending_volunteers	
 			}
-			ENE = { add_manpower = -25000 } # TODO_I: should be DUN
+			ENE = { add_manpower = -2500 } # TODO_I: should be DUN
 		}
 	}
 
@@ -3752,7 +3758,7 @@ focus_tree = {
 		completion_reward = {
 			rohan_set_horselords_cooldown = yes
 			if = {
-				limit = { has_country_flag = roh_erkenbrand_recalled }
+				limit = { NOT = { has_country_flag = roh_erkenbrand_recalled } }
 				rohan_lords_recall_erkenbrand_from_retirement = yes
 			}
 			# Get Erkenbrand as unit leader (unless he is already)
@@ -3982,6 +3988,7 @@ focus_tree = {
 			rohan_lords_controls_region_3 = yes
 			ROH_erkenbrand = { is_region_3_leader = yes }
 			rohan_horselords_tree_cooldown = yes
+			ROH_erkenbrand = { is_dead = no }
 		}
 		search_filters = { FOCUS_FILTER_ROH_LORDS }
 		ai_will_do = { factor = 10 }
@@ -3996,7 +4003,7 @@ focus_tree = {
 			# Make Erkenbrand field marshal (unless he is already)
 			# Give him the Lord of the Westemnet trait
 			if = {
-				limit = { has_country_flag = roh_erkenbrand_recalled }
+				limit = { NOT = { has_country_flag = roh_erkenbrand_recalled } }
 				rohan_lords_recall_erkenbrand_from_retirement = yes
 			}
 			# Get Erkenbrand as unit leader (unless he is already)
@@ -4627,7 +4634,7 @@ focus_tree = {
 			factor = 20
 			modifier = {
 				factor = 2
-				has_manpower < 100000
+				has_manpower < 10000
 			}
 			modifier = {
 				factor = 3
@@ -5711,7 +5718,16 @@ focus_tree = {
 			rohan_research_tree_cooldown = yes
 		}
 		search_filters = { FOCUS_FILTER_ROH_STATESCRAFT }
-		ai_will_do = { factor = 1 }
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 10
+				OR = {
+					target_heavy_cav_strat = yes
+					target_heavy_cav_chariots_strat = yes
+				}
+			}
+		}
 		x =-1
 		y =1
 		mutually_exclusive = { focus = ROH_light_cavalry }
@@ -5783,7 +5799,13 @@ focus_tree = {
 			rohan_research_tree_cooldown = yes
 		}
 		search_filters = { FOCUS_FILTER_ROH_STATESCRAFT }
-		ai_will_do = { factor = 1 }
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 10
+				target_light_cav_strat = yes
+			}
+		}
 		x =1
 		y =1
 		mutually_exclusive = { focus = ROH_heavy_cavalry }
@@ -6097,8 +6119,16 @@ focus_tree = {
 			rohan_research_tree_cooldown = yes
 		}
 		search_filters = { FOCUS_FILTER_ROH_STATESCRAFT }
-		ai_will_do = { factor = 1 } 
-		# TODO: after AI-divisions rework: increase priority. Same goes for several other focuses in this tree
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 10
+				OR = {
+					target_siege_machines_strat = yes
+					target_catapults_strat = yes
+				}
+			}
+		}
 		x =0
 		y =4
 		mutually_exclusive = { }
@@ -6220,6 +6250,35 @@ focus_tree = {
 				name = special_bonus
 				target = MOR
 				uses = 2
+			}
+		}
+	}
+
+	focus = {
+		id = ROH_trebuchet_construction
+		icon = GFX_goal_ROH_trebuchet_construction
+		relative_position_id = ROH_siege_works
+		prerequisite = { focus = ROH_siege_works }
+		allow_branch = {
+			has_dlc = "No Step Back"
+		}
+		available = {
+			rohan_research_tree_cooldown = yes
+			controls_province = 6760
+			has_tech = basic_siege_tactics
+		}
+		search_filters = { FOCUS_FILTER_ROH_STATESCRAFT }
+		ai_will_do = { factor = 1 }
+		x =0
+		y =2
+		mutually_exclusive = { }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			rohan_set_research_tree_cooldown = yes
+			create_railway_gun = {
+				equipment = siege_trebuchet_equipment_0
+				location = 6760
 			}
 		}
 	}

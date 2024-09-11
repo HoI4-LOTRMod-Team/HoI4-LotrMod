@@ -19,6 +19,31 @@ ROH_keep_core_safe = {
 	}
 }
 
+ROH_focus_on_infantry_early = {
+	enable = {
+		date < "3020.1.1"
+		has_equipment = {
+			infantry_equipment < 100
+		}
+	}
+	abort_when_not_enabled = yes
+	allowed = {
+		original_tag = ROH
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = armor
+		value = -35
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = infantry
+		value = 25
+	}
+}
+
 
 ROH_dont_attack_when_truced = {
 	enable = {
@@ -54,6 +79,36 @@ ROH_dont_attack_when_truced = {
 	}
 }
 
+ROH_dont_waste_attirtion_in_westmarch = {
+    enable = {
+        NOT = { ISE = { has_government = belligerent } }
+		NOT = { has_government = belligerent }
+		NOT = { has_completed_focus = ROH_secure_the_westmarch }
+		has_war = no
+    }
+    allowed = {
+        original_tag = ROH
+    }
+	abort_when_not_enabled = yes
+
+    ai_strategy = {
+		type = area_priority
+		id = durwaith_laur
+		value = -100
+	}
+
+	ai_strategy = {
+		type = area_priority
+		id = gap_of_rohan
+		value = -100
+	}
+
+	ai_strategy = {
+		type = prepare_for_war
+		id = ISE
+		value = -100
+	}
+}
 
 ROH_defend_the_west = {
     enable = {
@@ -63,8 +118,12 @@ ROH_defend_the_west = {
     allowed = {
         original_tag = ROH
     }
-
-    abort_when_not_enabled = yes
+	abort = {
+		OR = { 
+			ISE = { has_government = cooperative }
+			is_ally_with = ISE
+		}
+	}
 
     ai_strategy = {
 		type = area_priority

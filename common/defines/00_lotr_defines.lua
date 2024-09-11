@@ -52,6 +52,13 @@ NDefines.NDiplomacy.TENSION_TIME_SCALE_START_DATE = "3018.1.1.12"	-- Starting at
 -- Better supply from motorization
 NDefines.NSupply.SUPPLY_HUB_FULL_MOTORIZATION_BONUS = 3.0
 
+-- Lowering attrition damage
+NDefines.NSupply.SUPPLY_THRESHOLD_FOR_ARMY_ATTRITION = 0.28        -- at 28% supply army starts to suffer attrition
+NDefines.NMilitary.ATTRITION_DAMAGE_ORG = 0.07					   -- damage from attrition to Organisation
+NDefines.NMilitary.ATTRITION_EQUIPMENT_LOSS_CHANCE = 0.05		   -- Chance for loosing equipment when suffer attrition. Scaled up the stronger attrition is. Then scaled down by equipment reliability.
+NDefines.NMilitary.ATTRITION_EQUIPMENT_PER_TYPE_LOSS_CHANCE = 0.05 -- Chance for loosing equipment when suffer attrition. Scaled up the stronger attrition is. Then scaled down by equipment reliability.
+NDefines.NMilitary.ATTRITION_WHILE_MOVING_FACTOR = 0.75
+
 -- Base speed of manpower mobilization  #in 1/1000 of 1 %
 NDefines.NCountry.BASE_MOBILIZATION_SPEED = 0.005
 
@@ -60,6 +67,40 @@ NDefines.NAir.AIR_WING_COUNTRY_XP_FROM_TRAINING_FACTOR = 0.15
 NDefines.NAir.AIR_WING_XP_AIR_VS_AIR_COMBAT_GAIN = 8.0
 NDefines.NAir.AIR_WING_XP_GROUND_MISSION_COMPLETED_GAIN = 2.8
 NDefines.NAir.AIR_WING_XP_RECON_MISSION_COMPLETED_GAIN = 0.5
+NDefines.NAir.AIR_WING_MAX_STATS_ATTACK = 1000					-- Max stats
+NDefines.NAir.AIR_WING_MAX_STATS_DEFENCE = 1000
+NDefines.NAir.AIR_WING_MAX_STATS_AGILITY = 1000
+NDefines.NAir.AIR_WING_MAX_STATS_SPEED = 8000
+NDefines.NAir.AIR_WING_MAX_STATS_BOMBING = 1000
+NDefines.NAir.AIR_WING_MAX_SIZE = 100 							-- Max amount of airplanes in wing
+NDefines.NAir.AIR_WING_AVERAGE_SIZE = 10 						-- Eyeballed average amount of airplanes in wing. Used when calculating air volunteer.
 
 -- Increased army XP from training units (slightly)
-NDefines.NMilitary.UNIT_EXPERIENCE_PER_TRAINING_DAY = 0.002
+NDefines.NMilitary.UNIT_EXPERIENCE_PER_TRAINING_DAY = 0.0025
+
+-- AI template unit management related
+NDefines.NAI.UPGRADE_DIVISION_RELUCTANCE = 5
+NDefines.NAI.WANTED_UNITS_MANPOWER_DIVISOR = 2700
+-- NDefines.NAI.UPGRADE_PERCENTAGE_OF_FORCES = 0.03
+NDefines.NAI.WANTED_UNITS_WEIGHT_FRONTS_WANT = 0.4
+NDefines.NAI.WANTED_UNITS_WEIGHT_MANPOWER = 0.3
+NDefines.NAI.WANTED_UNITS_MIN_DEFENCE_FACTOR = 0.6
+NDefines.NAI.DAYS_BETWEEN_CHECK_BEST_TEMPLATE = 28       -- Recalculate desired best template to upgrade with this many days inbetween.
+NDefines.NAI.DESIRE_USE_XP_TO_UPGRADE_LAND_EQUIPMENT = 1.5  -- How quickly is desire to update/create land equipment variants accumulated?
+NDefines.NAI.DESIRE_USE_XP_TO_UPGRADE_NAVAL_EQUIPMENT = 3.0
+NDefines.DESIRE_USE_XP_TO_UPGRADE_AIR_EQUIPMENT = 0.2
+NDefines.NAI.DESIRE_USE_XP_TO_UPDATE_LAND_TEMPLATE = 8.0    -- How quickly is desire to update/create templates accumulated?
+
+-- Avoice Equipment over-abundance
+NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.2 -- How much equipment from deployed divisions will be transferred on capitulation
+
+-- Division Designer
+NDefines.NMilitary.MAX_DIVISION_BRIGADE_WIDTH = 6			-- Max width of regiments in division designer.
+NDefines.NMilitary.MAX_DIVISION_BRIGADE_HEIGHT = 4		-- Max height of regiments in division designer.
+NDefines.NMilitary.MIN_DIVISION_BRIGADE_HEIGHT = 3		-- Min height of regiments in division designer.
+NDefines.NMilitary.MAX_DIVISION_SUPPORT_WIDTH = 5			-- Max width of support in division designer.
+NDefines.NMilitary.MAX_DIVISION_SUPPORT_HEIGHT = 1		-- Max height of support in division designer.
+
+-- Training divisions
+NDefines.NProduction.MIN_POSSIBLE_TRAINING_MANPOWER = 3000	-- How many deployment lines minimum can be training
+NDefines.NProduction.MIN_FIELD_TO_TRAINING_MANPOWER_RATIO = 0.5
