@@ -169,7 +169,7 @@ PixelShader =
 			const float3 c5 = float3(0.1, 0.1, 0.1);
 			const float3 c6 = float3(0.9, 0.9, 0.9);
 
-			float2 speed = float2(1.2, 0.1);
+			float2 speed = float2(0.2, 0.1);
 			float shift = 1.327 + sin(Time * 2.0) / 2.4;
 			float alpha = 1.0;
 
