@@ -219,9 +219,15 @@ PixelShader =
 			float4 og_color = OutColor * Color;
 			float4 flame_color = flame(v.vTexCoord.xy*1920);
 
+			flame_color = lerp(
+				float4(0.0200, 0.0125, 0.00120, 0),
+				float4(0.480, 0.292, 0.00960, 1),
+				flame_color.r
+			);
+
 			float alpha = og_color.a;
 
-			alpha = 0.1 * length(flame_color.rg) * length(flame_color.rg);//len(flame_color) * 0.5;
+			alpha = flame_color.a * 0.1 * length(flame_color.rg) * length(flame_color.rg);//len(flame_color) * 0.5;
 			alpha = max(alpha, og_color.a);
 			//alpha = 1;
 
