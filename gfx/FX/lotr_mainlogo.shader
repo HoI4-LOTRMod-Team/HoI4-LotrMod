@@ -149,7 +149,7 @@ PixelShader =
 		float fbm(float2 n)
 		{
 			float total = 0.0, amplitude = 1.0;
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 15; i++)
 			{
 				total += noise(n) * amplitude;
 				n += n * 1.7;
@@ -160,6 +160,8 @@ PixelShader =
 
 		float4 flame(float2 fragCoord)
 		{
+			fragCoord.y *= -1;
+			fragCoord.y += 1080;
 			float2 iResolution = float2(1920, 1080);
 
 			const float3 c1 = float3(0.5, 0.0, 0.1);
@@ -169,19 +171,19 @@ PixelShader =
 			const float3 c5 = float3(0.1, 0.1, 0.1);
 			const float3 c6 = float3(0.9, 0.9, 0.9);
 
-			float2 speed = float2(0.2, 0.1);
-			float shift = 1.327 + sin(Time * 2.0) / 2.4;
+			float2 speed = float2(0.0, 0.2);
+			float shift = 1.327;// + sin(Time * 2.0) / 2.4;
 			float alpha = 1.0;
 
 			float dist = 3.5 - sin(Time * 0.4) / 1.89;
 
 			float2 p = fragCoord.xy * dist / iResolution.xx;
-			p.x -= Time / 1.1;
+			p.y -= Time / 8;
 			float q = fbm(p - Time * 0.01 + 1.0 * sin(Time) / 10.0);
-			float qb = fbm(p - Time * 0.002 + 0.1 * cos(Time) / 5.0);
-			float q2 = fbm(p - Time * 0.44 - 5.0 * cos(Time) / 7.0) - 6.0;
+			float qb = q;//fbm(p - Time * 0.002 + 0.1 * cos(Time) / 5.0);
+			float q2 = q;//fbm(p - Time * 0.44 - 5.0 * cos(Time) / 7.0) - 6.0;
 			float q3 = fbm(p - Time * 0.9 - 10.0 * cos(Time) / 30.0) - 4.0;
-			float q4 = fbm(p - Time * 2.0 - 20.0 * sin(Time) / 20.0) + 2.0;
+			float q4 = q;//fbm(p - Time * 2.0 - 20.0 * sin(Time) / 20.0) + 2.0;
 			q = (q + qb - 0.4 * q2 - 2.0 * q3 + 0.6 * q4) / 3.8;
 
 			float2 r = float2(fbm(p + q / 2.0 + Time * speed.x - p.x - p.y), fbm(p + q - Time * speed.y));
@@ -213,9 +215,32 @@ PixelShader =
 		#endif
 
 			
-			OutColor *= Color;
+
+			float4 og_color = OutColor * Color;
+			float4 flame_color = flame(v.vTexCoord.xy*1920);
+
+			float alpha = og_color.a;
+
+			alpha = 0.1 * length(flame_color.rg) * length(flame_color.rg);//len(flame_color) * 0.5;
+			alpha = max(alpha, og_color.a);
+			//alpha = 1;
+
+			float4 ret = lerp(flame_color, og_color, og_color.a*(1-og_color.r));
+
+			ret.a = alpha;
+			//ret.g = 1;
+			return ret;
+
+			//return flame_color;
+
+			
+			
 			//OutColor.b = 1;//1.0f;//sin(Time);
-			OutColor *= flame(v.vTexCoord.xy*1920);
+			//OutColor *= flame(v.vTexCoord.xy*1920);
+			float old_a = OutColor.a;
+			OutColor = lerp(OutColor, flame_color, OutColor.r*OutColor.a);
+			OutColor.a = min(old_a, flame_color.r);
+			//OutColor.g = 1;
 			return OutColor;
 		}
 		
