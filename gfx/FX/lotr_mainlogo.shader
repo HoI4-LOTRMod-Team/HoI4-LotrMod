@@ -171,7 +171,6 @@ PixelShader =
 
 			float2 speed = float2(0.0, 0.2);
 			float shift = 1.327;
-			float alpha = 1.0;
 
 			float dist = 3.5 - sin(Time * 0.4) / 1.89;
 
@@ -180,7 +179,7 @@ PixelShader =
 			float q = fbm(p - Time * 0.01 + 1.0 * sin(Time) / 10.0);
 			float q3 = fbm(p - Time * 0.9 - 10.0 * cos(Time) / 30.0) - 4.0;
 			
-			q = (q + q - 0.4 * q - 2.0 * q3 + 0.6 * q) / 3.8;
+			q = (2.2*q - 2.0 * q3) / 3.8;
 
 			float2 r = float2(fbm(p + q / 2.0 + Time * speed.x - p.x - p.y), fbm(p + q - Time * speed.y));
 			float3 c = lerp(c1, c2, fbm(p + r)) + lerp(c3, c4, r.x) - lerp(c5, c6, r.y);
@@ -196,7 +195,7 @@ PixelShader =
 			hsv.y = (2.2 - hsv.z * 0.9) * 1.20;
 			color = hsv2rgb(hsv);
 
-			return float4(color.x, color.y, color.z, alpha);
+			return float4(color.x, color.y, color.z, 1);
 		}
 
 		float4 main( VS_OUTPUT v ) : PDX_COLOR
