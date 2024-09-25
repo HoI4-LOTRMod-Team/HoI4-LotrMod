@@ -44,7 +44,7 @@ class PObj:
     
     def Has(self, key):
         for obj in self.value:
-            if obj.id == key:
+            if isinstance(obj, PObj) and obj.id == key:
                 return True
         return False
     
@@ -100,6 +100,7 @@ class PObj:
     
     def InsertAfter(self, line):
         self.parent.InsertAt(line, self.parent.value.index(self)+1)
+        return self
     
     def InsertAt(self, line, index):
         if(len(self.value) < 1):
@@ -115,6 +116,7 @@ class PObj:
             else:
                 pobj.post = "\n" + tabspace*nobj.level
             self.value.insert(index, nobj)
+        return self
 
     
     def Insert(self, line):
@@ -127,6 +129,14 @@ class PObj:
             else:
                 nobj.post = "\n" + tabspace*nobj.level
             self.value.append(nobj)
+        return self
+
+    def Remove(self, key):
+        if not self.Has(key):
+            return self
+        rm = self.Get(key)
+        self.value.remove(rm)
+        return self
         
 
 
@@ -263,6 +273,14 @@ def ParseListFromFile(input_file):
         content = file.read()
 
         return Parse_List(content, 0)
+    
+def SaveObjToFile(obj, output_file):
+    with open(output_file, 'w') as file:
+        file.write(str(obj))
+
+def SaveListToFile(lst, output_file):
+    with open(output_file, 'w') as file:
+        file.write("\n".join([str(x) for x in lst]))
     
 
 
