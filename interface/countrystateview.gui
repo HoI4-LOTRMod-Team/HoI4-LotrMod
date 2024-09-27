@@ -82,6 +82,31 @@ guiTypes = {
 				scale = 0.8
 				hide = yes
 			}
+
+			# Helliaca NOTE: Okay, this is the biggest mystery of our time. Pull up a chair and I'll tell you a story.
+			# In vanilla, province_info_window comes *after* state_info_window. For our mod, I've changed their order since we draw a lot of stuff on top of province_info_window.
+			# This worked fine, until Paradox changed the stateview UI in the GTD patch. For some, entirely unknown reason, the flag of the state owner *only* shows up if the three elements below exist in the *first*
+			# containerwindow of countrystateview (which used to be state_info_window).
+			# But it gets worse. Because once you add the three elements below, the flag will show up, but it will use the values of the elements set in state_info_window (below). 
+			# ????????????????????????????????????????????????????????????????????????? ( <- that's an extra 72 bytes wasted for every subscriber who downloads the mod lol)
+			# Anyway, I'm just going to leave this here. It's only purpose is to magically make things work.
+			OverlappingElementsBoxType = {
+				name = "state_owners"
+				position = { x= 18 y = 32 }
+				size = { x = 60 y = 40 }
+				format = left
+				spacing = 1.0
+			}
+
+			positionType = {
+				name = "state_owners_size_when_owner_is_controller"
+				position = { x = 110 y = 40 }
+			}
+
+			positionType = {
+				name = "state_owners_size_when_owner_is_not_controller"
+				position = { x = 60 y = 40 }
+			}
 			
 			### Positioning of these are controlled by the positionType "countrystateview_weathericons_position" and "countrystateview_weathericons_offset" above
 			iconType = {
@@ -128,8 +153,8 @@ guiTypes = {
 				size = { width = 0 height = 0 }
 				format = "UPPER_LEFT"
 				slotsize = { width = 40 height = 47 }
-				max_slots_vertical = 1
-				max_slots_horizontal = 5
+				max_slots_vertical = 5
+				max_slots_horizontal = 1
 			}
 			
 			containerWindowType = {
@@ -180,7 +205,7 @@ guiTypes = {
 				max_slots_horizontal = 7
 			}
 		}
-		
+
 		containerWindowType = {
 			name = "state_info_window"
 			position = { x = 0 y = 0 }
@@ -268,23 +293,10 @@ guiTypes = {
 				fixedsize = yes
 				format = center
 			}
-
-			#buttonType = {
-			#	name = "owner_flag"
-			#	quadTextureSprite ="GFX_flag_small2"
-			#	position = { x= 18 y = 32 }
-			#}
-			
-			#iconType ={
-			#	name ="owner_flag_border"
-			#	quadTextureSprite = "GFX_diplo_countrylist_flag_frame"
-			#	position = { x= 14 y = 28 }
-			#	alwaystransparent = yes
-			#}
 			
 			OverlappingElementsBoxType = {
 				name = "state_owners"
-				position = { x = 35 y = 63 }
+				position = { x= 18 y = 32 }
 				size = { x = 60 y = 40 }
 				format = left
 				spacing = 1.0
@@ -474,7 +486,7 @@ guiTypes = {
 					}
 				}
 			}
-		}	
+		}
 		
 		buttonType = {
 			name = "close_button"
