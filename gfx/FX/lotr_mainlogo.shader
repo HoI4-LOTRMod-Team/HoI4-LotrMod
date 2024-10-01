@@ -232,9 +232,9 @@ PixelShader =
 			//alpha = 1;
 
 			float4 og_color2 = float4(
-				og_color.r + 0.092,
-				0.058,
-				0.021,
+				og_color.r + 0.042,
+				0.028,
+				0.011,
 				og_color.a
 			);
 
