@@ -172,16 +172,18 @@ PixelShader =
 			float2 speed = float2(0.0, 0.2);
 			float shift = 1.327;
 
-			float dist = 3.5 - sin(Time * 0.4) / 1.89;
+			float vTime = 0.5*Time;
+
+			float dist = 3.5 - sin(vTime * 0.4) / 1.89;
 
 			float2 p = fragCoord.xy * dist;
-			p.y -= Time / 8;
-			float q = fbm(p - Time * 0.01 + 1.0 * sin(Time) / 10.0);
-			float q3 = fbm(p - Time * 0.9 - 10.0 * cos(Time) / 30.0) - 4.0;
+			p.y -= vTime / 8;
+			float q = fbm(p - vTime * 0.01 + 1.0 * sin(vTime) / 10.0);
+			float q3 = fbm(p - vTime * 0.9 - 10.0 * cos(vTime) / 30.0) - 4.0;
 			
 			q = (2.2*q - 2.0 * q3) / 3.8;
 
-			float2 r = float2(fbm(p + q / 2.0 + Time * speed.x - p.x - p.y), fbm(p + q - Time * speed.y));
+			float2 r = float2(fbm(p + q / 2.0 + vTime * speed.x - p.x - p.y), fbm(p + q - vTime * speed.y));
 			float3 c = lerp(c1, c2, fbm(p + r)) + lerp(c3, c4, r.x) - lerp(c5, c6, r.y);
 			float3 color = float3(1,1,1) * c * cos(shift * fragCoord.y / aspect_ratio);
 
@@ -213,7 +215,7 @@ PixelShader =
 
 			
 
-			float4 og_color = OutColor * Color;
+			float4 og_color = OutColor;// * Color;
 			float4 flame_color = flame(v.vTexCoord.xy);
 
 			flame_color = lerp(
@@ -224,11 +226,20 @@ PixelShader =
 
 			float alpha = og_color.a;
 
-			alpha = flame_color.a * 0.1 * length(flame_color.rg) * length(flame_color.rg);//len(flame_color) * 0.9;
-			alpha = max(alpha, og_color.a);
+			alpha = flame_color.a * 0.15 * length(flame_color.rg) * length(flame_color.rg);
+			alpha = max(alpha, og_color.a-og_color.r*0.2);
+			alpha = min(alpha, og_color.b);
 			//alpha = 1;
 
-			float4 ret = lerp(flame_color, og_color, og_color.a*(1-og_color.r));
+			float4 og_color2 = float4(
+				og_color.r + 0.092,
+				0.058,
+				0.021,
+				og_color.a
+			);
+
+			float par = og_color.a;
+			float4 ret = lerp(flame_color, og_color2, og_color.a*(par-par*og_color.r));
 
 			ret.a = alpha;
 			//ret.g = 1;
@@ -238,7 +249,7 @@ PixelShader =
 
 			
 			
-			//OutColor.b = 1;//1.0f;//sin(Time);
+			//OutColor.b = 1;//1.0f;//sin(vTime);
 			//OutColor *= flame(v.vTexCoord.xy*1920);
 			float old_a = OutColor.a;
 			OutColor = lerp(OutColor, flame_color, OutColor.r*OutColor.a);
