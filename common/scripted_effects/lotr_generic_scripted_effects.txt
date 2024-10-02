@@ -393,3 +393,65 @@ remove_all_collaboration = {
         }
     }
 }
+
+# @docs(Generic): The current scrope receives a number of fake intel divisions, which are dissolved automatically after ~120 days
+create_fake_divisions = {
+    ROOT = {
+        hidden_effect = {
+            if = {
+                # create template if not exist
+                limit = {
+                    not = {
+                        has_country_flag = fake_intel_template_created
+                    }
+                }
+                division_template = {
+                    name = "Fake Intel Division"
+
+                    is_fake_intel_division = yes
+                    is_locked = yes
+                    regiments = {
+                        fake_intel_unit = { x = 0 y = 0 }
+                    }
+                }
+                set_country_flag = fake_intel_template_created
+            }
+
+            # give it an id and store id & current date so it can be deleted later
+            if = {
+                limit = { NOT = { has_variable = fake_intel_id } }
+                set_variable = { fake_intel_id = 1000 }
+            }
+            set_temp_variable = { id_to_set = fake_intel_id }
+            add_to_variable = { fake_intel_id = 1 }
+            add_to_array = {
+                fake_intel_ids_to_delete = id_to_set
+            }
+            set_variable = { num_days_for_fake_intel_id@var:id_to_set = global.num_days }
+
+            # minimum of 0.25 of current armies or 8
+            set_temp_variable = { num_to_create = num_armies }
+            multiply_temp_variable = { num_to_create = 0.25 }
+            round_temp_variable = num_to_create
+            add_to_temp_variable = { num_to_create = 1 }
+            clamp_temp_variable = {
+                var = num_to_create
+                min = 8
+            }
+
+            # create actual units
+            capital_scope = {
+                create_unit = {
+                    division = "division_template = \"Fake Intel Division\" start_experience_factor = 0.5"
+                    owner = PREV
+                    count = num_to_create
+                    id = id_to_set
+                }
+            }
+
+            # will delete them after 90 days
+            country_event = { id = lar_fake_intel_units.1 days = 120 random_days = 30 }
+        }
+    }
+    custom_effect_tooltip = CUSTOM_EFFECT_CREATE_FAKE_ARMIES_RESULT
+}
