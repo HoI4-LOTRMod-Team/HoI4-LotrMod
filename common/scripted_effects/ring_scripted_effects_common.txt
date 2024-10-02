@@ -953,15 +953,16 @@ ring_combat_kill_character = {
 
 		# Check if gandalf dead
 		if = {
-			limit = { ring_gandalf_is_dead = yes }
+			limit = { var:temp_defender = { has_character_flag = is_gandalf } }
 			set_global_flag = fs_gandalf_left_fellowship
 		}
 
 		log = "[?var:SHI.temp_attacker.GetName] killed [?var:temp_defender.GetName]"
 		if = {
 			limit = {
-				check_variable = {var:SHI.temp_defender = FS_boromir}
-				check_variable = {var:SHI.temp_attacker = ISE_lurtz}
+				# Using is_character or comparing directly doesn't work because of some enigmatic tokenization. Solution: We use character flags. The flags are set where the characters are recruited.
+				var:temp_defender = { has_character_flag = is_boromir }
+				var:temp_attacker = { has_character_flag = is_lurtz }
 			}
 			log = "Got lurtz_killed_boromir_while_attacking_the_fellowship_the_achievement_flag achievement"
 			set_global_flag = lurtz_killed_boromir_while_attacking_the_fellowship_the_achievement_flag
