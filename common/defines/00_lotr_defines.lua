@@ -104,3 +104,6 @@ NDefines.NMilitary.MAX_DIVISION_SUPPORT_HEIGHT = 1		-- Max height of support in 
 -- Training divisions
 NDefines.NProduction.MIN_POSSIBLE_TRAINING_MANPOWER = 3000	-- How many deployment lines minimum can be training
 NDefines.NProduction.MIN_FIELD_TO_TRAINING_MANPOWER_RATIO = 0.5
+
+-- Used for debugging special projects
+NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 800
