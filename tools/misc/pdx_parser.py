@@ -7,6 +7,22 @@ sys.setrecursionlimit(5000) # increase if needed
 tabspace = "\t"
 
 
+class PLooseToken:
+    raw = ""
+
+    pre = ""
+    id = ""
+    value = ""
+    post = ""
+
+    parent = None
+
+    level = 0
+
+    def __str__(self) -> str:
+        return f"{self.pre}{self.value}{self.post}"
+
+
 class PObj:
     raw = ""
 
@@ -26,6 +42,16 @@ class PObj:
             if(len(val_str) < 1): val_str = " "
             return f"{self.pre}{self.id} {self.operator} "+"{"+f"{val_str}"+"}"+f"{self.post}"
         return f"{self.pre}{self.id} {self.operator} {self.value}{self.post}"
+    
+    def GetValueString(self, withBrackets=True):
+        if(isinstance(self.value, list)):
+            val_str = ''.join([str(x) for x in self.value])
+            if(len(val_str) < 1): val_str = " "
+            if withBrackets:
+                return "{"+f"{val_str}"+"}"
+            else:
+                return f"{val_str}"
+        return f"{self.value}"
     
     def Get(self, key):
         for obj in self.value:
@@ -204,6 +230,42 @@ def skip_until_literal_closed(s, i):
 operators = ["=", "<", ">"]
 
 
+def Parse_Token(text, i=0, parent=None):
+    ret = PLooseToken()
+
+    j = i
+
+    if parent:
+        ret.parent = parent
+        ret.level = parent.level + 1
+
+    (ret.pre, i) = skip_whitespace(text, i)
+
+    (ret.value, i) = skip_until_ws(text, i)
+    ret.id = ret.value
+        
+    (ret.post, i) = skip_whitespace(text, i)
+
+    ret.raw = text[j:i]
+
+    return ret, i
+
+
+def ParseTokenList(text, i=0, parent=None):
+    ret = []
+
+    while(i < len(text)):
+        try:
+            (obj, i) = Parse_Token(text, i, parent)
+            ret.append(obj)
+        except:
+            break
+
+    return ret
+
+
+
+
 def Parse_PObj(text, i=0, parent=None):
     ret = PObj()
 
@@ -230,7 +292,7 @@ def Parse_PObj(text, i=0, parent=None):
         if "=" in block or block[1:len(block)-1].isspace():
             ret.value = Parse_List(block[1:len(block)-1], 0, ret)
         else:
-            ret.value = block # NOTE: We do not handle list of traits/states etc. THey just get jammed in here as a string
+            ret.value = ParseTokenList(block[1:len(block)-1], 0, ret)
 
     elif (text[i] == "\""):
         (block, i) = skip_until_literal_closed(text, i)
@@ -259,6 +321,13 @@ def Parse_List(text, i=0, parent=None):
 
     return ret
 
+def Parse_List_asPObj(text, i=0, parent=None):
+    lst = Parse_List(text, i, parent)
+
+    ret = PObj()
+    ret.value = lst
+    return ret
+
 
 def ParseObjFromFile(input_file):
     with open(input_file, 'r') as file:
@@ -273,6 +342,12 @@ def ParseListFromFile(input_file):
         content = file.read()
 
         return Parse_List(content, 0)
+    
+def ParseListFromFile_asPObj(input_file):
+    with open(input_file, 'r') as file:
+        content = file.read()
+
+        return Parse_List_asPObj(content, 0)
     
 def SaveObjToFile(obj, output_file):
     with open(output_file, 'w') as file:
