@@ -50,24 +50,43 @@ ring_heal_fellowship = {
 	}
 }
 
-# @docs(Ring): Gives ringbearer 1 extra HP
+# @docs(Ring): Gives ringbearer member 1 extra HP
 ring_bless_ringbearer = {
+	var:global.fs_members^0 = {
+		ring_bless_member = yes
+	}
+}
+
+# @docs(Ring): Gives fellowship member 1 extra HP
+ring_bless_member = {
 	custom_effect_tooltip = ring_bless_ringbearer_tt
 
 	hidden_effect = {
-		SHI = {
-			add_to_variable = { global.fs_members^0.health = 1 }
+		add_to_variable = { health = 1 }
 
-			add_to_array = { global.fs_eventlog_prefix_targets = THIS }
-			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
-			add_to_array = { global.fs_eventlog = token:fs_event_country_ringbearer_blessed_member }
-			ring_trim_eventlog = yes
+		add_to_array = { global.fs_eventlog_prefix_targets = THIS }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_country_ringbearer_blessed_member }
+		ring_trim_eventlog = yes
+	}
+}
+
+# @docs(Ring): Gives random fellowship member 1 extra HP
+ring_bless_random_member = {
+	custom_effect_tooltip = ring_bless_random_member_tt
+
+	hidden_effect = {
+		SHI = {
+			random_scope_in_array = {
+				array = global.fs_members
+
+				THIS = { ring_bless_member = yes }
+			}
 		}
 	}
 }
 
 # @docs(Ring): Reduces the health and dexterity of a random fellowship member
-
 ring_curse_random_fellowship_member = {
 	custom_effect_tooltip = ring_curse_random_fellowship_member_tt
 
