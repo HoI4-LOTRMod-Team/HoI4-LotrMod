@@ -1,0 +1,414 @@
+sp_basic_mithril_armor = {
+
+	specialization = specialization_laboratory
+
+	allowed = {
+		is_dwarves_init = no
+	}
+
+	visible = {
+		is_dwarves = no
+	}
+	
+	available = {
+		has_resources_in_country = {
+			resource = aluminium
+			amount > 14
+			extracted = yes
+		}
+		has_tech = foundry_tech
+	}
+	
+	prototype_time = sp_time.prototype.long
+	complexity = sp_complexity.insane
+
+	breakthrough_cost = {
+		specialization_laboratory = 4
+	}
+
+	resource_cost = {
+		resources = { aluminium = 15 }
+	}
+	
+	project_output = {
+		country_effects = {
+			set_technology = {
+				mithril_armour = 1
+			}
+		}
+	}
+
+	generic_prototype_rewards = {
+		sp_generic_reward_scientist_xp_1
+		sp_generic_reward_scientist_xp_2
+		sp_generic_reward_scientist_xp_3
+		sp_generic_reward_army_xp_1
+		sp_generic_reward_army_xp_2
+		sp_generic_reward_army_xp_3
+		sp_generic_reward_major_progress_1
+		sp_generic_reward_major_progress_2
+		sp_generic_reward_major_progress_3
+		sp_generic_reward_test_failure_1
+		sp_generic_reward_test_failure_2
+		sp_generic_reward_test_failure_3
+		sp_generic_reward_resource_scarcity
+		sp_generic_reward_critical_failure
+		sp_generic_reward_political_interference
+		sp_generic_reward_major_failure
+		sp_generic_reward_infantry_weapons_tech
+		sp_generic_reward_support_tech_tech
+		sp_generic_reward_knowledge_alchemy_tech
+		sp_generic_reward_knowledge_magic_tech
+		sp_generic_reward_labour_metalworking_tech
+	}
+
+	unique_prototype_rewards = {
+
+		sp_basic_mithril_armor_upgrade_facilities = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 0
+				max = 50
+			}
+
+			weight = {
+				base = 35
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_upgrade_facilities_pay_upfront
+				
+				iteration_output = {
+					country_effects = {
+						FROM = {
+							add_project_progress_ratio = constant:sp_progress.gain.high
+							add_timed_idea = { idea = six_civs_cost days = 120 }
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_upgrade_facilities_pay_over_long_term
+				
+				iteration_output = {
+					country_effects = {
+						FROM = {
+							add_project_progress_ratio = constant:sp_progress.gain.medium
+							add_timed_idea = { idea = three_civs_cost days = 180 }
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_upgrade_facilities_pay_bare_minimum
+				
+				iteration_output = {
+					country_effects = {
+						FROM = {
+							add_project_progress_ratio = constant:sp_progress.gain.low
+							add_timed_idea = { idea = three_civs_cost days = 90 }
+						}
+					}
+				}
+			}
+		}
+
+		sp_basic_mithril_armor_metal_resists = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 35
+				max = 85
+			}
+
+			weight = {
+				base = 35
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_metal_resists_mitigate_damage
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = { add_project_progress_ratio = constant:sp_progress.loss.low }
+						add_timed_idea = { idea = six_civs_cost days = 120 }
+					}
+				}
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_metal_resists_try_again
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = { add_project_progress_ratio = constant:sp_progress.loss.medium }
+						add_timed_idea = { idea = three_civs_cost days = 120 }
+					}
+				}
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_metal_resists_back_to_drawing_board
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = { add_project_progress_ratio = constant:sp_progress.loss.high }
+						add_political_power = 50
+					}
+				}
+			}
+		}
+
+		sp_basic_mithril_armor_new_crucible_required = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 50
+				max = 100
+			}
+
+			weight = {
+				base = 35
+				modifier = {
+					factor = 0
+					has_resources_in_country = {
+						resource = chromium
+						amount < 15
+						extracted = yes
+					}
+				}
+				modifier = {
+					factor = 0
+					has_resources_in_country = {
+						resource = steel
+						amount < 10
+						extracted = yes
+					}
+				}
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_new_crucible_required_extra_firewood
+				
+				iteration_output = {
+					country_effects = { 
+						random_state = {
+							limit = { chromium > 14 }
+							add_resource = {
+								type = chromium
+								amount = -15
+							}
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_new_crucible_required_build_new_crucible
+				
+				iteration_output = {
+					country_effects = { 
+						random_state = {
+							limit = { steel > 9 }
+							add_resource = {
+								type = steel
+								amount = -10
+							}
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_new_crucible_required_improvise
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = { add_project_progress_ratio = constant:sp_progress.loss.high }
+						add_political_power = -50
+					}
+				}
+			}
+		}
+	}
+}
+
+sp_basic_mithril_armor_2 = {
+
+	specialization = specialization_laboratory
+
+	special_project_parent = {
+		sp_basic_mithril_armor
+	}
+
+	allowed = {
+		is_dwarves_init = no
+	}
+
+	visible = {
+		is_dwarves = no
+	}
+	
+	available = {
+		has_resources_in_country = {
+			resource = aluminium
+			amount > 34
+			extracted = yes
+		}
+		has_tech = advanced_machine_tools
+	}
+	
+	prototype_time = sp_time.prototype.long
+	complexity = sp_complexity.insane
+
+	breakthrough_cost = {
+		specialization_laboratory = 4
+	}
+
+	resource_cost = {
+		resources = { aluminium = 35 }
+	}
+	
+	project_output = {
+		country_effects = {
+			set_technology = {
+				mithril_armour2 = 1
+			}
+		}
+	}
+
+	generic_prototype_rewards = {
+		sp_generic_reward_scientist_xp_1
+		sp_generic_reward_scientist_xp_2
+		sp_generic_reward_scientist_xp_3
+		sp_generic_reward_army_xp_1
+		sp_generic_reward_army_xp_2
+		sp_generic_reward_army_xp_3
+		sp_generic_reward_major_progress_1
+		sp_generic_reward_major_progress_2
+		sp_generic_reward_major_progress_3
+		sp_generic_reward_test_failure_1
+		sp_generic_reward_test_failure_2
+		sp_generic_reward_test_failure_3
+		sp_generic_reward_resource_scarcity
+		sp_generic_reward_critical_failure
+		sp_generic_reward_political_interference
+		sp_generic_reward_major_failure
+		sp_generic_reward_infantry_weapons_tech
+		sp_generic_reward_support_tech_tech
+		sp_generic_reward_knowledge_alchemy_tech
+		sp_generic_reward_knowledge_magic_tech
+		sp_generic_reward_labour_metalworking_tech
+	}
+
+	unique_prototype_rewards = {
+
+		sp_basic_mithril_armor_2_catastrophic_failure = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 0
+				max = 50
+			}
+
+			weight = {
+				base = 40
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_2_it_is_what_it_is
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = { add_project_progress_ratio = constant:sp_progress.loss.high }
+					}
+
+					scientist_effects = {
+						add_scientist_xp = {
+							experience = constant:sp_scientist_xp_gain.low
+							specialization = specialization_laboratory
+						}
+						injure_scientist_for_days = 60
+					}
+
+					facility_state_effects = {
+						damage_building = {
+							tags = facility
+							damage = 0.8
+							province = var:facility_province_id
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_2_mitigate_damage
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = { add_project_progress_ratio = constant:sp_progress.loss.medium }
+						add_timed_idea = { idea = six_civs_cost days = 60 }
+					}
+
+					scientist_effects = {
+						add_scientist_xp = {
+							experience = constant:sp_scientist_xp_gain.low
+							specialization = specialization_laboratory
+						}
+						injure_scientist_for_days = 60
+					}
+
+					facility_state_effects = {
+						damage_building = {
+							tags = facility
+							damage = 0.4
+							province = var:facility_province_id
+						}
+					}
+				}
+			}
+		}
+
+		sp_basic_mithril_armor_2_dwarves_angered = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 50
+				max = 100
+			}
+
+			weight = {
+				base = 50
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_2_dwarves_angered_appease
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = { add_project_progress_ratio = constant:sp_progress.loss.medium }
+					}
+				}
+			}
+
+			option = {
+				token = sp_basic_mithril_armor_2_dwarves_angered_too_bad
+				
+				iteration_output = {
+					country_effects = { 
+						every_country = {
+							limit = { is_dwarves = yes }
+							add_opinion_modifier = {
+								target = FROM
+								modifier = medium_decrease
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
