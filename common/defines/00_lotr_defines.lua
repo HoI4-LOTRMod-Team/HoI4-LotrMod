@@ -92,7 +92,7 @@ NDefines.DESIRE_USE_XP_TO_UPGRADE_AIR_EQUIPMENT = 0.2
 NDefines.NAI.DESIRE_USE_XP_TO_UPDATE_LAND_TEMPLATE = 8.0    -- How quickly is desire to update/create templates accumulated?
 
 -- Avoice Equipment over-abundance
-NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.2 -- How much equipment from deployed divisions will be transferred on capitulation
+NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.1 -- How much equipment from deployed divisions will be transferred on capitulation
 
 -- Division Designer
 NDefines.NMilitary.MAX_DIVISION_BRIGADE_WIDTH = 6			-- Max width of regiments in division designer.
@@ -106,4 +106,4 @@ NDefines.NProduction.MIN_POSSIBLE_TRAINING_MANPOWER = 3000	-- How many deploymen
 NDefines.NProduction.MIN_FIELD_TO_TRAINING_MANPOWER_RATIO = 0.5
 
 -- Used for debugging special projects
-NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 800
+NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 1000
