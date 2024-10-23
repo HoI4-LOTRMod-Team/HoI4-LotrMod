@@ -1,39 +1,26 @@
 import pyperclip
 
 
-project_title = "Sacrifice"
-project_title_token = "sp_sacrifice_spell"
+project_title = "Resist Heat"
+project_title_token = "sp_resist_heat_spell"
 
 rewards = [
     {
-        "reward_title": "[Character.GetName] proposes using blood-magic.",
-        "reward_title_token": "sp_sacrifice_spell_blood_magic",
-        "reward_desc": "Blood-magic can amplify the effects of the sacrifice, but it comes with a cost. [Character.GetName] advises proceeding cautiously, as the magic is powerful but volatile.",
-        "reward_min_threshold": "40",
-        "reward_max_threshold": "90",
-        "reward_weight": "30",
-
-        "options": [
-            ("sp_sacrifice_spell_blood_magic_yes", "Use blood-magic to maximize the power boost."),
-            ("sp_sacrifice_spell_blood_magic_no", "Stick to the safer sacrificial methods."),
-            ("sp_sacrifice_spell_blood_magic_partial", "Utilize a controlled amount of blood-magic for a moderate gain.")
-        ]
-    },
-    {
-        "reward_title": "A sinister entity offers an unexpected boon.",
-        "reward_title_token": "sp_sacrifice_spell_entity",
-        "reward_desc": "During the ritual, an otherworldly presence intervenes. It offers to greatly amplify the effects of the sacrifice, but the price may be higher than anticipated. [Character.GetName] is uncertain about the consequences.",
-        "reward_min_threshold": "70",
+        "reward_title": "[Character.GetName] proposes modifying the heat resistance spell.",
+        "reward_title_token": "sp_resist_heat_modification",
+        "reward_desc": "As the spell nears completion, [Character.GetName] suggests altering the enchantment to enhance our troops' ability to withstand extreme heat. However, this change might reduce their tolerance to colder climates, which could be a disadvantage in certain regions.",
+        "reward_min_threshold": "0",
         "reward_max_threshold": "100",
-        "reward_weight": "10",
+        "reward_weight": "100",
 
         "options": [
-            ("sp_sacrifice_spell_entity_yes", "Accept the entity’s offer for greater power."),
-            ("sp_sacrifice_spell_entity_no", "Reject the entity’s aid and continue the spell normally."),
-            ("sp_sacrifice_spell_entity_negotiate", "Attempt to negotiate a lesser price for the boon.")
+            ("sp_resist_heat_modification_yes", "Increase acclimatization to heat at the cost of cold resistance."),
+            ("sp_resist_heat_modification_no", "Maintain balanced resistance to all climates."),
         ]
     }
 ]
+
+
 
 
 
