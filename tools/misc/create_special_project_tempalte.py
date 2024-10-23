@@ -1,63 +1,40 @@
 import pyperclip
 
 
-project_title = "Mirror Image"
-project_title_token = "sp_mirror_image_spell"
+project_title = "Sacrifice"
+project_title_token = "sp_sacrifice_spell"
 
 rewards = [
     {
-        "reward_title": "[Character.GetName] suggests using light-magic.",
-        "reward_title_token": "sp_mirror_image_spell_use_light",
-        "reward_desc": "The spell to create illusory troops is progressing well. [Character.GetName] suggests enhancing the illusion by manipulating light and shadows to make it even more convincing.",
-        "reward_min_threshold": "0",
-        "reward_max_threshold": "50",
-        "reward_weight": "40",
+        "reward_title": "[Character.GetName] proposes using blood-magic.",
+        "reward_title_token": "sp_sacrifice_spell_blood_magic",
+        "reward_desc": "Blood-magic can amplify the effects of the sacrifice, but it comes with a cost. [Character.GetName] advises proceeding cautiously, as the magic is powerful but volatile.",
+        "reward_min_threshold": "40",
+        "reward_max_threshold": "90",
+        "reward_weight": "30",
 
         "options": [
-            ("sp_mirror_image_spell_use_light_yes", "Use light-magic to enhance the deception."),
-            ("sp_mirror_image_spell_use_light_no", "Stick with basic illusions for now.")
+            ("sp_sacrifice_spell_blood_magic_yes", "Use blood-magic to maximize the power boost."),
+            ("sp_sacrifice_spell_blood_magic_no", "Stick to the safer sacrificial methods."),
+            ("sp_sacrifice_spell_blood_magic_partial", "Utilize a controlled amount of blood-magic for a moderate gain.")
         ]
     },
     {
-        "reward_title": "[Character.GetName] proposes using elemental magic.",
-        "reward_title_token": "sp_mirror_image_spell_use_elemental",
-        "reward_desc": "[Character.GetName] suggests using elemental forces to give the illusory troops some physical presence, perhaps stirring dust or wind around them.",
-        "reward_min_threshold": "30",
-        "reward_max_threshold": "70",
-        "reward_weight": "25",
-
-        "options": [
-            ("sp_mirror_image_spell_use_elemental_yes", "Add elemental effects to the illusions."),
-            ("sp_mirror_image_spell_use_elemental_no", "Focus purely on the visual deception.")
-        ]
-    },
-    {
-        "reward_title": "Unexpected success!",
-        "reward_title_token": "sp_mirror_image_spell_unexpected_success",
-        "reward_desc": "An unforeseen breakthrough in the spell’s development has made the illusory troops even more lifelike than expected. The enemy may mistake them for real units even from up close.",
+        "reward_title": "A sinister entity offers an unexpected boon.",
+        "reward_title_token": "sp_sacrifice_spell_entity",
+        "reward_desc": "During the ritual, an otherworldly presence intervenes. It offers to greatly amplify the effects of the sacrifice, but the price may be higher than anticipated. [Character.GetName] is uncertain about the consequences.",
         "reward_min_threshold": "70",
         "reward_max_threshold": "100",
-        "reward_weight": "15",
+        "reward_weight": "10",
 
         "options": [
-            ("sp_mirror_image_spell_unexpected_success_yes", "Leverage this success to further improve the spell."),
-            ("sp_mirror_image_spell_unexpected_success_no", "Hold off on refining the spell for now.")
-        ]
-    },
-    {
-        "reward_title": "Catastrophic failure!",
-        "reward_title_token": "sp_mirror_image_spell_failure",
-        "reward_desc": "A disastrous mishap during the spell's casting has caused the illusions to vanish entirely, and the magical backlash has temporarily weakened our mages.",
-        "reward_min_threshold": "80",
-        "reward_max_threshold": "100",
-        "reward_weight": "5",
-
-        "options": [
-            ("sp_mirror_image_spell_failure_yes", "Deal with the consequences and regroup."),
-            ("sp_mirror_image_spell_failure_no", "Try to salvage something from the failed spell.")
+            ("sp_sacrifice_spell_entity_yes", "Accept the entity’s offer for greater power."),
+            ("sp_sacrifice_spell_entity_no", "Reject the entity’s aid and continue the spell normally."),
+            ("sp_sacrifice_spell_entity_negotiate", "Attempt to negotiate a lesser price for the boon.")
         ]
     }
 ]
+
 
 
 
