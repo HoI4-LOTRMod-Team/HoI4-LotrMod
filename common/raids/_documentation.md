@@ -54,7 +54,7 @@ raid_type_id = {
 	                    # There is RAID_DEFAULT_TARGET_COOLDOWN_DAYS define which is used if no value is specified in script.
 	                    # Set to 0 if you don't want any cooldown.
 
-	days_to_prepare = 30
+	days_to_prepare = 50
 	speed_multiplier = 1.0 # optional unit speed multiplier, default = 1 (see also: RAID_UNIT_SPEED_MULTIPLIER in defines.lua)
 
 	allowed = {
