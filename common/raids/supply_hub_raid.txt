@@ -1,0 +1,258 @@
+types = {
+
+	supply_hub_raid = {
+		category = land_infiltration_raids
+
+		days_to_prepare = 14
+
+		custom_map_icon = GFX_raid_type_icon_other_raid
+		target_icon = GFX_other_target_icon
+
+		ai_will_do = {
+			base = 0.1
+		}
+
+		allowed = {
+			#has_dlc = "Gotterdammerung"
+			always = yes
+		}
+		visible = {
+			#always = yes
+			has_tech = infiltrators_tech
+		}
+		available = {
+			has_war_with = FROM
+		}
+		launchable = {
+			has_war_with = FROM
+		}
+
+		show_target = {
+			has_war_with = FROM
+
+			# This works theoretically:
+			#capital_scope = {
+			#	var:target_state = {
+			#		distance_to = {
+			#			value < 2000
+			#			target = PREV
+			#		}
+			#	}
+			#}
+		}
+
+		arrow = {
+		    type = line
+		}
+
+		essential_equipment = {
+			support_equipment = 25
+			#infantry_equipment = 50
+		}
+		
+		target_type = {
+			building = {
+				type = supply_node
+			}
+		}
+		
+		unit_requirements = {
+			battalion_types = {
+				infiltrators = { min = 4 }
+			}
+		}
+
+		starting_point = {
+		    types = { air_base naval_base }
+		}
+
+		success_levels = {
+			failure = {
+				victim_effects = {
+					# Effects on target
+					#var:target_state = {
+					#	add_dynamic_modifier = {
+					#		modifier = steel_mines_lightly_damaged_modifier
+					#		days = 30
+					#	}
+					#}
+				}
+				actor_effects = {
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 30
+						str_damage = 10
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.05
+					add_raid_history_entry = yes
+
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+					}
+			}
+			limited_success = {
+				victim_effects = {
+					var:target_state = {
+						damage_building = {
+							type = infrastructure
+							damage = 1.0
+							province = var:ROOT.target_province
+						}
+					}
+				}
+				actor_effects = {
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 20
+						str_damage = 5
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.1
+					add_raid_history_entry = yes
+				}
+				division_effects = {
+					add_divisional_commander_xp = 100
+				}
+				visual_effect = {
+					entity = "air_raids_paradrop_limited_success_entity"
+					animation = "attack"
+				}
+			}
+			success = {
+				victim_effects = {
+					var:target_state = {
+						damage_building = {
+							type = supply_node
+							damage = 1.0
+							province = var:ROOT.target_province
+						}
+					}
+				}
+				actor_effects = {
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 25
+						str_damage = 2
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.2
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 250
+				}
+				visual_effect = {
+					entity = "air_raids_paradrop_success_entity"
+					animation = "attack"
+					}
+			}
+			critical_success = {
+				victim_effects = {
+					var:target_state = {
+						damage_building = {
+							type = supply_node
+							damage = 1.0
+							province = var:ROOT.target_province
+						}
+					}
+				}
+				actor_effects = {
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 20
+						str_damage = 0
+					}
+
+
+					# Unit Experience
+					raid_add_unit_experience = 0.35
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 500
+				}
+				visual_effect = {
+					entity = "air_raids_paradrop_critical_success_entity"
+					animation = "attack"
+					}
+			}
+		}
+
+		success_factors = {
+			success = {
+				base = 0.25
+
+				# Raiding unit modifiers
+				experience = {
+					weight = 0.05
+					start_weight = -0.05
+					reference = 0.5
+				}
+
+				organisation = {
+					weight = 0.05
+					start_weight = -0.05
+					reference = 100
+				}
+				strength = {
+					weight = 0.05
+					start_weight = -0.05
+					reference = 1
+				}
+				recon = {
+					weight = 0.08
+					reference = 10
+				}
+
+				### Target Modifiers
+
+				resistance = {
+					reference = 100
+					start_reference = 20 # Resistance below 20 doesn't help
+					weight = 0.4
+				}
+				air_superiority = {
+					reference = 1
+					weight = 0.25
+					start_weight = -0.25
+				}
+
+
+				anti_air = {
+					reference = 5
+					weight = -0.2
+				}
+				interception = {
+					reference = 30 # More than 500 fighters won't really make any difference
+					weight = -0.2
+				}
+				enemy_units = {
+					reference = 2 # More than 2 DIVs in the target Province shouldn't make any difference
+					weight = -0.5
+				}
+				intel = {
+					weight = 0.2
+					#start_reference = 50
+					reference = 100
+				}
+			}
+
+			critical = {
+				base = 0.15
+			}
+		}
+		
+	}
+}
