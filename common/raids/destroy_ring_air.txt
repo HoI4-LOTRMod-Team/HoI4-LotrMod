@@ -1,0 +1,185 @@
+types = {
+
+	destroy_ring_air = {
+
+		days_to_prepare = 70
+		speed_multiplier = 0.5
+
+		category = air_raids
+		custom_map_icon = GFX_raid_type_ring_raid
+		ai_will_do = {
+			base = 0
+		}
+
+		command_power = 35
+
+		allowed = {
+			NOT = { tag = MOR }
+		}
+		visible = {
+			ring_has_the_ring = yes
+			NOT = { 10 = { is_controlled_by = ROOT } }
+			NOT = { 10 = { controller = { is_ally_with = ROOT } } }
+		}
+		available = {
+			ring_has_the_ring = yes
+		}
+		launchable = {
+			NOT = { is_ally_with = MOR }
+			ring_has_the_ring = yes
+		}
+
+		show_target = {
+			FROM = { NOT = { is_ally_with = ROOT } }
+		}
+
+		arrow = {
+		    type = air
+		}
+        unit_model = {
+            type = equipment
+        }
+
+		target_type = {
+			province = 5097
+		}
+		target_icon = GFX_berlin_reichstag_icon
+		launch_sound = raid_launch_air
+
+		unit_requirements = {
+			equipment = {
+				type = { strategic_bomber }
+				amount = { min = 10 }
+			}
+		}
+
+		starting_point = {
+		    types = { air_base }
+		}
+
+		success_factors = {
+			success = {
+				base = 0.0
+
+				# Raiding unit modifiers
+				experience = {
+					weight = 0.05
+					start_weight = -0.05
+					reference = 1000
+				}
+				air_agility = {
+					reference = 100.0 # As air unit agility approaches 100 (as defined by the value above), increase chance by this value
+					weight = 0.05 # At 0 agility, the modifier will have negative effect.
+					start_weight = -0.05 # The modifier will scale linearly, meaning at 50 agility, the modifier will be 0.
+				}
+				reliability = {
+					reference = 1
+					weight = 0.05
+					start_weight = -0.1
+				}
+				air_defence = {
+					reference = 100
+					weight = 0.05
+					start_weight = -0.05
+				}
+
+				air_superiority = {
+					reference = 1
+					weight = 0.1
+					start_weight = -0.1
+				}
+
+				### Target Modifiers
+				anti_air = {
+					reference = 5
+					weight = -0.1
+				}
+				interception = {
+					reference = 500 # More than 500 fighters won't really make any difference
+					weight = -0.2
+				}
+				intel = {
+					weight = 0.2
+					#start_reference = 50
+					reference = 100
+				}
+
+			}
+
+			critical = {
+				base = 0.0
+
+			}
+		}
+
+		success_levels = {
+			failure = {
+				victim_effects = {
+					var:victim_country = {
+						ring_seize_ring = yes
+					}
+				}
+				actor_effects = {
+					raid_damage_units = {
+						plane_loss = 1.0
+						ratio = yes
+					}
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+			limited_success = {
+				victim_effects = {
+					var:victim_country = {
+						ring_destroy_ring = yes
+					}
+				}
+				actor_effects = {
+					raid_damage_units = {
+						plane_loss = 1.0
+						ratio = yes
+					}
+				}
+			}
+			success = {
+				victim_effects = {
+					var:victim_country = {
+						ring_destroy_ring = yes
+					}
+				}
+				actor_effects = {
+					raid_damage_units = {
+						plane_loss = 0.5
+						ratio = yes
+					}
+					raid_add_unit_experience = 0.35
+				}
+				visual_effect = {
+					entity = "air_raids_2_success_entity"
+					animation = "attack"
+				}
+			}
+			critical_success = {
+				victim_effects = {
+					var:victim_country = {
+						ring_destroy_ring = yes
+					}
+				}
+				actor_effects = {
+					raid_damage_units = {
+						plane_loss = 0.5
+						ratio = yes
+					}
+					raid_add_unit_experience = 0.35
+				}
+				visual_effect = {
+					entity = "air_raids_2_success_entity"
+					animation = "attack"
+				}
+			}
+		}
+	}
+
+}
