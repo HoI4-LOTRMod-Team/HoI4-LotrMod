@@ -36,35 +36,35 @@ $project_title_token$ = {
 	project_tags = sp_tag_artillery
 
 	allowed = {
-		# TODO
+		# $empty_task_token$
 	}
 
 	visible = {
-		# TODO
+		# $empty_task_token$
 	}
 	
 	available = {
 		FROM = {
-			# TODO
+			# $empty_task_token$
 		}
 	}
 	
-	prototype_time = sp_time.prototype.short # TODO
-	complexity = sp_complexity.medium # TODO
+	prototype_time = sp_time.prototype.short # $empty_task_token$
+	complexity = sp_complexity.medium # $empty_task_token$
 
 	breakthrough_cost = {
-		specialization_laboratory = 2 # TODO
+		specialization_laboratory = 2 # $empty_task_token$
 	}
 
 	resource_cost = {
-		# resources = { steel=4 chromium=2 } # TODO
+		# resources = { steel=4 chromium=2 } # $empty_task_token$
 	}
 	
 	project_output = {
-		# TODO
+		# $empty_task_token$
 	}
 
-	generic_prototype_rewards = { # TODO
+	generic_prototype_rewards = { # $empty_task_token$
 		sp_generic_reward_scientist_xp_1
         sp_generic_reward_scientist_xp_2
         sp_generic_reward_scientist_xp_3
@@ -142,7 +142,7 @@ option_template = """
 				token = $reward_option_token$
 				
 				iteration_output = {
-					# TODO
+					# $empty_task_token$
 				}
 			}
 """
@@ -160,7 +160,7 @@ for rew in rewards:
 
     rewards_str += reward_template.replace("$REWARD_OPTIONS$", options_str).replace("$UNIQUE_REWARD_MIN_THRESHOLD$", rew["reward_min_threshold"]).replace("$UNIQUE_REWARD_MAX_THRESHOLD$", rew["reward_max_threshold"]).replace("$UNIQUE_REWARD_WEIGHT$", rew["reward_weight"]).replace("$UNIQUE_REWARD_TOKEN$", rew["reward_title_token"])
 
-ret = project_template.replace("$REWARDS$", rewards_str).replace("$project_title_token$", project_title_token)
+ret = project_template.replace("$REWARDS$", rewards_str).replace("$project_title_token$", project_title_token).replace("$empty_task_token$", "TO"+"DO")
 
 #print(ret)
 
