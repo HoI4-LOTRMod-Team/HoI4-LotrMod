@@ -26,8 +26,8 @@ NDefines.NCharacter.GENIUS_ADVISOR_MIN_RANK = 7
 -- lowered minimum land-unit speed
 NDefines.NMilitary.SLOWEST_SPEED = 2
 
--- increased fort penalty (because they're castles now)
-NDefines.NMilitary.BASE_FORT_PENALTY = -0.4
+-- single fort = encampment. Castle = 7 forts
+NDefines.NMilitary.BASE_FORT_PENALTY = -0.05
 
 -- Airbase lower capacity
 NDefines.NBuildings.AIRBASE_CAPACITY_MULT = 10
