@@ -291,6 +291,9 @@ special_project_id = {
 
 		# OPTIONAL - Defaults to no. Allows reward to be triggered more than once.
 		fire_only_once = yes/no
+		
+		# OPTIONAL - When this reward becomes available it will have priority. If several available rewards have this set to true, the reward will be randomly chosen based on weight.
+		force_reward_if_available = yes/no
 
 		threshold = {
 			min = 35

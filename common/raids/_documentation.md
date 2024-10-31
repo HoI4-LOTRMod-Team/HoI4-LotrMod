@@ -18,7 +18,8 @@ raid_type_id = {
 
 	category = raid_category_id
 
-	custom_map_icon = GFX_ref # override if not using standard icon
+	custom_map_icon = GFX_ref [Optional] - override for the automatic icon lookup (if this is not set, will look for "GFX_raid_type_icon_{raid_name} )" 
+    custom_terrain_icon = GFX_ref [Optional] - override for the automatic background based on target province terrain
 
 	unit_icon = GFX_ref
 	target_icon = GFX_ref
@@ -54,7 +55,7 @@ raid_type_id = {
 	                    # There is RAID_DEFAULT_TARGET_COOLDOWN_DAYS define which is used if no value is specified in script.
 	                    # Set to 0 if you don't want any cooldown.
 
-	days_to_prepare = 50
+	days_to_prepare = 30
 	speed_multiplier = 1.0 # optional unit speed multiplier, default = 1 (see also: RAID_UNIT_SPEED_MULTIPLIER in defines.lua)
 
 	allowed = {
@@ -95,7 +96,9 @@ raid_type_id = {
 				is_coastal = yes # Optional
 			}
 			state = { <triggers> }
-
+			
+	target_loc_key = LOC_KEY [Optional] - Custom loc key for overriding the target name. Use $LOCATION$ if you want to include the location name (state or VP).
+	
     # Conditions on the starting point:
     starting_point = {
         types = { air_base, naval_base, rocket_site, carrier, submarine }
@@ -121,7 +124,6 @@ raid_type_id = {
 			modules = { engine_1_2x }  # Optional
 			amount = { min = 80 max = 100 }  # Optional
 		}
-		experience = { min = 1 }  # Optional
 	}
 
 	# NOTE : unit_requirements can occur multiple times in a script
@@ -147,11 +149,6 @@ raid_type_id = {
 	}
 
 	nuke_type = nuclear_bomb		# type of nuke to use: nuclear_bomb or thermonuclear_bomb
-
-	# Intel requirements
-	intel_levels = {
-		launch = 10 # minimum intel level to launch the raid
-	}
 
 	# What happens depending on which level of access is achieved
 	success_levels = {
@@ -192,6 +189,15 @@ raid_type_id = {
 	}
 }
 ```
+## Raid Map Icons
+
+Map icons can be assigned in the following ways:
+
+1. Automatically based on a string lookup of "GFX_raid_type_icon_" + [raid_type_name]
+2. A custom scripted icon set through "custom_map_icon = [name]"
+
+In both of the above cases, the system will also try to find a customized icon for the target building type, by appending the building template to the end of the string:
+[1. or 2. from above] + "_" + [building_template_name]
 
 # Raid Outcomes
 
@@ -203,8 +209,6 @@ The following effects are supported, taking *failure* as an example:
 
 Note that *actor_effects* and *victim_effects* both use the same scope, but separating them allows for
 easily separating them for UI purposes (showing separate lists of how the actor and victim country were affected by the outcome)
-
-Custom description of the outcome can be added through *outcome_description*, *outcome_description_attacker* or *outcome_description_defender*.
 
 ```
 failure = {
@@ -247,10 +251,13 @@ failure = {
 	# The percentage of additional equipment that gets destroyed
 	# Default is 100%
 	destroy_additional_equipment = 0.25
+    custom_sound = SFX_ref [Optional] Custom sound effect to play for this outcome
 
-    outcome_description = desc_loc_key [Optional] Custom description of the outcome
-    # outcome_description_attacker = desc_loc_key [Optional] Custom description for attacker
-    # outcome_description_defender = desc_loc_key [Optional] Custom description for defender
+    # Visual effect to spawn on the target province
+    visual_effect = {
+        entity = "nuke_entity" # name of the entity to spawn
+        animation = "attack" # name of the entity animation state
+    }
 }
 
 ```
@@ -281,13 +288,13 @@ scripted in the same way through this formula construct.
 
 ### List of modifiers:
 - *prep_time*: The preparation progress. Reference values from 0.0 (no preparation) to 1.0 (full preparation).
-- *experience*: The experience of the unit assigned to the raid. Reference values from 0.0-1.0 if land unit, or 0-1000 if air wing.
+- *experience*: The experience of the unit assigned to the raid. Reference values from 0.0-1.0
 - *anti_air*: The anti-air defense value of the target state. Reference values e.g. from 0 to 5 (meaning 5 basic AA buildings)
 - *resistance*: The amount of resistance in the target state. Reference values from 0 to 100
 - *enemy_units*: The number of enemy divisions in the target province. For province-target missions ONLY.
 - *air_superiority*: The air superiority score (fraction) of the actor country in the target region. Reference values from 0.0 to 1.0
 - *naval_supremacy*: The naval supremacy score (fraction) of the actor country in the target sea zone. Reference values from 0.0 to 1.0
-- *interceptor*: The number of enemy planes executing interceptor missions in the target region.
+- *interception*: The number of enemy planes executing interception missions in the target region.
 - *intel*: The amount of intel the actor country has on the target. Reference values depend on defines.
 
 #### Air Units Only:
@@ -431,6 +438,12 @@ raid_damage_units = {
 
 Add experience to the units (e.g. divisions or air wings) performing the raid.
 ```
-raid_add_unit_experience = <value>
+raid_add_unit_experience = <value> # The value is 0.0-1.0, representing progress towards the max level
+```
+
+example:
+
+# Gain 25% progress towards the max level
+raid_add_unit_experience = 0.25
 ```
 Supports both explicit values and variables
