@@ -74,6 +74,12 @@ NDefines.NAir.AIR_WING_MAX_STATS_SPEED = 8000
 NDefines.NAir.AIR_WING_MAX_STATS_BOMBING = 1000
 NDefines.NAir.AIR_WING_MAX_SIZE = 100 							-- Max amount of airplanes in wing
 NDefines.NAir.AIR_WING_AVERAGE_SIZE = 10 						-- Eyeballed average amount of airplanes in wing. Used when calculating air volunteer.
+NDefines.NAir.MANPOWER_LOSS_RATIO_PLANE_SHOT = 1.0
+NDefines.NAir.AI_ALLOWED_PLANES_KEPT_IN_RESERVE = 0.0
+NDefines.NMilitary.ENEMY_AIR_SUPERIORITY_IMPACT = -0.6          -- effect on defense due to enemy air superiorty
+NDefines.NMilitary.ENEMY_AIR_SUPERIORITY_DEFENSE = 0.80	       -- more AA attack will approach this amount of help (diminishing returns)
+NDefines.NMilitary.ENEMY_AIR_SUPERIORITY_DEFENSE_STEEPNESS = 112 -- how quickly defense approaches the max impact diminishing returns curve
+NDefines.NMilitary.ENEMY_AIR_SUPERIORITY_SPEED_IMPACT = -0.5     -- effect on speed due to enemy air superiority
 
 -- Increased army XP from training units (slightly)
 NDefines.NMilitary.UNIT_EXPERIENCE_PER_TRAINING_DAY = 0.0025
@@ -92,7 +98,7 @@ NDefines.DESIRE_USE_XP_TO_UPGRADE_AIR_EQUIPMENT = 0.2
 NDefines.NAI.DESIRE_USE_XP_TO_UPDATE_LAND_TEMPLATE = 8.0    -- How quickly is desire to update/create templates accumulated?
 
 -- Avoice Equipment over-abundance
-NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.1 -- How much equipment from deployed divisions will be transferred on capitulation
+NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.07 -- How much equipment from deployed divisions will be transferred on capitulation
 
 -- Division Designer
 NDefines.NMilitary.MAX_DIVISION_BRIGADE_WIDTH = 6			-- Max width of regiments in division designer.
