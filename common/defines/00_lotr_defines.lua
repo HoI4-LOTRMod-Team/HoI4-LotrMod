@@ -112,4 +112,4 @@ NDefines.NProduction.MIN_POSSIBLE_TRAINING_MANPOWER = 3000	-- How many deploymen
 NDefines.NProduction.MIN_FIELD_TO_TRAINING_MANPOWER_RATIO = 0.5
 
 -- Used for debugging special projects
---NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 1000
+NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 8
