@@ -26,8 +26,8 @@ NDefines.NCharacter.GENIUS_ADVISOR_MIN_RANK = 7
 -- lowered minimum land-unit speed
 NDefines.NMilitary.SLOWEST_SPEED = 2
 
--- increased fort penalty (because they're castles now)
-NDefines.NMilitary.BASE_FORT_PENALTY = -0.4
+-- single fort = encampment. Castle = 7 forts
+NDefines.NMilitary.BASE_FORT_PENALTY = -0.05
 
 -- Airbase lower capacity
 NDefines.NBuildings.AIRBASE_CAPACITY_MULT = 10
@@ -74,6 +74,12 @@ NDefines.NAir.AIR_WING_MAX_STATS_SPEED = 8000
 NDefines.NAir.AIR_WING_MAX_STATS_BOMBING = 1000
 NDefines.NAir.AIR_WING_MAX_SIZE = 100 							-- Max amount of airplanes in wing
 NDefines.NAir.AIR_WING_AVERAGE_SIZE = 10 						-- Eyeballed average amount of airplanes in wing. Used when calculating air volunteer.
+NDefines.NAir.MANPOWER_LOSS_RATIO_PLANE_SHOT = 1.0
+NDefines.NAir.AI_ALLOWED_PLANES_KEPT_IN_RESERVE = 0.0
+NDefines.NMilitary.ENEMY_AIR_SUPERIORITY_IMPACT = -0.6          -- effect on defense due to enemy air superiorty
+NDefines.NMilitary.ENEMY_AIR_SUPERIORITY_DEFENSE = 0.80	       -- more AA attack will approach this amount of help (diminishing returns)
+NDefines.NMilitary.ENEMY_AIR_SUPERIORITY_DEFENSE_STEEPNESS = 112 -- how quickly defense approaches the max impact diminishing returns curve
+NDefines.NMilitary.ENEMY_AIR_SUPERIORITY_SPEED_IMPACT = -0.5     -- effect on speed due to enemy air superiority
 
 -- Increased army XP from training units (slightly)
 NDefines.NMilitary.UNIT_EXPERIENCE_PER_TRAINING_DAY = 0.0025
@@ -92,7 +98,7 @@ NDefines.DESIRE_USE_XP_TO_UPGRADE_AIR_EQUIPMENT = 0.2
 NDefines.NAI.DESIRE_USE_XP_TO_UPDATE_LAND_TEMPLATE = 8.0    -- How quickly is desire to update/create templates accumulated?
 
 -- Avoice Equipment over-abundance
-NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.1 -- How much equipment from deployed divisions will be transferred on capitulation
+NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.07 -- How much equipment from deployed divisions will be transferred on capitulation
 
 -- Division Designer
 NDefines.NMilitary.MAX_DIVISION_BRIGADE_WIDTH = 6			-- Max width of regiments in division designer.
@@ -106,4 +112,4 @@ NDefines.NProduction.MIN_POSSIBLE_TRAINING_MANPOWER = 3000	-- How many deploymen
 NDefines.NProduction.MIN_FIELD_TO_TRAINING_MANPOWER_RATIO = 0.5
 
 -- Used for debugging special projects
-NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 1000
+NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 8

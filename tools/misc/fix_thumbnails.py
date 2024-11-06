@@ -1,7 +1,7 @@
 from wand.image import Image
 import os
 
-dir = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\gfx\interface\counters\temp'
+dir = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\ideas'
 
 # Get all .dds files in the current directory
 dds_files = [dir+"\\"+file for file in os.listdir(dir) if file.endswith('.dds')]

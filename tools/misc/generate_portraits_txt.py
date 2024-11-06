@@ -1,7 +1,7 @@
 from pdx_parser import Parse_PObj, Parse_List, PObj, SaveListToFile, ParseListFromFile, ParseListFromFile_asPObj
 
 
-input_file = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\portraits\input'
+input_file = r'C:\Users\kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\portraits\input'
 
 
 

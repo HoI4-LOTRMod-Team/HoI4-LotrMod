@@ -4,12 +4,33 @@
 
 
 # @docs(Generic): Retires a character, shows '[Character] dies' as a tooltip
-kill_character = {
+lotr_kill_character = {
     custom_effect_tooltip = kill_character_tt
     hidden_effect = {
         set_character_flag = is_dead
         retire = yes
         on_character_killed = yes
+    }
+}
+
+# @docs(Generic): Retires a character
+lotr_retire_character = {
+    set_character_flag = is_retired
+    retire = yes
+    hidden_effect = {
+        on_character_retired = yes   
+    }
+}
+
+
+# @docs(Generic): Pseudo-Retire a character, without removing them from the leader-pool
+lotr_pseudo_retire_character = {
+    effect_tooltip = {
+        retire = yes
+    }
+    set_character_flag = is_retired
+    hidden_effect = {
+        on_character_retired = yes   
     }
 }
 
@@ -22,6 +43,19 @@ on_character_killed = {
         limit = { rohan_lords_is_horselord = yes }
         ROH = {
             rohan_lords_replace_characters_on_death = yes
+        }
+    }
+}
+
+
+# @docs(Generic): A pseudo on-action that gets called whenever a character is retired
+on_character_retired = {
+
+    # Deal with Rohan Lords
+    if = {
+        limit = { rohan_lords_is_horselord = yes }
+        ROH = {
+            rohan_lords_replace_characters_on_retired = yes
         }
     }
 }
@@ -141,7 +175,7 @@ add_building_slot_and_mil_x4 = {
 
 # @docs(Moria): Kill/Retire the Durin's Bane character (Does not remove the state modifiers)
 kill_durins_bane = {
-    MOA = { MOA_bane = { kill_character = yes } }
+    MOA = { MOA_bane = { lotr_kill_character = yes } }
     hidden_effect = {
         set_global_flag = durins_bane_dead
         MOC = { MOC_bane = { retire = yes } }

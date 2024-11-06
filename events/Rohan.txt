@@ -53,23 +53,30 @@ country_event = {
 
 	trigger = {
 		tag = ROH
+		date > 3020.9.1 # Sometimes (Looking at you Weathertop) the Ring gets captured very early. This stops Rohan from being able to turbo-rush their focuses
 		OR = {
-			AND = {
-				has_global_flag = fs_gandalf_left_fellowship
-				date > 3020.1.1
-			}
+			#has_global_flag = fs_gandalf_left_fellowship # Old version. No longer in use because this *should* happen after fellowship breakup.
+			has_global_flag = fs_fellowship_breakup
 			# If the fellowship moves south past isengard, Gandalf can take a pit-stop at Rohan lol
 			AND = {
 				check_variable = { global.fs_currentstate = 26 }
 				ring_gandalf_in_fellowship = yes
 			}
 			has_global_flag = fs_ring_seized
-			date > 3022.1.1 # This is here as a stop-gap measure. If gandalf is bugged for some reason, this will keep Rohan remotely playable
+			date > 3022.2.1 # This is here as a stop-gap measure. If gandalf is bugged for some reason, this will keep Rohan remotely playable
 		}
 	}
 
 	mean_time_to_happen = {
 		days = 30
+		modifier = {
+			factor = 2
+			date < 3022.1.1
+		}
+		modifier = {
+			factor = 2
+			date < 3021.1.1
+		}
 	}
 
 	immediate = {
@@ -102,7 +109,7 @@ country_event = {
 				}
 			}
 			add_political_power = -500
-			add_stability = -0.05
+			add_stability = -0.1
 		}
 		else_if = {
 			limit = {
@@ -147,7 +154,7 @@ country_event = {
 				}
 			}
 			add_political_power = -500
-			add_stability = -0.05
+			add_stability = -0.1
 		}
 		else_if = {
 			limit = {
@@ -165,7 +172,6 @@ country_event = {
 }
 
 # Theodred dies
-# TODO_I: Still need to implement Theodred dying on the field of battle event
 country_event = {
 	id = rohan.4
 	title = rohan.4.t
@@ -178,7 +184,7 @@ country_event = {
 
 	option = {
 		name = rohan.4.a
-		ROH_theodred = { kill_character = yes }
+		ROH_theodred = { lotr_kill_character = yes }
 		hidden_effect = {news_event = { hours = 48 id = news.336 }}
 	}
 
@@ -254,21 +260,25 @@ country_event = {
 		move_bop_to_grima = yes
 		add_manpower = -2000
 		ROH_eomer = {
-			remove_unit_leader_role = yes
-			remove_country_leader_role = {
-				ideology = federative
-			}
-			remove_country_leader_role = {
-				ideology = isolationist
-			}
-			remove_country_leader_role = {
-				ideology = expansionist
-			}
-			remove_advisor_role = {
-				slot = chief_advisor
-			}
+			lotr_pseudo_retire_character = yes
 		}
-		rohan_lords_replace_characters_on_retired = yes
+		hidden_effect = {
+			ROH_eomer = {
+				remove_unit_leader_role = yes
+				remove_country_leader_role = {
+					ideology = federative
+				}
+				remove_country_leader_role = {
+					ideology = isolationist
+				}
+				remove_country_leader_role = {
+					ideology = expansionist
+				}
+				remove_advisor_role = {
+					slot = chief_advisor
+				}
+			}	
+		}
 	}
 
 }
@@ -293,7 +303,6 @@ country_event = {
 }
 
 # Event for Gondor sending help to deal with Isengard
-# TODO_I When how what?
 country_event = {
 	id = rohan.8
 	title = rohan.8.t
@@ -402,7 +411,7 @@ country_event = {
 
 	option = {
 		name = rohan.11.a
-		ROH_theodred = { kill_character = yes }
+		ROH_theodred = { lotr_kill_character = yes }
 
 		ROH = { rohan_lords_replace_characters_on_death = yes }
 
@@ -423,7 +432,7 @@ country_event = {
 
 	option = {
 		name = rohan.12.a
-		ROH_eomer = { kill_character = yes }
+		ROH_eomer = { lotr_kill_character = yes }
 
 		ROH = { rohan_lords_replace_characters_on_death = yes }
 	}
@@ -808,7 +817,7 @@ country_event = {
 		move_bop_to_grima = yes
 		random_unit_leader = {
 			limit = { has_trait = eorl_loyalist }
-			retire = yes
+			lotr_retire_character = yes
 		}
 	}
 }
@@ -997,8 +1006,10 @@ country_event = {
 		name = rohan.75.a
 
 		ROH_gandalf = {
-			retire = yes
+			lotr_retire_character = yes
 		}
+
+		set_global_flag = gandalf_left_rohan
 	}
 }
 
@@ -1413,7 +1424,7 @@ country_event = {
 		# Add idea that lowers output, construction and some other stuff
 		add_timed_idea = {
 			idea = ROH_concessions_blowback
-			days = 120
+			days = 90
 		}
 	}
 }
@@ -1592,7 +1603,7 @@ country_event = {
 
 		effect_tooltip = {
 			add_ideas = ROH_anti_eorl_plot_3
-			ROH_grima = { kill_character = yes }
+			ROH_grima = { lotr_kill_character = yes }
 			set_global_flag = grima_executed
 			ROH_theoden = {
 				add_trait = {
@@ -1613,7 +1624,7 @@ country_event = {
 
 		effect_tooltip = {
 			ROH_grima = {
-				retire = yes
+				lotr_retire_character = yes
 			}
 			add_ideas = ROH_anti_eorl_plot_3
 			ROH_theoden = {
@@ -2095,6 +2106,10 @@ country_event = {
 
 	option = {
 		name = rohan.98.a
+
+		hidden_effect = {
+			news_event = { id = news.404 days = 4 }
+		}
 		
 		# Set state flags for negotiate terms
 		every_state = {
@@ -2180,7 +2195,7 @@ country_event = {
 	option = {
 		name = rohan.101.a
 
-		ROH_grima = { retire = yes }
+		ROH_grima = { lotr_retire_character = yes }
 	}
 }
 
@@ -2249,13 +2264,18 @@ country_event = {
 				country_leader = { ideology = expansionist }
 			}
 
-			add_advisor_role = {
-				activate = no
-				advisor = {
-					idea_token = ROH_eomer
-					slot = chief_advisor 
-					cost = 150
-					traits = { lord_of_the_mark }
+			if = {
+				limit = {
+					ROOT = { NOT = { has_completed_focus = ROH_purge_the_rot } }
+				}
+				add_advisor_role = {
+					activate = no
+					advisor = {
+						idea_token = ROH_eomer
+						slot = chief_advisor 
+						cost = 150
+						traits = { lord_of_the_mark }
+					}
 				}
 			}
 		}
@@ -2288,7 +2308,9 @@ country_event = {
 			}
 		}
 
-		#TODO: news event
+		hidden_effect = {
+			news_event = { id = news.405 days = 2 }
+		}
 
 		ROH = {
 			# Set state flags for negotiate terms
@@ -2378,6 +2400,7 @@ country_event = {
 
 	option = {
 		name = rohan.105.a
+		add_political_power = 35
 		move_bop_to_theoden = yes
 	}
 }
@@ -2433,6 +2456,7 @@ country_event = {
 
 	option = {
 		name = rohan.108.a
+		add_manpower = 500
 		move_bop_to_theoden = yes
 	}
 }
@@ -2584,5 +2608,22 @@ country_event = {
 		name = rohan.116.a
 
 		add_country_leader_trait = ednew_the_renewed
+	}
+}
+
+# Theodred's funeral
+country_event = {
+	id = rohan.117
+	title = rohan.117.t
+	desc = rohan.117.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = {
+		name = rohan.117.a
 	}
 }
