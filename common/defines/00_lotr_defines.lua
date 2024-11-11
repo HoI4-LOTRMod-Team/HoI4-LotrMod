@@ -88,15 +88,26 @@ NDefines.NMilitary.UNIT_EXPERIENCE_PER_TRAINING_DAY = 0.0025
 NDefines.NAI.UPGRADE_DIVISION_RELUCTANCE = 5
 NDefines.NAI.WANTED_UNITS_MANPOWER_DIVISOR = 2100
 -- NDefines.NAI.UPGRADE_PERCENTAGE_OF_FORCES = 0.03
-NDefines.NAI.WANTED_UNITS_WEIGHT_FRONTS_WANT = 0.75
-NDefines.NAI.WANTED_UNITS_WEIGHT_MANPOWER = 0.25
-NDefines.NAI.WANTED_UNITS_WEIGHT_FACTORIES = 0.25                        -- Weight of military factories when computing final nr wanted units
+NDefines.NAI.WANTED_UNITS_WEIGHT_FRONTS_WANT = 0.45
+NDefines.NAI.WANTED_UNITS_WEIGHT_MANPOWER = 0.3
+NDefines.NAI.WANTED_UNITS_WEIGHT_FACTORIES = 0.3                        -- Weight of military factories when computing final nr wanted units
 NDefines.NAI.WANTED_UNITS_MIN_DEFENCE_FACTOR = 0.7
 NDefines.NAI.DAYS_BETWEEN_CHECK_BEST_TEMPLATE = 28       -- Recalculate desired best template to upgrade with this many days inbetween.
 NDefines.NAI.DESIRE_USE_XP_TO_UPGRADE_LAND_EQUIPMENT = 1.5  -- How quickly is desire to update/create land equipment variants accumulated?
 NDefines.NAI.DESIRE_USE_XP_TO_UPGRADE_NAVAL_EQUIPMENT = 3.0
-NDefines.DESIRE_USE_XP_TO_UPGRADE_AIR_EQUIPMENT = 0.2
+NDefines.NAI.DESIRE_USE_XP_TO_UPGRADE_AIR_EQUIPMENT = 0.2
 NDefines.NAI.DESIRE_USE_XP_TO_UPDATE_LAND_TEMPLATE = 8.0    -- How quickly is desire to update/create templates accumulated?
+
+NDefines.NAI.WANTED_UNITS_THREAT_BASE = 0.8                             -- If no threat, multiply min wanted units by this
+NDefines.NAI.WANTED_UNITS_THREAT_MAX = 3.0                             -- Normalized threat is clamped to this
+NDefines.NAI.WANTED_UNITS_WAR_THREAT_FACTOR = 1.15                       -- Factor threat with this if country is at war. this value is overriden by the value in ideology database if that value exceedes this.
+NDefines.NAI.WANTED_UNITS_DANGEROUS_NEIGHBOR_FACTOR = 1.15              -- Factor if has dangerous neighbor
+
+NDefines.NAI.WANTED_UNITS_MAX_WANTED_CAP = 300	-- Maximum wanted divisions for a country. This can be exceeded by certain hardcoded multipliers, but not by base calculation logic.
+NDefines.NAI.AT_WAR_THREAT_FACTOR = 1.7					-- How much increase in threat does AI feel for being in war against someone
+NDefines.NAI.NEIGHBOUR_WAR_THREAT_FACTOR = 1.30 		-- How much increase in threat does AI feel against neighbours who are at war
+NDefines.NAI.NEUTRAL_THREAT_PARANOIA = 20				-- How scared neutrals are of everyone
+NDefines.NAI.DIFFERENT_FACTION_THREAT = 25				-- Threat caused by not being in the same faction
 
 -- Avoice Equipment over-abundance
 NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.07 -- How much equipment from deployed divisions will be transferred on capitulation
