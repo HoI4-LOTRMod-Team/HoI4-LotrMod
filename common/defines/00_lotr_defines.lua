@@ -125,3 +125,6 @@ NDefines.NProduction.MIN_FIELD_TO_TRAINING_MANPOWER_RATIO = 0.5
 
 -- Used for debugging special projects
 NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 8
+
+-- Food consumption etc.
+NDefines.NMilitary.ARMY_IDLE_FUEL_MULT = 0.05						-- fuel consumption ratio while just existing
