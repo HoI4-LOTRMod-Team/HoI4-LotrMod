@@ -1,0 +1,181 @@
+###########################
+# Misty Mountains Pact Events
+# Related to mechanic Isengard focus tree
+###########################
+
+add_namespace = misty_pact
+
+# General agree event
+country_event = {
+	id = misty_pact.1
+	title = misty_pact.1.t
+	desc = misty_pact.1.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Okay
+		name = misty_pact.1.a
+	}
+}
+
+# General refuse event
+country_event = {
+	id = misty_pact.2
+	title = misty_pact.2.t
+	desc = misty_pact.2.d
+	picture = GFX_report_event_elven_alliance
+
+	is_triggered_only = yes
+
+	option = { # Okay
+		name = misty_pact.2.a
+	}
+}
+
+# Suggest misty mountain pact
+country_event = {
+	id = misty_pact.3
+	title = misty_pact.3.t
+	desc = misty_pact.3.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = misty_pact.3.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = -5
+				is_puppet = yes
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
+			modifier = {
+				add = 10
+				has_non_aggression_pact_with = FROM
+			}
+			modifier = {
+				factor = -999
+				has_war_with = FROM
+			}
+		}
+		add_opinion_modifier = { target = FROM modifier = small_increase }
+		add_political_power = 50
+		add_popularity = {
+			ideology = cooperative
+			popularity = 0.05
+		}
+		FROM = {
+			country_event = { id = misty_pact.1 }
+		}
+		set_country_flag = MISTY_PACT
+	}
+
+	option = { #no
+		name = misty_pact.3.b
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 999
+				has_war_with = FROM
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+		}
+		add_opinion_modifier = { target = FROM modifier = small_decrease }
+		FROM = {
+			country_event = { id = misty_pact.2 }
+		}
+	}
+}
+
+# Expand misty mountain pact to militair investments
+country_event = {
+	id = misty_pact.4
+	title = misty_pact.4.t
+	desc = misty_pact.4.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = misty_pact.4.a
+		add_opinion_modifier = { target = FROM modifier = small_increase }
+		add_political_power = 50
+	}
+}
+
+# Expand misty mountain pact to a faction
+country_event = {
+	id = misty_pact.5
+	title = misty_pact.5.t
+	desc = misty_pact.5.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = misty_pact.5.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = -999
+				is_puppet = yes
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
+			modifier = {
+				add = 10
+				has_non_aggression_pact_with = FROM
+			}
+			modifier = {
+				factor = -999
+				has_war_with = FROM
+			}
+		}
+		add_opinion_modifier = { target = FROM modifier = small_increase }
+		add_stability = 0.1
+		FROM = {
+			add_to_faction = ROOT
+		}
+	}
+	option = { #no
+		name = misty_pact.5.b
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 999
+				has_war_with = FROM
+			}
+			modifier = {
+				factor = 999
+				is_puppet = yes
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+		}
+		add_opinion_modifier = { target = FROM modifier = small_decrease }
+	}
+}

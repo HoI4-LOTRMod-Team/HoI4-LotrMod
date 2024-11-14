@@ -183,7 +183,7 @@ country_event = {
 		29 = { damage_building = { type = infrastructure damage = 5 } }
 		29 = { damage_building = { type = arms_factory damage = 5 } }
 		add_resource = { type = rubber amount = -10 state = 29 }
-		add_manpower = -25000
+		add_manpower = -2500
 	}
 }
 
@@ -214,5 +214,56 @@ country_event = {
 	option = {
 		name = entwood.9.a
 		set_global_flag = entwives_set_free
+	}
+}
+
+# Isengard requests increasing relations
+country_event = {
+	id = entwood.10
+	title = entwood.10.t
+	desc = entwood.10.d
+	picture = GFX_report_event_paper
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = entwood.10.a
+		ai_chance = {
+			base = 30
+			modifier = {
+				has_opinion = { target = ENT value > 0 }
+				add = 30
+			}
+			modifier = {
+				has_opinion = { target = ENT value > 50 }
+				add = 30
+			}
+			modifier = {
+				has_opinion = { target = ENT value > 80 }
+				add = 30
+			}
+		}
+		diplomatic_relation = {
+			country = ISE
+			relation = non_aggression_pact
+		}
+		add_opinion_modifier = { target = ISE modifier = small_increase }
+		ISE = {
+			country_event = { id = isengard.15 }
+		}
+	}
+	option = { #Refuse
+		name = entwood.10.b
+		ai_chance = {
+			base = 30
+			modifier = {
+				add = 600
+				has_war_with = ENT
+			}
+		}
+		ISE = {
+			country_event = { id = isengard.16 }
+			event_option_tooltip = isengard.16.a
+		}
 	}
 }

@@ -1,0 +1,107 @@
+sp_bless_fellowship = {
+
+	specialization = specialization_laboratory
+
+	allowed = {
+		FROM = {
+			NOT = { original_tag = MOR }
+		}
+	}
+
+	visible = {
+		FROM = {
+			NOT = { has_global_flag = fs_ring_seized }
+			NOT = { has_global_flag = fs_ring_destroyed }
+			NOT = { is_special_project_completed = sp:sp_curse_fellowship }
+		}
+	}
+	
+	available = {
+		FROM = {
+			NOT = { has_government = belligerent }
+			has_global_flag = fs_started
+
+			has_tech = magic
+			has_tech = herbology
+		}
+	}
+	
+	prototype_time = sp_time.prototype.short
+	complexity = sp_complexity.medium
+
+	breakthrough_cost = {
+		specialization_laboratory = 1
+	}
+
+	resource_cost = {
+		#resources = { tungsten=2 chromium=4 }
+	}
+	
+	project_output = {
+		country_effects = {
+			if = {
+				limit = { FROM = { has_project_flag = sp_bless_fellowship_target_ringbearer_flag } }
+				random_list = {
+					50 = {
+						ring_bless_ringbearer = yes
+					}
+					50 = {
+						ring_bless_random_member = yes
+					}
+				}
+			}
+			else = {
+				ring_bless_random_member = yes
+			}
+		}
+	}
+
+	generic_prototype_rewards = {
+		sp_generic_reward_scientist_xp_1
+		sp_generic_reward_scientist_xp_2
+		sp_generic_reward_scientist_xp_3
+		sp_generic_reward_major_progress_1
+		sp_generic_reward_major_progress_2
+		sp_generic_reward_major_progress_3
+		sp_generic_reward_knowledge_magic_tech
+		sp_generic_reward_knowledge_scriptorium_tech
+		sp_generic_reward_knowledge_intrigue_tech
+	}
+
+	unique_prototype_rewards = {
+
+		sp_bless_fellowship_target_ringbearer = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 0
+				max = 100
+			}
+
+			weight = {
+				base = 50
+			}
+
+			option = {
+				token = sp_bless_fellowship_target_ringbearer
+				
+				iteration_output = {
+					country_effects = {
+						FROM = { set_project_flag = sp_bless_fellowship_target_ringbearer_flag }
+						custom_effect_tooltip = sp_bless_fellowship_target_ringbearer_tt
+					}
+				}
+			}
+
+			option = {
+				token = sp_bless_fellowship_target_no_target
+
+				iteration_output = {
+					country_effects = {
+						custom_effect_tooltip = sp_bless_fellowship_target_no_target_tt
+					}
+				}
+			}
+		}
+	}
+}

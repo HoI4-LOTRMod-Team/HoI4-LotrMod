@@ -1,0 +1,191 @@
+
+sp_sacrifice_spell = {
+
+	specialization = specialization_laboratory
+
+	project_tags = sp_tag_artillery
+
+	allowed = {
+		always = yes
+	}
+
+	visible = {
+		always = yes
+	}
+	
+	available = {
+		FROM = {
+			has_tech = magic
+			num_divisions > 0
+			NOT = {
+				has_government = cooperative
+			}
+		}
+	}
+	
+	prototype_time = sp_time.prototype.short
+	complexity = sp_complexity.medium
+
+	breakthrough_cost = {
+		specialization_laboratory = 2
+	}
+
+	resource_cost = {
+		resources = { aluminium=1 }
+	}
+	
+	project_output = {
+		sub_unit_bonus = {
+			category_all_infantry = {
+				max_strength = 0.05
+				supply_consumption = -0.02
+			}
+		}
+		country_effects = {
+			custom_effect_tooltip = sp_sacrifice_spell_tt
+			hidden_effect = {
+				random_country_division = {
+					destroy_unit = yes
+				}
+			}
+			if = {
+				limit = { FROM = { has_project_flag = sp_sacrifice_spell_entity_yes } }
+				custom_effect_tooltip = sp_sacrifice_spell_entity_yes_tt
+				hidden_effect = {
+					random_country_division = {
+						destroy_unit = yes
+					}
+				}
+			}
+		}
+	}
+
+	generic_prototype_rewards = {
+		sp_generic_reward_scientist_xp_1
+        sp_generic_reward_scientist_xp_2
+        sp_generic_reward_scientist_xp_3
+        sp_generic_reward_major_progress_1
+        sp_generic_reward_major_progress_2
+        sp_generic_reward_major_progress_3
+        sp_generic_reward_test_failure_1
+        sp_generic_reward_test_failure_2
+        sp_generic_reward_test_failure_3
+        sp_generic_reward_resource_scarcity
+        sp_generic_reward_critical_failure
+        sp_generic_reward_political_interference
+        sp_generic_reward_knowledge_alchemy_tech
+        sp_generic_reward_knowledge_magic_tech
+        sp_generic_reward_knowledge_scriptorium_tech
+	}
+
+	unique_prototype_rewards = {
+
+		
+		sp_sacrifice_spell_blood_magic = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 40
+				max = 90
+			}
+
+			weight = {
+				base = 30
+			}
+
+			
+			option = {
+				token = sp_sacrifice_spell_blood_magic_yes
+				
+				iteration_output = {
+					country_effects = {
+						add_manpower = -1000
+						add_stability = -0.1
+					}
+					sub_unit_bonus = {
+						category_all_infantry = {
+							max_strength = 0.05
+						}
+					}
+					scientist_effects = {
+						if = {
+							limit = {
+								has_scientist_level = {
+									level < 5
+									specialization = specialization_laboratory
+								}
+							}
+							add_scientist_xp = {
+								experience = constant:sp_scientist_xp_gain.high
+								specialization = specialization_laboratory
+							}
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_sacrifice_spell_blood_magic_no
+				
+				iteration_output = {
+					scientist_effects = {
+						if = {
+							limit = {
+								has_scientist_level = {
+									level < 5
+									specialization = specialization_laboratory
+								}
+							}
+							add_scientist_xp = {
+								experience = constant:sp_scientist_xp_gain.high
+								specialization = specialization_laboratory
+							}
+						}
+					}
+				}
+			}
+
+        }
+
+		sp_sacrifice_spell_entity = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 70
+				max = 100
+			}
+
+			weight = {
+				base = 10
+			}
+
+			
+			option = {
+				token = sp_sacrifice_spell_entity_yes
+				
+				iteration_output = {
+					sub_unit_bonus = {
+						category_all_infantry = {
+							combat_width = -0.1
+						}
+					}
+					country_effects = {
+						custom_effect_tooltip = sp_sacrifice_spell_entity_yes_tt
+						FROM = { set_project_flag = sp_sacrifice_spell_entity_yes }
+					}
+				}
+			}
+
+			option = {
+				token = sp_sacrifice_spell_entity_no
+				
+				iteration_output = {
+					
+				}
+			}
+
+        }
+
+	}
+}
+

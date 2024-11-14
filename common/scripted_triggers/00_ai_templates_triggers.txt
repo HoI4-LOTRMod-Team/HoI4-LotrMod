@@ -1,0 +1,312 @@
+
+
+
+# @docs(AI): This country intends to invest in airforce
+target_air_focus = {
+	has_country_flag = gameplan_air_focus
+}
+
+
+# @docs(AI): This country aims for 7-2 as the main infantry template
+target_7_2_strat = {
+	has_country_flag = gameplan_7_2_strat
+}
+
+# @docs(AI): This country aims for 9-1 as the main infantry template
+target_9_1_strat = {
+	has_country_flag = gameplan_9_1_strat
+}
+
+
+
+# @docs(AI): This country aims to use a cavalry template for pushing
+target_any_cavalry_strat = {
+	OR = {
+		target_light_cav_strat = yes
+		target_heavy_infantry_strat = yes
+		target_heavy_cav_chariots_strat = yes
+	}
+}
+
+# @docs(AI): This country aims to use a light cav template for pushing
+target_light_cav_strat = {
+	has_country_flag = gameplan_light_cav_strat
+}
+
+# @docs(AI): This country aims to use a heavy cav template for pushing
+target_heavy_cav_strat = {
+	has_country_flag = gameplan_heavy_cav_strat
+}
+
+# @docs(AI): This country aims to use a heavy cav + chariot template for pushing
+target_heavy_cav_chariots_strat = {
+	has_country_flag = gameplan_heavy_cav_chariots_strat
+}
+
+# @docs(AI): This country aims to use a chariot template for pushing
+target_chariots_strat = {
+	has_country_flag = gameplan_chariots_strat
+}
+
+# @docs(AI): This country aims to use a catapult template for pushing
+target_catapults_strat = {
+	has_country_flag = gameplan_catapults_strat
+}
+
+# @docs(AI): This country aims to use a siege machine template for pushing
+target_siege_machines_strat = {
+	has_country_flag = gameplan_siege_machines_strat
+}
+
+# @docs(AI): This country aims to use a heavy infantry template for pushing
+target_heavy_infantry_strat = {
+	has_country_flag = gameplan_heavy_infantry_strat
+}
+
+
+
+
+# @docs(AI): This country wants more divisions than it has
+ai_wants_more_divisions = {
+	check_variable = {
+		ai_wants_divisions > num_divisions
+	}
+}
+
+# @docs(AI): This country has less than 25% of the divions it wants
+ai_has_under_25p_wanted_divs = {
+	set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.25 }
+	check_variable = {
+		temp_divs > num_divisions
+	}
+}
+
+# @docs(AI): This country has less than 50% of the divions it wants
+ai_has_under_50p_wanted_divs = {
+	set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.5 }
+	check_variable = {
+		temp_divs > num_divisions
+	}
+}
+
+# @docs(AI): This country has less than 75% of the divions it wants
+ai_has_under_75p_wanted_divs = {
+	set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.75 }
+	check_variable = {
+		temp_divs > num_divisions
+	}
+}
+
+# @docs(AI): This country has less than 100% of the divions it wants
+ai_has_under_100p_wanted_divs = {
+	check_variable = {
+		ai_wants_divisions > num_divisions
+	}
+}
+
+
+
+# @docs(AI): This country has more than 25% of the divions it wants
+ai_has_over_25p_wanted_divs = {
+	set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.25 }
+	check_variable = {
+		temp_divs < num_divisions
+	}
+}
+
+# @docs(AI): This country has more than 50% of the divions it wants
+ai_has_over_50p_wanted_divs = {
+	set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.5 }
+	check_variable = {
+		temp_divs < num_divisions
+	}
+}
+
+# @docs(AI): This country has more than 75% of the divions it wants
+ai_has_over_75p_wanted_divs = {
+	set_temp_variable = { temp_divs = ai_wants_divisions }
+	multiply_temp_variable = { temp_divs = 0.75 }
+	check_variable = {
+		temp_divs < num_divisions
+	}
+}
+
+# @docs(AI): This country has more than 100% of the divions it wants
+ai_has_over_100p_wanted_divs = {
+	check_variable = {
+		ai_wants_divisions < num_divisions
+	}
+}
+
+
+# should we use arty or support equipment in defcon 2 template?
+ai_defcon_2_use_arty = {
+	has_tech = interwar_artillery # can't use arty without the research
+	OR = {
+		# the immense priviledge of having string in our country
+		tungsten > 7
+
+		# we're rich enough to trade for string
+		num_of_civilian_factories > 24
+
+		# elves like bows
+		#is_elves = yes # Ive toggled this out because elves all start with enough string anyway
+
+		# We happen to have some spare arty
+		#stockpile_ratio = {
+		#	archetype = artillery_equipment
+		#	ratio > 0.15
+		#}
+
+		# We have historically produced more arty
+		check_variable = {
+			total_equipment_produced_artillery > total_equipment_produced_support
+		}
+
+		# We don't have any rubber anyway
+		rubber < 6
+	}
+}
+
+
+ai_infantry_play_tall = {
+	has_country_flag = ai_infantry_play_tall
+}
+
+ai_infantry_switch_to_tall_threshold = {
+	date > "3021.6.1"
+	num_of_civilian_factories > 35
+	has_manpower > 50000
+	OR = {
+		AND = {
+			ai_has_over_50p_wanted_divs = yes
+			num_of_military_factories > 25
+			num_divisions > 40
+		}
+		ai_has_over_75p_wanted_divs = yes
+	}
+	stockpile_ratio = {
+		archetype = infantry_equipment
+		ratio > 0.4
+	}
+	stockpile_ratio = {
+		archetype = artillery_equipment
+		ratio > 0.25
+	}
+	stockpile_ratio = {
+		archetype = support_equipment
+		ratio > 0.25
+	}
+}
+
+ai_infantry_switch_to_wide_threshold = {
+	OR = {
+		ai_has_under_25p_wanted_divs = yes
+		AND = {
+			ai_has_under_50p_wanted_divs = yes
+			has_equipment = { infantry_equipment < -1000 }
+		}
+		AND = {
+			ai_has_under_75p_wanted_divs = yes
+			has_equipment = { infantry_equipment < -5000 }
+		}
+		AND = {
+			ai_has_under_50p_wanted_divs = yes
+			stockpile_ratio = {
+				archetype = infantry_equipment
+				ratio < 0.2
+			}
+			stockpile_ratio = {
+				archetype = artillery_equipment
+				ratio < 0.1
+			}
+			stockpile_ratio = {
+				archetype = support_equipment
+				ratio < 0.1
+			}
+		}
+	}
+}
+
+ai_pushers_play_tall = {
+	has_country_flag = ai_pushers_play_tall
+}
+
+ai_pushers_switch_to_tall_threshold = {
+	date > "3020.1.1"
+	OR = {
+		AND = {
+			ai_has_over_75p_wanted_divs = yes
+			num_of_military_factories > 30
+		}
+		ai_has_over_100p_wanted_divs = yes
+	}
+	OR = {
+		AND = {
+			target_light_cav_strat = yes
+			stockpile_ratio = {
+				archetype = light_cavalry_chassis
+				ratio > 0.4
+			}
+		}
+		AND = {
+			target_heavy_cav_strat = yes
+			stockpile_ratio = {
+				archetype = heavy_cavalry_chassis
+				ratio > 0.4
+			}
+		}
+		AND = {
+			target_chariots_strat = yes
+			stockpile_ratio = {
+				archetype = chariot_chassis
+				ratio > 0.4
+			}
+		}
+		AND = {
+			target_heavy_cav_chariots_strat = yes
+			stockpile_ratio = {
+				archetype = heavy_cavalry_chassis
+				ratio > 0.4
+			}
+			stockpile_ratio = {
+				archetype = chariot_chassis
+				ratio > 0.4
+			}
+		}
+	}
+}
+
+ai_pushers_switch_to_wide_threshold = {
+	OR = {
+		ai_has_under_25p_wanted_divs = yes
+		AND = {
+			ai_has_under_75p_wanted_divs = yes
+			has_equipment = { infantry_equipment < -1000 }
+		}
+		AND = {
+			ai_has_under_100p_wanted_divs = yes
+			has_equipment = { infantry_equipment < -5000 }
+		}
+		AND = {
+			ai_has_under_50p_wanted_divs = yes
+			stockpile_ratio = {
+				archetype = infantry_equipment
+				ratio < 0.2
+			}
+			stockpile_ratio = {
+				archetype = artillery_equipment
+				ratio < 0.1
+			}
+			stockpile_ratio = {
+				archetype = support_equipment
+				ratio < 0.1
+			}
+		}
+	}
+}

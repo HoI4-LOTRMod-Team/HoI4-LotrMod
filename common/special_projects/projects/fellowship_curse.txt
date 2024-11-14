@@ -1,0 +1,142 @@
+sp_curse_fellowship = {
+
+	specialization = specialization_laboratory
+
+	allowed = {
+		FROM = {
+			NOT = { original_tag = RIV }
+		}
+	}
+
+	visible = {
+		FROM = {
+			NOT = { has_global_flag = fs_ring_seized }
+			NOT = { has_global_flag = fs_ring_destroyed }
+			NOT = { is_special_project_completed = sp:sp_bless_fellowship }
+		}
+	}
+	
+	available = {
+		FROM = {
+			NOT = { has_country_flag = fs_interceptions_disabled }
+			NOT = { has_government = cooperative }
+			has_global_flag = fs_started
+
+			has_tech = magic
+		}
+	}
+	
+	prototype_time = sp_time.prototype.short
+	complexity = sp_complexity.medium
+
+	breakthrough_cost = {
+		specialization_laboratory = 1
+	}
+
+	resource_cost = {
+		#resources = { tungsten=2 chromium=4 }
+	}
+	
+	project_output = {
+		country_effects = {
+			if = {
+				limit = { FROM = { has_project_flag = sp_curse_fellowship_target_ringbearer_flag } }
+				random_list = {
+					50 = {
+						var:global.fs_members^0 = { ring_curse_member = yes }
+					}
+					50 = {
+						ring_curse_random_fellowship_member = yes
+					}
+				}
+			}
+			else = {
+				ring_curse_random_fellowship_member = yes
+			}
+		}
+	}
+
+	generic_prototype_rewards = {
+		sp_generic_reward_scientist_xp_1
+		sp_generic_reward_scientist_xp_2
+		sp_generic_reward_scientist_xp_3
+		sp_generic_reward_major_progress_1
+		sp_generic_reward_major_progress_2
+		sp_generic_reward_major_progress_3
+		sp_generic_reward_test_failure_1
+		sp_generic_reward_test_failure_2
+		sp_generic_reward_test_failure_3
+		sp_generic_reward_resource_scarcity
+		sp_generic_reward_critical_failure
+		sp_generic_reward_major_failure
+		sp_generic_reward_knowledge_magic_tech
+		sp_generic_reward_knowledge_scriptorium_tech
+		sp_generic_reward_knowledge_intrigue_tech
+	}
+
+	unique_prototype_rewards = {
+
+		sp_curse_fellowship_target_ringbearer = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 0
+				max = 100
+			}
+
+			weight = {
+				base = 60
+			}
+
+			option = {
+				token = sp_curse_fellowship_target_ringbearer
+				
+				iteration_output = {
+					country_effects = {
+						FROM = { set_project_flag = sp_curse_fellowship_target_ringbearer_flag }
+						custom_effect_tooltip = sp_curse_fellowship_target_ringbearer_tt
+					}
+				}
+			}
+
+			option = {
+				token = sp_curse_fellowship_target_no_target
+
+				iteration_output = {
+					country_effects = {
+						custom_effect_tooltip = sp_curse_fellowship_target_no_target_tt
+					}
+				}
+			}
+		}
+
+		sp_curse_fellowship_gandalf_countercurse = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 20
+				max = 100
+			}
+
+			weight = {
+				base = 35
+				modifier = {
+					factor = 0
+					ring_gandalf_in_fellowship = no
+				}
+			}
+
+			option = {
+				token = sp_curse_fellowship_gandalf_countercurse
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = {
+							add_project_progress_ratio = constant:sp_progress.loss.medium
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,3 +1,5 @@
+#!gfx:interface\auto_generated\lotr_goals.gfx
+
 focus_tree = {
 	id = lothlorien
 	country = {
@@ -757,11 +759,23 @@ focus_tree = {
 		x =-1
 		y =1
 
-		cost = 5
+		cost = 3
 		ai_will_do = {
-			factor = 5
+			factor = 4
 			modifier = {
-				factor = 4
+				factor = 2
+				ROH = { surrender_progress > 0.15 }
+			}
+			modifier = {
+				factor = 2
+				ROH = { surrender_progress > 0.35 }
+			}
+			modifier = {
+				factor = 2
+				ROH = { casualties_k > 10 }
+			}
+			modifier = {
+				factor = 1.5
 				ROH = { is_ai = no }
 			}
 		}
@@ -776,10 +790,17 @@ focus_tree = {
 				NOT = { has_government = belligerent }
 				NOT = { is_ally_with = MOR }
 			}
+			# We don't want the AI using this if Rohan is doing very well
+			hidden_trigger = {
+				OR = {
+					is_ai = no
+					ROH = { surrender_progress > 0.12 }
+				}
+			}
 		}
 		completion_reward = {
 			# Remove a bunch of equipment and mp
-			add_manpower = -10000
+			add_manpower = -1000
 			add_equipment_to_stockpile = { type = infantry_equipment amount = -1000 }
 			custom_effect_tooltip = lth_sendaidtohelmsdeep_tt
 			# Load an OOB for Rohan, with an event
@@ -798,15 +819,27 @@ focus_tree = {
 		x =1
 		y =1
 
-		cost = 5
+		cost = 3
 		ai_will_do = {
-			factor = 5
+			factor = 2
 			modifier = {
-				factor = 4
+				factor = 2
+				GON = { surrender_progress > 0.1 }
+			}
+			modifier = {
+				factor = 2
+				GON = { surrender_progress > 0.3 }
+			}
+			modifier = {
+				factor = 2
+				GON = { casualties_k > 10 }
+			}
+			modifier = {
+				factor = 1.5
 				GON = { is_ai = no }
 			}
 			modifier = {
-				factor = 0
+				factor = 0.5
 				is_historical_focus_on = yes
 			}
 		}
@@ -824,7 +857,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			# Remove a bunch of equipment and mp
-			add_manpower = -10000
+			add_manpower = -1000
 			add_equipment_to_stockpile = { type = infantry_equipment amount = -1000 }
 			custom_effect_tooltip = lth_sendaidtominastirith_tt
 			# Load an OOB for Gondor, with an event
@@ -2286,6 +2319,10 @@ focus_tree = {
 				factor = 2
 				is_going_belligerent = yes
 			}
+			modifier = {
+				factor = 3
+				target_heavy_infantry_strat = yes
+			}
 		}
 		prerequisite = { focus = lth_elvenweaponry }
 		search_filters = { FOCUS_FILTER_RESEARCH }
@@ -2315,6 +2352,14 @@ focus_tree = {
 			modifier = {
 				factor = 5
 				has_completed_focus = lth_sentinelsofcerinamroth
+			}
+			modifier = {
+				add = 15
+				OR = {
+					target_light_cav_strat = yes
+					target_heavy_infantry_strat = yes
+					target_heavy_cav_chariots_strat = yes
+				}
 			}
 		}
 		prerequisite = { focus = lth_silvanelitewarriors }
@@ -2540,7 +2585,7 @@ focus_tree = {
 			remove_ideas = LTH_great_schism
 			# Get rid of Cele
 			LTH_celeborn = {
-				retire = yes
+				lotr_retire_character = yes
 			}
 			# Switch to belligerent
 			hidden_effect = {
@@ -3892,7 +3937,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			# Something with erebor
-			ERE = { country_event = { id = lotr_generic.6 days = 1 } }
+			ERE = { send_delegation_to_country = yes }
 		}
 	}
 
@@ -3921,7 +3966,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			# Something with moria
-			MOA = { country_event = { id = lotr_generic.6  days = 1 } }
+			MOA = { send_delegation_to_country = yes }
 		}
 	}
 
@@ -4055,7 +4100,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			# event to rohan
-			ROH = { country_event = { id = lotr_generic.6  days = 1 } }
+			ROH = { send_delegation_to_country = yes }
 		}
 	}
 
@@ -4157,7 +4202,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			# event to gondor
-			GON = { country_event = { id = lotr_generic.6  days = 1 } }
+			GON = { send_delegation_to_country = yes }
 		}
 	}
 
@@ -4505,7 +4550,7 @@ focus_tree = {
 			remove_ideas = LTH_great_schism
 			# Get rid of Cele
 			LTH_galadriel = {
-				retire = yes
+				lotr_retire_character = yes
 			}
 			# Switch to revolutionary
 			add_popularity = { ideology = revolutionary popularity = 1.0 }
@@ -4581,7 +4626,7 @@ focus_tree = {
 			factor = 15
 			modifier = {
 				factor = 2
-				has_manpower < 10000
+				has_manpower < 1000
 			}
 			modifier = {
 				factor = 2
@@ -4629,7 +4674,7 @@ focus_tree = {
 			factor = 15
 			modifier = {
 				factor = 2
-				has_manpower < 10000
+				has_manpower < 1000
 			}
 		}
 		prerequisite = { focus = lth_unityindivision }
@@ -4729,7 +4774,7 @@ focus_tree = {
 					limit = {
 						check_variable = { skill_level < 2 }
 					}
-					retire = yes
+					lotr_retire_character = yes
 				}
 				# All other unit leaders gain an additional skill level
 				every_unit_leader = {
@@ -5675,7 +5720,7 @@ focus_tree = {
 			}
 			modifier = {
 				factor = 10
-				has_manpower > 200000
+				has_manpower > 20000
 			}
 		}
 		prerequisite = { focus = lth_cleansethetunnels }
@@ -6298,7 +6343,7 @@ focus_tree = {
 		prerequisite = { focus = lth_sauronstoolsturned }
 		search_filters = { FOCUS_FILTER_RING }
 		available = {
-			MOR = { casualties_inflicted_by = { opponent = LTH thousands > 80 } }
+			MOR = { casualties_inflicted_by = { opponent = LTH thousands > 8 } }
 			has_country_leader = { character = LTH_galadriel ruling_only = yes }
 			ring_has_the_ring = yes	
 		}
@@ -6320,7 +6365,7 @@ focus_tree = {
 		prerequisite = { focus = lth_tworingsbecomethone }
 		search_filters = { FOCUS_FILTER_RING }
 		available = {
-			MOR = { casualties_inflicted_by = { opponent = LTH thousands > 10 } }
+			MOR = { casualties_inflicted_by = { opponent = LTH thousands > 1 } }
 			has_country_leader = { character = LTH_galadriel ruling_only = yes }
 			ring_has_the_ring = yes
 			
@@ -6348,7 +6393,7 @@ focus_tree = {
 		prerequisite = { focus = lth_prisonervivisections }
 		search_filters = { FOCUS_FILTER_RING }
 		available = {
-			MOR = { casualties_inflicted_by = { opponent = LTH thousands > 200 } }
+			MOR = { casualties_inflicted_by = { opponent = LTH thousands > 20 } }
 			has_country_leader = { character = LTH_galadriel ruling_only = yes }
 			ring_has_the_ring = yes	
 		}
@@ -6998,7 +7043,7 @@ focus_tree = {
 			factor = 5
 			modifier = {
 				factor = 2
-				has_manpower < 1000
+				has_manpower < 100
 			}
 			modifier = {
 				factor = 10
@@ -7029,7 +7074,7 @@ focus_tree = {
 			factor = 5
 			modifier = {
 				factor = 2
-				has_manpower < 1000
+				has_manpower < 100
 			}
 			modifier = {
 				factor = 10
@@ -7061,7 +7106,7 @@ focus_tree = {
 			factor = 5
 			modifier = {
 				factor = 2
-				has_manpower < 1000
+				has_manpower < 100
 			}
 			modifier = {
 				factor = 10

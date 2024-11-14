@@ -1,0 +1,627 @@
+
+
+
+hire_grima_wormtongue = {
+	set_global_flag = grima_hired
+
+	add_ideas = ROH_power_struggle
+
+	add_ideas = ROH_grima
+
+	set_variable = { ROH_grima_wormtongue_move_duration = 35 }
+	set_variable = { ROH_resistance_move_duration = 40 }
+
+	add_popularity = { ideology = cooperative popularity = -0.15 }
+	hidden_effect = {
+		# Theoden gets sick
+		country_event = { days = 70 id=rohan.2 }
+		# Eomer goes into exile
+		country_event = { days = 170 id=rohan.3 }
+
+		# Send events to "neighbouring" countries to let influence
+		LTH = { country_event = { id = rohan.79 days = 70 random_days = 70 } }
+		GON = { country_event = { id = rohan.79 days = 25 random_days = 25 } }
+
+		# Good Isengard gets to have say too
+		if = {
+			limit = { ISE = { has_completed_focus = imprisongandalf } }
+			ISE = { country_event = { id = rohan.79 days = 15 random_days = 15 } }
+		}
+
+		# There's a chance these countries get to chime in aswell:
+		random = {
+			chance = 80
+			RIV = { country_event = { id = rohan.79 days = 120 random_days = 120 } }
+		}
+		random = {
+			chance = 40
+			MIR = { country_event = { id = rohan.79 days = 80 random_days = 50 } }
+		}
+		random = {
+			chance = 50
+			DOR = { country_event = { id = rohan.79 days = 80 random_days = 120 } }
+		}
+		random = {
+			chance = 40
+			DAM = { country_event = { id = rohan.79 days = 35 random_days = 70 } }
+		}
+	}
+
+	custom_effect_tooltip = hire_grima_wormtongue_tt
+
+	hidden_effect = {
+		set_power_balance = {
+			id = power_balance_wormtongue
+		}
+
+		complete_national_focus = ROH_accept_grima
+
+		ROH_habold = { add_trait = { trait = wormtongue_sympathizer } }
+		ROH_brego = { add_trait = { trait = wormtongue_sympathizer } }
+		ROH_deorhelm = { add_trait = { trait = wormtongue_sympathizer } }
+		ROH_gleofa = { add_trait = { trait = wormtongue_sympathizer } }
+	}
+}
+
+
+improve_royal_guard = {
+	
+	custom_effect_tooltip = improve_royal_guard_tt
+
+	hidden_effect = {
+		if = {
+			limit = { NOT = { has_country_flag = guard_improved } }
+
+			set_country_flag = guard_improved
+
+			add_equipment_to_stockpile = {
+				type = heavy_cavalry_chassis_0
+				amount = 150
+			}
+
+			add_equipment_to_stockpile = {
+				type = motorized_equipment
+				amount = 50
+			}
+
+			add_units_to_division_template = {
+				template_name = "Royal Guard"
+				regiments = {
+					heavy_cavalry = 0
+					heavy_cavalry = 0
+					heavy_cavalry = 1
+					heavy_cavalry = 1
+					motorized = 2
+					motorized = 2
+				}
+				support = {
+					engineer = 0
+				}
+			}
+		}
+
+		else = {
+			add_equipment_to_stockpile = {
+				type = heavy_cavalry_chassis_0
+				amount = 150
+			}
+
+			add_equipment_to_stockpile = {
+				type = motorized_equipment
+				amount = 50
+			}
+
+			add_units_to_division_template = {
+				template_name = "Royal Guard"
+				regiments = {
+					heavy_cavalry = 3
+					heavy_cavalry = 3
+					heavy_cavalry = 3
+					heavy_cavalry = 3
+					motorized = 4
+					motorized = 4
+				}
+			}
+		}
+	}
+}
+
+
+move_bop_to_grima = {
+	if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value > 0.6 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = 0.015
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else_if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value > 0.3 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = 0.025
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else_if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value > -0.3 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = 0.045
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else = {
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = 0.055
+			tooltip_side = grima_wormtongue
+		}
+	}
+}
+
+move_bop_to_theoden = {
+	if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value < -0.6 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = -0.02
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else_if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value < -0.3 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = -0.035
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else_if = {
+		limit = { power_balance_value = { id = power_balance_wormtongue value < 0.3 } }
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = -0.07
+			tooltip_side = grima_wormtongue
+		}
+	}
+	else = {
+		add_power_balance_value = {
+			id = power_balance_wormtongue
+			value = -0.1
+			tooltip_side = grima_wormtongue
+		}
+	}
+}
+
+
+grima_make_move = {
+	custom_effect_tooltip = grima_make_move_tt
+	hidden_effect = {
+		# hich chance of enacting neutral foreign policy first
+		if = {
+			limit = { NOT = { has_idea = ROH_neutral_foreign_policy } }
+
+			random_list = {
+				65 = {
+					country_event = rohan.78
+				}
+				35 = {
+					random_list = {
+						18 = { grima_hire_advisor = yes }
+						8 = { grima_banish_rival = yes }
+						12 = { grima_replace_horselord = yes }
+						7 = { grima_misc_actions = yes }
+					}	
+				}
+			}
+		}
+		else = {
+			random_list = {
+				18 = { grima_hire_advisor = yes }
+				8 = { grima_banish_rival = yes }
+				12 = { grima_replace_horselord = yes }
+				7 = { grima_misc_actions = yes }
+			}	
+		}
+	}
+}
+
+resistance_make_move = {
+	custom_effect_tooltip = resistance_make_move_tt
+	hidden_effect = {
+		random_list = {
+			10 = {
+				country_event = rohan.105
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					ROH_eomer = { is_unit_leader = no }
+				}
+				country_event = rohan.106
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					ROH_hama = { is_unit_leader = no }
+				}
+				country_event = rohan.107
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					NOT = { controls_state = 184 }
+				}
+				country_event = rohan.108
+			}
+			10 = {
+				country_event = rohan.109
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					NOT = {
+						has_country_leader_with_trait = afflicted
+						has_country_leader_with_trait = isolated_and_paranoid
+					}
+				}
+				country_event = rohan.110
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					OR = {
+						ROH_eomer = { is_dead = yes }
+						ROH_eomer = { is_unit_leader = yes }
+					}
+				}
+				country_event = rohan.111
+			}
+			10 = {
+				country_event = rohan.112
+			}
+			10 = {
+				country_event = rohan.113
+			}
+			10 = {
+				country_event = rohan.114
+			}
+			10 = {
+				modifier = {
+					factor = 0
+					ROH_eomer = { is_unit_leader = no }
+				}
+				country_event = rohan.115
+			}
+		}
+	}
+}
+
+
+grima_replace_horselord = {
+	random_list = {
+		100 = {
+			modifier = {
+				factor = 0
+				OR = {
+					has_global_flag = has_dealt_with_region_4
+					NOT = { has_character = ROH_herethain }
+				}
+			}
+			# westmarch
+			country_event = rohanlords.6
+		}
+		100 = {
+			modifier = {
+				factor = 0
+				OR = {
+					has_global_flag = has_dealt_with_region_3
+					NOT = { has_character = ROH_frumbold }
+				}
+			}
+			# westemnet
+			country_event = rohanlords.7
+		}
+		100 = {
+			modifier = {
+				factor = 0
+				OR = {
+					has_global_flag = has_dealt_with_region_5
+					NOT = { has_character = ROH_leoheort }
+				}
+			}
+			# eastfold/anorien
+			country_event = rohanlords.8
+		}
+		100 = {
+			modifier = {
+				factor = 0
+				OR = {
+					has_global_flag = has_dealt_with_region_2
+					NOT = { has_character = ROH_widgelred }
+				}
+			}
+			# eastemnet
+			country_event = rohanlords.9
+		}
+		100 = {
+			modifier = {
+				factor = 0
+				OR = {
+					has_global_flag = has_dealt_with_region_1
+					NOT = { has_character = ROH_derngar }
+				}
+			}
+			# wold
+			country_event = rohanlords.10
+		}
+		1 = {  }
+	}
+}
+
+
+grima_banish_rival = {
+	random_list = {
+		# Banish a general Grima doesn't like
+		10 = {
+			country_event = rohan.67
+		}
+		# Promote a new general
+		10 = {
+			country_event = rohan.66
+		}
+	}
+}
+
+grima_misc_actions = {
+	random_list = {
+		# crushes peasant unrest
+		100 = {
+			country_event = rohan.68
+		}
+		# rallies military support
+		100 = {
+			country_event = rohan.69
+		}
+		# increases trading tolls
+		100 = {
+			country_event = rohan.70
+		}
+		# convenes with king
+		100 = {
+			country_event = rohan.71
+		}
+		# raises new levy army
+		100 = {
+			country_event = rohan.72
+		}
+		# makes concessions to Isengard
+		100 = {
+			country_event = rohan.73
+		}
+	}
+}
+
+
+grima_hire_advisor = {
+	# PROMOTE AN ADVISOR:
+	random_list = {
+		100 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { chief_advisor } } }
+			country_event = rohan.51
+		}
+		15 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { spymaster } } }
+			country_event = rohan.52
+		}
+		15 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { treasurer } } }
+			country_event = rohan.53
+		}
+		15 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 1 slots = { political_advisor } } }
+			country_event = rohan.54
+		}
+		15 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 1 slots = { political_advisor } } }
+			country_event = rohan.55
+		}
+		12 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { chief_researcher } } }
+			country_event = rohan.56
+		}
+		8 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { architect } } }
+			country_event = rohan.57
+		}
+		10 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { theorist } } }
+			country_event = rohan.58
+		}
+		7 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 1 slots = { research_advisor } } }
+			country_event = rohan.59
+		}
+		7 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 1 slots = { research_advisor } } }
+			country_event = rohan.60
+		}
+		8 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { army_chief } } }
+			country_event = rohan.61
+		}
+		1 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { navy_chief } } }
+			country_event = rohan.62
+		}
+		5 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { cavalry_chief } } }
+			country_event = rohan.63
+		}
+		5 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 1 slots = { high_command } } }
+			country_event = rohan.64
+		}
+		5 = {
+			modifier = { factor = 0 amount_taken_ideas = { amount > 1 slots = { high_command } } }
+			country_event = rohan.65
+		}
+		1 = { }
+	}
+}
+
+
+grima_hire_small_council_advisor = {
+	custom_effect_tooltip = grima_hire_small_council_advisor_tt
+	hidden_effect = {
+		random_list = {
+			100 = {
+				modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { chief_advisor } } }
+				country_event = rohan.51
+			}
+			15 = {
+				modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { spymaster } } }
+				country_event = rohan.52
+			}
+			15 = {
+				modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { treasurer } } }
+				country_event = rohan.53
+			}
+			15 = {
+				modifier = { factor = 0 amount_taken_ideas = { amount > 1 slots = { political_advisor } } }
+				country_event = rohan.54
+			}
+			15 = {
+				modifier = { factor = 0 amount_taken_ideas = { amount > 1 slots = { political_advisor } } }
+				country_event = rohan.55
+			}
+		}
+	}
+}
+
+
+grima_hire_war_council_advisor = {
+	custom_effect_tooltip = grima_hire_war_council_advisor_tt
+	hidden_effect = {
+		random_list = {
+			8 = {
+				modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { army_chief } } }
+				country_event = rohan.61
+			}
+			1 = {
+				modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { navy_chief } } }
+				country_event = rohan.62
+			}
+			5 = {
+				modifier = { factor = 0 amount_taken_ideas = { amount > 0 slots = { cavalry_chief } } }
+				country_event = rohan.63
+			}
+			5 = {
+				modifier = { factor = 0 amount_taken_ideas = { amount > 1 slots = { high_command } } }
+				country_event = rohan.64
+			}
+			5 = {
+				modifier = { factor = 0 amount_taken_ideas = { amount > 1 slots = { high_command } } }
+				country_event = rohan.65
+			}
+		}
+	}
+}
+
+roh_add_minor_grima_drift = {
+	custom_effect_tooltip = roh_add_minor_grima_drift_tt
+	hidden_effect = {
+			add_power_balance_modifier = {
+			id = power_balance_wormtongue
+			modifier = ROH_minor_grima_drift
+		}	
+	}
+}
+
+roh_add_intermediate_grima_drift = {
+	custom_effect_tooltip = roh_add_intermediate_grima_drift_tt
+	hidden_effect = {
+			add_power_balance_modifier = {
+			id = power_balance_wormtongue
+			modifier = ROH_intermediate_grima_drift
+		}	
+	}
+}
+
+roh_add_major_grima_drift = {
+	custom_effect_tooltip = roh_add_major_grima_drift_tt
+	hidden_effect = {
+			add_power_balance_modifier = {
+			id = power_balance_wormtongue
+			modifier = ROH_major_grima_drift
+		}	
+	}
+}
+
+roh_add_minor_theoden_drift = {
+	custom_effect_tooltip = roh_add_minor_theoden_drift_tt
+	hidden_effect = {
+			add_power_balance_modifier = {
+			id = power_balance_wormtongue
+			modifier = ROH_minor_theoden_drift
+		}	
+	}
+}
+
+roh_add_intermediate_theoden_drift = {
+	custom_effect_tooltip = roh_add_intermediate_theoden_drift_tt
+	hidden_effect = {
+			add_power_balance_modifier = {
+			id = power_balance_wormtongue
+			modifier = ROH_intermediate_theoden_drift
+		}	
+	}
+}
+
+roh_add_major_theoden_drift = {
+	custom_effect_tooltip = roh_add_major_theoden_drift_tt
+	hidden_effect = {
+			add_power_balance_modifier = {
+			id = power_balance_wormtongue
+			modifier = ROH_major_theoden_drift
+		}	
+	}
+}
+
+roh_end_bop_struggle = {
+	#custom_effect_tooltip = roh_end_bop_struggle_tt
+	remove_power_balance = {
+		id = power_balance_wormtongue
+	}
+	remove_ideas = ROH_power_struggle
+}
+
+
+roh_send_bop_delegation = {
+	country_event = rohan.87
+
+	custom_effect_tooltip = if_they_accept_newline_tt
+	roh_add_intermediate_theoden_drift = yes
+
+	custom_effect_tooltip = if_they_refuse_newline_tt
+	roh_add_minor_grima_drift = yes
+}
+
+
+rohan_set_horselords_cooldown = {
+	set_country_flag = {
+		flag = rohan_lords_dealt_with_region
+		days = 70
+		value = 1
+	}
+}
+
+rohan_set_research_tree_cooldown = {
+	set_country_flag = {
+		flag = rohan_research_tree_cooldown
+		days = 70
+		value = 1
+	}
+}

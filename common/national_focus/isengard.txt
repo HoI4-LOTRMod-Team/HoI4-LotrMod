@@ -314,7 +314,7 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			custom_effect_tooltip = MOR_event_triggert_focus
-			add_named_threat = { threat = 1 name = "Gandalf being taken prisoner" }
+			add_named_threat = { threat = 2 name = "Gandalf being taken prisoner" }
 		}
 	}
 
@@ -335,7 +335,7 @@ focus_tree = {
 		completion_reward = {
 			lotr_switch_to_orcs = yes
 			set_politics = { ruling_party = belligerent elections_allowed = no }
-			add_named_threat = { threat = 1 name = "Rebranded Isengard" }
+			add_named_threat = { threat = 3 name = "Rebranded Isengard" }
 			hidden_effect = {
 				if = {
 					limit = {
@@ -361,7 +361,7 @@ focus_tree = {
 		mutually_exclusive = { }
 		prerequisite = { focus = imprisongandalf }
 		prerequisite = { focus = militaryinnovations }
-		cost = 5
+		cost = 10
 		available_if_capitulated = no
 		completion_reward = { army_experience = 25 add_threat = 5 }
 	}
@@ -371,7 +371,7 @@ focus_tree = {
 	focus = {
 		id = setupaproductionline
 		icon = GFX_goal_generic_anvil
-		ai_will_do = { factor = 8 }
+		ai_will_do = { factor = 42 }
 		available = { 31 = { is_controlled_by = ISE } 158 = { is_controlled_by = ISE } 159 = { is_controlled_by = ISE } }
 		x =14
 		y =5
@@ -380,15 +380,27 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = no
 		completion_reward = {
-			31 = { add_extra_state_shared_building_slots = 7 }
+			31 = { add_extra_state_shared_building_slots = 6 }
 			31 = {add_building_construction = { type = arms_factory level = 5 instant_build = yes } }
-			31 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+			31 = {add_building_construction = { type = industrial_complex level = 1 instant_build = yes } }
 			158 = { add_extra_state_shared_building_slots = 4 }
 			158 = {add_building_construction = { type = arms_factory level = 2 instant_build = yes } }
 			158 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
 			159 = { add_extra_state_shared_building_slots = 4 }
 			159 = {add_building_construction = { type = arms_factory level = 2 instant_build = yes } }
 			159 = {add_building_construction = { type = industrial_complex level = 2 instant_build = yes } }
+			hidden_effect = {
+				if = {
+					limit = { is_ai = yes }
+					add_offsite_building = { type = arms_factory level = 3 }
+					add_offsite_building = { type = industrial_complex level = 1 }
+				}
+				if = {
+					limit = { is_ai = yes ROH = { is_ai = no } }
+					add_offsite_building = { type = arms_factory level = 3 }
+					add_offsite_building = { type = industrial_complex level = 1 }
+				}
+			}
 		}
 	}
 
@@ -426,14 +438,14 @@ focus_tree = {
 	focus = {
 		id = establishorcbreedinggrounds
 		icon = GFX_goal_army_uruk_hai
-		ai_will_do = { factor = 50 }
+		ai_will_do = { factor = 40 }
 		x =16
 		y =5
 		mutually_exclusive = { }
 		prerequisite = { focus = buildanarmyworthyofmordor }
 		cost = 10
 		available_if_capitulated = no
-		completion_reward = { add_manpower = 250000 add_ideas = ISE_orc_breeding }
+		completion_reward = { add_manpower = 25000 add_ideas = ISE_orc_breeding }
 	}
 
 	#Focus for More Orcs!
@@ -447,7 +459,7 @@ focus_tree = {
 		prerequisite = { focus = establishorcbreedinggrounds }
 		cost = 10
 		available_if_capitulated = no
-		completion_reward = { add_manpower = 250000 add_ideas = ISE_orc_breeding2 }
+		completion_reward = { add_manpower = 25000 add_ideas = ISE_orc_breeding2 }
 	}
 
 	#Focus for Select the Strongest Few
@@ -459,7 +471,7 @@ focus_tree = {
 		y =7
 		mutually_exclusive = { }
 		prerequisite = { focus = moreorcs }
-		cost = 2
+		cost = 3
 		available_if_capitulated = no
 		completion_reward = {
 			add_corps_commander_role = {
@@ -896,7 +908,7 @@ focus_tree = {
 		y =4
 		mutually_exclusive = { }
 		prerequisite = { focus = imprisongandalf}
-		cost = 5
+		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
 			ROH = { add_opinion_modifier = { target = ISE modifier = isr_quarrel } }
@@ -919,8 +931,8 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			add_named_threat = { threat = 1 name = "Orc pillaging Rohan villages" }
-			ROH = { add_ideas = ISE_orc_pillage }
+			add_named_threat = { threat = 3 name = "Orc pillaging Rohan villages" }
+			ROH = { add_ideas = ROH_orc_pillage_2 }
 		}
 	}
 
@@ -934,15 +946,15 @@ focus_tree = {
 		y =6
 		mutually_exclusive = { }
 		prerequisite = { focus = pillagethetownsofrohan}
-		cost = 3
+		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			ISE = { set_state_owner = 24 }
+			ISE = { transfer_state = 24 }
 			add_named_threat = { threat = 5 name = "The annexation of Rohan Gap by Isengard" } 
-			ROH = { add_manpower = -20000 }
+			ROH = { add_manpower = -2000 }
 			hidden_effect = {
 				if = {
-					limit = { NOT = { has_global_flag = theodred_dead } }
+					limit = { ROH = { ROH_theodred = { is_alive = yes } } }
 					ROH = { country_event = { days = 0 id = rohan.4 } } set_global_flag = theodred_dead
 				}
 			}
@@ -957,20 +969,33 @@ focus_tree = {
 			factor = 5
 			modifier = {
 				add = 5
-				ISE = { num_divisions > 60 }
+				ISE = { num_divisions > 30 }
+			}
+			modifier = {
+				add = 3
+				24 = { is_controlled_by = ISE }
 			}
 			modifier = {
 				add = 2
-				24 = { is_controlled_by = ISE }
+				ROH = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 0.5
+				date < "3021.2.1"
+			}
+			modifier = {
+				factor = 2
+				date > "3021.10.1"
 			}
 		}
 		bypass = { has_war_with = ROH }
 		x =12
 		y =7
 		prerequisite = { focus = takethefordsofisen}
+		will_lead_to_war_with = ROH
 		cost = 10
 		available_if_capitulated = yes
-		completion_reward = { ROH = { country_event = { days = 0 id = rohan.5 } } }
+		completion_reward = { ROH = { country_event = { days = 1 id = rohan.5 } } }
 	}
 
 	#Focus for War with Gondor
@@ -978,6 +1003,7 @@ focus_tree = {
 		id = isr_warwithgondor
 		icon = GFX_goal_mor_wargoal_gondor
 		available = { NOT = { is_in_faction_with = GON } }
+		will_lead_to_war_with = GON
 		ai_will_do = {
 			factor = 0
 			modifier = {
@@ -1002,6 +1028,7 @@ focus_tree = {
 		id = warwithlorien
 		icon = GFX_goal_generic_major_war
 		available = { NOT = { is_in_faction_with = LTH } }
+		will_lead_to_war_with = LTH
 		ai_will_do = {
 			factor = 0
 			modifier = {
@@ -1025,11 +1052,12 @@ focus_tree = {
 	focus = {
 		id = warwithrohan
 		icon = GFX_goal_mor_wargoal_rohan
+		will_lead_to_war_with = ROH
 		ai_will_do = {
-			factor = 2
+			factor = 3
 			modifier = {
 				add = 5
-				ISE = { num_divisions > 60 }
+				ISE = { num_divisions > 35 }
 			}
 			modifier = {
 				add = 2
@@ -1041,11 +1069,24 @@ focus_tree = {
 			}
 			modifier = {
 				factor = 2
-				ROH = { num_divisions < 80 }
+				ROH = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 0.25
+				date < "3021.2.1"
+			}
+			modifier = {
+				factor = 1.5
+				date > "3021.10.1"
+			}
+			modifier = {
+				factor = 0
+				has_war = yes
+				enemies_strength_ratio > 1.1
 			}
 		}
 		bypass = { has_war_with = ROH }
-		available = { NOT = { is_in_faction_with = ROH } NOT = { ROH= { has_completed_focus = unitewithisengard } } }
+		available = { NOT = { is_in_faction_with = ROH } NOT = { ROH= { has_completed_focus = ROH_pledge_to_saruman } } }
 		x =12
 		y =8
 		mutually_exclusive = { }
@@ -1088,6 +1129,7 @@ focus_tree = {
 				controls_province = 4628
 				has_war_with = ROOT
 			}
+			controls_state = 23
 		}
 		x =14
 		y =8
@@ -1096,18 +1138,27 @@ focus_tree = {
 		cost = 2
 		available_if_capitulated = yes
 		completion_reward = {
-			custom_effect_tooltip = helmsdeephasbutoneweakness_effect_tooltip
-
-			hidden_effect = {
-				news_event = { hours = 5 id = news.388 }
-				launch_nuke = {
-					province = 4628
-					state = 184
-					controller = ROH
-					use_nuke = no
+			if = {
+				limit = { ROH = { has_completed_focus = ROH_reinforce_the_deeping_wall } }
+				184 = {
+					damage_building = {
+						type = castle
+						damage = 1
+					}
 				}
+			}
+			else = {
+				custom_effect_tooltip = helmsdeephasbutoneweakness_effect_tooltip
 
-				184 = { remove_building = { type = bunker province = 4628 level = 2 } }
+				hidden_effect = {
+					news_event = { hours = 5 id = news.388 }
+					launch_nuke = {
+						province = 4628
+						state = 184
+						controller = ROH
+						use_nuke = no
+					}
+				}
 			}
 		}
 	}
@@ -1116,8 +1167,35 @@ focus_tree = {
 	focus = {
 		id = unitewithsauron
 		icon = GFX_goal_mordor_flag
-		ai_will_do = { factor = 6 }
-		available = { has_government = belligerent NOT = { ISE = { has_completed_focus = ourownway } } }
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				NOT = { has_war_with = GON }
+				ROH = { is_in_faction = no }
+				date < "3022.5.1"
+			}
+			modifier = {
+				factor = 2
+				has_war_with = GON
+			}
+			modifier = {
+				factor = 3
+				enemies_strength_ratio > 1.5
+			}
+			modifier = {
+				factor = 2
+				enemies_strength_ratio > 2.0
+			}
+		}
+		available = {
+			has_government = belligerent NOT = { ISE = { has_completed_focus = ourownway } }
+			OR = {
+				MOR = { has_war = yes }
+				threat > 0.31
+			}
+		}
 		bypass = { any_country = { original_tag = MOR has_government = belligerent is_faction_leader = yes is_in_faction_with = ROOT } }
 		x =6
 		y =5
@@ -1125,7 +1203,7 @@ focus_tree = {
 		prerequisite = { focus = rebrandisengard}
 		cost = 2
 		available_if_capitulated = yes
-		completion_reward = { MOR = { add_to_faction = ISE } }
+		completion_reward = { MOR = { ask_to_join_faction = yes } }
 	}
 
 	#Focus for Hunt for the Ring in Argonath

@@ -1,0 +1,144 @@
+
+
+
+ai_decisions = {
+	
+
+	# emergency manpower injection
+	ai_get_manpower = {
+		available = {
+			has_manpower < 4000
+			num_of_factories > 24
+		}
+
+	    cancel_trigger = {
+	        has_manpower > 15000
+	    }
+
+		ai_will_do = {
+			base = 10
+			modifier = {
+				factor = 2
+				has_manpower < 100
+			}
+		}
+
+	    days_remove = 180
+		days_re_enable = 370
+
+		modifier = {
+			weekly_manpower = 250
+		}
+	}
+
+
+	# build up supply routes to the front
+	ai_build_railway = {
+		available = {
+			has_country_flag = ai_build_railway_enabled
+		}
+
+		ai_will_do = {
+			base = 15
+			modifier = {
+				factor = 2
+				is_major = yes
+			}
+			modifier = {
+				factor = 2
+				has_war = yes
+			}
+		}
+
+		days_re_enable = 370
+
+		complete_effect = {
+			clr_country_flag = ai_build_railway_enabled
+
+			random_controlled_state = {
+				limit = {
+					ROOT = {
+						divisions_in_state = {
+							type = infantry
+							size > 7
+							state = PREV
+						}
+						NOT = {
+							has_railway_connection = {
+								start_state = capital
+								target_state = PREV
+							}
+						}
+						can_build_railway = {
+							start_state = capital
+							target_state = PREV
+						}
+					}
+					any_neighbor_state = {
+						controller = { has_war_with = ROOT }
+					}
+				}
+				ROOT = {
+					build_railway = {
+						level = 1
+						build_only_on_allied = yes
+						start_state = capital
+						target_state = PREV
+					}
+				}
+			} 
+		}
+	}
+
+
+
+	# build airfields in the combat area
+	ai_build_air_base = {
+		available = {
+			has_country_flag = ai_build_air_base_enabled
+		}
+
+		ai_will_do = {
+			base = 15
+			modifier = {
+				factor = 2
+				is_major = yes
+			}
+			modifier = {
+				factor = 2
+				has_war = yes
+			}
+		}
+
+		days_re_enable = 370
+
+		complete_effect = {
+			clr_country_flag = ai_build_air_base_enabled
+
+			# Select best state for airbase and build one
+
+			set_temp_variable = { temp_max_prio = -999 }
+			set_temp_variable = { temp_max_state = capital }
+
+			for_each_scope_loop = {
+				array = controlled_states
+				
+				if = {
+					limit = {
+						check_variable = { temp_max_prio < mtth:state_air_base_priority }
+					}
+					set_temp_variable = { temp_max_prio = mtth:state_air_base_priority }
+					set_temp_variable = { temp_max_state = THIS }
+				}
+			}
+
+			var:temp_max_state = {
+				add_building_construction = {
+					type = air_base
+					level = 1
+				}
+			}
+		}
+	}
+
+}

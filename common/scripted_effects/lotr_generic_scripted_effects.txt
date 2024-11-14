@@ -4,11 +4,61 @@
 
 
 # @docs(Generic): Retires a character, shows '[Character] dies' as a tooltip
-kill_character = {
+lotr_kill_character = {
     custom_effect_tooltip = kill_character_tt
-    hidden_effect = { retire = yes }
+    hidden_effect = {
+        set_character_flag = is_dead
+        retire = yes
+        on_character_killed = yes
+    }
 }
 
+# @docs(Generic): Retires a character
+lotr_retire_character = {
+    set_character_flag = is_retired
+    retire = yes
+    hidden_effect = {
+        on_character_retired = yes   
+    }
+}
+
+
+# @docs(Generic): Pseudo-Retire a character, without removing them from the leader-pool
+lotr_pseudo_retire_character = {
+    effect_tooltip = {
+        retire = yes
+    }
+    set_character_flag = is_retired
+    hidden_effect = {
+        on_character_retired = yes   
+    }
+}
+
+
+# @docs(Generic): A pseudo on-action that gets called whenever a character dies via the kill_character effect.
+on_character_killed = {
+
+    # Deal with Rohan Lords
+    if = {
+        limit = { rohan_lords_is_horselord = yes }
+        ROH = {
+            rohan_lords_replace_characters_on_death = yes
+        }
+    }
+}
+
+
+# @docs(Generic): A pseudo on-action that gets called whenever a character is retired
+on_character_retired = {
+
+    # Deal with Rohan Lords
+    if = {
+        limit = { rohan_lords_is_horselord = yes }
+        ROH = {
+            rohan_lords_replace_characters_on_retired = yes
+        }
+    }
+}
 
 
 # @docs(Generic): ROOT steals a technology from THIS
@@ -48,6 +98,15 @@ give_intel_on_country = {
 }
 
 
+# @docs(Generic): Increase a country's levies law with no pre-requisite checks
+increase_levies = {
+    if = { limit = { has_idea = no_standing_army } swap_ideas = { add_idea = priviledged_service remove_idea = no_standing_army } }
+    else_if = { limit = { has_idea = priviledged_service } swap_ideas = { add_idea = volunteer_service remove_idea = priviledged_service } }
+    else_if = { limit = { has_idea = volunteer_service } swap_ideas = { add_idea = limited_levy remove_idea = volunteer_service } }
+    else_if = { limit = { has_idea = limited_levy } swap_ideas = { add_idea = extensive_levy remove_idea = limited_levy } }
+    else_if = { limit = { has_idea = limited_levy } swap_ideas = { add_idea = mass_levy remove_idea = limited_levy } }
+}
+
 # @docs(Generic): Increase a country's centralization law with no pre-requisite checks
 increase_centralization = {
     if = { limit = { has_idea = no_centralization } swap_ideas = { add_idea = weak_centralization remove_idea = no_centralization } }
@@ -55,6 +114,15 @@ increase_centralization = {
     else_if = { limit = { has_idea = moderate_centralization } swap_ideas = { add_idea = strong_centralization remove_idea = moderate_centralization } }
     else_if = { limit = { has_idea = strong_centralization } swap_ideas = { add_idea = very_strong_centralization remove_idea = strong_centralization } }
     else = { add_political_power = 150 }
+}
+
+# @docs(Generic): Decrease a country's centralization law with no pre-requisite checks
+decrease_centralization = {
+    if = { limit = { has_idea = weak_centralization } swap_ideas = { remove_idea = weak_centralization add_idea = no_centralization } }
+    else_if = { limit = { has_idea = moderate_centralization } swap_ideas = { remove_idea = moderate_centralization add_idea = weak_centralization } }
+    else_if = { limit = { has_idea = strong_centralization } swap_ideas = { remove_idea = strong_centralization add_idea = moderate_centralization } }
+    else_if = { limit = { has_idea = very_strong_centralization } swap_ideas = { remove_idea = very_strong_centralization add_idea = strong_centralization } }
+    else = { add_political_power = 100 }
 }
 
 # @docs(Generic): Adds a building slot and civilian factory to a state
@@ -107,7 +175,7 @@ add_building_slot_and_mil_x4 = {
 
 # @docs(Moria): Kill/Retire the Durin's Bane character (Does not remove the state modifiers)
 kill_durins_bane = {
-    MOA = { MOA_bane = { kill_character = yes } }
+    MOA = { MOA_bane = { lotr_kill_character = yes } }
     hidden_effect = {
         set_global_flag = durins_bane_dead
         MOC = { MOC_bane = { retire = yes } }
@@ -257,6 +325,11 @@ random_state_add_building_slot_and_doc_x4 = {
     }
 }
 
+# @docs(Generic): Send and event to a country inviting them to form a non-aggression pact
+invite_to_non_aggession_pact = {
+    country_event = { id = lotr_generic.13 days = 1 }
+}
+
 # @docs(Generic): Send and event to a country inviting them to your faction
 invite_to_faction = {
     country_event = { id = lotr_generic.11 days = 1 }
@@ -311,5 +384,222 @@ restore_ruling_party = {
             #ruling_party = revolutionary
         }
         clear_variable = ROOT.ruling_ideology_before_change
+    }
+}
+
+# @docs(Generic): reduces tax-law to low (unless it is none) and disallows a higher tax law
+disallow_medium_and_low_taxes = {
+    if = { limit = { has_idea = medium_taxes } swap_ideas = { remove_idea = medium_taxes add_idea = low_taxes } }
+    if = { limit = { has_idea = high_taxes } swap_ideas = { remove_idea = high_taxes add_idea = low_taxes } }
+    custom_effect_tooltip = "disallow_medium_and_low_taxes_tt"
+    set_country_flag = medium_and_low_taxes_not_allowed
+}
+
+# @docs(Generic): reduces tax-law to low (unless it is none) and disallows a higher tax law for a year
+disallow_medium_and_low_taxes_1y = {
+    if = { limit = { has_idea = medium_taxes } swap_ideas = { remove_idea = medium_taxes add_idea = low_taxes } }
+    if = { limit = { has_idea = high_taxes } swap_ideas = { remove_idea = high_taxes add_idea = low_taxes } }
+    custom_effect_tooltip = "disallow_medium_and_low_taxes_1y_tt"
+    set_country_flag = {
+        flag = medium_and_low_taxes_not_allowed
+        days = 370
+    }
+}
+
+# @docs(Generic): ROOT sends a delegation to THIS, giving them three options to respond
+send_delegation_to_country = {
+    custom_effect_tooltip = send_delegation_to_country_tt
+    hidden_effect = {
+        country_event = { id = lotr_generic.6 days = 1 }
+    }
+}
+
+# @docs(Generic): Remove all collaboration other countries have on ROOT
+remove_all_collaboration = {
+    custom_effect_tooltip = remove_all_collaboration_tt
+    hidden_effect = {
+        every_country = {
+            limit = { has_collaboration = { target = ROOT value > 0 } }
+            set_collaboration = {
+                target = ROOT
+                value = 0
+            }
+        }
+    }
+}
+
+# @docs(Generic): The current scrope receives a number of fake intel divisions, which are dissolved automatically after ~120 days
+create_fake_divisions = {
+    ROOT = {
+        hidden_effect = {
+            if = {
+                # create template if not exist
+                limit = {
+                    not = {
+                        has_country_flag = fake_intel_template_created
+                    }
+                }
+                division_template = {
+                    name = "Fake Intel Division"
+
+                    is_fake_intel_division = yes
+                    is_locked = yes
+                    regiments = {
+                        fake_intel_unit = { x = 0 y = 0 }
+                    }
+                }
+                set_country_flag = fake_intel_template_created
+            }
+
+            # give it an id and store id & current date so it can be deleted later
+            if = {
+                limit = { NOT = { has_variable = fake_intel_id } }
+                set_variable = { fake_intel_id = 1000 }
+            }
+            set_temp_variable = { id_to_set = fake_intel_id }
+            add_to_variable = { fake_intel_id = 1 }
+            add_to_array = {
+                fake_intel_ids_to_delete = id_to_set
+            }
+            set_variable = { num_days_for_fake_intel_id@var:id_to_set = global.num_days }
+
+            # minimum of 0.25 of current armies or 8
+            set_temp_variable = { num_to_create = num_armies }
+            multiply_temp_variable = { num_to_create = 0.25 }
+            round_temp_variable = num_to_create
+            add_to_temp_variable = { num_to_create = 1 }
+            clamp_temp_variable = {
+                var = num_to_create
+                min = 8
+            }
+
+            # create actual units
+            capital_scope = {
+                create_unit = {
+                    division = "division_template = \"Fake Intel Division\" start_experience_factor = 0.5"
+                    owner = PREV
+                    count = num_to_create
+                    id = id_to_set
+                }
+            }
+
+            # will delete them after 90 days
+            country_event = { id = lar_fake_intel_units.1 days = 120 random_days = 30 }
+        }
+    }
+    custom_effect_tooltip = CUSTOM_EFFECT_CREATE_FAKE_ARMIES_RESULT
+}
+
+# Non-generic variant of the effect above
+sp_mirror_image_create_fake_divisions = {
+    ROOT = {
+        hidden_effect = {
+            if = {
+                # create template if not exist
+                limit = {
+                    not = {
+                        has_country_flag = fake_intel_template_created
+                    }
+                }
+                division_template = {
+                    name = "Fake Intel Division"
+
+                    is_fake_intel_division = yes
+                    is_locked = yes
+                    regiments = {
+                        fake_intel_unit = { x = 0 y = 0 }
+                    }
+                }
+                set_country_flag = fake_intel_template_created
+            }
+
+            # give it an id and store id & current date so it can be deleted later
+            if = {
+                limit = { NOT = { has_variable = fake_intel_id } }
+                set_variable = { fake_intel_id = 1000 }
+            }
+            set_temp_variable = { id_to_set = fake_intel_id }
+            add_to_variable = { fake_intel_id = 1 }
+            add_to_array = {
+                fake_intel_ids_to_delete = id_to_set
+            }
+            set_variable = { num_days_for_fake_intel_id@var:id_to_set = global.num_days }
+
+            # minimum of 0.25 of current armies or 8
+            set_temp_variable = { num_to_create = num_armies }
+
+            if = {
+                limit = { has_country_flag = sp_mirror_image_increase_amount }
+                multiply_temp_variable = { num_to_create = 0.35 }
+            }
+            else = {
+                multiply_temp_variable = { num_to_create = 0.25 }
+            }
+
+            round_temp_variable = num_to_create
+            add_to_temp_variable = { num_to_create = 1 }
+
+            if = {
+                limit = { has_country_flag = sp_mirror_image_increase_amount }
+                clamp_temp_variable = { var = num_to_create min = 15 }
+            }
+            else = {
+                clamp_temp_variable = { var = num_to_create min = 10 }
+            }
+
+            # create actual units
+            capital_scope = {
+                create_unit = {
+                    division = "division_template = \"Fake Intel Division\" start_experience_factor = 0.5"
+                    owner = PREV
+                    count = num_to_create
+                    id = id_to_set
+                }
+            }
+
+            # will delete them after 90 days
+            if = {
+                limit = {
+                     has_variable = sp_mirror_image_duration
+                }
+                country_event = { id = lar_fake_intel_units.1 days = sp_mirror_image_duration random_days = 30 }
+            }
+            else = {
+                country_event = { id = lar_fake_intel_units.1 days = 120 random_days = 30 }
+            }
+        }
+    }
+    custom_effect_tooltip = CUSTOM_EFFECT_CREATE_FAKE_ARMIES_RESULT
+}
+
+# @docs(Generic): Add 10% popularity to the ruling party of THIS
+add_ruling_party_support = {
+    IF = {
+        limit = { has_government = unaligned }
+        add_popularity = {
+            ideology = unaligned #these do not take FROM/ROOTs/var:actor_country
+            popularity = 0.1
+        }
+    }
+    ELSE_IF = {
+        limit = { has_government = revolutionary }
+        add_popularity = {
+            ideology = revolutionary #these do not take FROM/ROOTs/var:actor_country
+            popularity = 0.1
+        }
+    }
+    ELSE_IF = {
+        limit = { has_government = cooperative }
+        add_popularity = {
+            ideology = cooperative #these do not take FROM/ROOTs/var:actor_country
+            popularity = 0.1
+        }
+    }
+    ELSE_IF = {
+        limit = { has_government = belligerent }
+        add_popularity = {
+            ideology = belligerent #these do not take FROM/ROOTs/var:actor_country
+            popularity = 0.1
+        }
     }
 }
