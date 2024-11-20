@@ -128,3 +128,22 @@ NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 8
 
 -- Food consumption etc.
 NDefines.NMilitary.ARMY_IDLE_FUEL_MULT = 0.05						-- fuel consumption ratio while just existing
+
+-- Resistance
+NDefines.NResistance.RESISTANCE_ACTIVITY_CHANCE_AT_MAX_RESISTANCE = 0.08 -- was 0.312
+NDefines.NResistance.RESISTANCE_ACTIVITY_MIN_GARRISON_PENETRATE_CHANCE = 0.04 -- was 0.02
+NDefines.NResistance.GARRISON_MANPOWER_REINFORCEMENT_SPEED = 300.0	-- Modifier for garrison manpower reinforcement.  This value is the maximum to be delivered which is then modified by distance, was 2000
+
+NDefines.NResistance.RESISTANCE_POP_LOW_CUTOFF = 5000 -- was 10000
+NDefines.NResistance.RESISTANCE_POP_VERY_LOW_CUTOFF = 500 -- was 1000
+
+NDefines.NResistance.GARRISON_MANPOWER_LOST_BY_ATTACK = 0.009 	-- Ratio of manpower lost by garrison at each attack on garrison (this number will be reduced by the hardness of garrison template)
+NDefines.NResistance.GARRISON_EQUIPMENT_LOST_BY_ATTACK = 0.013 	-- Ratio of equipment lost by garrison at each attack on garrison (this number will be reduced by the hardness of garrison template)
+NDefines.NResistance.MAXIMUM_GARRISON_HARDNESS_WHEN_ATTACKED = 0.95   -- Cap to be sure that garrison will suffer lost in attack, even with a almost 100% hardness
+
+NDefines.NResistance.FOREIGN_MANPOWER_MIN_THRESHOLD = 1000 -- was 5k
+
+NDefines.NResistance.GARRISON_STR_POW_MANPOWER = 1.8 -- was 2
+NDefines.NResistance.GARRISON_STR_POW_EQUIPMENT = 2 -- was 3
+
+NDefines.NResistance.MIN_DAMAGE_TO_GARRISONS_MODIFIER = 0.05 -- was 0.1
