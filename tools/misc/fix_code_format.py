@@ -112,6 +112,6 @@ def reformat_braces(file_path):
 
 
 # Replace 'your_code_file.txt' with the path to your actual code file
-input_file = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\portraits\input'
+input_file = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\angmar.txt'
 reformat_code(input_file)
 reformat_braces(input_file)
