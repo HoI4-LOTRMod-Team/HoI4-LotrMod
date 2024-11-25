@@ -1,0 +1,232 @@
+ROH_default_behaviour = {
+	enable = {
+		always = yes
+	}
+	abort = {
+		always = no
+	}
+	allowed = {
+		original_tag = ROH
+	}
+
+	ai_strategy = {
+        type = force_build_armies # ROhan with less than 34 divs is pretty useless
+        value = 34
+    }
+
+	ai_strategy = {
+		type = put_unit_buffers
+		ratio = 0.03
+		states = { # Edoras
+			183
+		}
+	}
+}
+
+
+ROH_protect_helms_deep = {
+	enable = {
+		always = yes
+	}
+	abort = {
+		OR = {
+			is_in_faction_with = ISE
+			ISE = { has_government = cooperative }
+			ISE = { has_capitulated = yes }
+			is_subject_of = ISE
+		}
+	}
+	allowed = {
+		original_tag = ROH
+	}
+
+	ai_strategy = {
+		type = put_unit_buffers
+		ratio = 0.18
+		states = { # Helms Deep
+			184
+		}
+	}
+}
+
+ROH_focus_on_infantry_early = {
+	enable = {
+		date < "3020.1.1"
+		has_equipment = {
+			infantry_equipment < 100
+		}
+	}
+	abort_when_not_enabled = yes
+	allowed = {
+		original_tag = ROH
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = armor
+		value = -35
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = infantry
+		value = 25
+	}
+}
+
+
+ROH_dont_attack_when_truced = {
+	enable = {
+		OR = {
+			has_idea = ISE_temp_truce
+			has_idea = ISE_temp_truce_2
+		}
+	}
+	abort = {
+		OR = {
+			ROH = { has_completed_focus = ROH_purge_grima_sympathizers }
+			ROH = { has_completed_focus = ROH_pledge_to_saruman }
+			ROH = { has_completed_focus = ROH_resist_saruman }
+		}
+	}
+	allowed = {
+		original_tag = ROH
+		original_tag = ISE
+	}
+
+	ai_strategy = {
+		type = front_control
+		country_trigger = {
+			OR = {
+				tag = ROH
+				tag = ISE
+			}
+		}
+		priority = 200
+		ordertype = front
+		execute_order = no
+		manual_attack = no
+	}
+}
+
+ROH_dont_waste_attirtion_in_westmarch = {
+    enable = {
+        NOT = { ISE = { has_government = belligerent } }
+		NOT = { has_government = belligerent }
+		NOT = { has_completed_focus = ROH_secure_the_westmarch }
+		has_war = no
+    }
+    allowed = {
+        original_tag = ROH
+    }
+	abort_when_not_enabled = yes
+
+    ai_strategy = {
+		type = area_priority
+		id = durwaith_laur
+		value = -100
+	}
+
+	ai_strategy = {
+		type = area_priority
+		id = gap_of_rohan
+		value = -100
+	}
+
+	ai_strategy = {
+		type = prepare_for_war
+		id = ISE
+		value = -100
+	}
+}
+
+ROH_defend_the_west = {
+    enable = {
+        ISE = { has_government = belligerent }
+		is_going_belligerent = no
+    }
+    allowed = {
+        original_tag = ROH
+    }
+	abort = {
+		OR = { 
+			ISE = { has_government = cooperative }
+			is_ally_with = ISE
+		}
+	}
+
+    ai_strategy = {
+		type = area_priority
+		id = gap_of_rohan
+		value = 50
+	}
+
+	ai_strategy = {
+		type = prepare_for_war
+		id = ISE
+		value = 50
+	}
+}
+
+ROH_defend_the_north = {
+    enable = {
+		OR = {
+			LTH = { has_government = belligerent }
+			MIR = { has_government = belligerent }
+			206 = { controller = { has_government = belligerent } }
+		}
+		is_going_belligerent = no
+    }
+    allowed = {
+        original_tag = ROH
+    }
+
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+		type = area_priority
+		id = the_wold
+		value = 30
+	}
+}
+
+ROH_defend_the_eastfold = {
+    enable = {
+		OR = {
+			163 = { controller = { has_government = belligerent } }
+			167 = { controller = { has_government = belligerent } }
+		}
+		is_going_belligerent = no
+    }
+    allowed = {
+        original_tag = ROH
+    }
+
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+		type = area_priority
+		id = eastfold_anorien
+		value = 35
+	}
+}
+
+ROH_build_civs_in_edoras = {
+    enable = {
+		has_war = no
+		NOT = { ISE = { has_government = belligerent } }
+		threat < 0.25
+    }
+    allowed = {
+        original_tag = ROH
+    }
+
+    abort_when_not_enabled = yes
+
+    ai_strategy = {
+		type = build_building
+		id = industrial_complex
+		target = 183
+		value = 15
+	}
+}

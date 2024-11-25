@@ -1,0 +1,228 @@
+sp_ent_domestication = {
+
+	specialization = specialization_laboratory
+
+	#icon = GFX_sp_ent_domestication
+
+	allowed = {
+		FROM = {
+			is_ents_init = no
+		}
+	}
+
+	visible = {
+		FROM = 	{
+			is_ents = no
+		}
+	}
+	
+	available = {
+		FROM = 	{
+			has_tech = magic
+			OR = {
+				any_owned_state = {
+					is_core_of = ENT
+				}
+				any_subject_country = {
+					is_ents = yes
+				}
+			}
+		}
+	}
+	
+	prototype_time = sp_time.prototype.long
+	complexity = sp_complexity.insane
+
+	breakthrough_cost = {
+		specialization_laboratory = 4
+	}
+
+	resource_cost = {
+		resources = { chromium = 8 aluminium = 3 }
+	}
+	
+	project_output = {
+		enable_subunits = {
+			ent_infantry
+		}
+	}
+
+	generic_prototype_rewards = {
+		sp_generic_reward_scientist_xp_1
+		sp_generic_reward_scientist_xp_2
+		sp_generic_reward_scientist_xp_3
+		sp_generic_reward_army_xp_1
+		sp_generic_reward_army_xp_2
+		sp_generic_reward_major_progress_1
+		sp_generic_reward_major_progress_2
+		sp_generic_reward_major_progress_3
+		sp_generic_reward_test_failure_1
+		sp_generic_reward_test_failure_2
+		sp_generic_reward_test_failure_3
+		sp_generic_reward_critical_failure
+		sp_generic_reward_political_interference
+		sp_generic_reward_major_failure
+		sp_generic_reward_support_tech_tech
+		sp_generic_reward_knowledge_magic_tech
+		sp_generic_reward_labour_farming_tech
+	}
+
+	unique_prototype_rewards = {
+
+		sp_ent_domestication_speed_vs_org = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 0
+				max = 100
+			}
+
+			weight = {
+				base = 35
+			}
+
+			option = {
+				token = sp_ent_domestication_speed_vs_org_speed
+				
+				iteration_output = {
+					sub_unit_bonus = { 
+						ent_infantry = {
+							maximum_speed = 0.15
+							max_organisation = -0.08
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_ent_domestication_speed_vs_org_org
+				
+				iteration_output = {
+					sub_unit_bonus = { 
+						ent_infantry = {
+							maximum_speed = -0.15
+							max_organisation = 0.08
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_ent_domestication_speed_vs_org_neither
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = { add_project_progress_ratio = constant:sp_progress.loss.low }
+					}
+				}
+			}
+		}
+
+		sp_ent_domestication_attack_vs_defense = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 0
+				max = 100
+			}
+
+			weight = {
+				base = 35
+			}
+
+			option = {
+				token = sp_ent_domestication_attack_vs_defense_attack
+				
+				iteration_output = {
+					sub_unit_bonus = { 
+						ent_infantry = {
+							soft_attack = 0.05
+							hard_attack = 0.05
+							defense = -0.1
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_ent_domestication_attack_vs_defense_defense
+				
+				iteration_output = {
+					sub_unit_bonus = { 
+						ent_infantry = {
+							soft_attack = -0.05
+							hard_attack = -0.05
+							defense = 0.1
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_ent_domestication_attack_vs_defense_neither
+				
+				iteration_output = {
+
+				}
+			}
+		}
+
+		sp_ent_domestication_testing_subjects_revolt = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 15
+				max = 65
+			}
+
+			weight = {
+				base = 50
+			}
+
+			option = {
+				token = sp_ent_domestication_testing_subjects_revolt
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = { add_project_progress_ratio = constant:sp_progress.loss.high }
+					}
+
+					facility_state_effects = {
+						damage_building = {
+							tags = facility
+							damage = 0.8
+							province = var:facility_province_id
+						}
+					}
+				}
+			}
+		}
+
+		sp_ent_domestication_scientist_injured = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 25
+				max = 75
+			}
+
+			weight = {
+				base = 50
+			}
+
+			option = {
+				token = sp_ent_domestication_scientist_injured
+				
+				iteration_output = {
+					scientist_effects = {
+						add_scientist_xp = {
+							experience = constant:sp_scientist_xp_gain.low
+							specialization = specialization_laboratory
+						}
+						injure_scientist_for_days = 60
+					}
+				}
+			}
+		}
+	}
+}

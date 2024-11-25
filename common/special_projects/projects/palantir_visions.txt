@@ -1,0 +1,212 @@
+
+sp_palantir_visions_spell = {
+
+	specialization = specialization_laboratory
+
+	project_tags = sp_tag_artillery
+
+	allowed = {
+		always = yes
+	}
+
+	visible = {
+		always = yes
+	}
+	
+	available = {
+		FROM = {
+			has_palantir = yes
+		}
+	}
+	
+	prototype_time = sp_time.prototype.short
+	complexity = sp_complexity.medium
+
+	breakthrough_cost = {
+		specialization_laboratory = 1
+	}
+
+	resource_cost = {
+		# resources = { steel=4 chromium=2 }
+	}
+	
+	project_output = {
+		country_effects = {
+			every_country = {
+				limit = { has_palantir = yes NOT = { tag = ROOT } }
+				give_intel_on_country = yes
+			}
+		}
+	}
+
+	generic_prototype_rewards = {
+		sp_generic_reward_scientist_xp_1
+        sp_generic_reward_scientist_xp_2
+        sp_generic_reward_scientist_xp_3
+        sp_generic_reward_army_xp_1
+        sp_generic_reward_army_xp_2
+        sp_generic_reward_army_xp_3
+        sp_generic_reward_navy_xp_1
+        sp_generic_reward_navy_xp_2
+        sp_generic_reward_navy_xp_3
+        sp_generic_reward_air_xp_1
+        sp_generic_reward_air_xp_2
+        sp_generic_reward_air_xp_3
+        sp_generic_reward_infantry_weapons_tech
+        sp_generic_reward_infantry_archery_tech
+        sp_generic_reward_support_tech_tech
+        sp_generic_reward_cavalry_tech
+        sp_generic_reward_machines_siege_equipment_tech
+        sp_generic_reward_knowledge_alchemy_tech
+        sp_generic_reward_knowledge_magic_tech
+        sp_generic_reward_knowledge_scriptorium_tech
+        sp_generic_reward_knowledge_intrigue_tech
+        sp_generic_reward_labour_metalworking_tech
+        sp_generic_reward_labour_metalworking_mining_tech
+        sp_generic_reward_labour_construction_tech
+        sp_generic_reward_labour_farming_tech
+        sp_generic_reward_sailing_tech
+        sp_generic_reward_eagles_tech
+        sp_generic_reward_fellbeasts_tech
+	}
+
+	unique_prototype_rewards = {
+
+		
+		sp_palantir_visions_military_intel = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 0
+				max = 50
+			}
+
+			weight = {
+				base = 50
+			}
+
+			
+			option = {
+				token = sp_palantir_visions_military_intel_yes
+				
+				iteration_output = {
+					country_effects = {
+						every_country = {
+							limit = { has_palantir = yes NOT = { tag = ROOT } }
+							ROOT = {
+								add_intel = {
+									target = PREV
+									army_intel = 30
+								}
+							}
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_palantir_visions_military_intel_no
+				
+				iteration_output = {
+					country_effects = {
+						every_country = {
+							limit = { has_palantir = yes NOT = { tag = ROOT } }
+							ROOT = {
+								add_intel = {
+									target = PREV
+									civilian_intel = 30
+								}
+							}
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_palantir_visions_military_intel_mix
+				
+				iteration_output = {
+					country_effects = {
+						every_country = {
+							limit = { has_palantir = yes NOT = { tag = ROOT } }
+							ROOT = {
+								add_intel = {
+									target = PREV
+									civilian_intel = 10
+									army_intel = 10
+								}
+							}
+						}
+					}
+				}
+			}
+
+        }
+
+		sp_palantir_visions_danger = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 70
+				max = 100
+			}
+
+			weight = {
+				base = 30
+			}
+
+			
+			option = {
+				token = sp_palantir_visions_danger_yes
+				
+				iteration_output = {
+					country_effects = { 
+						every_country = {
+							limit = { has_palantir = yes NOT = { tag = ROOT } }
+							add_intel = {
+								target = ROOT
+								civilian_intel = 30
+								army_intel = 30
+							}
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_palantir_visions_danger_no
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = {
+							add_project_progress_ratio = constant:sp_progress.loss.high
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_palantir_visions_danger_modify
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = {
+							add_project_progress_ratio = constant:sp_progress.loss.medium
+						}
+
+						every_country = {
+							limit = { has_palantir = yes NOT = { tag = ROOT } }
+							add_intel = {
+								target = ROOT
+								civilian_intel = 10
+								army_intel = 10
+							}
+						}
+					}
+				}
+			}
+
+        }
+
+	}
+}

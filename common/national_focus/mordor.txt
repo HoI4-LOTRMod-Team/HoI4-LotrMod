@@ -1,4 +1,6 @@
-﻿focus_tree = {
+﻿#!gfx:interface\auto_generated\lotr_goals.gfx
+
+focus_tree = {
 	id = mordor
 	country = {
 		factor=0
@@ -47,7 +49,15 @@ focus = {
 	 	 	add_political_power = 25
 			add_resource = { type = oil amount = 5 state = 12 }
 			add_resource = { type = steel amount = 10 state = 12 }
-			12 = { add_building_construction = { type = castle province = 3972 level = 3 instant_build = yes } }
+			12 = {
+				add_building_construction = { type = castle province = 3972 level = 3 instant_build = yes }
+				add_building_construction = {
+					type = laboratory
+					level = 1
+					instant_build = yes
+					province = 3972
+				}
+			}
 	 }
 }
 
@@ -109,10 +119,10 @@ focus = {
 	 icon = GFX_goal_gon_pitchfork_and_torch_revolt
 	 bypass = { has_global_flag = mordor_civil_war}
 	 ai_will_do = { factor = 25 }
-	 x = -1
+	 x = 0
 	 y = 1
 	 relative_position_id = resistsauron
-	 mutually_exclusive = { focus = seekhelpfromgondor }
+	 mutually_exclusive = { }
 	 prerequisite = { focus = resistsauron }
 	 cost = 10
 	 available_if_capitulated = yes
@@ -442,7 +452,8 @@ focus = {
 			GON = {
 				set_temp_variable = { ideology_val = party_popularity@revolutionary }
 				start_civil_war = {
-					ruling_party = revolutionary
+					ideology = revolutionary
+					#ruling_party = revolutionary
 					size = ideology_val
 					capital = 13
 					states = {
@@ -498,7 +509,7 @@ focus = {
 			ROH = {
 				set_temp_variable = { ideology_val = party_popularity@revolutionary }
 				start_civil_war = {
-					ruling_party = revolutionary
+					ideology = revolutionary
 					size = ideology_val
 					capital = 27
 					states = {
@@ -538,7 +549,7 @@ focus = {
 	available_if_capitulated = no
 	search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_INDUSTRY }
 	completion_reward = {
-		add_named_threat = { threat = 1 name = "Preparing for a violent revolution" }
+		add_named_threat = { threat = 3 name = "Preparing for a violent revolution" }
 		add_war_support = 0.10
 		12 = { add_extra_state_shared_building_slots = 2 }
 		12 = {add_building_construction = { type = arms_factory level = 2 instant_build = yes } }
@@ -871,19 +882,6 @@ focus = {
 
 	}
 }
-#Focus for Seek Help from Gondor
-focus = {
-	 id = seekhelpfromgondor
-	 icon = GFX_goal_tripartite_pact
-	 ai_will_do = { factor = 0 }
-	 relative_position_id = resistsauron
-	 x = 1
-	 y = 1
-	 mutually_exclusive = { focus = seizethemeansofproduction }
-	 prerequisite = { focus = resistsauron}
-	 cost = 10
-	 available_if_capitulated = yes
-}
 
  #Focus for The Fate of Minas Morgul
 focus = {
@@ -1096,7 +1094,7 @@ focus = {
 			name = infantry_weapons_bonus
 			bonus = 0.5
 			uses = 2
-			category = infantry_weapons
+			category = lotr_infantry_weapons
 		}
 	}
 }
@@ -1236,7 +1234,13 @@ focus = {
 focus = {
 	id = specializedunits
 	icon = GFX_goal_mor_azog_orc_revolt
-	ai_will_do = { factor = 1 }
+	ai_will_do = {
+		factor = 1
+		modifier = {
+			factor = 5
+			target_heavy_infantry_strat = yes
+		}
+	}
 	x = 1
 	y = 1
 	relative_position_id = militaryeffort
@@ -1311,7 +1315,13 @@ focus = {
 focus = {
 	id = calvary_units
 	icon = GFX_goal_generic_horse_studs
-	ai_will_do = { factor = 1 }
+	ai_will_do = {
+		factor = 1
+		modifier = {
+			factor = 7
+			target_any_cavalry_strat = yes
+		}
+	}
 	x = 3
 	y = 1
 	relative_position_id = militaryeffort
@@ -1346,7 +1356,13 @@ focus = {
 focus = {
 	id = mechanizationeffort
 	icon = GFX_goal_generic_horse_drawn_equipment
-	ai_will_do = { factor = 2 }
+	ai_will_do = {
+		factor = 2
+		modifier = {
+			factor = 5
+			target_light_cav_strat = yes
+		}
+	}
 	x = 0
 	y = 1
 	relative_position_id = calvary_units
@@ -1868,7 +1884,13 @@ focus = {
 		focus = {
 		id = ferociousfellbeasts
 		icon = GFX_goal_generic_air_fellbeast
-		ai_will_do = { factor = 1 }
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 10
+				target_air_focus = yes
+			}
+		}
  		x = -1
  		y = 1
 		 relative_position_id = wrathofthefellbeasts
@@ -1890,7 +1912,13 @@ focus = {
 		focus = {
 		id = firebreathingfellbeasts
 		icon = GFX_goal_generic_air_fellbeast
-		ai_will_do = { factor = 2 }
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 10
+				target_air_focus = yes
+			}
+		}
  		x = 1
  		y = 1
 		 relative_position_id =wrathofthefellbeasts
@@ -2172,15 +2200,19 @@ focus = {
 	id = invite_isengard_to_faction
 	icon = GFX_goal_army_uruk_hai
 	ai_will_do = {
-		factor = 10
+		factor = 5
 		modifier = {
-			add = -5
-			ISE = {
-				is_in_faction = yes
-				NOT = {
-					is_in_faction_with = MOR
-				}
-			}
+			factor = 0.1
+			has_war = no
+		}
+		modifier = {
+			factor = 0
+			is_historical_focus_on = yes
+			NOT = { has_war_with = GON }
+		}
+		modifier = {
+			factor = 2
+			surrender_progress > 0
 		}
 	}
 	x = 0
@@ -2544,7 +2576,7 @@ focus = {
 	}
 	search_filters = { FOCUS_FILTER_MANPOWER }
 	completion_reward = {
-		add_manpower = -10000
+		add_manpower = -1000
 		add_equipment_to_stockpile = { type = infantry_equipment_1   amount = -1500  }
 		87 = {
 			add_state_modifier = { modifier = {  compliance_gain = -0.05 } }
@@ -2676,13 +2708,13 @@ focus = {
 	cost = 10
 	search_filters = { FOCUS_FILTER_MANPOWER FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
 	completion_reward = {
-		add_manpower = -50000
+		add_manpower = -5000
 		add_equipment_to_stockpile = { type = infantry_equipment amount = -2000  }
 
 		DGU = {
 			add_stability = 0.05
 			add_war_support = 0.15
-			add_manpower = 50000
+			add_manpower = 5000
 			add_equipment_to_stockpile = { type = infantry_equipment amount = 2000  }
 		}
 		87 = {
@@ -3112,7 +3144,7 @@ focus = {
 	search_filters = { FOCUS_FILTER_ARMY_XP }
 	completion_reward = {
 		army_experience = 10
-		add_named_threat = { threat = 3 name = "Nazguls gathered once more in Minas Morgul" }
+		add_named_threat = { threat = 4 name = "Nazguls gathered once more in Minas Morgul" }
 		custom_effect_tooltip = MOR_gather_the_nazgul
 		hidden_effect = {
 			if = {
@@ -3164,6 +3196,7 @@ focus = {
 	completion_reward = {
 		retire_character = MOR_sauron_eye
 		add_named_threat = { threat = 50 name = "Sauron obtained the ring" }
+		set_country_flag = MOR_unleashed_sauron
 		create_country_leader = {
 			name = "Sauron"
 			picture = "gfx/leaders/MOR/Portrait_Mordor_Sauron.dds"
@@ -3173,6 +3206,16 @@ focus = {
 				ringbearer
 				legacyofmorgoth
 			}
+		}
+		create_field_marshal = {
+			name = "Sauron"
+			picture = "gfx/leaders/MOR/Portrait_Mordor_Sauron.dds"
+			traits = { trickster brilliant_strategist }
+			skill = 8
+			attack_skill = 8
+			defense_skill = 5
+			planning_skill = 5
+			logistics_skill = 5
 		}
 	}
 }
@@ -3286,7 +3329,7 @@ focus = {
 		} else = {
 			204 = { add_compliance = 50 }
 		}
-		add_named_threat = { threat = 3 name = "Mordor claimed Black Gate" }
+		add_named_threat = { threat = 5 name = "Mordor claimed Black Gate" }
 		GON = {
 			add_opinion_modifier = { target = MOR modifier = small_decrease }
 		}
@@ -3629,6 +3672,7 @@ focus = {
 			ROH = {
 				NOT = {
 					is_in_faction_with = ROOT
+					is_subject = yes
 				}
 			}
 		}
@@ -3648,7 +3692,6 @@ focus = {
 		will_lead_to_war_with = ROH
 		prerequisite = { focus = war_with_gondor focus = suggest_war_with_gondor}
 		cost = 10
-		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_ANNEXATION }
 		completion_reward = {
 			create_wargoal = { type = puppet_wargoal_focus target = ROH }
@@ -3695,7 +3738,7 @@ focus = {
 	focus = {
 		id = encroach_on_ithilien
 		icon = GFX_goal_mor_encroach_on_ithilien
-		ai_will_do = { factor = 0 }
+		ai_will_do = { factor = 1 }
 		x = 6
 		y = 1
 		relative_position_id = conquestofmiddleearth
@@ -3713,7 +3756,7 @@ focus = {
 	focus = {
 		id = escalate_the_attacks
 		icon = GFX_goal_mor_escalate_the_attacks
-		ai_will_do = { factor = 0 }
+		ai_will_do = { factor = 10 }
 		x = 0
 		y = 1
 		relative_position_id = encroach_on_ithilien
@@ -3732,7 +3775,7 @@ focus = {
 	focus = {
 		id = second_wave
 		icon = GFX_goal_mor_second_wave
-		ai_will_do = { factor = 0 }
+		ai_will_do = { factor = 10 }
 		x = 0
 		y = 2
 		relative_position_id = encroach_on_ithilien

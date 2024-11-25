@@ -1,0 +1,194 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			NEP = { # This needs to run for *some* scope
+				compute_avg_factories = yes
+			}
+
+			every_possible_country = {
+				# Set ideology gameplan
+				if = { limit = { tag = ANG } set_gameplan_ANG = yes }
+				else_if = { limit = { tag = ANG } set_gameplan_ANG = yes }
+				else_if = { limit = { tag = ART } set_gameplan_ART = yes }
+				else_if = { limit = { tag = RHU } set_gameplan_RHU = yes }
+				else_if = { limit = { tag = ELU } set_gameplan_ELU = yes }
+				else_if = { limit = { tag = ENT } set_gameplan_ENT = yes }
+				else_if = { limit = { tag = ERE } set_gameplan_ERE = yes }
+				else_if = { limit = { tag = GON } set_gameplan_GON = yes }
+				else_if = { limit = { tag = HAR } set_gameplan_HAR = yes }
+				else_if = { limit = { tag = ISE } set_gameplan_ISE = yes }
+				else_if = { limit = { tag = LTH } set_gameplan_LTH = yes }
+				else_if = { limit = { tag = MIR } set_gameplan_MIR = yes }
+				else_if = { limit = { tag = MOR } set_gameplan_MOR = yes }
+				else_if = { limit = { tag = MOA } set_gameplan_MOA = yes }
+				else_if = { limit = { tag = MOC } set_gameplan_MOC = yes }
+				else_if = { limit = { tag = RIV } set_gameplan_RIV = yes }
+				else_if = { limit = { tag = ROH } set_gameplan_ROH = yes }
+				else_if = { limit = { tag = SHI } set_gameplan_SHI = yes }
+				else = { set_gameplan_generic = yes }
+
+				# Set template gameplan
+				set_gameplan_templates_generic = yes
+
+				# Apply ai buffs
+				if = {
+					limit = { is_ai = yes difficulty > 1 NOT = { tag = NEP } }
+					add_ideas = ai_cheap_specialized_equipment
+					add_timed_idea = {
+						idea = ai_army_xp_boost
+						days = 370
+					}
+				}
+				# If the player is playing singleplayer Mordor, the free peoples get substantial buffs to make it more challenging
+				if = {
+					limit = {
+						GON = { is_ai = yes }
+						ROH = { is_ai = yes }
+						DAM = { is_ai = yes }
+						OR = {
+							MOR = { is_ai = no }
+							ISE = { is_ai = no }
+							HAR = { is_ai = no }
+							RHU = { is_ai = no }
+							ENE = { is_ai = no }
+						}
+						#all_country = {
+						#	OR = {
+						#		tag = MOR
+						#		is_ai = yes
+						#	}
+						#}
+					}
+					GON = { add_ideas = ai_gondor_buff }
+				}
+				# If the player is playing singleplayer Isengard, the free peoples get substantial buffs to make it more challenging
+				if = {
+					limit = {
+						ISE = { is_ai = no }
+						all_country = {
+							OR = {
+								tag = ISE
+								is_ai = yes
+							}
+						}
+					}
+					ROH = { add_ideas = ai_rohan_buff }
+				}
+				# If the player is playing singleplayer Rohan, Isengard get substantial buffs to make it more challenging
+				if = {
+					limit = {
+						ROH = { is_ai = no }
+						all_country = {
+							OR = {
+								tag = ROH
+								is_ai = yes
+							}
+						}
+					}
+					ISE = { add_ideas = ai_isengard_buff }
+				}
+			}
+		}
+	}
+
+	on_monthly = {
+		effect = {
+			if = {
+				limit = { is_ai = yes }
+
+				# Mark a state to be eligible for a railway
+				if = {
+					limit = {
+						is_major = yes
+						any_controlled_state = {
+							ROOT = {
+								divisions_in_state = {
+									type = infantry
+									size > 7
+									state = PREV
+								}
+								NOT = {
+									has_railway_connection = {
+										start_state = capital
+										target_state = PREV
+									}
+								}
+								can_build_railway = {
+									start_state = capital
+									target_state = PREV
+								}
+							}
+							any_neighbor_state = {
+								NOT = { state = 1 }
+								controller = { has_war_with = ROOT }
+							}
+						} 
+					}
+					set_country_flag = ai_build_railway_enabled
+				}
+
+				# Mark eligibility to build air bases
+				if = {
+					limit = {
+						is_major = yes
+						has_deployed_air_force_size = { size > 0 }
+						num_of_civilian_factories > 20
+					}
+					set_temp_variable = { temp_max_prio = -999 }
+					for_each_scope_loop = {
+						array = controlled_states
+						
+						if = {
+							limit = {
+								check_variable = { temp_max_prio < mtth:state_air_base_priority }
+							}
+							set_temp_variable = { temp_max_prio = mtth:state_air_base_priority }
+						}
+					}
+					if = {
+						limit = {
+							check_variable = { temp_max_prio > 10 }
+						}
+						set_country_flag = ai_build_air_base_enabled
+					}
+				}
+				
+
+				# Decide between tall or wide
+
+				# Pushers
+				if = {
+					limit = {
+						ai_pushers_play_tall = no
+						ai_pushers_switch_to_tall_threshold = yes
+					}
+					set_country_flag = ai_pushers_play_tall
+				}
+				else_if = {
+					limit = {
+						ai_pushers_play_tall = yes
+						ai_pushers_switch_to_wide_threshold = yes
+					}
+					clr_country_flag = ai_pushers_play_tall
+				}
+
+				# Infantry
+				if = {
+					limit = {
+						ai_infantry_play_tall = no
+						ai_infantry_switch_to_tall_threshold = yes
+					}
+					set_country_flag = ai_infantry_play_tall
+				}
+				else_if = {
+					limit = {
+						ai_infantry_play_tall = yes
+						ai_infantry_switch_to_wide_threshold = yes
+					}
+					clr_country_flag = ai_infantry_play_tall
+				}
+			}
+		}
+	}
+}

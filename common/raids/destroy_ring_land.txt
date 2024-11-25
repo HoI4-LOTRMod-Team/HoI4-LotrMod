@@ -1,0 +1,216 @@
+types = {
+
+	destroy_ring_land_raid = {
+		category = land_infiltration_raids
+
+		days_to_prepare = 70
+		speed_multiplier = 0.6 # Fellowship is slow af
+
+		custom_map_icon = GFX_raid_type_ring_raid
+		target_icon = GFX_other_target_icon
+
+		ai_will_do = {
+			base = 0
+		}
+
+		command_power = 35
+
+		allowed = {
+			NOT = { tag = MOR }
+		}
+		visible = {
+			ring_has_the_ring = yes
+			NOT = { 10 = { is_controlled_by = ROOT } }
+			NOT = { 10 = { controller = { is_ally_with = ROOT } } }
+		}
+		available = {
+			ring_has_the_ring = yes
+		}
+		launchable = {
+			NOT = { is_ally_with = MOR }
+			ring_has_the_ring = yes
+		}
+
+		show_target = {
+			FROM = { NOT = { is_ally_with = ROOT } }
+			ROOT = { ring_has_the_ring = yes }
+		}
+
+		arrow = {
+		    type = line
+		}
+
+		essential_equipment = {
+			#support_equipment = 25
+			#infantry_equipment = 50
+		}
+		additional_equipment = {
+			# list of equipment archetypes and numbers
+			support_equipment = 150
+		}
+		
+		target_type = {
+			province = 5097
+		}
+		
+		unit_requirements = {
+			battalion_types = {
+				infiltrators = { min = 8 }
+			}
+		}
+
+		starting_point = {
+		    types = { air_base naval_base }
+		}
+
+		success_levels = {
+			failure = {
+				victim_effects = {
+					var:victim_country = {
+						ring_seize_ring = yes
+					}
+				}
+				actor_effects = {
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 100
+						str_damage = 100
+					}
+					#add_raid_history_entry = yes
+					var:actor_country = {
+						ring_remove_ring = yes
+					}
+				}
+				# Other unit effects
+				division_effects = {
+					destroy_unit = yes
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+			limited_success = {
+				victim_effects = {
+					var:victim_country = {
+						ring_destroy_ring = yes
+					}
+				}
+				actor_effects = {
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 100
+						str_damage = 100
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 1.0
+					add_raid_history_entry = yes
+					var:actor_country = {
+						ring_remove_ring = yes
+					}
+				}
+				# Other unit effects
+				division_effects = {
+					destroy_unit = yes
+				}
+			}
+			success = {
+				victim_effects = {
+					var:victim_country = {
+						ring_destroy_ring = yes
+					}
+				}
+				actor_effects = {
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 80
+						str_damage = 50
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 1.0
+					add_raid_history_entry = yes
+					var:actor_country = {
+						ring_remove_ring = yes
+					}
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 500
+				}
+			}
+			critical_success = {
+				victim_effects = {
+					var:victim_country = {
+						ring_destroy_ring = yes
+					}
+				}
+				actor_effects = {
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 80
+						str_damage = 50
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 1.0
+					add_raid_history_entry = yes
+					var:actor_country = {
+						ring_remove_ring = yes
+					}
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 500
+				}
+			}
+		}
+
+		success_factors = {
+			success = {
+				base = 0.0
+
+				# Raiding unit modifiers
+				experience = {
+					weight = 0.05
+					start_weight = -0.05
+					reference = 0.3
+				}
+
+				organisation = {
+					weight = 0.05
+					start_weight = -0.05
+					reference = 100
+				}
+				strength = {
+					weight = 0.05
+					start_weight = -0.05
+					reference = 1
+				}
+				recon = {
+					weight = 0.08
+					reference = 10
+				}
+
+				### Target Modifiers
+
+				enemy_units = {
+					reference = 4 # More than 2 DIVs in the target Province shouldn't make any difference
+					weight = -0.5
+				}
+				intel = {
+					weight = 0.2
+					#start_reference = 50
+					reference = 100
+				}
+			}
+
+			critical = {
+				base = 0
+
+			}
+		}
+		
+	}
+}

@@ -1,0 +1,132 @@
+
+sp_weather_manipulation_spell = {
+
+	specialization = specialization_laboratory
+
+	project_tags = sp_tag_artillery
+
+	allowed = {
+		always = yes
+	}
+
+	visible = {
+		always = yes
+	}
+	
+	available = {
+		FROM = {
+			has_tech = magic
+			has_tech = navigation
+		}
+	}
+	
+	prototype_time = sp_time.prototype.medium 
+	complexity = sp_complexity.medium 
+
+	breakthrough_cost = {
+		specialization_laboratory = 3
+	}
+
+	resource_cost = {
+		# resources = { steel=4 chromium=2 }
+	}
+	
+	project_output = {
+		country_effects = {
+			add_ideas = TECH_weather_manipulation
+		}
+	}
+
+	generic_prototype_rewards = {
+		sp_generic_reward_scientist_xp_1
+        sp_generic_reward_scientist_xp_2
+        sp_generic_reward_scientist_xp_3
+        sp_generic_reward_army_xp_1
+        sp_generic_reward_army_xp_2
+        sp_generic_reward_navy_xp_1
+        sp_generic_reward_navy_xp_2
+        sp_generic_reward_navy_xp_3
+        sp_generic_reward_air_xp_1
+        sp_generic_reward_air_xp_2
+        sp_generic_reward_air_xp_3
+        sp_generic_reward_major_progress_1
+        sp_generic_reward_major_progress_2
+        sp_generic_reward_major_progress_3
+        sp_generic_reward_test_failure_1
+        sp_generic_reward_test_failure_2
+        sp_generic_reward_test_failure_3
+        sp_generic_reward_critical_failure
+        sp_generic_reward_political_interference
+        sp_generic_reward_major_failure
+        sp_generic_reward_support_tech_tech
+        sp_generic_reward_machines_siege_equipment_tech
+        sp_generic_reward_knowledge_magic_tech
+        sp_generic_reward_knowledge_scriptorium_tech
+        sp_generic_reward_labour_farming_tech
+        sp_generic_reward_sailing_tech
+        sp_generic_reward_eagles_tech
+        sp_generic_reward_fellbeasts_tech
+	}
+
+	unique_prototype_rewards = {
+
+		
+		sp_weather_manipulation_failure = {
+			fire_only_once = yes
+
+			threshold = { 
+				min = 70
+				max = 100
+			}
+
+			weight = {
+				base = 15
+			}
+
+			
+			option = {
+				token = sp_weather_manipulation_failure_yes
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = {
+							add_project_progress_ratio = constant:sp_progress.loss.low
+						}
+						add_timed_idea = {
+							idea = three_civs_cost
+							days = 70
+						}
+					}
+					facility_state_effects = {
+						damage_building = {
+							tags = facility
+							damage = 0.2
+							province = var:facility_province_id
+						}
+					}
+				}
+			}
+
+			option = {
+				token = sp_weather_manipulation_failure_no
+				
+				iteration_output = {
+					country_effects = { 
+						FROM = {
+							add_project_progress_ratio = constant:sp_progress.loss.high
+						}
+					}
+					facility_state_effects = {
+						damage_building = {
+							tags = facility
+							damage = 0.85
+							province = var:facility_province_id
+						}
+					}
+				}
+			}
+
+        }
+
+	}
+}

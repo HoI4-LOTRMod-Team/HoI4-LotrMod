@@ -1,0 +1,94 @@
+scripted_gui = {
+	
+	lotr_countrystateview_scripted_gui = {
+		context_type = selected_state_context
+		parent_window_name = "lotr_stateview_guihook"
+
+		window_name = "lotr_stateview_container"
+
+		properties = {
+		    
+		}
+
+		triggers = {
+			mobilize_action_button_click_enabled = {
+				is_fully_controlled_by = ROOT
+				ROOT = { has_political_power > 25 }
+				NOT = { has_dynamic_modifier = {
+					modifier = lotr_state_hastened_mobilization
+				} }
+			}
+
+			hasten_supply_action_button_click_enabled = {
+				is_fully_controlled_by = ROOT
+				ROOT = { has_political_power > 50 }
+				NOT = { has_dynamic_modifier = {
+					modifier = lotr_state_hastened_supplylines
+				} }
+			}
+
+			suppress_action_button_click_enabled = {
+				is_fully_controlled_by = ROOT
+				resistance > 10
+				ROOT = {
+					has_political_power > 50
+					has_equipment = { infantry_equipment > 500 }
+					divisions_in_state = {
+						size > 3
+						state = PREV
+					}
+				}
+				NOT = { has_dynamic_modifier = {
+					modifier = lotr_state_resistance_suppressed
+				} }
+			}
+        }
+
+		effects = {
+			mobilize_action_button_click = {
+				ROOT = { add_political_power = -25 }
+				add_dynamic_modifier = {
+					modifier = lotr_state_hastened_mobilization
+					days = 120
+				}
+			}
+
+			hasten_supply_action_button_click = {
+				ROOT = { add_political_power = -50 }
+				add_dynamic_modifier = {
+					modifier = lotr_state_hastened_supplylines
+					days = 120
+				}
+				ROOT = {
+					add_timed_idea = {
+						idea = minor_expense
+						days = 120
+					}
+				}
+			}
+
+			suppress_action_button_click = {
+				ROOT = { add_political_power = -50 }
+				add_dynamic_modifier = {
+					modifier = lotr_state_resistance_suppressed
+					days = 120
+				}
+				ROOT = {
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = -500
+					}
+				}
+			}
+		}
+
+		ai_enabled = {
+			always = no
+		}
+		
+		visible = {
+			ROOT = { is_ai = no }
+		}
+	}
+}
+

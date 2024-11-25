@@ -1,0 +1,563 @@
+# region_1: The Wold
+# region_2: the Eastemnet
+# region_3: the Westemnet
+# region_4: Westmarch
+# region_5: Eastfold/Anorien
+
+
+# @docs(Horselords): Appoints THIS as governor of the Wold (only some characters work)
+rohan_lords_set_as_region_1_leader = {
+	custom_effect_tooltip = rohan_lords_set_as_region_1_leader_tt
+	var:ROH.region_1_leader = { clr_character_flag = is_horselord_flag clr_character_flag = is_region_1_leader }
+	set_character_flag = is_horselord_flag
+	set_character_flag = is_region_1_leader
+	set_variable = { ROH.region_1_leader = THIS }
+	rohan_lords_update_regions = yes
+}
+
+# @docs(Horselords): Appoints THIS as governor of the Eastemnet (only some characters work)
+rohan_lords_set_as_region_2_leader = {
+	custom_effect_tooltip = rohan_lords_set_as_region_2_leader_tt
+	var:ROH.region_2_leader = { clr_character_flag = is_horselord_flag clr_character_flag = is_region_2_leader }
+	set_character_flag = is_horselord_flag
+	set_character_flag = is_region_2_leader
+	set_variable = { ROH.region_2_leader = THIS }
+	rohan_lords_update_regions = yes
+}
+
+# @docs(Horselords): Appoints THIS as governor of the Westemnet (only some characters work)
+rohan_lords_set_as_region_3_leader = {
+	custom_effect_tooltip = rohan_lords_set_as_region_3_leader_tt
+	var:ROH.region_3_leader = { clr_character_flag = is_horselord_flag clr_character_flag = is_region_3_leader }
+	set_character_flag = is_horselord_flag
+	set_character_flag = is_region_3_leader
+	set_variable = { ROH.region_3_leader = THIS }
+	rohan_lords_update_regions = yes
+}
+
+# @docs(Horselords): Appoints THIS as governor of the Westmarch (only some characters work)
+rohan_lords_set_as_region_4_leader = {
+	custom_effect_tooltip = rohan_lords_set_as_region_4_leader_tt
+	var:ROH.region_4_leader = { clr_character_flag = is_horselord_flag clr_character_flag = is_region_4_leader }
+	set_character_flag = is_horselord_flag
+	set_character_flag = is_region_4_leader
+	set_variable = { ROH.region_4_leader = THIS }
+	rohan_lords_update_regions = yes
+}
+
+# @docs(Horselords): Appoints THIS as governor of the Eastfold (only some characters work)
+rohan_lords_set_as_region_5_leader = {
+	custom_effect_tooltip = rohan_lords_set_as_region_5_leader_tt
+	var:ROH.region_5_leader = { clr_character_flag = is_horselord_flag clr_character_flag = is_region_5_leader }
+	set_character_flag = is_horselord_flag
+	set_character_flag = is_region_5_leader
+	set_variable = { ROH.region_5_leader = THIS }
+	rohan_lords_update_regions = yes
+}
+
+
+# Opens/Closes the details view
+rohan_lords_toggle_details_view = {
+	custom_effect_tooltip = rohan_lords_toggle_details_view_tt
+	if = {
+		limit = { has_country_flag = ring_details_view_open }
+		clr_country_flag = ring_details_view_open
+	}
+	if = {
+		limit = { has_country_flag = elven_alliance_details_view_open }
+		clr_country_flag = elven_alliance_details_view_open
+	}
+	if = {
+		limit = { has_country_flag = rohan_lords_details_view_open }
+		clr_country_flag = rohan_lords_details_view_open
+	}
+	# To keep the UI clean and smooth, we won't allow this to open when interception_form is open
+	else_if = {
+		limit = { NOT = { has_country_flag = ring_interception_form_open } }
+		set_country_flag = rohan_lords_details_view_open
+	}
+}
+
+
+
+# Updates modifiers. Runs weekly
+# Isn't HoI4 code just... beautiful :')
+rohan_lords_update_regions = {
+
+	ROOT = {
+		set_temp_variable = { lords_region_count = 0 }
+
+		# NOTE: trigger 3 and 4 are "ignored" by the AI to make things a little less volatile
+
+		if = {
+			limit = { rohan_lords_controls_region_1 = yes }
+			set_variable = { region_1_modifier = region_1_investment_bonus }
+			set_variable = { region_1_approval_bonus = -0.2 }
+			if = { limit = { region_1_trigger_1 = yes } add_to_variable = { region_1_approval_bonus = 0.1 } }
+			if = { limit = { region_1_trigger_2 = yes } add_to_variable = { region_1_approval_bonus = 0.1 } }
+			if = { limit = { is_ai = no region_1_trigger_3 = yes } add_to_variable = { region_1_approval_bonus = 0.1 } }
+			if = { limit = { OR = { is_ai = yes region_1_trigger_4 = yes } } add_to_variable = { region_1_approval_bonus = 0.1 } }
+			add_to_variable = { region_1_modifier = region_1_approval_bonus }
+			set_variable = { region_1_demands_met = region_1_approval_bonus } # Converting from [-0.2, 0.2] to [1, 5] to calculate the frame of our progress bar spritesheet
+			multiply_variable = { region_1_demands_met = 10 }
+			add_to_variable = { region_1_demands_met = 2 }
+			add_to_temp_variable = { lords_region_count = 1 }
+		}
+		else = {
+			set_variable = { region_1_modifier = 0 }
+			set_variable = { region_1_demands_met = 0 }
+			set_variable = { region_1_approval_bonus = 0 }
+		}
+
+		if = {
+			limit = { rohan_lords_controls_region_1 = yes }
+			set_variable = { region_2_modifier = region_2_investment_bonus }
+			set_variable = { region_2_approval_bonus = -0.2 }
+			if = { limit = { region_2_trigger_1 = yes } add_to_variable = { region_2_approval_bonus = 0.1 } }
+			if = { limit = { region_2_trigger_2 = yes } add_to_variable = { region_2_approval_bonus = 0.1 } }
+			if = { limit = { is_ai = no region_2_trigger_3 = yes } add_to_variable = { region_2_approval_bonus = 0.1 } }
+			if = { limit = { OR = { is_ai = yes region_2_trigger_4 = yes } } add_to_variable = { region_2_approval_bonus = 0.1 } }
+			add_to_variable = { region_2_modifier = region_2_approval_bonus }
+			set_variable = { region_2_demands_met = region_2_approval_bonus } # Converting from [-0.2, 0.2] to [1, 5] to calculate the frame of our progress bar spritesheet
+			multiply_variable = { region_2_demands_met = 10 }
+			add_to_variable = { region_2_demands_met = 2 }
+			add_to_temp_variable = { lords_region_count = 1 }
+		}
+		else = {
+			set_variable = { region_2_modifier = 0 }
+			set_variable = { region_2_demands_met = 0 }
+			set_variable = { region_2_approval_bonus = 0 }
+		}
+
+		if = {
+			limit = { rohan_lords_controls_region_1 = yes }
+			set_variable = { region_3_modifier = region_3_investment_bonus }
+			set_variable = { region_3_approval_bonus = -0.2 }
+			if = { limit = { region_3_trigger_1 = yes } add_to_variable = { region_3_approval_bonus = 0.1 } }
+			if = { limit = { region_3_trigger_2 = yes } add_to_variable = { region_3_approval_bonus = 0.1 } }
+			if = { limit = { is_ai = no region_3_trigger_3 = yes } add_to_variable = { region_3_approval_bonus = 0.1 } }
+			if = { limit = { OR = { is_ai = yes region_3_trigger_4 = yes } } add_to_variable = { region_3_approval_bonus = 0.1 } }
+			add_to_variable = { region_3_modifier = region_3_approval_bonus }
+			set_variable = { region_3_demands_met = region_3_approval_bonus } # Converting from [-0.2, 0.2] to [1, 5] to calculate the frame of our progress bar spritesheet
+			multiply_variable = { region_3_demands_met = 10 }
+			add_to_variable = { region_3_demands_met = 2 }
+			add_to_temp_variable = { lords_region_count = 1 }
+		}
+		else = {
+			set_variable = { region_3_modifier = 0 }
+			set_variable = { region_3_demands_met = 0 }
+			set_variable = { region_3_approval_bonus = 0 }
+		}
+
+		if = {
+			limit = { rohan_lords_controls_region_1 = yes }
+			set_variable = { region_4_modifier = region_4_investment_bonus }
+			set_variable = { region_4_approval_bonus = -0.2 }
+			if = { limit = { region_4_trigger_1 = yes } add_to_variable = { region_4_approval_bonus = 0.1 } }
+			if = { limit = { region_4_trigger_2 = yes } add_to_variable = { region_4_approval_bonus = 0.1 } }
+			if = { limit = { is_ai = no region_4_trigger_3 = yes } add_to_variable = { region_4_approval_bonus = 0.1 } }
+			if = { limit = { OR = { is_ai = yes region_4_trigger_4 = yes } } add_to_variable = { region_4_approval_bonus = 0.1 } }
+			add_to_variable = { region_4_modifier = region_4_approval_bonus }
+			set_variable = { region_4_demands_met = region_4_approval_bonus } # Converting from [-0.2, 0.2] to [1, 5] to calculate the frame of our progress bar spritesheet
+			multiply_variable = { region_4_demands_met = 10 }
+			add_to_variable = { region_4_demands_met = 2 }
+			add_to_temp_variable = { lords_region_count = 1 }
+		}
+		else = {
+			set_variable = { region_4_modifier = 0 }
+			set_variable = { region_4_demands_met = 0 }
+			set_variable = { region_4_approval_bonus = 0 }
+		}
+
+		if = {
+			limit = { rohan_lords_controls_region_1 = yes }
+			set_variable = { region_5_modifier = region_5_investment_bonus }
+			set_variable = { region_5_approval_bonus = -0.2 }
+			if = { limit = { region_5_trigger_1 = yes } add_to_variable = { region_5_approval_bonus = 0.1 } }
+			if = { limit = { region_5_trigger_2 = yes } add_to_variable = { region_5_approval_bonus = 0.1 } }
+			if = { limit = { is_ai = no region_5_trigger_3 = yes } add_to_variable = { region_5_approval_bonus = 0.1 } }
+			if = { limit = { OR = { is_ai = yes region_5_trigger_4 = yes } } add_to_variable = { region_5_approval_bonus = 0.1 } }
+			add_to_variable = { region_5_modifier = region_5_approval_bonus }
+			set_variable = { region_5_demands_met = region_5_approval_bonus } # Converting from [-0.2, 0.2] to [1, 5] to calculate the frame of our progress bar spritesheet
+			multiply_variable = { region_5_demands_met = 10 }
+			add_to_variable = { region_5_demands_met = 2 }
+			add_to_temp_variable = { lords_region_count = 1 }
+		}
+		else = {
+			set_variable = { region_5_modifier = 0 }
+			set_variable = { region_5_demands_met = 0 }
+			set_variable = { region_5_approval_bonus = 0 }
+		}
+
+		# prevent divide by 0
+		clamp_temp_variable = { var = lords_region_count min = 1 }
+
+		# Calculate cohesion drift
+		set_variable = { realm_cohesion_drift = region_1_demands_met }
+		add_to_variable = { realm_cohesion_drift = region_2_demands_met }
+		add_to_variable = { realm_cohesion_drift = region_3_demands_met }
+		add_to_variable = { realm_cohesion_drift = region_4_demands_met }
+		add_to_variable = { realm_cohesion_drift = region_5_demands_met }
+		divide_variable = { realm_cohesion_drift = var:lords_region_count }
+		subtract_from_variable = { realm_cohesion_drift = 2 } # [0, 4] -> [-2, 2]
+		multiply_variable = { realm_cohesion_drift = 0.01 } # to percentages
+	}
+}
+
+rohan_lords_apply_cohesion_drift = {
+	add_to_variable = {
+		realm_cohesion = realm_cohesion_drift
+	}
+
+	if = {
+		limit = {
+			ROH = { is_ai = yes }
+		}
+		clamp_variable = { # ai hax: Make sure the ai doesn't get weakened too much, nor doesn't get too strong
+			var = realm_cohesion
+			min = -0.5
+			max = 0.5
+		}
+	}
+	else = {
+		clamp_variable = {
+			var = realm_cohesion
+			min = -1
+			max = 1
+		}
+	}
+
+	set_variable = {
+		realm_cohesion_modifier = realm_cohesion
+	}
+	# Eorlingas united doubles the modifier to +-40, whilst otherwise we have +-20
+	if = {
+		limit = { has_completed_focus = ROH_eorlingas_united }
+		multiply_variable = {
+			realm_cohesion_modifier = 0.3
+		}
+	}
+	else = {
+		multiply_variable = {
+			realm_cohesion_modifier = 0.15
+		}
+	}
+}
+
+rohan_lords_invest_in_region_1_5p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_1_5p_tt
+	add_to_variable = { region_1_investment_bonus = 0.05 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_invest_in_region_2_5p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_2_5p_tt
+	add_to_variable = { region_2_investment_bonus = 0.05 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_invest_in_region_3_5p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_3_5p_tt
+	add_to_variable = { region_3_investment_bonus = 0.05 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_invest_in_region_4_5p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_4_5p_tt
+	add_to_variable = { region_4_investment_bonus = 0.05 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_invest_in_region_5_5p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_5_5p_tt
+	add_to_variable = { region_5_investment_bonus = 0.05 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_invest_in_region_1_10p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_1_10p_tt
+	add_to_variable = { region_1_investment_bonus = 0.1 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_invest_in_region_2_10p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_2_10p_tt
+	add_to_variable = { region_2_investment_bonus = 0.1 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_invest_in_region_2_15p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_2_15p_tt
+	add_to_variable = { region_2_investment_bonus = 0.15 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_invest_in_region_3_10p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_3_10p_tt
+	add_to_variable = { region_3_investment_bonus = 0.1 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_invest_in_region_4_10p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_4_10p_tt
+	add_to_variable = { region_4_investment_bonus = 0.1 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_invest_in_region_5_10p = {
+	custom_effect_tooltip = rohan_lords_invest_in_region_5_10p_tt
+	add_to_variable = { region_5_investment_bonus = 0.1 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_remove_investment_in_region_1_5p = {
+	custom_effect_tooltip = rohan_lords_remove_investment_in_region_1_5p_tt
+	add_to_variable = { region_1_investment_bonus = -0.05 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_remove_investment_in_region_2_5p = {
+	custom_effect_tooltip = rohan_lords_remove_investment_in_region_2_5p_tt
+	add_to_variable = { region_2_investment_bonus = -0.05 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_remove_investment_in_region_3_5p = {
+	custom_effect_tooltip = rohan_lords_remove_investment_in_region_3_5p_tt
+	add_to_variable = { region_3_investment_bonus = -0.05 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_remove_investment_in_region_4_5p = {
+	custom_effect_tooltip = rohan_lords_remove_investment_in_region_4_5p_tt
+	add_to_variable = { region_4_investment_bonus = -0.05 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_remove_investment_in_region_5_5p = {
+	custom_effect_tooltip = rohan_lords_remove_investment_in_region_5_5p_tt
+	add_to_variable = { region_5_investment_bonus = -0.05 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_remove_investment_in_region_1_10p = {
+	custom_effect_tooltip = rohan_lords_remove_investment_in_region_1_10p_tt
+	add_to_variable = { region_1_investment_bonus = -0.1 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_remove_investment_in_region_2_10p = {
+	custom_effect_tooltip = rohan_lords_remove_investment_in_region_2_10p_tt
+	add_to_variable = { region_2_investment_bonus = -0.1 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_remove_investment_in_region_3_10p = {
+	custom_effect_tooltip = rohan_lords_remove_investment_in_region_3_10p_tt
+	add_to_variable = { region_3_investment_bonus = -0.1 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_remove_investment_in_region_4_10p = {
+	custom_effect_tooltip = rohan_lords_remove_investment_in_region_4_10p_tt
+	add_to_variable = { region_4_investment_bonus = -0.1 }
+	rohan_lords_update_regions = yes
+}
+
+rohan_lords_remove_investment_in_region_5_10p = {
+	custom_effect_tooltip = rohan_lords_remove_investment_in_region_5_10p_tt
+	add_to_variable = { region_5_investment_bonus = -0.1 }
+	rohan_lords_update_regions = yes
+}
+
+
+rohan_lords_recall_erkenbrand_from_retirement = {
+	set_country_flag = roh_erkenbrand_recalled
+	hidden_effect = {
+		ROH_erkenbrand = {
+			add_field_marshal_role = {
+				traits={ eorl_loyalist_p old_guard }
+				skill=1
+				attack_skill=1
+				defense_skill=2
+				planning_skill=1
+				logistics_skill=2
+			}
+			add_advisor_role = {
+				advisor = {
+					idea_token = ROH_erkenbrand
+					slot = army_chief 
+					cost = 150
+					traits = { army_chief_morale_2 }
+				}
+			}
+		}
+	}
+}
+
+
+rohan_lords_replace_characters_on_death = {
+	# region 3
+    if = {
+        limit = { ROH_theodred = { is_region_3_leader = yes is_dead = yes } }
+		ROH_theodred = { save_global_event_target_as = ROH_lords_char_killed }
+        ROH_fenmund = {
+            save_global_event_target_as = ROH_lords_char_replacement
+            rohan_lords_set_as_region_3_leader = yes
+        }
+        country_event = rohan.99
+    }
+	else_if = {
+        limit = { ROH_erkenbrand = { is_region_3_leader = yes is_dead = yes } }
+		ROH_erkenbrand = { save_global_event_target_as = ROH_lords_char_killed }
+        ROH_fenmund = {
+            save_global_event_target_as = ROH_lords_char_replacement
+            rohan_lords_set_as_region_3_leader = yes
+        }
+        country_event = rohan.99
+    }
+
+	# region 4
+    if = {
+        limit = { ROH_herethain = { is_region_4_leader = yes is_dead = yes } }
+		ROH_herethain = { save_global_event_target_as = ROH_lords_char_killed }
+        ROH_fulcanstan = {
+            save_global_event_target_as = ROH_lords_char_replacement
+            rohan_lords_set_as_region_4_leader = yes
+        }
+        country_event = rohan.99
+    }
+	else_if = {
+        limit = { ROH_erkenbrand = { is_region_4_leader = yes is_dead = yes } }
+		ROH_erkenbrand = { save_global_event_target_as = ROH_lords_char_killed }
+        ROH_fulcanstan = {
+            save_global_event_target_as = ROH_lords_char_replacement
+            rohan_lords_set_as_region_4_leader = yes
+        }
+        country_event = rohan.99
+    }
+	else_if = {
+        limit = { ROH_guthlaf = { is_region_4_leader = yes is_dead = yes } }
+		ROH_guthlaf = { save_global_event_target_as = ROH_lords_char_killed }
+        ROH_fulcanstan = {
+            save_global_event_target_as = ROH_lords_char_replacement
+            rohan_lords_set_as_region_4_leader = yes
+        }
+        country_event = rohan.99
+    }
+
+	# region 2
+    if = {
+        limit = { ROH_eomer = { is_region_2_leader = yes is_dead = yes } }
+		ROH_eomer = { save_global_event_target_as = ROH_lords_char_killed }
+        ROH_leofred = {
+            save_global_event_target_as = ROH_lords_char_replacement
+            rohan_lords_set_as_region_2_leader = yes
+        }
+        country_event = rohan.99
+    }
+	else_if = {
+        limit = { ROH_elfhelm = { is_region_2_leader = yes is_dead = yes } }
+		ROH_elfhelm = { save_global_event_target_as = ROH_lords_char_killed }
+        ROH_leofred = {
+            save_global_event_target_as = ROH_lords_char_replacement
+            rohan_lords_set_as_region_2_leader = yes
+        }
+        country_event = rohan.99
+    }
+
+	# region 5
+	if = {
+        limit = { ROH_leoheort = { is_region_5_leader = yes is_dead = yes } }
+		ROH_leoheort = { save_global_event_target_as = ROH_lords_char_killed }
+        ROH_hadig = {
+            save_global_event_target_as = ROH_lords_char_replacement
+            rohan_lords_set_as_region_5_leader = yes
+        }
+        country_event = rohan.99
+    }
+}
+
+rohan_lords_replace_characters_on_retired = {
+	ROH = {
+		# region 3
+		if = {
+			limit = { ROH_theodred = { is_region_3_leader = yes is_retired = yes } }
+			ROH_theodred = { save_global_event_target_as = ROH_lords_char_killed }
+			ROH_fenmund = {
+				save_global_event_target_as = ROH_lords_char_replacement
+				rohan_lords_set_as_region_3_leader = yes
+			}
+			country_event = rohan.100
+		}
+		else_if = {
+			limit = { ROH_erkenbrand = { is_region_3_leader = yes is_retired = yes } }
+			ROH_erkenbrand = { save_global_event_target_as = ROH_lords_char_killed }
+			ROH_fenmund = {
+				save_global_event_target_as = ROH_lords_char_replacement
+				rohan_lords_set_as_region_3_leader = yes
+			}
+			country_event = rohan.100
+		}
+
+		# region 4
+		if = {
+			limit = { ROH_herethain = { is_region_4_leader = yes is_retired = yes } }
+			ROH_herethain = { save_global_event_target_as = ROH_lords_char_killed }
+			ROH_fulcanstan = {
+				save_global_event_target_as = ROH_lords_char_replacement
+				rohan_lords_set_as_region_4_leader = yes
+			}
+			country_event = rohan.100
+		}
+		else_if = {
+			limit = { ROH_erkenbrand = { is_region_4_leader = yes is_retired = yes } }
+			ROH_erkenbrand = { save_global_event_target_as = ROH_lords_char_killed }
+			ROH_fulcanstan = {
+				save_global_event_target_as = ROH_lords_char_replacement
+				rohan_lords_set_as_region_4_leader = yes
+			}
+			country_event = rohan.100
+		}
+		else_if = {
+			limit = { ROH_guthlaf = { is_region_4_leader = yes is_retired = yes } }
+			ROH_guthlaf = { save_global_event_target_as = ROH_lords_char_killed }
+			ROH_fulcanstan = {
+				save_global_event_target_as = ROH_lords_char_replacement
+				rohan_lords_set_as_region_4_leader = yes
+			}
+			country_event = rohan.100
+		}
+
+		# region 2
+		if = {
+			limit = { ROH_eomer = { is_region_2_leader = yes is_retired = yes } }
+			ROH_eomer = { save_global_event_target_as = ROH_lords_char_killed }
+			ROH_leofred = {
+				save_global_event_target_as = ROH_lords_char_replacement
+				rohan_lords_set_as_region_2_leader = yes
+			}
+			country_event = rohan.100
+		}
+		else_if = {
+			limit = { ROH_elfhelm = { is_region_2_leader = yes is_retired = yes } }
+			ROH_elfhelm = { save_global_event_target_as = ROH_lords_char_killed }
+			ROH_leofred = {
+				save_global_event_target_as = ROH_lords_char_replacement
+				rohan_lords_set_as_region_2_leader = yes
+			}
+			country_event = rohan.100
+		}
+
+		# region 5
+		if = {
+			limit = { ROH_leoheort = { is_region_5_leader = yes is_retired = yes } }
+			ROH_leoheort = { save_global_event_target_as = ROH_lords_char_killed }
+			ROH_hadig = {
+				save_global_event_target_as = ROH_lords_char_replacement
+				rohan_lords_set_as_region_5_leader = yes
+			}
+			country_event = rohan.100
+		}
+	}
+}

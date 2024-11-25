@@ -4,6 +4,7 @@
 
 add_namespace = rohan
 
+# NOT USED AT THE MOMENT
 # Saruman Demands the Westmarch
 country_event = {
 	id = rohan.5
@@ -36,6 +37,10 @@ country_event = {
 		name = rohan.5.b
 		ai_chance = {
 			base = 50
+			modifier = {
+				factor = 0.1
+				has_country_flag = gameplan_rush_westmarch_abandon
+			}
 		}
 		ISE = {country_event = { hours = 2 id = isengard.3 } }
 	}
@@ -52,23 +57,46 @@ country_event = {
 
 	trigger = {
 		tag = ROH
+		date > 3020.9.1 # Sometimes (Looking at you Weathertop) the Ring gets captured very early. This stops Rohan from being able to turbo-rush their focuses
 		OR = {
-			AND = {
-				has_global_flag = fs_gandalf_left_fellowship
-				date > 3020.1.1
-			}
+			#has_global_flag = fs_gandalf_left_fellowship # Old version. No longer in use because this *should* happen after fellowship breakup.
+			has_global_flag = fs_fellowship_breakup
 			# If the fellowship moves south past isengard, Gandalf can take a pit-stop at Rohan lol
 			AND = {
 				check_variable = { global.fs_currentstate = 26 }
 				ring_gandalf_in_fellowship = yes
 			}
 			has_global_flag = fs_ring_seized
-			date > 3022.1.1 # This is here as a stop-gap measure. If gandalf is bugged for some reason, this will keep Rohan remotely playable
+			date > 3022.2.1 # This is here as a stop-gap measure. If gandalf is bugged for some reason, this will keep Rohan remotely playable
 		}
 	}
 
 	mean_time_to_happen = {
 		days = 30
+		modifier = {
+			factor = 2
+			date < 3022.1.1
+		}
+		modifier = {
+			factor = 2
+			date < 3021.1.1
+		}
+		modifier = {
+			factor = 0.5
+			ROH = { has_war = yes }
+		}
+		modifier = {
+			factor = 0.1
+			ROH = { surrender_progress > 0.2 }
+		}
+		modifier = {
+			factor = 0.1
+			ROH = { surrender_progress > 0.35 }
+		}
+	}
+
+	immediate = {
+		complete_national_focus = ROH_gandalfs_arrival
 	}
 
 	option = { # Let him in
@@ -77,7 +105,40 @@ country_event = {
 			base = 250
 			modifier = { factor = 0 is_going_cooperative = no }
 		}
+		trigger = {
+			NOT = { has_completed_focus = ROH_wormtongue_cabinet }
+			NOT = { has_completed_focus = ROH_deny_gandalf_entrance }
+			OR = {
+				is_ai = yes
+				power_balance_value = {
+					id = power_balance_wormtongue
+					value < 0.9
+				}
+			}
+		}
+		if = {
+			limit = {
+				rohan_has_bop = yes
+				power_balance_value = {
+					id = power_balance_wormtongue
+					value > 0.3
+				}
+			}
+			add_political_power = -500
+			add_stability = -0.1
+		}
+		else_if = {
+			limit = {
+				rohan_has_bop = yes
+				power_balance_value = {
+					id = power_balance_wormtongue
+					value > -0.3
+				}
+			}
+			add_political_power = -150
+		}
  		set_global_flag = gandalf_allowed_into_rohan
+		complete_national_focus = ROH_let_gandalf_in
 	}
 	option = { # Deny Access
 		name = rohan.6.b
@@ -89,7 +150,40 @@ country_event = {
 			}
 			modifier = { factor = 0 is_going_belligerent = no }
 		}
+		trigger = {
+			NOT = { has_completed_focus = ROH_purge_the_rot }
+			NOT = { has_completed_focus = ROH_let_gandalf_in }
+			OR = {
+				is_ai = yes
+				power_balance_value = {
+					id = power_balance_wormtongue
+					value > -0.9
+				}
+			}
+		}
+		if = {
+			limit = {
+				rohan_has_bop = yes
+				power_balance_value = {
+					id = power_balance_wormtongue
+					value < -0.3
+				}
+			}
+			add_political_power = -500
+			add_stability = -0.1
+		}
+		else_if = {
+			limit = {
+				rohan_has_bop = yes
+				power_balance_value = {
+					id = power_balance_wormtongue
+					value < 0.3
+				}
+			}
+			add_political_power = -150
+		}
 		set_global_flag = gandalf_denied_access_rohan
+		complete_national_focus = ROH_deny_gandalf_entrance
 	}
 }
 
@@ -106,13 +200,13 @@ country_event = {
 
 	option = {
 		name = rohan.4.a
-		retire_character = ROH_theodred
+		ROH_theodred = { lotr_kill_character = yes }
 		hidden_effect = {news_event = { hours = 48 id = news.336 }}
 	}
 
 }
 
-# Grima Wormtongue becomes Hand of the King
+# Grima Wormtongue hired as chief advisor
 country_event = {
 	id = rohan.1
 	title = rohan.1.t
@@ -123,22 +217,16 @@ country_event = {
 
 	trigger = {
 		tag = ROH
-		date > 3018.9.1
+		date > 3018.7.15
 	}
 
 	mean_time_to_happen = {
-		days = 30
+		days = 65
 	}
 
 	option = {
 		name = rohan.1.a
-		set_global_flag = grima_hired
-		add_ideas = ROH_grima
-		add_popularity = { ideology = cooperative popularity = -0.15 }
-		hidden_effect = {
-			country_event = { days = 20 id=rohan.2 }
-			country_event = { days = 60 id=rohan.3 }
-		}
+		hire_grima_wormtongue = yes
 	}
 
 }
@@ -157,9 +245,15 @@ country_event = {
 
 	option = {
 		name = rohan.2.a
+		unlock_decision_tooltip = ROH_bop_administer_medicine
 		set_politics = { ruling_party = unaligned elections_allowed = no }
 		ROH_theoden = { remove_unit_leader = yes }
 		hidden_effect = { news_event = { hours = 48 id = news.337 } }
+
+		set_country_leader_portrait = {
+			portrait = GFX_portrait_rohan_theoden_old
+		}
+		add_country_leader_trait = afflicted
 	}
 
 }
@@ -179,12 +273,27 @@ country_event = {
 	option = {
 		name = rohan.3.a
 
-		add_manpower = -20000
+		move_bop_to_grima = yes
+		add_manpower = -2000
 		ROH_eomer = {
-			remove_unit_leader = yes
-			remove_advisor_role = {
-				slot = chief_advisor
-			}
+			lotr_pseudo_retire_character = yes
+		}
+		hidden_effect = {
+			ROH_eomer = {
+				remove_unit_leader_role = yes
+				remove_country_leader_role = {
+					ideology = federative
+				}
+				remove_country_leader_role = {
+					ideology = isolationist
+				}
+				remove_country_leader_role = {
+					ideology = expansionist
+				}
+				remove_advisor_role = {
+					slot = chief_advisor
+				}
+			}	
 		}
 	}
 
@@ -222,7 +331,7 @@ country_event = {
 
 	option = {
 		name = rohan.8.a
-		add_manpower = 10000
+		add_manpower = 1000
 		add_equipment_to_stockpile = {
 			type = infantry_equipment_0
 			amount = 1000
@@ -302,5 +411,2271 @@ country_event = {
 			add_opinion_modifier = { target = ROH modifier = small_decrease }
 			country_event = { id = arthedain.11 }
 		}
+	}
+}
+
+# Getting rid of Theodred "manually"
+country_event = {
+	id = rohan.11
+	title = rohan.11.t
+	desc = rohan.11.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.11.a
+		ROH_theodred = { lotr_kill_character = yes }
+
+		ROH = { rohan_lords_replace_characters_on_death = yes }
+
+		news_event = news.340
+	}
+}
+
+# Getting rid of Eomer "manually"
+country_event = {
+	id = rohan.12
+	title = rohan.12.t
+	desc = rohan.12.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.12.a
+		ROH_eomer = { lotr_kill_character = yes }
+
+		ROH = { rohan_lords_replace_characters_on_death = yes }
+	}
+}
+
+# chief advisor
+country_event = {
+	id = rohan.51
+	title = rohan.51.t
+	desc = rohan.51.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.51.a
+		add_ideas = ROH_leocred
+		ROH_leocred = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# spymaster
+country_event = {
+	id = rohan.52
+	title = rohan.52.t
+	desc = rohan.52.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.52.a
+		add_ideas = ROH_fengel
+		ROH_fengel = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# treasurer
+country_event = {
+	id = rohan.53
+	title = rohan.53.t
+	desc = rohan.53.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.53.a
+		add_ideas = ROH_heostor
+		ROH_heostor = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# advisor
+country_event = {
+	id = rohan.54
+	title = rohan.54.t
+	desc = rohan.54.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.54.a
+		add_ideas = ROH_widgelred
+		ROH_widgelred = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# advsior
+country_event = {
+	id = rohan.55
+	title = rohan.55.t
+	desc = rohan.55.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.55.a
+		add_ideas = ROH_frumbold
+		ROH_frumbold = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# chief researcher
+country_event = {
+	id = rohan.56
+	title = rohan.56.t
+	desc = rohan.56.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.56.a
+		add_ideas = shady_intellectual_idea_ROH
+	}
+}
+
+# architect
+country_event = {
+	id = rohan.57
+	title = rohan.57.t
+	desc = rohan.57.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.57.a
+		add_ideas = luxury_powerbroker_idea_ROH
+	}
+}
+
+# theorist
+country_event = {
+	id = rohan.58
+	title = rohan.58.t
+	desc = rohan.58.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.58.a
+		add_ideas = ROH_grimbeam
+		ROH_grimbeam = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# researcher
+country_event = {
+	id = rohan.59
+	title = rohan.59.t
+	desc = rohan.59.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.59.a
+		add_ideas = backroom_beneficiary_idea_ROH
+	}
+}
+
+# researcher
+country_event = {
+	id = rohan.60
+	title = rohan.60.t
+	desc = rohan.60.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.60.a
+		add_ideas = rampant_plagiarizer_wrm_idea_ROH
+	}
+}
+
+# army chief
+country_event = {
+	id = rohan.61
+	title = rohan.61.t
+	desc = rohan.61.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.61.a
+		add_ideas = ROH_erkenor
+		ROH_erkenor = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# navy chief
+country_event = {
+	id = rohan.62
+	title = rohan.62.t
+	desc = rohan.62.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.62.a
+		add_ideas = ROH_freca
+		ROH_freca = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# cavalry chief
+country_event = {
+	id = rohan.63
+	title = rohan.63.t
+	desc = rohan.63.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.63.a
+		add_ideas = ROH_heoere
+		ROH_heoere = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# high command
+country_event = {
+	id = rohan.64
+	title = rohan.64.t
+	desc = rohan.64.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.64.a
+		add_ideas = ROH_herethain
+		ROH_herethain = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# high command
+country_event = {
+	id = rohan.65
+	title = rohan.65.t
+	desc = rohan.65.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.65.a
+		add_ideas = ROH_leoheort
+		ROH_leoheort = {
+			set_can_be_fired_in_advisor_role = {
+				value = no
+			}	
+		}
+	}
+}
+
+# Grima promotes new commander
+country_event = {
+	id = rohan.66
+	title = rohan.66.t
+	desc = rohan.66.d
+	picture = GFX_report_event_army_camp
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.66.a
+
+		move_bop_to_grima = yes
+		custom_effect_tooltip = rohan.66.a_tt
+		hidden_effect = {
+			random_list = {
+				100 = {
+					modifier = {
+						factor = 0
+						ROH_theobold = { is_unit_leader = yes }
+					}
+					add_corps_commander_role = {
+						Character = ROH_theobold
+						traits = { wormtongue_sympathizer trait_reckless }
+						skill = 4
+						attack_skill = 5
+						defense_skill = 3
+						planning_skill = 1
+						logistics_skill = 2
+					}
+				}
+				100 = {
+					modifier = {
+						factor = 0
+						ROH_leodig = { is_unit_leader = yes }
+					}
+					add_corps_commander_role = {
+						Character = ROH_leodig
+						traits = { wormtongue_sympathizer trait_cautious politically_connected }
+						skill = 3
+						attack_skill = 2
+						defense_skill = 3
+						planning_skill = 3
+						logistics_skill = 2
+					}
+				}
+				100 = {
+					modifier = {
+						factor = 0
+						ROH_gleotor = { is_unit_leader = yes }
+					}
+					add_corps_commander_role = {
+						Character = ROH_gleotor
+						traits = { wormtongue_sympathizer politically_connected }
+						skill = 3
+						attack_skill = 3
+						defense_skill = 1
+						planning_skill = 2
+						logistics_skill = 3
+					}
+				}
+				1 = {
+
+				}
+			}
+		}
+	}
+}
+
+# Grima banishes eorl loyalist commander
+country_event = {
+	id = rohan.67
+	title = rohan.67.t
+	desc = rohan.67.d
+	picture = GFX_report_event_exile
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.67.a
+
+		move_bop_to_grima = yes
+		random_unit_leader = {
+			limit = { has_trait = eorl_loyalist }
+			lotr_retire_character = yes
+		}
+	}
+}
+
+# Grima crushes peasant unrest
+country_event = {
+	id = rohan.68
+	title = rohan.68.t
+	desc = rohan.68.d
+	picture = GFX_report_event_peasant_revolt3
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.68.a
+
+		move_bop_to_grima = yes
+		add_manpower = -50
+		add_stability = 0.05
+	}
+}
+
+# Grima rallies military support
+country_event = {
+	id = rohan.69
+	title = rohan.69.t
+	desc = rohan.69.d
+	picture = GFX_report_event_cavalry_knights
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.69.a
+
+		move_bop_to_grima = yes
+		add_war_support = 0.05
+	}
+}
+
+# Grima increases trading tolls
+country_event = {
+	id = rohan.70
+	title = rohan.70.t
+	desc = rohan.70.d
+	picture = GFX_report_event_horseman_wanderer
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.70.a
+
+		move_bop_to_grima = yes
+		add_timed_idea = {
+			idea = increased_trading_tolls
+			days = 175
+		}
+	}
+}
+
+# Grima convenes with king
+country_event = {
+	id = rohan.71
+	title = rohan.71.t
+	desc = rohan.71.d
+	picture = GFX_report_event_grima
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.71.a
+
+		move_bop_to_grima = yes
+		add_popularity = {
+			ideology = belligerent
+			popularity = 0.05
+		}
+		add_political_power = 50
+	}
+}
+
+# Grima raises new levy army
+country_event = {
+	id = rohan.72
+	title = rohan.72.t
+	desc = rohan.72.d
+	picture = GFX_report_event_army_camp
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.72.a
+
+		move_bop_to_grima = yes
+		add_manpower = 500
+	}
+}
+
+# Grima makes concessions to Isengard
+country_event = {
+	id = rohan.73
+	title = rohan.73.t
+	desc = rohan.73.d
+	picture = GFX_report_event_grima_saruman
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.73.a
+
+		move_bop_to_grima = yes
+		add_political_power = 50
+		ISE = {
+			add_collaboration = {
+				target = ROH
+				value = 0.1
+			}
+		}
+	}
+}
+
+# Isengard gearing up to attack fellowship. Help?
+country_event = {
+	id = rohan.74
+	title = rohan.74.t
+	desc = rohan.74.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	timeout_days = 7
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.74.a
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 4
+				ISE = { is_ai = no }
+			}
+			modifier = {
+				factor = 0
+				is_going_belligerent = no
+			}
+		}
+
+		set_country_flag = fs_rohan_coordinating_with_isengard
+
+		custom_effect_tooltip = rohan.74.a_tt
+
+		hidden_effect = { ISE = { country_event = { id = isengard.7 days = 3 } } }
+	}
+
+	option = {
+		name = rohan.74.b
+		ai_chance = {
+			base = 5
+		}
+
+		hidden_effect = { ISE = { country_event = { id = isengard.7 days = 3 } } }
+	}
+
+}
+
+# Gandalf leaves Rohan
+country_event = {
+	id = rohan.75
+	title = rohan.75.t
+	desc = rohan.75.d
+	picture = GFX_report_event_gandalf_on_horse
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = ROH
+		ROH_gandalf = { is_hired_as_advisor = yes }
+		MOR = { has_war_with = GON }
+	}
+
+	mean_time_to_happen = {
+		days = 60
+	}
+
+	option = {
+		name = rohan.75.a
+
+		ROH_gandalf = {
+			lotr_retire_character = yes
+		}
+
+		set_global_flag = gandalf_left_rohan
+	}
+}
+
+# Support the fellowship
+country_event = {
+	id = rohan.76
+	title = rohan.76.t
+	desc = rohan.76.d
+	picture = GFX_report_event_hobbits
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.76.a
+		ai_chance = {
+			base = 5
+		}
+
+		# heal them
+		ring_heal_fellowship = yes
+
+		add_to_array = { global.fs_eventlog_prefix_targets = ROH }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_lth_give_shelter }
+		ring_trim_eventlog = yes
+	}
+
+	option = {
+		name = rohan.76.b
+		ai_chance = {
+			base = 5
+		}
+
+		custom_effect_tooltip = rohan.76.b_tt
+
+		# give them speed
+		clr_global_flag = fs_on_boat
+		set_global_flag = fs_on_horseback
+	}
+
+	option = {
+		name = rohan.76.c
+		ai_chance = {
+			base = 5
+		}
+
+		# give them some good gear
+		ring_gear_up_random_member = yes
+	}
+}
+
+# Support the fellowship
+country_event = {
+	id = rohan.77
+	title = rohan.77.t
+	desc = rohan.77.d
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.77.a
+		ai_chance = {
+			base = 5
+		}
+		trigger = {
+			ROH_hama = { is_unit_leader = yes }
+		}
+
+		add_to_array = { global.fs_eventlog_prefix_targets = ROH }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_roh_sends_aid }
+		ring_trim_eventlog = yes
+
+		ROH_hama = { ring_add_member_to_fellowship = yes }
+	}
+
+	option = {
+		name = rohan.77.b
+		ai_chance = {
+			base = 5
+		}
+		trigger = {
+			ROH_eomer = { is_unit_leader = yes }
+		}
+
+		add_to_array = { global.fs_eventlog_prefix_targets = ROH }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_roh_sends_aid }
+		ring_trim_eventlog = yes
+
+		ROH_eomer = { ring_add_member_to_fellowship = yes }
+	}
+
+	option = {
+		name = rohan.77.c
+		ai_chance = {
+			base = 5
+		}
+		trigger = {
+			ROH_elfhelm = { is_unit_leader = yes }
+		}
+
+		add_to_array = { global.fs_eventlog_prefix_targets = ROH }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_roh_sends_aid }
+		ring_trim_eventlog = yes
+
+		ROH_elfhelm = { ring_add_member_to_fellowship = yes }
+	}
+
+	option = {
+		name = rohan.77.dd
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				is_going_cooperative = yes
+			}
+		}
+		trigger = {
+			OR = {
+				ROH_elfhelm = { is_unit_leader = yes }
+				ROH_eomer = { is_unit_leader = yes }
+				ROH_hama = { is_unit_leader = yes }
+			}
+		}
+
+		add_to_array = { global.fs_eventlog_prefix_targets = ROH }
+		add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+		add_to_array = { global.fs_eventlog = token:fs_event_roh_sends_aid }
+		ring_trim_eventlog = yes
+
+		if = {
+			limit = { ROH_hama = { is_unit_leader = yes } }
+			ROH_hama = { ring_add_member_to_fellowship = yes }
+		}
+		if = {
+			limit = { ROH_eomer = { is_unit_leader = yes } }
+			ROH_eomer = { ring_add_member_to_fellowship = yes }
+		}
+		if = {
+			limit = { ROH_elfhelm = { is_unit_leader = yes } }
+			ROH_elfhelm = { ring_add_member_to_fellowship = yes }
+		}
+
+		add_political_power = -250
+	}
+
+	option = {
+		name = rohan.77.e
+		trigger = {
+			OR = {
+				ROH_elfhelm = { is_unit_leader = no }
+				ROH_eomer = { is_unit_leader = no }
+				ROH_hama = { is_unit_leader = no }
+			}
+		}
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+
+# Grima declares neutral foreign policy
+country_event = {
+	id = rohan.78
+	title = rohan.78.t
+	desc = rohan.78.d
+	picture = GFX_report_event_grima
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = ROH
+		grima_wormtongue_is_hired = yes
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.78.a
+
+		move_bop_to_grima = yes
+		add_ideas = ROH_neutral_foreign_policy
+	}
+}
+
+# Country asked to chime in on Grima vs Theoden stuff
+country_event = {
+	id = rohan.79
+	title = rohan.79.t
+	desc = rohan.79.d
+	picture = GFX_report_event_grima
+
+	trigger = {
+		ROH = {
+			grima_wormtongue_is_hired = yes
+		}
+		NOT = { has_war_with = ROH }
+	}
+
+	is_triggered_only = yes
+
+	# help theoden
+	option = {
+		name = rohan.79.a
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor=0
+				OR = {
+					is_going_belligerent = yes
+					is_going_revolutionary = yes
+				}
+			}
+			modifier = {
+				factor=0.5
+				is_going_unaligned = yes
+			}
+			modifier = {
+				factor=0.5
+				is_elves = yes # elves just don't give af sometimes
+			}
+		}
+
+		add_political_power = -50
+		ROH = {
+			event_option_tooltip = rohan.80.a
+			hidden_effect = { country_event = { id = rohan.80 days = 5 random_days = 5 } } 
+		}
+	}
+
+	# help theoden a lot with potential backfire
+	option = {
+		name = rohan.79.b
+		ai_chance = {
+			factor = 10
+			modifier = {
+				factor=0
+				OR = {
+					is_going_belligerent = yes
+					is_going_revolutionary = yes
+				}
+			}
+			modifier = {
+				factor=0.5
+				is_going_unaligned = yes
+			}
+			modifier = {
+				factor=0.5
+				is_elves = yes # elves just don't give af sometimes
+			}
+			modifier = {
+				factor = 0.25
+				political_power_daily < 1
+			}
+		}
+
+		add_political_power = -100
+		random_list = {
+			65 = {
+				ROH = {
+					event_option_tooltip = rohan.81.a
+					hidden_effect = { country_event = { id = rohan.81 days = 15 random_days = 35 } }
+				}
+			}
+			35 = {
+				ROH = {
+					event_option_tooltip = rohan.82.a
+					hidden_effect = { country_event = { id = rohan.82 days = 15 random_days = 35 } }
+				}
+			}
+		}
+	}
+
+	# do nothing
+	option = {
+		name = rohan.79.c_h
+		trigger = {
+			is_elves = no
+		}
+		ai_chance = {
+			factor = 10
+		}
+	}
+
+	option = {
+		name = rohan.79.c_e
+		trigger = {
+			is_elves = yes
+		}
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+# Response event: Help theoden
+country_event = {
+	id = rohan.80
+	title = rohan.80.t
+	desc = rohan.80.d
+
+	trigger = {
+		ROH = {
+			grima_wormtongue_is_hired = yes
+		}
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		move_bop_to_theoden = yes
+		name = rohan.80.a
+	}
+}
+
+# Response event: Help theoden a lot
+country_event = {
+	id = rohan.81
+	title = rohan.81.t
+	desc = rohan.81.d
+
+	trigger = {
+		ROH = {
+			grima_wormtongue_is_hired = yes
+		}
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		move_bop_to_theoden = yes
+		move_bop_to_theoden = yes
+		name = rohan.81.a
+	}
+}
+
+# Response event: Help theoden a lot - backfire
+country_event = {
+	id = rohan.82
+	title = rohan.82.t
+	desc = rohan.82.d
+
+	trigger = {
+		ROH = {
+			grima_wormtongue_is_hired = yes
+		}
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		move_bop_to_grima = yes
+		name = rohan.82.a
+	}
+}
+
+# Empower Grima event
+country_event = {
+	id = rohan.83
+	title = rohan.83.t
+	desc = rohan.83.d
+
+	trigger = {
+		ROH = {
+			grima_wormtongue_is_hired = yes
+		}
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		move_bop_to_grima = yes
+		add_political_power = 100
+
+		name = rohan.83.a
+	}
+}
+
+# Isengard appeaser has effect on Isengard
+country_event = {
+	id = rohan.84
+	title = rohan.84.t
+	desc = rohan.84.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.84.a
+
+		add_political_power = -300
+		add_stability = -0.1
+	}
+}
+
+# Isengard concessions have effect on Isengard
+country_event = {
+	id = rohan.85
+	title = rohan.85.t
+	desc = rohan.85.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.85.a
+
+		# Add idea that lowers output, construction and some other stuff
+		add_timed_idea = {
+			idea = ROH_concessions_blowback
+			days = 90
+		}
+	}
+}
+
+# King's Council decides to abolish position of chief advisor. King returns to his senses. What to do with Grima?
+country_event = {
+	id = rohan.86
+	title = rohan.86.t
+	desc = rohan.86.d
+
+	picture = GFX_report_event_negotiations
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.86.a
+
+		# abolish the position of chief advisor
+		custom_effect_tooltip = ROH_purge_the_rot_tt
+		hidden_effect = {
+			ROH_grima = { remove_advisor_role = { slot = chief_advisor } }
+			ROH_eowyn = { remove_advisor_role = { slot = chief_advisor } }
+			ROH_theodred = { remove_advisor_role = { slot = chief_advisor } }
+			ROH_eomer = { remove_advisor_role = { slot = chief_advisor } }
+			ROH_leocred = { remove_advisor_role = { slot = chief_advisor } }
+		}
+		# get rid of wormtongue "manually", donly doable if BOP is won
+		roh_end_bop_struggle = yes
+
+		set_country_leader_portrait = {
+			portrait = GFX_portrait_rohan_theoden
+		}
+		if = {
+			limit = { has_country_leader_with_trait = afflicted }
+			remove_country_leader_trait = afflicted
+		}
+		if = {
+			limit = { has_country_leader_with_trait = isolated_and_paranoid }
+			remove_country_leader_trait = isolated_and_paranoid
+		}
+	}
+}
+
+# Send delegation to country
+# NOTE: This is a 1:1 copy-paste from lotr_generic.6, except that you get BOP modifier if they accept
+country_event = {
+	id = rohan.87
+	title = lotr_generic.6.t
+	desc = lotr_generic.6.d
+	picture = GFX_report_event_elven_alliance
+
+	is_triggered_only = yes
+
+	option = { # Shower them with gifts
+		name = lotr_generic.6.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = FROM
+					value > 30
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 0.25
+				FROM = { is_going_different_path_as_root = yes }
+			}
+		}
+		
+		add_timed_idea = {
+			idea = minor_expense
+			days = 60
+		}
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = large_increase
+			}
+		}
+
+		FROM = { roh_add_intermediate_theoden_drift = yes }
+
+		set_country_flag = has_accepted_cross_anduin_diplo
+	}
+
+	option = { # Give them the common courtesies
+		name = lotr_generic.6.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = FROM
+					value > 15
+				}
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { is_going_different_path_as_root = yes }
+			}
+		}
+		
+		add_political_power = 50
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = medium_increase
+			}
+		}
+
+		FROM = { roh_add_intermediate_theoden_drift = yes }
+
+		set_country_flag = has_accepted_cross_anduin_diplo
+	}
+
+	option = { # They're not welcome here
+		name = lotr_generic.6.c
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+			modifier = {
+				factor = 0.5
+				FROM = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_going_different_path_as_root = yes }
+			}
+		}
+		
+		add_political_power = -50
+		FROM = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = medium_decrease
+			}
+		}
+
+		FROM = { roh_add_minor_grima_drift = yes }
+	}
+}
+
+# Force player to choose what to do with Grima
+country_event = {
+	id = rohan.88
+	title = rohan.88.t
+	desc = rohan.88.d
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_completed_focus = ROH_execute_grima }
+		NOT = { has_completed_focus = ROH_exile_grima }
+	}
+
+	option = {
+		name = rohan.88.a
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+
+		effect_tooltip = {
+			add_ideas = ROH_anti_eorl_plot_3
+			ROH_grima = { lotr_kill_character = yes }
+			set_global_flag = grima_executed
+			ROH_theoden = {
+				add_trait = {
+					trait = the_merciless
+				}
+			}
+		}
+		hidden_effect = {
+			complete_national_focus = ROH_execute_grima	
+		}
+	}
+
+	option = {
+		name = rohan.88.b
+		ai_chance = {
+			base = 7
+		}
+
+		effect_tooltip = {
+			ROH_grima = {
+				lotr_retire_character = yes
+			}
+			add_ideas = ROH_anti_eorl_plot_3
+			ROH_theoden = {
+				add_trait = {
+					trait = the_merciful
+				}
+			}
+		}
+		hidden_effect = {
+			complete_national_focus = ROH_exile_grima	
+		}
+	}
+}
+
+# Rohan stands down (after Grima gains power)
+country_event = {
+	id = rohan.89
+	title = rohan.89.t
+	desc = rohan.89.d
+
+	is_triggered_only = yes
+
+	# k
+	option = {
+		name = rohan.89.a
+		ai_chance = {
+			base = 13
+			modifier = {
+				factor = 2
+				ROH = { is_ai = no }
+			}
+		}
+
+		ISE = {
+			set_truce = {
+				target = FROM
+				days = 90
+			}
+		}
+
+		# begin timer that lets Isengard force ROH to choose pledge or resist
+		custom_effect_tooltip = rohan.89.a_tt
+		hidden_effect = {
+			ISE = { country_event = { id = rohan.94 days = 70 } }
+		}
+
+		# Set temporary truce:
+		ROH = { add_timed_idea = { idea = ROH_temp_truce days = 90 } }
+		ISE = { add_timed_idea = { idea = ISE_temp_truce days = 90 } }
+	}
+
+	# You want peace? Too bad!
+	option = {
+		name = rohan.89.b
+		ai_chance = {
+			base = 3
+			modifier = {
+				factor = 2
+				ROH = { surrender_progress > 0 }
+			}
+			modifier = {
+				factor = 2
+				ROH = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				ROH = { is_significantly_weaker = yes }
+			}
+		}
+
+		add_political_power = -150
+	}
+}
+
+# Event to Isengard: Rohan resists submission
+country_event = {
+	id = rohan.90
+	title = rohan.90.t
+	desc = rohan.90.d
+
+	is_triggered_only = yes
+
+	# whatevs
+	option = {
+		name = rohan.90.a
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 2
+				ROH = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 2
+				ROH = { is_significantly_stronger = yes }
+			}
+			modifier = {
+				factor = 2
+				enemies_strength_ratio > 0.8
+			}
+		}
+
+		# Offer truce that freezes territory in place
+		ROH = { country_event = { id = rohan.103 days = 1 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = rohan.103.a
+	}
+
+	# oof
+	option = {
+		name = rohan.90.b
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 2
+				enemies_strength_ratio < 0.8
+			}
+		}
+
+		add_war_support = 0.05
+		add_timed_idea = {
+			idea = increased_attack
+			days = 90
+		}
+	}
+
+	# :rage:
+	option = {
+		name = rohan.90.c
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 2
+				ROH = { is_significantly_weaker = yes }
+			}
+		}
+
+		add_political_power = -150
+		add_stability = -0.05
+
+		ROH = {
+			every_core_state = { add_claim_by = ISE }
+		}
+	}
+}
+
+# Rohan makes concessions
+country_event = {
+	id = rohan.91
+	title = rohan.91.t
+	desc = rohan.91.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = rohan.91.a
+
+		ROH = { add_ideas = ROH_concessions_to_isengard }
+	}
+}
+
+# Selective investments: Select one region to make large investment in
+country_event = {
+	id = rohan.92
+	title = rohan.92.t
+	desc = rohan.92.desc
+
+	is_triggered_only = yes
+
+	# region 1
+	option = {
+		ai_chance = {
+			base = mtth:rohan_lords_region_1_importance
+		}
+		trigger = {
+			rohan_lords_controls_region_1 = yes
+		}
+		name = rohan.92.a
+		rohan_lords_invest_in_region_1_10p = yes
+	}
+
+	# region 2
+	option = {
+		ai_chance = {
+			base = mtth:rohan_lords_region_2_importance
+		}
+		trigger = {
+			rohan_lords_controls_region_2 = yes
+		}
+		name = rohan.92.b
+		rohan_lords_invest_in_region_2_10p = yes
+	}
+
+	# region 3
+	option = {
+		ai_chance = {
+			base = mtth:rohan_lords_region_3_importance
+		}
+		trigger = {
+			rohan_lords_controls_region_3 = yes
+		}
+		name = rohan.92.c
+		rohan_lords_invest_in_region_3_10p = yes
+	}
+
+	# region 4
+	option = {
+		ai_chance = {
+			base = mtth:rohan_lords_region_4_importance
+		}
+		trigger = {
+			rohan_lords_controls_region_4 = yes
+		}
+		name = rohan.92.d
+		rohan_lords_invest_in_region_4_10p = yes
+	}
+
+	# region 5
+	option = {
+		ai_chance = {
+			base = mtth:rohan_lords_region_5_importance
+		}
+		trigger = {
+			rohan_lords_controls_region_5 = yes
+		}
+		name = rohan.92.e
+		rohan_lords_invest_in_region_5_10p = yes
+	}
+}
+
+# Rohan Landsmeet event
+country_event = {
+	id = rohan.93
+	title = rohan.93.t
+	desc = rohan.93.desc
+
+	is_triggered_only = yes
+
+	# region 1
+	option = {
+		ai_chance = {
+			base = mtth:rohan_lords_region_1_importance
+		}
+		trigger = {
+			rohan_lords_controls_region_1 = yes
+			NOT = { has_completed_focus = ROH_deal_with_the_wold }
+		}
+		name = rohan.93.a
+		country_event = { id = rohanlords.5 days = 3 }
+	}
+
+	# region 2
+	option = {
+		ai_chance = {
+			base = mtth:rohan_lords_region_2_importance
+		}
+		trigger = {
+			rohan_lords_controls_region_2 = yes
+			NOT = { has_completed_focus = ROH_deal_with_eastemnet }
+		}
+		name = rohan.93.b
+		country_event = { id = rohanlords.4 days = 3 }
+	}
+
+	# region 3
+	option = {
+		ai_chance = {
+			base = mtth:rohan_lords_region_3_importance
+		}
+		trigger = {
+			rohan_lords_controls_region_3 = yes
+			NOT = { has_completed_focus = ROH_deal_with_westemnet }
+		}
+		name = rohan.93.c
+		country_event = { id = rohanlords.2 days = 3 }
+	}
+
+	# region 4
+	option = {
+		ai_chance = {
+			base = mtth:rohan_lords_region_4_importance
+		}
+		trigger = {
+			rohan_lords_controls_region_4 = yes
+			NOT = { has_completed_focus = ROH_deal_with_westmarch }
+		}
+		name = rohan.93.d
+		country_event = { id = rohanlords.1 days = 3 }
+	}
+
+	# region 5
+	option = {
+		ai_chance = {
+			base = mtth:rohan_lords_region_5_importance
+		}
+		trigger = {
+			rohan_lords_controls_region_5 = yes
+			NOT = { has_completed_focus = ROH_deal_with_eastfold }
+		}
+		name = rohan.93.e
+		country_event = { id = rohanlords.3 days = 3 }
+	}
+
+	option = {
+		ai_chance = {
+			base = 15
+		}
+		name = rohan.93.f
+		add_political_power = 100
+	}
+}
+
+# Let isengard force Rohan to choose a side (resist or submit)
+country_event = {
+	id = rohan.94
+	title = rohan.94.t
+	desc = rohan.94.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		ISE = { exists = yes }
+		ISE = { has_capitulated = no }
+		ROH = { exists = yes }
+		ROH = { has_capitulated = no }
+	}
+
+	#
+	option = {
+		name = rohan.94.a
+		ROH = { country_event = { id = rohan.95 } }
+	}
+}
+
+# Rohan forced to submit or resist
+country_event = {
+	id = rohan.95
+	title = rohan.95.t
+	desc = rohan.95.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		ISE = { exists = yes }
+		ISE = { has_capitulated = no }
+		ROH = { exists = yes }
+		ROH = { has_capitulated = no }
+	}
+
+	# submit
+	option = {
+		ai_chance = {
+			base = 8
+			modifier = {
+				factor = 1.5
+				ISE = { is_ai = no }
+			}
+			modifier = {
+				factor = 1.6
+				ISE = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 2
+				ISE = { is_significantly_stronger = yes }
+			}
+		}
+		name = rohan.95.a
+		complete_national_focus = ROH_pledge_to_saruman
+	}
+
+	# resist
+	option = {
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 2
+				ISE = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 10
+				ISE = { is_significantly_weaker = yes }
+			}
+		}
+		name = rohan.95.b
+		complete_national_focus = ROH_resist_saruman
+	}
+}
+
+# Rohan does Pledge to Saruman focus (asks to be pupetted)
+country_event = {
+	id = rohan.96
+	title = rohan.96.t
+	desc = rohan.96.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		ISE = { exists = yes }
+		ISE = { has_capitulated = no }
+		ROH = { exists = yes }
+		ROH = { has_capitulated = no }
+	}
+
+	# accept
+	option = {
+		name = rohan.96.a
+		ai_chance = {
+			base = 15
+		}
+
+		set_global_flag = ise_accepted_rohan_submission
+		
+		ROH = {
+			event_option_tooltip = rohan.98.a
+			hidden_effect = { country_event = { id = rohan.98 days = 1 } }
+		}
+	}
+
+	# decline
+	option = {
+		name = rohan.96.b
+		ai_chance = {
+			base = 5
+		}
+		
+		ROH = {
+			event_option_tooltip = rohan.97.a
+			hidden_effect = { country_event = { id = rohan.97 days = 1 } }
+		}
+	}
+}
+
+# Saruman refuses to puppet rohan, keeps war
+country_event = {
+	id = rohan.97
+	title = rohan.97.t
+	desc = rohan.97.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		ISE = { exists = yes }
+		ISE = { has_capitulated = no }
+		ROH = { exists = yes }
+		ROH = { has_capitulated = no }
+	}
+
+	option = {
+		name = rohan.97.a
+		
+		uncomplete_national_focus = { focus = ROH_pledge_to_saruman }
+		unlock_national_focus = ROH_resist_saruman
+	}
+}
+
+# Saruman accepts puppet
+country_event = {
+	id = rohan.98
+	title = rohan.98.t
+	desc = rohan.98.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		ISE = { exists = yes }
+		ISE = { has_capitulated = no }
+		ROH = { exists = yes }
+		ROH = { has_capitulated = no }
+	}
+
+	option = {
+		name = rohan.98.a
+
+		hidden_effect = {
+			news_event = { id = news.404 days = 4 }
+		}
+		
+		# Set state flags for negotiate terms
+		every_state = {
+			limit = { is_controlled_by = ROH is_owned_by = ISE }
+			set_state_flag = truce_controlled_by_ROH
+		}
+		every_state = {
+			limit = { is_controlled_by = ISE is_owned_by = ROH }
+			set_state_flag = truce_controlled_by_ISE
+		}
+
+		ISE = {
+			puppet = {
+				target = ROH
+				#end_wars = yes # Need this?
+			}
+		}
+
+		hidden_effect = {
+			ROH = {
+				add_autonomy_score = {
+					value = -350
+				}
+			}
+		}
+
+		custom_effect_tooltip = ROH_pledge_to_saruman_tt
+
+		# give ISE all the territory they occupy + west
+		every_state = {
+			limit = { has_state_flag = truce_controlled_by_ISE }
+			transfer_state_to = ISE
+		}
+		every_state = {
+			limit = { has_state_flag = truce_controlled_by_ROH }
+			transfer_state_to = ROH
+		}
+
+		add_ideas = ROH_isengard_protectorate
+	}
+}
+
+# Lord X died, has been replaced by Y
+country_event = {
+	id = rohan.99
+	title = rohan.99.t
+	desc = rohan.99.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = {
+		name = rohan.99.a
+
+		clear_global_event_target = ROH_lords_char_killed
+		clear_global_event_target = ROH_lords_char_replacement
+	}
+}
+
+# Lord X retired, has been replaced by Y
+country_event = {
+	id = rohan.100
+	title = rohan.100.t
+	desc = rohan.100.d
+
+	is_triggered_only = yes
+
+	picture = GFX_report_event_paper
+
+	option = {
+		name = rohan.100.a
+
+		clear_global_event_target = ROH_lords_char_killed
+		clear_global_event_target = ROH_lords_char_replacement
+	}
+}
+
+# Grima deposed
+country_event = {
+	id = rohan.101
+	title = rohan.101.t
+	desc = rohan.101.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_grima_wormtongue
+
+	option = {
+		name = rohan.101.a
+
+		ROH_grima = { lotr_retire_character = yes }
+	}
+}
+
+# Eomer returns
+country_event = {
+	id = rohan.102
+	title = rohan.102.t
+	desc = rohan.102.d
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = ROH
+		ROH = { ROH_eomer = { is_unit_leader = no } }
+		ROH = { ROH_eomer = { is_alive = yes } }
+		has_government = cooperative
+	}
+
+	mean_time_to_happen = {
+		days = 200
+		# Eomer comes back a lot quicker if the enemy controls provinces right outside Helms deep
+		modifier = {
+			factor = 0.5
+			has_defensive_war = yes
+		}
+		modifier = {
+			factor = 0.5
+			surrender_progress > 0.2
+		}
+		modifier = {
+			factor = 0.01
+			OR = {
+				controls_province = 4628
+				NOT = { controls_province = 2483 }
+				NOT = { controls_province = 6762 }
+			}
+		}
+		modifier = {
+			factor = 1.5
+			NOT = { controls_province = 4628 }
+		}
+	}
+
+	picture = GFX_report_event_eomer_attack
+
+	option = {
+		name = rohan.102.a
+
+		load_oob = ROH_EomerReinforcements
+
+		ROH_eomer = {
+			add_corps_commander_role = {
+				traits={ eorl_loyalist_p panzer_leader }
+				skill=4
+				attack_skill=3
+				defense_skill=2
+				planning_skill=3
+				logistics_skill=2
+			}
+			add_country_leader_role = {
+				promote_leader = no
+				country_leader = { ideology = federative }
+			}
+			add_country_leader_role = {
+				promote_leader = no
+				country_leader = { ideology = isolationist }
+			}
+			add_country_leader_role = {
+				promote_leader = no
+				country_leader = { ideology = expansionist }
+			}
+
+			if = {
+				limit = {
+					ROOT = { NOT = { has_completed_focus = ROH_purge_the_rot } }
+				}
+				add_advisor_role = {
+					activate = no
+					advisor = {
+						idea_token = ROH_eomer
+						slot = chief_advisor 
+						cost = 150
+						traits = { lord_of_the_mark }
+					}
+				}
+			}
+		}
+	}
+}
+
+# Isengard offers a truce
+country_event = {
+	id = rohan.103
+	title = rohan.103.t
+	desc = rohan.103.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_grima_saruman
+
+	option = {
+		name = rohan.103.a
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				ISE = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 2
+				ISE = { is_significantly_stronger = yes }
+			}
+		}
+
+		hidden_effect = {
+			news_event = { id = news.405 days = 2 }
+		}
+
+		ROH = {
+			# Set state flags for negotiate terms
+			every_state = {
+				limit = { is_controlled_by = ROH is_owned_by = ISE }
+				set_state_flag = truce_controlled_by_ROH
+			}
+			every_state = {
+				limit = { is_controlled_by = ISE is_owned_by = ROH }
+				set_state_flag = truce_controlled_by_ISE
+			}
+
+			white_peace = ISE
+
+			# give ISE all the territory they occupy + west
+			every_state = {
+				limit = { has_state_flag = truce_controlled_by_ISE }
+				transfer_state_to = ISE
+			}
+			every_state = {
+				limit = { has_state_flag = truce_controlled_by_ROH }
+				transfer_state_to = ROH
+			}
+		}
+	}
+
+	option = {
+		name = rohan.103.b
+		ai_chance = {
+			base = 5
+			modifier = {
+				factor = 4
+				ISE = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				ISE = { is_significantly_weaker = yes }
+			}
+		}
+	}
+}
+
+# Grima Resistance begins
+country_event = {
+	id = rohan.104
+	title = rohan.104.t
+	desc = rohan.104.d
+
+	trigger = {
+		tag = ROH
+		rohan_has_bop = yes
+	}
+
+	mean_time_to_happen = {
+		days = 16
+		modifier = {
+			factor = 3
+			power_balance_value = {
+				id = power_balance_wormtongue
+				value < 0.19
+			}
+		}
+		modifier = {
+			factor = 5
+			power_balance_value = {
+				id = power_balance_wormtongue
+				value < 0.1
+			}
+		}
+		modifier = {
+			factor = 1.5
+			power_balance_value = {
+				id = power_balance_wormtongue
+				value < -0.1
+			}
+		}
+		modifier = {
+			factor = 1.2
+			power_balance_value = {
+				id = power_balance_wormtongue
+				value < -0.3
+			}
+		}
+	}
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_grima
+
+	option = {
+		name = rohan.104.a
+
+		set_country_flag = ROH_bop_resistance_movement
+		effect_tooltip = {
+			activate_decision = ROH_resistance_move
+		}
+	}
+}
+
+# Grima Resistance: Eowyn public speech
+country_event = {
+	id = rohan.105
+	title = rohan.105.t
+	desc = rohan.105.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_eowyn
+
+	option = {
+		name = rohan.105.a
+		add_political_power = 35
+		move_bop_to_theoden = yes
+	}
+}
+
+# Grima Resistance: Eomer wins border skirmish
+country_event = {
+	id = rohan.106
+	title = rohan.106.t
+	desc = rohan.106.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_eomer
+
+	option = {
+		name = rohan.106.a
+		add_war_support = 0.05
+		move_bop_to_theoden = yes
+	}
+}
+
+# Grima Resistance: Hama refuses Grima's orders
+country_event = {
+	id = rohan.107
+	title = rohan.107.t
+	desc = rohan.107.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	option = {
+		name = rohan.107.a
+		add_stability = -0.02
+		add_political_power = -25
+		move_bop_to_theoden = yes
+	}
+}
+
+# Grima Resistance: Rally at helms deep
+country_event = {
+	id = rohan.108
+	title = rohan.108.t
+	desc = rohan.108.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_army_camp
+
+	option = {
+		name = rohan.108.a
+		add_manpower = 500
+		move_bop_to_theoden = yes
+	}
+}
+
+# Grima Resistance: Corruption Scandal exposed
+country_event = {
+	id = rohan.109
+	title = rohan.109.t
+	desc = rohan.109.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_corruption
+
+	option = {
+		name = rohan.109.a
+		add_stability = -0.02
+		move_bop_to_theoden = yes
+	}
+}
+
+# Grima Resistance: Healer's Testimony
+country_event = {
+	id = rohan.110
+	title = rohan.110.t
+	desc = rohan.110.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_healer
+
+	option = {
+		name = rohan.110.a
+		add_political_power = -25
+		move_bop_to_theoden = yes
+	}
+}
+
+# Grima Resistance: Eomer rallies support from exile
+country_event = {
+	id = rohan.111
+	title = rohan.111.t
+	desc = rohan.111.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_eomer
+
+	option = {
+		name = rohan.111.a
+		move_bop_to_theoden = yes
+	}
+}
+
+# Grima Resistance: Links between Grima and Saruman exposed
+country_event = {
+	id = rohan.112
+	title = rohan.112.t
+	desc = rohan.112.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_grima_saruman
+
+	option = {
+		name = rohan.112.a
+		add_war_support = -0.02
+		move_bop_to_theoden = yes
+	}
+}
+
+# Grima Resistance: Prison Outbreak
+country_event = {
+	id = rohan.113
+	title = rohan.113.t
+	desc = rohan.113.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_fight
+
+	option = {
+		name = rohan.113.a
+		add_stability = -0.02
+		move_bop_to_theoden = yes
+	}
+}
+
+# Grima Resistance: Eowyn's secret assembly
+country_event = {
+	id = rohan.114
+	title = rohan.114.t
+	desc = rohan.114.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_intense_diplomatic_negotiations
+
+	option = {
+		name = rohan.114.a
+		move_bop_to_theoden = yes
+	}
+}
+
+# Grima Resistance: Theodred rallies against Grima
+country_event = {
+	id = rohan.115
+	title = rohan.115.t
+	desc = rohan.115.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_cavalry_knights
+
+	option = {
+		name = rohan.115.a
+		add_stability = 0.05
+		move_bop_to_theoden = yes
+	}
+}
+
+# Isengard defeated under Theoden
+country_event = {
+	id = rohan.116
+	title = rohan.116.t
+	desc = rohan.116.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_rohan_riders
+
+	option = {
+		name = rohan.116.a
+
+		add_country_leader_trait = ednew_the_renewed
+	}
+}
+
+# Theodred's funeral
+country_event = {
+	id = rohan.117
+	title = rohan.117.t
+	desc = rohan.117.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = {
+		name = rohan.117.a
 	}
 }
