@@ -28,6 +28,13 @@ NDefines.NGraphics.MAP_ICONS_GROUP_SPLIT_SELECTED_LIMIT = 5   -- Maximum number 
 NDefines.NGraphics.MAP_ICONS_COARSE_COUNTRY_GROUPING_DISTANCE = 500 -- Distance at which icon grouping becomes very coarse and merges different types of units
 NDefines.NGraphics.MAP_ICONS_COARSE_COUNTRY_GROUPING_DISTANCE_STRATEGIC = 500 -- Distance at which icon grouping becomes very coarse and merges different types of units for strategic mapmodes
 
+NDefines.NGraphics.BLOOM_WIDTH = 0.0
+NDefines.NGraphics.BLOOM_SCALE = 1000.0
+NDefines.NGraphics.BRIGHT_THRESHOLD = 100.4
+NDefines.NGraphics.EMISSIVE_BLOOM_STRENGTH = 0.0
+NDefines.NGraphics.MIN_HDR_ADJUSTMENT = 0.99     --0.18 0.7  är hur mkt den anpassar sig till mörka områden, mindre värde -> mer mörkerseen
+NDefines.NGraphics.MAX_HDR_ADJUSTMENT = 1.0
+
 NDefines.NGraphics.FRIEND_COLOR  = {1.0, 1.0, 1.0}
 NDefines.NGraphics.ENEMY_COLOR   = {1.0, 0.7, 0.7}
 NDefines.NGraphics.NEUTRAL_COLOR = {0.8, 0.8, 0.8}
