@@ -424,7 +424,7 @@ PixelShader =
 			//float3 ret = float3(uv.x, uv.y, 0);
 			//return float4(ret.x, ret.y, ret.z, 1);
 
-			float2 iResolution = float2(2000, 1000);
+			float2 iResolution = float2(1000, 500);
 			fragCoord *= iResolution;
 			float2 iMouse = float2(0,0);
 			//return float4(fragCoord.x, fragCoord.y, 0, 1);
@@ -446,13 +446,13 @@ PixelShader =
 			float3 ang = float3(roll, pitch, yaw);
 
 			// Camera origin
-			//float3 ori = vCamPos;//float3(0.0, 3.5, time * 3.0);
-			float3 ori = float3(0.0, 3.5, time * 3.0);
+			float3 ori = vCamPos - float3(0, WATER_HEIGHT, 0);//float3(0.0, 3.5, time * 3.0);
+			//float3 ori = float3(0.0, 3.5, time * 3.0);
 
 			// Ray direction
-			//float3 dir = normalize(Input.pos - vCamPos);//normalize(float3(uv.x, uv.y, -1.6));
-			float3 dir = normalize(float3(uv.x, uv.y, -1.6));
-			dir = mul(fromEuler(ang), dir);
+			float3 dir = normalize(Input.pos - vCamPos);//normalize(float3(uv.x, uv.y, -1.6));
+			//float3 dir = normalize(float3(uv.x, uv.y, -1.6));
+			//dir = mul(fromEuler(ang), dir);
 
 			// Trace the ray
 			float3 p;
