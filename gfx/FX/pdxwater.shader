@@ -255,6 +255,7 @@ PixelShader =
 
 
 		float SmoothNoise(in float2 o) {
+			//o.xy *= 0.1;
 			float2 p = floor(o);
 			float2 f = frac(o);
 			float n = p.x + p.y*57.0;
@@ -287,6 +288,7 @@ PixelShader =
 
 
 		float3 SmoothNoise_DXY(in float2 o) {
+			//o.xy *= 0.1;
 			float2 p = floor(o);
 			float2 f = frac(o);
 			float n = p.x + p.y*57.0;
@@ -327,8 +329,8 @@ PixelShader =
 		}
 
 		
-		float GetTerrainHeight( const float3 vPos ) {    
-			float fbm = FBM( vPos.xz * float2(0.5, 1.0), 0.5 );
+		float GetTerrainHeight( float3 vPos ) {    
+			float fbm = FBM( vPos.xz * float2(1.5, 1.0), 0.5 );
 			float fTerrainHeight = fbm * fbm * 0.05;
 			fTerrainHeight -= 0.3 + (0.5 + 0.5 * sin( vPos.z * 0.001 + 3.0)) * 0.4;
 			return fTerrainHeight;
@@ -684,8 +686,14 @@ PixelShader =
 			float near, far;
 			initCamera(ro, rd, near, far, fragCoord);
 
-			//ro = CamPos;
-			//rd = normalize(FragPos);//float3(0,0,1);//normalize(FragPos - CamPos);
+			ro = CamPos;
+			//ro.y *= 0.1;
+			ro.y -= 1000.0;
+			//ro.y = clamp(ro.y, 1.5, 3);
+			ro.x = ro.x/1000.0;
+			ro.z = 0;
+			ro.y = 2.5f;
+			rd = normalize(FragPos - CamPos);
 			//near = 100.0;
 			//far = 1000.0;
 
@@ -695,7 +703,13 @@ PixelShader =
 			vFinal = vFinal * 1.1 - 0.1;
 			fragColor = float4(vFinal, 1.0);
 
-			return pow(fragColor, 2.0);
+			fragColor -= 0.0 * float4(1,1,1,0);
+			fragColor *= 0.75;
+			fragColor = pow(fragColor, 2.0);
+
+			fragColor.a = 1;
+
+			return fragColor;
 		}
 
 
