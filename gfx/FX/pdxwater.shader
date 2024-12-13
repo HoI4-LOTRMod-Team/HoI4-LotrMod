@@ -464,7 +464,7 @@ PixelShader =
 			float3 n = getNormal(p, eps);
 
 			// Light direction
-			float3 light = normalize(float3(0.0, 1.0, 0.8));
+			float3 light = normalize(float3(0.0, 2.0, 0.8));
 
 			// Get sky and sea colors
 			float3 skyColor = getSkyColor(dir);
@@ -576,7 +576,7 @@ PixelShader =
 
 		float4 main( VS_OUTPUT_WATER Input ) : PDX_COLOR
 		{
-			//return float4( 0, 0, 1, 1 );
+			// Both of these values give a measure of how close we are to shore
 			float waterHeight = MultiSampleTexX( HeightTexture, Input.uv ) / ( 95.7f / 255.0f );
 			float waterShore = saturate( ( waterHeight - 0.954f ) * 25.0f );
 
@@ -736,16 +736,16 @@ PixelShader =
 		#else
 			DebugReturn(vOut, lightingProperties, fShadowTerm);
 		#endif
-			//return float4(vOut, (1.0f - waterShore)*(1.0f-map_fac));
-			float2 wsUV = float2(
-				Input.uv.x * 4000.0f,
-				(1.0f - Input.uv.y) * 2000.0f
-			);
-			float2 wsrUV = float2(
-				Input.uv.x,
-				(1.0f - Input.uv.y)
-			);
-			return waveShader(wsrUV, wsrUV, Input);
+			return float4(vOut, (1.0f - waterShore)*(1.0f-map_fac));
+			//float2 wsUV = float2(
+			//	Input.uv.x * 4000.0f,
+			//	(1.0f - Input.uv.y) * 2000.0f
+			//);
+			//float2 wsrUV = float2(
+			//	Input.uv.x,
+			//	(1.0f - Input.uv.y)
+			//);
+			//return waveShader(wsrUV, wsrUV, Input);
 		}
 	]]
 }
