@@ -336,6 +336,14 @@ PixelShader =
 			return fTerrainHeight;
 		}
 
+		float GetTerrainHeight2( float3 vPos ) {  
+			vPos.xz *= 0.03f;  
+			float fbm = FBM( vPos.xz * float2(1.5, 1.0), 0.5 );
+			float fTerrainHeight = fbm * fbm * 0.55;
+			fTerrainHeight -= 0.3 + (0.5 + 0.5 * sin( vPos.z * 0.001 + 3.0)) * 0.4;
+			return -1.0 * fTerrainHeight;
+		}
+
 
 		float GetSceneDistance( const float3 vPos ) {
 			return vPos.y - GetTerrainHeight( vPos );
@@ -434,6 +442,29 @@ PixelShader =
 				}
 			}
 			intersection.m_pos = vRayOrigin + vRayDir * intersection.m_dist;
+		}
+
+		float3 RayIntersectXZPlane(float3 rayOrigin, float3 rayDirection, float planeY)
+		{
+			float t = (planeY - rayOrigin.y) / rayDirection.y;
+			return rayOrigin + t * rayDirection;
+		}
+
+		float3 RaymarchScene2( float3 vRayOrigin, float3 vRayDir) {
+			float max_height = 50.0f;
+
+			float3 currentPos = RayIntersectXZPlane(vRayOrigin, vRayDir, max_height);
+			//currentPos.y = GetTerrainHeight2(currentPos);
+			//currentPos = currentPos + vRayDir * 100.0f;
+			//return currentPos;
+
+			for(int i=0; i<50; i++) {
+				float h = max_height * GetTerrainHeight2(currentPos);
+				float delta = currentPos.y - h;
+				if(delta < 0.05f || currentPos.y < 2.0f) return currentPos;
+				currentPos = currentPos + vRayDir * 0.5f * delta;
+			}
+			return currentPos;
 		}
 
 		float3 GetSceneNormal(const in float3 vPos) {
@@ -777,7 +808,25 @@ PixelShader =
 		float4 main( VS_OUTPUT_WATER Input ) : PDX_COLOR
 		{
 			Input.uv.y = 1.0 - Input.uv.y;
-			return waves_img(Input.uv*float2(800,450), vCamPos, Input.pos);
+			float4 ret;
+			ret.rgb = float3(1,1,1) * -1.0f * GetTerrainHeight2(float3(Input.uv.x, 0, Input.uv.y)*100.0);
+			//ret.rgb = GetSceneNormal(float3(Input.uv.x, 0, Input.uv.y)*100.0);
+			//ret.rgb = float3(1,1,1) * 1.0f * GetSceneDistance(float3(Input.uv.x, 0, Input.uv.y)*100.0);
+			//ret.rgb = pow(ret.rgb, 2);
+
+			float3 p = RaymarchScene2(
+				vCamPos,
+				normalize(Input.pos - vCamPos)
+			);
+
+			p.y = max(p.y, 0);
+			//p.y *= -1;
+
+			ret.rgb = float3(1,1,1) * p.y * 0.01f;
+
+			ret.a = 1;
+			return ret;
+			//return waves_img(Input.uv*float2(800,450), vCamPos, Input.pos);
 
 			// Both of these values give a measure of how close we are to shore
 			float waterHeight = MultiSampleTexX( HeightTexture, Input.uv ) / ( 95.7f / 255.0f );
