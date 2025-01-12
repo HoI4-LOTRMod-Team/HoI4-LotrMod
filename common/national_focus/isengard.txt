@@ -1466,8 +1466,22 @@ focus_tree = {
 			add_equipment_to_stockpile = { type = infantry_equipment_1 amount = 15000 producer = ISE }
 			ENT = { country_event = { days = 1 id = entwood.7 } }
 			add_resource = { type = chromium amount = 45 state = 31 }
-
 			fires_of_isengard_increase = yes
+			if = {
+				limit = {
+					has_government = cooperative
+				}
+				add_stability = -0.15
+				every_other_country = {
+					limit = {
+						has_government = cooperative
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = medium_decrease
+					}
+				}
+			}
 		}
 	}
 
@@ -1491,7 +1505,7 @@ focus_tree = {
 	}
 
 	focus = {
-		id = ISE_
+		id = ISE_coring_remaing_forest
 		icon = GFX_goal_gon_ithilien_defensive_planning
 		ai_will_do = { factor = 5 }
 		available = {
@@ -1505,6 +1519,7 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			add_state_core = 29
+			add_stability = 0.1
 		}
 	}
 
@@ -1725,7 +1740,7 @@ focus_tree = {
 		ai_will_do = { factor = 5 }
 		mutually_exclusive = { focus = ISE_burn_the_fangorn_forest }
 		relative_position_id = ISE_expand_isengard_logistics
-		x = 5
+		x = 6
 		y = 1
 		cost = 5
 		available_if_capitulated = yes
@@ -1790,12 +1805,12 @@ focus_tree = {
 		relative_position_id = ISE_expand_the_relations
 		prerequisite = { focus = ISE_expand_the_relations }
 		mutually_exclusive = { focus = ISE_protecting_nature }
-		x = 0
+		x = -1
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			
+			custom_effect_tooltip = "Creating a faction/Inviting to faction with Entwood"
 		}
 	}
 
@@ -1809,12 +1824,13 @@ focus_tree = {
 		relative_position_id = ISE_expand_the_relations
 		prerequisite = { focus = ISE_expand_the_relations }
 		mutually_exclusive = { focus = ISE_against_all_evil }
-		x = 2
+		x = 1
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
 			add_ideas = ISE_defending_nature
+			custom_effect_tooltip = "Add note in description when spirit would be removed"
 		}
 	}
 
@@ -1889,7 +1905,7 @@ focus_tree = {
 		icon = GFX_goal_meet_with_gandalf
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_valars_mission
-		x = -2
+		x = -6
 		y = 1
 		prerequisite = { focus = ISE_valars_mission }
 		mutually_exclusive = { focus = ISE_fighting_against_evil }
@@ -1941,11 +1957,27 @@ focus_tree = {
 	}
 
 	focus = {
+		id = ISE_equipment_support
+		icon = GFX_goal_generic_horse_drawn_equipment
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_defend_against_all_evil
+		x = -1
+		y = 1
+		prerequisite = { focus = ISE_defend_against_all_evil }
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			custom_effect_tooltip = "Unlocking decisions to send equipment to the free people of Middle-Earth"
+		}
+	}
+
+	focus = {
 		id = ISE_military_spy_network
-		icon = GFX_goal_lth_raised_fist_blue
+		icon = GFX_goal_generic_unknown
 		ai_will_do = { factor = 5 }
 		available = {
 			has_intelligence_agency = yes
+			has_dlc = "La Resistance"
 		}
 		relative_position_id = ISE_defend_against_all_evil
 		prerequisite = { focus = ISE_defend_against_all_evil }
@@ -1955,7 +1987,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			
+			add_ideas = ISE_military_spy_network_idea
 		}
 	}
 
@@ -2072,8 +2104,8 @@ focus_tree = {
 	}
 
 	focus = {
-		id = ISE_
-		icon = GFX_goal_meet_with_gandalf
+		id = ISE_the_fires_must_burn
+		icon = GFX_goal_generic_unknown
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_industry_for_freedom
 		x = 0
@@ -2082,11 +2114,53 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			random_owned_state = {
-				add_building_slot_and_civ_x3 = yes
+			fires_of_isengard_increase = yes
+		}
+	}
+
+	focus = {
+		id = ISE_prepare_for_neighbouring_evil
+		icon = GFX_goal_roh_rohan_flag
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_expanding_support
+		x = -2
+		y = 1
+		available = {
+			OR = {
+				AND = {
+					ROH = {
+						OR = {
+							has_government = belligerent
+							has_government = revolutionary
+						}
+					}
+				}
+				has_war_with = ROH
 			}
-			random_owned_state = {
-				add_building_slot_and_mil_x2 = yes
+			controls_state = 158
+		}
+		prerequisite = { focus = ISE_expanding_support }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			158 = {
+				add_building_construction = {	type = bunker level = 1 instant_build = yes province = 4614 }
+				add_building_construction = {	type = bunker level = 1 instant_build = yes province = 6653 }
+				add_building_construction = {	type = bunker level = 1 instant_build = yes province = 6672 }
+				add_building_construction = {	type = bunker level = 1 instant_build = yes province = 1604 }
+				add_building_construction = {	type = bunker level = 1 instant_build = yes province = 6720 }
+				add_building_construction = {	type = bunker level = 1 instant_build = yes province = 4614 }
+			}
+			add_war_support = 0.075
+			add_opinion_modifier = {
+				target = ROH
+				modifier = small_decrease
+			}
+			ROH = {
+				add_opinion_modifier = {
+					target = ISE
+					modifier = small_decrease
+				}
 			}
 		}
 	}
@@ -2100,10 +2174,55 @@ focus_tree = {
 		y = 1
 		prerequisite = { focus = ISE_valars_mission }
 		mutually_exclusive = { focus = ISE_supporting_role }
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			add_war_support = 0.1
+			every_other_country = {
+				limit = {
+					has_government = belligerent
+				}
+				ISE = {
+					add_opinion_modifier = {
+						target = PREV
+						modifier = small_decrease
+					}
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_diffrent_approach
+		icon = GFX_goal_ELU_age_of_conquest_dagger_on_map
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_fighting_against_evil
+		x = -2
+		y = 1
+		prerequisite = { focus = ISE_fighting_against_evil }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			
+			swap_ideas = {
+				remove_idea = ISE_valars_mission_0
+				add_idea = ISE_valars_mission_diffrent_approach_0
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_new_government_approach
+		icon = GFX_goal_generic_court_law
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_diffrent_approach
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_diffrent_approach }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_political_power = 100
+			increase_levies = yes
 		}
 	}
 
@@ -2120,21 +2239,6 @@ focus_tree = {
 		completion_reward = {
 			
 		}
-	}
-
-	#Custom focuses start here
-	#Focus for Fate of Isengard
-	focus = {
-		id = thefateofisengard
-		icon = GFX_goal_orthanc_destroyed
-		ai_will_do = { factor = 100 }
-		x =4
-		y =0
-		mutually_exclusive = { }
-		prerequisite = { }
-		cost = 0
-		available_if_capitulated = yes
-		completion_reward = { }
 	}
 
 	#Focus for Ways of the Light
@@ -2389,59 +2493,6 @@ focus_tree = {
 				uses = 2
 				category = lotr_knowledge_magic
 			}
-		}
-	}
-
-	#Focus for Extra Research Slot
-	focus = {
-		id = ISE_extraresearchslot2
-		icon = GFX_focus_research
-		ai_will_do = { factor = 7 }
-		x =2
-		y =11
-		prerequisite = { focus = veryintensewizardry }
-		mutually_exclusive = { }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_research_slot = 1
-		}
-	}
-
-	#Focus for Imprison Gandalf
-	focus = {
-		id = imprisongandalf
-		icon = GFX_goal_imprisend_gandalf
-		ai_will_do = { factor = 100 }
-		x =6
-		y =3
-		available = { has_global_flag = gandalf_imprisoned }
-		mutually_exclusive = { focus = unitewithgandalf }
-		prerequisite = { focus = meetwithgandalf}
-		cost = 0
-		available_if_capitulated = yes
-		completion_reward = {
-			custom_effect_tooltip = MOR_event_triggert_focus
-			add_named_threat = { threat = 1 name = "Gandalf being taken prisoner" }
-		}
-	}
-
-	#Focus for Protect the Fangorn Forest
-	focus = {
-		id = protectthefangornforest
-		icon = GFX_goal_entwood_forest_nature
-		ai_will_do = { factor = 3 }
-		x =1
-		y =2
-		mutually_exclusive = { }
-		prerequisite = { focus = waysofthelight }
-		cost = 5
-		available_if_capitulated = no
-		completion_reward = {
-			ENT = { add_opinion_modifier = { target = ISE modifier = isr_entwood_protected } }
-			add_threat = -3
-			give_guarantee = ENT
-			add_resource = { type = oil amount = 30 state = 31 }
 		}
 	}
 
