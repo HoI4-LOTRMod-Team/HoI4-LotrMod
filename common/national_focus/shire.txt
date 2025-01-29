@@ -40,8 +40,8 @@ focus = {
 	icon = GFX_goal_generic_demand_territory
 	ai_will_do = { factor = 7 }
 	relative_position_id = thefateoftheshire
-	x =5
-	y =1
+	x = 10
+	y = 1
 	mutually_exclusive = { focus = traditionalhobbitpacifism }
 	prerequisite = { focus = thefateoftheshire}
 	cost = 10
@@ -58,7 +58,7 @@ focus = {
 		modifier = { factor = 0 is_going_cooperative = no }
 	}
 	relative_position_id = thefateoftheshire
-	x =-3
+	x =-4
 	y =1
 	mutually_exclusive = { focus = adifferentapproach}
 	prerequisite = { focus = thefateoftheshire}
@@ -117,9 +117,9 @@ focus = {
 	cancel_if_invalid = no
 	continue_if_invalid = yes
 	relative_position_id = adifferentapproach
-	x =3
-	y =1
-	mutually_exclusive = { focus = empowertheshirriffs }
+	x = 8
+	y = 1
+	mutually_exclusive = { focus = SHI_empower_the_shirriffs }
 	prerequisite = { focus = adifferentapproach}
 	cost = 10
 	available_if_capitulated = yes
@@ -144,25 +144,104 @@ focus = {
 	}
 }
 
-#Focus for Empower the Shirriffs
 focus = {
-	id = empowertheshirriffs
+	id = SHI_empower_the_shirriffs
 	icon = GFX_goal_rhineland
 	ai_will_do = {
 		factor = 15
 		modifier = { factor = 0 is_going_belligerent = no }
 	}
-	available = { belligerent > 0.3 }
+	available = { belligerent > 0.15 }
 	cancel_if_invalid = no
 	continue_if_invalid = yes
 	relative_position_id = adifferentapproach
-	x =-3
-	y =1
+	x = -4
+	y = 1
 	mutually_exclusive = { focus = empowerthehobbitproletariat}
 	prerequisite = { focus = adifferentapproach}
 	cost = 10
 	available_if_capitulated = yes
-	completion_reward = { add_threat = 2 set_politics = { ruling_party = belligerent elections_allowed = no } remove_ideas = SHI_different_approach add_ideas = generic_belligerent_intermediate }
+	completion_reward = {
+		remove_ideas = SHI_different_approach 
+		add_timed_idea = { idea = SHI_empowerd_Shirriffs  days = 365 }
+	}
+}
+
+focus = {
+	id = SHI_militarize_the_hobbits
+	icon = GFX_goal_generic_anvil
+	ai_will_do = { factor = 10 }
+	relative_position_id = SHI_empower_the_shirriffs
+	x = 0
+	y = 1
+	available = {
+		has_war_support > 0.35
+	}
+	prerequisite = { focus = SHI_empower_the_shirriffs }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		43 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = arms_factory	level = 1	instant_build = yes }
+		}
+		44 = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = arms_factory	level = 2	instant_build = yes }
+		}
+		42 = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = arms_factory	level = 2	instant_build = yes }
+		}
+		38 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = { type = arms_factory	level = 1	instant_build = yes }
+		}
+	}
+}
+
+focus = {
+	id = SHI_display_of_strength
+	icon = GFX_goal_demand_sudetenland
+	ai_will_do = { factor = 5 }
+	available = { belligerent > 0.25 }
+	relative_position_id = SHI_empower_the_shirriffs
+	x = 3
+	y = 1
+	prerequisite = { focus = SHI_empower_the_shirriffs}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		army_experience = 10
+		add_popularity = {
+			ideology = belligerent
+			popularity = 0.05
+		}
+		increase_centralization = yes
+		add_autonomy_ratio = {
+			value = 0.5
+			localization = SHI_display_of_strength
+		}
+		set_politics = {
+			ruling_party = belligerent
+		}
+	}
+}
+
+focus = {
+	id = SHI_unquestioned_authority
+	icon = GFX_focus_generic_military_mission
+	ai_will_do = { factor = 4 }
+	relative_position_id = SHI_display_of_strength
+	x = 0
+	y = 1
+	prerequisite = { focus = SHI_display_of_strength }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+		add_ideas = SHI_unquestioned_authority 
+		increase_levies = yes
+	}
 }
 
 #Focus for Encourage a Reformation of Arthedain
@@ -189,9 +268,8 @@ focus = {
 	icon = GFX_focus_generic_self_management
 	ai_will_do = { factor = 3 }
 	relative_position_id = adifferentapproach
-	x =0
-	y =2
-	mutually_exclusive = { }
+	x = 5
+	y = 2
 	prerequisite = { focus = adifferentapproach}
 	bypass = {
 		is_subject = no
@@ -247,54 +325,87 @@ focus = {
 	}
 }
 
-#Focus for Conspire with Saruman
 focus = {
-	id = conspirewithsaruman
-	icon = GFX_goal_roh_trust_saruman
+	id = SHI_conspire_with_saruman
+	icon = GFX_goal_ROH_concessions_to_isengard_saruman
 	ai_will_do = { factor = 5 }
-
-	available = { NOT = { has_completed_focus = seekourowndestiny } ISE = { is_in_faction = yes } NOT = { is_puppet = yes } ISE = { has_country_leader = { ruling_only = yes name = "Saruman" } } ISE = { has_government = belligerent } }
-	relative_position_id = empowertheshirriffs
-	x =-2
-	y =1
-
-	mutually_exclusive = { }
-	prerequisite = { focus = empowertheshirriffs}
-	cost = 10
+	available = { 
+		is_puppet = no
+		ISE = { 
+			has_country_leader = { ruling_only = yes name = "Saruman" } 
+			has_government = belligerent
+		} 
+	}
+	relative_position_id = SHI_empower_the_shirriffs
+	x = -3
+	y = 1
+	prerequisite = { focus = SHI_empower_the_shirriffs}
+	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
-		if = {
-			limit = { ISE = { is_faction_leader = yes } }
-			ISE = { add_to_faction = SHI }
-			else = { MOR = { add_to_faction = SHI } }
+		set_country_flag = SHI_conspired_with_saruman
+		custom_effect_tooltip = SHI_conspired_with_saruman_tooltip
+		add_opinion_modifier = { target = ISE modifier = medium_increase }
+		ISE = {
+			add_opinion_modifier = { target = SHI modifier = medium_increase }
 		}
 	}
 }
 
-#Focus for A Display of Strength
 focus = {
-	id = adisplayofstrength
-	icon = GFX_goal_demand_sudetenland
+	id = SHI_invite_isengard_business
+	icon = GFX_goal_isengard_deal
 	ai_will_do = { factor = 5 }
-	relative_position_id = empowertheshirriffs
-	x =0
-	y =1
-	mutually_exclusive = { }
-	prerequisite = { focus = empowertheshirriffs}
+	available = { 
+		is_puppet = no
+		ISE = { 
+			has_country_leader = { ruling_only = yes name = "Saruman" } 
+			has_government = belligerent
+		} 
+	}
+	relative_position_id = SHI_conspire_with_saruman
+	x = 0
+	y = 1
+	prerequisite = { focus = SHI_conspire_with_saruman }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		add_threat = 1
-		army_experience = 10
-		add_ideas = strong_centralization
-		add_autonomy_ratio = {
-			value = 0.5
-			localization = SHI_display_of_strength
-		}
+		
 	}
 }
 
-#Focus for Appropriate the Farmland
+focus = {
+	id = SHI_unite_with_isengard
+	icon = GFX_goal_ise_the_white_hand_flag
+	ai_will_do = { factor = 3 }
+	relative_position_id = SHI_invite_isengard_business
+	x = 0
+	y = 1
+	mutually_exclusive = { focus = SHI_seek_our_own_destiny }
+	prerequisite = { focus = SHI_invite_isengard_business}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+		add_ideas = SHI_saruman_help
+		custom_effect_tooltip = "Add event for isengard to request joining their faction"
+	}
+}
+
+focus = {
+	id = SHI_ambitious_plans
+	icon = GFX_goal_gon_ithilien_defensive_planning
+	ai_will_do = { factor = 3 }
+	relative_position_id = SHI_seek_our_own_destiny
+	x = -3
+	y = 1
+	prerequisite = { focus = SHI_seek_our_own_destiny focus = SHI_unite_with_isengard}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = { 
+
+	}
+}
+
 focus = {
 	id = appropriatethefarmland
 	icon = GFX_goal_generic_construct_civ_factory
@@ -386,81 +497,17 @@ focus = {
 	completion_reward = { add_ideas = SHI_inextricable_unity }
 }
 
-#Focus for Unquestioned Authority
 focus = {
-	id = unquestionedauthority
-	icon = GFX_focus_generic_military_mission
-	ai_will_do = { factor = 4 }
-	relative_position_id = adisplayofstrength
-	x =-1
-	y =1
-	mutually_exclusive = { }
-	prerequisite = { focus = adisplayofstrength}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { add_ideas = SHI_unquestioned_authority add_ideas = limited_levy }
-}
-
-#Focus for Militarize the Hobbits!
-focus = {
-	id = militarizethehobbits
-	icon = GFX_goal_generic_political_pressure
-	ai_will_do = { factor = 10 }
-	relative_position_id = adisplayofstrength
-	x =1
-	y =1
-	mutually_exclusive = { }
-	prerequisite = { focus = adisplayofstrength}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = {
-		43 = {
-			add_extra_state_shared_building_slots = 1
-			add_building_construction = { type = arms_factory	level = 1	instant_build = yes }
-		}
-		44 = {
-			add_extra_state_shared_building_slots = 2
-			add_building_construction = { type = arms_factory	level = 2	instant_build = yes }
-		}
-		42 = {
-			add_extra_state_shared_building_slots = 2
-			add_building_construction = { type = arms_factory	level = 2	instant_build = yes }
-		}
-		38 = {
-			add_extra_state_shared_building_slots = 1
-			add_building_construction = { type = arms_factory	level = 1	instant_build = yes }
-		}
-	}
-}
-
-#Focus for Abolish Second Breakfast
-focus = {
-	id = abolishsecondbreakfast
-	icon = GFX_goal_generic_dangerous_deal
+	id = SHI_abolish_second_breakfast
+	icon = GFX_goal_lth_safeguard_food_bread
 	ai_will_do = { factor = 2 }
-	relative_position_id = militarizethehobbits
-	x =1
-	y =1
-	mutually_exclusive = { }
-	prerequisite = { focus = militarizethehobbits}
+	relative_position_id = SHI_unquestioned_authority
+	x = 2
+	y = 1
+	prerequisite = { focus = SHI_unquestioned_authority}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { add_ideas = SHI_minimal_diet	}
-}
-
-#Focus for Unite with Isengard
-focus = {
-	id = SHI_unitewithisengard
-	icon = GFX_goal_ise_the_white_hand_flag
-	ai_will_do = { factor = 3 }
-	relative_position_id = conspirewithsaruman
-	x =0
-	y =2
-	mutually_exclusive = { focus = seekourowndestiny }
-	prerequisite = { focus = conspirewithsaruman}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { add_ideas = SHI_saruman_help ISE = { puppet = SHI } }
 }
 
 #Focus for Encourage Isengard Sovereignty
@@ -468,11 +515,11 @@ focus = {
 	id = SHI_encourageisengardsovereignity
 	icon = GFX_goal_army_uruk_hai
 	ai_will_do = { factor = 0 }
-	relative_position_id = conspirewithsaruman
+	relative_position_id = SHI_conspire_with_saruman
 	x =0
 	y =3
 	mutually_exclusive = { }
-	prerequisite = { focus = SHI_unitewithisengard}
+	prerequisite = { focus = SHI_unite_with_isengard}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { set_global_flag = isengard_sovereignity_encouraged }
@@ -510,15 +557,14 @@ focus = {
 
 #Focus for Seek our own Destiny
 focus = {
-	id = seekourowndestiny
+	id = SHI_seek_our_own_destiny
 	icon = GFX_goal_generic_small_arms
 	ai_will_do = { factor = 2 }
-	relative_position_id = unquestionedauthority
-	x =1
-	y =1
-	mutually_exclusive = { focus = SHI_unitewithisengard }
-	prerequisite = { focus = militarizethehobbits}
-	prerequisite = { focus =unquestionedauthority}
+	relative_position_id = SHI_unquestioned_authority
+	x = 0
+	y = 1
+	mutually_exclusive = { focus = SHI_unite_with_isengard }
+	prerequisite = { focus =SHI_unquestioned_authority}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -530,14 +576,13 @@ focus = {
 
 #Focus for Minimal Diet
 focus = {
-	id = minimaldiet
+	id = SHI_minimal_diet_focus
 	icon = GFX_goal_generic_consumer_goods
 	ai_will_do = { factor = 2 }
-	relative_position_id = abolishsecondbreakfast
-	x =0
-	y =1
-	mutually_exclusive = { }
-	prerequisite = { focus = abolishsecondbreakfast}
+	relative_position_id = SHI_abolish_second_breakfast
+	x = 0
+	y = 2
+	prerequisite = { focus = SHI_abolish_second_breakfast}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { add_ideas = SHI_minimal_diet2	}
@@ -548,11 +593,11 @@ focus = {
 	id = thefirsthobbitempire
 	icon = GFX_goal_generic_secret_weapon
 	ai_will_do = { factor = 10 }
-	relative_position_id = seekourowndestiny
+	relative_position_id = SHI_seek_our_own_destiny
 	x =0
 	y =1
 	mutually_exclusive = { }
-	prerequisite = { focus = seekourowndestiny}
+	prerequisite = { focus = SHI_seek_our_own_destiny}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -561,60 +606,43 @@ focus = {
 	}
 }
 
-#Focus for Transform the Hobbit-holes into bunkers
 focus = {
-	id = transformthehobbitholesintobunkers
+	id = SHI_transform_hobbit_holes_into_bunkers
 	icon = GFX_goal_generic_fortify_city
 	ai_will_do = { factor = 4 }
 	available = { 42 = { is_controlled_by = SHI } 44 = { is_controlled_by = SHI } 43 = { is_controlled_by = SHI } 38 = { is_controlled_by = SHI } }
-	relative_position_id = militarizethehobbits
-	x =0
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = militarizethehobbits}
+	relative_position_id = SHI_unquestioned_authority
+	x = 4
+	y = 1
+	prerequisite = { focus = SHI_unquestioned_authority}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		42 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 1641 } }
-		42 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 4984 } }
-		42 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 6036 } }
-		42 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 4336 } }
-		43 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 2895 } }
-		43 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 1304 } }
-		43 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 2167 } }
-		38 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 1661 } }
-		44 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 4937 } }
-		42 = { add_building_construction = {	type = bunker level = 5 instant_build = yes province = 1457 } }
+		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1641 } }
+		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4984 } }
+		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 6036 } }
+		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4336 } }
+		43 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 2895 } }
+		43 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1304 } }
+		43 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 2167 } }
+		38 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1661 } }
+		44 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4937 } }
+		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1457 } }
 	}
 }
 
-#Focus for A Stealthy Approach
 focus = {
-	id = astealthyapproach
+	id = SHI_stealthy_approach
 	icon = GFX_goal_generic_wolf_pack
-	ai_will_do = {
-		factor = 2
-		modifier = {
-			factor = 5
-			target_heavy_infantry_strat = yes
-		}
-	}
-	relative_position_id = militarizethehobbits
-	x =0
-	y =4
-	mutually_exclusive = { }
-	prerequisite = { focus = transformthehobbitholesintobunkers}
-	cost = 10
+	relative_position_id = SHI_transform_hobbit_holes_into_bunkers
+	x = 1
+	y = 1
+	prerequisite = { focus = SHI_transform_hobbit_holes_into_bunkers }
+	mutually_exclusive = { focus = SHI_armored_approach }
+	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
-		army_experience = 5
-		add_tech_bonus = {
-			name = special_bonus
-			bonus = 0.5
-			uses = 1
-			technology = paratroopers
-			technology = paratroopers2
-		}
+		army_experience = 25
 		add_tech_bonus = {
 			name = special_bonus
 			ahead_reduction = 1
@@ -624,7 +652,35 @@ focus = {
 	}
 }
 
-	#Focus for Baggins Manifesto
+focus = {
+	id = SHI_armored_approach
+	icon = GFX_goal_ROH_loyalty_through_fear_armored_knight_intimidation
+	ai_will_do = {
+		factor = 2
+		modifier = {
+			factor = 5
+			target_heavy_infantry_strat = yes
+		}
+	}
+	relative_position_id = SHI_transform_hobbit_holes_into_bunkers
+	x = -1
+	y = 1
+	prerequisite = { focus = SHI_transform_hobbit_holes_into_bunkers }
+	mutually_exclusive = { focus = SHI_stealthy_approach }
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		army_experience = 5
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.75
+			uses = 2
+			technology = paratroopers
+			technology = paratroopers2
+		}
+	}
+}
+
 focus = {
 	id = thebagginsmanifesto
 	icon = GFX_focus_generic_join_comintern
@@ -872,8 +928,8 @@ focus = {
 		}
 	}
 	relative_position_id = thefateoftheshire
-	x = 14
-	y = 1
+	x = 0
+	y = 2
 	prerequisite = { focus = thefateoftheshire }
 	available = {
 		has_idea = SHI_pacifist_country_0
@@ -897,7 +953,7 @@ focus = {
 		modifier = {
 			OR = {
 				has_completed_focus = empowerthehobbitproletariat
-				has_completed_focus = empowertheshirriffs
+				has_completed_focus = SHI_empower_the_shirriffs
 			}
 			add = 10
 		}
@@ -950,7 +1006,7 @@ focus = {
 		modifier = {
 			OR = {
 				has_completed_focus = empowerthehobbitproletariat
-				has_completed_focus = empowertheshirriffs
+				has_completed_focus = SHI_empower_the_shirriffs
 			}
 			add = 10
 		}
@@ -988,7 +1044,7 @@ focus = {
 		modifier = {
 			OR = {
 				has_completed_focus = empowerthehobbitproletariat
-				has_completed_focus = empowertheshirriffs
+				has_completed_focus = SHI_empower_the_shirriffs
 			}
 			add = 10
 		}
