@@ -17,6 +17,14 @@ shared_focus = {
     completion_reward = {
         add_stability = 0.025
         add_political_power = 100
+        add_popularity = {
+            ideology = unaligned
+            popularity = 0.05
+        }
+        add_popularity = {
+            ideology = belligerent
+            popularity = 0.05
+        }
     }
 }
 
@@ -83,6 +91,12 @@ shared_focus = {
 
     completion_reward = {
         add_ideas = unaligned_idea
+        add_stability = 0.025
+        add_political_power = 100
+        add_popularity = {
+            ideology = unaligned
+            popularity = 0.025
+        }
     }
 }
 
@@ -181,7 +195,12 @@ shared_focus = {
     y = 1
     cost = 10
     search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
-    available = { threat > 0.50 }
+    available = { 
+        OR = {
+            threat > 0.50
+            has_war = yes
+        }
+    }
     available_if_capitulated = yes
 
     ai_will_do = {
@@ -198,13 +217,138 @@ shared_focus = {
     }
 }
 
+shared_focus = {
+    id = tribes_expanding_our_lands
+    icon = GFX_goal_goal_generic_occypy_states_ongoing_war
+    prerequisite = { focus = tribes_setup_centralized_army focus = tribes_there_is_no_other_way focus = tribes_request_joining_faction }
+    relative_position_id = tribes_setup_centralized_army
+    x = 0
+    y = 3
+    cost = 10
+    search_filters = { FOCUS_FILTER_ANNEXATION }\
+    bypass = {
+        if = {
+            limit = {
+                tag = DUN
+            }
+            is_in_faction_with = ENE
+        }
+        else if = {
+            limit = {
+                tag = ENE
+            }
+            is_in_faction_with = DUN
+        }
+    }
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        if = {
+            limit = {
+                tag = DUN
+            }
+            create_wargoal = { target = ENE type = annex_everything }
+        }
+        else_if = {
+            limit = {
+                tag = ENE
+            }
+            create_wargoal = { target = DUN type = annex_everything }
+        }
+    }
+}
+
+shared_focus = {
+    id = tribes_one_leader
+    icon = GFX_goal_ELU_old_kingdom_not_forgotten_durins_crown
+    relative_position_id = tribes_expanding_our_lands
+    prerequisite = { focus = tribes_expanding_our_lands }
+    x = -1
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_BELLIGERENT }
+    available = {
+        #Dunland
+        controls_state = 78
+        controls_state = 32
+        #Enedwaith
+        controls_state = 77
+        controls_state = 156
+        controls_state = 155
+        controls_state = 79
+        controls_state = 157
+        controls_state = 154
+    }
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        add_country_leader_trait  = tribes_leader_of_the_tribes
+    }
+}
+
+shared_focus = {
+    id = tribes_one_nation
+    icon = GFX_goal_goal_generic_national_unity
+    relative_position_id = tribes_one_leader
+    prerequisite = { focus = tribes_one_leader }
+    x = 0
+    y = 1
+    cost = 5
+    search_filters = { FOCUS_FILTER_WAR_SUPPORT FOCUS_FILTER_BELLIGERENT }
+    available = {
+        #Dunland
+        controls_state = 78
+        controls_state = 32
+        #Enedwaith
+        controls_state = 77
+        controls_state = 156
+        controls_state = 155
+        controls_state = 79
+        controls_state = 157
+        controls_state = 154
+    }
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        if = {
+            limit = {
+                tag = ENE
+            }
+            every_owned_state = {
+                limit = { is_core_of = DUN }
+                ENE = {
+                    add_state_core = PREV
+                }
+            }
+        } else_if = {
+            limit = {
+                tag = DUN
+            }
+            every_owned_state = {
+                limit = { is_core_of = ENE }
+                DUN = {
+                    add_state_core = PREV
+                }
+            }
+        }
+    }
+}
 
 shared_focus = {
     id = tribes_offense_is_the_best_defense
     icon = GFX_goal_goal_generic_political_pressure
-    relative_position_id = tribes_there_is_no_other_way
-    prerequisite = { focus = tribes_there_is_no_other_way }
-    x = 0
+    relative_position_id = tribes_expanding_our_lands
+    prerequisite = { focus = tribes_expanding_our_lands }
+    x = 1
     y = 1
     cost = 10
     search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
@@ -250,6 +394,27 @@ shared_focus = {
     completion_reward = {
 		add_war_support = 0.05
         army_experience = 25
+        if = {
+            limit = {
+                tag = ENE
+            }
+            custom_effect_tooltip = "Build level 2 encampments along the border with Isengard"
+            77 = {
+                add_building_construction = {type = bunker level = 2 instant_build = yes province = 6633 }
+                add_building_construction = {type = bunker level = 2 instant_build = yes province = 2434 }
+                add_building_construction = {type = bunker level = 2 instant_build = yes province = 6683 }
+                add_building_construction = {type = bunker level = 2 instant_build = yes province = 4869 }
+                add_building_construction = {type = bunker level = 2 instant_build = yes province = 4562 }
+            }
+        }else_if = {
+            limit = {
+                tag = DUN
+            }
+            custom_effect_tooltip = "Build level 5 encampments in the capital"
+            78 = {
+                add_building_construction = {type = bunker level = 5 instant_build = yes province = 65558 }
+            }
+        }
     }
 }
 
@@ -484,13 +649,13 @@ shared_focus = {
 }
 
 shared_focus = {
-    id = tribes_unite_the_tribes
+    id = tribes_unite_the_tribes_by_force
     icon = GFX_goal_saruman_enedwaith_tribes
     relative_position_id = tribes_only_one_true_way
     prerequisite = { focus = tribes_only_one_true_way }
     x = 1
     y = 1
-    cost = 5
+    cost = 10
     search_filters = { FOCUS_FILTER_BELLIGERENT FOCUS_FILTER_STABILITY FOCUS_FILTER_INDUSTRY }
     
     available_if_capitulated = yes
@@ -504,6 +669,10 @@ shared_focus = {
             ideology = belligerent
             popularity = 0.1
         }
+        add_timed_idea = {
+            idea = tribes_agressive_measurements
+            days = 200
+        }
         swap_ideas = { remove_idea = tribes_not_united_tribes_0 add_idea = tribes_not_united_tribes_1 }
     }
 }
@@ -511,8 +680,8 @@ shared_focus = {
 shared_focus = {
     id = tribes_one_ruling_government
     icon = GFX_goal_goal_generic_demand_territory
-    relative_position_id = tribes_unite_the_tribes
-    prerequisite = { focus = tribes_unite_the_tribes focus = tribes_rally_support }
+    relative_position_id = tribes_unite_the_tribes_by_force
+    prerequisite = { focus = tribes_unite_the_tribes_by_force focus = tribes_rally_support }
     x = -1
     y = 1
     cost = 10
@@ -532,6 +701,7 @@ shared_focus = {
 			ruling_party = belligerent
 			elections_allowed = yes
 		}
+        swap_ideas = { remove_idea = tribes_not_united_tribes_1 add_idea = tribes_united_country }
     }
 }
 
@@ -588,30 +758,11 @@ shared_focus = {
 }
 
 shared_focus = {
-    id = tribes_request_joining_faction
-    icon = GFX_goal_isengard_deal
-    relative_position_id = tribes_seek_non_agression_ise
-    prerequisite = { focus = tribes_seek_non_agression_ise }
-    x = 0
-    y = 1
-    cost = 5
-
-    ai_will_do = {
-        factor = 2
-    }
-
-    completion_reward = {
-        custom_effect_tooltip = "Request joining faction Isengard"
-        #Make it so that Isengard can say yes, no, demand them to be puppeted
-    }
-}
-
-shared_focus = {
     id = tribes_army_for_our_lord
     icon = GFX_goal_lth_white_council_saruman_with_palantir
-    relative_position_id = tribes_request_joining_faction
-    prerequisite = { focus = tribes_request_joining_faction }
-    x = 0
+    relative_position_id = tribes_seek_non_agression_ise
+    prerequisite = { focus = tribes_seek_non_agression_ise }
+    x = -1
     y = 1
     cost = 10
     search_filters = { FOCUS_FILTER_MANPOWER }
@@ -629,6 +780,25 @@ shared_focus = {
 
     completion_reward = {
         add_ideas = tribes_army_for_our_lord
+    }
+}
+
+shared_focus = {
+    id = tribes_request_joining_faction
+    icon = GFX_goal_isengard_deal
+    relative_position_id = tribes_seek_non_agression_ise
+    prerequisite = { focus = tribes_seek_non_agression_ise }
+    x = 1
+    y = 1
+    cost = 5
+
+    ai_will_do = {
+        factor = 2
+    }
+
+    completion_reward = {
+        custom_effect_tooltip = "Request joining faction Isengard"
+        #Make it so that Isengard can say yes, no, demand them to be puppeted
     }
 }
 
@@ -678,41 +848,11 @@ shared_focus = {
 }
 
 shared_focus = {
-    id = tribes_expanding_our_lands
-    icon = GFX_goal_goal_generic_occypy_states_ongoing_war
-    relative_position_id = tribes_setup_centralized_army
-    prerequisite = { focus = tribes_setup_centralized_army }
-    x = 0
-    y = 1
-    cost = 10
-    search_filters = { FOCUS_FILTER_ANNEXATION }
-
-    ai_will_do = {
-        factor = 2
-    }
-
-    completion_reward = {
-        if = {
-            limit = {
-                tag = DUN
-            }
-            create_wargoal = { target = ENE type = annex_everything }
-        }
-        else_if = {
-            limit = {
-                tag = ENE
-            }
-            create_wargoal = { target = DUN type = annex_everything }
-        }
-    }
-}
-
-shared_focus = {
     id = tribes_army_of_our_lands
     icon = GFX_goal_generic_soldier_rearmament
     relative_position_id = tribes_setup_centralized_army
     prerequisite = { focus = tribes_setup_centralized_army }
-    x = 2
+    x = 1
     y = 1
     cost = 10
     search_filters = { FOCUS_FILTER_MANPOWER }
