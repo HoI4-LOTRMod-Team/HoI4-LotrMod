@@ -19,8 +19,8 @@ focus_tree = {
 		id = ISE_fate_of_isengard
 		icon = GFX_goal_orthanc_destroyed
 		ai_will_do = { factor = 100 }
-		x = 25
-		y = 7
+		x = 16
+		y = 0
 		cost = 0
 		available_if_capitulated = yes
 		completion_reward = {
@@ -77,7 +77,7 @@ focus_tree = {
 		icon = GFX_goal_imprisend_gandalf
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_meet_with_gandalf
-		x = 1
+		x = 7
 		y = 1
 		available = { has_global_flag = gandalf_imprisoned }
 		mutually_exclusive = { focus = ISE_unite_with_gandalf }
@@ -631,8 +631,8 @@ focus_tree = {
 		id = ISE_influence_neighbouring_tribes
 		icon = GFX_goal_generic_unknown
 		ai_will_do = { factor = 100 }
-		x = 50
-		y = 6
+		x = 53
+		y = 0
 		#prerequisite = { focus = ISE_imprison_gandalf}
 		cost = 10
 		available_if_capitulated = no
@@ -1202,7 +1202,7 @@ focus_tree = {
 		icon = GFX_goal_generic_soldier_rearmament
 		ai_will_do = { factor = 5 }
 		x = 32
-		y = 6
+		y = 0
 		cost = 3
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1216,7 +1216,7 @@ focus_tree = {
 		ai_will_do = { factor = 5 }
 		prerequisite = { focus = ISE_hash_training focus = ISE_expand_isengard_logistics }
 		relative_position_id = ISE_hash_training
-		x = 5
+		x = 6
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
@@ -1243,6 +1243,8 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
+			army_experience = 5
+			add_war_support = 0.025
 			158 = {
 				add_building_construction = {	type = castle level = 2 instant_build = yes province = 6720 }
 			}
@@ -1419,35 +1421,13 @@ focus_tree = {
 		}
 	}
 
-	#Focus for Intense Wizardry
-	focus = {
-		id = intensewizardry
-		icon = GFX_focus_wonderweapons
-		ai_will_do = { factor = 2 }
-		available = { has_government = belligerent has_country_leader = { ruling_only = yes name = "Saruman" } }
-		x =19
-		y =9
-		#prerequisite = { focus = trainorcscholars }
-		mutually_exclusive = { }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_tech_bonus = {
-				name = secret_bonus
-				bonus = 0.5
-				uses = 1
-				category = lotr_knowledge_magic
-			}
-		}
-	}
-
 	focus = {
 		id = ISE_expand_isengard_logistics
 		icon = GFX_goal_generic_position_armies
 		ai_will_do = { factor = 5 }
 		available = { 31 = { is_controlled_by = ISE } }
-		x = 40
-		y = 6
+		x = 42
+		y = 0
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
@@ -2189,7 +2169,10 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			add_war_support = 0.1
+			swap_ideas = {
+				remove_idea = ISE_valars_mission_0
+				add_idea = ISE_valars_mission_diffrent_approach_0
+			}
 			every_other_country = {
 				limit = {
 					has_government = belligerent
@@ -2215,10 +2198,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			swap_ideas = {
-				remove_idea = ISE_valars_mission_0
-				add_idea = ISE_valars_mission_diffrent_approach_0
-			}
+
 		}
 	}
 
@@ -2239,13 +2219,43 @@ focus_tree = {
 	}
 
 	focus = {
-		id = ISE_alliance_with_gondor
+		id = ISE_improve_relations_with_human_nations
 		icon = GFX_goal_meet_with_gandalf
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_fighting_against_evil
-		x = 0
+		x = 4
 		y = 1
 		prerequisite = { focus = ISE_fighting_against_evil }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			every_other_country = {
+				limit = {
+					OR = {
+						has_government = cooperative
+						has_government = unaligned
+					}
+					is_men = yes
+				}
+				add_opinion_modifier = { target = ISE modifier = medium_increase }
+				ISE  = {
+					add_opinion_modifier = { target = PREV modifier = medium_increase }
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_make_contact_with_the_blue_wizards
+		icon = GFX_goal_rhu_the_blue_wizards
+		ai_will_do = { factor = 100 }
+		available = {
+			RHU = { has_government = cooperative }
+		}
+		relative_position_id = ISE_improve_relations_with_human_nations
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_improve_relations_with_human_nations }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -2253,258 +2263,120 @@ focus_tree = {
 		}
 	}
 
-	#Focus for Ways of the Light
 	focus = {
-		id = waysofthelight
-		icon = GFX_goal_ise_palantir_covered_up
-		ai_will_do = { factor = 20 }
-		x =3
-		y =1
-		mutually_exclusive = { focus = waysofthedark }
-		#prerequisite = { focus = thefateofisengard}
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { add_ideas = ISE_ways_of_the_light }
-	}
-
-	#Focus for Ways of the Dark
-	focus = {
-		id = waysofthedark
-		icon = GFX_goal_saruman_with_palantir
-		ai_will_do = { factor = 40 }
-		x =5
-		y =1
-		mutually_exclusive = { focus = waysofthelight }
-		#prerequisite = { focus = thefateofisengard}
+		id = ISE_alliance_of_men
+		icon = GFX_goal_generic_men_at_arms
+		ai_will_do = { factor = 100 }
+		available = {
+			is_in_faction = yes
+			OR = {
+				is_in_faction_with = RHU
+				is_in_faction_with = GON
+				is_in_faction_with = ROH
+			}
+		}
+		relative_position_id = ISE_make_contact_with_the_blue_wizards
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_make_contact_with_the_blue_wizards focus = ISE_alliance_with_gondor focus = ISE_alliance_with_rohan }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			add_ideas = ISE_ways_of_the_dark
+			every_other_country = {
+				limit = {
+					is_in_faction_with = ISE
+					NOT = {
+						tag = ISE
+					}
+				}
+				add_ideas = ISE_alliance_of_men
+			}
+			add_ideas = ISE_alliance_of_men
 		}
 	}
 
-	#Focus for Meet with Gandalf
 	focus = {
-		id = meetwithgandalf
-		icon = GFX_goal_generic_improve_relations
+		id = ISE_our_neighbouring_threat
+		icon = GFX_goal_mor_wargoal_rohan
 		ai_will_do = { factor = 100 }
-		available = { always = no }
-		x =4
-		y =2
-		mutually_exclusive = { }
-		prerequisite = { focus = waysofthedark  focus = waysofthelight}
+		available = {
+			ROH = { has_government = belligerent }
+		}
+		relative_position_id = ISE_alliance_with_rohan
+		x = -2
+		y = 0
+		prerequisite = { focus = ISE_fighting_against_evil }
+		mutually_exclusive = { focus = ISE_alliance_with_rohan }
 		cost = 10
 		available_if_capitulated = yes
-		completion_reward = { custom_effect_tooltip = MOR_event_triggert_focus }
+		completion_reward = {
+			
+		}
 	}
 
-	#Focus for Unite with Gandalf
 	focus = {
-		id = unitewithgandalf
-		icon = GFX_goal_meet_with_gandalf
+		id = ISE_preemptify_the_neighbouring_threat
+		icon = GFX_goal_mor_wargoal_rohan
 		ai_will_do = { factor = 100 }
-		x =2
-		y =3
-		available = { has_global_flag = gandalf_saruman_united }
-		#mutually_exclusive = { focus = imprisongandalf}
-		prerequisite = { focus = meetwithgandalf}
-		cost = 0
+		relative_position_id = ISE_our_neighbouring_threat
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_our_neighbouring_threat }
+		cost = 10
 		available_if_capitulated = yes
-		completion_reward = { custom_effect_tooltip = MOR_event_triggert_focus }
+		completion_reward = {
+			
+		}
 	}
 
-	#Focus for A Gift to Gondor
 	focus = {
-		id = agifttogondor
+		id = ISE_alliance_with_rohan
+		icon = GFX_goal_ROH_secure_the_riddermark_rohan_flag
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_improve_relations_with_human_nations
+		x = -2
+		y = 1
+		prerequisite = { focus = ISE_improve_relations_with_human_nations }
+		mutually_exclusive = { focus = ISE_our_neighbouring_threat }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			
+		}
+	}
+
+	focus = {
+		id = ISE_alliance_with_gondor
 		icon = GFX_goal_gondor
-		ai_will_do = { factor = 5 }
-		x =2
-		y =4
-		mutually_exclusive = { }
-		prerequisite = { focus = unitewithgandalf}
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_improve_relations_with_human_nations
+		x = 2
+		y = 1
+		prerequisite = { focus = ISE_improve_relations_with_human_nations }
+		mutually_exclusive = { focus = ISE_failure_of_isildur }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			GON = { add_opinion_modifier = { target = ISE modifier = large_increase } }
-			send_equipment = { target = GON type = infantry_equipment amount = 10000 }
+			
 		}
 	}
 
-	#Focus for Improve White Council Relations
 	focus = {
-		id = improvewhitecouncilrelations
-		icon = GFX_goal_generic_national_unity
-		ai_will_do = { factor = 5 }
-		x =2
-		y =5
-		mutually_exclusive = { }
-		prerequisite = { focus = agifttogondor}
-		cost = 5
-		available_if_capitulated = yes
-		completion_reward = {
-			RIV = { add_opinion_modifier = { target = ISE modifier = large_increase } }
-			LTH = { add_opinion_modifier = { target = ISE modifier = large_increase } }
+		id = ISE_failure_of_isildur
+		icon = GFX_goal_gon_gondor_needs_no_king_crown_broken
+		ai_will_do = { factor = 100 }
+		available = {
+			GON = { has_government = belligerent }
 		}
-	}
-
-	#Focus for Declare Against Sauron
-	focus = {
-		id = declareagainstsauron
-		icon = GFX_goal_support_cooperative
-		ai_will_do = { factor = 15 }
-		available = { cooperative > 0.5 }
-		x =0
-		y =4
-		mutually_exclusive = { }
-		prerequisite = { focus = unitewithgandalf}
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { set_politics = { ruling_party = cooperative elections_allowed = no } }
-	}
-
-	#Focus for Share knowledge with Gandalf
-	focus = {
-		id = shareknowledgewithgandalf
-		icon = GFX_focus_research
-		ai_will_do = { factor = 25 }
-		x =0
-		y =5
-		mutually_exclusive = { }
-		prerequisite = { focus = declareagainstsauron}
-		cost = 15
-		available_if_capitulated = yes
-		completion_reward = { add_research_slot = 1 }
-	}
-
-	#Focus for Protect Isengard
-	focus = {
-		id = protectisengard
-		icon = GFX_goal_generic_fortify_city
-		ai_will_do = { factor = 6 }
-		available = { 31 = { is_controlled_by = ROOT } }
-		x =0
-		y =6
-		mutually_exclusive = { }
-		prerequisite = { focus = shareknowledgewithgandalf}
+		relative_position_id = ISE_alliance_with_gondor
+		x = 2
+		y = 0
+		prerequisite = { focus = ISE_fighting_against_evil }
+		mutually_exclusive = { focus = ISE_alliance_with_gondor }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			31 = { add_building_construction = {	type = bunker level = 10 instant_build = yes province = 6610 } }
-			31 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 1437 } }
-			31 = { add_building_construction = {	type = bunker level = 4 instant_build = yes province = 6659 } }
-			31 = { add_building_construction = {	type = anti_air_building level = 5 instant_build = yes	}	}
-		}
-	}
-
-	#Focus for Persuade Enedwaith2 (cooperative)
-	focus = {
-		id = persuadeenedwaith2
-		icon = GFX_goal_generic_dangerous_deal
-		ai_will_do = { factor = 5 }
-		x =0
-		y =7
-		mutually_exclusive = { }
-		prerequisite = { focus = protectisengard}
-		cost = 5
-		available_if_capitulated = yes
-		completion_reward = {
-			ENE = { add_ideas = generic_cooperative }
-		}
-	}
-
-	#Focus for Unite with Gondor
-	focus = {
-		id = isr_unitewithgondor
-		icon = GFX_focus_generic_diplomatic_treaty
-		ai_will_do = { factor = 5 }
-		available = { OR = { GON = { has_government = cooperative }  GON = { has_government = unaligned } } GON = { is_faction_leader = yes } }
-		x =0
-		y =7
-		mutually_exclusive = { }
-		prerequisite = { focus = protectisengard}
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			GON = { add_to_faction = ISE }
-		}
-	}
-
-	#Focus for Anorganic Magic
-	focus = {
-		id = anorganicmagic
-		icon = GFX_goal_generic_construction2
-		ai_will_do = { factor = 5 }
-		available = { 31 = { is_controlled_by = ISE } }
-		x =2
-		y =7
-		mutually_exclusive = { }
-		prerequisite = { focus = shareknowledgewithgandalf}
-		cost = 5
-		available_if_capitulated = yes
-		completion_reward = {
-			add_resource = { type = steel amount = 25 state = 31 }
-		}
-	}
-
-	#Focus for Improved Combat Tactics 2
-	focus = {
-		id = ISE_improved_combat_tactics2
-		icon = GFX_goal_generic_army_doctrines
-		ai_will_do = { factor = 5 }
-		x =2
-		y =8
-		mutually_exclusive = { }
-		prerequisite = { focus = anorganicmagic}
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { 
-			add_doctrine_cost_reduction = {
-				cost_reduction = 0.5
-				uses = 2
-				category = land_doctrine
-			}
-		}
-	}
-
-	#Focus for Advanced Warfare2
-	focus = {
-		id = advancedwarfare2
-		icon = GFX_focus_rocketry
-		ai_will_do = { factor = 2 }
-		x =2
-		y =9
-		mutually_exclusive = { }
-		prerequisite = { focus = ISE_improved_combat_tactics2 }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_tech_bonus = {
-				name = jet_rocket_bonus
-				ahead_reduction = 0.5
-				uses = 2
-				category = lotr_knowledge_magic
-			}
-		}
-	}
-
-	#Focus for Very Intense Wizardry
-	focus = {
-		id = veryintensewizardry
-		icon = GFX_focus_wonderweapons
-		ai_will_do = { factor = 2 }
-		x =2
-		y =10
-		prerequisite = { focus = advancedwarfare2 }
-		mutually_exclusive = { }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_tech_bonus = {
-				name = secret_bonus
-				bonus = 0.5
-				uses = 2
-				category = lotr_knowledge_magic
-			}
+			
 		}
 	}
 
@@ -2544,6 +2416,64 @@ focus_tree = {
 		}
 	}
 
+	
+
+	#Focus for Slave Soldiers of Rohan
+	focus = {
+		id = ISE_slave_soldiers_of_rohan
+		icon = GFX_focus_CZE_german_puppet
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				add = 20
+				ISE = { has_manpower < 10  }
+			}
+		}
+		available = { 184 = { is_controlled_by = ISE } 183 = { is_controlled_by = ISE } }
+		relative_position_id = ISE_pillage_the_towns_of_rohan
+		x = 0
+		y = 2
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = { add_ideas = ISE_slave_soldiers }
+	}
+
+	#Focus for Helms Deep Has but one Weakness
+	focus = {
+		id = ISE_helms_deep_has_but_one_weakness
+		icon = GFX_goal_roh_helms_deep_weakness
+		ai_will_do = { factor = 20 }
+		available = {
+			has_government = belligerent
+			has_country_leader = { ruling_only = yes name = "Saruman" }
+			any_country = {
+				controls_province = 4628
+				has_war_with = ROOT
+			}
+		}
+		relative_position_id = ISE_pillage_the_towns_of_rohan
+		x = 2
+		y = 2
+		#prerequisite = { focus = demandthewestmarch}
+		cost = 2
+		available_if_capitulated = yes
+		completion_reward = {
+			custom_effect_tooltip = helmsdeephasbutoneweakness_effect_tooltip
+
+			hidden_effect = {
+				news_event = { hours = 5 id = news.388 }
+				launch_nuke = {
+					province = 4628
+					state = 184
+					controller = ROH
+					use_nuke = no
+				}
+
+				184 = { remove_building = { type = bunker province = 4628 level = 2 } }
+			}
+		}
+	}
+
 	focus = {
 		id = ISE_establish_camps_in_the_area
 		icon = GFX_goal_mor_azog_orc_revolt
@@ -2576,145 +2506,6 @@ focus_tree = {
 			ROH = {
 				add_stability = -0.05
 				add_war_support = 0.05
-			}
-		}
-	}
-
-	#Focus for War with Gondor
-	focus = {
-		id = isr_warwithgondor
-		icon = GFX_goal_mor_wargoal_gondor
-		available = { NOT = { is_in_faction_with = GON } }
-		ai_will_do = {
-			factor = 0
-			modifier = {
-				add = 1
-				NOT = { has_war = yes }
-				NOT = { is_in_faction_with = GON }
-				is_in_faction = yes
-			}
-		}
-		bypass = { has_war_with = GON }
-		x =11
-		y =9
-		mutually_exclusive = { }
-		prerequisite = { focus = warwithrohan}
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { create_wargoal = { type = annex_everything target = GON } }
-	}
-
-	#Focus for War with Lórien
-	focus = {
-		id = warwithlorien
-		icon = GFX_goal_generic_major_war
-		available = { NOT = { is_in_faction_with = LTH } }
-		ai_will_do = {
-			factor = 0
-			modifier = {
-				add = 1
-				NOT = { has_war = yes }
-				NOT = { is_in_faction_with = LTH }
-				is_in_faction = yes
-			}
-		}
-		bypass = { has_war_with = LTH }
-		x =13
-		y =9
-		mutually_exclusive = { }
-		prerequisite = { focus = warwithrohan}
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { create_wargoal = { type = annex_everything target = LTH } }
-	}
-
-	#Focus for War with Rohan
-	focus = {
-		id = warwithrohan
-		icon = GFX_goal_mor_wargoal_rohan
-		ai_will_do = {
-			factor = 2
-			modifier = {
-				add = 5
-				ISE = { num_divisions > 60 }
-			}
-			modifier = {
-				add = 2
-				24 = { is_controlled_by = ISE }
-			}
-			modifier = {
-				add = 5
-				23 = { is_controlled_by = ISE }
-			}
-			modifier = {
-				factor = 2
-				ROH = { num_divisions < 80 }
-			}
-		}
-		bypass = { has_war_with = ROH }
-		available = { NOT = { is_in_faction_with = ROH } NOT = { ROH= { has_completed_focus = ROH_pledge_to_saruman } } }
-		x =12
-		y =8
-		mutually_exclusive = { }
-		#prerequisite = { focus = demandthewestmarch}
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { create_wargoal = { type = annex_everything target = ROH } }
-	}
-
-	#Focus for Slave Soldiers of Rohan
-	focus = {
-		id = slavesoldiersofrohan
-		icon = GFX_focus_CZE_german_puppet
-		ai_will_do = {
-			factor = 2
-			modifier = {
-				add = 20
-				ISE = { has_manpower < 10  }
-			}
-		}
-		available = { 184 = { is_controlled_by = ISE } 183 = { is_controlled_by = ISE } }
-		x =12
-		y =10
-		mutually_exclusive = { }
-		prerequisite = { focus = warwithrohan}
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { add_ideas = ISE_slave_soldiers }
-	}
-
-	#Focus for Helms Deep Has but one Weakness
-	focus = {
-		id = helmsdeephasbutoneweakness
-		icon = GFX_goal_roh_helms_deep_weakness
-		ai_will_do = { factor = 20 }
-		available = {
-			has_government = belligerent
-			has_country_leader = { ruling_only = yes name = "Saruman" }
-			any_country = {
-				controls_province = 4628
-				has_war_with = ROOT
-			}
-		}
-		x =14
-		y =8
-		mutually_exclusive = { }
-		#prerequisite = { focus = demandthewestmarch}
-		cost = 2
-		available_if_capitulated = yes
-		completion_reward = {
-			custom_effect_tooltip = helmsdeephasbutoneweakness_effect_tooltip
-
-			hidden_effect = {
-				news_event = { hours = 5 id = news.388 }
-				launch_nuke = {
-					province = 4628
-					state = 184
-					controller = ROH
-					use_nuke = no
-				}
-
-				184 = { remove_building = { type = bunker province = 4628 level = 2 } }
 			}
 		}
 	}
