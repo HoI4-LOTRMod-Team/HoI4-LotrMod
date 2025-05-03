@@ -139,11 +139,11 @@ ISE_shire_decisions = {
         icon = GFX_decision_generic_2
         cost = 0
         fixed_random_seed = no
-        days_remove = 25
+        days_remove = 1
 		is_good = yes
 	    selectable_mission = yes
 		state_target = yes
-		targets = { 43 38 44 42 }
+		targets = { 43 38 44 }
         visible = {
             NOT = { FROM = { has_state_flag = ISE_infiltrated_state } }
         }
@@ -157,14 +157,15 @@ ISE_shire_decisions = {
         icon = GFX_decision_generic_2
         cost = 0
         fixed_random_seed = no
-        days_remove = 50
+        days_remove = 1
 		is_good = yes
 	    selectable_mission = yes
 		state_target = yes
-		targets = { 43 38 44 42 }
+		targets = { 43 38 44 }
         available = {
             FROM = {
                 has_state_flag = ISE_infiltrated_state
+                NOT = { has_dynamic_modifier = { modifier = ise_influence_modifier_3 } }
             }
         }
         remove_effect = {
@@ -177,28 +178,77 @@ ISE_shire_decisions = {
         icon = GFX_decision_generic_2
         cost = 0
         fixed_random_seed = no
-        days_remove = 50
+        days_remove = 1
 		is_good = yes
 	    selectable_mission = yes
 		state_target = yes
-		targets = { 43 38 44 42 }
+		targets = { 43 }
         visible = {
             FROM = { has_state_flag = ISE_infiltrated_state }
         }
+        complete_effect = {
+            #TODO
+            SHI = {
+                custom_effect_tooltip = "Send warning to Shire"
+            }
+        }
+        hidden_effect = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment_0
+                amount = 1500
+            }
+            218 = {
+                any_neighbor_state = {
+                    limit = {
+                        check_variable = { id = 31.id }
+                    }
+                    31.owner = {
+                        transfer_state = 218
+                    }
+                }
+            }
+        }
         remove_effect = {
+            
             SHI = {
                 every_owned_state = {
                     limit = {
                         has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
                     }
-                }
-                PREV = {
                     transfer_state_to = ISE
+                    if = {
+                        limit = {
+                            check_variable = { id = 38.id }
+                        }
+                        ISE = {
+                            load_oob = "ise/BOTS_shire"
+                        }
+                    }
+                    if = {
+                        limit = {
+                            check_variable = { id = 44.id }
+                        }
+                        ISE = {
+                            load_oob = "ise/BOTS_east_farthing"
+                        }
+                    }
+                }
+            }
+            ISE = {
+                load_oob = "ise/BOTS_south_farthing"
+                if = {
+                    limit = {
+                        has_completed_focus = ISE_improve_strength
+                    }
+                    load_oob = "ise/BOTS_south_farthing_extra"
                 }
             }
             declare_war_on = {
                 target = SHI
                 type = annex_everything
+            }
+            set_capital = {
+                state = 43
             }
         }
     }
