@@ -1,0 +1,79 @@
+################
+##### SHI ######
+################
+
+SHI_sharkey_influence_decisions = {
+    SHI_fight_influence = {
+        icon = GFX_decision_generic_operation
+		cost = 100
+		fire_only_once = yes
+        fixed_random_seed = no
+		ai_will_do = {
+			factor = 5
+            modifier = {
+				factor = 10
+				check_variable = { var = global.influence_ise_in_shi  value = 10  compare = greater_than_or_equals }
+			}
+			modifier = {
+				factor = 20
+				check_variable = { var = global.influence_ise_in_shi  value = 20  compare = greater_than_or_equals }
+			}
+		}
+        complete_effect = {
+			decrease_shire_influence = yes
+            SHI = { add_stability = 0.025 }
+		}
+    }
+    SHI_decrease_control = {
+        icon = GFX_decision_generic_2
+        cost = 1
+        fixed_random_seed = no
+        days_remove = 25
+		is_good = yes
+	    selectable_mission = yes
+		state_target = yes
+		targets = { 43 38 44 }
+        ai_will_do = {
+            factor = 10
+            #Higher change of doing when its the state Shire or East Farthing
+            modifier = {
+                add = 5
+                OR = {
+                    check_variable = { FROM.id = 38 }
+                    check_variable = { FROM.id = 44 }
+                }
+            }
+            #The higher the influence the higher the change AI will do something about it
+            modifier = {
+                add = 10
+                FROM = {
+                    has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+                }
+            }
+            modifier = {
+                add = 15
+                FROM = {
+                    has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+                }
+            }
+        }
+        available = {
+            FROM = {
+                has_state_flag = ISE_infiltrated_state
+                state_is_influenced = yes
+                NOT = { check_variable = { SHI.currently_influencing = 1 } }
+            }
+        }
+        complete_effect = {
+            set_variable = { SHI.deinfluencing_state = FROM }
+            set_variable = { SHI.currently_influencing = 1 }
+        }
+        remove_effect = {
+            set_variable = { SHI.deinfluencing_state = 0 }
+            set_variable = { SHI.currently_influencing = 0 }
+            FROM = {
+                decrease_ISE_influence_in_SHI_state = yes
+            }
+        }
+    }
+}
