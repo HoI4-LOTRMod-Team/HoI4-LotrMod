@@ -8,16 +8,16 @@ focus_tree = {
 		}
 	}
 
-	continuous_focus_position = { x = 50 y = 2000 }
+	continuous_focus_position = { x = 50 y = 1000 }
     default = no
 
 	focus = {
 		id = SHA_enforce_control
-		icon = GFX_goal_orthanc_destroyed
+		icon = GFX_goal_ROH_pledge_to_saruman
 		ai_will_do = { factor = 100 }
 		x = 10
 		y = 0
-		cost = 5
+		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
 			add_political_power = 100
@@ -25,6 +25,212 @@ focus_tree = {
 				remove_idea = SHA_weak_control_2
 				add_idea = SHA_weak_control_1
 			}
+		}
+	}
+
+	focus = {
+		id = SHA_reveal_identity
+		icon = GFX_goal_ROH_concessions_to_isengard_saruman
+		ai_will_do = { factor = 100 }
+		relative_position_id = SHA_enforce_control
+		prerequisite = { focus = SHA_enforce_control }
+		x = -2
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			news_event = { id = news.407 }
+			add_stability = 0.025
+			add_political_power = 100
+			custom_effect_tooltip = "Leader will change back into Saruman"
+			set_country_leader_name = {
+				ideology = domineering
+				name = "Saruman"
+			}
+			set_country_leader_portrait = {
+				ideology = domineering
+				portrait = GFX_portrait_isengard_saruman
+			}
+		}
+	}
+
+	focus = {
+		id = SHA_controled_government
+		icon = GFX_goal_generic_control_government
+		ai_will_do = { factor = 100 }
+		relative_position_id = SHA_enforce_control
+		prerequisite = { focus = SHA_enforce_control }
+		x = 0
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			add_political_power = 100
+			increase_centralization = yes
+
+		}
+	}
+
+	focus = {
+		id = SHA_better_grip
+		icon = GFX_goal_lth_raised_fist_blue
+		ai_will_do = { factor = 100 }
+		relative_position_id = SHA_controled_government
+		prerequisite = { focus = SHA_controled_government }
+		x = 0
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = SHA_weak_control_1
+				add_idea = SHA_weak_control_0
+			}
+		}
+	}
+
+	focus = {
+		id = SHA_reorganize_the_army
+		icon = GFX_goal_army_uruk_hai
+		ai_will_do = { factor = 100 }
+		relative_position_id = SHA_better_grip
+		prerequisite = { focus = SHA_better_grip }
+		x = 0
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			army_experience = 50
+			add_manpower = 100000
+		}
+	}
+	
+	focus = {
+		id = SHA_our_way_to_revenge
+		icon = GFX_goal_lth_white_council_saruman_with_palantir
+		ai_will_do = { factor = 100 }
+		relative_position_id = SHA_reorganize_the_army
+		prerequisite = { focus = SHA_reorganize_the_army }
+		x = -1
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			if = {
+				limit = {
+					CAR = {
+						exists = yes
+						NOT = { is_in_faction_with = ISE }
+					}
+				}
+				create_wargoal = { target = CAR type = annex_everything }
+			}
+			if = {
+				limit = {
+					ENE = {
+						exists = yes
+						NOT = { is_in_faction_with = ISE }
+					}
+				}
+				create_wargoal = { target = ENE type = annex_everything }
+			}
+		}
+	}
+
+	focus = {
+		id = SHA_sweet_revenge
+		icon = GFX_goal_orthanc_destroyed
+		ai_will_do = { factor = 100 }
+		relative_position_id = SHA_our_way_to_revenge
+		prerequisite = { focus = SHA_our_way_to_revenge }
+		x = 0
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			if = {
+				limit = {
+					check_variable = { 31.owner = 159.owner }
+				}
+				create_wargoal = { target = 31.owner type = annex_everything }
+			} else = {
+				create_wargoal = { target = 31.owner type = annex_everything }
+				create_wargoal = { target = 159.owner type = annex_everything }
+			}
+
+		}
+	}
+
+	focus = {
+		id = SHA_reclaimed_glory
+		icon = GFX_goal_ROH_sarumans_ambassadors
+		ai_will_do = { factor = 100 }
+		relative_position_id = SHA_sweet_revenge
+		prerequisite = { focus = SHA_sweet_revenge }
+		x = 0
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = SHA_reclaimed_glory
+		}
+	}
+
+	focus = {
+		id = SHA_firm_grip
+		icon = GFX_goal_saruman_with_palantir
+		ai_will_do = { factor = 100 }
+		relative_position_id = SHA_reorganize_the_army
+		prerequisite = { focus = SHA_reorganize_the_army }
+		x = 1
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = SHA_firm_grip
+		}
+	}
+
+	focus = {
+		id = SHA_awaken_the_industry
+		icon = GFX_goal_generic_anvil
+		ai_will_do = { factor = 100 }
+		relative_position_id = SHA_controled_government
+		prerequisite = { focus = SHA_controled_government }
+		x = 2
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_tech_bonus = {
+				name = tradition_industrial_bonus
+				bonus = 0.75
+				uses = 2
+				category = lotr_labour
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = { type = industrial_complex level = 3 instant_build = yes }
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 4
+				add_building_construction = { type = arms_factory level = 4 instant_build = yes }
+			}
+		}
+	}
+
+	focus = {
+		id = SHA_enforce_labour
+		icon = GFX_goal_lth_elf_kneeling_to_orc
+		ai_will_do = { factor = 100 }
+		relative_position_id = SHA_awaken_the_industry
+		prerequisite = { focus = SHA_awaken_the_industry }
+		x = 0
+		y = 1
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_ideas = SHA_enforced_labour
 		}
 	}
 }
