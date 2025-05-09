@@ -4,97 +4,6 @@
 
 add_namespace = isengard
 
-# NOT IN USE ANYMORE
-country_event = {
-	id = isengard.4
-	title = isengard.4.t
-	desc = isengard.4.d
-	picture = GFX_report_event_paper
-
-	is_triggered_only = yes
-
-	option = { # Accept
-		name = isengard.4.a
-		ai_chance = {
-			base = 30
-			modifier = {
-				add = -25
-				ISE = { has_army_size = { size < 30 } }
-			}
-			modifier = {
-				add = 30
-				ISE = { has_army_size = { size > 40 } }
-			}
-			modifier = {
-				add = 100
-				ENE = { has_government = belligerent }
-			}
-		}
- 		ISE = { annex_country = { target = ENE } }
-		add_named_threat = { threat = 5 name = "Enedwaith annexed by Isengard" }
-	}
-	option = { # Refuse
-		name = isengard.4.b
-		ai_chance = {
-			base = 50
-			modifier = {
-				any_other_country = {
-					has_guaranteed = ENE
-				}
-				factor = 5
-			}
-			modifier = {
-				add = 20
-				ENE = { has_army_size = { size > 20 } }
-			}
-			modifier = {
-				factor = 0
-				is_historical_focus_on = yes
-			}
-		}
-		ENE = { declare_war_on = { target = ISE type = annex_everything } }
-	}
-}
-
-# NOT USED AT THE MOMENT
-# Rohan Refuses to Give up the Westmarch
-country_event = {
-	id = isengard.3
-	title = isengard.3.t
-	desc = isengard.3.d
-	picture = GFX_report_event_paper
-
-	fire_only_once = yes
-
-	is_triggered_only = yes
-
-	option = {
-		name = isengard.3.a
-		create_wargoal = { type = annex_everything target = ROH }
-	}
-
-}
-
-# NOT USED AT THE MOMENT
-# Rohan Gives up the Westmarch
-country_event = {
-	id = isengard.2
-	title = isengard.2.t
-	desc = isengard.2.d
-	picture = GFX_report_event_paper
-
-	fire_only_once = yes
-
-	is_triggered_only = yes
-
-	option = {
-		name = isengard.2.a
-		trigger = { is_ai = no }
-		ISE = { set_state_owner = 23 }
-	}
-
-}
-
 # Meet with Gandalf
 country_event = {
 	id = isengard.1
@@ -184,6 +93,116 @@ country_event = {
 	}
 }
 
+# Shire requests joining hands
+country_event = {
+	id = isengard.2
+	title = isengard.2.t
+	desc = isengard.2.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = isengard.4.a
+		ai_chance = {
+			base = 30
+			modifier = {
+				add = -25
+				ISE = { has_army_size = { size < 30 } }
+			}
+			modifier = {
+				add = 30
+				ISE = { has_army_size = { size > 40 } }
+			}
+			modifier = {
+				add = 100
+				ENE = { has_government = belligerent }
+			}
+		}
+		add_to_faction = SHI
+		add_political_power = 50
+		add_opinion_modifier = { target = SHI modifier = small_increase }
+	}
+	option = { # Demand puppet
+		name = isengard.4.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				any_other_country = {
+					has_guaranteed = ENE
+				}
+				factor = 5
+			}
+			modifier = {
+				add = 20
+				ENE = { has_army_size = { size > 20 } }
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		SHI = { country_event = shire.7 }
+	}
+	option = { # Refuse
+		name = isengard.4.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				any_other_country = {
+					has_guaranteed = ENE
+				}
+				factor = 5
+			}
+			modifier = {
+				add = 20
+				ENE = { has_army_size = { size > 20 } }
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		add_opinion_modifier = { target = SHI modifier = large_decrease }
+		add_political_power = -25
+	}
+}
+
+# Shire refuses to be a puppet
+country_event = {
+	id = isengard.3
+	title = isengard.3.t
+	desc = isengard.3.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.3.a
+		add_opinion_modifier = { target = SHI modifier = large_decrease }
+	}
+
+}
+
+# Shire accepts being a puppet
+country_event = {
+	id = isengard.4
+	title = isengard.4.t
+	desc = isengard.4.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = isengard.4.a
+ 		puppet = SHI
+		add_political_power = 50
+	}
+}
 
 # Grima arrives in Isengard
 country_event = {

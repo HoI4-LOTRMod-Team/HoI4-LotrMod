@@ -142,133 +142,147 @@ palantir_give_in = {
 # @docs(Isengard): Small increase ISE influence in the Shire
 small_increase_shire_influence = {
 	add_to_variable = { global.influence_ise_in_shi = 5 }
-    custom_effect_tooltip = "WIP Small increase influence in the Shire by 5"
+    custom_effect_tooltip = ISE_effect_tooltip_small_increase_influence_shi
 }
 # @docs(Isengard): Big increase ISE influence in the Shire
 increase_shire_influence = {
 	add_to_variable = { global.influence_ise_in_shi = 10 }
-    custom_effect_tooltip = "WIP Increase influence in the Shire by 10"
+    custom_effect_tooltip = ISE_effect_tooltip_increase_influence_shi
+}
+# @docs(Isengard): Small decrease ISE influence in the Shire
+small_decrease_shire_influence = {
+	add_to_variable = { global.influence_ise_in_shi = -5 }
+    custom_effect_tooltip = ISE_effect_tooltip_small_decrease_influence_shi
 }
 # @docs(Isengard): Decrease ISE influence in the Shire
 decrease_shire_influence = {
 	add_to_variable = { global.influence_ise_in_shi = -10 }
-    custom_effect_tooltip = "WIP Decrease influence in de Shire by 10"
+    custom_effect_tooltip = ISE_effect_tooltip_decrease_influence_shi
 }
 # @docs(Isengard): Establish base of opertation
 establish_base_of_operations = {
-    if = {
-        limit = {
-            check_variable = { var = global.influence_ise_in_shi  value = 30  compare = greater_than_or_equals }
+    hidden_effect = { 
+        if = {
+            limit = {
+                check_variable = { var = global.influence_ise_in_shi  value = 30  compare = greater_than_or_equals }
+            }
+            SHI = {
+                44 = {
+                    increase_ISE_influence_in_SHI_state = yes
+                    set_state_flag = ISE_infiltrated_state
+                }
+                38 = {
+                    increase_ISE_influence_in_SHI_state = yes
+                    set_state_flag = ISE_infiltrated_state
+                }
+                43 = {
+                    increase_ISE_influence_in_SHI_state = yes
+                }
+            }
+        } else_if = {
+            limit = {
+                check_variable = { var = global.influence_ise_in_shi  value = 20  compare = greater_than_or_equals }
+            }
+            SHI = {
+                43 = {
+                    increase_ISE_influence_in_SHI_state = yes
+                }
+            }
         }
         SHI = {
-            44 = {
-                increase_ISE_influence_in_SHI_state = yes
-                set_state_flag = ISE_infiltrated_state
-            }
-            38 = {
-                increase_ISE_influence_in_SHI_state = yes
-                set_state_flag = ISE_infiltrated_state
-            }
             43 = {
                 increase_ISE_influence_in_SHI_state = yes
-            }
-        }
-    } else_if = {
-        limit = {
-            check_variable = { var = global.influence_ise_in_shi  value = 20  compare = greater_than_or_equals }
-        }
-        SHI = {
-            43 = {
-                increase_ISE_influence_in_SHI_state = yes
+                set_state_flag = ISE_infiltrated_state        
             }
         }
     }
-    ### Hidden effect
-    SHI = {
-        43 = {
-            increase_ISE_influence_in_SHI_state = yes
-            set_state_flag = ISE_infiltrated_state        }
-    }
-    ###
-    custom_effect_tooltip = "WIP Establish base of operation in South Farthing"
 }
 
 # @docs(Isengard): Increase ISE influence in SHI state
 increase_ISE_influence_in_SHI_state = {
-	if = {
-        limit = {
-            NOT = {
-                OR = {
-                    has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
-                    has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
-                    has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+	hidden_effect = {
+        if = {
+            limit = {
+                NOT = {
+                    OR = {
+                        has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+                        has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+                        has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+                    }
                 }
             }
+            custom_effect_tooltip = "Increase Isengard influence"
+            add_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+        } else_if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            }
+            custom_effect_tooltip = "Increase Isengard influence"
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            add_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+        } else_if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            }
+            custom_effect_tooltip = "Increase Isengard influence"
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            add_dynamic_modifier = { modifier = ise_influence_modifier_3 }
         }
-        custom_effect_tooltip = "Increase Isengard influence"
-        add_dynamic_modifier = { modifier = ise_influence_modifier_1 }
-    } else_if = {
-        limit = {
-            has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
-        }
-        custom_effect_tooltip = "Increase Isengard influence"
-        remove_dynamic_modifier = { modifier = ise_influence_modifier_1 }
-        add_dynamic_modifier = { modifier = ise_influence_modifier_2 }
-    } else_if = {
-        limit = {
-            has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
-        }
-        custom_effect_tooltip = "Increase Isengard influence"
-        remove_dynamic_modifier = { modifier = ise_influence_modifier_2 }
-        add_dynamic_modifier = { modifier = ise_influence_modifier_3 }
     }
+    custom_effect_tooltip = ISE_effect_tooltip_increase_influence_in_state
 }
 
 # @docs(Isengard): Decrease ISE influence in SHI state
 decrease_ISE_influence_in_SHI_state = {
-	if = {
-        limit = {
-            has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+	hidden_effect = {
+        if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+            add_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            custom_effect_tooltip = "Decrease Isengard influence"
+        } else_if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            add_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            custom_effect_tooltip = "Decrease Isengard influence"
+        } else_if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            custom_effect_tooltip = "Decrease Isengard influence"
         }
-        remove_dynamic_modifier = { modifier = ise_influence_modifier_3 }
-        add_dynamic_modifier = { modifier = ise_influence_modifier_2 }
-        custom_effect_tooltip = "Decrease Isengard influence"
-    } else_if = {
-        limit = {
-            has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
-        }
-        remove_dynamic_modifier = { modifier = ise_influence_modifier_2 }
-        add_dynamic_modifier = { modifier = ise_influence_modifier_1 }
-        custom_effect_tooltip = "Decrease Isengard influence"
-    } else_if = {
-        limit = {
-            has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
-        }
-        remove_dynamic_modifier = { modifier = ise_influence_modifier_1 }
-        custom_effect_tooltip = "Decrease Isengard influence"
     }
+    custom_effect_tooltip = ISE_effect_tooltip_decrease_influence_in_state
 }
 
 # @docs(Isengard): Decrease ISE influence in SHI state to zero
-decrease_ISE_influence_in_SHI_state_to_zero = {
-    if = {
-        limit = {
-            has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+influence_ise_in_state_removed = {
+    hidden_effect = {
+        if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_1 }
         }
-        remove_dynamic_modifier = { modifier = ise_influence_modifier_1 }
-    }
-    if = {
-        limit = {
-            has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+        if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_2 }
         }
-        remove_dynamic_modifier = { modifier = ise_influence_modifier_2 }
-    }
-    if = {
-        limit = {
-            has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+        if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_3 }
         }
-        remove_dynamic_modifier = { modifier = ise_influence_modifier_3 }
     }
+    custom_effect_tooltip = ISE_effect_tooltip_remove_influence_in_state
 }
 
 ### ISE - ROH influence system
