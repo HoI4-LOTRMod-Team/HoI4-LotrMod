@@ -839,35 +839,55 @@ focus = {
 	}
 }
 
+focus = {
+	id = ART_only_than_can_we_protect_them
+	icon = GFX_goal_elu_unrest_in_the_shire
+	ai_will_do = { factor = 3 }
+	mutually_exclusive = { focus = ART_invest_in_the_shire }
+	available = {
+		NOT = { has_war_with = SHI}
+		SHI = {
+			exists = yes
+		}
+		threat > 0.25
+	}
+	relative_position_id = ART_reinstate_monarchy
+	x = 4
+	y = 1
+	prerequisite = { focus = ART_reinstate_monarchy focus = ART_enforce_new_goverment }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_POLITICAL }
+	completion_reward = {
+		create_wargoal = { target = SHI type = puppet_wargoal_focus }
+	}
+}
 
 focus = {
 	id = ART_invest_in_the_shire
 	icon = GFX_goal_invest_in_the_shire
 	ai_will_do = { factor = 3 }
+	mutually_exclusive = { focus = ART_only_than_can_we_protect_them }
 	available = {
+		NOT = { has_war_with = SHI}
 		SHI = {
-			OR = {
-				is_subject_of = ART
-				is_puppet_of = ART
-			}
+			exists = yes
 		}
 	}
 	relative_position_id = ART_reinstate_monarchy
 	x = 2
 	y = 1
 	prerequisite = { focus = ART_reinstate_monarchy }
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_POLITICAL }
 	completion_reward = {
+		add_political_power = 100
+		add_stability = 0.05
 		SHI = {
 			add_opinion_modifier = { target = ART modifier = large_increase }
-			add_autonomy_ratio = {
-				value = -0.1
-			}
 			random_controlled_state = {
-				add_extra_state_shared_building_slots = 1 
-				add_building_construction = { type = arms_factory level = 1 instant_build = yes } 
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes } 
 			}
 			random_controlled_state = {
 				add_extra_state_shared_building_slots = 1 
@@ -877,17 +897,14 @@ focus = {
 	}
 }
 
-
 focus = {
-	id = ART_enforce_control_over_the_shire
-	icon = GFX_goal_generic_forceful_treaty
+	id = ART_expand_trading_agremeent
+	icon = GFX_goal_lth_extend_citizenship
 	ai_will_do = { factor = 3 }
 	available = {
+		NOT = { has_war_with = SHI}
 		SHI = {
-			OR = {
-				is_subject_of = ART
-				is_puppet_of = ART
-			}
+			exists = yes
 		}
 	}
 	relative_position_id = ART_invest_in_the_shire
@@ -898,54 +915,13 @@ focus = {
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_POLITICAL }
 	completion_reward = {
-		add_opinion_modifier = { target = SHI modifier = small_increase }
 		SHI = {
-			add_opinion_modifier = { target = ART modifier = large_increase }
-			add_autonomy_ratio = {
-				value = -0.25
-			}
-			add_popularity = {
-				ideology = cooperative
-				popularity = 0.05
-			}
+			country_event = { id = shire.8 }
 		}
-	}
-}
-
-focus = {
-	id = ART_assign_loyalists
-	icon = GFX_goal_generic_intelligence_exchange
-	ai_will_do = { factor = 3 }
-	available = {
-		SHI = {
-			OR = {
-				is_subject_of = ART
-				is_puppet_of = ART
-			}
-		}
-	}
-	relative_position_id = ART_enforce_control_over_the_shire
-	x = 0
-	y = 1
-	prerequisite = { focus = ART_enforce_control_over_the_shire }
-	cost = 10
-	available_if_capitulated = yes
-	search_filters = { FOCUS_FILTER_POLITICAL }
-	completion_reward = {
-		SHI = {
-			add_opinion_modifier = { target = ART modifier = large_increase }
-			add_autonomy_ratio = {
-				value = -0.5
-			}
-			add_popularity = {
-				ideology = belligerent
-				popularity = -0.075
-			}
-			add_popularity = {
-				ideology = revolutionary
-				popularity = -0.075
-			}
-		}
+		custom_effect_tooltip = lotr_generic_tooltip_they_will_receive
+		event_option_tooltip  = shire.8.a
+		custom_effect_tooltip = lotr_generic_tooltip_we_will_receive
+		event_option_tooltip  = arthedain.24.a
 	}
 }
 #Focus for Improve Arnorian Relations
