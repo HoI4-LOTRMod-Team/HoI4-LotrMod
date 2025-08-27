@@ -824,12 +824,11 @@ focus_tree = {
 
 	focus = {
 		id = ISE_influence_neighbouring_tribes
-		icon = GFX_goal_generic_unknown
+		icon = GFX_goal_saruman_enedwaith_tribes
 		ai_will_do = { factor = 100 }
 		x = 34
 		y = 0
-		#prerequisite = { focus = ISE_imprison_gandalf}
-		cost = 10
+		cost = 5
 		available_if_capitulated = no
 		completion_reward = { 
 			add_opinion_modifier = { target = DUN modifier = medium_increase }
@@ -880,9 +879,6 @@ focus_tree = {
 	focus = {
 		id = ISE_increase_relations
 		icon = GFX_goal_goal_generic_improve_relations
-		available = {
-			has_government = cooperative
-		}
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_influence_neighbouring_tribes
 		x = -2
@@ -927,10 +923,9 @@ focus_tree = {
 
 	focus = {
 		id = ISE_influence_neighbours_political
-		icon = GFX_goal_goal_generic_improve_relations
+		icon = GFX_goal_generic_unknown
 		available = {
 			has_government = cooperative
-			has_intelligence_agency = yes
 		}
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_increase_relations
@@ -940,19 +935,35 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
-
+			if = {
+				limit = { has_dlc = "La Resistance" }
+				upgrade_intelligence_agency = upgrade_psycho_warfare
+				every_neighbor_country = {
+					add_popularity = {
+						ideology = cooperative
+						popularity = 0.025
+					}
+				}
+			} else = {
+				every_neighbor_country = {
+					add_popularity = {
+						ideology = cooperative
+						popularity = 0.05
+					}
+				}
+			}
+			add_opinion_modifier = { target = FROM modifier = small_increase }
 		}
 	}
 
 	focus = {
 		id = ISE_misty_mountains_pact
-		icon = GFX_goal_goal_generic_improve_relations
+		icon = GFX_goal_a_land_of_mountains
 		available = {
-			has_government = cooperative
 			is_puppet = no
 			OR = {
-				DUN = { has_government = cooperative }
-				ERE = { has_government = cooperative }
+				NOT = { DUN = { has_government = belligerent }}
+				NOT = { ERE = { has_government = belligerent }}
 			}
 		}
 		ai_will_do = { factor = 100 }
@@ -963,35 +974,39 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
+			set_variable = { misty_pact_members = 1 }
 			if = {
 				limit = {
-					DUN = { has_government = cooperative }
+					DUN = { has_government = belligerent }
 				}
 				DUN = { country_event = { id = misty_pact.3 } }
 			}
 			if = {
 				limit = {
-					ERE = { has_government = cooperative }
+					ERE = { has_government = belligerent }
 				}
 				ERE = { country_event = { id = misty_pact.3 } }
 			}
+			custom_effect_tooltip = "Dunland and Enedwaith will get a invite for the Misty Mountains Pact"
 		}
 	}
 
 	focus = {
 		id = ISE_expand_collaboration
-		icon = GFX_goal_goal_generic_improve_relations
+		icon = GFX_goal_lth_adminstration
 		available = {
-			has_government = cooperative
 			is_puppet = no
-			threat > 0.25
+			custom_trigger_tooltip = {
+				tooltip = ise_misty_pact_members_check		
+				misty_pact_members > 2
+			}
 		}
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_misty_mountains_pact
 		x = -1
 		y = 1
 		prerequisite = { focus = ISE_misty_mountains_pact}
-		cost = 5
+		cost = 10
 		available_if_capitulated = no
 		completion_reward = {
 			every_possible_country  = {
@@ -1003,14 +1018,46 @@ focus_tree = {
                 }
 				country_event = { id = misty_pact.4 }
 			}
+			add_ideas = ISE_Misty_Mountain_Collaboration_0
+		}
+	}
+
+	focus = {
+		id = ISE_militair_collaboration
+		icon = GFX_goal_lth_defense_deal
+		available = {
+			is_puppet = no
+			threat > 0.25
+			custom_trigger_tooltip = {
+				tooltip = ise_misty_pact_members_check		
+				misty_pact_members > 2
+			}
+		}
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_expand_collaboration
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_expand_collaboration}
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = {
+			every_possible_country  = {
+                limit = {
+                    has_country_flag = MISTY_PACT
+					NOT = {
+						tag = ROOT
+					}
+                }
+				country_event = { id = misty_pact.4 }
+			}
+			add_ideas = ISE_Misty_Mountain_Collaboration_1
 		}
 	}
 
 	focus = {
 		id = ISE_setup_faction
-		icon = GFX_goal_goal_generic_improve_relations
+		icon = GFX_goal_goal_anschluss
 		available = {
-			has_government = cooperative
 			is_puppet = no
 			threat > 0.35
 			is_in_faction = no
@@ -1087,16 +1134,18 @@ focus_tree = {
 		completion_reward = {
 			DUN = {
 				add_timed_idea = { idea = ISE_influencing_tribes days = 365 }
+				add_popularity = { ideology = belligerent popularity = 0.05 }
 			}
 			ENE = {
 				add_timed_idea = { idea = ISE_influencing_tribes days = 365 }
+				add_popularity = { ideology = belligerent popularity = 0.05 }
 			}
 		}
 	}
 
 	focus = {
 		id = ISE_infiltration_plans
-		icon = GFX_goal_goal_generic_forceful_treaty
+		icon = GFX_goal_gon_ithilien_defensive_planning
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_increase_control
 		x = 2
