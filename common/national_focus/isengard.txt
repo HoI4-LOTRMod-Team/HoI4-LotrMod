@@ -1607,7 +1607,7 @@ focus_tree = {
 
 	focus = {
 		id = ISE_stronghold_fords_ofd_isen
-		icon = GFX_goal_generic_coastal_fort
+		icon = GFX_goal_ROH_restore_dunharrow_fortress_castle_on_mountain
 		ai_will_do = { factor = 5 }
 		prerequisite = { focus = ISE_defend_the_river }
 		relative_position_id = ISE_defend_the_river
@@ -1847,8 +1847,7 @@ focus_tree = {
 		icon = GFX_goal_goal_generic_occypy_states_ongoing_war
 		ai_will_do = { factor = 5 }
 		available = {
-			arms_factory > 40
-			threat > 0.4
+			threat > 0.25
 		}
 		prerequisite = { focus = ISE_burn_the_fangorn_forest }
 		relative_position_id = ISE_burn_the_fangorn_forest
@@ -1909,7 +1908,7 @@ focus_tree = {
 		relative_position_id = ISE_enhance_weapon_production
 		prerequisite = { focus = ISE_enhance_weapon_production }
 		available = { 31 = { is_controlled_by = ISE } }
-		cost = 10
+		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
 			fires_of_isengard_increase = yes
@@ -1918,7 +1917,7 @@ focus_tree = {
 	
 	focus = {
 		id = ISE_leave_nature_alone
-		icon = GFX_goal_generic_resource_wood
+		icon = GFX_goal_generic_nature_trees
 		ai_will_do = { factor = 4 }
 		x = 0
 		y = 1
@@ -2167,6 +2166,12 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
+			if = {
+				limit = {
+					is_in_faction = no
+				}
+				create_faction = "Protective alliance of Nature"
+			}
 			custom_effect_tooltip = "Creating a faction/Inviting to faction with Entwood"
 		}
 	}
@@ -2306,17 +2311,18 @@ focus_tree = {
 	}
 
 	focus = {
-		id = ISE_equipment_support
+		id = ISE_supporting_industry
 		icon = GFX_goal_generic_horse_drawn_equipment
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_defend_against_all_evil
 		x = -1
 		y = 1
 		prerequisite = { focus = ISE_defend_against_all_evil }
-		cost = 5
+		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			custom_effect_tooltip = "Unlocking decisions to send equipment to the free people of Middle-Earth"
+			add_building_slot_and_mil_x2 = yes
+			add_ideas = ISE_supporting_industry
 		}
 	}
 
@@ -2324,19 +2330,20 @@ focus_tree = {
 		id = ISE_military_spy_network
 		icon = GFX_goal_generic_unknown
 		ai_will_do = { factor = 5 }
-		available = {
-			has_intelligence_agency = yes
-			has_dlc = "La Resistance"
-		}
 		relative_position_id = ISE_defend_against_all_evil
-		prerequisite = { focus = ISE_defend_against_all_evil }
-		prerequisite = { focus = ISE_crebain_spies }
+		prerequisite = { focus = ISE_defend_against_all_evil focus = ISE_crebain_spies }
 		x = 1
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			add_ideas = ISE_military_spy_network_idea
+			if = {
+				limit = { has_dlc = "La Resistance" }
+				add_ideas = ISE_military_spy_network_idea
+			} else = {
+				add_ideas = ISE_military_spy_network_idea_without_LA
+			}
+			
 		}
 	}
 
