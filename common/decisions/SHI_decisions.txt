@@ -3,11 +3,12 @@
 ################
 
 SHI_sharkey_influence_decisions = {
-    SHI_fight_influence = {
+    SHI_fight_influence_with_ART = {
         icon = GFX_decision_generic_operation
-		cost = 100
+		cost = 50
 		fire_only_once = yes
         fixed_random_seed = no
+		is_good = yes
 		ai_will_do = {
 			factor = 5
             modifier = {
@@ -19,14 +20,46 @@ SHI_sharkey_influence_decisions = {
 				check_variable = { var = global.influence_ise_in_shi  value = 20  compare = greater_than_or_equals }
 			}
 		}
+        available = {
+            ART = {
+                OR = {
+                    has_government = cooperative
+                    has_government = unaligned
+                }
+            }
+        }
         complete_effect = {
 			decrease_shire_influence = yes
-            SHI = { add_stability = 0.025 }
+            add_stability = 0.025
+            add_opinion_modifier = { target = ART modifier = small_increase }
+		}
+    }
+    SHI_fight_influence = {
+        icon = GFX_decision_generic_operation
+		cost = 75
+		fire_only_once = no
+        fixed_random_seed = no
+        days_remove = 25
+		is_good = yes
+		ai_will_do = {
+			base = 5
+            modifier = {
+				add = 10
+				check_variable = { var = global.influence_ise_in_shi  value = 10  compare = greater_than_or_equals }
+			}
+			modifier = {
+				add = 20
+				check_variable = { var = global.influence_ise_in_shi  value = 20  compare = greater_than_or_equals }
+			}
+		}
+        complete_effect = {
+			decrease_shire_influence = yes
+            add_stability = 0.025
 		}
     }
     SHI_decrease_control = {
         icon = GFX_decision_generic_2
-        cost = 1
+        cost = 50
         fixed_random_seed = no
         days_remove = 25
 		is_good = yes
@@ -50,6 +83,7 @@ SHI_sharkey_influence_decisions = {
                     has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
                 }
             }
+            #Higher change if influence is already high
             modifier = {
                 add = 15
                 FROM = {
