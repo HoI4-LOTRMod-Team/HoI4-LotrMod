@@ -29,8 +29,12 @@ focus = {
 	y = 5
 	cost = 5
 	available_if_capitulated = yes
+	ai_will_do = { 
+		factor = 999
+	}
 	completion_reward = {
 		add_political_power = 100
+		small_decrease_shire_influence = yes
 		custom_effect_tooltip = "Unlocks decisions to battle Sarumans growing influence" 
 	}
 }
@@ -42,23 +46,33 @@ focus = {
 		ISE = { has_completed_focus = ISE_establish_base_of_operations }
 	}
 	relative_position_id = SHI_dealing_with_Sharkey
-	x = -1
+	x = 0
 	y = 1
 	prerequisite = { focus = SHI_dealing_with_Sharkey}
 	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
-		### Hidden effect
+		if = {
+			limit = {
+				44 = {
+					has_state_flag = ISE_infiltrated_state
+				}
+			}
 			44 = {
 				decrease_ISE_influence_in_SHI_state = yes
 			}
-			38 = {
+		}
+		if = {
+			limit = {
+				38 = {
+					has_state_flag = ISE_infiltrated_state
+				}
+			}
+			38 {
 				decrease_ISE_influence_in_SHI_state = yes
 			}
-			43 = {
-				decrease_ISE_influence_in_SHI_state = yes
-			}
-		###
+		}
+		add_stability = 0.025
 	}
 }
 
@@ -66,7 +80,7 @@ focus = {
 	id = SHI_secure_the_shire
 	icon = GFX_goal_ELU_age_of_conquest_dagger_on_map
 	relative_position_id = SHI_dealing_with_Sharkey
-	x = 1
+	x = 2
 	y = 1
 	prerequisite = { focus = SHI_dealing_with_Sharkey}
 	available = {
@@ -89,18 +103,21 @@ focus = {
 focus = {
 	id = SHI_frodo_support
 	icon = GFX_goal_ROH_track_the_fellowship_frodo
+	available = {
+		has_country_flag = SHI_frodo_returned_to_shire
+	}
 	ai_will_do = {
 		factor = 10
 		modifier = { factor = 0 is_going_cooperative = no }
 	}
 	relative_position_id = SHI_dealing_with_Sharkey
-	x = -3
+	x = -2
 	y = 1
 	prerequisite = { focus = SHI_dealing_with_Sharkey}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		
+		custom_effect_tooltip = "End anny attempt and defeat Isengard instantly"
 	}
 }
 
@@ -122,10 +139,10 @@ focus = {
 			state_is_influence_free = yes
 		}
 	}
-	relative_position_id = SHI_fighting_ruffians_influence
-	x = 1
+	relative_position_id = SHI_frodo_support
+	x = 0
 	y = 1
-	prerequisite = { focus = SHI_fighting_ruffians_influence focus = SHI_secure_the_shire }
+	prerequisite = { focus = SHI_frodo_support }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
