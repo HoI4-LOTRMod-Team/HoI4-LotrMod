@@ -140,15 +140,18 @@ ISE_palantir_decisions = {
 ISE_shire_decisions = {
     ISE_expand_business = {
         icon = GFX_decision_generic_4
-		cost = 125
+		cost = 100
 		fire_only_once = yes
         fixed_random_seed = no
         available = {
-            SHI = { NOT = { has_idea = SHI_pipe_weed_business_0 } }  
-            #has_completed_focus = ISE_pipe_weed_business
+            SHI = { has_idea = SHI_pipe_weed_business_0 }  
+            has_completed_focus = ISE_pipe_weed_business
         }
         visible = {
-            SHI = { NOT = { has_idea = SHI_pipe_weed_business_0 } }
+            SHI = { has_idea = SHI_pipe_weed_business_0 }
+            ISE = { 
+                NOT = { has_completed_focus = ISE_establish_base_of_operations } 
+            }
         }
         complete_effect = {
 			increase_shire_influence = yes
@@ -162,11 +165,17 @@ ISE_shire_decisions = {
     }
     ISE_ise_propagande = {
         icon = GFX_decision_army_group_soldiers_shadows
-		cost = 100
+		cost = 75
         fixed_random_seed = no
 		days_remove = 50
+        visible = {
+            ISE = { 
+                has_completed_focus = ISE_pipe_weed_business
+                NOT = { has_completed_focus = ISE_establish_base_of_operations } 
+            }
+        }
         available = {
-           #has_completed_focus = ISE_send_spies_to_the_shire
+           has_completed_focus = ISE_send_spies_to_the_shire
         }
 		remove_effect = {
             small_increase_shire_influence = yes
@@ -178,14 +187,15 @@ ISE_shire_decisions = {
     }
     ISE_infiltrate_state = {
         icon = GFX_decision_generic_2
-        cost = 0
+        cost = 50
         fixed_random_seed = no
-        days_remove = 1
+        days_remove = 25
 		is_good = yes
 	    selectable_mission = yes
 		state_target = yes
 		targets = { 43 38 44 }
         visible = {
+            ISE = { has_completed_focus = ISE_establish_base_of_operations }
             NOT = { FROM = { has_state_flag = ISE_infiltrated_state } }
         }
         remove_effect = {
@@ -198,13 +208,16 @@ ISE_shire_decisions = {
     }
     ISE_increase_control = {
         icon = GFX_decision_generic_cooperation
-        cost = 0
+        cost = 75
         fixed_random_seed = no
-        days_remove = 1
+        days_remove = 25
 		is_good = yes
 	    selectable_mission = yes
 		state_target = yes
 		targets = { 43 38 44 }
+        visible = {
+            ISE = { has_completed_focus = ISE_establish_base_of_operations }
+        }
         available = {
             FROM = {
                 has_state_flag = ISE_infiltrated_state
@@ -220,14 +233,15 @@ ISE_shire_decisions = {
     }
     ISE_initiate_coop = {
         icon = GFX_decision_generic_2
-        cost = 0
+        cost = 125
         fixed_random_seed = no
-        days_remove = 1
+        days_remove = 100
 		is_good = yes
 	    selectable_mission = yes
 		state_target = yes
 		targets = { 43 }
         visible = {
+            ISE = { has_completed_focus = ISE_establish_base_of_operations }
             FROM = { has_state_flag = ISE_infiltrated_state }
         }
         available = {
@@ -257,58 +271,68 @@ ISE_shire_decisions = {
                         }
                     }
                 }
-            }
-            SHI = {
-                every_owned_state = {
-                    limit = {
-                        has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
-                    }
-                    transfer_state_to = ISE
-                    if = {
+                SHI = {
+                    every_owned_state = {
                         limit = {
-                            check_variable = { id = 38.id }
+                            has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
                         }
-                        ISE = {
-                            load_oob = "ise/BOTS_shire"
+                        transfer_state_to = ISE
+                        if = {
+                            limit = {
+                                check_variable = { id = 38.id }
+                            }
+                            ISE = {
+                                load_oob = "ise/BOTS_shire"
+                            }
                         }
-                    }
-                    if = {
-                        limit = {
-                            check_variable = { id = 44.id }
-                        }
-                        ISE = {
-                            load_oob = "ise/BOTS_east_farthing"
+                        if = {
+                            limit = {
+                                check_variable = { id = 44.id }
+                            }
+                            ISE = {
+                                load_oob = "ise/BOTS_east_farthing"
+                            }
                         }
                     }
                 }
-            }
-            ISE = {
-                load_oob = "ise/BOTS_south_farthing"
-                #Spawn in more divisions if focus Improve Strength is done
+                ISE = {
+                    load_oob = "ise/BOTS_south_farthing"
+                    #Spawn in more divisions if focus Improve Strength is done
+                    if = {
+                        limit = {
+                            has_completed_focus = ISE_improve_strength
+                        }
+                        load_oob = "ise/BOTS_south_farthing_extra"
+                    }
+                }
+                #Spawn in more divisions if any of the Tribe nations joined Isengard
                 if = {
                     limit = {
-                        has_completed_focus = ISE_improve_strength
+                        OR = {
+                            ENE = { has_completed_focus = tribes_saruman_did_nothing_wrong }
+                            DUN = { has_completed_focus = tribes_saruman_did_nothing_wrong }
+                        }
                     }
-                    load_oob = "ise/BOTS_south_farthing_extra"
+                    hidden_effect = { country_event = { id = sharkey.1 days = 15 } }
+                }
+                declare_war_on = {
+                    target = SHI
+                    type = annex_everything
+                }
+                set_capital = {
+                    state = 43
+                }
+                #Mordor helps if agreed on
+                if = {
+                    limit = {
+                        MOR = { has_country_flag = MOR_will_help_Sharkey }
+                    }
+                    MOR = {
+                        country_event = { id = mordor.68 }
+                    }
                 }
             }
-            #Spawn in more divisions if any of the Tribe nations joined Isengard
-            if = {
-                limit = {
-                    OR = {
-                        ENE = { has_completed_focus = tribes_saruman_did_nothing_wrong }
-                        DUN = { has_completed_focus = tribes_saruman_did_nothing_wrong }
-                    }
-                }
-                hidden_effect = { country_event = { id = sharkey.1 days = 15 } }
-            }
-            declare_war_on = {
-                target = SHI
-                type = annex_everything
-            }
-            set_capital = {
-                state = 43
-            }
+            custom_effect_tooltip = ISE_effect_tooltip_initiate_coop
         }
     }
 }
