@@ -21,6 +21,17 @@ focus_tree = {
 		ai_will_do = { factor = 100 }
 		x = 16
 		y = 0
+		offset = {
+			x = -10
+			y = 0
+			trigger = {
+				has_game_rule = {
+					rule = obsolete_focus_branches_visibility
+					option = HIDE
+				}
+				has_completed_focus = ISE_imprison_gandalf
+			}
+		}
 		cost = 0
 		available_if_capitulated = yes
 		completion_reward = {
@@ -77,15 +88,32 @@ focus_tree = {
 		icon = GFX_goal_imprisend_gandalf
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_meet_with_gandalf
-		x = 7
+		x = 8
 		y = 1
 		available = { has_global_flag = gandalf_imprisoned }
 		mutually_exclusive = { focus = ISE_unite_with_gandalf }
 		prerequisite = { focus = ISE_meet_with_gandalf}
 		cost = 0
 		available_if_capitulated = yes
+		allow_branch = {
+			NOT = {
+				has_completed_focus = ISE_unite_with_gandalf
+			}
+		}
+		offset = {
+			x = -8
+			y = 0
+			trigger = {
+				has_game_rule = {
+					rule = obsolete_focus_branches_visibility
+					option = HIDE
+				}
+				has_completed_focus = ISE_imprison_gandalf
+			}
+		}
 		completion_reward = {
 			custom_effect_tooltip = MOR_event_triggert_focus
+			mark_focus_tree_layout_dirty = yes
 			add_named_threat = { threat = 1 name = "Gandalf being taken prisoner" }
 		}
 	}
@@ -124,6 +152,7 @@ focus_tree = {
 			add_opinion_modifier = { target = SHI modifier = small_increase }
 			SHI = {
 				add_opinion_modifier = { target = ISE modifier = small_increase}
+				country_event = { id = shire.5 }
 			}
 			add_political_power = 50
 			custom_effect_tooltip = ISE_effect_tooltip_unlock_shire_influence_mechanic
@@ -216,7 +245,7 @@ focus_tree = {
 		x = 1
 		y = 1
 		prerequisite = { focus = ISE_rebrand_isengard}
-		cost = 10
+		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
 			MOR = {
@@ -453,6 +482,7 @@ focus_tree = {
 		ai_will_do = { factor = 100 }
 		available = {
 			has_completed_focus = ISE_pipe_weed_business
+			has_intelligence_agency = yes
 		}
 		relative_position_id = ISE_collabiration_with_mordor
 		x = 10
@@ -489,10 +519,7 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			hidden_effect = {
-				increase_ISE_influence_in_SHI_state = yes
-			}
-			custom_effect_tooltip = ISE_effect_tooltip_establish_base_of_operation
+			establish_base_of_operations = yes
 			add_political_power = 100
 			add_stability = 0.025
 			add_war_support = 0.025
@@ -514,14 +541,35 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			44 = {
-				increase_ISE_influence_in_SHI_state = yes
+			if = {
+				limit = {
+					44 = {
+						has_state_flag = ISE_infiltrated_state
+					}
+				}
+				44 = {
+					increase_ISE_influence_in_SHI_state = yes
+				}
 			}
-			38 = {
-				increase_ISE_influence_in_SHI_state = yes
+			if = {
+				limit = {
+					38 = {
+						has_state_flag = ISE_infiltrated_state
+					}
+				}
+				38 {
+					increase_ISE_influence_in_SHI_state = yes
+				}
 			}
-			43 = {
-				increase_ISE_influence_in_SHI_state = yes
+			if = {
+				limit = {
+					43 = {
+						has_state_flag = ISE_infiltrated_state
+					}
+				}
+				43 = {
+					increase_ISE_influence_in_SHI_state = yes
+				}
 			}
 		}
 	}
@@ -555,16 +603,48 @@ focus_tree = {
 			has_global_flag = ise_orthanc_has_fallen
 			NOT = { has_global_flag = ise_sharkey_succesfull }
 			NOT = { has_completed_focus = ISE_betray_sauron }
+			MOR = {
+				has_government = belligerent
+				NOT = { has_war_with = ISE }
+			}
 		}
 		relative_position_id = ISE_improve_strength
-		x = 0
+		x = -1
 		y = 1
 		prerequisite = { focus = ISE_improve_strength }
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			custom_effect_tooltip = "If agreed on, Mordor will get a national spirit to easily send volunteers"
-			custom_effect_tooltip = "Aswell as sending equipment over"
+			MOR = { country_event = { id = mordor.67 } }
+		}
+	}
+
+	focus = {
+		id = ISE_political_scheming
+		icon = GFX_goal_ROH_curb_foreign_influence_protect_political_power
+		ai_will_do = { factor = 100 }
+		available = {
+			has_global_flag = ise_orthanc_has_fallen
+			NOT = { has_global_flag = ise_sharkey_succesfull }
+		}
+		relative_position_id = ISE_improve_strength
+		x = 1
+		y = 1
+		prerequisite = { focus = ISE_improve_strength }
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			add_political_power = 100
+			if = {
+				limit = {
+					43 = {
+						has_state_flag = ISE_infiltrated_state
+					}
+				}
+				43 = {
+					increase_ISE_influence_in_SHI_state = yes
+				}
+			}
 		}
 	}
 
@@ -826,8 +906,19 @@ focus_tree = {
 		id = ISE_influence_neighbouring_tribes
 		icon = GFX_goal_saruman_enedwaith_tribes
 		ai_will_do = { factor = 100 }
-		x = 34
+		x = 35
 		y = 0
+		offset = {
+			x = -18
+			y = 0
+			trigger = {
+				has_game_rule = {
+					rule = obsolete_focus_branches_visibility
+					option = HIDE
+				}
+				has_completed_focus = ISE_imprison_gandalf
+			}
+		}
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = { 
@@ -1473,8 +1564,19 @@ focus_tree = {
 		id = ISE_hash_training
 		icon = GFX_goal_generic_soldier_rearmament
 		ai_will_do = { factor = 5 }
-		x = 46
+		x = 47
 		y = 0
+		offset = {
+			x = -18
+			y = 0
+			trigger = {
+				has_game_rule = {
+					rule = obsolete_focus_branches_visibility
+					option = HIDE
+				}
+				has_completed_focus = ISE_imprison_gandalf
+			}
+		}
 		cost = 3
 		available_if_capitulated = yes
 		completion_reward = {
@@ -1589,7 +1691,7 @@ focus_tree = {
 		ai_will_do = { factor = 5 }
 		prerequisite = { focus = ISE_hash_training focus = ISE_expand_isengard_logistics }
 		relative_position_id = ISE_hash_training
-		x = 8
+		x = 9
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
@@ -1710,7 +1812,8 @@ focus_tree = {
 		id = ISE_into_the_air_we_must_go
 		icon = GFX_goal_lth_white_council_eagles
 		ai_will_do = { factor = 1 }
-		available = { NOT = { has_government = belligerent } }
+		mutually_exclusive = { focus = ISE_air_dominance }
+		available = { has_completed_focus = ISE_unite_with_gandalf }
 		prerequisite = { focus = ISE_hash_training }
 		relative_position_id = ISE_hash_training
 		x = -2
@@ -1730,8 +1833,8 @@ focus_tree = {
 				name = "Weapons Bonus"
 				category = lotr_eagles
 			}
-			add_ideas = ISE_strength_of_the_many
-			increase_eagles_cap_15 = yes
+			add_ideas = ISE_strength_of_the_few
+			increase_eagles_cap_5 = yes
 		}
 	}
 
@@ -1739,7 +1842,8 @@ focus_tree = {
 		id = ISE_air_dominance
 		icon = GFX_goal_generic_air_fellbeast
 		ai_will_do = { factor = 1 }
-		available = { has_government = belligerent  }
+		mutually_exclusive = { focus = ISE_into_the_air_we_must_go }
+		available = { has_completed_focus = ISE_imprison_gandalf }
 		prerequisite = { focus = ISE_hash_training }
 		relative_position_id = ISE_hash_training
 		x = 0
@@ -1760,7 +1864,8 @@ focus_tree = {
 				name = "Weapons Bonus"
 				category = lotr_fellbeasts
 			}
-			add_ideas = ISE_strength_of_the_few
+			increase_eagles_cap_15 = yes
+			add_ideas = ISE_strength_of_the_many
 		}
 	}
 
@@ -1793,6 +1898,17 @@ focus_tree = {
 		available = { 31 = { is_controlled_by = ISE } }
 		x = 60
 		y = 0
+		offset = {
+			x = -18
+			y = 0
+			trigger = {
+				has_game_rule = {
+					rule = obsolete_focus_branches_visibility
+					option = HIDE
+				}
+				has_completed_focus = ISE_imprison_gandalf
+			}
+		}
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
@@ -2200,15 +2316,34 @@ focus_tree = {
 		id = ISE_unite_with_gandalf
 		icon = GFX_goal_meet_with_gandalf
 		ai_will_do = { factor = 100 }
-		relative_position_id = ISE_meet_with_gandalf
-		x = -4
-		y = 1
 		available = { has_global_flag = gandalf_saruman_united }
 		mutually_exclusive = { focus = ISE_imprison_gandalf}
 		prerequisite = { focus = ISE_meet_with_gandalf}
+		relative_position_id = ISE_meet_with_gandalf
+		x = -4
+		y = 1
+		allow_branch = {
+			NOT = {
+				has_completed_focus = ISE_imprison_gandalf
+			}
+		}
+		offset = {
+			x = 4
+			y = 0
+			trigger = {
+				has_game_rule = {
+					rule = obsolete_focus_branches_visibility
+					option = HIDE
+				}
+				has_completed_focus = ISE_unite_with_gandalf
+			}
+		}
 		cost = 0
 		available_if_capitulated = yes
-		completion_reward = { custom_effect_tooltip = MOR_event_triggert_focus }
+		completion_reward = { 
+			custom_effect_tooltip = MOR_event_triggert_focus 
+			mark_focus_tree_layout_dirty = yes
+		}
 	}
 
 	focus = {
@@ -2216,7 +2351,7 @@ focus_tree = {
 		icon = GFX_goal_meet_with_gandalf
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_unite_with_gandalf
-		x = -1
+		x = 0
 		y = 1
 		prerequisite = { focus = ISE_unite_with_gandalf }
 		cost = 10

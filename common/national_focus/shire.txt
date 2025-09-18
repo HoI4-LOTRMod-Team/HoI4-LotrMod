@@ -349,7 +349,7 @@ focus = {
 	icon = GFX_goal_generic_anvil
 	ai_will_do = { factor = 10 }
 	relative_position_id = SHI_empower_the_shirriffs
-	x = 0
+	x = -2
 	y = 1
 	available = {
 		has_war_support > 0.35
@@ -359,16 +359,13 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = {
 		43 = {
-			add_extra_state_shared_building_slots = 1
-			add_building_construction = { type = arms_factory	level = 1	instant_build = yes }
+			add_building_slot_and_mil = yes
 		}
 		44 = {
-			add_extra_state_shared_building_slots = 2
-			add_building_construction = { type = arms_factory	level = 2	instant_build = yes }
+			add_building_slot_and_mil_x2 = yes
 		}
 		42 = {
-			add_extra_state_shared_building_slots = 2
-			add_building_construction = { type = arms_factory	level = 2	instant_build = yes }
+			add_building_slot_and_mil_x2 = yes
 		}
 	}
 }
@@ -378,7 +375,7 @@ focus = {
 	icon = GFX_goal_generic_soldier_rearmament
 	ai_will_do = { factor = 10 }
 	relative_position_id = SHI_militarize_the_hobbits
-	x = 0
+	x = -1
 	y = 1
 	available = {
 		has_war_support > 0.75
@@ -389,6 +386,106 @@ focus = {
 	available_if_capitulated = yes
 	completion_reward = {
 		add_ideas = SHI_mobilize_the_hobbits
+	}
+}
+
+focus = {
+	id = SHI_militarize_the_families
+	icon = GFX_goal_gon_pitchfork_and_torch_revolt
+	ai_will_do = { factor = 10 }
+	relative_position_id = SHI_militarize_the_hobbits
+	x = 1
+	y = 1
+	available = {
+		revolutionary > 0.1
+		has_war_support > 0.5
+	}
+	prerequisite = { focus = SHI_militarize_the_hobbits }
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_popularity = {
+			popularity = 0.1
+			ideology = revolutionary
+		}
+		random_state_add_building_slot_and_civ_x2 = yes
+		random_state_add_building_slot_and_mil = yes
+		add_manpower = 75000
+	}
+}
+
+focus = {
+	id = SHI_transform_hobbit_holes_into_bunkers
+	icon = GFX_goal_generic_coastal_fort_building
+	ai_will_do = { factor = 4 }
+	available = { 42 = { is_controlled_by = SHI } 44 = { is_controlled_by = SHI } 43 = { is_controlled_by = SHI } 38 = { is_controlled_by = SHI } }
+	relative_position_id = SHI_empower_the_shirriffs
+	x = 2
+	y = 1
+	prerequisite = { focus = SHI_empower_the_shirriffs}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1641 } }
+		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4984 } }
+		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 6036 } }
+		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4336 } }
+		43 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 2895 } }
+		43 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1304 } }
+		43 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 2167 } }
+		38 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1661 } }
+		44 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4937 } }
+		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1457 } }
+	}
+}
+
+focus = {
+	id = SHI_stealthy_approach
+	icon = GFX_goal_generic_wolf_pack
+	relative_position_id = SHI_transform_hobbit_holes_into_bunkers
+	x = 1
+	y = 1
+	prerequisite = { focus = SHI_transform_hobbit_holes_into_bunkers }
+	mutually_exclusive = { focus = SHI_armored_approach }
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		army_experience = 25
+		add_tech_bonus = {
+			name = special_bonus
+			ahead_reduction = 1
+			uses = 1
+			technology = tech_mountaineers2
+		}
+	}
+}
+
+focus = {
+	id = SHI_armored_approach
+	icon = GFX_goal_ROH_loyalty_through_fear_armored_knight_intimidation
+	ai_will_do = {
+		factor = 2
+		modifier = {
+			factor = 5
+			target_heavy_infantry_strat = yes
+		}
+	}
+	relative_position_id = SHI_transform_hobbit_holes_into_bunkers
+	x = -1
+	y = 1
+	prerequisite = { focus = SHI_transform_hobbit_holes_into_bunkers }
+	mutually_exclusive = { focus = SHI_stealthy_approach }
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		army_experience = 5
+		add_tech_bonus = {
+			name = special_bonus
+			bonus = 0.75
+			uses = 2
+			technology = paratroopers
+			technology = paratroopers2
+		}
 	}
 }
 
@@ -477,8 +574,8 @@ focus = {
 }
 
 focus = {
-	id = SHI_rally_the_people
-	icon = GFX_goal_ELU_invite_durinvii_to_the_throne_treaty
+	id = SHI_rally_the_families
+	icon = GFX_goal_gon_ensure_popular_support_peasant_farmer
 	ai_will_do = { factor = 3 }
 	relative_position_id = SHI_different_approach
 	x = 8
@@ -684,32 +781,17 @@ focus = {
 }
 
 focus = {
-	id = SHI_encourageisengardsovereignity
-	icon = GFX_goal_army_uruk_hai
-	ai_will_do = { factor = 0 }
-	relative_position_id = SHI_conspire_with_saruman
-	x =0
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = SHI_unite_with_isengard}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { set_global_flag = isengard_sovereignity_encouraged }
-}
-
-focus = {
 	id = SHI_abolish_second_breakfast
 	icon = GFX_goal_lth_safeguard_food_bread
 	ai_will_do = { factor = 2 }
 	relative_position_id = SHI_unite_with_isengard
-	x = 6
+	x = 5
 	y = 1
-	prerequisite = { focus = SHI_unite_with_isengard focus = SHI_seek_our_own_destiny }1
+	prerequisite = { focus = SHI_unite_with_isengard focus = SHI_seek_our_own_destiny }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { add_ideas = SHI_minimal_diet	}
 }
-
 
 focus = {
 	id = SHI_minimal_diet_focus
@@ -742,13 +824,13 @@ focus = {
 	icon = GFX_goal_army_uruk_hai
 	ai_will_do = { factor = 0 }
 	relative_position_id = SHI_unite_with_isengard
-	x = 3
+	x = 0
 	y = 1
-	prerequisite = { focus = SHI_unite_with_isengard focus = SHI_seek_our_own_destiny }
+	prerequisite = { focus = SHI_unite_with_isengard }
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { 
-		add_ideas = SHI_hobbit_empire
+		add_ideas = SHI_hobbit_warriors
 	}
 }
 
@@ -874,100 +956,89 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		
+		decrease_shire_influence = yes
 	}
 }
 
-#Focus for The First Hobbit Empire
 focus = {
-	id = thefirsthobbitempire
+	id = SHI_the_first_hobbit_empire
 	icon = GFX_goal_generic_secret_weapon
 	ai_will_do = { factor = 10 }
 	relative_position_id = SHI_seek_our_own_destiny
-	x =0
-	y =1
-	mutually_exclusive = { }
+	x = 0
+	y = 1
 	prerequisite = { focus = SHI_seek_our_own_destiny}
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
 		create_faction = "first_hobbit_empire"
+		add_stability = 0.1
 		news_event = { hours = 48 id = news.356 }
 	}
 }
 
 focus = {
-	id = SHI_transform_hobbit_holes_into_bunkers
-	icon = GFX_goal_generic_coastal_fort_building
-	ai_will_do = { factor = 4 }
-	available = { 42 = { is_controlled_by = SHI } 44 = { is_controlled_by = SHI } 43 = { is_controlled_by = SHI } 38 = { is_controlled_by = SHI } }
-	relative_position_id = SHI_unquestioned_authority
-	x = 4
+	id = SHI_imperial_ambitions
+	icon = GFX_goal_generic_secret_weapon
+	ai_will_do = { factor = 10 }
+	relative_position_id = SHI_the_first_hobbit_empire
+	x = 1
 	y = 1
-	prerequisite = { focus = SHI_unquestioned_authority}
+	prerequisite = { focus = SHI_the_first_hobbit_empire}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
-		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1641 } }
-		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4984 } }
-		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 6036 } }
-		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4336 } }
-		43 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 2895 } }
-		43 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1304 } }
-		43 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 2167 } }
-		38 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1661 } }
-		44 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 4937 } }
-		42 = { add_building_construction = {	type = bunker level = 3 instant_build = yes province = 1457 } }
+		
 	}
 }
 
 focus = {
-	id = SHI_stealthy_approach
-	icon = GFX_goal_generic_wolf_pack
-	relative_position_id = SHI_transform_hobbit_holes_into_bunkers
-	x = 1
-	y = 1
-	prerequisite = { focus = SHI_transform_hobbit_holes_into_bunkers }
-	mutually_exclusive = { focus = SHI_armored_approach }
-	cost = 5
-	available_if_capitulated = yes
-	completion_reward = {
-		army_experience = 25
-		add_tech_bonus = {
-			name = special_bonus
-			ahead_reduction = 1
-			uses = 1
-			technology = tech_mountaineers2
-		}
-	}
-}
-
-focus = {
-	id = SHI_armored_approach
-	icon = GFX_goal_ROH_loyalty_through_fear_armored_knight_intimidation
-	ai_will_do = {
-		factor = 2
-		modifier = {
-			factor = 5
-			target_heavy_infantry_strat = yes
-		}
-	}
-	relative_position_id = SHI_transform_hobbit_holes_into_bunkers
+	id = SHI_bree_claim
+	icon = GFX_goal_goal_generic_more_territorial_claims
+	ai_will_do = { factor = 10 }
+	relative_position_id = SHI_the_first_hobbit_empire
 	x = -1
 	y = 1
-	prerequisite = { focus = SHI_transform_hobbit_holes_into_bunkers }
-	mutually_exclusive = { focus = SHI_stealthy_approach }
+	prerequisite = { focus = SHI_the_first_hobbit_empire}
 	cost = 5
 	available_if_capitulated = yes
+	will_lead_to_war_with = CAR
 	completion_reward = {
-		army_experience = 5
-		add_tech_bonus = {
-			name = special_bonus
-			bonus = 0.75
-			uses = 2
-			technology = paratroopers
-			technology = paratroopers2
-		}
+		add_state_claim = 150
+		add_state_claim = 149
+		custom_effect_tooltip = "News event Shire lays claim on Bree"
+		custom_effect_tooltip = "Triggering event for Cardolan to propose talks"
+	}
+}
+
+focus = {
+	id = SHI_real_protectors
+	icon = GFX_goal_generic_soldier_rearmament
+	ai_will_do = { factor = 10 }
+	relative_position_id = SHI_bree_claim
+	x = 1
+	y = 1
+	prerequisite = { focus = SHI_bree_claim}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		create_wargoal = { type = puppet_wargoal_focus target = ART }
+	}
+}
+
+focus = {
+	id = SHI_rightfull_owner
+	icon = GFX_goal_lth_adminstration
+	ai_will_do = { factor = 10 }
+	relative_position_id = SHI_bree_claim
+	x = -1
+	y = 1
+	prerequisite = { focus = SHI_bree_claim}
+	cost = 10
+	available_if_capitulated = yes
+	completion_reward = {
+		add_state_core = 150
+		add_state_core = 149
 	}
 }
 
