@@ -690,17 +690,20 @@ focus_tree = {
 
 	focus = {
 		id = ISE_arnor_my_ass
-		icon = GFX_goal_goal_generic_occypy_states_ongoing_war
+		icon = GFX_goal_ROH_isengards_enforcers
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_expand_to_the_north
-		x = 0
+		x = 1
 		y = 1
 		prerequisite = { focus = ISE_expand_to_the_north }
+		available = {
+			ART = { has_completed_focus = ART_unite_the_kingdom_of_arnor }
+		}
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
 			add_war_support = 0.1
-			create_wargoal = { target = CAR type = annex_everything }
+			create_wargoal = { target = ART type = annex_everything }
 		}
 	}
 
@@ -906,7 +909,7 @@ focus_tree = {
 		id = ISE_influence_neighbouring_tribes
 		icon = GFX_goal_saruman_enedwaith_tribes
 		ai_will_do = { factor = 100 }
-		x = 35
+		x = 37
 		y = 0
 		offset = {
 			x = -18
@@ -972,10 +975,10 @@ focus_tree = {
 		icon = GFX_goal_goal_generic_improve_relations
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_influence_neighbouring_tribes
-		x = -2
+		x = -4
 		y = 1
 		prerequisite = { focus = ISE_influence_neighbouring_tribes}
-		mutually_exclusive = { focus = ISE_increase_control focus = ISE_they_will_listen }
+		mutually_exclusive = { focus = ISE_increase_influence focus = ISE_they_will_listen }
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
@@ -1078,7 +1081,7 @@ focus_tree = {
 				}
 				ERE = { country_event = { id = misty_pact.3 } }
 			}
-			custom_effect_tooltip = "Dunland and Enedwaith will get a invite for the Misty Mountains Pact"
+			custom_effect_tooltip = ISE_tooltip_ENE_DUN_Misty_Mountains_invite
 		}
 	}
 
@@ -1141,7 +1144,7 @@ focus_tree = {
                 }
 				country_event = { id = misty_pact.4 }
 			}
-			add_ideas = ISE_Misty_Mountain_Collaboration_1
+			swap_ideas = { remove_idea = ISE_Misty_Mountain_Collaboration_0 add_idea = ISE_Misty_Mountain_Collaboration_1 }
 		}
 	}
 
@@ -1150,7 +1153,7 @@ focus_tree = {
 		icon = GFX_goal_goal_anschluss
 		available = {
 			is_puppet = no
-			threat > 0.35
+			threat > 0.25
 			is_in_faction = no
 		}
 		ai_will_do = { factor = 100 }
@@ -1161,7 +1164,7 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
-			create_faction = ISE_misty_mountains_pact_faction
+			create_faction = "Misty Mountain Pact"
 			every_possible_country  = {
                 limit = {
                     has_country_flag = MISTY_PACT
@@ -1170,6 +1173,216 @@ focus_tree = {
 					}
                 }
 				country_event = { id = misty_pact.5 }
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_increase_influence
+		icon = GFX_goal_saruman_with_palantir
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_influence_neighbouring_tribes
+		x = 0
+		y = 1
+		available = {
+			has_government = belligerent
+		}
+		prerequisite = { focus = ISE_influence_neighbouring_tribes}
+		mutually_exclusive = { focus = ISE_they_will_listen focus = ISE_increase_relations }
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = {
+			DUN = {
+				add_timed_idea = { idea = ISE_influencing_tribes days = 265 }
+				add_popularity = { ideology = belligerent popularity = 0.05 }
+			}
+			ENE = {
+				add_timed_idea = { idea = ISE_influencing_tribes days = 265 }
+				add_popularity = { ideology = belligerent popularity = 0.05 }
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_infiltration_plans
+		icon = GFX_goal_gon_ithilien_defensive_planning
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_increase_influence
+		x = 2
+		y = 1
+		prerequisite = { focus = ISE_increase_influence}
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = {
+			if = {
+				limit = { has_dlc = "La Resistance" }
+				create_intelligence_agency = {
+					name = "Eyes of Isengard"
+					icon = GFX_intelligence_agency_logo_generic_2
+				}
+			}
+			else = {
+				add_ideas = ISE_the_white_hand_agency
+			}
+			add_political_power = 100
+			custom_effect_tooltip = ISE_tooltip_infiltration_decisions
+		}
+	}
+
+	focus = {
+		id = ISE_make_contact_with_supports
+		icon = GFX_goal_goal_generic_dangerous_deal
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_increase_influence
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_increase_influence}
+		cost = 10
+		available_if_capitulated = no
+		completion_reward = {
+			custom_effect_tooltip = ISE_tooltip_will_start_as_a_puppet
+			set_country_flag = ISE_has_made_contact_with_supports
+			DUN = {
+				add_popularity = {
+					ideology = belligerent
+					popularity = 0.05
+				}
+			}
+			ENE = {
+				add_popularity = {
+					ideology = belligerent
+					popularity = 0.05
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_civil_war_DUN
+		icon = GFX_goal_goal_generic_military_deal
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_increase_influence
+		prerequisite = { focus = ISE_increase_influence}
+		x = 1
+		y = 2
+		cost = 10
+		available_if_capitulated = no
+		available = {
+			DUN = { belligerent > 0.5 }
+		}
+		completion_reward = {
+			if = {
+				limit = {
+					DUN = { NOT = { has_government = belligerent } }
+				}
+				custom_effect_tooltip = ISE_tooltip_trigger_civil_war
+				hidden_effect = {
+					set_politics = { ruling_party = belligerent elections_allowed = no }
+					if = {
+						limit = {
+							has_country_flag = ISE_has_made_contact_with_supports
+						}
+						set_autonomy = {
+							target = DUN
+							autonomy_state = autonomy_puppet
+							end_wars = no
+							end_civil_wars = no
+						}
+					}
+					else = {
+						set_autonomy = {
+							target = DUN
+							autonomy_state = autonomy_fiefdom
+							end_wars = no
+							end_civil_wars = no
+						}
+					}
+					DUN = {
+						start_civil_war = {
+							ruling_party = belligerent
+							ideology = unaligned
+							size = 0.4
+						}
+					}
+					DUN = {
+						set_popularities = {
+							cooperative = 0
+							belligerent = 100
+							revolutionary = 0
+							unaligned = 0
+						}
+					}
+					ISE = { country_event = { id = isengard.14 days = 10 } }
+				}
+			}
+			else = {
+				DUN = { country_event = { id = dunland.1 } }
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_civil_war_ENE
+		icon = GFX_goal_goal_generic_military_deal
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_increase_influence
+		prerequisite = { focus = ISE_increase_influence}
+		x = -1
+		y = 2
+		cost = 10
+		available_if_capitulated = no
+		available = {
+			OR = {
+				ENE = { belligerent > 0.5 }
+			}
+		}
+		completion_reward = {
+			if = {
+				limit = {
+					ENE = { NOT = { has_government = belligerent } }
+				}
+				custom_effect_tooltip = ISE_tooltip_trigger_civil_war
+				hidden_effect = {
+					set_politics = { ruling_party = belligerent elections_allowed = no }
+					if = {
+						limit = {
+							has_country_flag = ISE_has_made_contact_with_supports
+						}
+						set_autonomy = {
+							target = ENE
+							autonomy_state = autonomy_puppet
+							end_wars = no
+							end_civil_wars = no
+						}
+					}
+					else = {
+						set_autonomy = {
+							target = ENE
+							autonomy_state = autonomy_fiefdom
+							end_wars = no
+							end_civil_wars = no
+						}
+					}
+					ENE = {
+						start_civil_war = {
+							ruling_party = belligerent
+							ideology = unaligned
+							size = 0.4
+						}
+					}
+					ENE = {
+						set_popularities = {
+							cooperative = 0
+							belligerent = 100
+							revolutionary = 0
+							unaligned = 0
+						}
+					}
+					ISE = { country_event = { id = isengard.14 days = 10 } }
+				}
+			}
+			else = {
+				DUN = { country_event = { id = enedwaith.2 } }
 			}
 		}
 	}
@@ -1194,10 +1407,10 @@ focus_tree = {
 		}
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_influence_neighbouring_tribes
-		x = 6
+		x = 4
 		y = 1
 		prerequisite = { focus = ISE_influence_neighbouring_tribes}
-		mutually_exclusive = { focus = ISE_increase_control focus = ISE_increase_relations }
+		mutually_exclusive = { focus = ISE_increase_influence focus = ISE_increase_relations }
 		will_lead_to_war_with = DUN
 		will_lead_to_war_with = ENE
 		cost = 10
@@ -1205,220 +1418,6 @@ focus_tree = {
 		completion_reward = {
 			create_wargoal = { target = DUN type = puppet_wargoal_focus }
 			create_wargoal = { target = ENE type = puppet_wargoal_focus }
-		}
-	}
-
-	focus = {
-		id = ISE_increase_control
-		icon = GFX_goal_saruman_with_palantir
-		ai_will_do = { factor = 100 }
-		relative_position_id = ISE_influence_neighbouring_tribes
-		x = 2
-		y = 1
-		available = {
-			has_government = belligerent
-		}
-		prerequisite = { focus = ISE_influence_neighbouring_tribes}
-		mutually_exclusive = { focus = ISE_they_will_listen focus = ISE_increase_relations }
-		cost = 10
-		available_if_capitulated = no
-		completion_reward = {
-			DUN = {
-				add_timed_idea = { idea = ISE_influencing_tribes days = 365 }
-				add_popularity = { ideology = belligerent popularity = 0.05 }
-			}
-			ENE = {
-				add_timed_idea = { idea = ISE_influencing_tribes days = 365 }
-				add_popularity = { ideology = belligerent popularity = 0.05 }
-			}
-		}
-	}
-
-	focus = {
-		id = ISE_infiltration_plans
-		icon = GFX_goal_gon_ithilien_defensive_planning
-		ai_will_do = { factor = 100 }
-		relative_position_id = ISE_increase_control
-		x = 2
-		y = 1
-		prerequisite = { focus = ISE_increase_control}
-		cost = 10
-		available_if_capitulated = no
-		completion_reward = {
-			if = {
-				limit = { has_dlc = "La Resistance" }
-				create_intelligence_agency = {
-					name = "Eyes of Isengard"
-					icon = GFX_intelligence_agency_logo_generic_2
-				}
-			}
-			else = {
-				add_ideas = ISE_the_white_hand_agency
-			}
-			add_political_power = 100
-			custom_effect_tooltip = ISE_tooltip_infiltration_decisions
-		}
-	}
-
-	focus = {
-		id = ISE_make_contact_with_supports
-		icon = GFX_goal_goal_generic_dangerous_deal
-		ai_will_do = { factor = 100 }
-		relative_position_id = ISE_increase_control
-		x = 0
-		y = 1
-		prerequisite = { focus = ISE_increase_control}
-		cost = 5
-		available_if_capitulated = no
-		completion_reward = {
-			custom_effect_tooltip = "This will make sure they start as a ??? instead of a fiefdom"
-			set_country_flag = ISE_has_made_contact_with_supports
-			DUN = {
-				add_popularity = {
-					ideology = belligerent
-					popularity = 0.05
-				}
-			}
-			ENE = {
-				add_popularity = {
-					ideology = belligerent
-					popularity = 0.05
-				}
-			}
-		}
-	}
-
-	focus = {
-		id = ISE_civil_war_DUN
-		icon = GFX_goal_goal_generic_military_deal
-		ai_will_do = { factor = 100 }
-		relative_position_id = ISE_increase_control
-		prerequisite = { focus = ISE_increase_control}
-		x = 1
-		y = 2
-		cost = 10
-		available_if_capitulated = no
-		available = {
-			DUN = { belligerent > 0.5 }
-		}
-		completion_reward = {
-			if = {
-				limit = {
-					DUN = { NOT = { has_government = belligerent } }
-				}
-				custom_effect_tooltip = "Make a civil war happend"
-				hidden_effect = {
-					set_politics = { ruling_party = belligerent elections_allowed = no }
-				}
-				if = {
-					limit = {
-						has_country_flag = ISE_has_made_contact_with_supports
-					}
-					set_autonomy = {
-						target = DUN
-						autonomy_state = autonomy_puppet
-						end_wars = no
-						end_civil_wars = no
-					}
-				}
-				else = {
-					set_autonomy = {
-						target = DUN
-						autonomy_state = autonomy_fiefdom
-						end_wars = no
-						end_civil_wars = no
-					}
-				}
-				DUN = {
-					start_civil_war = {
-						ruling_party = belligerent
-						ideology = unaligned
-						size = 0.4
-					}
-				}
-				hidden_effect = {
-					DUN = {
-						set_popularities = {
-							cooperative = 0
-							belligerent = 100
-							revolutionary = 0
-							unaligned = 0
-						}
-					}
-					ISE = { country_event = { id = isengard.14 days = 10 } }
-				}
-			}
-			else = {
-				DUN = { country_event = { id = dunland.1 } }
-			}
-		}
-	}
-
-	focus = {
-		id = ISE_civil_war_ERE
-		icon = GFX_goal_goal_generic_military_deal
-		ai_will_do = { factor = 100 }
-		relative_position_id = ISE_increase_control
-		prerequisite = { focus = ISE_increase_control}
-		x = -1
-		y = 2
-		cost = 10
-		available_if_capitulated = no
-		available = {
-			OR = {
-				ENE = { belligerent > 0.5 }
-			}
-		}
-		completion_reward = {
-			if = {
-				limit = {
-					ENE = { NOT = { has_government = belligerent } }
-				}
-				custom_effect_tooltip = "Make a civil war happend"
-				hidden_effect = {
-					set_politics = { ruling_party = belligerent elections_allowed = no }
-				}
-				if = {
-					limit = {
-						has_country_flag = ISE_has_made_contact_with_supports
-					}
-					set_autonomy = {
-						target = ENE
-						autonomy_state = autonomy_puppet
-						end_wars = no
-						end_civil_wars = no
-					}
-				}
-				else = {
-					set_autonomy = {
-						target = ENE
-						autonomy_state = autonomy_fiefdom
-						end_wars = no
-						end_civil_wars = no
-					}
-				}
-				ENE = {
-					start_civil_war = {
-						ruling_party = belligerent
-						ideology = unaligned
-						size = 0.4
-					}
-				}
-				hidden_effect = {
-					ENE = {
-						set_popularities = {
-							cooperative = 0
-							belligerent = 100
-							revolutionary = 0
-							unaligned = 0
-						}
-					}
-					ISE = { country_event = { id = isengard.14 days = 10 } }
-				}
-			}
-			else = {
-				DUN = { country_event = { id = enedwaith.2 } }
-			}
 		}
 	}
 
@@ -1432,16 +1431,14 @@ focus_tree = {
 				ERE = { is_puppet_of = ISE }
 			}
 		}
-		relative_position_id = ISE_civil_war_ERE
-		prerequisite = { focus = ISE_civil_war_ERE focus = ISE_civil_war_DUN  focus = ISE_they_will_listen }
+		relative_position_id = ISE_civil_war_ENE
+		prerequisite = { focus = ISE_civil_war_ENE focus = ISE_civil_war_DUN  focus = ISE_they_will_listen }
 		x = 5
 		y = 1
 		cost = 10
 		available_if_capitulated = no
 		completion_reward = {
-			
-			custom_effect_tooltip = "If puppet than: this will increase popularity and reduce autonomy for Enedwaith and Dunland if puppeted"
-			custom_effect_tooltip = "If annexed than: this will add compliance"
+			custom_effect_tooltip = ISE_tooltip_ENE_DUN_if_puppet_or_annexed
 			if = {
 				limit = {
 					DUN = { is_puppet_of = ISE }
@@ -1456,7 +1453,7 @@ focus_tree = {
 					}
 				}
 			}
-			else_if = {
+			if = {
 				limit = {
 					ENE = { is_puppet_of = ISE }
 				}
@@ -1484,7 +1481,7 @@ focus_tree = {
 					add_compliance = 15
 				}
 			}
-			else_if = {
+			if = {
 				limit = {
 					ENE = {
 						exists = no
@@ -1505,9 +1502,22 @@ focus_tree = {
 		id = ISE_invest_in_enedwaith
 		icon = GFX_goal_generic_windmill
 		available = {
-			controls_state = 77
-			controls_state = 156
-			controls_state = 155
+			OR = {
+				AND = {
+					controls_state = 77
+					controls_state = 156
+					controls_state = 155
+				}
+				any_other_country = {
+					OR = {
+						is_in_faction_with = ISE
+						is_puppet_of = ISE
+					}
+					controls_state = 77
+					controls_state = 156
+					controls_state = 155
+				}
+			}
 		}
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_iron_fist
@@ -1554,6 +1564,7 @@ focus_tree = {
 		available_if_capitulated = no
 		completion_reward = {
 			custom_effect_tooltip = ISE_tooltip_loading_militia
+			army_experience = 15
 			hidden_effect = {
 				ISE = { load_oob = "ISE_Militia" }
 			}
