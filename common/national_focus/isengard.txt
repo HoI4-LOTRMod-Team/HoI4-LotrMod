@@ -872,7 +872,7 @@ focus_tree = {
 		x = 20
 		y = 0
 		offset = {
-			x = -18
+			x = -8
 			y = 0
 			trigger = {
 				has_game_rule = {
@@ -1538,7 +1538,7 @@ focus_tree = {
 		x = 32
 		y = 0
 		offset = {
-			x = -18
+			x = -8
 			y = 0
 			trigger = {
 				has_game_rule = {
@@ -1870,7 +1870,7 @@ focus_tree = {
 		x = 45
 		y = 0
 		offset = {
-			x = -18
+			x = -8
 			y = 0
 			trigger = {
 				has_game_rule = {
@@ -1884,7 +1884,7 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			31 = { 
-				add_extra_state_shared_building_slots = 2
+				add_extra_state_shared_building_slots = 1
 				add_building_construction = {	type = infrastructure level = 2 instant_build = yes }
 			}
 			add_ideas = ISE_the_fires_of_isengard_0
@@ -1899,14 +1899,15 @@ focus_tree = {
 		prerequisite = { focus = ISE_expand_isengard_logistics }
 		mutually_exclusive = { focus = ISE_befriend_entwood }
 		relative_position_id = ISE_expand_isengard_logistics
-		x = 3
+		x = 5
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			add_named_threat = { threat = 5 name = "Fangorn forest burned"}
+			add_named_threat = { threat = 3 name = "Fangorn forest burned"}
 			set_global_flag = ents_burned
 			add_offsite_building = { type = arms_factory level = 1 }
+			add_offsite_building = { type = industrial_complex level = 1 }
 			add_equipment_to_stockpile = { type = infantry_equipment_1 amount = 15000 producer = ISE }
 			ENT = { country_event = { days = 1 id = entwood.7 } }
 			add_resource = { type = chromium amount = 45 state = 31 }
@@ -1934,7 +1935,7 @@ focus_tree = {
 		icon = GFX_goal_goal_generic_occypy_states_ongoing_war
 		ai_will_do = { factor = 5 }
 		available = {
-			threat > 0.25
+			threat > 0.3
 		}
 		prerequisite = { focus = ISE_burn_the_fangorn_forest }
 		relative_position_id = ISE_burn_the_fangorn_forest
@@ -1944,6 +1945,26 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			create_wargoal = { target = ENT type = annex_everything }
+			if = {
+				limit = {
+					has_government = cooperative
+				}
+				add_stability = -0.1
+				every_other_country = {
+					limit = {
+						has_government = cooperative
+					}
+					add_opinion_modifier = {
+						target = PREV
+						modifier = medium_decrease
+					}
+				}
+			} else_if = {
+				limit = {
+					has_government = belligerent
+				}
+				add_war_support = 0.1
+			}
 		}
 	}
 
@@ -1963,6 +1984,7 @@ focus_tree = {
 		completion_reward = {
 			add_state_core = 29
 			add_stability = 0.1
+			add_resource = { type = chromium amount = 12 state = 29 }
 		}
 	}
 
@@ -1970,7 +1992,7 @@ focus_tree = {
 		id = ISE_enhance_weapon_production
 		icon = GFX_goal_generic_anvil
 		ai_will_do = { factor = 4 }
-		x = -1
+		x = -2
 		y = 1
 		relative_position_id = ISE_expand_isengard_logistics
 		prerequisite = { focus = ISE_expand_isengard_logistics }
@@ -1982,6 +2004,12 @@ focus_tree = {
 			31 = {
 				add_extra_state_shared_building_slots = 2
 				add_building_construction = { type = arms_factory level = 2 instant_build = yes }
+			}
+			add_tech_bonus = {
+				name = construction_tech_bonus
+				bonus = 0.5
+				uses = 1
+				category = lotr_labour_metalworking
 			}
 		}
 	}
@@ -2006,7 +2034,7 @@ focus_tree = {
 		id = ISE_leave_nature_alone
 		icon = GFX_goal_generic_nature_trees
 		ai_will_do = { factor = 4 }
-		x = 0
+		x = 3
 		y = 1
 		relative_position_id = ISE_fires_of_isengard
 		prerequisite = { focus = ISE_fires_of_isengard focus = ISE_enhance_civilian_production_2 }
@@ -2015,13 +2043,22 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			add_resource = { type = chromium amount = 10 state = 158 }
+			add_building_slot_and_civ_x3 = yes
+			ENT = {
+				add_opinion_modifier = { target = ISE modifier = medium_increase }
+			}
+			add_tech_bonus = {
+				name = construction_tech_bonus
+				bonus = 0.75
+				uses = 1
+				category = lotr_labour_construction
+			}
 		}
 	}
 	
 	focus = {
 		id = ISE_food_of_the_earth
-		icon = GFX_goal_generic_anvil
+		icon = GFX_goal_lth_safeguard_food_bread
 		ai_will_do = { factor = 4 }
 		x = 0
 		y = 1
@@ -2031,8 +2068,7 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			add_resource = { type = chromium amount = 10 state = 158 }
-			add_resource = { type = oil amount = 15 state = 159 }
+			add_resource = { type = oil amount = 25 state = 159 }
 			random_owned_state = {
 				add_building_slot_and_civ = yes
 				add_building_slot_and_civ = yes
@@ -2047,7 +2083,7 @@ focus_tree = {
 		id = ISE_the_furnaces_will_always_burn
 		icon = GFX_goal_generic_anvil
 		ai_will_do = { factor = 4 }
-		x = 2
+		x = 1
 		y = 1
 		relative_position_id = ISE_fires_of_isengard
 		prerequisite = { focus = ISE_fires_of_isengard focus = ISE_enhance_civilian_production_2 }
@@ -2057,31 +2093,6 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			fires_of_isengard_increase = yes
-		}
-	}
-
-	focus = {
-		id = ISE_never_ending_production
-		icon = GFX_goal_generic_anvil
-		ai_will_do = { factor = 4 }
-		x = 0
-		y = 1
-		relative_position_id = ISE_the_furnaces_will_always_burn
-		prerequisite = { focus = ISE_the_furnaces_will_always_burn }
-		available = { 31 = { is_controlled_by = ISE } }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			random_owned_state = {
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
-				add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
-			}
-			random_owned_state = {
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = { type = arms_factory level = 1 instant_build = yes }
-				add_building_construction = { type = arms_factory level = 1 instant_build = yes }
-			}
 		}
 	}
 
@@ -2110,7 +2121,7 @@ focus_tree = {
 		id = ISE_enhance_civilian_production
 		icon = GFX_goal_generic_windmill
 		ai_will_do = { factor = 3 }
-		x = 1
+		x = 2
 		y = 1
 		relative_position_id = ISE_expand_isengard_logistics
 		prerequisite = { focus = ISE_expand_isengard_logistics }
@@ -2126,7 +2137,7 @@ focus_tree = {
 			add_tech_bonus = {
 				name = construction_tech_bonus
 				bonus = 0.5
-				uses = 1
+				uses = 2
 				category = lotr_labour_construction
 			}
 		}
@@ -2141,10 +2152,12 @@ focus_tree = {
 		relative_position_id = ISE_enhance_civilian_production
 		prerequisite = { focus = ISE_enhance_civilian_production }
 		available = { 31 = { is_controlled_by = ISE } }
-		cost = 10
+		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			custom_effect_tooltip = "Will unlock advisor that gives bonuses to consumer goods, food (and construction?)"
+			add_political_power = 100
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = ISE_aldric_stone_warden
 		}
 	}
 
@@ -2152,10 +2165,10 @@ focus_tree = {
 		id = ISE_roads_and_cars
 		icon = GFX_goal_generic_infrastructure_investment
 		ai_will_do = { factor = 3 }
-		x = -2
+		x = 0
 		y = 1
-		relative_position_id = ISE_fires_of_isengard
-		prerequisite = { focus = ISE_fires_of_isengard }
+		relative_position_id = ISE_expand_isengard_logistics
+		prerequisite = { focus = ISE_expand_isengard_logistics }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -2183,7 +2196,7 @@ focus_tree = {
 		ai_will_do = { factor = 5 }
 		mutually_exclusive = { focus = ISE_burn_the_fangorn_forest }
 		relative_position_id = ISE_expand_isengard_logistics
-		x = 6
+		x = 8
 		y = 1
 		cost = 5
 		available_if_capitulated = yes
@@ -2406,14 +2419,15 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
+			add_political_power = 100
 			every_neighbor_country = {
 				add_popularity = {
 					ideology = cooperative
 					popularity = 0.05
 				}
 			}
-			add_stability = 0.1
-			add_political_power = 100
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = ISE_fridmund_isen_kin
 		}
 	}
 
@@ -2597,6 +2611,7 @@ focus_tree = {
 			ROH = { country_event = { id = isengard.19 } }
 			custom_effect_tooltip = GENERIC_custom_tooltip_if_they_accept
 			event_option_tooltip = isengard.19.a
+			custom_effect_tooltip = ISE_tooltip_spirit_will_be_removed_on_war_end
 		}
 	}
 
@@ -2631,6 +2646,7 @@ focus_tree = {
 			GON = { country_event = { id = isengard.19 } }
 			custom_effect_tooltip = GENERIC_custom_tooltip_if_they_accept
 			event_option_tooltip = isengard.19.a
+			custom_effect_tooltip = ISE_tooltip_spirit_will_be_removed_on_war_end
 		}
 	}
 
@@ -2923,6 +2939,23 @@ focus_tree = {
 	}
 
 	focus = {
+		id = ISE_united_against_evil
+		icon = GFX_goal_lth_burdens_of_leadership
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_fighting_against_evil
+		x = 4
+		y = 1
+		prerequisite = { focus = ISE_fighting_against_evil }
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			create_faction = ISE_faction_free_people_of_middle_earth
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = ISE_fridmund_isen_kin
+		}
+	}
+
+	focus = {
 		id = ISE_improve_relations_with_human_nations
 		icon = GFX_goal_goal_generic_improve_relations
 		ai_will_do = { factor = 100 }
@@ -2933,6 +2966,7 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
+			add_political_power = 100
 			every_other_country = {
 				limit = {
 					OR = {
@@ -3057,6 +3091,7 @@ focus_tree = {
 		ai_will_do = { base = 60 }
 		available = {
 			ROH = {
+				OR = { has_government = belligerent has_government = revolutionary }
 				has_added_tension_amount > 10
 			}
 		}
