@@ -98,21 +98,89 @@ ISE_infiltrating_DUN_ENE = {
 ISE_palantir_decisions = {
     ISE_fight_against_sauron_influence = {
         icon = GFX_decision_generic_civil_support
-		cost = 100
+		cost = 75
         fixed_random_seed = no
 		days_remove = 50
+        available = {
+            OR = {
+                has_idea = ISE_palantir_1
+                has_idea = ISE_palantir_2
+                has_idea = ISE_palantir_3
+            }
+        }
+        visible = {
+            OR = {
+                has_idea = ISE_palantir_0
+                has_idea = ISE_palantir_1
+                has_idea = ISE_palantir_2
+                has_idea = ISE_palantir_3
+            }
+        }
 		remove_effect = {
-            palantir_decrease = yes
+            random_list = {
+                50 = {
+                    add_popularity = { ideology = belligerent popularity = -0.05 }
+                    palantir_decrease = yes
+                }
+                25 = {
+                    palantir_decrease = yes
+                    add_stability = -0.05
+                }
+                25 = {
+                    add_stability = -0.05
+                }
+            }
 		}
 		ai_will_do = {
 			factor = 100
 		}
     }
+    #Only with DLC
     ISE_use_the_palantir = {
         icon = GFX_decision_generic_civil_support
 		cost = 75
         fixed_random_seed = no
-		days_remove = 50
+		days_remove = 100
+        visible = {
+            OR = {
+                is_debug = yes
+                has_dlc = "La Resistance"
+                has_normal_palantir_state = yes
+            }
+        }
+        modifier = {
+            intel_network_gain_factor = 0.15
+            decryption_factor = 0.5
+            recon_factor = 0.1
+            army_intel_factor = 0.1
+            coordination_bonus = 0.1
+            recon_factor_while_entrenched = 0.15
+        }
+		remove_effect = {
+            palantir_increase = yes
+		}
+		ai_will_do = {
+			factor = 100
+		}
+    }
+    ISE_use_the_palantir_without_dlc = {
+        icon = GFX_decision_generic_civil_support
+		cost = 75
+        fixed_random_seed = no
+		days_remove = 100
+        visible = {
+            OR = {
+                is_debug = yes
+                NOT = { has_dlc = "La Resistance" }
+                has_normal_palantir_state = yes
+            }
+        }
+        modifier = {
+            decryption_factor = 0.5
+            recon_factor = 0.1
+            coordination_bonus = 0.1
+            recon_factor_while_entrenched = 0.15
+        }
 		remove_effect = {
             palantir_increase = yes
 		}
@@ -127,6 +195,7 @@ ISE_palantir_decisions = {
 		days_remove = 25
         available = {
             has_government = belligerent
+            has_normal_palantir_state = yes
         }
 		remove_effect = {
             palantir_give_in = yes
