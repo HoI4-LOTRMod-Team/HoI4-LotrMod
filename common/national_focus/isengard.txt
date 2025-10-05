@@ -1614,11 +1614,11 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			army_experience = 5
-			add_tech_bonus = {
-				name = special_bonus
+			add_doctrine_cost_reduction = {
+				name = land_doc_bonus
+				cost_reduction = 0.5
+				uses = 2
 				category = cat_superior_firepower
-				bonus = 0.75
-				uses = 1
 			}
 		}
 	}
@@ -1657,11 +1657,11 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			army_experience = 5
-			add_tech_bonus = {
-				name = special_bonus
+			add_doctrine_cost_reduction = {
+				name = land_doc_bonus
+				cost_reduction = 0.5
+				uses = 2
 				category = cat_mobile_warfare
-				bonus = 0.75
-				uses = 1
 			}
 		}
 	}
@@ -1687,7 +1687,7 @@ focus_tree = {
 		ai_will_do = { factor = 5 }
 		prerequisite = { focus = ISE_hash_training focus = ISE_expand_isengard_logistics }
 		relative_position_id = ISE_hash_training
-		x = 10
+		x = 11
 		y = 1
 		cost = 10
 		available_if_capitulated = yes
@@ -1743,22 +1743,78 @@ focus_tree = {
 	}
 
 	focus = {
+		id = ISE_siege_equipment
+		icon = GFX_goal_generic_siege_equipment
+		ai_will_do = { factor = 5 }
+		prerequisite = { focus = ISE_hash_training }
+		available = {
+			OR = {
+				has_government = belligerent
+				has_government = cooperative
+			}
+		}
+		relative_position_id = ISE_hash_training
+		x = 9
+		y = 1
+		cost = 5
+		available_if_capitulated = no
+		completion_reward = { 
+			army_experience = 5
+			if = {
+				limit = { has_government = belligerent }
+				add_tech_bonus = {
+					bonus = 0.75
+					uses = 1
+					name = "Weapons Bonus"
+					category = lotr_machines_siege_equipment
+				}
+				add_tech_bonus = {
+					bonus = 0.5
+					uses = 1
+					name = "Weapons Bonus"
+					category = lotr_orcs_secrets_grond
+				}
+			} else_if = {
+				limit = { has_government = cooperative }
+				add_tech_bonus = {
+					bonus = 0.5
+					uses = 1
+					name = "Weapons Bonus"
+					category = lotr_machines_siege_equipment
+				}
+				add_tech_bonus = {
+					bonus = 0.75
+					uses = 1
+					name = "Weapons Bonus"
+					category = lotr_machines_siege_equipment
+				}
+			}
+		}
+	}
+
+	focus = {
 		id = ISE_military_research_committee
 		icon = GFX_goal_tfv_generic_tech_sharing
 		ai_will_do = { factor = 5 }
 		prerequisite = { focus = ISE_hash_training }
 		relative_position_id = ISE_hash_training
-		x = 8
+		x = 7
 		y = 1
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = { 
-			army_experience = 15
+			army_experience = 5
 			add_tech_bonus = {
 				bonus = 0.5
 				uses = 2
 				name = "Weapons Bonus"
 				category = lotr_infantry
+			}
+			add_tech_bonus = {
+				bonus = 0.5
+				uses = 2
+				name = "Weapons Bonus"
+				category = lotr_infantry_supportweapons
 			}
 		}
 	}
@@ -1769,7 +1825,10 @@ focus_tree = {
 		ai_will_do = { factor = 5 }
 		prerequisite = { focus = ISE_military_research_committee }
 		relative_position_id = ISE_military_research_committee
-		x = 0
+		available = {
+			NOT = { has_war_with = ROH }
+		}
+		x = 1
 		y = 1
 		cost = 10
 		available_if_capitulated = no
@@ -1786,15 +1845,15 @@ focus_tree = {
 		id = ISE_army_research_investment
 		icon = GFX_goal_ROH_military_vigilance_soldier_shield
 		ai_will_do = { factor = 5 }
-		prerequisite = { focus = ISE_hash_training }
-		relative_position_id = ISE_hash_training
-		x = 6
+		prerequisite = { focus = ISE_military_research_committee }
+		relative_position_id = ISE_military_research_committee
+		x = -1
 		y = 1
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = { 
 			army_experience = 10
-			add_political_power = 75
+			add_political_power = 50
 			custom_effect_tooltip = available_political_advisor
 			show_ideas_tooltip = ISE_sunlind_of_aldburg
 		}
@@ -1852,7 +1911,7 @@ focus_tree = {
 		ai_will_do = { factor = 1 }
 		prerequisite = { focus = ISE_improved_combat_tactics focus = ISE_rohan_collaboration }
 		relative_position_id = ISE_improved_combat_tactics
-		x = 1
+		x = 2
 		y = 1
 		cost = 5
 		available_if_capitulated = yes
@@ -2252,6 +2311,31 @@ focus_tree = {
 			show_ideas_tooltip = ISE_aldric_stone_warden
 		}
 	}
+
+	focus = {
+		id = ISE_farmers_of_orthanc
+		icon = GFX_goal_lth_food_resource_storage
+		ai_will_do = { factor = 3 }
+		x = 1
+		y = 1
+		relative_position_id = ISE_enhance_civilian_production_2
+		prerequisite = { focus = ISE_enhance_civilian_production_2 }
+		available = { 31 = { is_controlled_by = ISE } }
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			add_building_slot_and_civ = yes
+			31 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = { type = synthetic_refinery level = 2 instant_build = yes }
+				add_resource = {
+					type = oil
+					amount = 15
+				}
+			}
+		}
+	}
+
 
 	focus = {
 		id = ISE_roads_and_cars
