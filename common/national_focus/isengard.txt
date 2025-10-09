@@ -1012,34 +1012,62 @@ focus_tree = {
 		id = ISE_influence_neighbours_political
 		icon = GFX_goal_generic_unknown
 		available = {
-			has_government = cooperative
+			OR = {
+				has_government = cooperative
+				has_government = belligerent
+			}
 		}
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_increase_relations
 		x = 2
 		y = 1
-		prerequisite = { focus = ISE_increase_relations}
+		prerequisite = { focus = ISE_increase_relations focus = ISE_increase_influence  }
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
 			if = {
 				limit = { has_dlc = "La Resistance" }
 				upgrade_intelligence_agency = upgrade_psycho_warfare
-				every_neighbor_country = {
-					add_popularity = {
-						ideology = cooperative
-						popularity = 0.025
+				if = {
+					limit = { has_government = cooperative }
+					every_neighbor_country = {
+						add_popularity = {
+							ideology = cooperative
+							popularity = 0.025
+						}
 					}
+					add_opinion_modifier = { target = FROM modifier = small_increase }
+				}else_if = {
+					limit = { has_government = belligerent }
+					every_neighbor_country = {
+						add_popularity = {
+							ideology = belligerent
+							popularity = 0.025
+						}
+					}
+					add_opinion_modifier = { target = FROM modifier = small_increase }
 				}
 			} else = {
-				every_neighbor_country = {
-					add_popularity = {
-						ideology = cooperative
-						popularity = 0.05
+				if = {
+					limit = { has_government = cooperative }
+					every_neighbor_country = {
+						add_popularity = {
+							ideology = cooperative
+							popularity = 0.05
+						}
 					}
+					add_opinion_modifier = { target = FROM modifier = small_increase }
+				} else_if = {
+					limit = { has_government = belligerent }
+					every_neighbor_country = {
+						add_popularity = {
+							ideology = belligerent
+							popularity = 0.05
+						}
+					}
+					add_opinion_modifier = { target = FROM modifier = small_increase }
 				}
 			}
-			add_opinion_modifier = { target = FROM modifier = small_increase }
 		}
 	}
 
@@ -2037,7 +2065,7 @@ focus_tree = {
 		x = 45
 		y = 0
 		offset = {
-			x = -9
+			x = -7
 			y = 0
 			trigger = {
 				has_game_rule = {
