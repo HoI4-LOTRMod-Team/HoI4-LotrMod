@@ -402,19 +402,38 @@ country_event = {
 
 	is_triggered_only = yes
 
+	# Accept
 	option = {
 		name = isengard.8.a
-		MOR = {
-			add_to_faction = ISE
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 25
+				has_government = belligerent
+			}
+			modifier = {
+				add = 15
+				has_non_aggression_pact_with = MOR
+			}
+			modifier = {
+				add = -999
+				has_completed_focus = ISE_betray_sauron
+			}
 		}
+		MOR = { add_to_faction = ISE }
 	}
-
+	#Decline
 	option = {
 		name = isengard.8.b
+		ai_chance = {
+			base = 50
+		}
+		add_opinion_modifier = { target = MOR modifier = small_decrease }
+		MOR = { add_opinion_modifier = { target = ISE modifier = small_decrease } }
 	}
 }
 
-#Mordor invites Isengard to attack Gondor together
+#Mordor innacts plan to attack Gondor together
 country_event = {
 	id = isengard.9
 	title = isengard.9.t
@@ -427,24 +446,20 @@ country_event = {
 		name = isengard.9.a
 		ai_chance = {
 			base = 50
+			modifier = {
+				add = -10
+				has_war = yes
+			}
 		}
+		add_war_support = 0.05
 		declare_war_on = { target = GON    type = annex_everything }
-		MOR = {
-			declare_war_on = { target = GON    type = annex_everything }
-		}
 	}
 
 	option = {
 		name = isengard.9.b
-		ai_chance = {
-			base = 50
-		}
-		add_political_power = -50
-		MOR = {
-			create_wargoal = {
-				type = annex_everything target = GON
-			}
-		}
+		ai_chance = { base = 5 }
+		add_stability = -0.05
+		MOR = { add_opinion_modifier = { target = ISE modifier = large_decrease } }
 	}
 }
 
@@ -773,7 +788,6 @@ country_event = {
 	}
 }
 
-
 # Isengard investing efforts
 country_event = {
 	id = isengard.22
@@ -788,5 +802,70 @@ country_event = {
 		add_popularity = { ideology = cooperative popularity = 0.075 }
 		add_timed_idea = { days = 150 idea = ISE_isengard_investments }
 		add_opinion_modifier = { target = ISE modifier = small_increase }
+	}
+}
+
+# Suggest declaring war on Gondor
+country_event = {
+	id = isengard.23
+	title = isengard.23.t
+	desc = isengard.23.d
+	picture = GFX_report_event_paper
+	is_triggered_only = yes
+
+	#Accept
+	option = {
+		name = isengard.23.a
+		ai_chance = {
+			base = 50
+		}
+		set_country_flag = ISE_accepted_joined_war_against_gondor
+	}
+	#Decline
+	option = {
+		name = isengard.23.b
+		ai_chance = {
+			base = 50
+		}
+		add_opinion_modifier = { target = MOR modifier = small_decrease }
+		MOR = { add_opinion_modifier = { target = ISE modifier = small_decrease } }
+	}
+}
+
+# Mordor suggest non-aggresion pact
+country_event = {
+	id = isengard.24
+	title = isengard.24.t
+	desc = isengard.24.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.24.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 25
+				ISE = { has_government = belligerent }
+			}
+			modifier = {
+				add = -999
+				ISE = { has_government = cooperative }
+			}
+		}
+		diplomatic_relation = {
+			country = MOR
+			relation = non_aggression_pact
+		}
+		MOR = { country_event = { id = mordor.69 } }
+	}
+
+	option = {
+		name = isengard.24.b
+		ai_chance = {
+			base = 25
+		}
+		add_opinion_modifier = { target = MOR modifier = small_decrease }
 	}
 }

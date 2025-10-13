@@ -2130,7 +2130,7 @@ focus_tree = {
 		icon = GFX_goal_goal_generic_occypy_states_ongoing_war
 		ai_will_do = { factor = 5 }
 		available = {
-			threat > 0.3
+			threat > 0.2
 		}
 		prerequisite = { focus = ISE_burn_the_fangorn_forest }
 		relative_position_id = ISE_burn_the_fangorn_forest
@@ -2164,7 +2164,7 @@ focus_tree = {
 	}
 
 	focus = {
-		id = ISE_coring_remaing_forest
+		id = ISE_intergrating_remaing_forest
 		icon = GFX_goal_gon_ithilien_defensive_planning
 		ai_will_do = { factor = 5 }
 		available = {
@@ -2178,7 +2178,7 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			add_state_core = 29
-			add_stability = 0.1
+			add_stability = 0.05 
 			add_resource = { type = chromium amount = 12 state = 29 }
 		}
 	}
@@ -2225,6 +2225,37 @@ focus_tree = {
 		}
 	}
 	
+	focus = {
+		id = ISE_expand_resources
+		icon = GFX_goal_generic_anvil
+		ai_will_do = { factor = 4 }
+		x = -1
+		y = 1
+		relative_position_id = ISE_fires_of_isengard
+		prerequisite = { focus = ISE_fires_of_isengard }
+		available = { 31 = { is_controlled_by = ISE } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			158 = {
+				add_resource = {
+					type = rubber
+					amount = 4
+				}
+				add_resource = {
+					type = tungsten
+					amount = 3
+				}
+			}
+			159 = {
+				add_resource = {
+					type = tungsten
+					amount = 3
+				}
+			}
+		}
+	}
+
 	focus = {
 		id = ISE_leave_nature_alone
 		icon = GFX_goal_generic_nature_trees
@@ -2427,12 +2458,14 @@ focus_tree = {
 					target = ISE
 					modifier = isengard_entwood_relation_improvement
 				}
+				add_political_power = 50
 			}
 			add_opinion_modifier = { target = ENT modifier = medium_increase } 
 			add_relation_modifier = {
     			target = ENT
     			modifier = isengard_entwood_relation_improvement
 			}
+			add_political_power = 50
 		}
 	}
 
@@ -2449,9 +2482,6 @@ focus_tree = {
 		completion_reward = {
 			ENT = { country_event = { id = entwood.10 }}
 			custom_effect_tooltip = GENERIC_custom_tooltip_if_they_accept
-			ISE = {
-				event_option_tooltip = isengard.15.a
-			}
 			ENT = {
 				event_option_tooltip = entwood.10.a
 			}
@@ -2483,7 +2513,7 @@ focus_tree = {
 		mutually_exclusive = { focus = ISE_protecting_nature }
 		x = -1
 		y = 1
-		cost = 10
+		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
 			if = {
@@ -2492,7 +2522,7 @@ focus_tree = {
 				}
 				create_faction = "Protective alliance of Nature"
 			}
-			custom_effect_tooltip = "Creating a faction/Inviting to faction with Entwood"
+			ENT = { country_event = { id = entwood.11 } }
 		}
 	}
 
@@ -2502,6 +2532,8 @@ focus_tree = {
 		ai_will_do = { factor = 5 }
 		available = {
 			has_completed_focus = ISE_supporting_role
+			NOT = { has_war_with = ENT }
+			ENT = { exists = yes }
 		}
 		relative_position_id = ISE_expand_the_relations
 		prerequisite = { focus = ISE_expand_the_relations }
@@ -2512,7 +2544,7 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			add_ideas = ISE_defending_nature
-			custom_effect_tooltip = "Add note in description when spirit would be removed"
+			custom_effect_tooltip = ISE_tooltip_will_be_removed_when_war_with_ent
 		}
 	}
 

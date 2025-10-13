@@ -2059,7 +2059,7 @@ focus = {
 	y = 1
 	relative_position_id = conquestofmiddleearth
 	prerequisite = { focus = conquestofmiddleearth}
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_RESEARCH FOCUS_FILTER_ARMY_XP }
 	completion_reward = {
@@ -2194,10 +2194,30 @@ focus = {
 	}
 }
 
-#Invite Isengard
+focus = {
+	id = MOR_suggest_non_agression_pact
+	icon = GFX_goal_isengard_deal
+	ai_will_do = {
+		base = 75
+	}
+	x = 0
+	y = 1
+	relative_position_id = reach_out_to_isengard
+	bypass = { ISE = { is_in_faction_with = MOR } }
+	mutually_exclusive = { focus = demand_submission_isengard }
+	prerequisite = { focus = reach_out_to_isengard }
+	cost = 5
+	available = { NOT = { has_war_with = ISE } }
+	completion_reward  = {
+		ISE = { country_event = { id = isengard.24 } }
+		custom_effect_tooltip = GENERIC_custom_tooltip_if_they_accept
+		event_option_tooltip = isengard.24.a
+	}
+}
+
 focus = {
 	id = invite_isengard_to_faction
-	icon = GFX_goal_army_uruk_hai
+	icon = GFX_goal_isengard_deal
 	ai_will_do = {
 		factor = 5
 		modifier = {
@@ -2216,38 +2236,30 @@ focus = {
 	}
 	x = 0
 	y = 1
-	relative_position_id = reach_out_to_isengard
-	available = {
-		ISE = {
-			has_government = belligerent
-		}
-	}
-	bypass = {
-		ISE = {
-			is_in_faction_with = MOR
-		}
-	}
+	relative_position_id = MOR_suggest_non_agression_pact
+	available = { ISE = { has_government = belligerent } NOT = { has_war_with = ISE } }
+	bypass = { ISE = { is_in_faction_with = MOR } }
 	mutually_exclusive = { focus = demand_submission_isengard }
-	prerequisite = { focus = reach_out_to_isengard }
+	prerequisite = { focus = MOR_suggest_non_agression_pact }
 	cost = 5
 	completion_reward  = {
-		ISE = {
-			country_event = { id = isengard.8 }
-		}
+		ISE = { country_event = { id = isengard.8 } }
 	}
 }
 
 focus = {
-	id = suggest_war_with_gondor
-	icon = GFX_goal_generic_military_deal
+	id = MOR_suggest_war_with_gondor
+	icon = GFX_goal_goal_generic_dangerous_deal
+	cost = 5
 	ai_will_do = {
 		factor = 3
 	}
 	x = 0
-	y = 4
+	y = 2
 	relative_position_id = invite_isengard_to_faction
+	prerequisite = { focus = invite_isengard_to_faction }
 	available = {
-		threat > 0.2
+		num_divisions > 40
 		OR = {
 			MOR = {
 				any_neighbor_country  = {
@@ -2281,22 +2293,42 @@ focus = {
 			}
 		}
 		GON = {
+			exists = yes
 			NOT = {
 				is_in_faction_with = MOR
 				has_government = belligerent
-				exists = no
 			}
 		}
 	}
+	completion_reward = {
+		ISE = { country_event = { id = isengard.23 } }
+	}
+}
+
+focus = {
+	id = MOR_together_against_gondor
+	icon = GFX_goal_mor_wargoal_gondor
+	ai_will_do = {
+		factor = 3
+	}
+	x = 0
+	y = 1
+	relative_position_id = MOR_suggest_war_with_gondor
 	will_lead_to_war_with = GON
 	mutually_exclusive = { focus = war_with_gondor }
-	prerequisite = { focus = invite_isengard_to_faction }
+	prerequisite = { focus = MOR_suggest_war_with_gondor }
+	available = { 
+		ISE = { 
+			has_country_flag = ISE_accepted_joined_war_against_gondor 
+			NOT = { has_war_with = MOR } 
+		} 
+		NOT = { has_war_with = GON }
+	}
 	cost = 10
 	search_filters = { FOCUS_FILTER_ANNEXATION }
 	completion_reward  = {
-		ISE = {
-			country_event = { id = isengard.9 }
-		}
+		ISE = { country_event = { id = isengard.9 } }
+		declare_war_on = { target = GON    type = annex_everything }
 		custom_effect_tooltip = MOR_will_lead_to_war_if_accepted
 	}
 }
@@ -2342,7 +2374,7 @@ focus = {
 		}
 	}
 	prerequisite = { focus = reachouttoangmar}
-	cost = 10
+	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
 		ANG = {
@@ -2353,7 +2385,6 @@ focus = {
 	}
 }
 
-#Anti-elves pact
 focus = {
 	id = MOR_anti_elves_pact_invite
 	icon = GFX_goal_riv_elrond_ring_vilya
@@ -2365,7 +2396,7 @@ focus = {
 		is_in_faction = yes
 		has_government = belligerent
 	}
-	prerequisite = { focus = invite_angmar_to_faction focus = invite_isengard_to_faction}
+	prerequisite = { focus = invite_angmar_to_faction focus = MOR_suggest_non_agression_pact}
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = {
@@ -3486,7 +3517,7 @@ focus = {
 	y = 2
 	relative_position_id = MOR_invite_erebor
 	prerequisite = { focus = MOR_invite_erebor }
-	cost = 10
+	cost = 5
 	ai_will_do = {
 		base = 25
 	}
@@ -3647,7 +3678,7 @@ focus = {
 		controls_state = 22
 		controls_state = 21
 	}
-	prerequisite = { focus = war_with_gondor focus = suggest_war_with_gondor }
+	prerequisite = { focus = war_with_gondor focus = MOR_together_against_gondor }
 	cost = 10
 	completion_reward = {
 		add_state_core = 22
