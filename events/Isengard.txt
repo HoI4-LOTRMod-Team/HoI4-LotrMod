@@ -933,3 +933,66 @@ country_event = {
 		}
 	}
 }
+
+# Gondor invites Isengard to faction
+country_event = {
+	id = isengard.26
+	title = isengard.26.t
+	desc = isengard.26.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# Accept
+	option = {
+		name = isengard.26.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 5
+				has_non_aggression_pact_with = MOR
+			}
+			modifier = {
+				add = 5
+				OR = {
+					has_war_with = GON
+					has_war_with = ROH
+				}
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value > 75
+				}
+			}
+			modifier = {
+				add = -999
+				has_completed_focus = ISE_betray_sauron
+			}
+		}
+		MOR = { 
+			add_to_faction = ISE 
+			country_event = { id =  mordor.69 } 
+		}
+	}
+	#Decline
+	option = {
+		name = isengard.26.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value < 25
+				}
+			}
+		}
+		add_opinion_modifier = { target = MOR modifier = small_decrease }
+		MOR = { 
+			add_opinion_modifier = { target = ISE modifier = small_decrease } 
+			country_event = { id = mordor.70 }
+		}
+	}
+}
