@@ -406,30 +406,53 @@ country_event = {
 	option = {
 		name = isengard.8.a
 		ai_chance = {
-			base = 50
+			base = 25
 			modifier = {
-				add = 25
-				has_government = belligerent
+				add = 5
+				has_non_aggression_pact_with = MOR
 			}
 			modifier = {
-				add = 15
-				has_non_aggression_pact_with = MOR
+				add = 5
+				OR = {
+					has_war_with = GON
+					has_war_with = ROH
+				}
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value > 75
+				}
 			}
 			modifier = {
 				add = -999
 				has_completed_focus = ISE_betray_sauron
 			}
 		}
-		MOR = { add_to_faction = ISE }
+		MOR = { 
+			add_to_faction = ISE 
+			country_event = { id =  mordor.69 } 
+		}
 	}
 	#Decline
 	option = {
 		name = isengard.8.b
 		ai_chance = {
 			base = 50
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value < 25
+				}
+			}
 		}
 		add_opinion_modifier = { target = MOR modifier = small_decrease }
-		MOR = { add_opinion_modifier = { target = ISE modifier = small_decrease } }
+		MOR = { 
+			add_opinion_modifier = { target = ISE modifier = small_decrease } 
+			country_event = { id = mordor.70 }
+		}
 	}
 }
 
@@ -458,8 +481,13 @@ country_event = {
 	option = {
 		name = isengard.9.b
 		ai_chance = { base = 5 }
-		add_stability = -0.05
-		MOR = { add_opinion_modifier = { target = ISE modifier = large_decrease } }
+		add_stability = -0.075
+		add_political_power = -100
+		complete_national_focus = ISE_betray_sauron
+		MOR = { 
+			add_opinion_modifier = { target = ISE modifier = large_decrease }
+			country_event = { id = mordor.73 }
+		}
 	}
 }
 
@@ -818,17 +846,31 @@ country_event = {
 		name = isengard.23.a
 		ai_chance = {
 			base = 50
+			modifier = {
+				add = 5
+				has_opinion = { target = MOR value > 75 }
+			}
+			modifier = {
+				add = 5
+				GON = { has_completed_focus = GON_honor_isildurs_legacy }
+			}
 		}
 		set_country_flag = ISE_accepted_joined_war_against_gondor
+		MOR = { 
+			country_event = { id = mordor.71 } 
+			add_opinion_modifier = { target = ISE modifier = small_increase } 
+		}
 	}
 	#Decline
 	option = {
 		name = isengard.23.b
 		ai_chance = {
-			base = 50
+			base = 25
 		}
-		add_opinion_modifier = { target = MOR modifier = small_decrease }
-		MOR = { add_opinion_modifier = { target = ISE modifier = small_decrease } }
+		MOR = { 
+			add_opinion_modifier = { target = ISE modifier = small_decrease } 
+			country_event = { id = mordor.72 }
+		}
 	}
 }
 
@@ -866,6 +908,28 @@ country_event = {
 		ai_chance = {
 			base = 25
 		}
-		add_opinion_modifier = { target = MOR modifier = small_decrease }
+		MOR = { 
+			country_event = { id = mordor.70 } 
+			add_opinion_modifier = { target = ISE modifier = small_decrease }
+		}
+	}
+}
+
+# Mordor fucks with the Palantir
+country_event = {
+	id = isengard.25
+	title = isengard.25.t
+	desc = isengard.25.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.25.a
+		ai_chance = { base = 50 }
+		ISE = { 
+			palantir_increase = yes 
+			add_opinion_modifier = { target = MOR modifier = small_increase }
+		}
 	}
 }

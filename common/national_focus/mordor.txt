@@ -2114,7 +2114,6 @@ focus = {
 	}
 }
 
-#Take over Isengard
 focus = {
 	id = demand_submission_isengard
 	icon = GFX_goal_generic_forceful_treaty
@@ -2155,9 +2154,7 @@ focus = {
 				country_event = { id = isengard.10 }
 			}
 		}else = {
-			create_wargoal = {
-				type = annex_everything target = ISE
-			}
+			create_wargoal = { type = annex_everything target = ISE }
 		}
 	}
 }
@@ -2210,8 +2207,27 @@ focus = {
 	available = { NOT = { has_war_with = ISE } }
 	completion_reward  = {
 		ISE = { country_event = { id = isengard.24 } }
-		custom_effect_tooltip = GENERIC_custom_tooltip_if_they_accept
-		event_option_tooltip = isengard.24.a
+	}
+}
+
+focus = {
+	id = MOR_increase_influence
+	icon = GFX_goal_sauron_eye
+	ai_will_do = {
+		factor = 5
+	}
+	x = 0
+	y = 1
+	relative_position_id = MOR_suggest_non_agression_pact
+	available = { ISE = { has_government = belligerent } NOT = { has_war_with = ISE } }
+	bypass = { ISE = { is_in_faction_with = MOR } }
+	mutually_exclusive = { focus = demand_submission_isengard }
+	prerequisite = { focus = MOR_suggest_non_agression_pact }
+	cost = 5
+	completion_reward  = {
+		ISE = { country_event = { id = isengard.25 } }
+		custom_effect_tooltip = GENERIC_custom_tooltip_this_will_have_the_following_effect
+		event_option_tooltip = isengard.25.a
 	}
 }
 
@@ -2234,13 +2250,12 @@ focus = {
 			surrender_progress > 0
 		}
 	}
-	x = 0
+	x = 2
 	y = 1
-	relative_position_id = MOR_suggest_non_agression_pact
+	relative_position_id = MOR_increase_influence
 	available = { ISE = { has_government = belligerent } NOT = { has_war_with = ISE } }
 	bypass = { ISE = { is_in_faction_with = MOR } }
-	mutually_exclusive = { focus = demand_submission_isengard }
-	prerequisite = { focus = MOR_suggest_non_agression_pact }
+	prerequisite = { focus = MOR_increase_influence }
 	cost = 5
 	completion_reward  = {
 		ISE = { country_event = { id = isengard.8 } }
@@ -2253,13 +2268,16 @@ focus = {
 	cost = 5
 	ai_will_do = {
 		factor = 3
+		modifier = {
+			add = -999
+			ISE = { has_war_with = GON }
+		}
 	}
 	x = 0
-	y = 2
-	relative_position_id = invite_isengard_to_faction
-	prerequisite = { focus = invite_isengard_to_faction }
+	y = 1
+	relative_position_id = MOR_increase_influence
+	prerequisite = { focus = MOR_increase_influence }
 	available = {
-		num_divisions > 40
 		OR = {
 			MOR = {
 				any_neighbor_country  = {
@@ -2274,23 +2292,25 @@ focus = {
 				}
 			}
 		}
+		OR = {
+			ISE = {
+				any_neighbor_country  = {
+					tag = GON
+				}
+			}
+			ISE = {
+				any_subject_country  = {
+					any_neighbor_country  = {
+						tag = GON
+					}
+				}
+			}
+		}
+		num_divisions > 40
 		ISE = {
 			has_government = belligerent
 			is_in_faction_with = MOR
-		}
-		OR = {
-			ISE = {
-				any_neighbor_country  = {
-					tag = GON
-				}
-			}
-			ISE = {
-				any_subject_country  = {
-					any_neighbor_country  = {
-						tag = GON
-					}
-				}
-			}
+			NOT = { has_completed_focus = ISE_betray_sauron }
 		}
 		GON = {
 			exists = yes
@@ -2310,9 +2330,13 @@ focus = {
 	icon = GFX_goal_mor_wargoal_gondor
 	ai_will_do = {
 		factor = 3
+		modifier = {
+			add = -999
+			ISE = { has_war_with = GON }
+		}
 	}
 	x = 0
-	y = 1
+	y = 2
 	relative_position_id = MOR_suggest_war_with_gondor
 	will_lead_to_war_with = GON
 	mutually_exclusive = { focus = war_with_gondor }
