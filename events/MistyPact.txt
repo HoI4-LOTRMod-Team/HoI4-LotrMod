@@ -16,6 +16,7 @@ country_event = {
 
 	option = { # Okay
 		name = misty_pact.1.a
+		add_opinion_modifier = { target = FROM modifier = small_increase }
 	}
 }
 
@@ -30,6 +31,7 @@ country_event = {
 
 	option = { # Okay
 		name = misty_pact.2.a
+		add_opinion_modifier = { target = FROM modifier = small_decrease }
 	}
 }
 
@@ -68,18 +70,19 @@ country_event = {
 		}
 		add_opinion_modifier = { target = FROM modifier = small_increase }
 		add_political_power = 50
-		add_popularity = {
-			ideology = cooperative
-			popularity = 0.025
-		}
-		FROM = {
-			country_event = { id = misty_pact.1 }
-		}
-		set_country_flag = MISTY_PACT
-		hidden_effect = {
-			ISE = {
-				add_to_variable = { misty_pact_members = 1 }
+		FROM = { country_event = { id = misty_pact.1 } }
+		if = { 
+			limit = { FROM = { has_government = cooperative } }
+			add_popularity = {
+				ideology = cooperative
+				popularity = 0.025
 			}
+		}
+		hidden_effect = {
+			set_country_flag = MISTY_PACT
+			ISE = { add_to_variable = { misty_pact_members = 1 } }
+			ISE = { add_to_variable = { misty_pact_bonus_effect = 0.02 } }
+			ISE = { add_to_variable = { misty_pact_bonus_effect_text = 2 } }
 		}
 	}
 
@@ -100,9 +103,7 @@ country_event = {
 			}
 		}
 		add_opinion_modifier = { target = FROM modifier = small_decrease }
-		FROM = {
-			country_event = { id = misty_pact.2 }
-		}
+		FROM = { country_event = { id = misty_pact.2 } }
 	}
 }
 
@@ -119,7 +120,7 @@ country_event = {
 		name = misty_pact.4.a
 		add_opinion_modifier = { target = FROM modifier = small_increase }
 		add_political_power = 50
-		add_ideas = ISE_Misty_Mountain_Collaboration_0
+		add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses }
 	}
 }
 
@@ -198,9 +199,81 @@ country_event = {
 
 	option = { #yes
 		name = misty_pact.6.a
-		swap_ideas = {
-			remove_idea = ISE_Misty_Mountain_Collaboration_0
-			add_idea = ISE_Misty_Mountain_Collaboration_1
-		}
+		remove_dynamic_modifier = { modifier = misty_mountain_pact_bonuses }
+		add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses_militair_expansion }
 	}
 }
+
+# Invite for more members for the Musty Mountain Pact
+country_event = {
+	id = misty_pact.7
+	title = misty_pact.7.t
+	desc = misty_pact.7.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = misty_pact.7.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = -10
+				is_puppet = yes
+				NOT = { is_puppet_of = FROM }
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
+			modifier = {
+				add = 10
+				has_non_aggression_pact_with = FROM
+			}
+			modifier = {
+				factor = -999
+				has_war_with = FROM
+			}
+		}
+		add_opinion_modifier = { target = FROM modifier = small_increase }
+		FROM = { country_event = { id = misty_pact.1 } }
+		if = {
+			limit = {
+				FROM = { has_government = cooperative }
+			}
+			add_popularity = {
+				ideology = cooperative
+				popularity = 0.025
+			}
+		}
+		hidden_effect = {
+			set_country_flag = MISTY_PACT
+			ISE = { add_to_variable = { misty_pact_members = 1 } }
+		}
+	}
+
+	option = { #no
+		name = misty_pact.7.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+			modifier = {
+				add = 5
+				has_government = revolutionary
+				FROM = { has_government = cooperative }
+			}
+		}
+		add_opinion_modifier = { target = FROM modifier = small_decrease }
+		FROM = { country_event = { id = misty_pact.2 } }
+	}
+}
+
