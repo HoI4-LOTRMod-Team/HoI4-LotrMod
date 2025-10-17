@@ -36,6 +36,10 @@ class PObj:
 
     level = 0
 
+    # Is the value of this obj a list or a single string?
+    def ValueIsList(self) -> bool:
+        return isinstance(self.value, list)
+
     def __str__(self) -> str:
         if(isinstance(self.value, list)):
             val_str = ''.join([str(x) for x in self.value])
@@ -43,6 +47,7 @@ class PObj:
             return f"{self.pre}{self.id} {self.operator} "+"{"+f"{val_str}"+"}"+f"{self.post}"
         return f"{self.pre}{self.id} {self.operator} {self.value}{self.post}"
     
+    # Get the value of this obj as a string (regardless of list or not)
     def GetValueString(self, withBrackets=True):
         if(isinstance(self.value, list)):
             val_str = ''.join([str(x) for x in self.value])
@@ -53,81 +58,115 @@ class PObj:
                 return f"{val_str}"
         return f"{self.value}"
     
+    # Get the first child object by id (example: techs.Get("light_cav_1"))
     def Get(self, key):
         for obj in self.value:
             if obj.id == key:
                 return obj
         return None
     
+    # Get any childobjects based on a key value (example: focuses.GetByField("id", "the_fate_of_ered_luin"))
     def GetByField(self, key, value):
         for obj in self.value:
             if obj.Has(key) and obj.GetVal(key) == value:
                 return obj
         return None
     
+    # Get the *value* of a child object by id (equivalent to Get(key).value)
     def GetVal(self, key):
         return self.Get(key).value
     
+    # Does this obj have a child with the given id?
     def Has(self, key):
         for obj in self.value:
             if isinstance(obj, PObj) and obj.id == key:
                 return True
         return False
     
+    # Does this obj have a child with the given id and value?
     def HasFieldAs(self, key, value):
         return self.Has(key) and self.Get(key).value == value
     
+    # Does this obj have a child with given id, BUT the value is not equal to the given value
     def HasFieldNotAs(self, key, value):
         return self.Has(key) and self.Get(key).value != value
     
+    # Does this object not have a child with the given id
     def HasNot(self, key):
         return not self.Has(key)
     
-    def WithField(self, key):
-        return self.Where(lambda x: x.Has(key))
-    
-    def WithoutField(self, key):
-        return self.Where(lambda x: not x.Has(key))
-    
-    def WithFieldAs(self, key, value):
-        return self.Where(lambda x: x.Get(key).value == value)
-    
-    def WithFieldNotAs(self, key, value):
-        return self.Where(lambda x: x.Get(key).value != value)
-    
-    def GetAll(self, key):
-        return self.Where(lambda x: x.id == key)
-    
+    # Returns a VirtualPObj clone that only has the children that meet the given condition(obj) -> true
     def Where(self, condition):
         ret = VirtualPObj(self)
         ret.value = [obj for obj in self.value if condition(obj)]
         return ret
     
+    # Returns a clone that only retains the children that have the given field (example: focuses.WithField("prerequisite").WithoutField("relative_position_id"))
+    def WithField(self, key):
+        return self.Where(lambda x: x.Has(key))
+    
+    # Returns a clone that only retains the children that do not have the given field (example: focuses.WithField("prerequisite").WithoutField("relative_position_id"))
+    def WithoutField(self, key):
+        return self.Where(lambda x: not x.Has(key))
+    
+    # Returns a clone that only retains the children that have the given field with the given value (example: focuses.WithFieldAs("prerequisite", "fate_of_ered_luin"))
+    def WithFieldAs(self, key, value):
+        return self.Where(lambda x: x.Get(key).value == value)
+    
+    # Negation of WithFieldAs
+    def WithFieldNotAs(self, key, value):
+        return self.Where(lambda x: x.Get(key).value != value)
+    
+    # Get clone that only have the children with the given name
+    def GetAll(self, key):
+        return self.Where(lambda x: x.id == key)
+    
+    # Get all child and sub-child objects that have the given id
+    def GetAllRecurse(self, key):
+        ret = VirtualPObj(self)
+        ret.value = []
+        self.GetAllRecurse_helper(ret, key)
+        return ret
+            
+    # Helper function for the method above
+    def GetAllRecurse_helper(self, vpo, key):
+        for obj in self.value:
+            if obj.id == key:
+                vpo.value.append(obj)
+            if obj.ValueIsList():
+                obj.GetAllRecurse_helper(vpo, key)
+    
+    # Get the first child object that meets the given condition
     def First(self, condition=None):
         if condition is None:
             return self.value[0]
         return self.Where(condition).First()
     
+    # Get the last child object that meets the given condition
     def Last(self, condition=None):
         if condition is None:
             return self.value[len(self.value)-1]
         return self.Where(condition).Last()
     
+    # ...
     def Recurse(self, NextFunction:lambda x: x, ActionFunction:lambda x: None):
         ActionFunction(self)
         next = NextFunction(self)
         if next is not None:
             next.Recurse(NextFunction, ActionFunction)
 
+    # ...
     def RecurseFind(self, NextFunction:lambda x: x, ReturnCondition:lambda x: bool):
         if(ReturnCondition(self)):
             return self
         return NextFunction(self).RecurseFind(NextFunction, ReturnCondition)
     
+    # Insert a new line of text after a certain line ?
     def InsertAfter(self, line):
         self.parent.InsertAt(line, self.parent.value.index(self)+1)
         return self
     
+    # ...
     def InsertAt(self, line, index):
         if(len(self.value) < 1):
             self.Insert(line)
@@ -144,7 +183,7 @@ class PObj:
             self.value.insert(index, nobj)
         return self
 
-    
+    # ...
     def Insert(self, line):
         if(len(self.value) > 0):
             self.InsertAt(line, len(self.value))
@@ -157,6 +196,7 @@ class PObj:
             self.value.append(nobj)
         return self
 
+    # Remove a child with a certain id
     def Remove(self, key):
         if not self.Has(key):
             return self
