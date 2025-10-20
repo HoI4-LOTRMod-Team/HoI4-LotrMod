@@ -110,7 +110,7 @@ NDefines.NAI.NEUTRAL_THREAT_PARANOIA = 20				-- How scared neutrals are of every
 NDefines.NAI.DIFFERENT_FACTION_THREAT = 25				-- Threat caused by not being in the same faction
 
 -- Avoice Equipment over-abundance
-NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.07 -- How much equipment from deployed divisions will be transferred on capitulation
+NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.05 -- How much equipment from deployed divisions will be transferred on capitulation
 
 -- Division Designer
 NDefines.NMilitary.MAX_DIVISION_BRIGADE_WIDTH = 6			-- Max width of regiments in division designer.
