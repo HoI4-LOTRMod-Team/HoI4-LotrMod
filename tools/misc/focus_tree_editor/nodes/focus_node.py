@@ -7,13 +7,18 @@ from NodeGraphQt.nodes.base_node import NodeObject
 
 from NodeGraphQt.qgraphics.node_abstract import AbstractNodeItem
 
+from NodeGraphQt.widgets.node_widgets import NodeBaseWidget
 
 
-from Qt import QtCore, QtWidgets
+
+from Qt import QtWidgets, QtGui, QtCore
 
 GRID_SIZE = 100
 
 BASE_PATH = Path(__file__).parent.parent.resolve()
+
+
+
 
 class FocusNode(BaseNode):
     """
@@ -43,6 +48,14 @@ class FocusNode(BaseNode):
 
         # create node outputs.
         self.add_output('children')
+
+        # 2. Load the image using QPixmap
+        image_path = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\tools\subscripts\res\leader_frame.png'
+        self.set_icon(image_path)
+
+        
+        
+
 
     def hoi4_get_relative_pos(self):
         return (self.x, self.y)

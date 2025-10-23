@@ -8,6 +8,7 @@ from pdx_parser import Parse_PObj, Parse_List, PObj, SaveListToFile, ParseListFr
 from Qt import QtCore, QtWidgets
 
 from nodes import focus_node
+from nodes import test_image_node
 from NodeGraphQt import (
     NodeGraph,
     NodesPaletteWidget,
@@ -61,7 +62,8 @@ def main():
 
     # registered example nodes.
     graph.register_nodes([
-        focus_node.FocusNode
+        focus_node.FocusNode,
+        test_image_node.ImageNode
     ])
 
     # show the node graph widget.
@@ -124,6 +126,9 @@ def main():
 
     #focus_1 = graph.create_node('nodes.basic.FocusNode')
     #focus_1.set_layout_direction(1)
+
+    node = graph.create_node('nodes.basic.ImageNode')
+    node.set_image(r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\tools\subscripts\res\leader_frame.png')
 
     
 
