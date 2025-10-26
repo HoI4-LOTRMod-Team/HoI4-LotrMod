@@ -1119,11 +1119,24 @@ focus_tree = {
 		available = { NOT = { is_in_faction = yes } OR = { has_government = belligerent has_government = revolutionary } is_puppet = no }
 		x = 7
 		y = 6
-		mutually_exclusive = { }
 		prerequisite = { focus = axesandswords focus = hammersandshovels}
-		cost = 10
+		cost = 5
 		available_if_capitulated = no
-		completion_reward = { create_faction = "sons_of_durin" }
+		completion_reward = { 
+			if = {
+				limit = { has_government = belligerent }
+				create_faction_from_template = {
+					name = sons_of_durin
+					template = faction_template_belligerent_expansionist
+				}
+			} else_if = {
+				limit = { has_government = revolutionary }
+				create_faction_from_template = {
+					name = sons_of_durin
+					template = world_revolution_faction
+				}
+			}
+		}
 	}
 
 	#Focus for Dig deeper
@@ -1180,7 +1193,10 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = no
 		completion_reward = {
-			create_faction = "northern_protection_league"
+			create_faction_from_template = {
+				name = northern_protection_league
+				template = faction_template_defensive_cooperative
+			}
 			DAL = { country_event = { days = 0 id = erebor.2 } } }
 	}
 }
