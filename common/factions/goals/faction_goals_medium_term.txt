@@ -1,5 +1,27 @@
 #category = short_term medium_term or long_term
 
+#Table of contents
+### General
+# faction_goal_a_large_faction
+# faction_goal_marine_corps
+# faction_goal_industrial_expansion
+# faction_goal_a_military_base
+
+### War
+
+
+### For Belligerent and Orc nations
+
+ 
+### Spread the Revolution
+
+
+### Against ... ideology
+# faction_goal_war_on_revolutionary
+
+### Faction Specific
+# faction_conquest_of_neighbouring_nations
+
 ######################################################################
 
 ###  ##   ##  ### ###  ##  #  #      ## ###  ###  ##  ### ### ###  ##  
@@ -137,181 +159,7 @@ faction_goal_marine_corps = {
 	}
 }
 
-faction_goal_convoy_escort_force = {
-	name = convoy_escort_force_goal_name
-	description = convoy_escort_force_goal_desc
-	category = medium_term
-	available = {
-		count_in_collection = {
-			collection = {
-				input = game:scope
-				operators = { faction_members }
-				name = FACTION
-		    }
-			unit = screen_ship
-			size < 100
-		}
-	}
-	completed = {
-		count_in_collection = {
-			collection = {
-				input = game:scope
-				operators = { faction_members }
-				name = FACTION
-		    }
-			unit = screen_ship
-			size > 99
-		}
-	}
-	complete_effect = {
-		add_faction_power_projection = 100
-		custom_effect_tooltip = generic_skip_one_line_tt
-		every_collection_element = {
-			input = {
-				input = game:scope
-				operators = { 
-					faction_members 
-					limit = {
-						has_army_size = {
-						    size > 24
-						    type = screen_ship
-						}
-					}
-				}
-				name = ALL_FACTION_MEMBERS_WITH_25_SCREENING_SHIPS
-			}
-			random_character = {
-				tooltip = ONE_ADMIRAL	
-				visible_when_empty = yes
-				limit = {
-					is_navy_leader = yes
-					NOT = { has_trait = fleet_protector }
-					NOT = { has_trait = seawolf }
-					NOT = { has_trait = ironside }
-					NOT = { has_trait = battleship_adherent }
-					NOT = { has_trait = gunnery_expert }
-					NOT = { has_trait = aviation_enthusiast }
-				}
-				gain_xp = 400
-				add_attack = 1
-				add_trait = { trait = fleet_protector }
-			}
-			#add_mastery = {
-			#	amount = 100
-			#	track = screens
-			#}
-		}
-		custom_effect_tooltip = generic_skip_one_line_tt
-		custom_effect_tooltip = ALL_FACTION_MEMBERS
-		every_faction_member = {
-			add_tech_bonus = {
-				name = convoy_escort_force_tech_bonus
-				bonus = 0.5
-				uses = 1
-				category = naval_equipment
-			}
-		}
-	}
-	ai_will_do = {
-		base = 0
-		modifier = {
-			add = 1 # Powers with no dockyards should probably not care about navy
-			num_of_naval_factories > 0
-		}
-		modifier = {
-			add = 1 # Powers with threatened convoys should care more
-			convoy_threat > 0.2
-		}
-		modifier = {
-			add = 8 # Powers with very threatened convoys should care -a lot-
-			convoy_threat > 0.5
-		}
-	}
-}
-
-faction_goal_air_superiority = {
-	name = air_superiority_goal_name
-	description = air_superiority_goal_desc
-	category = medium_term
-	available = {
-		count_in_collection = {
-			collection = {
-				input = game:scope
-				operators = { faction_members }
-				name = FACTION
-		    }
-			unit = fighter
-			size < 1000
-		}
-	}
-	completed = {
-		count_in_collection = {
-			collection = {
-				input = game:scope
-				operators = { faction_members }
-				name = FACTION
-		    }
-			unit = fighter
-			size > 999
-		}
-	}
-	complete_effect = {
-		add_faction_power_projection = 100
-		custom_effect_tooltip = generic_skip_one_line_tt
-		every_collection_element = {
-			input = {
-				input = game:scope
-				operators = { 
-					faction_members 
-					limit = {
-						has_army_size = {
-						    size > 249
-						    type = fighter
-						}
-					}
-				}
-				name = ALL_FACTION_MEMBERS_WITH_250_FIGHTERS
-			}
-			air_experience = 50
-			#add_mastery = {
-			#	amount = 100
-			#	track = fighter_aircraft
-			#}
-		}
-		custom_effect_tooltip = generic_skip_one_line_tt
-		custom_effect_tooltip = ALL_FACTION_MEMBERS
-		every_faction_member = {
-			add_tech_bonus = {
-				name = air_superiority_tech_bonus
-				bonus = 0.5
-				uses = 1
-				category = air_equipment
-			}
-		}
-	}
-	ai_will_do = {
-		base = 0
-		modifier = {
-			add = 1 # Powers with few military factories should probably not care about expensive planes
-			num_of_military_factories > 39
-		}
-		modifier = {
-			add = 1 # Factions with decent number of military factories should probably start caring a lot about contesting air superiority - because they can
-			count_in_collection = {
-				collection = {
-					input = game:scope
-					operators = { faction_members }
-					name = FACTION_NAME
-				}
-				buildings = { arms_factory }
-				size > 149
-			}
-		}
-	}
-}
-
 ### Industry
-
 faction_goal_industrial_expansion = {
 	name = industrial_expansion_goal_name
 	description = industrial_expansion_goal_desc
@@ -429,7 +277,6 @@ faction_goal_a_military_base = {
 }
 
 ### War Waging
-
 faction_goal_war_on_revolutionary = {
 	name = war_on_revolutionary_goal_name
 	description = war_on_revolutionary_goal_desc
@@ -491,9 +338,19 @@ faction_conquest_of_neighbouring_nations = {
 		GON = { OR = { exists = no is_puppet_of = MOR is_in_faction_with = MOR } }
 	}
 	complete_effect = {
-		add_faction_power_projection = 50
+		add_faction_power_projection = 250		
+		custom_effect_tooltip = generic_skip_one_line_tt
 		custom_effect_tooltip = THE_FACTION_LEADER
-		add_war_support = 0.02
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.1
+			}
+			add_political_power = 100
+		}
 	}
 	ai_will_do = {
 		base = 10

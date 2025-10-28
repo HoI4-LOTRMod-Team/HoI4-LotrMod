@@ -1,5 +1,26 @@
 #category = short_term medium_term or long_term
 
+#Table of contents
+### General
+# faction_goal_liberate_territory
+
+### War
+# faction_goal_great_offensive 			# Gain 1 core state of enemy
+# faction_goal_defeating_our_enemies 	# Be on winningn side of conference
+
+### For Belligerent and Orc nations
+# faction_goal_destroy_men
+ 
+### Spread the Revolution
+# faction_goal_spread_the_revolution
+
+### Against ... ideology
+# faction_goal_defeat_of_belligerent
+# faction_goal_defeat_of_anti_revolutionary
+
+### Faction Specific
+# faction_conquest_of_middle_earth 		#Dark Pact
+
 
 ######################################################################
 
@@ -26,88 +47,7 @@
 
 ### Units/Deployment
 
-faction_goal_rule_the_waves = {
-	name = rule_the_waves_goal_name
-	description = rule_the_waves_goal_desc
-	category = long_term
-	visible = {
-		num_of_naval_factories > 19
-	}
-	available = {
-		NOT = { has_government = cooperative }
-	}
-	completed = {
-		has_war = yes
-		count_in_collection = {
-			collection = {
-				input = game:scope
-				operators = { faction_members }
-				name = FACTION
-		    }
-			unit = capital_ship
-			size > 59
-		}
-		alliance_naval_strength_ratio > 2
-	}
-	complete_effect = {
-		add_faction_power_projection = 300
-		custom_effect_tooltip = generic_skip_one_line_tt
-		custom_effect_tooltip = INFLUENCE_TOP_TWO
-		every_faction_member = {
-			limit = { faction_influence_rank < 3}
-			add_faction_initiative = 1
-			
-		}
-		custom_effect_tooltip = ALL_FACTION_MEMBERS
-		every_faction_member = {
-			random_character = {
-				tooltip = ONE_ADMIRAL	
-				visible_when_empty = yes
-				limit = {
-					is_navy_leader = yes
-					NOT = { has_trait = seawolf }
-					NOT = { has_trait = battleship_adherent }
-				}
-				gain_xp = 400
-				add_coordination = 1
-				add_trait = { trait = battleship_adherent }
-			}
-			#add_mastery = {
-			#	amount = 100
-			#	track = capital_ships
-			#}
-			add_tech_bonus = {
-				name = rule_the_waves_tech_bonus
-				bonus = 1
-				uses = 1
-				category = naval_equipment
-			}
-		}
-	}
-	ai_will_do = {
-		base = 0
-		modifier = {
-			add = 1 # Don't bother unless you're somewhat likely to be able to do it
-			count_in_collection = {
-				collection = {
-					input = game:scope
-					operators = { faction_members }
-					name = FACTION
-			    }
-				unit = capital_ship
-				size > 19
-			}
-			alliance_naval_strength_ratio > 0.6
-		}
-		modifier = {
-			add = 1 # If you got a bunch of dockyards odds of succeeding go up + indication nation is gunning for navy
-			num_of_naval_factories > 59
-		}
-	}
-}
-
 ### War Waging
-
 faction_goal_liberate_territory = {
 	name = liberate_territory_goal_name
 	description = liberate_territory_goal_desc
@@ -314,6 +254,60 @@ faction_goal_defeating_our_enemies = {
 }
 ### Tech
 
+### Race based
+faction_goal_destroy_men = {
+	name = destroy_men_goal_name
+	description = destroy_men_goal_desc
+	category = long_term
+
+	visible = {
+		has_government = belligerent
+		is_orcs = yes
+		collection_size = {
+			input = {
+				input = collection:men_controlled_countries
+				name = COLLECTION_AMOUNT_OF_MEN_CONTROLLED_COUNTRIES
+			}
+			value > 0
+		}
+	}
+	available = {
+		collection_size = {
+			input = {
+				input = collection:men_controlled_countries
+				name = COLLECTION_AMOUNT_OF_MEN_CONTROLLED_COUNTRIES
+			}
+			value > 0
+		}
+	}
+	completed = {
+		collection_size = {
+			input = {
+				input = collection:men_controlled_countries
+				name = COLLECTION_AMOUNT_OF_MEN_CONTROLLED_COUNTRIES
+			}
+			value < 1
+		}
+		
+	}
+	complete_effect = {
+		add_faction_power_projection = 500
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.15
+			}
+			add_stability = 0.1
+			add_political_power = 100
+		}
+	}
+}
+
 
 ### Ideology based
 
@@ -329,9 +323,7 @@ faction_goal_defeat_of_belligerent = {
 				input = game:scope
 				operators = {
 					faction_members
-					limit = {
-						has_government = belligerent
-					}
+					limit = { has_government = belligerent }
 				}
 				name = FACTION
 			}
@@ -341,8 +333,8 @@ faction_goal_defeat_of_belligerent = {
 	available = {
 		collection_size = {
 			input = {
-				input = collection:belligerent_controlled_states_my_continent
-				name = COLLECTION_AMOUNT_OF_BELLIGERENT_CONTROLLED_STATES_SAME_CONTINENT
+				input = collection:world_belligerent_controlled_states
+				name = COLLECTION_AMOUNT_OF_BELLIGERENT_CONTROLLED_STATES
 			}
 			value > 0
 		}
@@ -443,6 +435,72 @@ faction_goal_defeat_of_anti_revolutionary = {
 	}
 }
 
+# Spread the revolution
+faction_goal_spread_the_revolution = {
+	name = spread_the_revolutions_goal_name
+	description = spread_the_revolutions_goal_desc
+	category = long_term
+
+	visible = {
+		collection_size = {
+			input = {
+				input = game:scope
+				operators = {
+					faction_members
+					limit = {
+						OR = {
+							has_government = belligerent
+							has_government = cooperative
+							has_government = unaligned
+						}
+					}
+				}
+				name = FACTION
+			}
+			value < 1
+		}
+	}
+	available = {
+		faction_leader = {
+			any_neighbor_country = {
+				NOT = { has_government = revolutionary }
+			}
+		}
+	}
+	completed = {
+		faction_leader = {
+			all_neighbor_country = {
+				has_government = revolutionary
+			}
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 500
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_popularity = {
+				ideology = revolutionary
+				popularity = 0.2
+			}
+			add_political_power = 100
+		}
+	}
+	ai_will_do = {
+		base = 0
+		modifier = { 
+			add = 1 # If war with revolutionarys you probably hate them
+			any_enemy_country = {
+				has_government = revolutionary
+			}
+		}
+	}
+}
+
+
 ######################################################################
 
 ###  ##   ##  ### ###  ##  #  #      ## ###  ###  ##  ### ### ###  ##  
@@ -475,9 +533,17 @@ faction_conquest_of_middle_earth = {
 		}
 	}
 	complete_effect = {
-		add_faction_power_projection = 50
-		custom_effect_tooltip = THE_FACTION_LEADER
-		add_war_support = 0.02
+		add_faction_power_projection = 500
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.2
+			}
+			add_stability = 0.1
+			add_political_power = 100
+		}
 	}
 	ai_will_do = {
 		base = 10
