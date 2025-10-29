@@ -8,13 +8,7 @@
 # faction_goal_a_military_base
 
 ### War
-
-
-### For Belligerent and Orc nations
-
- 
-### Spread the Revolution
-
+# faction_goal_aggressive_defense
 
 ### Against ... ideology
 # faction_goal_war_on_revolutionary
@@ -56,7 +50,7 @@ faction_goal_a_large_faction = {
 		num_faction_members > 4
 	}
 	completed = {
-		num_faction_members > 9
+		num_faction_members > 5
 	}
 	complete_effect = {
 		add_faction_power_projection = 200
@@ -93,9 +87,13 @@ faction_goal_marine_corps = {
 				operators = { faction_members }
 				name = FACTION
 		    }
-			unit = amphibious
+			subunit = heavy_infantry
 			size > 9
 		}
+		all_allied_countries = {
+			check_variable = { var:num_armies_with_type@heavy_infantry > 5 }
+		}
+		#check_variable = { var:num_armies_with_type@heavy_infantry > 5 }
 	}
 	complete_effect = {
 		add_faction_power_projection = 100
@@ -210,10 +208,6 @@ faction_goal_industrial_expansion = {
 			is_major = yes
 		}
 		modifier = {
-			add = 1 # If already big it's easy to grow
-			is_major = yes
-		}
-		modifier = {
 			add = 1 # Prioritize more earlier on - more pay-off
 			date < 1938.1.1
 		}
@@ -309,6 +303,63 @@ faction_goal_war_on_revolutionary = {
 	}
 }
 
+faction_goal_aggressive_defense = {
+	name = aggressive_defense_goal_name
+	description = aggressive_defense_goal_desc
+	category = medium_term
+	visible = {
+		FROM = { has_defensive_war = yes }
+	}
+	completed = {
+		any_allied_country = {
+			has_defensive_war = yes
+		}
+		collection_size = {
+			input = {
+				input = game:scope
+				operators = {
+					faction_members
+					limit = {
+						any_enemy_country = {
+							has_offensive_war_with = ROOT
+							casualties_inflicted_by = {
+							    opponent = PREV
+							    thousands > 250
+							}
+						}
+					}
+				}
+				name = COLLECTION_CASUALTIES_INFLICTED_BY_FACTION_MEMBERS
+			}
+			value > 0
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS_INFLICTED_250K_CASUALTIES
+		every_faction_member = {
+			limit = {
+				any_enemy_country = {
+					has_offensive_war_with = ROOT
+					casualties_inflicted_by = {
+					    opponent = PREV
+					    thousands > 250
+					}
+				}
+			}
+			add_faction_initiative = 1
+		}
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			army_experience = 50
+		}
+	}
+	ai_will_do = {
+		base = 1
+	}
+}
 ######################################################################
 
 ###  ##   ##  ### ###  ##  #  #      ## ###  ###  ##  ### ### ###  ##  
@@ -322,13 +373,11 @@ faction_goal_war_on_revolutionary = {
 
 # Dark Dark Pact
 #Conquest 
-faction_conquest_of_neighbouring_nations = {
-	name = faction_conquest_of_neighbouring_nations_goal_name
-	description = faction_conquest_of_neighbouring_nations_goal_desc
+faction_goal_conquest_of_neighbouring_nations = {
+	name = conquest_of_neighbouring_nations_goal_name
+	description = conquest_of_neighbouring_nations_goal_desc
 	category = medium_term
-	visible = {
-		ROOT = { tag = MOR }
-	}
+	visible = { ROOT = { tag = MOR } }
 	cancel = { 
 		ROOT = { NOT = { has_government = belligerent } }
 	}
@@ -350,6 +399,38 @@ faction_conquest_of_neighbouring_nations = {
 				popularity = 0.1
 			}
 			add_political_power = 100
+		}
+	}
+	ai_will_do = {
+		base = 10
+	}
+}
+
+# New Dark Dark Pact
+#Defeat the fake Dark Lord 
+faction_defeat_the_fake_dark_lord = {
+	name = defeat_the_fake_dark_lord_name
+	description = defeat_the_fake_dark_lord_desc
+	category = medium_term
+	visible = { ROOT = { tag = RHU } }
+	cancel = { ROOT = { NOT = { has_government = belligerent } } }
+	completed = {
+		MOR = { OR = { exists = no is_puppet_of = RHU } }
+	}
+	complete_effect = {
+		add_faction_power_projection = 250		
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.1
+			}
+			add_political_power = 100
+			add_war_support = 0.1
 		}
 	}
 	ai_will_do = {
