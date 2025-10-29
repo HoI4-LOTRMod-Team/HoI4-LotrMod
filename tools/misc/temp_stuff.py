@@ -3,35 +3,38 @@
 
 text = """
 $TOKEN$ = {
-    track = archers_mounted_track
-    name = SUBDOCTRINE_$TOKEN$
-    description = SUBDOCTRINE_$TOKEN$_DESC
-    icon = GFX_forward_interception_medium
-
-    xp_cost = 100
-    xp_type = army
-
-    available = {
-        always = yes
-    }
-
-    ai_will_do = { }
-
-    # EFFECTS
-	# TODO
-
-    rewards = {
-		# TODO
+    name = DOCTRINE_TRACK_$TOKEN$
+    background = "GFX_air_superiority_bg"
+    background_offset = 0
+    icon = "GFX_doctrine_milestone_fighter_air"
+    icon_frame = "GFX_infantry_doctrine_deco"
+    mastery = {
+        multiplier = 5.0 # TODO - placeholder
+        categories = {
+            category_all_infantry
+        }
     }
 }
 """
 
 
 nlist = [
-	"crossbow_levies",
-	"elusive_skirmishers",
-	"archer_lines_integration",
-	"mobile_archers",
+		'dav_infantry_track',
+        'dav_archers_track',
+        'dav_cavalry_track',
+        'dav_machs_track',
+		'horde_infantry_track',
+        'horde_archers_track',
+        'horde_cavalry_track',
+        'horde_machs_track',
+		'sws_infantry_track',
+        'sws_archers_track',
+        'sws_cavalry_track',
+        'sws_machs_track',
+		'maw_infantry_tack',
+        'maw_archers_track',
+        'maw_cavalry_track',
+        'maw_machs_track',
 ]
 
 
