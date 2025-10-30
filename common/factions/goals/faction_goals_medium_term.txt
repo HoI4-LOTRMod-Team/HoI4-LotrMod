@@ -3,7 +3,7 @@
 #Table of contents
 ### General
 # faction_goal_a_large_faction
-# faction_goal_marine_corps
+# faction_goal_heavy_infantry
 # faction_goal_industrial_expansion
 # faction_goal_a_military_base
 
@@ -65,35 +65,25 @@ faction_goal_a_large_faction = {
 
 ### Units/Deployment
 
-faction_goal_marine_corps = {
-	name = marine_corps_goal_name
-	description = marine_corps_goal_desc
+faction_goal_heavy_infantry = {
+	name = heavy_infantry_goal_name
+	description = heavy_infantry_goal_desc
 	category = medium_term
 	available = {
-		count_in_collection = {
-			collection = {
-				input = game:scope
-				operators = { faction_members }
-				name = FACTION
-		    }
-			unit = amphibious
-			size < 10
+		all_allied_country = {
+			custom_trigger_tooltip = {
+				tooltip = custom_tooltip_faction_goal_has_6_or_less_heavy_infantry
+				check_variable = { var:num_armies_with_type@heavy_infantry < 6 }
+			}
 		}
 	}
 	completed = {
-		count_in_collection = {
-			collection = {
-				input = game:scope
-				operators = { faction_members }
-				name = FACTION
-		    }
-			subunit = heavy_infantry
-			size > 9
+		all_allied_country = {
+			custom_trigger_tooltip = {
+				tooltip = custom_tooltip_faction_goal_has_atleast_6_heavy_infantry
+				check_variable = { var:num_armies_with_type@heavy_infantry > 6 }
+			}
 		}
-		all_allied_countries = {
-			check_variable = { var:num_armies_with_type@heavy_infantry > 5 }
-		}
-		#check_variable = { var:num_armies_with_type@heavy_infantry > 5 }
 	}
 	complete_effect = {
 		add_faction_power_projection = 100
@@ -104,13 +94,10 @@ faction_goal_marine_corps = {
 				operators = { 
 					faction_members 
 					limit = {
-						has_army_size = {
-						    size > 0
-						    type = amphibious
-						}
+						check_variable = { var:num_armies_with_type@heavy_infantry > 6 }
 					}
 				}
-				name = ALL_FACTION_MEMBERS_WITH_1_AMPHIBIOUS
+				name = custom_tooltip_faction_goal_all_faction_members_with_atleast_1_heavy_infantry
 			}
 			random_character = {
 				tooltip = ONE_GENERAL	
@@ -132,9 +119,9 @@ faction_goal_marine_corps = {
 		every_faction_member = {
 			add_tech_bonus = {
 				name = marine_corps_tech_bonus
-				bonus = 0.5
+				bonus = 0.75
 				uses = 1
-				category = marine_tech
+				category = lotr_infantry_specialforces
 			}
 		}
 	}
