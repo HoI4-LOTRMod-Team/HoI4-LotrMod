@@ -52,12 +52,9 @@ faction_goal_growing_the_faction = {
 	name = growing_the_faction
 	description = growing_the_faction_desc
 	category = short_term
-	visible = {
-		num_faction_members < 4
-	}
-	completed = {
-		num_faction_members > 3
-	}
+	group = FOCUS_FILTER_POLITICAL_CHARACTER
+	visible = { num_faction_members < 4 }
+	completed = { num_faction_members > 3 }
 	complete_effect = {
 		add_faction_power_projection = 50 
 		custom_effect_tooltip = generic_skip_one_line_tt
@@ -85,9 +82,8 @@ faction_goal_spy_master = {
 	name = spy_master_goal_name
 	description = spy_master_goal_desc
 	category = short_term
-	allowed = {
-		has_dlc = "La Resistance"
-	}
+	group = FOCUS_FILTER_POLITICAL_CHARACTER
+	allowed = { has_dlc = "La Resistance" }
 	visible = {
 		is_spymaster = no
 		any_allied_country = {
@@ -176,6 +172,7 @@ faction_goal_military_infrastructure = {
 	name = military_infrastructure_goal_name
 	description = military_infrastructure_goal_desc
 	category = short_term
+	group = FOCUS_FILTER_INDUSTRY
 	visible = {
 		collection_size = {
 			input = {
@@ -238,9 +235,8 @@ faction_goal_a_great_fortress = {
 	name = a_great_fortress_goal_name
 	description = a_great_fortress_goal_desc
 	category = short_term
-	visible = {
-		always = yes
-	}
+	group = FOCUS_FILTER_RESEARCH
+	visible = { always = yes }
 	available = {
 		collection_size = {
 			input = {
@@ -300,6 +296,7 @@ faction_goal_preemptive_strike_on_belligerent = {
 	name = preemptive_strike_on_belligerent_goal_name
 	description = preemptive_strike_on_belligerent_goal_desc
 	category = short_term
+	group = FOCUS_FILTER_WAR_SUPPORT
 	visible = {
 		NOT = { has_government = belligerent }
 		NOT = {
@@ -331,41 +328,79 @@ faction_goal_preemptive_strike_on_belligerent = {
 	}
 }
 
-faction_goal_guardians_of_peace = {
-	name = guardians_of_peace_goal_name
-	description = guardians_of_peace_goal_desc
+faction_goal_war_on_revolutionary = {
+	name = war_on_revolutionary_goal_name
+	description = war_on_revolutionary_goal_desc
 	category = short_term
+	group = FOCUS_FILTER_WAR_SUPPORT
 	visible = {
-		date < 1939.1.1
-		OR = {
-			NOT = { has_government = belligerent }
-			NOT = { has_government = revolutionary }
+		any_country = {
+			has_government = revolutionary
 		}
 	}
-	available = {
-		NOT = { has_country_flag = guardians_of_peace_been_at_war_flag }
-	}
-	cancel = {
-		has_country_flag = guardians_of_peace_been_at_war_flag
-	}
 	completed = {
-		date > 1938.12.31
-		NOT = { has_country_flag = guardians_of_peace_been_at_war_flag }
+		OR = {
+			any_enemy_country = {
+				has_government = revolutionary
+			}
+			any_allied_country = {
+				any_enemy_country = {
+					has_government = revolutionary
+				}
+			}
+		}
 	}
 	complete_effect = {
 		add_faction_power_projection = 100
 		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
 		custom_effect_tooltip = ALL_FACTION_MEMBERS
 		every_faction_member = {
-			add_stability = 0.05
+			add_war_support = 0.05
 		}
 	}
 	ai_will_do = {
-		base = 0
-		modifier = {
-			add = 1
+		base = 1
+	}
+}
+
+faction_goal_war_on_cooperative = {
+	name = war_on_cooperative_goal_name
+	description = war_on_democracy_goal_desc
+	group = FOCUS_FILTER_WAR_SUPPORT
+	category = short_term
+	visible = {
+		any_country = {
 			has_government = cooperative
 		}
+	}
+	completed = {
+		OR = {
+			any_enemy_country = {
+				has_government = cooperative
+			}
+			any_allied_country = {
+				any_enemy_country = {
+					has_government = cooperative
+				}
+			}
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_war_support = 0.05
+		}
+	}
+	ai_will_do = {
+		base = 1
 	}
 }
 
@@ -375,9 +410,7 @@ faction_goal_an_armored_fist = {
 	name = an_armored_fist_goal_name
 	description = an_armored_fist_goal_desc
 	category = short_term
-	visible = {
-		always = yes
-	}
+	group = FOCUS_FILTER_ARMY_XP
 	completed = {
 		count_in_collection = {
 			collection = {
