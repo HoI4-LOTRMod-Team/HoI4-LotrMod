@@ -52,6 +52,7 @@ faction_goal_liberate_territory = {
 	name = liberate_territory_goal_name
 	description = liberate_territory_goal_desc
 	category = long_term
+	group = FOCUS_FILTER_ANNEXATION
 	visible = {
 		collection_size = {
 			input = {
@@ -130,6 +131,7 @@ faction_goal_great_offensive = {
 	name = great_offensive_goal_name
 	description = great_offensive_goal_desc
 	category = long_term
+	group = FOCUS_FILTER_ANNEXATION
 	visible = {
 		has_war = yes
 		collection_size = {
@@ -224,6 +226,7 @@ faction_goal_defeating_our_enemies = {
 	name = defeating_our_enemies_goal_name
 	description = defeating_our_enemies_goal_desc
 	category = long_term
+	group = FOCUS_FILTER_ANNEXATION
 	visible = {
 		NOT = { has_country_flag = peace_winner_flag}
 	}
@@ -252,13 +255,65 @@ faction_goal_defeating_our_enemies = {
 		}
 	}
 }
-### Tech
+### Industry
+faction_goal_industrial_domination = {
+	name = industrial_domination_goal_name
+	description = industrial_domination_goal_desc
+	category = long_term
+	group = FOCUS_FILTER_INDUSTRY
+	visible = {
+		count_in_collection = {
+			collection = {
+				input = game:scope
+				operators = { faction_members }
+				name = FACTION_NAME
+			}
+			buildings = { industrial_complex arms_factory dockyard }
+			size > 100
+		}
+	}
+	completed = {
+		count_in_collection = {
+			collection = {
+				input = game:scope
+				operators = { faction_members }
+				name = FACTION_NAME
+			}
+			buildings = {  industrial_complex arms_factory dockyard }
+			size > 1000
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = generic_skip_one_line_tt
+		every_faction_member = {
+			tooltip = AT_LEAST_500_FACTORIES
+			visible_when_empty = yes 
+			limit = {
+				num_of_controlled_factories > 500
+			}
+			add_faction_initiative = 1
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 1 # If already big it's easy to grow
+			is_major = yes
+		}
+		modifier = {
+			add = 1 # If we are already on the way
+			num_of_controlled_factories > 200
+		}
+	}
+}
 
 ### Race based
 faction_goal_destroy_men = {
 	name = destroy_men_goal_name
 	description = destroy_men_goal_desc
 	category = long_term
+	group = FOCUS_FILTER_WAR_SUPPORT
 
 	visible = {
 		has_government = belligerent
@@ -316,6 +371,7 @@ faction_goal_defeat_of_belligerent = {
 	name = defeat_of_belligerent_goal_name
 	description = defeat_of_belligerent_goal_desc
 	category = long_term
+	group = FOCUS_FILTER_WAR_SUPPORT
 
 	visible = {
 		collection_size = {
@@ -371,6 +427,7 @@ faction_goal_defeat_of_anti_revolutionary = {
 	name = defeat_of_anti_revolutionarys_goal_name
 	description = defeat_of_anti_revolutionarys_goal_desc
 	category = long_term
+	group = FOCUS_FILTER_WAR_SUPPORT
 
 	visible = {
 		collection_size = {
@@ -441,6 +498,7 @@ faction_goal_spread_the_revolution = {
 	name = spread_the_revolutions_goal_name
 	description = spread_the_revolutions_goal_desc
 	category = long_term
+	group = FOCUS_FILTER_WAR_SUPPORT
 
 	visible = {
 		collection_size = {
@@ -518,11 +576,15 @@ faction_goal_conquest_of_middle_earth = {
 	name = conquest_of_middle_earth_goal_name
 	description = conquest_of_middle_earth_goal_desc
 	category = long_term
+	group = FOCUS_FILTER_WAR_SUPPORT
 	visible = {
 		FROM = {
 			has_government = belligerent
 			OR = { 
-				original_tag = MOR
+				AND = {
+					original_tag = MOR
+					has_completed_focus = conquestofmiddleearth
+				}
 				AND = {
 					original_tag = ANG
 					has_country_flag = ANG_sauron_returned
