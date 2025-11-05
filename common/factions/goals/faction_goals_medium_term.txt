@@ -4,9 +4,11 @@
 ### General
 # faction_goal_a_large_faction
 # faction_goal_heavy_infantry
+# faction_goal_a_military_base
+
+# Industry and Resources
 # faction_goal_industrial_expansion
 # faction_goal_industrial_research
-# faction_goal_a_military_base
 # faction_goal_entwood_forest
 
 ### War
@@ -17,6 +19,8 @@
 
 ### Faction Specific
 # faction_conquest_of_neighbouring_nations
+# faction_defeat_the_fake_dark_lord
+# faction_goal_war_on_dwarves
 
 ######################################################################
 
@@ -556,13 +560,22 @@ faction_goal_entwood_forest = {
 	description = entwood_forest_desc
 	category = medium_term
 	group = resources_to_market_icon
-	allowed = { every_faction_member = { NOT = { tag = MIR } } }
 	visible = {
-		every_faction_member = { NOT = { tag = MIR } }
+		FROM = {
+			NOT = {
+				original_tag = ENT
+				is_in_faction_with = ENT
+			}
+		}
 		29 = {	is_controlled_by_ROOT_or_ally = no }
 	}
 	available = {
-		every_faction_member = { NOT = { tag = MIR } }
+		FROM = {
+			NOT = {
+				original_tag = ENT
+				is_in_faction_with = ENT
+			}
+		}
 		29 = {	is_controlled_by_ROOT_or_ally = no }
 	}
 	completed = { 29 = { is_controlled_by_ROOT_or_ally = yes } }
@@ -573,9 +586,7 @@ faction_goal_entwood_forest = {
 		every_faction_member = {
 			visible_when_empty = yes
 			limit = {
-				OR = {
-					controls_state = 29
-				}
+				OR = { controls_state = 29 }
 			}
 			add_faction_initiative = 1
 		}
@@ -602,17 +613,99 @@ faction_goal_entwood_forest = {
 			}
 		}
 		modifier = {
-			add = 1 # Powers with low steel should care about steel a bit more
+			add = 1 # Powers with low wood should care about wood a bit more
 			chromium < 20
 			all_allied_country = {
 				chromium > 20
 			}
 		}
 		modifier = {
-			add = 1 # Powers with low steel should care about steel a bit more
+			add = 1 # Powers with low wood should care about wood a bit more
 			chromium < 10
 			all_allied_country = {
 				chromium > 20
+			}
+		}
+	}
+}
+
+faction_goal_rich_mines_of_moria = {
+	name = rich_mines_of_moria_name
+	description = rich_mines_of_moria_desc
+	category = medium_term
+	group = resources_to_market_icon
+	visible = {
+		FROM = {
+			NOT = {
+				original_tag = MOA
+				is_in_faction_with = MOA
+			}
+		}
+	}
+	available = {
+		OR = {
+			73 = { is_controlled_by_ROOT_or_ally = no }
+			134 = {	is_controlled_by_ROOT_or_ally = no }	
+		}
+	}
+	completed = {
+		73 = { is_controlled_by_ROOT_or_ally = yes }
+		134 = {	is_controlled_by_ROOT_or_ally = yes }	
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = TARGET_STATE_CONTROLLERS
+		every_faction_member = {
+			visible_when_empty = yes
+			limit = {
+				OR = {
+					controls_state = 73
+					controls_state = 134
+				}
+			}
+			add_faction_initiative = 1
+		}
+		every_state = {
+			limit = {
+				OR = {
+					state = 73
+					state = 134
+				}
+			}
+			if = {
+				limit = {
+					infrastructure < 5
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}	
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1 
+		modifier = {
+			add = -1 # If the alliance is doing well with aluminium avoid taking this...
+			aluminium > 20
+			all_allied_country = {
+				aluminium > 20
+			}
+		}
+		modifier = {
+			add = 1 # Powers with low aluminium should care about aluminium a bit more
+			aluminium < 20
+			all_allied_country = {
+				aluminium > 20
+			}
+		}
+		modifier = {
+			add = 1 # Powers with low aluminium should care about aluminium a bit more
+			aluminium < 10
+			all_allied_country = {
+				aluminium > 20
 			}
 		}
 	}
