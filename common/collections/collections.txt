@@ -26,7 +26,7 @@ cooperative_faction_members = {
 			has_government = cooperative
 		}
 	}
-	name = COLLECTION_cooperative_FACTION_MEMBERS
+	name = COLLECTION_COOPERATIVE_FACTION_MEMBERS
 }
 
 uncapitulated_cooperative_faction_members = {
@@ -38,12 +38,12 @@ uncapitulated_cooperative_faction_members = {
 			has_capitulated = no
 		}
 	}
-	name = COLLECTION_UNCAPITULATED_cooperative_FACTION_MEMBERS
+	name = COLLECTION_UNCAPITULATED_COOPERATIVE_FACTION_MEMBERS
 }
 
 world_cooperative_countries = {
 	input = game:all_countries
-	name = COLLECTION_WORLD_cooperative_COUNTRIES
+	name = COLLECTION_WORLD_COOPERATIVE_COUNTRIES
 	operators = {
 		limit = {
 			has_government = cooperative
@@ -51,20 +51,9 @@ world_cooperative_countries = {
 	}
 }
 
-world_uncapitulated_cooperative_countries_and_dominions = {
-	input = game:all_countries
-	name = COLLECTION_UNCAPITULATED_COOPERATIVE_COUNTRIES_AND_DOMINIONS
-	operators = {
-		limit = {
-			has_government = cooperative
-			has_capitulated = no
-			is_subject = no
-		}
-	}
-}
 world_uncapitulated_cooperative_countries = {
 	input = collection:world_cooperative_countries
-	name = COLLECTION_UNCAPITULATED_cooperative_COUNTRIES
+	name = COLLECTION_UNCAPITULATED_COOPERATIVE_COUNTRIES
 	operators = {
 		limit = {
 			has_capitulated = no
@@ -74,10 +63,20 @@ world_uncapitulated_cooperative_countries = {
 
 world_non_revolutionary_countries = {
 	input = game:all_countries
-	name = COLLECTION_NON_COMMUNIST_COUNTRIES
+	name = COLLECTION_NON_REVOLUTIONARY_COUNTRIES
 	operators = {
 		limit = {
 			NOT = { has_government = revolutionary }
+		}
+	}
+}
+
+world_non_revolutionary_states = {
+	input = game:all_states
+	name = COLLECTION_NON_COMMUNIST_STATES
+	operators = {
+		limit = {
+			NOT = { controller = { has_government = revolutionary } }
 		}
 	}
 }
@@ -103,6 +102,14 @@ world_revolutionary_countries = {
 
 ########################
 
+faction_states = {
+	input = game:scope
+	operators = {
+		faction_members
+		controlled_states
+	}
+	name = COLLECTION_FACTION_CONTROLLED_STATES
+}
 
 faction_owned_core_states = {
 	input = game:scope
@@ -115,6 +122,19 @@ faction_owned_core_states = {
 	}
 	name = COLLECTION_FACTION_OWNED_CORE_STATES
 }
+
+faction_controlled_non_core_states = {
+	input = game:scope
+	operators = {
+		faction_members
+		controlled_states
+		limit = {
+			NOT = { is_core_of = PREV }
+		}
+	}
+	name = COLLECTION_FACTION_CONTROLLED_NON_CORE_STATES
+}
+
 
 world_non_belligerent_controlled_states = {
 	input = game:all_states
@@ -205,6 +225,16 @@ belligerent_controlled_states_my_continent = {
 	}
 }
 
+belligerent_controlled_countries = {
+	input = game:all_countries
+	name = COLLECTION_AMOUNT_OF_BELLIGERENT_CONTROLLED_COUNTRIES
+	operators = {
+		limit = {
+			controller = { has_government = belligerent }
+		}
+	}
+}
+
 men_controlled_states = {
 	input = game:all_states
 	name = COLLECTION_AMOUNT_OF_MEN_CONTROLLED_STATES
@@ -248,4 +278,29 @@ anti_revolutionary_controlled_states = {
 			}
 		}
 	}
+}
+
+world_uncapitulated_cooperative_countries_and_fiefdom = {
+	input = game:all_countries
+	name = COLLECTION_UNCAPITULATED_COOPERATIVE_COUNTRIES_AND_FIEFDOM
+	operators = {
+		limit = {
+			has_government = cooperative
+			has_capitulated = no
+			OR = {
+				is_subject = no
+				has_autonomy_state = autonomy_fiefdom
+			}
+		}
+	}
+}
+###
+world_uncapitulated_cooperative_countries = {
+	input = collection:world_cooperative_countries
+	name = COLLECTION_UNCAPITULATED_COOPERATIVE_COUNTRIES
+	operators = {
+		limit = {
+			has_capitulated = no
+		}
+	}	
 }
