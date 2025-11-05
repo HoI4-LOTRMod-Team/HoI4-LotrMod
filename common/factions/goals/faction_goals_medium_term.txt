@@ -7,13 +7,13 @@
 # faction_goal_industrial_expansion
 # faction_goal_industrial_research
 # faction_goal_a_military_base
+# faction_goal_entwood_forest
 
 ### War
 # faction_goal_aggressive_defense
 # faction_goal_guardians_of_peace
 
 ### Against ... ideology
-
 
 ### Faction Specific
 # faction_conquest_of_neighbouring_nations
@@ -550,7 +550,73 @@ faction_goal_war_on_dwarves = {
 
 ### Strategic Resources
 
-# TODO
+# Wood
+faction_goal_entwood_forest = {
+	name = entwood_forest_name
+	description = entwood_forest_desc
+	category = medium_term
+	group = resources_to_market_icon
+	allowed = { every_faction_member = { NOT = { tag = MIR } } }
+	visible = {
+		every_faction_member = { NOT = { tag = MIR } }
+		29 = {	is_controlled_by_ROOT_or_ally = no }
+	}
+	available = {
+		every_faction_member = { NOT = { tag = MIR } }
+		29 = {	is_controlled_by_ROOT_or_ally = no }
+	}
+	completed = { 29 = { is_controlled_by_ROOT_or_ally = yes } }
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = TARGET_STATE_CONTROLLERS
+		every_faction_member = {
+			visible_when_empty = yes
+			limit = {
+				OR = {
+					controls_state = 29
+				}
+			}
+			add_faction_initiative = 1
+		}
+		29 = {
+			if = {
+				limit = {
+					infrastructure < 5
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}	
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1 
+		modifier = {
+			add = -1 # If the alliance is doing well with wood avoid taking this...
+			chromium > 20
+			all_allied_country = {
+				chromium > 20
+			}
+		}
+		modifier = {
+			add = 1 # Powers with low steel should care about steel a bit more
+			chromium < 20
+			all_allied_country = {
+				chromium > 20
+			}
+		}
+		modifier = {
+			add = 1 # Powers with low steel should care about steel a bit more
+			chromium < 10
+			all_allied_country = {
+				chromium > 20
+			}
+		}
+	}
+}
 
 ### Strategic Bases
 
