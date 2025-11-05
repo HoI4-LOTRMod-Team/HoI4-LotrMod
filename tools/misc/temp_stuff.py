@@ -9,7 +9,7 @@ $TOKEN$ = {
     icon = "GFX_doctrine_milestone_fighter_air"
     icon_frame = "GFX_infantry_doctrine_deco"
     mastery = {
-        multiplier = 5.0 # TODO - placeholder
+        multiplier = 5.0
         categories = {
             category_all_infantry
         }
