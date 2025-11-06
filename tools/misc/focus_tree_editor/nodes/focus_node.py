@@ -71,6 +71,7 @@ class FocusNode(BaseNode):
     y = 0
     relative_position_id = None
     focus_id = ""
+    cost = 10
 
     pObj = None
 

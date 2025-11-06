@@ -24,10 +24,6 @@ from NodeGraphQt.constants import PipeLayoutEnum
 BASE_PATH = Path(__file__).parent.resolve()
 
 
-x_scaling = 150
-y_scaling = 150
-
-
 
 def main():
     # handle SIGINT to make the app terminate on CTRL+C
@@ -37,14 +33,14 @@ def main():
 
     # create graph controller.
     graph = create_node_graph()
+
+    focus_node_tree = FocusNodeTree(graph)
+
     context_menu = graph.get_context_menu('graph')
     main_window = create_main_window()
     main_window.setCentralWidget(graph.widget)
-    dock_widget = create_properties_panel(main_window, graph)
+    dock_widget = create_properties_panel(main_window, graph, focus_node_tree)
 
-
-    # Create focus node tree from file
-    focus_node_tree = FocusNodeTree(graph)
 
 
     # Present

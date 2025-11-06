@@ -97,115 +97,169 @@ def create_main_window():
     return main_window
 
 
-def create_properties_panel(main_window, graph):
+def create_properties_panel(main_window, graph, focus_node_tree):
     dock_widget = QtWidgets.QDockWidget("Properties Panel", main_window)
 
     panel_container = QtWidgets.QWidget()
     form_layout = QtWidgets.QFormLayout(panel_container)
-    form_layout.setContentsMargins(10, 10, 10, 10) # Add padding
+    form_layout.setContentsMargins(10, 10, 10, 10)
 
-    # Create the editable widgets
-    # We define them here so our functions below can access them
-    edit_id = QtWidgets.QLineEdit()
-    edit_x = QtWidgets.QSpinBox()
-    edit_y = QtWidgets.QSpinBox()
-
-    # Set ranges for the spin boxes (optional, but good practice)
-    edit_x.setRange(-1000, 1000)
-    edit_y.setRange(-1000, 1000)
-
-    # Add them to the layout
-    form_layout.addRow("ID:", edit_id)
-    form_layout.addRow("Grid X:", edit_x)
-    form_layout.addRow("Grid Y:", edit_y)
+    # --- 1. DEFINE WIDGETS AND PROPERTY MAP ---
     
-    # 5. Add your container widget to the dock widget
+    property_map = []
+
+    # --- Property 1: ID (QLineEdit) ---
+    edit_id = QtWidgets.QLineEdit()
+    property_map.append({
+        'label': "ID:",
+        'attr': "focus_id",  # The node attribute (e.g., node.focus_name)
+        'widget': edit_id,
+        'signal': edit_id.editingFinished, # Signal to connect to
+        'get_val': lambda w: w.text(),    # How to get value from widget
+        'set_val': lambda w, v: w.setText(v), # How to set value on widget
+        'clear_val': lambda w: w.clear(), # How to clear widget for "Mixed"
+        'set_placeholder': lambda w, t: w.setPlaceholderText(t) # How to set placeholder
+    })
+
+    relpos_id = QtWidgets.QLineEdit()
+    property_map.append({
+        'label': "RelPosID:",
+        'attr': "relative_position_id",  # The node attribute (e.g., node.focus_name)
+        'widget': relpos_id,
+        'signal': relpos_id.editingFinished, # Signal to connect to
+        'get_val': lambda w: focus_node_tree.get_focus_node_by_name(w.text().strip()),    # How to get value from widget
+        'set_val': lambda w, v: w.setText(v.focus_id), # How to set value on widget
+        'clear_val': lambda w: w.clear(), # How to clear widget for "Mixed"
+        'set_placeholder': lambda w, t: w.setPlaceholderText(t) # How to set placeholder
+    })
+
+    # --- Property 2: Cost (QSpinBox) ---
+    cost = QtWidgets.QSpinBox()
+    cost.setRange(-1000, 1000)
+    property_map.append({
+        'label': "Cost:",
+        'attr': "cost",        # The node attribute (e.g., node.cost)
+        'widget': cost,
+        'signal': cost.valueChanged,
+        'get_val': lambda w: w.value(),
+        'set_val': lambda w, v: w.setValue(v),
+        'clear_val': lambda w: w.clear(),
+        'set_placeholder': lambda w, t: w.lineEdit().setPlaceholderText(t)
+    })
+
+    # --- 2. ADD WIDGETS TO LAYOUT ---
+    for prop in property_map:
+        form_layout.addRow(prop['label'], prop['widget'])
+
     dock_widget.setWidget(panel_container)
 
-    def update_node_from_panel():
-        """
-        Reads values from the panel and updates the selected node.
-        """
-        selected_nodes = graph.selected_nodes()
-        if not selected_nodes:
-            return
+    # --- 3. REFACTORED FUNCTIONS ---
 
-        node = selected_nodes[0]
-        if node.type_ != 'nodes.basic.FocusNode':
-            return
+    def create_update_function(prop_entry):
+        """
+        Creates and returns a function that updates a
+        specific node property from its widget.
+        """
+        widget = prop_entry['widget']
+        attr_name = prop_entry['attr']
+        getter = prop_entry['get_val']
 
-        # Update the node's internal properties from the widgets
-        node.focus_name = edit_id.text()
-        node.x = edit_x.value()
-        node.y = edit_y.value()
+        def update_nodes():
+            new_value = getter(widget)
+            
+            selected_nodes = graph.selected_nodes()
+            for node in selected_nodes:
+                # We only update nodes that are of the correct type
+                # AND have the attribute (to be safe).
+                if (node.type_ == 'nodes.basic.FocusNode' and
+                    hasattr(node, attr_name)):
+                    
+                    try:
+                        setattr(node, attr_name, new_value)
+                    except Exception as e:
+                        # Log error if setting the node property fails
+                        print(f"Error updating node {node.name()}: {e}")
         
-        # IMPORTANT: Also update the node's visual position in the graph
-        # We use the x_scaling/y_scaling from your script's global scope
-        node.set_pos(x_scaling * node.x, y_scaling * node.y)
+        return update_nodes
+
 
     def update_panel_from_node():
         """
-        Reads properties from the selected node and updates the panel.
+        Updates the panel based on the current node selection.
+        Hides properties if not all selected nodes have them.
+        Handles set_val errors.
         """
         selected_nodes = graph.selected_nodes()
-        
-        # Check if a valid FocusNode is selected
-        if selected_nodes and selected_nodes[0].type_ == 'nodes.basic.FocusNode':
-            node = selected_nodes[0]
-            
-            # Block signals from the widgets to prevent a feedback loop
-            # (e.g., setValue() firing valueChanged, which calls update_node_from_panel)
-            edit_id.blockSignals(True)
-            edit_x.blockSignals(True)
-            edit_y.blockSignals(True)
+        focus_nodes = [n for n in selected_nodes if n.type_ == 'nodes.basic.FocusNode']
 
-            # Update the panel widgets with the node's data
-            edit_id.setText(node.focus_name)
-            edit_x.setValue(node.x)
-            edit_y.setValue(node.y)
-
-            # Re-enable signals
-            edit_id.blockSignals(False)
-            edit_x.blockSignals(False)
-            edit_y.blockSignals(False)
-            
-            # Enable widgets for editing
-            edit_id.setEnabled(True)
-            edit_x.setEnabled(True)
-            edit_y.setEnabled(True)
-            
+        if not focus_nodes:
+            # No FocusNodes selected, hide all rows
+            for prop in property_map:
+                widget = prop['widget']
+                # Use form_layout to hide the entire row (label + widget)
+                form_layout.setRowVisible(widget, False)
+                
+                # Block signals while clearing
+                widget.blockSignals(True)
+                prop['clear_val'](widget)
+                widget.blockSignals(False)
         else:
-            # No node selected, or not a FocusNode. Clear and disable panel.
-            edit_id.blockSignals(True)
-            edit_x.blockSignals(True)
-            edit_y.blockSignals(True)
-            
-            edit_id.clear()
-            edit_x.setValue(0)
-            edit_y.setValue(0)
-            
-            edit_id.blockSignals(False)
-            edit_x.blockSignals(False)
-            edit_y.blockSignals(False)
-            
-            edit_id.setEnabled(False)
-            edit_x.setEnabled(False)
-            edit_y.setEnabled(False)
+            # At least one FocusNode is selected
+            for prop in property_map:
+                widget = prop['widget']
+                attr_name = prop['attr']
 
-    # 6. Add the dock widget to the main window
-    #    You can change QtCore.Qt.RightDockWidgetArea to .Left, .Top, or .Bottom
+                # --- NEW CHECK 1: Do all nodes have this attribute? ---
+                all_nodes_have_attr = True
+                for node in focus_nodes:
+                    if not hasattr(node, attr_name):
+                        all_nodes_have_attr = False
+                        break
+                
+                # Set row visibility based on the check
+                form_layout.setRowVisible(widget, all_nodes_have_attr)
+
+                if not all_nodes_have_attr:
+                    continue # Skip to the next property, this one is hidden
+
+                # --- All nodes have the attr, proceed as before ---
+                all_values = set(getattr(n, attr_name) for n in focus_nodes)
+                
+                widget.blockSignals(True)
+                
+                if len(all_values) == 1:
+                    # All nodes have the same value
+                    value_to_set = all_values.pop()
+                    
+                    # --- NEW CHECK 2: Handle set_val failures ---
+                    try:
+                        prop['set_val'](widget, value_to_set)
+                        prop['set_placeholder'](widget, "") # Clear placeholder
+                    except Exception as e:
+                        # set_val failed (e.g., type mismatch)
+                        print(f"Warning: Failed to set widget for '{attr_name}'. Error: {e}")
+                        prop['clear_val'](widget)
+                        prop['set_placeholder'](widget, "N/A (Error)")
+                else:
+                    # Mixed values
+                    prop['clear_val'](widget) # Clear text
+                    prop['set_placeholder'](widget, "--- Mixed ---")
+                
+                widget.blockSignals(False)
+
+
+    # 4. Add the dock widget to the main window
     main_window.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_widget)
 
-    # 7. Connect graph selection TO panel
+    # 5. Connect graph selection TO panel
     graph.node_selection_changed.connect(update_panel_from_node)
 
-    # 8. Connect panel edits TO node
-    edit_id.editingFinished.connect(update_node_from_panel)
-    edit_x.valueChanged.connect(update_node_from_panel)
-    edit_y.valueChanged.connect(update_node_from_panel)
+    # 6. Connect panel edits TO node
+    for prop in property_map:
+        update_func = create_update_function(prop)
+        prop['signal'].connect(update_func)
 
-    # 9. Set the initial state of the panel (disabled)
+    # 7. Set the initial state of the panel
     update_panel_from_node()
 
     return dock_widget
-
