@@ -147,6 +147,49 @@ def create_properties_panel(main_window, graph, focus_node_tree):
         'set_placeholder': lambda w, t: w.lineEdit().setPlaceholderText(t)
     })
 
+    is_active_check = QtWidgets.QCheckBox()
+    # Enable tri-state to allow for the "Mixed" state
+    is_active_check.setTristate(True) 
+    
+    property_map.append({
+        'label': "Is Active:",
+        'attr': "is_active",  # The node attribute (e.g., node.is_active)
+        'widget': is_active_check,
+        'signal': is_active_check.stateChanged, # Use stateChanged
+        
+        # Get the boolean value
+        'get_val': lambda w: w.isChecked(),
+        
+        # Set the state: Checked or Unchecked
+        'set_val': lambda w, v: (
+            w.setTristate(False), # A specific value is not tri-state
+            w.setCheckState(QtCore.Qt.Checked if v else QtCore.Qt.Unchecked)
+        ),
+        
+        # Clear (for "Mixed"): Set to PartiallyChecked
+        'clear_val': lambda w: (
+            w.setTristate(True), # Enable tri-state for "Mixed"
+            w.setCheckState(QtCore.Qt.PartiallyChecked)
+        ),
+
+        # No placeholder for a checkbox, so do nothing
+        'set_placeholder': lambda w, t: None 
+    })
+
+    search_filters = ["FOCUS_FILTER_POLITICAL", "FOCUS_FILTER_COOPERATIVE"]
+    for filter in search_filters:
+        filt = QtWidgets.QCheckBox()
+        property_map.append({
+            'label': filter+":",
+            'attr': "cost",        # The node attribute (e.g., node.cost)
+            'widget': filt,
+            'signal': filt.stateChanged,
+            'get_val': lambda w: True,
+            'set_val': lambda w, v: w.setChecked(True),
+            'clear_val': lambda w: w.setChecked(False),
+            'set_placeholder': lambda w, t: w.setChecked(False)
+        })
+
     # --- 2. ADD WIDGETS TO LAYOUT ---
     for prop in property_map:
         form_layout.addRow(prop['label'], prop['widget'])

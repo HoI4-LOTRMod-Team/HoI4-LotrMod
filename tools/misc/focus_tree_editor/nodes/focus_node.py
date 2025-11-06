@@ -37,17 +37,19 @@ class FocusNode(BaseNode):
         self.add_output('children')
 
         #self.create_property('focus_cost', 5)
-        self.create_property('focus_icon', 'GFX_placeholder_icon', tab="properties")
+        #self.create_property('focus_icon', 'GFX_placeholder_icon', tab="properties")
         #self.create_property('focus_relative_position_id', '')
+
+        #self.add_combo_menu("hi there", "hi", ["i1", "af2", "afija"])
 
 
         #self.add_text_input('cost', "5")
         #self.add_text_input('focus_icon', "GFX_placeholder_icon")
 
 
-        self.add_text_input('my_notes', 'id', text=self.focus_id)
-        notes_widget = self.get_widget('my_notes')
-        notes_widget.value_changed.connect(self.on_notes_changed)
+        #self.add_text_input('my_notes', 'id', text=self.focus_id)
+        #notes_widget = self.get_widget('my_notes')
+        #notes_widget.value_changed.connect(self.on_notes_changed)
 
         # 2. Load the image using QPixmap
         #image_path = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\tools\subscripts\res\leader_frame.png'
@@ -72,6 +74,8 @@ class FocusNode(BaseNode):
     relative_position_id = None
     focus_id = ""
     cost = 10
+
+    is_active = True # temporary example for tristate checkbox in properties panel
 
     pObj = None
 
