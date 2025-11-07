@@ -142,11 +142,29 @@ class PObj:
             return self.value[0]
         return self.Where(condition).First()
     
+    # Get index of first child object meeting condition
+    def FirstIndex(self, condition=None):
+        if condition is None: return 0
+        i = 0
+        for c in self.value:
+            if(condition(c)): return i
+            i += 1
+        return i
+    
     # Get the last child object that meets the given condition
     def Last(self, condition=None):
         if condition is None:
             return self.value[len(self.value)-1]
         return self.Where(condition).Last()
+    
+    # Get index of first child object meeting condition
+    def LastIndex(self, condition=None):
+        if condition is None: return len(self.value) - 1
+        i = len(self.value) - 1
+        while i >= 0:
+            if(condition(self.value[i])): return i
+            i -= 1
+        return 0
     
     # ...
     def Recurse(self, NextFunction:lambda x: x, ActionFunction:lambda x: None):
@@ -166,7 +184,7 @@ class PObj:
         self.parent.InsertAt(line, self.parent.value.index(self)+1)
         return self
     
-    # ...
+    # Insert new line of text at a certain index
     def InsertAt(self, line, index):
         if(len(self.value) < 1):
             self.Insert(line)
@@ -202,6 +220,13 @@ class PObj:
             return self
         rm = self.Get(key)
         self.value.remove(rm)
+        return self
+    
+    # Remove all children that fulfil condition
+    def RemoveAllWhere(self, condition):
+        for c in self.value:
+            if condition(c):
+                self.value.remove(c)
         return self
         
 

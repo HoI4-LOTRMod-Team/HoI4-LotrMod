@@ -3,8 +3,6 @@
 import signal
 from pathlib import Path
 
-from core import *
-
 from Qt import QtCore, QtWidgets
 
 from nodes import focus_node
@@ -39,6 +37,11 @@ def focus_to_node_pos(pos):
 
     return (x*x_scaling, y*y_scaling)
 
+def node_to_focus_pos(pos):
+    (x, y) = pos
+
+    return (int(x/x_scaling), int(y/y_scaling))
+
 
 def add_focus_to_graph(graph):
     focus = graph.create_node('nodes.basic.FocusNode')
@@ -65,6 +68,8 @@ class FocusNodeGraph(NodeGraph):
             # This snaps the nodes in this graph to coordinates that are a multiple of 100
             (new_x, new_y) = snap_node_pos((node.pos()[0], node.pos()[1]))
             node.set_pos(new_x, new_y)
+
+            node.recalculate_positions()
 
         self._undo_stack.endMacro()
 

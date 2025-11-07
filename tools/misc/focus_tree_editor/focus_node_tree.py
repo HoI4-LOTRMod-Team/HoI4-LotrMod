@@ -66,3 +66,7 @@ class FocusNodeTree:
                     preq_focuses = preq.GetAll("focus")
                     for preq_focus in preq_focuses.value:
                         self.get_focus_node_by_name(preq_focus.value).set_output(0, curr_f.input(0))
+
+        for focus in self.focuses:
+            focus.parent_tree = self
+            focus.is_activated = True
