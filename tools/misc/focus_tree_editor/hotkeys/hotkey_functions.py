@@ -62,28 +62,28 @@ def import_session(graph):
         graph.import_session(file_path)
 
 
-def save_session(graph):
-    """
-    Prompts a file save dialog to serialize a session if required.
-    """
-    current = graph.current_session()
-    if current:
-        graph.save_session(current)
-        msg = 'Session layout saved:\n{}'.format(current)
-        viewer = graph.viewer()
-        viewer.message_dialog(msg, title='Session Saved')
-    else:
-        save_session_as(graph)
-
-
-def save_session_as(graph):
-    """
-    Prompts a file save dialog to serialize a session.
-    """
-    current = graph.current_session()
-    file_path = graph.save_dialog(current)
-    if file_path:
-        graph.save_session(file_path)
+#def save_session(graph):
+#    """
+#    Prompts a file save dialog to serialize a session if required.
+#    """
+#    current = graph.current_session()
+#    if current:
+#        graph.save_session(current)
+#        msg = 'Session layout saved:\n{}'.format(current)
+#        viewer = graph.viewer()
+#        viewer.message_dialog(msg, title='Session Saved')
+#    else:
+#        save_session_as(graph)
+#
+#
+#def save_session_as(graph):
+#    """
+#    Prompts a file save dialog to serialize a session.
+#    """
+#    current = graph.current_session()
+#    file_path = graph.save_dialog(current)
+#    if file_path:
+#        graph.save_session(file_path)
 
 
 def clear_session(graph):

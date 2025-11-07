@@ -393,6 +393,10 @@ def SaveObjToFile(obj, output_file):
     with open(output_file, 'w') as file:
         file.write(str(obj))
 
+def SaveObjValueToFile(obj, output_file):
+    with open(output_file, 'w') as file:
+        file.write(str(obj.GetValueString(False)))
+
 def SaveListToFile(lst, output_file):
     with open(output_file, 'w') as file:
         file.write("\n".join([str(x) for x in lst]))

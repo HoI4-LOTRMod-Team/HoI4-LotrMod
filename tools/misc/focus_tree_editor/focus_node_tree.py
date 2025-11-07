@@ -1,6 +1,6 @@
 
 
-from pdx_parser import Parse_PObj, Parse_List, PObj, SaveListToFile, ParseListFromFile, ParseListFromFile_asPObj
+from pdx_parser import Parse_PObj, Parse_List, PObj, SaveListToFile, ParseListFromFile, ParseListFromFile_asPObj, SaveObjValueToFile
 
 from core import *
 
@@ -11,26 +11,38 @@ class FocusNodeTree:
 
     focuses = []
 
+    root_pobj = None
+
     def get_focus_node_by_name(self, name):
         for focus in self.focuses:
             if focus.focus_id == name:
                 return focus
         return None
     
+    def save_focus_tree(self):
+        for f in self.focuses:
+            f.apply()
+        SaveObjValueToFile(self.root_pobj, r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\rohan.txt')
+    
     def __init__(self, graph):
 
-        focus_list = ParseListFromFile_asPObj(r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\rohan.txt').Get("focus_tree")
+        focus_menu = graph.get_context_menu('graph').add_menu('Focus Tree')
+        focus_menu.add_command('Save Focus Tree', self.save_focus_tree, 'Ctrl+S')
+
+        self.root_pobj = ParseListFromFile_asPObj(r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\rohan.txt')
+        focus_list = self.root_pobj.Get("focus_tree")
 
         focuses_pobjs = focus_list.GetAll("focus").value
 
         # Create a node in the graph for each focus and set the respective values
         for focus in focuses_pobjs:
             focus_1 = graph.create_node('nodes.basic.FocusNode')
+            focus_1.set_from_pObj(focus)
             focus_1.set_name("")
-            focus_1.focus_id = focus.Get("id").value
-            focus_1.x = int(focus.GetVal("x"))
-            focus_1.y = int(focus.GetVal("y"))
-            focus_1.pObj = focus
+            #focus_1.focus_id = focus.Get("id").value
+            #focus_1.x = int(focus.GetVal("x"))
+            #focus_1.y = int(focus.GetVal("y"))
+            #focus_1.pObj = focus
             self.focuses.append(focus_1)
 
         # set relative position id to respective focus

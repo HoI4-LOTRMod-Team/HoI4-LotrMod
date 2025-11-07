@@ -36,35 +36,30 @@ class FocusNode(BaseNode):
         # create node outputs.
         self.add_output('children')
 
-        #self.create_property('focus_cost', 5)
-        #self.create_property('focus_icon', 'GFX_placeholder_icon', tab="properties")
-        #self.create_property('focus_relative_position_id', '')
+    
+    def set_from_pObj(self, obj):
+        self.pObj = obj
 
-        #self.add_combo_menu("hi there", "hi", ["i1", "af2", "afija"])
-
-
-        #self.add_text_input('cost', "5")
-        #self.add_text_input('focus_icon', "GFX_placeholder_icon")
-
-
-        #self.add_text_input('my_notes', 'id', text=self.focus_id)
-        #notes_widget = self.get_widget('my_notes')
-        #notes_widget.value_changed.connect(self.on_notes_changed)
-
-        # 2. Load the image using QPixmap
-        #image_path = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\tools\subscripts\res\leader_frame.png'
-        #self.set_icon(image_path)
-
-    def on_notes_changed(self, text, text2):
-        """
-        This method is a "slot" that runs every time the
-        'my_notes' text field signal fires.
+        self.focus_id = obj.GetVal("id")
+        self.x = int(obj.GetVal("x"))
+        self.y = int(obj.GetVal("y"))
         
-        The 'text' argument is the new string, passed automatically
-        by the textChanged signal.
-        """
-        # Action 1: Change the node's name to match the text
-        focus_id = text2
+        if obj.Has("cost"):
+            self.og_cost = self.cost = int(obj.GetVal("cost"))
+
+        # We do not set relative_position_id here!
+
+        self.filters = []
+        if obj.Has("search_filters"):
+            for f in obj.GetVal("search_filters"):
+                if f.value not in self.filters: self.filters.append(f.value.strip())
+            #print(self.focus_id + ": " + str(self.filters))
+
+        #self.filters = ["FOCUS_FILTER_UNALIGNED"]
+
+
+        
+
 
         
         
@@ -73,9 +68,10 @@ class FocusNode(BaseNode):
     y = 0
     relative_position_id = None
     focus_id = ""
-    cost = 10
+    filters = []
 
-    is_active = True # temporary example for tristate checkbox in properties panel
+    cost = 10
+    og_cost = 10
 
     pObj = None
 
@@ -87,6 +83,15 @@ class FocusNode(BaseNode):
             (px, py) = self.relative_position_id.hoi4_get_absolute_pos()
             return (self.x + px, self.y + py)
         return (self.x, self.y)
+    
+    def has_changed(self):
+        return self.cost != self.og_cost
+    
+    def apply(self):
+        if self.has_changed():
+            self.pObj.Get("cost").value = str(self.cost)
+    
+
 
 
 
