@@ -9,8 +9,15 @@ from NodeGraphQt.qgraphics.node_abstract import AbstractNodeItem
 
 from NodeGraphQt.widgets.node_widgets import NodeBaseWidget
 
+from PySide6.QtWidgets import QGraphicsTextItem
+from PySide6.QtGui import QFont
+from PySide6.QtCore import Qt
+
 
 from Qt import QtWidgets, QtGui, QtCore
+
+import random
+import string
 
 BASE_PATH = Path(__file__).parent.parent.resolve()
 
@@ -22,6 +29,10 @@ def node_to_focus_pos(pos):
     (x, y) = pos
 
     return (int(x/x_scaling), int(y/y_scaling))
+
+def random_string(length):
+    chars = string.ascii_letters + string.digits  # a-z, A-Z, 0-9
+    return ''.join(random.choice(chars) for _ in range(length))
 
 
 class FocusNode(BaseNode):
@@ -43,6 +54,24 @@ class FocusNode(BaseNode):
         # create node outputs.
         self.add_output('children')
 
+        self.add_text_input
+
+        # Add a label text item inside the node's graphics object
+        label = QGraphicsTextItem("", self.view)
+        font = QFont()
+        font.setPointSize(8)
+        label.setFont(font)
+        label.setDefaultTextColor(Qt.gray)
+        
+        # Position relative to the node
+        label.setPos(5, 5)  # (x, y)
+        
+        # Disable interaction
+        label.setTextInteractionFlags(Qt.NoTextInteraction)
+        
+        # Store a reference if you want to move/update it later
+        self._label_item = label
+
 
 
     def __setattr__(self, name, value):
@@ -59,8 +88,11 @@ class FocusNode(BaseNode):
                 elif name == "filters" and self.pObj.Has("search_filters"):
                     self.pObj.Get("search_filters").value = "{ " + " ".join(self.filters) + " }"
 
-                elif name == "relative_position_id" and self.pObj.Has("relative_position_id"):
-                    self.pObj.Get("relative_position_id").value = value.focus_id
+                elif name == "relative_position_id":
+                    if self.pObj.Has("relative_position_id"):
+                        self.pObj.Get("relative_position_id").value = value.focus_id
+                    else:
+                        self.pObj.InsertAt("relative_position_id = "+str(value.focus_id), 1)
                     super().__setattr__(name, value)
                     self.recalculate_positions()
                     return
@@ -72,6 +104,11 @@ class FocusNode(BaseNode):
                     self.pObj.Get("y").value = str(value)
 
                 elif name == "focus_id":
+                    # first, check if the name exists already and add random chars if it does:
+                    for f in self.parent_tree.focuses:
+                        if f != self and f.focus_id == value:
+                            value = value + "_" + random_string(6)
+
                     self.pObj.Get("id").value = str(value)
                     for f in self.parent_tree.focuses:
                         # deal with rel-pos-ids
@@ -81,6 +118,8 @@ class FocusNode(BaseNode):
                             for preq in f.pObj.GetAll("prerequisite").value:
                                 for pf in preq.value:
                                     if pf.value == old_value: pf.value = value
+
+                    self._label_item.setPlainText(value)
                     
 
 
@@ -96,7 +135,7 @@ class FocusNode(BaseNode):
         if not self.is_activated: return
 
         li = self.pObj.LastIndex(lambda x: x.id == "prerequisite") + 1
-        self.pObj.InsertAt("prerequisite = { focus = " + out_port.node().focus_id + " }", li)
+        self.pObj.InsertAt("\tprerequisite = { focus = " + out_port.node().focus_id + " }", li)
 
         #print("prerequitites added: " + out_port.node().focus_id)
         return
@@ -125,10 +164,11 @@ class FocusNode(BaseNode):
 
 
 
-    def set_from_pObj(self, obj):
+    def set_from_pObj(self, obj, is_new_focus=False):
         self.pObj = obj
 
         self.focus_id = obj.GetVal("id")
+        self._label_item.setPlainText(self.focus_id)
         self.x = int(obj.GetVal("x"))
         self.y = int(obj.GetVal("y"))
         
@@ -142,6 +182,9 @@ class FocusNode(BaseNode):
             for f in obj.GetVal("search_filters"):
                 if f.value not in self.filters: self.filters.append(f.value.strip())
         self.og_filters = self.filters.copy()
+
+        if is_new_focus:
+            self.parent_tree.root_pobj.Get("focus_tree").value.append(self.pObj)
 
     
     def recalculate_positions(self):
@@ -175,7 +218,6 @@ class FocusNode(BaseNode):
     is_activated = False
 
 
-
     pObj = None
 
     def hoi4_get_relative_pos(self):
@@ -186,9 +228,6 @@ class FocusNode(BaseNode):
             (px, py) = self.relative_position_id.hoi4_get_absolute_pos()
             return (self.x + px, self.y + py)
         return (self.x, self.y)
-    
-    def apply(self):
-        return
     
 
 

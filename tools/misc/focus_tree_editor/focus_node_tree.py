@@ -20,8 +20,6 @@ class FocusNodeTree:
         return None
     
     def save_focus_tree(self):
-        for f in self.focuses:
-            f.apply()
         SaveObjValueToFile(self.root_pobj, r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\rohan.txt')
     
     def __init__(self, graph):

@@ -35,6 +35,7 @@ def main():
     graph = create_node_graph()
 
     focus_node_tree = FocusNodeTree(graph)
+    graph.focus_tree = focus_node_tree
 
     context_menu = graph.get_context_menu('graph')
     main_window = create_main_window()

@@ -2,8 +2,10 @@
 
 import signal
 from pathlib import Path
+import random
+import string
 
-from Qt import QtCore, QtWidgets
+from Qt import QtCore, QtWidgets, QtGui
 
 from nodes import focus_node
 from NodeGraphQt import (
@@ -14,6 +16,8 @@ from NodeGraphQt import (
 )
 from NodeGraphQt.constants import LayoutDirectionEnum
 from NodeGraphQt.constants import PipeLayoutEnum
+
+from pdx_parser import Parse_PObj
 
 BASE_PATH = Path(__file__).parent.resolve()
 
@@ -43,16 +47,55 @@ def node_to_focus_pos(pos):
     return (int(x/x_scaling), int(y/y_scaling))
 
 
+def random_string(length):
+    chars = string.ascii_letters + string.digits  # a-z, A-Z, 0-9
+    return ''.join(random.choice(chars) for _ in range(length))
+
+
+focus_template = """
+    focus = {
+		id = ROH_new_focus_$TOKEN$
+		icon = GFX_unknown_focus
+		
+		x = 0
+		y = 0
+
+		cost = 5
+		ai_will_do = { factor = 1 }
+		
+		search_filters = { }
+		available = {
+			always = yes
+		}
+		completion_reward = {
+			# TODO
+		}
+	}
+"""
+
+
 def add_focus_to_graph(graph):
     focus = graph.create_node('nodes.basic.FocusNode')
     (x, y) = graph.cursor_pos()
     x = round((x - (0.5*x_scaling)) / x_scaling) * x_scaling
     y = round((y - (0.5*y_scaling)) / y_scaling) * y_scaling
     focus.set_pos(x, y)
+    focus.set_name("")
+
+    graph.focus_tree.focuses.append(focus)
+
+    template = focus_template.replace("$TOKEN$", random_string(6))
+    
+    focus.parent_tree = graph.focus_tree
+    focus.set_from_pObj(Parse_PObj(template)[0], True)
+    focus.is_activated = True
+    focus.recalculate_positions()
 
 
 
 class FocusNodeGraph(NodeGraph):
+
+    focus_tree = None
 
     def _on_nodes_moved(self, node_data):
         """
@@ -125,6 +168,18 @@ def create_properties_panel(main_window, graph, focus_node_tree):
         'clear_val': lambda w: w.clear(), # How to clear widget for "Mixed"
         'set_placeholder': lambda w, t: w.setPlaceholderText(t) # How to set placeholder
     })
+
+    # This makes it so we can quick-edit focus names with enter
+    shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Return), main_window)
+    def focus_line_edit_if_unfocused():
+        if not edit_id.hasFocus():
+            dock_widget.activateWindow()
+            edit_id.setFocus()
+            edit_id.selectAll()
+        else:
+            edit_id.clearFocus()
+    shortcut.activated.connect(focus_line_edit_if_unfocused)
+
 
     relpos_id = QtWidgets.QLineEdit()
     property_map.append({
