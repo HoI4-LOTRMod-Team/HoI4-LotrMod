@@ -1050,7 +1050,7 @@ focus = {
 			}
 		}
 	}
-	x = 48
+	x = 52
 	y = 0
 	search_filters = { FOCUS_FILTER_ARMY_XP }
 	cost = 5
@@ -1543,7 +1543,7 @@ focus = {
 	icon = GFX_focus_generic_industry_1
 	ai_will_do = { factor = 3 }
 	available = { 11 = { is_controlled_by = ROOT } 9 = { is_controlled_by = ROOT } 2 = { is_controlled_by = ROOT } 3 = { is_controlled_by = ROOT } 7 = { is_controlled_by = ROOT } }
-	x = 42
+	x = 44
 	y = 0
 	mutually_exclusive = { focus = centralizedindustry }
 	prerequisite = { }
@@ -1562,15 +1562,75 @@ focus = {
 	}
  }
 
+focus = {
+	id = MOR_fires_of_the_foundry
+	icon = GFX_goal_ROH_wartime_economy_blacksmith_forging
+	ai_will_do = { base = 15 }
+	x = -4
+	y = 1
+	relative_position_id = decentralizedindustry
+	prerequisite = { focus =  decentralizedindustry focus = centralizedindustry }
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		random_owned_state = {
+			add_building_slot_and_civ = yes
+		}
+		add_tech_bonus = {
+			name = "Labour Metalworking Bonus"
+			bonus = 0.5
+			uses = 1
+			category = lotr_labour_metalworking
+		}
+		add_tech_bonus = {
+			name = "Foundry Research Bonus"
+			bonus = 0.75
+			uses = 1
+			technology = foundry_tech
+		}
+	}
+}
+
+focus = {
+	id = MOR_expand_mining_facility
+	icon = GFX_goal_ELU_age_of_the_miners_stonehammer
+	ai_will_do = { base = 25 }
+	available = { controls_state = 3  }
+	x = 0
+	y = 1
+	relative_position_id = MOR_fires_of_the_foundry
+	prerequisite = { focus =  MOR_fires_of_the_foundry }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		3 = {
+			if = {
+				limit = { infrastructure < 5 }
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+			}
+			add_resource = {
+                type = coal
+                amount = 10
+            }
+			add_resource = {
+                type = steel
+                amount = 5
+            }
+		}
+	}
+}
+
 #Focus for Build animal farms
 focus = {
 	id = MOR_build_animal_farms
 	icon = GFX_goal_generic_windmill
 	ai_will_do = { factor = 1 }
 	available = { 187 = { is_controlled_by = ROOT } 9 = { is_controlled_by = ROOT } }
-	x = 4
+	x = -2
 	y = 1
-	relative_position_id = centralizedindustry
+	relative_position_id = decentralizedindustry
 	prerequisite = { focus =  decentralizedindustry focus = centralizedindustry }
 	cost = 5
 	available_if_capitulated = yes
@@ -1841,10 +1901,8 @@ focus = {
 		id = wrathofthefellbeasts
 		icon = GFX_goal_generic_build_airforce
 		ai_will_do = { factor = 2 }
- 		x = 60
+ 		x = 64
  		y = 0
- 		mutually_exclusive = { }
- 		prerequisite = { }
  		cost = 5
   		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_AIR_XP }
