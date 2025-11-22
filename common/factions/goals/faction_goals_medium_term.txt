@@ -1,0 +1,872 @@
+#category = short_term medium_term or long_term
+
+#Table of contents
+### General
+# faction_goal_a_large_faction
+# faction_goal_heavy_infantry
+# faction_goal_a_military_base
+
+# Industry and Resources
+# faction_goal_industrial_expansion
+# faction_goal_industrial_research
+# faction_goal_entwood_forest
+# faction_goal_secure_mithril_supply
+
+### War
+# faction_goal_aggressive_defense
+# faction_goal_guardians_of_peace
+# faction_goal_control_helms_deep
+# faction_goal_control_grey_havens
+
+### Against ... ideology
+
+### Faction Specific
+# faction_conquest_of_neighbouring_nations
+# faction_defeat_the_fake_dark_lord
+# faction_goal_war_on_dwarves
+
+######################################################################
+
+###  ##   ##  ### ###  ##  #  #      ## ###  ###  ##  ### ### ###  ##  
+#   #  # #  #  #   #  #  # ## #     #   #  # #   #  #  #  #    #  #  # 
+##  #### #     #   #  #  # # ##      #  ###  ##  #     #  ##   #  #    
+#   #  # #  #  #   #  #  # #  #       # #    #   #  #  #  #    #  #  # 
+#   #  #  ##   #  ###  ##  #  #     ##  #    ###  ##  ### #   ###  ##  
+
+######################################################################
+
+
+
+
+###########################################################
+
+ ##  ### #  # ### ###  ###  ##       ##   ##   ##  #    ## 
+#    #   ## # #   #  #  #  #  #     #    #  # #  # #   #   
+# ## ##  # ## ##  ###   #  #        # ## #  # #### #    #  
+#  # #   #  # #   #  #  #  #  #     #  # #  # #  # #     # 
+ ##  ### #  # ### #  # ###  ##       ##   ##  #  # ### ##  
+
+###########################################################
+
+### Faction Growth
+
+faction_goal_a_large_faction = {
+	name = a_large_faction_goal_name
+	description = a_large_faction_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_POLITICAL_CHARACTER
+	visible = {
+		num_faction_members > 4
+	}
+	completed = {
+		num_faction_members > 5
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+	}
+	ai_will_do = {
+		base = 1
+	}
+}
+
+### Units/Deployment
+
+faction_goal_heavy_infantry = {
+	name = heavy_infantry_goal_name
+	description = heavy_infantry_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_ARMY_XP
+	available = {
+		all_allied_country = {
+			custom_trigger_tooltip = {
+				tooltip = custom_tooltip_faction_goal_has_6_or_less_heavy_infantry
+				check_variable = { var:num_armies_with_type@heavy_infantry < 6 }
+			}
+		}
+	}
+	completed = {
+		all_allied_country = {
+			custom_trigger_tooltip = {
+				tooltip = custom_tooltip_faction_goal_has_atleast_6_heavy_infantry
+				check_variable = { var:num_armies_with_type@heavy_infantry > 6 }
+			}
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		every_collection_element = {
+			input = {
+				input = game:scope
+				operators = { 
+					faction_members 
+					limit = {
+						check_variable = { var:num_armies_with_type@heavy_infantry > 6 }
+					}
+				}
+				name = custom_tooltip_faction_goal_all_faction_members_with_atleast_1_heavy_infantry
+			}
+			random_character = {
+				tooltip = ONE_GENERAL	
+				visible_when_empty = yes
+				limit = {
+					is_army_leader = yes
+					is_field_marshal = no
+					NOT = { has_trait = cavalry_officer }
+					NOT = { has_trait = panzer_leader }
+					NOT = { has_trait = invader }
+				}
+				gain_xp = 400
+				add_attack = 1
+				add_trait = { trait = invader }
+			}
+		}
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_tech_bonus = {
+				name = marine_corps_tech_bonus
+				bonus = 0.75
+				uses = 1
+				category = lotr_infantry_specialforces
+			}
+		}
+	}
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1
+			any_state = {
+    		    is_controlled_by_ROOT_or_ally = yes
+    		    is_coastal = yes
+    		}
+		}
+		modifier = {
+			add = 2
+			any_state = {
+    		    is_controlled_by = ROOT
+    		    is_coastal = yes
+    		}
+		}
+	}
+}
+
+# Industry and Resources
+faction_goal_secure_mithril_supply = {
+	name = secure_mithril_goal_name
+	description = secure_mithril_goal_desc
+	category = medium_term
+	group = resources_to_market_icon
+	visible = {
+		FROM = { is_dwarves = yes NOT = { original_tag = MOA } }
+	}
+	completed = {
+		has_resources_in_collection = {
+			collection = {
+					input = game:scope
+					operators =  { faction_members }
+					name = FACTION
+			}
+			resource = aluminium
+			amount > 10
+		}
+	}
+	complete_effect = {
+		every_faction_member = { 
+			tooltip = AT_LEAST_9_MITHRIL
+			visible_when_empty = yes
+			limit = {
+				has_resources_in_country = {
+					resource = aluminium
+					amount > 8
+				}
+			}
+			add_faction_initiative = 1
+			add_faction_influence_ratio = 0.1
+			add_tech_bonus = {
+				name = lotr_dwarven_secrets_mithril
+				bonus = 0.75
+				uses = 1
+				category = excavation_tech
+			}
+		}
+		
+	}
+}
+
+faction_goal_industrial_expansion = {
+	name = industrial_expansion_goal_name
+	description = industrial_expansion_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_INDUSTRY
+	visible = {
+		count_in_collection = {
+			collection = {
+				input = game:scope
+				operators = { faction_members }
+				name = FACTION_NAME
+			}
+			buildings = { industrial_complex }
+			size > 49
+		}
+	}
+	completed = {
+		count_in_collection = {
+			collection = {
+				input = game:scope
+				operators = { faction_members }
+				name = FACTION_NAME
+			}
+			buildings = { industrial_complex }
+			size > 74
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = generic_skip_one_line_tt
+		every_faction_member = {
+			tooltip = AT_LEAST_50_CIVS
+			visible_when_empty = yes 
+			limit = {
+				num_of_civilian_factories > 49
+			}
+			add_tech_bonus = {
+				name = industrial_expansion_tech_bonus
+				bonus = 0.5
+				uses = 2
+				category = industry
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 1 # If already big it's easy to grow
+			is_major = yes
+		}
+		modifier = {
+			add = 1 # Prioritize more earlier on - more pay-off
+			date < 1938.1.1
+		}
+	}
+}
+
+faction_goal_industrial_research = {
+	name = industrial_research_goal_name
+	description = industrial_research_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_RESEARCH
+	visible = {
+		any_allied_country = {
+			NOT = { has_tech = construction3 }
+		}
+	}
+	completed = {
+		ROOT = {
+			has_tech = construction3
+		}
+		all_allied_country = {
+			has_tech = construction3
+		}
+
+		collection_size = {
+				input = {
+					input = game:scope
+					operators =  { 
+						faction_members 
+					}
+				}
+				value > 4
+			}
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = generic_skip_one_line_tt
+		every_faction_member = {
+			tooltip = INFLUENCE_ABOVE_30_PERCENT
+			visible_when_empty = yes 
+			limit = {
+				faction_influence_ratio > 0.3
+			}
+			add_faction_initiative = 1
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = {
+			add = 1 # Prio for smaller factions (Easier to get everyone up then )
+			collection_size = {
+				input = {
+					input = game:scope
+					operators =  { 
+						faction_members 
+					}
+				}
+				value < 5
+			}
+		}
+	}
+}
+
+
+faction_goal_a_military_base = {
+	name = a_military_base_goal_name
+	description = a_military_base_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_INDUSTRY
+	visible = {
+		count_in_collection = {
+			collection = {
+				input = game:scope
+				operators = { faction_members }
+				name = FACTION_NAME
+			}
+			buildings = { arms_factory }
+			size > 49
+		}
+	}
+	completed = {
+		count_in_collection = {
+			collection = {
+				input = game:scope
+				operators = { faction_members }
+				name = FACTION_NAME
+			}
+			buildings = { arms_factory }
+			size > 149
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = generic_skip_one_line_tt
+		every_faction_member = {
+			tooltip = AT_LEAST_50_MILS
+			visible_when_empty = yes 
+			limit = {
+				num_of_military_factories > 49
+			}
+			add_tech_bonus = {
+				name = a_military_base_tech_bonus
+				bonus = 0.5
+				uses = 2
+				category = excavation_tech
+			}
+		}
+	}
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1
+			date > 1938.1.1
+		}
+		modifier = {
+			add = 1
+			is_major = yes
+		}
+	}
+}
+
+### War Waging
+faction_goal_aggressive_defense = {
+	name = aggressive_defense_goal_name
+	description = aggressive_defense_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_WAR_SUPPORT
+	visible = {
+		FROM = { has_defensive_war = yes }
+	}
+	completed = {
+		any_allied_country = {
+			has_defensive_war = yes
+		}
+		collection_size = {
+			input = {
+				input = game:scope
+				operators = {
+					faction_members
+					limit = {
+						any_enemy_country = {
+							has_offensive_war_with = ROOT
+							casualties_inflicted_by = {
+							    opponent = PREV
+							    thousands > 250
+							}
+						}
+					}
+				}
+				name = COLLECTION_CASUALTIES_INFLICTED_BY_FACTION_MEMBERS
+			}
+			value > 0
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS_INFLICTED_250K_CASUALTIES
+		every_faction_member = {
+			limit = {
+				any_enemy_country = {
+					has_offensive_war_with = ROOT
+					casualties_inflicted_by = {
+					    opponent = PREV
+					    thousands > 250
+					}
+				}
+			}
+			add_faction_initiative = 1
+		}
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			army_experience = 50
+		}
+	}
+	ai_will_do = {
+		base = 1
+	}
+}
+
+faction_goal_guardians_of_peace = {
+	name = guardians_of_peace_goal_name
+	description = guardians_of_peace_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_INTERNAL_AFFAIRS
+	visible = {
+		OR = {
+			NOT = { has_government = belligerent }
+			NOT = { has_government = revolutionary }
+		}
+	}
+	available = {
+		FROM = {
+			NOT = { has_country_flag = guardians_of_peace_been_at_war_flag }
+		}
+	}
+	cancel = {
+		FROM = {
+			has_country_flag = guardians_of_peace_been_at_war_flag
+		}
+	}
+	completed = {
+		date > 1938.12.31
+		NOT = { has_country_flag = guardians_of_peace_been_at_war_flag }
+		all_allied_country = {
+			NOT = { has_country_flag = guardians_of_peace_been_at_war_flag }
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_stability = 0.05
+		}
+	}
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1
+			has_government = cooperative
+		}
+	}
+}
+
+# Helms Deep
+faction_goal_control_helms_deep = {
+	name = control_helms_deep_goal_name
+	description = control_helms_deep_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_ANNEXATION
+	visible = {
+		FROM = {
+			NOT = {
+				original_tag = ROH
+				is_in_faction_with = ROH
+			}
+		}
+		any_collection_element = {
+			collection = {
+				 input = game:scope
+				 operators = { faction_members controlled_states }
+				 name = FACTION_CONTROLLED_STATES
+			}
+			distance_to = {
+				target = 184
+				value < 2000
+			}
+		}
+	}
+	completed = {
+		184 = { is_controlled_by_ROOT_or_ally = yes }
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = TARGET_STATE_CONTROLLERS
+		every_faction_member = { 
+			visible_when_empty = yes
+			limit = { controls_state = 184 }
+			add_faction_initiative = 1
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = {
+			factor = 2 # Target of opportunity - already at war anyway
+			184 = {
+				owner = { has_war_with = ROOT }
+			}
+		}
+		modifier = {
+			add = 1 # If ISE prioritize this
+			is_historical_focus_on = yes
+			original_tag = ISE
+		}
+	}
+}
+
+# Grey Havens
+faction_goal_control_grey_havens = {
+	name = control_grey_havens_goal_name
+	description = control_grey_havens_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_ANNEXATION
+	visible = {
+		FROM = {
+			NOT = {
+				original_tag = LIN
+				is_in_faction_with = LIN
+			}
+		}
+		any_collection_element = {
+			collection = {
+				 input = game:scope
+				 operators = { faction_members controlled_states }
+				 name = FACTION_CONTROLLED_STATES
+			}
+			distance_to = {
+				target = 54
+				value < 2000
+			}
+		}
+	}
+	completed = {
+		54 = { is_controlled_by_ROOT_or_ally = yes }
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = TARGET_STATE_CONTROLLERS
+		every_faction_member = { 
+			visible_when_empty = yes
+			limit = { controls_state = 54 }
+			add_faction_initiative = 1
+		}
+		54 = {
+			add_building_construction = {
+				type = naval_base
+				level = 2
+				instant_build = yes
+				province = 2837
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = {
+			factor = 2 # Target of opportunity - already at war anyway
+			54 = {
+				owner = { has_war_with = ROOT }
+			}
+		}
+	}
+}
+
+######################################################################
+
+###  ##   ##  ### ###  ##  #  #      ## ###  ###  ##  ### ### ###  ##  
+#   #  # #  #  #   #  #  # ## #     #   #  # #   #  #  #  #    #  #  # 
+##  #### #     #   #  #  # # ##      #  ###  ##  #     #  ##   #  #    
+#   #  # #  #  #   #  #  # #  #       # #    #   #  #  #  #    #  #  # 
+#   #  #  ##   #  ###  ##  #  #     ##  #    ###  ##  ### #   ###  ##  
+
+######################################################################
+
+
+# Dark Dark Pact
+#Conquest 
+faction_goal_conquest_of_neighbouring_nations = {
+	name = conquest_of_neighbouring_nations_goal_name
+	description = conquest_of_neighbouring_nations_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_WAR_SUPPORT
+	visible = { ROOT = { tag = MOR } }
+	cancel = { 
+		ROOT = { NOT = { has_government = belligerent } }
+	}
+	completed = {
+		RHU = { OR = { exists = no is_puppet_of = MOR is_in_faction_with = MOR } }
+		HAR = { OR = { exists = no is_puppet_of = MOR is_in_faction_with = MOR } }
+		GON = { OR = { exists = no is_puppet_of = MOR is_in_faction_with = MOR } }
+	}
+	complete_effect = {
+		add_faction_power_projection = 250		
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.1
+			}
+			add_political_power = 100
+		}
+	}
+	ai_will_do = {
+		base = 10
+	}
+}
+
+# New Dark Dark Pact
+#Defeat the fake Dark Lord 
+faction_defeat_the_fake_dark_lord = {
+	name = defeat_the_fake_dark_lord_name
+	description = defeat_the_fake_dark_lord_desc
+	category = medium_term
+	group = FOCUS_FILTER_WAR_SUPPORT
+	visible = { ROOT = { tag = RHU } }
+	cancel = { ROOT = { NOT = { has_government = belligerent } } }
+	completed = {
+		MOR = { OR = { exists = no is_puppet_of = RHU } }
+	}
+	complete_effect = {
+		add_faction_power_projection = 250		
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.1
+			}
+			add_political_power = 100
+			add_war_support = 0.1
+		}
+	}
+	ai_will_do = {
+		base = 10
+	}
+}
+
+# Erebor Revolutionary/Belligerent faction against dwarves
+faction_goal_war_on_dwarves = {
+	name = war_on_dwarves_goal_name
+	description = war_on_dwarves_goal_desc
+	category = medium_term
+	group = FOCUS_FILTER_WAR_SUPPORT
+	visible = { has_completed_focus = MIR_no_dwarfs_are_trustworthy }
+	available = {
+		collection_size = {
+			input = {
+				input = collection:dwarven_controlled_countries
+				name = COLLECTION_AMOUNT_OF_DWARVEN_CONTROLLED_COUNTRIES
+			}
+			value > 0
+		}
+	}
+	completed = {
+		collection_size = {
+			input = {
+				input = collection:dwarven_controlled_countries
+				name = COLLECTION_AMOUNT_OF_DWARVEN_CONTROLLED_COUNTRIES
+			}
+			value < 1
+		}
+		
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_war_support = 0.05
+		}
+	}
+	ai_will_do = {
+		base = 1
+	}
+}
+
+
+### Strategic Resources
+
+# Wood
+faction_goal_entwood_forest = {
+	name = entwood_forest_name
+	description = entwood_forest_desc
+	category = medium_term
+	group = resources_to_market_icon
+	visible = {
+		FROM = {
+			NOT = {
+				original_tag = ENT
+				is_in_faction_with = ENT
+			}
+		}
+		29 = {	is_controlled_by_ROOT_or_ally = no }
+	}
+	available = {
+		FROM = {
+			NOT = {
+				original_tag = ENT
+				is_in_faction_with = ENT
+			}
+		}
+		29 = {	is_controlled_by_ROOT_or_ally = no }
+	}
+	completed = { 29 = { is_controlled_by_ROOT_or_ally = yes } }
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = TARGET_STATE_CONTROLLERS
+		every_faction_member = {
+			visible_when_empty = yes
+			limit = {
+				OR = { controls_state = 29 }
+			}
+			add_faction_initiative = 1
+		}
+		29 = {
+			if = {
+				limit = {
+					infrastructure < 5
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}	
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1 
+		modifier = {
+			add = -1 # If the alliance is doing well with wood avoid taking this...
+			chromium > 20
+			all_allied_country = {
+				chromium > 20
+			}
+		}
+		modifier = {
+			add = 1 # Powers with low wood should care about wood a bit more
+			chromium < 20
+			all_allied_country = {
+				chromium > 20
+			}
+		}
+		modifier = {
+			add = 1 # Powers with low wood should care about wood a bit more
+			chromium < 10
+			all_allied_country = {
+				chromium > 20
+			}
+		}
+	}
+}
+
+faction_goal_rich_mines_of_moria = {
+	name = rich_mines_of_moria_name
+	description = rich_mines_of_moria_desc
+	category = medium_term
+	group = resources_to_market_icon
+	visible = {
+		FROM = {
+			NOT = {
+				original_tag = MOA
+				is_in_faction_with = MOA
+			}
+		}
+	}
+	available = {
+		OR = {
+			73 = { is_controlled_by_ROOT_or_ally = no }
+			134 = {	is_controlled_by_ROOT_or_ally = no }	
+		}
+	}
+	completed = {
+		73 = { is_controlled_by_ROOT_or_ally = yes }
+		134 = {	is_controlled_by_ROOT_or_ally = yes }	
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = TARGET_STATE_CONTROLLERS
+		every_faction_member = {
+			visible_when_empty = yes
+			limit = {
+				OR = {
+					controls_state = 73
+					controls_state = 134
+				}
+			}
+			add_faction_initiative = 1
+		}
+		every_state = {
+			limit = {
+				OR = {
+					state = 73
+					state = 134
+				}
+			}
+			if = {
+				limit = {
+					infrastructure < 5
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}	
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1 
+		modifier = {
+			add = -1 # If the alliance is doing well with aluminium avoid taking this...
+			aluminium > 20
+			all_allied_country = {
+				aluminium > 20
+			}
+		}
+		modifier = {
+			add = 1 # Powers with low aluminium should care about aluminium a bit more
+			aluminium < 20
+			all_allied_country = {
+				aluminium > 20
+			}
+		}
+		modifier = {
+			add = 1 # Powers with low aluminium should care about aluminium a bit more
+			aluminium < 10
+			all_allied_country = {
+				aluminium > 20
+			}
+		}
+	}
+}
+
+### Strategic Bases
+
+# TODO

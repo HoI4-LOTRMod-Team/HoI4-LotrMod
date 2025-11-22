@@ -610,7 +610,7 @@ scientist = {
 
 		modifier = {
 			factor = 10
-			has_ideology = communism
+			has_ideology = revolutionary
 		}
 	}
 

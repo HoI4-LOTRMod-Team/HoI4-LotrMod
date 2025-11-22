@@ -42,7 +42,7 @@ country_event = {
 
 			unlock_national_focus = submittosauron
 			complete_national_focus = submittosauron
-			#load_oob = "SPA_Civil_War" #in case we want special oop for fascist mordor
+			#load_oob = "SPA_Civil_War" #in case we want special oop for belligerent mordor
 			set_equipment_fraction = 0.5
 
 			add_popularity = {
@@ -475,7 +475,7 @@ country_event = {
 					original_tag = HAR
 					has_government = unaligned
 				}
-				if = { limit = { has_global_flag = harad_faction } create_faction = southern_confederacy }
+				if = { limit = { has_global_flag = harad_faction } create_faction_from_template = { name = southern_confederacy template = faction_template_industrial_focus } }
 				if = { limit = { has_global_flag = harad_PEL_faction } add_to_faction = PEL }
 				if = { limit = { has_global_flag = harad_UMB_faction } add_to_faction = UMB }
 				if = { limit = { has_global_flag = harad_PEL_puppet } puppet = PEL }
@@ -568,7 +568,7 @@ country_event = {
 	}
 }
 
-# send demand to join union of orcs (communist path)
+# send demand to join union of orcs (revolutionary path)
 country_event = {
 	id = mordor.44
 	title = mordor.44.t
@@ -740,29 +740,41 @@ country_event = {
 
 	is_triggered_only = yes
 
+	#Welcome Mirkwood in the Dark Pact
 	option = {
 		name = mordor.48.a
+		ai_chance = {
+			base = 5
+			modifier = {
+				add = 25
+				has_war = yes
+			}
+		}
 		MOR = {
 			add_to_faction = ROOT
 		}
-		ai_chance = {
-			base = 10
-		}
 
 	}
+	#Request Dol Guldur
 	option = {
 		name = mordor.48.b
-		MIR = {
-			country_event = { id = mirkwood.9 }
-		}
 		ai_chance = {
 			base = 30
 		}
+		MIR = {
+			country_event = { id = mirkwood.9 }
+		}
 	}
+	#Decline request
 	option = {
 		name = mordor.48.c
 		ai_chance = {
-			base = 0
+			base = 5
+			modifier = {
+				add = 10
+				has_war = no
+				FROM = { has_war = yes }
+			}
 		}
 		MIR = {
 			country_event = { id = mordor.49 }

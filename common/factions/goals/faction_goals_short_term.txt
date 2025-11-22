@@ -1,0 +1,657 @@
+#category = short_term medium_term or long_term
+
+#Table of contents
+### General
+# faction_goal_growing_the_faction
+# faction_goal_spy_master
+# faction_goal_military_infrastructure
+# faction_goal_a_great_fortress
+# faction_goal_an_armored_fist
+# faction_goal_an_infantry_army
+
+### War
+
+### For Belligerent and Orc nations
+ 
+### Spread the Revolution
+
+### Against ... ideology
+# faction_goal_preemptive_strike_on_belligerent
+# faction_goal_war_on_revolutionary
+# faction_goal_war_on_cooperative
+
+### Faction Specific
+
+
+######################################################################
+
+###  ##   ##  ### ###  ##  #  #      ## ###  ###  ##  ### ### ###  ##  
+#   #  # #  #  #   #  #  # ## #     #   #  # #   #  #  #  #    #  #  # 
+##  #### #     #   #  #  # # ##      #  ###  ##  #     #  ##   #  #    
+#   #  # #  #  #   #  #  # #  #       # #    #   #  #  #  #    #  #  # 
+#   #  #  ##   #  ###  ##  #  #     ##  #    ###  ##  ### #   ###  ##  
+
+######################################################################
+
+
+##########################################################
+
+ ##  ### #  # ### ###  ###  ##       ##   ##   ##  #    ## 
+#    #   ## # #   #  #  #  #  #     #    #  # #  # #   #   
+# ## ##  # ## ##  ###   #  #        # ## #  # #### #    #  
+#  # #   #  # #   #  #  #  #  #     #  # #  # #  # #     # 
+ ##  ### #  # ### #  # ###  ##       ##   ##  #  # ### ##  
+
+##########################################################
+
+
+# Faction Growth
+faction_goal_growing_the_faction = {
+	name = growing_the_faction
+	description = growing_the_faction_desc
+	category = short_term
+	group = FOCUS_FILTER_POLITICAL_CHARACTER
+	visible = { num_faction_members < 4 }
+	completed = { num_faction_members > 3 }
+	complete_effect = {
+		add_faction_power_projection = 50 
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+	}
+	ai_will_do = {
+		base = 0
+		modifier = {  
+			add = 1
+			num_faction_members < 5
+		}
+		modifier = {  
+			add = 1
+			num_faction_members < 4
+		}
+		modifier = {  
+			add = 3
+			num_faction_members < 3
+		}
+	}
+}
+
+faction_goal_spy_master = {
+	name = spy_master_goal_name
+	description = spy_master_goal_desc
+	category = short_term
+	group = FOCUS_FILTER_POLITICAL_CHARACTER
+	allowed = { has_dlc = "La Resistance" }
+	visible = {
+		is_spymaster = no
+		any_allied_country = {
+			is_spymaster = no
+		}
+	}
+	completed = {
+		OR = {
+			is_spymaster = yes
+			any_allied_country = {
+				is_spymaster = yes
+			}
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 50
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_SPY_MASTER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		every_faction_member = { 
+			limit = {
+				has_intelligence_agency = no
+			}
+			create_intelligence_agency = yes
+		}
+		every_faction_member = { 
+			limit = {
+				has_intelligence_agency = yes
+				NOT = { has_done_agency_upgrade  = upgrade_form_department }
+			}
+			upgrade_intelligence_agency = upgrade_form_department
+		}
+		every_faction_member = {
+			limit = {
+				has_intelligence_agency = yes
+				has_done_agency_upgrade  = upgrade_form_department
+				NOT = { has_done_agency_upgrade = upgrade_crypto_strength }
+			}
+			upgrade_intelligence_agency = upgrade_crypto_strength
+		}
+		every_faction_member = { 
+			limit = {
+				has_intelligence_agency = yes
+				has_done_agency_upgrade = upgrade_crypto_strength
+				has_tech = mechanical_computing
+				NOT = { has_done_agency_upgrade = upgrade_crypto_strength_2 }
+			}
+			add_faction_initiative = 1
+			upgrade_intelligence_agency = upgrade_crypto_strength_2
+		}
+		every_faction_member = { 
+			limit = {
+				has_intelligence_agency = yes
+				NOT = { agency_upgrade_number > 30 }
+				OR = {
+					has_done_agency_upgrade = upgrade_crypto_strength_2
+					NOT = { has_tech = mechanical_computing }
+				}
+			}
+			add_faction_initiative = 1
+			gain_random_agency_upgrade = yes
+		}
+		every_faction_member = { # Fallback in case someone completed everything
+			visible_when_empty = yes
+			limit = {
+				has_intelligence_agency = yes
+				agency_upgrade_number > 30
+			}
+			add_faction_initiative = 1
+			add_political_power = 100
+		}
+	}
+	ai_will_do = {
+		base = 1
+		modifier = {  
+			add = 2
+			has_intelligence_agency = yes
+		}
+	}
+}
+
+### Unlock Research/Military
+
+
+faction_goal_unlock_research = {
+	name = faction_goal_unlock_research_name
+	description = faction_goal_unlock_research_desc
+	category = short_term
+	group = FOCUS_FILTER_INTERNAL_AFFAIRS
+	available = {
+		FROM = { num_faction_members > 2 }
+	}
+	visible = {
+		FROM = { NOT = { has_faction_research_unlocked = yes } }
+	}
+	select_effect = {
+		set_temp_variable = { total_techs = 0 }
+		every_collection_element = {
+			input = {
+				input = game:scope
+				operators =  {
+					faction_members
+				}
+			}
+			add_to_temp_variable = { total_techs = num_researched_technologies }
+		}
+		
+		multiply_temp_variable = {
+			var = total_techs
+			value = 1.20
+		}
+		scope:faction = {
+			set_variable = { unlock_military_techs_researched_target = total_techs }
+		}
+	}
+	completed = {
+		scope:faction = {
+			hidden_trigger = {
+				tooltip_evaluation = eval
+				set_temp_variable = { unlock_military_techs_researched_compare = 0 }			
+				all_collection_elements = {
+					collection = {
+						input = game:scope
+						operators =  { faction_members }
+					}
+					add_to_temp_variable = { unlock_military_techs_researched_compare = num_researched_technologies }
+				}
+				set_temp_variable = { unlock_military_techs_researched_compare_temp_target = unlock_military_techs_researched_compare }
+				multiply_temp_variable = { unlock_military_techs_researched_compare_temp_target = 1.20 }
+			}
+			if = {
+				limit = {
+					has_variable = unlock_military_techs_researched_target
+				}
+				check_variable = {
+					var = unlock_military_techs_researched_compare
+					value = unlock_military_techs_researched_target
+					compare = greater_than
+					tooltip = "GOAL_T_TRIGGER_A"
+				}
+			}
+			else = {
+				check_variable = {
+					var = unlock_military_techs_researched_compare
+					value = unlock_military_techs_researched_compare_temp_target
+					compare = greater_than
+					tooltip = "GOAL_T_TRIGGER_A"
+				}
+			}
+		}
+	}
+	complete_effect = {
+		set_faction_research_unlocked = yes
+		add_faction_initiative = 1
+	}
+	ai_will_do = {
+		base = 1000 # They should always do this if they can
+	}
+}
+
+faction_goal_unlock_military = {
+	name = faction_goal_unlock_military_name
+	description = faction_goal_unlock_military_desc
+	category = short_term
+	group = FOCUS_FILTER_INTERNAL_AFFAIRS
+	available = {
+		FROM = { num_faction_members > 2 }
+	}
+	visible = {
+		FROM = { NOT = { has_faction_military_unlocked = yes } }
+	}
+	select_effect = {
+		set_temp_variable = { total_divs = 0 }
+		every_collection_element = {
+			input = {
+				input = game:scope
+				operators =  {
+					faction_members
+				}
+			}
+			add_to_temp_variable = { total_divs = num_armies }
+		}
+		
+		multiply_temp_variable = {
+			var = total_divs
+			value = 1.20
+		}
+		scope:faction = {
+			set_variable = { unlock_target = total_divs }
+		}
+	}
+	completed = {
+		scope:faction = {
+			hidden_trigger = {
+				tooltip_evaluation = eval
+				set_temp_variable = { unlock_compare = 0 }			
+				all_collection_elements = {
+					collection = {
+						input = game:scope
+						operators =  { faction_members }
+					}
+					add_to_temp_variable = { unlock_compare = num_armies }
+					set_temp_variable = { unlock_military_techs_researched_compare_temp_target = unlock_compare }
+					multiply_temp_variable = { unlock_military_techs_researched_compare_temp_target = 1.20 }
+				}
+			}
+			if = {
+				limit = {
+					has_variable = unlock_target
+				}
+				check_variable = {
+					var = unlock_compare
+					value = unlock_target
+					compare = greater_than
+					tooltip = "GOAL_T_TRIGGER_B"
+				}
+			}
+			else = {
+				check_variable = {
+					var = unlock_compare
+					value = unlock_military_techs_researched_compare_temp_target
+					compare = greater_than
+					tooltip = "GOAL_T_TRIGGER_B"
+				}
+			}
+		}
+	}
+	complete_effect = {
+		set_faction_military_unlocked = yes
+		add_faction_initiative = 1
+	}
+	ai_will_do = {
+		base = 1000 # They should always do this if they can
+	}
+}
+
+### Industry
+faction_goal_military_infrastructure = {
+	name = military_infrastructure_goal_name
+	description = military_infrastructure_goal_desc
+	category = short_term
+	group = FOCUS_FILTER_INDUSTRY
+	visible = {
+		collection_size = {
+			input = {
+				input = game:all_states
+				operators = {
+					limit = {
+						is_core_of = CONTROLLER
+						is_controlled_by_ROOT_or_ally = yes 
+						any_neighbor_state = {
+							controller = {
+								NOT = { is_in_faction_with = ROOT }
+							}
+						}
+						infrastructure < 5
+					}
+				}
+				name = COLLECTION_FACTION_BORDER_STATES_FULL_INFRASTRUCTURE
+			}
+			value > 0
+		}
+	}
+	completed = {
+		collection_size = {
+			input = {
+				input = game:all_states
+				operators = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes 
+						any_neighbor_state = {
+							controller = {
+								NOT = { is_in_faction_with = ROOT }
+							}
+						}
+						infrastructure < 5
+					}
+				}
+				name = COLLECTION_FACTION_BORDER_STATES_FULL_INFRASTRUCTURE
+			}
+			value < 1
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			army_experience = 50
+		}
+	}
+	ai_will_do = {
+		base = 0
+		modifier = {  
+			add = 1
+			has_war = no
+		}
+	}
+}
+
+faction_goal_a_great_fortress = {
+	name = a_great_fortress_goal_name
+	description = a_great_fortress_goal_desc
+	category = short_term
+	group = FOCUS_FILTER_RESEARCH
+	visible = { always = yes }
+	available = {
+		collection_size = {
+			input = {
+				input = collection:faction_owned_core_states
+				operators = {
+					limit = {
+						NOT = { is_fully_controlled_by = OWNER }
+					}
+				}
+				name = FACTION_CORE_STATES_NOT_FULLY_CONTROLLED
+			}
+			value < 1
+		}
+		count_in_collection = {
+			collection = {
+				input = game:scope
+				operators = { faction_members }
+				name = FACTION_NAME
+			}
+			buildings = { bunker coastal_bunker castle }
+			size < 30
+		}
+	}
+	completed = {
+		count_in_collection = {
+			collection = {
+				input = game:scope
+				operators = { faction_members }
+				name = FACTION_NAME
+			}
+			buildings = { bunker coastal_bunker castle}
+			size > 29
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			limit = {
+				NOT = { has_idea = deterrence }
+			}
+			add_timed_idea = {
+				idea = deterrence
+				days = 360
+			}
+		}
+	}
+	ai_will_do = {
+		base = 0
+	}
+}
+
+
+### War Waging
+faction_goal_preemptive_strike_on_belligerent = {
+	name = preemptive_strike_on_belligerent_goal_name
+	description = preemptive_strike_on_belligerent_goal_desc
+	category = short_term
+	group = FOCUS_FILTER_WAR_SUPPORT
+	visible = {
+		NOT = { has_government = belligerent }
+		NOT = {
+			any_enemy_country = {
+				has_government = belligerent
+			}
+		}
+	}
+	available = { threat < 0.5 }
+	completed = {
+		ROOT = { has_offensive_war = yes }
+		any_enemy_country = { has_government = belligerent }
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			army_experience = 25
+			add_war_support = 0.05
+		}
+	}
+	ai_will_do = {
+		base = 0
+		modifier = {
+			add = 1
+			is_historical_focus_on = yes
+		}
+	}
+}
+
+faction_goal_war_on_revolutionary = {
+	name = war_on_revolutionary_goal_name
+	description = war_on_revolutionary_goal_desc
+	category = short_term
+	group = FOCUS_FILTER_WAR_SUPPORT
+	visible = {
+		any_country = {
+			has_government = revolutionary
+		}
+	}
+	completed = {
+		OR = {
+			any_enemy_country = {
+				has_government = revolutionary
+			}
+			any_allied_country = {
+				any_enemy_country = {
+					has_government = revolutionary
+				}
+			}
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_war_support = 0.05
+		}
+	}
+	ai_will_do = {
+		base = 1
+	}
+}
+
+faction_goal_war_on_cooperative = {
+	name = war_on_cooperative_goal_name
+	description = war_on_democracy_goal_desc
+	group = FOCUS_FILTER_WAR_SUPPORT
+	category = short_term
+	visible = {
+		any_country = {
+			has_government = cooperative
+		}
+	}
+	completed = {
+		OR = {
+			any_enemy_country = {
+				has_government = cooperative
+			}
+			any_allied_country = {
+				any_enemy_country = {
+					has_government = cooperative
+				}
+			}
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 100
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_war_support = 0.05
+		}
+	}
+	ai_will_do = {
+		base = 1
+	}
+}
+
+
+### Units
+faction_goal_an_armored_fist = {
+	name = an_armored_fist_goal_name
+	description = an_armored_fist_goal_desc
+	category = short_term
+	group = FOCUS_FILTER_ARMY_XP
+	completed = {
+		count_in_collection = {
+			collection = {
+			    input = game:scope
+			    operators = { faction_members }
+			    name = FACTION
+			}
+			unit = armor
+			size > 9
+		}
+		
+		
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			army_experience = 50 
+			random_character = {
+				tooltip = ONE_PANZER_GENERAL	
+				visible_when_empty = yes
+				limit = {
+					is_unit_leader = yes 
+					OR = {
+						has_trait = panzer_leader
+						has_trait = panzer_expert 
+					}
+				}
+				gain_xp = 400
+				add_attack = 1
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1
+	}
+}
+
+faction_goal_an_infantry_army = {
+	name = an_infantry_army_goal_name
+	description = an_infantry_army_goal_desc
+	category = short_term
+	group = FOCUS_FILTER_ARMY_XP
+	completed = {
+		count_in_collection = {
+		    collection = {
+		        input = game:scope
+		        operators = { faction_members }
+		        name = FACTION
+		    }
+		   unit = infantry
+		   size > 249
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			army_experience = 50 
+			random_character = {
+				tooltip = ONE_INFANTRY_GENERAL
+				visible_when_empty = yes
+				limit = {
+					is_unit_leader = yes 
+					OR = {
+						has_trait = infantry_leader
+						has_trait = infantry_expert 
+					}
+				}
+				gain_xp = 400
+				add_logistics = 1
+			}
+		}
+	}
+	ai_will_do = {
+		base = 1
+	}
+}
+
+
+######################################################################
+
+###  ##   ##  ### ###  ##  #  #      ## ###  ###  ##  ### ### ###  ##  
+#   #  # #  #  #   #  #  # ## #     #   #  # #   #  #  #  #    #  #  # 
+##  #### #     #   #  #  # # ##      #  ###  ##  #     #  ##   #  #    
+#   #  # #  #  #   #  #  # #  #       # #    #   #  #  #  #    #  #  # 
+#   #  #  ##   #  ###  ##  #  #     ##  #    ###  ##  ### #   ###  ##  
+
+######################################################################
+
+
+# Dark Dark Pact

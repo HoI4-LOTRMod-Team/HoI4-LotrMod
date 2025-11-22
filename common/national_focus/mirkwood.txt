@@ -25,13 +25,12 @@ focus_tree = {
 		id = thefateofmirkwood
 		icon = GFX_goal_generic_CAS
 		ai_will_do = { factor = 35 }
-		x =7
-		y =0
-		mutually_exclusive = { }
-		prerequisite = { }
+		x = 7
+		y = 0
 		cost = 5
 		completion_reward = {
 			add_political_power = 100
+			add_stability = 0.05
 		}
 	}
 
@@ -46,7 +45,7 @@ focus_tree = {
 		prerequisite = { focus = thefateofmirkwood }
 		cost = 10
 		completion_reward = {
-			add_threat = 1
+			add_named_threat = { threat = 1 name = "Mirkwood opposes Erebor" }
 			add_political_power = 70
 			ERE = { add_opinion_modifier = { target = MIR modifier = large_decrease } }
 			MIR = { add_opinion_modifier = { target = ERE modifier = large_decrease } }
@@ -60,10 +59,9 @@ focus_tree = {
 		ai_will_do = { factor = 2 }
 		x =0
 		y =2
-		mutually_exclusive = { }
 		prerequisite = { focus = opposeerebor }
 		cost = 5
-		completion_reward = { add_opinion_modifier = { target = ERE modifier = embargo } }
+		completion_reward = { add_opinion_modifier = { target = ERE modifier = embargo } send_embargo = ERE }
 	}
 
 	#Focus for Claim Erebor
@@ -73,13 +71,13 @@ focus_tree = {
 		ai_will_do = { factor = 2 }
 		x =0
 		y =4
-		mutually_exclusive = { }
 		prerequisite = { focus = embargoerebor }
 		cost = 10
 		completion_reward = {
-			add_threat = 3
+			add_named_threat = { threat = 3 name = "Mirkwood lay claims on Erebor states" }
 			add_state_claim = 90
 			add_state_claim = 193
+			add_war_support = 0.1
 		}
 	}
 
@@ -123,12 +121,12 @@ focus_tree = {
 			factor = 7
 			modifier = { factor = 0 is_going_cooperative = no }
 		}
-		x =4
-		y =2
+		x = 4
+		y = 2
 		mutually_exclusive = { focus=consensusrule focus=ironfistrule }
 		prerequisite = { focus = breakthesilence}
-		cost = 10
-		completion_reward = { add_ideas = generic_cooperative_intermediate }
+		cost = 5
+		completion_reward = { add_timed_idea = { idea = generic_cooperative_intermediate days = 265 } }
 	}
 
 	#Focus for Draw closer to Erebor
@@ -152,29 +150,29 @@ focus_tree = {
 		id = unitewitherebor
 		icon = GFX_goal_dwarves_soldiers_army
 		ai_will_do = { factor = 7 }
-		available = { ERE = { has_opinion = { target = MIR value > 19 } } is_in_faction = no ERE = { is_faction_leader = yes } }
+		available = { is_in_faction = no ERE = { is_faction_leader = yes has_government = cooperative } }
 		x =2
 		y =4
 		mutually_exclusive = {  }
 		prerequisite = { focus = drawclosertoerebor}
 		prerequisite = { focus = importereborsteel}
 		cost = 10
-		completion_reward = { ERE = { add_to_faction = MIR } }
+		completion_reward = { ERE = { country_event = { id = erebor.6 } } }
 	}
 
 	#Focus for Draw closer to Godnor
 	focus = {
 		id = drawclosertogondor
 		icon = GFX_goal_gondor
-		ai_will_do = { factor = 5 }
+		ai_will_do = { base = 25 }
 		x =5
 		y =3
 		mutually_exclusive = { focus = drawclosertoerebor }
 		prerequisite = { focus = diplomaticrule}
 		cost = 5
 		completion_reward = {
-			add_opinion_modifier = { target = GON modifier = large_increase }
-			GON = { add_opinion_modifier = { target = MIR modifier = large_increase } }
+			add_opinion_modifier = { target = GON modifier = medium_increase }
+			GON = { add_opinion_modifier = { target = MIR modifier = medium_increase } }
 		}
 	}
 
@@ -182,8 +180,8 @@ focus_tree = {
 	focus = {
 		id = men_unitewithgondor
 		icon = GFX_goal_goal_generic_improve_relations
-		ai_will_do = { factor = 6 }
-		available = { is_in_faction = no GON = { is_faction_leader = yes } }
+		ai_will_do = { base = 5 }
+		available = { is_in_faction = no GON = { is_faction_leader = yes OR = { has_government = cooperative has_government = unaligned } } }
 		x =5
 		y =4
 		prerequisite = { focus = drawclosertogondor}
@@ -203,12 +201,12 @@ focus_tree = {
 			factor = 8
 			modifier = { factor = 0 is_going_revolutionary = no }
 		}
-		x =7
-		y =2
+		x = 7
+		y = 2
 		mutually_exclusive = { focus = diplomaticrule focus = ironfistrule }
 		prerequisite = { focus = breakthesilence}
-		cost = 10
-		completion_reward = { add_ideas = generic_revolutionary_intermediate }
+		cost = 5
+		completion_reward = { add_timed_idea = { idea = generic_revolutionary_intermediate days = 265 } add_stability = -0.05 }
 	}
 
 	#Focus for Red in Heart and Mind
@@ -219,11 +217,11 @@ focus_tree = {
 		available = { revolutionary > 0.35 }
 		x =7
 		y =4
-		mutually_exclusive = { }
 		prerequisite = { focus = consensusrule}
 		cost = 10
 		completion_reward = {
 			set_politics = { ruling_party = revolutionary elections_allowed = no }
+			add_popularity = { ideology = revolutionary popularity = 0.15 }
 		}
 	}
 
@@ -232,10 +230,9 @@ focus_tree = {
 		id = governmentappropriation
 		icon = GFX_goal_generic_consumer_goods
 		ai_will_do = { factor = 13 }
-		available = { revolutionary > 0.35 }
+		available = { has_government = revolutionary }
 		x =7
 		y =6
-		mutually_exclusive = { }
 		prerequisite = { focus = redinheartandmind}
 		cost = 10
 		completion_reward = {
@@ -248,14 +245,15 @@ focus_tree = {
 		id = anewera
 		icon = GFX_goal_support_democracy
 		ai_will_do = { factor = 15 }
-		available = { cooperative > 0.35 }
+		available = { has_government = cooperative }
 		x =4
 		y =6
-		mutually_exclusive = { }
 		prerequisite = { focus = diplomaticrule}
 		cost = 10
 		completion_reward = {
 			add_ideas = home_of_the_free
+			add_stability = 0.1
+			add_popularity = { ideology = cooperative popularity = 0.1 }
 		}
 	}
 
@@ -336,7 +334,7 @@ focus_tree = {
 		cost = 10
 		completion_reward = {
 			add_stability = 0.05
-			add_ideas = generic_unaligned
+			add_timed_idea = { idea = generic_unaligned days = 265 }
 		}
 	}
 
@@ -448,13 +446,13 @@ focus_tree = {
 			factor = 8
 			modifier = { factor = 0 is_going_belligerent = no }
 		}
-		x =10
-		y =2
+		x = 10
+		y = 2
 		mutually_exclusive = { focus = diplomaticrule focus = consensusrule}
 		prerequisite = { focus = breakthesilence}
-		cost = 10
+		cost = 5
 		completion_reward = {
-			add_ideas = generic_belligerent_intermediate
+			add_timed_idea = { idea = generic_belligerent_intermediate days = 265 }
 			add_stability = -0.05
 		}
 	}
@@ -678,12 +676,14 @@ focus_tree = {
 		prerequisite = { focus = ironfistrule}
 		cost = 10
 		completion_reward = {
-			create_country_leader = {
-				name = "Radagast"
-				picture = "Portrait_Mirkwood_Radagast.dds"
-				expire = "1980.1.1"
-				ideology = expansionist
-				traits = { indomitable_perseverance }
+			add_country_leader_role = {
+				character = MIR_radagast
+				promote_leader = yes
+				country_leader = {
+					ideology = expansionist
+					expire = "1980.1.1"
+					traits = { indomitable_perseverance }
+				}
 			}
 		}
 	}
@@ -882,13 +882,12 @@ focus_tree = {
 		id = greenwoodthegreatest
 		icon = GFX_goal_generic_territory_or_war
 		ai_will_do = { factor = 15 }
-		available = { belligerent > 0.50 }
+		available = { belligerent > 0.40 }
 		x =10
 		y =4
-		mutually_exclusive = { }
 		prerequisite = { focus = guidanceofthewisest  focus = men_elvensupremacy}
 		cost = 10
-		completion_reward = { set_politics = { ruling_party = belligerent elections_allowed = no } }
+		completion_reward = { set_politics = { ruling_party = belligerent elections_allowed = no } add_popularity = { ideology = belligerent popularity = 0.1 } }
 	}
 
 	#Focus for Destroy those who defile nature
@@ -905,7 +904,19 @@ focus_tree = {
 			is_in_faction = no
 		}
 		completion_reward = {
-			create_faction = "green_union"
+			if = {
+				limit = { has_government = belligerent }
+				create_faction_from_template = {
+					name = green_union
+					template = faction_template_belligerent_expansionist
+				}
+			} else_if = {
+				limit = { has_government = revolutionary }
+				create_faction_from_template = {
+					name = green_union
+					template = faction_template_world_revolution
+				}
+			}
 			MOR = { add_opinion_modifier = { target = MIR modifier = large_decrease } }
 		}
 	}
@@ -923,14 +934,54 @@ focus_tree = {
 		}
 		available = {
 			NOT={is_in_faction_with = ERE}
+			OR = {
+				has_government = revolutionary
+				has_government = belligerent
+			}
 		}
 		x =0
 		y =5
 		will_lead_to_war_with = ERE
-		prerequisite = { focus = claimerebor focus =greenwoodthegreatest}
-		prerequisite = { focus = claimerebor focus =redinheartandmind}
+		prerequisite = { focus = claimerebor}
 		cost = 10
 		completion_reward = { create_wargoal = { type = annex_everything target = ERE } }
+	}
+
+
+	focus = {
+		id = MIR_no_dwarfs_are_trustworthy
+		icon = GFX_goal_lth_extend_citizenship
+		ai_will_do = {
+			base = 15
+		}
+		available = { 
+			is_faction_leader = yes 
+			has_dlc = "No Compromise, No Surrender" 
+			NOT = { has_government = cooperative }
+		}
+		relative_position_id = wipeoutthedwarves
+		x = 0
+		y = 1
+		prerequisite = { focus = wipeoutthedwarves}
+		cost = 5
+		completion_reward = { 
+			if = {
+				limit = { is_faction_leader = no }
+				custom_effect_tooltip = MIR_setting_non_dwarves_faction_rule_tooltip
+				custom_effect_tooltip = MIR_setting_against_dwarves_faction_goal_tooltip
+			} else = {
+				set_faction_rule = joining_rule_non_dwarves
+				add_faction_goal_slot = { category = medium_term value = 1 }
+				add_faction_goal = faction_goal_war_on_dwarves
+				every_country = {
+					limit = { is_dwarves = yes }
+					add_opinion_modifier = { target = MIR modifier = medium_decrease}
+				}
+				every_faction_member = {
+					add_war_support = 0.1
+				}
+			}
+		}
 	}
 
 	#Focus for Military Industry 2
@@ -978,10 +1029,13 @@ focus_tree = {
 		y =5
 		mutually_exclusive = { focus = destroythosewhodefilenature }
 		prerequisite = { focus = greenwoodthegreatest}
+		available = { MOR = { has_government = belligerent } }
 		cost = 5
 		completion_reward = {
 			set_global_flag = mirkwood_dark_sympathies
-			MOR = { add_opinion_modifier = { target = MIR modifier = large_increase } }
+			add_opinion_modifier = { target = MOR modifier = large_increase }
+			MOR = { add_opinion_modifier = { target = MIR modifier = medium_increase } }
+			add_popularity = { ideology = belligerent popularity = 0.1 }
 		}
 	}
 
@@ -1006,9 +1060,8 @@ focus_tree = {
 		ai_will_do = { factor = 10 }
 		x =9
 		y =6
-		mutually_exclusive = { }
 		prerequisite = { focus = destroythosewhodefilenature}
-		cost = 10
+		cost = 5
 		completion_reward = {
 			ENT = { country_event = { days = 1 id = mirkwood.3 } }
 		}
@@ -1160,8 +1213,10 @@ focus_tree = {
 		icon = GFX_goal_mordor_flag
 		ai_will_do = { factor = 8 }
 		available = {
-			NOT = { has_global_flag = mirkwood_dolguldur_attack } any_country = { original_tag = MOR has_government = belligerent is_faction_leader = yes }
+			NOT = { has_global_flag = mirkwood_dolguldur_attack } 
+			MOR = { has_government = belligerent is_faction_leader = yes }
 			controls_state = 87
+			has_government = belligerent
 		}
 		x =13
 		y =9

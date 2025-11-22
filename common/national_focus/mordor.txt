@@ -92,9 +92,9 @@ focus = {
 			has_country_flag = gameplan_going_revolutionary
 		}
 	}
-	 bypass = { has_global_flag = mordor_civil_war has_government = revolutionary}
-	 x = -7
-	 y = 1
+	bypass = { has_global_flag = mordor_civil_war has_government = revolutionary}
+	x = -8
+	y = 1
 	allow_branch = {
         NOT = {
             has_completed_focus = submittosauron
@@ -154,7 +154,6 @@ focus = {
 	 }
 }
 
-#Focus for March on Barad-dûr!
 focus = {
 	 id = marchonbaraddr
 	 icon = GFX_goal_lth_other_people_association
@@ -238,7 +237,6 @@ focus = {
 	 }
 }
 
-#Focus for A Realm of Orcs!
 focus = {
 	 id = arealmoforcs
 	 icon = GFX_goal_support_revolutionary
@@ -257,7 +255,8 @@ focus = {
 	 search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
 	 completion_reward = {
 		add_political_power = 100
-		add_stability = 0.05
+		add_stability = 0.075
+		dismantle_faction = yes
 		set_country_flag = MOR_orcs_have_taken_over_mordor
 	}
 }
@@ -273,7 +272,10 @@ focus = {
 	search_filters = { FOCUS_FILTER_POLITICAL }
 	completion_reward = {
 		add_political_power = 50
-		create_faction = Union_of_orcs
+		create_faction_from_template = {
+			template = faction_template_world_revolution
+			name = Union_of_orcs
+		}
 	}
 }
 
@@ -423,8 +425,8 @@ focus = {
 				}
 			}
 		}
-		custom_effect_tooltip = MOR_communist_revolution_tooltip
-	} #Add communist drift to Rohan Gondor, Eryn Lasgalen and Moria
+		custom_effect_tooltip = MOR_revolutionary_revolution_tooltip
+	} #Add revolutionary drift to Rohan Gondor, Eryn Lasgalen and Moria
 }
 
 focus = {
@@ -461,7 +463,7 @@ focus = {
 					}
 					keep_political_party_members = yes
 				}
-				#Communisme will start civil war in Gonder. Will join your faction if exists or maybe become your puppet?
+				#revolutionarye will start civil war in Gonder. Will join your faction if exists or maybe become your puppet?
 			}
 			every_country = {
 				limit = {
@@ -517,7 +519,7 @@ focus = {
 					}
 					keep_political_party_members = yes
 				}
-				#Communisme will start civil war in Gonder. Will join your faction if exists or maybe become your puppet?
+				#revolutionarye will start civil war in Gonder. Will join your faction if exists or maybe become your puppet?
 			}
 			every_country = {
 				limit = {
@@ -673,7 +675,7 @@ focus = {
 			}
 		}
 	}
-	 } #Add communist drift to
+	 } #Add revolutionary drift to
 }
 
 focus = {
@@ -776,7 +778,7 @@ focus = {
 				}
 			}
 		}
-	} #Add communist drift to Rohan Gondor, Eryn Lasgalen and Moria
+	} #Add revolutionary drift to Rohan Gondor, Eryn Lasgalen and Moria
 }
 
 focus = {
@@ -999,7 +1001,7 @@ focus = {
 		has_government = belligerent
 		ANG = {
 			NOT = {
-				has_completed_focus = ANG_welcome_back_the_old_master
+				has_completed_focus = ANG_unite_with_sauron
 			}
 		}
 	}
@@ -1048,7 +1050,7 @@ focus = {
 			}
 		}
 	}
-	x = 48
+	x = 52
 	y = 0
 	search_filters = { FOCUS_FILTER_ARMY_XP }
 	cost = 5
@@ -1541,7 +1543,7 @@ focus = {
 	icon = GFX_focus_generic_industry_1
 	ai_will_do = { factor = 3 }
 	available = { 11 = { is_controlled_by = ROOT } 9 = { is_controlled_by = ROOT } 2 = { is_controlled_by = ROOT } 3 = { is_controlled_by = ROOT } 7 = { is_controlled_by = ROOT } }
-	x = 42
+	x = 44
 	y = 0
 	mutually_exclusive = { focus = centralizedindustry }
 	prerequisite = { }
@@ -1560,15 +1562,75 @@ focus = {
 	}
  }
 
+focus = {
+	id = MOR_fires_of_the_foundry
+	icon = GFX_goal_ROH_wartime_economy_blacksmith_forging
+	ai_will_do = { base = 15 }
+	x = -4
+	y = 1
+	relative_position_id = decentralizedindustry
+	prerequisite = { focus =  decentralizedindustry focus = centralizedindustry }
+	cost = 5
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_RESEARCH }
+	completion_reward = {
+		random_owned_state = {
+			add_building_slot_and_civ = yes
+		}
+		add_tech_bonus = {
+			name = "Labour Metalworking Bonus"
+			bonus = 0.5
+			uses = 1
+			category = lotr_labour_metalworking
+		}
+		add_tech_bonus = {
+			name = "Foundry Research Bonus"
+			bonus = 0.75
+			uses = 1
+			technology = foundry_tech
+		}
+	}
+}
+
+focus = {
+	id = MOR_expand_mining_facility
+	icon = GFX_goal_ELU_age_of_the_miners_stonehammer
+	ai_will_do = { base = 25 }
+	available = { controls_state = 3  }
+	x = 0
+	y = 1
+	relative_position_id = MOR_fires_of_the_foundry
+	prerequisite = { focus =  MOR_fires_of_the_foundry }
+	cost = 10
+	available_if_capitulated = yes
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	completion_reward = {
+		3 = {
+			if = {
+				limit = { infrastructure < 5 }
+				add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+			}
+			add_resource = {
+                type = coal
+                amount = 10
+            }
+			add_resource = {
+                type = steel
+                amount = 5
+            }
+		}
+	}
+}
+
 #Focus for Build animal farms
 focus = {
 	id = MOR_build_animal_farms
 	icon = GFX_goal_generic_windmill
 	ai_will_do = { factor = 1 }
 	available = { 187 = { is_controlled_by = ROOT } 9 = { is_controlled_by = ROOT } }
-	x = 4
+	x = -2
 	y = 1
-	relative_position_id = centralizedindustry
+	relative_position_id = decentralizedindustry
 	prerequisite = { focus =  decentralizedindustry focus = centralizedindustry }
 	cost = 5
 	available_if_capitulated = yes
@@ -1804,7 +1866,7 @@ focus = {
 		id = mor_extraresearchslot
 		icon = GFX_focus_research
 		ai_will_do = { factor = 15 }
- 		x = 3
+ 		x = 4
  		y = 1
 		relative_position_id = centralizedmilitirization
  		prerequisite = { focus = decentralizedmilitirization focus = centralizedmilitirization focus = infrastructure_to_the_east }
@@ -1839,10 +1901,8 @@ focus = {
 		id = wrathofthefellbeasts
 		icon = GFX_goal_generic_build_airforce
 		ai_will_do = { factor = 2 }
- 		x = 60
+ 		x = 64
  		y = 0
- 		mutually_exclusive = { }
- 		prerequisite = { }
  		cost = 5
   		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_AIR_XP }
@@ -2014,7 +2074,7 @@ focus = {
  #Focus for Conquest of Middle Earth
 focus = {
 	id = conquestofmiddleearth
-	icon = GFX_focus_rom_handle_king
+	icon = GFX_goal_ELU_age_of_conquest_dagger_on_map
 	ai_will_do = { factor = 15 }
 	x = 6
 	y = 1
@@ -2026,6 +2086,11 @@ focus = {
 	completion_reward = {
 		army_experience = 25
 		add_threat = 5
+		if = {
+			limit = { has_dlc = "No Compromise, No Surrender" }
+			add_faction_goal_slot = { category = long_term value = 1 }
+			add_faction_goal = faction_goal_conquest_of_middle_earth
+		}
 		add_ideas = MOR_middle_earth_conquest
 		if = {
 			limit = {
@@ -2085,7 +2150,11 @@ focus = {
 	cost = 5
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_POLITICAL }
-	completion_reward = { add_political_power = 50 }
+	completion_reward = { 
+		add_political_power = 75
+		add_opinion_modifier = { target = ISE modifier = small_increase }
+		add_opinion_modifier = { target = ANG modifier = small_increase }
+	}
 }
 
 #Focus for Reach out to Isengard
@@ -2861,7 +2930,11 @@ focus = {
 	cost = 5
 	available_if_capitulated = yes
 	search_filters = { FOCUS_FILTER_POLITICAL }
-	completion_reward = { add_political_power = 50 }
+	completion_reward = { 
+		add_political_power = 75
+		add_opinion_modifier = { target = RHU modifier = small_increase }
+		add_opinion_modifier = { target = HAR modifier = small_increase }
+	}
 }
 
  #Focus for Enslave the East

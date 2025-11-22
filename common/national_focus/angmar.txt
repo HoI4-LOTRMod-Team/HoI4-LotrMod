@@ -91,13 +91,7 @@ focus_tree = {
 		relative_position_id = ANG_stay_true_to_the_people
 		x = 11
 		y = 1
-		available = {
-			OR = {
-				has_completed_focus = ANG_stay_true_to_the_people
-				has_completed_focus = ANG_seek_former_glory
-				has_completed_focus = ANG_the_path_of_balance
-			}
-		}
+		prerequisite = { focus = ANG_stay_true_to_the_people focus = ANG_seek_former_glory focus = ANG_the_path_of_balance}
 		cost = 10
 		completion_reward = { 
 			add_tech_bonus = {
@@ -184,6 +178,10 @@ focus_tree = {
 				add_resource = {
 					type = steel
 					amount = 12
+				}
+				add_resource = {
+					type = coal
+					amount = 6
 				}
 			}
 		}
@@ -1132,7 +1130,11 @@ focus_tree = {
 		}
 		cost = 5
 		completion_reward = {
-			create_faction = ANG_faction_northern_alliance
+			add_political_power = 75
+			create_faction_from_template = {
+				name = ANG_faction_northern_alliance
+				template = faction_template_defensive_cooperative
+			}
 		}
 	}
 
@@ -1505,7 +1507,6 @@ focus_tree = {
 		}
 	}
 
-	#Focus for Our own Empire
 	focus = {
 		id = ANG_our_own_empire
 		icon = GFX_focus_generic_little_entente
@@ -1517,8 +1518,33 @@ focus_tree = {
 		prerequisite = { focus = ANG_strengthen_the_new_goverment}
 		cost = 5
 		completion_reward = {
-			create_faction = "empire_of_angmar"
+			create_faction_from_template = {
+				name = "Empire of Angmar"
+				template = faction_template_belligerent_expansionist
+			}
 			add_political_power = 100
+		}
+	}
+
+	focus = {
+		id = ANG_orc_lead_faction
+		icon = GFX_goal_ELU_deal_with_goblin_raiders_orc
+		relative_position_id = ANG_our_own_empire
+		prerequisite = { focus = ANG_our_own_empire }
+		available = {
+			is_subject = no
+			has_dlc = "No Compromise, No Surrender"
+			is_faction_leader = yes
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL  } 
+		relative_position_id = ANG_our_own_empire
+		x = 2
+		y = 1
+		cost = 5
+		completion_reward = {
+			add_stability = 0.05
+			set_faction_rule = joining_rule_orcs_only
+			add_faction_initiative = 1
 		}
 	}
 
@@ -2385,15 +2411,20 @@ focus_tree = {
 		prerequisite = { focus = ANG_tell_the_world }
 		cost = 10
 		completion_reward = {
-			create_faction = "The Dark Pact"
+			create_faction_from_template = {
+				name = "Dark Pact"
+				template = faction_template_belligerent_expansionist
+			}
+			hidden_effect = { 
+				remove_faction_goal = faction_goal_defeating_our_enemies
+				add_faction_goal = faction_goal_conquest_of_middle_earth
+			}
 			if = {
 				limit = {
 					ISE = {
 						has_government = belligerent
 						exists = yes
-						NOT = {
-							has_war_with = ANG
-						}
+						NOT = { has_war_with = ANG }
 						is_puppet = no
 					}
 				}

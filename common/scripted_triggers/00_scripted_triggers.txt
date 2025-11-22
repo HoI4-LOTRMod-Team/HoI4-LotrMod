@@ -1,7 +1,7 @@
 #	Example:
 #
 #	example_trigger = {
-#		tag = GER
+#		tag = MOR
 #		is_ai = no
 #	}
 #
@@ -92,6 +92,20 @@ is_controlled_by_ROOT_or_subject = {
 	}
 }
 
+is_not_controlled_by_ROOT_or_subject = {
+	custom_trigger_tooltip = {
+		tooltip = is_not_controlled_by_ROOT_or_subject
+		CONTROLLER = {
+			NOT = {
+				OR = {
+					tag = ROOT
+					is_subject_of = ROOT
+				}
+			}
+		}
+	}
+}
+
 #Country scope
 is_free_or_subject_of_root = {
 	OR = {
@@ -114,55 +128,27 @@ is_controlled_by_ROOT_or_ally = {
 	}
 }
 
+
+#State scope
+is_not_controlled_by_ROOT_or_ally = {
+	custom_trigger_tooltip = {
+		tooltip = is_not_controlled_by_ROOT_or_ally
+		CONTROLLER = {
+			NOT = {
+				tag = ROOT
+				is_subject_of = ROOT
+				is_in_faction_with = ROOT
+			}
+		}
+	}
+}
+
 is_csa_state = {
 	always = no
 }
 
 has_naval_treaty_trigger = {
 	always = no
-}
-
-ai_air_doctrine_tier_1_trigger = {
-	OR = {
-		has_tech = naval_strike_tactics
-		has_tech = direct_ground_support
-		has_tech = low_echelon_support
-	}
-}
-
-ai_air_doctrine_tier_2_trigger = {
-	OR = {
-		has_tech = multialtitude_flying
-		has_tech = hunt_and_destroy
-		has_tech = operational_destruction
-	}
-}
-ai_air_doctrine_tier_3_trigger = {
-	OR = {
-		has_tech = flying_fortress
-		has_tech = naval_strike_torpedo_tactics
-		has_tech = infiltration_bombing
-	}
-}
-
-ai_land_doctrine_tier_1_trigger = {
-	OR = {
-		has_tech = elastic_defence
-		has_tech = mobile_defence
-		has_tech = grand_assault
-		has_tech = defence_in_depth
-	}
-}
-
-ai_land_doctrine_tier_2_trigger = {
-	OR = {
-		has_tech = kampfgruppe
-		has_tech = mechanised_offensive
-		has_tech = branch_interoperation
-		has_tech = infiltration_assault
-		has_tech = vast_offensives
-		has_tech = large_front_offensive
-	}
 }
 
 SOV_save_pp_for_manpower_trouble = {
@@ -446,6 +432,23 @@ state_is_fully_controlled_by_ROOT_or_subject = {
 	}
 }
 
+#State scope
+state_is_fully_controlled_by_ROOT_subject_or_faction_member = {
+	custom_trigger_tooltip = {
+		tooltip = state_is_fully_controlled_by_ROOT_subject_or_faction_member_tt
+		OR = {
+			is_fully_controlled_by = ROOT
+			controller = {
+				OR = {
+					is_subject_of = ROOT
+					is_in_faction_with = ROOT
+				}
+				has_full_control_of_state = PREV
+			}
+		}
+	}
+}
+
 is_alpine_state = {
 	custom_trigger_tooltip = {
 		tooltip = is_alpine_TT
@@ -479,6 +482,10 @@ state_has_any_resource = {
 		}
 		has_resources_amount = {
 			resource = chromium
+			amount > 0
+		}
+		has_resources_amount = {
+			resource = coal
 			amount > 0
 		}
 	}
@@ -576,46 +583,48 @@ FROM_is_twice_as_weak = {
 	}
 }
 
-ai_has_completed_army_doctrine = {
-	is_ai = yes
-	OR = {
-		has_tech = werwolf_guerillas
-		has_tech = modern_blitzkrieg
-		has_tech = air_land_battle
-		has_tech = shock_and_awe
-		has_tech = c3i_theory
-		has_tech = infiltration_in_depth
-		has_tech = continuous_offensive
-		has_tech = guerilla_warfare
-	}
-}
-
-ai_has_completed_air_doctrine = {
-	is_ai = yes
-	OR = {
-		has_tech = offensive_formations
-		has_tech = mass_destruction
-		has_tech = forward_interception
-		has_tech = high_level_bombing
-	}
-}
-
-ai_has_completed_naval_doctrine = {
-	is_ai = yes
-	OR = {
-		has_tech = grand_battlefleet
-		has_tech = submarine_offensive
-		has_tech = floating_airfield
-		has_tech = combined_operations_raiding
-		has_tech = integrated_convoy_defence
-		has_tech = submarine_offensive_bs
-		has_tech = carrier_battlegroups
-	}
-}
-
 achievement_standard_possible_check = {
 	is_ironman = yes
 	difficulty > 1
 	has_any_custom_difficulty_setting = no
 	game_rules_allow_achievements = yes		
+}
+
+is_in_the_east = {
+	custom_trigger_tooltip = {
+		tooltip = "is in the east"
+		OR = {
+			is_on_continent = erebor
+			is_on_continent = rhovanion
+			is_on_continent = rhun
+			is_on_continent = mirkwood
+			is_on_continent = vale
+			is_on_continent = mirkwood
+		}
+	}
+}
+
+is_in_the_south = {	
+	custom_trigger_tooltip = {
+		tooltip = "is in the south"
+		OR = {
+			is_on_continent = gondor
+			is_on_continent = mordor
+			is_on_continent = harad
+			is_on_continent = rohan
+		}
+	}
+}
+
+is_in_the_west = {
+	custom_trigger_tooltip = {
+		tooltip = "is in the west"
+		OR = {
+			is_on_continent = lindon
+			is_on_continent = eriador
+			is_on_continent = enedwaith
+			is_on_continent = hollin
+			is_on_continent = forodwaith
+		}
+	}
 }
