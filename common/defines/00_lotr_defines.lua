@@ -55,9 +55,8 @@ NDefines.NSupply.SUPPLY_HUB_FULL_MOTORIZATION_BONUS = 3.0
 -- Lowering attrition damage
 NDefines.NSupply.SUPPLY_THRESHOLD_FOR_ARMY_ATTRITION = 0.28        -- at 28% supply army starts to suffer attrition
 NDefines.NMilitary.ATTRITION_DAMAGE_ORG = 0.07					   -- damage from attrition to Organisation
-NDefines.NMilitary.ATTRITION_EQUIPMENT_LOSS_CHANCE = 0.05		   -- Chance for loosing equipment when suffer attrition. Scaled up the stronger attrition is. Then scaled down by equipment reliability.
-NDefines.NMilitary.ATTRITION_EQUIPMENT_PER_TYPE_LOSS_CHANCE = 0.05 -- Chance for loosing equipment when suffer attrition. Scaled up the stronger attrition is. Then scaled down by equipment reliability.
-NDefines.NMilitary.ATTRITION_WHILE_MOVING_FACTOR = 0.75
+NDefines.NMilitary.ATTRITION_EQUIPMENT_LOSS_CHANCE = 0.0023		   -- Chance for loosing equipment when suffer attrition. Scaled up the stronger attrition is. Then scaled down by equipment reliability
+NDefines.NMilitary.ATTRITION_WHILE_MOVING_FACTOR = 0.9
 
 -- Base speed of manpower mobilization  #in 1/1000 of 1 %
 NDefines.NCountry.BASE_MOBILIZATION_SPEED = 0.005
