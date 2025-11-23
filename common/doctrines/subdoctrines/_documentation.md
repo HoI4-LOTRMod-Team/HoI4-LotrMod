@@ -2,7 +2,7 @@
 
 **Subdoctrines** are at the root of each doctrine *Track*. The player can choose any available subdoctrine for that track and activate it by paying an XP cost. Activating a subdoctrine gives immediate effects, like unit stat bonuses or unlocking tactics. Also, activating a subdoctrine starts the automatic activation of a sequence of *Rewards*.
 
-### TODO - how unlocking of rewards works
+### how unlocking of rewards works
 ###reward keys are sub_doctrine_key_reward_key(_desc) - this is because they're not really database objects and this will help us avoid collisions.
 
 ## Script Examples
