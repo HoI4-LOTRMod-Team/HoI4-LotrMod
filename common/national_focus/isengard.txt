@@ -1133,17 +1133,25 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
-			set_variable = { misty_pact_members = 1 }
-			set_variable = { misty_pact_bonus_effect = 0.02 }
-			set_variable = { misty_pact_bonus_effect_text = 2 }
-			DUN = { country_event = { id = misty_pact.3 } }
-			ENE = { country_event = { id = misty_pact.3 } }
 			custom_effect_tooltip = ISE_tooltip_ENE_DUN_Misty_Mountains_invite
+			hidden_effect = {
+				set_variable = { misty_pact_members = 1 }
+				set_variable = { misty_pact_bonus_effect = 0.02 }
+				set_variable = { misty_pact_bonus_effect_text = 2 }
+				ROOT = { 
+					add_to_array = {
+						array = ISE.misty_mountain_pact_members
+						value = PREV #optional, if not defined adds scope
+					} 
+				}
+				DUN = { country_event = { id = misty_pact.3 } }
+				ENE = { country_event = { id = misty_pact.3 } }
+			}
 		}
 	}
 
 	focus = {
-		id = ISE_expand_collaboration
+		id = ISE_pact_collaboration
 		icon = GFX_goal_lth_adminstration
 		available = {
 			is_puppet = no
@@ -1160,14 +1168,53 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
-			every_possible_country  = {
-                limit = {
-                    has_country_flag = MISTY_PACT
-					NOT = { tag = ROOT }
-                }
-				country_event = { id = misty_pact.4 }
+			if = {
+				limit = { has_completed_focus = ISE_misty_mountains_pact }
+				every_possible_country  = {
+					limit = {
+						has_country_flag = MISTY_PACT
+						NOT = { tag = ROOT }
+					}
+					country_event = { id = misty_pact.4 }
+				}
+				add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses }
+			} else_if = {
+				custom_effect_tooltip = ISE_tooltip_mountain_pact_collaboration
 			}
-			add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses }
+		}
+	}
+
+	focus = {
+		id = ISE_expand_collaboration
+		icon = GFX_goal_generic_infrastructure_investment
+		available = {
+			is_puppet = no
+			custom_trigger_tooltip = {
+				tooltip = ise_misty_pact_members_check		
+				check_variable = { var = misty_pact_members  value = 1  compare = greater_than }
+			}
+		}
+		ai_will_do = { factor = 100 }
+		relative_position_id = ISE_pact_collaboration
+		x = -1
+		y = 1
+		prerequisite = { focus = ISE_pact_collaboration}
+		cost = 5
+		available_if_capitulated = no
+		completion_reward = {
+			if = {
+				limit = { has_completed_focus = ISE_misty_mountains_pact }
+				every_possible_country  = {
+					limit = {
+						has_country_flag = MISTY_PACT
+						NOT = { tag = ROOT }
+					}
+					country_event = { id = misty_pact.8 }
+				}
+				add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses_civilian_expansion }
+			} else_if = {
+				custom_effect_tooltip = ISE_tooltip_expand_mountain_pact_collaboration
+			}
 		}
 	}
 
@@ -1176,7 +1223,7 @@ focus_tree = {
 		icon = GFX_goal_lth_defense_deal
 		available = {
 			is_puppet = no
-			threat > 0.1
+			threat > 0.15 
 			custom_trigger_tooltip = {
 				tooltip = ise_misty_pact_members_check		
 				check_variable = { var = misty_pact_members  value = 1  compare = greater_than }
@@ -1184,7 +1231,7 @@ focus_tree = {
 		}
 		ai_will_do = { factor = 100 }
 		relative_position_id = ISE_expand_collaboration
-		x = -1
+		x = 0
 		y = 1
 		prerequisite = { focus = ISE_expand_collaboration}
 		cost = 10
@@ -1199,7 +1246,6 @@ focus_tree = {
                 }
 				country_event = { id = misty_pact.6 }
 			}
-			remove_dynamic_modifier = { modifier = misty_mountain_pact_bonuses }
 			add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses_militair_expansion }
 		}
 	}
@@ -1215,10 +1261,10 @@ focus_tree = {
 			}
 		}
 		ai_will_do = { factor = 100 }
-		relative_position_id = ISE_expand_collaboration
+		relative_position_id = ISE_pact_collaboration
 		x = 1
 		y = 1
-		prerequisite = { focus = ISE_expand_collaboration}
+		prerequisite = { focus = ISE_pact_collaboration}
 		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
@@ -1243,8 +1289,8 @@ focus_tree = {
 			is_puppet = no
 			is_in_faction = no
 			custom_trigger_tooltip = {
-				tooltip = ise_misty_pact_members_check		
-				check_variable = { misty_pact_members > 1 }
+				tooltip = ise_misty_pact_members_check_more_than_3		
+				check_variable = { misty_pact_members > 3 }
 			}
 		}
 		ai_will_do = { factor = 100 }
