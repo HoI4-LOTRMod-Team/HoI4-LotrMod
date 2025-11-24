@@ -7,7 +7,7 @@ import string
 
 from Qt import QtCore, QtWidgets, QtGui
 
-from nodes import focus_node
+from focus_node import FocusNode
 from NodeGraphQt import (
     NodeGraph,
     NodesPaletteWidget,
@@ -23,72 +23,17 @@ BASE_PATH = Path(__file__).parent.resolve()
 
 
 
-x_scaling = 150
-y_scaling = 150
-
-
-def snap_node_pos(pos):
-    (x, y) = pos
-
-    new_x = round(x / x_scaling) * x_scaling
-    new_y = round(y / y_scaling) * y_scaling
-
-    return (new_x, new_y)
-
-
-def focus_to_node_pos(pos):
-    (x, y) = pos
-
-    return (x*x_scaling, y*y_scaling)
-
-def node_to_focus_pos(pos):
-    (x, y) = pos
-
-    return (int(x/x_scaling), int(y/y_scaling))
-
-
-def random_string(length):
-    chars = string.ascii_letters + string.digits  # a-z, A-Z, 0-9
-    return ''.join(random.choice(chars) for _ in range(length))
-
-
-focus_template = """
-    focus = {
-		id = ROH_new_focus_$TOKEN$
-		icon = GFX_unknown_focus
-		
-		x = 0
-		y = 0
-
-		cost = 5
-		ai_will_do = { factor = 1 }
-		
-		search_filters = { }
-		available = {
-			always = yes
-		}
-		completion_reward = {
-			# TODO
-		}
-	}
-"""
-
-
 def add_focus_to_graph(graph):
     focus = graph.create_node('nodes.basic.FocusNode')
-    (x, y) = graph.cursor_pos()
-    x = round((x - (0.5*x_scaling)) / x_scaling) * x_scaling
-    y = round((y - (0.5*y_scaling)) / y_scaling) * y_scaling
-    focus.set_pos(x, y)
-    focus.set_name("")
-
-    graph.focus_tree.focuses.append(focus)
-
-    template = focus_template.replace("$TOKEN$", random_string(6))
     
-    focus.parent_tree = graph.focus_tree
-    focus.set_from_pObj(Parse_PObj(template)[0], True)
-    focus.is_activated = True
+    focus.init(None, graph.focus_tree)
+    focus.post_init()
+    focus.activate()
+
+    (x, y) = graph.cursor_pos()
+    focus.set_pos(x, y)
+    focus.on_node_moved()
+
     focus.recalculate_positions()
 
 
@@ -109,10 +54,7 @@ class FocusNodeGraph(NodeGraph):
             node = self._model.nodes[node_view.id]
 
             # This snaps the nodes in this graph to coordinates that are a multiple of 100
-            (new_x, new_y) = snap_node_pos((node.pos()[0], node.pos()[1]))
-            node.set_pos(new_x, new_y)
-
-            node.recalculate_positions()
+            node.on_node_moved()
 
         self._undo_stack.endMacro()
 
@@ -126,7 +68,7 @@ def create_node_graph():
     graph.set_context_menu_from_file(hotkey_path, 'graph')
 
     graph.register_nodes([
-        focus_node.FocusNode,
+        FocusNode,
     ])
         
 

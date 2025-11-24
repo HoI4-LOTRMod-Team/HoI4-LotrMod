@@ -13,6 +13,8 @@ from PySide6.QtWidgets import QGraphicsTextItem
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt
 
+from pdx_parser import Parse_PObj
+
 
 from Qt import QtWidgets, QtGui, QtCore
 
@@ -25,6 +27,11 @@ BASE_PATH = Path(__file__).parent.parent.resolve()
 # NOTE: This is in core.py, but getting it imported here is pain and suffering, so copy-pasted
 x_scaling = 150
 y_scaling = 150
+def focus_to_node_pos(pos):
+    (x, y) = pos
+
+    return (x*x_scaling, y*y_scaling)
+
 def node_to_focus_pos(pos):
     (x, y) = pos
 
@@ -33,6 +40,28 @@ def node_to_focus_pos(pos):
 def random_string(length):
     chars = string.ascii_letters + string.digits  # a-z, A-Z, 0-9
     return ''.join(random.choice(chars) for _ in range(length))
+
+
+focus_template = """
+    focus = {
+		id = ROH_new_focus_$TOKEN$
+		icon = GFX_unknown_focus
+		
+		x = 0
+		y = 0
+
+		cost = 5
+		ai_will_do = { factor = 1 }
+		
+		search_filters = { }
+		available = {
+			always = yes
+		}
+		completion_reward = {
+			# TODO
+		}
+	}
+"""
 
 
 class FocusNode(BaseNode):
@@ -130,6 +159,16 @@ class FocusNode(BaseNode):
         super().__setattr__(name, value)
 
 
+    def on_node_moved(self):
+        # snap position based on scaling
+        (x, y) = (self.pos()[0], self.pos()[1])
+        new_x = round(x / x_scaling) * x_scaling
+        new_y = round(y / y_scaling) * y_scaling
+
+        self.set_pos(new_x, new_y)
+        self.recalculate_positions()
+
+
 
     def on_input_connected(self, in_port, out_port):
         if not self.is_activated: return
@@ -147,13 +186,13 @@ class FocusNode(BaseNode):
 
         preq_name = out_port.node().focus_id
 
-        self.remve_all_preqs_with_name(preq_name)
+        self.remove_all_preqs_with_name(preq_name)
 
         #print("prerequitites removed!")
         return
 
     
-    def remve_all_preqs_with_name(self, preq_name):
+    def remove_all_preqs_with_name(self, preq_name):
         # remove all "focus = preq" that are this
         all_preqs = self.pObj.GetAll("prerequisite").value
         for preq in all_preqs:
@@ -163,9 +202,39 @@ class FocusNode(BaseNode):
         self.pObj.RemoveAllWhere(lambda p: p.id == "prerequisite" and len(p.value) < 1)
 
 
+    def post_init(self):
+        # set realtive-position id
+        if self.pObj.Has("relative_position_id"):
+            self.parent_tree.get_focus_node_by_name(self.pObj.Get("id").value).relative_position_id = self.parent_tree.get_focus_node_by_name(self.pObj.Get("relative_position_id").value)
 
-    def set_from_pObj(self, obj, is_new_focus=False):
+        # set the position of this node on the graph correctly
+        (x, y) = self.hoi4_get_absolute_pos()
+        (x, y) = focus_to_node_pos((x,y))
+        self.set_pos(x, y)
+
+        # Add prerequisite lines/connections
+        if(self.pObj.Has("prerequisite")):
+            curr_f = self.parent_tree.get_focus_node_by_name(self.pObj.Get("id").value)
+            preqs = self.pObj.GetAll("prerequisite")
+            
+            for preq in preqs.value:
+                preq_focuses = preq.GetAll("focus")
+                for preq_focus in preq_focuses.value:
+                    self.parent_tree.get_focus_node_by_name(preq_focus.value).set_output(0, curr_f.input(0))
+
+
+    def init(self, obj, parent_tree):
+        is_new_focus = False
+
+        if obj is None:
+            template = focus_template.replace("$TOKEN$", random_string(6))
+            obj = Parse_PObj(template)[0]
+            is_new_focus = True
         self.pObj = obj
+
+        self.set_name("")
+        self.parent_tree = parent_tree
+        parent_tree.focuses.append(self)
 
         self.focus_id = obj.GetVal("id")
         self._label_item.setPlainText(self.focus_id)
@@ -185,6 +254,9 @@ class FocusNode(BaseNode):
 
         if is_new_focus:
             self.parent_tree.root_pobj.Get("focus_tree").value.append(self.pObj)
+
+    def activate(self):
+        self.is_activated = True
 
     
     def recalculate_positions(self):

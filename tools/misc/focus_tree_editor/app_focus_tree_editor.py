@@ -25,7 +25,7 @@ def main():
     # create graph controller.
     graph = create_node_graph()
 
-    focus_node_tree = FocusNodeTree(graph)
+    focus_node_tree = FocusNodeTree(graph, r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\rohan.txt')
     graph.focus_tree = focus_node_tree
 
     context_menu = graph.get_context_menu('graph')
