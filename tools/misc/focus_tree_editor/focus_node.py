@@ -274,13 +274,6 @@ class FocusNode(BaseNode):
             self.y = ny
         
 
-    # from string
-    def set_rel_pos_id(self, rel_pos_id):
-        self.relative_position_id = self.parent_tree.get_focus_node_by_name(rel_pos_id.strip())
-    def get_rel_pos_id(self):
-        return self.relative_position_id.focus_id
-
-    idk_id = "hello"
     def get_properties(self):
         def rel_pos_getter(node):
             if node.relative_position_id:
