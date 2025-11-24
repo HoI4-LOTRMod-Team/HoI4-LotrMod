@@ -7,7 +7,7 @@ import string
 
 from Qt import QtCore, QtWidgets, QtGui
 
-from nodes import focus_node
+from nodes import tech_node
 from NodeGraphQt import (
     NodeGraph,
     NodesPaletteWidget,
@@ -36,12 +36,12 @@ def snap_node_pos(pos):
     return (new_x, new_y)
 
 
-def focus_to_node_pos(pos):
+def tech_to_node_pos(pos):
     (x, y) = pos
 
     return (x*x_scaling, y*y_scaling)
 
-def node_to_focus_pos(pos):
+def node_to_tech_pos(pos):
     (x, y) = pos
 
     return (int(x/x_scaling), int(y/y_scaling))
@@ -52,10 +52,10 @@ def random_string(length):
     return ''.join(random.choice(chars) for _ in range(length))
 
 
-focus_template = """
-    focus = {
-		id = ROH_new_focus_$TOKEN$
-		icon = GFX_unknown_focus
+tech_template = """
+    tech = {
+		id = ROH_new_tech_$TOKEN$
+		icon = GFX_unknown_tech
 		
 		x = 0
 		y = 0
@@ -74,28 +74,30 @@ focus_template = """
 """
 
 
-def add_focus_to_graph(graph):
-    focus = graph.create_node('nodes.basic.FocusNode')
-    (x, y) = graph.cursor_pos()
-    x = round((x - (0.5*x_scaling)) / x_scaling) * x_scaling
-    y = round((y - (0.5*y_scaling)) / y_scaling) * y_scaling
-    focus.set_pos(x, y)
-    focus.set_name("")
+def add_tech_to_graph(graph):
+    # TODO
+    return
+    #tech = graph.create_node('nodes.basic.FocusNode')
+    #(x, y) = graph.cursor_pos()
+    #x = round((x - (0.5*x_scaling)) / x_scaling) * x_scaling
+    #y = round((y - (0.5*y_scaling)) / y_scaling) * y_scaling
+    #tech.set_pos(x, y)
+    #tech.set_name("")
+#
+    #graph.tech_tree.teches.append(tech)
+#
+    #template = tech_template.replace("$TOKEN$", random_string(6))
+    #
+    #tech.parent_tree = graph.tech_tree
+    #tech.set_from_pObj(Parse_PObj(template)[0], True)
+    #tech.is_activated = True
+    #tech.recalculate_positions()
 
-    graph.focus_tree.focuses.append(focus)
-
-    template = focus_template.replace("$TOKEN$", random_string(6))
-    
-    focus.parent_tree = graph.focus_tree
-    focus.set_from_pObj(Parse_PObj(template)[0], True)
-    focus.is_activated = True
-    focus.recalculate_positions()
 
 
+class TechNodeGraph(NodeGraph):
 
-class FocusNodeGraph(NodeGraph):
-
-    focus_tree = None
+    tech_tree = None
 
     def _on_nodes_moved(self, node_data):
         """
@@ -116,22 +118,22 @@ class FocusNodeGraph(NodeGraph):
 
         self._undo_stack.endMacro()
 
-        super(FocusNodeGraph, self)._on_nodes_moved(node_data)
+        super(TechNodeGraph, self)._on_nodes_moved(node_data)
 
 
 def create_node_graph():
-    graph = FocusNodeGraph()
+    graph = TechNodeGraph()
 
     hotkey_path = Path(BASE_PATH, 'hotkeys', 'hotkeys.json')
     graph.set_context_menu_from_file(hotkey_path, 'graph')
 
     graph.register_nodes([
-        focus_node.FocusNode,
+        tech_node.TechNode,
     ])
         
 
-    focus_menu = graph.get_context_menu('graph').add_menu('Focus')
-    focus_menu.add_command('Add Focus', add_focus_to_graph, 'n')
+    tech_menu = graph.get_context_menu('graph').add_menu('Tech')
+    tech_menu.add_command('Add Tech', add_tech_to_graph, 'n')
 
 
     return graph
@@ -139,13 +141,13 @@ def create_node_graph():
 
 def create_main_window():
     main_window = QtWidgets.QMainWindow()
-    main_window.setWindowTitle("Focus Tree Editor")
+    main_window.setWindowTitle("Tech Tree Editor")
     main_window.resize(1100, 800)
 
     return main_window
 
 
-def create_properties_panel(main_window, graph, focus_node_tree):
+def create_properties_panel(main_window, graph, tech_node_tree):
     dock_widget = QtWidgets.QDockWidget("Properties Panel", main_window)
 
     panel_container = QtWidgets.QWidget()
@@ -160,7 +162,7 @@ def create_properties_panel(main_window, graph, focus_node_tree):
     edit_id = QtWidgets.QLineEdit()
     property_map.append({
         'label': "ID:",
-        'attr': "focus_id",  # The node attribute (e.g., node.focus_name)
+        'attr': "tech_id",  # The node attribute (e.g., node.tech_name)
         'widget': edit_id,
         'signal': edit_id.editingFinished, # Signal to connect to
         'get_val': lambda w: w.text(),    # How to get value from widget
@@ -169,119 +171,19 @@ def create_properties_panel(main_window, graph, focus_node_tree):
         'set_placeholder': lambda w, t: w.setPlaceholderText(t) # How to set placeholder
     })
 
-    # This makes it so we can quick-edit focus names with enter
+    # This makes it so we can quick-edit tech names with enter
     shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Return), main_window)
-    def focus_line_edit_if_unfocused():
+    def tech_line_edit_if_unteched():
         if not edit_id.hasFocus():
             dock_widget.activateWindow()
             edit_id.setFocus()
             edit_id.selectAll()
         else:
             edit_id.clearFocus()
-    shortcut.activated.connect(focus_line_edit_if_unfocused)
+    shortcut.activated.connect(tech_line_edit_if_unteched)
 
 
-    relpos_id = QtWidgets.QLineEdit()
-    property_map.append({
-        'label': "RelPosID:",
-        'attr': "relative_position_id",  # The node attribute (e.g., node.focus_name)
-        'widget': relpos_id,
-        'signal': relpos_id.editingFinished, # Signal to connect to
-        'get_val': lambda w: focus_node_tree.get_focus_node_by_name(w.text().strip()),    # How to get value from widget
-        'set_val': lambda w, v: w.setText(v.focus_id), # How to set value on widget
-        'clear_val': lambda w: w.clear(), # How to clear widget for "Mixed"
-        'set_placeholder': lambda w, t: w.setPlaceholderText(t) # How to set placeholder
-    })
-
-    # --- Property 2: Cost (QSpinBox) ---
-    cost = QtWidgets.QSpinBox()
-    cost.setRange(-1000, 1000)
-    property_map.append({
-        'label': "Cost:",
-        'attr': "cost",        # The node attribute (e.g., node.cost)
-        'widget': cost,
-        'signal': cost.valueChanged,
-        'get_val': lambda w: w.value(),
-        'set_val': lambda w, v: w.setValue(v),
-        'clear_val': lambda w: w.clear(),
-        'set_placeholder': lambda w, t: w.lineEdit().setPlaceholderText(t)
-    })
-
-    # Example of checkbox property
-    #is_active_check = QtWidgets.QCheckBox()
-    #is_active_check.setTristate(True) 
-    #property_map.append({
-    #    'label': "Is Active:",
-    #    'attr': "is_active",  # The node attribute (e.g., node.is_active)
-    #    'widget': is_active_check,
-    #    'signal': is_active_check.stateChanged, # Use stateChanged
-    #    
-    #    # Get the boolean value
-    #    'get_val': lambda w: w.isChecked(),
-    #    
-    #    # Set the state: Checked or Unchecked
-    #    'set_val': lambda w, v: (
-    #        w.setTristate(False), # A specific value is not tri-state
-    #        w.setCheckState(QtCore.Qt.Checked if v else QtCore.Qt.Unchecked)
-    #    ),
-    #    
-    #    # Clear (for "Mixed"): Set to PartiallyChecked
-    #    'clear_val': lambda w: (
-    #        w.setTristate(True), # Enable tri-state for "Mixed"
-    #        w.setCheckState(QtCore.Qt.PartiallyChecked)
-    #    ),
-    #    # No placeholder for a checkbox, so do nothing
-    #    'set_placeholder': lambda w, t: None 
-    #})
-
-    search_filters = [
-        "FOCUS_FILTER_UNALIGNED",
-        "FOCUS_FILTER_DEFENSE",
-        "FOCUS_FILTER_FARMING",
-        "FOCUS_FILTER_RING",
-        "FOCUS_FILTER_REVOLUTIONARY",
-        "FOCUS_FILTER_ELVEN_FACTIONS",
-        "FOCUS_FILTER_COOPERATIVE",
-        "FOCUS_FILTER_BELLIGERENT",
-        "FOCUS_FILTER_DENETHOR_PARANOIA",
-        "FOCUS_FILTER_BOP_GRIMA",
-        "FOCUS_FILTER_BOP_THEODEN",
-        "FOCUS_FILTER_ROH_STATESCRAFT",
-        "FOCUS_FILTER_ROH_LORDS",
-        "FOCUS_FILTER_POLITICAL",
-        "FOCUS_FILTER_INDUSTRY",
-        "FOCUS_FILTER_RESEARCH",
-        "FOCUS_FILTER_ANNEXATION",
-        "FOCUS_FILTER_STABILITY",
-        "FOCUS_FILTER_WAR_SUPPORT",
-        "FOCUS_FILTER_MANPOWER",
-        "FOCUS_FILTER_ARMY_XP",
-        "FOCUS_FILTER_NAVY_XP",
-        "FOCUS_FILTER_AIR_XP",
-    ]
-    for filter_name in search_filters:
-        filt_check = QtWidgets.QCheckBox()
-        filt_check.setTristate(True)
-        
-        property_map.append({
-            'type': 'list_membership', # --- This is the new type
-            'label': filter_name + ":",
-            'attr': 'filters',           # The name of the list attribute on the node
-            'value': filter_name,        # The string value to check for
-            'widget': filt_check,
-            'signal': filt_check.stateChanged,
-            
-            # For list membership, get_val/set_val handle check states,
-            # not boolean True/False.
-            'get_val': lambda w: w.checkState(),
-            'set_val': lambda w, state: w.setCheckState(state),
-            'clear_val': lambda w: w.setCheckState(QtCore.Qt.PartiallyChecked),
-            'set_placeholder': lambda w, t: None,
-        })
-
-    # --- 2. ADD WIDGETS TO LAYOUT ---
-    for prop in property_map:
-        form_layout.addRow(prop['label'], prop['widget'])
+    # TODO
 
     dock_widget.setWidget(panel_container)
 
@@ -364,9 +266,9 @@ def create_properties_panel(main_window, graph, focus_node_tree):
         Now branches logic based on property 'type'.
         """
         selected_nodes = graph.selected_nodes()
-        focus_nodes = [n for n in selected_nodes if n.type_ == 'nodes.basic.FocusNode']
+        tech_nodes = [n for n in selected_nodes if n.type_ == 'nodes.basic.FocusNode']
 
-        if not focus_nodes:
+        if not tech_nodes:
             for prop in property_map:
                 form_layout.setRowVisible(prop['widget'], False)
                 prop['widget'].blockSignals(True)
@@ -379,7 +281,7 @@ def create_properties_panel(main_window, graph, focus_node_tree):
                 prop_type = prop.get('type', 'attribute')
 
                 # Check if all selected nodes have this attribute
-                all_nodes_have_attr = all(hasattr(n, attr_name) for n in focus_nodes)
+                all_nodes_have_attr = all(hasattr(n, attr_name) for n in tech_nodes)
                 form_layout.setRowVisible(widget, all_nodes_have_attr)
 
                 if not all_nodes_have_attr:
@@ -389,7 +291,7 @@ def create_properties_panel(main_window, graph, focus_node_tree):
 
                 if prop_type == 'attribute':
                     # --- This is the original logic ---
-                    all_values = set(getattr(n, attr_name) for n in focus_nodes)
+                    all_values = set(getattr(n, attr_name) for n in tech_nodes)
                     
                     if len(all_values) == 1:
                         value_to_set = all_values.pop()
@@ -410,7 +312,7 @@ def create_properties_panel(main_window, graph, focus_node_tree):
                     
                     # Get the "state" (True/False) for this value from every node
                     all_states = set()
-                    for node in focus_nodes:
+                    for node in tech_nodes:
                         current_list = getattr(node, attr_name, [])
                         if not isinstance(current_list, list):
                             current_list = []

@@ -3,21 +3,12 @@
 import signal
 from pathlib import Path
 
-from pdx_parser import Parse_PObj, Parse_List, PObj, SaveListToFile, ParseListFromFile, ParseListFromFile_asPObj
-
 from focus_node_tree import FocusNodeTree
 
 from core import *
 
 from Qt import QtCore, QtWidgets
 
-from nodes import focus_node
-from NodeGraphQt import (
-    NodeGraph,
-    NodesPaletteWidget,
-    NodesTreeWidget,
-    PropertiesBinWidget,
-)
 from NodeGraphQt.constants import LayoutDirectionEnum
 from NodeGraphQt.constants import PipeLayoutEnum
 
