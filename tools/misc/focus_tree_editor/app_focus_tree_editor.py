@@ -9,6 +9,8 @@ from core import *
 
 from Qt import QtCore, QtWidgets
 
+from properties_panel import *
+
 from NodeGraphQt.constants import LayoutDirectionEnum
 from NodeGraphQt.constants import PipeLayoutEnum
 
@@ -31,8 +33,13 @@ def main():
     context_menu = graph.get_context_menu('graph')
     main_window = create_main_window()
     main_window.setCentralWidget(graph.widget)
-    dock_widget = create_properties_panel(main_window, graph, focus_node_tree)
+    #dock_widget = create_properties_panel(main_window, graph, focus_node_tree)
 
+    properties_panel = PropertiesPanel(main_window, graph)
+    main_window.addDockWidget(QtCore.Qt.RightDockWidgetArea, properties_panel)
+    properties_panel.setFloating(True)
+    properties_panel.resize(450, 800) 
+    properties_panel.move(100, 100)
 
 
     # Present

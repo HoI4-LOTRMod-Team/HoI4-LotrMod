@@ -21,6 +21,8 @@ from Qt import QtWidgets, QtGui, QtCore
 import random
 import string
 
+from properties_panel import *
+
 BASE_PATH = Path(__file__).parent.parent.resolve()
 
 
@@ -102,7 +104,7 @@ class FocusNode(BaseNode):
         self._label_item = label
 
 
-
+    # Use this to keep the pObj up to date !
     def __setattr__(self, name, value):
 
         # Called whenever ANY attribute is set
@@ -272,6 +274,62 @@ class FocusNode(BaseNode):
             self.y = ny
         
 
+    # from string
+    def set_rel_pos_id(self, rel_pos_id):
+        self.relative_position_id = self.parent_tree.get_focus_node_by_name(rel_pos_id.strip())
+    def get_rel_pos_id(self):
+        return self.relative_position_id.focus_id
+
+    idk_id = "hello"
+    def get_properties(self):
+        def rel_pos_getter(node):
+            if node.relative_position_id:
+                return node.relative_position_id.focus_id
+            return ""
+
+        def rel_pos_setter(node, value_str):
+            node.relative_position_id = node.parent_tree.get_focus_node_by_name(value_str.strip())
+
+        def filter_getter(node, filter):
+            return filter in node.filters
+        
+        def filter_setter(node, bool_val, filter):
+            new_filters = list(node.filters)
+            if bool_val: new_filters.append(filter)
+            else: new_filters.remove(filter)
+            node.filters = new_filters # ensure we trigger setattr
+
+
+        return [
+            StringProperty("ID", attr_name="focus_id", is_primary=True),
+            StringProperty(
+                "RelPosID", attr_name="relative_position_id", value_getter=rel_pos_getter, value_setter=rel_pos_setter, placeholder="Enter Target ID..."
+            ),
+            IntProperty("Cost", attr_name="cost"),
+            BoolProperty("FOCUS_FILTER_UNALIGNED",  attr_name="FOCUS_FILTER_UNALIGNED", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_UNALIGNED"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_UNALIGNED")),
+            BoolProperty("FOCUS_FILTER_DEFENSE",  attr_name="FOCUS_FILTER_DEFENSE", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_DEFENSE"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_DEFENSE")),
+            BoolProperty("FOCUS_FILTER_FARMING",  attr_name="FOCUS_FILTER_FARMING", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_FARMING"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_FARMING")),
+            BoolProperty("FOCUS_FILTER_RING",  attr_name="FOCUS_FILTER_RING", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_RING"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_RING")),
+            BoolProperty("FOCUS_FILTER_REVOLUTIONARY",  attr_name="FOCUS_FILTER_REVOLUTIONARY", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_REVOLUTIONARY"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_REVOLUTIONARY")),
+            BoolProperty("FOCUS_FILTER_ELVEN_FACTIONS",  attr_name="FOCUS_FILTER_ELVEN_FACTIONS", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_ELVEN_FACTIONS"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_ELVEN_FACTIONS")),
+            BoolProperty("FOCUS_FILTER_COOPERATIVE",  attr_name="FOCUS_FILTER_COOPERATIVE", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_COOPERATIVE"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_COOPERATIVE")),
+            BoolProperty("FOCUS_FILTER_BELLIGERENT",  attr_name="FOCUS_FILTER_BELLIGERENT", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_BELLIGERENT"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_BELLIGERENT")),
+            BoolProperty("FOCUS_FILTER_DENETHOR_PARANOIA",  attr_name="FOCUS_FILTER_DENETHOR_PARANOIA", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_DENETHOR_PARANOIA"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_DENETHOR_PARANOIA")),
+            BoolProperty("FOCUS_FILTER_BOP_GRIMA",  attr_name="FOCUS_FILTER_BOP_GRIMA", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_BOP_GRIMA"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_BOP_GRIMA")),
+            BoolProperty("FOCUS_FILTER_BOP_THEODEN",  attr_name="FOCUS_FILTER_BOP_THEODEN", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_BOP_THEODEN"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_BOP_THEODEN")),
+            BoolProperty("FOCUS_FILTER_ROH_STATESCRAFT",  attr_name="FOCUS_FILTER_ROH_STATESCRAFT", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_ROH_STATESCRAFT"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_ROH_STATESCRAFT")),
+            BoolProperty("FOCUS_FILTER_ROH_LORDS",  attr_name="FOCUS_FILTER_ROH_LORDS", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_ROH_LORDS"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_ROH_LORDS")),
+            BoolProperty("FOCUS_FILTER_POLITICAL",  attr_name="FOCUS_FILTER_POLITICAL", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_POLITICAL"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_POLITICAL")),
+            BoolProperty("FOCUS_FILTER_INDUSTRY",  attr_name="FOCUS_FILTER_INDUSTRY", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_INDUSTRY"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_INDUSTRY")),
+            BoolProperty("FOCUS_FILTER_RESEARCH",  attr_name="FOCUS_FILTER_RESEARCH", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_RESEARCH"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_RESEARCH")),
+            BoolProperty("FOCUS_FILTER_ANNEXATION",  attr_name="FOCUS_FILTER_ANNEXATION", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_ANNEXATION"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_ANNEXATION")),
+            BoolProperty("FOCUS_FILTER_STABILITY",  attr_name="FOCUS_FILTER_STABILITY", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_STABILITY"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_STABILITY")),
+            BoolProperty("FOCUS_FILTER_WAR_SUPPORT",  attr_name="FOCUS_FILTER_WAR_SUPPORT", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_WAR_SUPPORT"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_WAR_SUPPORT")),
+            BoolProperty("FOCUS_FILTER_MANPOWER",  attr_name="FOCUS_FILTER_MANPOWER", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_MANPOWER"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_MANPOWER")),
+            BoolProperty("FOCUS_FILTER_ARMY_XP",  attr_name="FOCUS_FILTER_ARMY_XP", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_ARMY_XP"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_ARMY_XP")),
+            BoolProperty("FOCUS_FILTER_NAVY_XP",  attr_name="FOCUS_FILTER_NAVY_XP", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_NAVY_XP"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_NAVY_XP")),
+            BoolProperty("FOCUS_FILTER_AIR_XP",  attr_name="FOCUS_FILTER_AIR_XP", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_AIR_XP"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_AIR_XP")),
+        ]
 
         
         
