@@ -1,5 +1,3 @@
-
-
 from Qt import QtWidgets, QtCore, QtGui
 
 
@@ -37,7 +35,6 @@ class IntProperty(NodeProperty):
 
 class BoolProperty(NodeProperty):
     def __init__(self, label, attr_name, **kwargs):
-        # kwargs allows passing value_getter / value_setter up to NodeProperty
         super().__init__(label, attr_name, **kwargs)
 
 class TextProperty(NodeProperty):
@@ -48,11 +45,9 @@ class TextProperty(NodeProperty):
 
 class ButtonProperty(NodeProperty):
     def __init__(self, label, callback, button_text="Execute", **kwargs):
-        # We don't need an attr_name because we aren't getting/setting a variable
         super().__init__(label, attr_name=None, **kwargs)
         self.callback = callback
         self.button_text = button_text
-
 
 
 class CommitPlainTextEdit(QtWidgets.QPlainTextEdit):
@@ -65,13 +60,7 @@ class CommitPlainTextEdit(QtWidgets.QPlainTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setTabChangesFocus(True)
-        
-        # --- LAYOUT FIX ---
-        # 1. "Expanding" Horizontal: Fill the width of the form
-        # 2. "Maximum" Vertical: Do not expand to fill empty vertical space
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
-        
-        # Set limits so it looks like a property field, not a full text editor
         self.setMaximumHeight(150) 
         self.setMinimumHeight(60) 
 
@@ -87,7 +76,6 @@ class CommitPlainTextEdit(QtWidgets.QPlainTextEdit):
         super().keyPressEvent(event)
 
 
-
 class PropertiesPanel(QtWidgets.QDockWidget):
     def __init__(self, main_window, graph):
         super().__init__("Properties Panel", main_window)
@@ -99,27 +87,31 @@ class PropertiesPanel(QtWidgets.QDockWidget):
         self.form_layout.setContentsMargins(10, 10, 10, 10)
         self.setWidget(self.container)
 
-        # Store active widget references to block signals during updates
+        # Store active widget references
         self._active_widgets = [] 
 
         # Connect Graph Signals
-        # Assuming graph has a signal: node_selection_changed
         self.graph.node_selection_changed.connect(self.refresh_panel)
 
-        # 1. Store a reference to the current "Quick Edit" widget
         self._primary_widget = None
-
-        # 2. Setup the Shortcut (Global context)
         self.shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Return), main_window)
         self.shortcut.activated.connect(self._on_quick_edit_shortcut)
 
     def refresh_panel(self):
+        """
+        Triggered by the signal. We use a singleShot timer to defer the 
+        UI build by one event loop tick. This ensures the Graph has fully 
+        updated its internal selection list before we query it.
+        """
+        QtCore.QTimer.singleShot(0, self._build_ui)
+
+    def _build_ui(self):
+        """The actual logic to clear and rebuild the panel."""
         self._clear_layout()
         self._active_widgets = []
-        
-        # Reset the primary widget reference on every refresh
         self._primary_widget = None 
 
+        # Now this will return the CORRECT list because the event loop cleared
         selected_nodes = self.graph.selected_nodes()
         if not selected_nodes: return
 
@@ -128,22 +120,14 @@ class PropertiesPanel(QtWidgets.QDockWidget):
             self._build_widget_for_property(prop, selected_nodes)
 
     def _get_common_properties(self, nodes):
-        """
-        Returns a list of properties that are identical (by name and type)
-        across all selected nodes.
-        """
         if not nodes: return []
         
-        # Get properties of the first node
         reference_props = nodes[0].get_properties()
-        
         final_props = []
         
         for ref_prop in reference_props:
             is_common = True
             for node in nodes[1:]:
-                # Check if this node has a matching property
-                # We match by attr_name and class type
                 node_props = node.get_properties()
                 match = next((p for p in node_props 
                               if p.attr_name == ref_prop.attr_name 
@@ -172,7 +156,6 @@ class PropertiesPanel(QtWidgets.QDockWidget):
             widget = QtWidgets.QLineEdit()
             if prop.placeholder: widget.setPlaceholderText(prop.placeholder)
 
-            # USE NEW GETTER:
             values = [prop.get_value(n) for n in nodes]
             
             if len(set(values)) == 1:
@@ -181,7 +164,6 @@ class PropertiesPanel(QtWidgets.QDockWidget):
                 widget.setPlaceholderText("--- Mixed ---")
                 widget.clear()
 
-            # USE NEW SETTER:
             widget.editingFinished.connect(
                 lambda: self._apply_value(prop, nodes, widget.text())
             )
@@ -192,24 +174,18 @@ class PropertiesPanel(QtWidgets.QDockWidget):
             if prop.placeholder: 
                 widget.setPlaceholderText(prop.placeholder)
 
-            # 1. Get Values
-            # We ensure it's a string to avoid errors if value is None
             values = [str(prop.get_value(n)) for n in nodes]
             
-            # 2. Handle Mixed State
             if len(set(values)) == 1:
-                # QPlainTextEdit handles '\n' correctly by creating visual lines
                 widget.setPlainText(values[0])
             else:
                 widget.setPlaceholderText("--- Mixed ---")
                 widget.setPlainText("")
 
-            # 3. Connect Signal
-            # GETTER: Convert literal "\n" characters to visual newlines
+            # Handle Newlines
             val = values[0].replace('\\n', '\n') 
             widget.setPlainText(val)
 
-            # SETTER: Convert visual newlines back to literal "\n" characters
             widget.editingFinished.connect(
                 lambda: self._apply_value(prop, nodes, widget.toPlainText().replace('\n', '\\n'))
             )
@@ -218,11 +194,8 @@ class PropertiesPanel(QtWidgets.QDockWidget):
         elif isinstance(prop, ButtonProperty):
             widget = QtWidgets.QPushButton(prop.button_text)
             
-            # Define the logic to run when clicked
             def on_button_clicked():
                 for node in nodes:
-                    # Call the function provided in the property definition
-                    # We pass the 'node' so the function knows who to act on
                     prop.callback(node)
                 self.refresh_panel()
             
@@ -233,55 +206,30 @@ class PropertiesPanel(QtWidgets.QDockWidget):
             widget = QtWidgets.QSpinBox()
             widget.setRange(prop.min_val, prop.max_val)
 
-            # 1. Get Values
             values = [int(prop.get_value(n)) for n in nodes]
             unique_values = set(values)
             
-            # The value we want to start at if the user touches the control
             sensible_default = values[0] if values else 0
 
-            # 2. Setup "Mixed" State
             is_mixed = False
             if len(unique_values) == 1:
                 widget.setValue(sensible_default)
             else:
                 is_mixed = True
-                # Park at minimum so the text shows up
                 widget.setValue(prop.min_val) 
                 widget.setSpecialValueText("--- Mixed ---")
 
-            # 3. Define the Signal Logic
-            # We use a mutable container (dict) for 'is_mixed' so the inner 
-            # function can modify the flag from the outer scope.
             state = {'mixed': is_mixed}
 
             def on_int_changed(new_val):
                 if state['mixed']:
-                    # --- INTERCEPT THE FIRST INTERACTION ---
-                    
                     widget.blockSignals(True)
-                    
-                    # Snap to the sensible default immediately
                     widget.setValue(sensible_default)
-                    
-                    # Clear the "Mixed" text so it looks like a normal number now
                     widget.setSpecialValueText("")
-                    
                     widget.blockSignals(False)
-                    
-                    # Turn off the flag so next time it behaves normally
                     state['mixed'] = False
-                    
-                    # Option A: Apply the 'sensible_default' to the nodes immediately
                     self._apply_value(prop, nodes, sensible_default)
-                    
-                    # Option B: Do nothing else. 
-                    # The user clicks "Up", the box snaps to "50" (default). 
-                    # They have to click "Up" again to go to "51". 
-                    # This is often safer to prevent accidental jumps.
-                    
                 else:
-                    # --- NORMAL BEHAVIOR ---
                     self._apply_value(prop, nodes, new_val)
 
             widget.valueChanged.connect(on_int_changed)
@@ -290,11 +238,9 @@ class PropertiesPanel(QtWidgets.QDockWidget):
         elif isinstance(prop, BoolProperty):
             widget = QtWidgets.QCheckBox()
             
-            # 1. GET VALUES
             values = [bool(prop.get_value(n)) for n in nodes]
             unique_values = set(values)
 
-            # 2. SET INITIAL STATE
             if len(unique_values) == 1:
                 state = list(unique_values)[0]
                 widget.setCheckState(QtCore.Qt.Checked if state else QtCore.Qt.Unchecked)
@@ -303,67 +249,36 @@ class PropertiesPanel(QtWidgets.QDockWidget):
                 widget.setTristate(True)
                 widget.setCheckState(QtCore.Qt.PartiallyChecked)
 
-            # 3. DEFINE SIGNAL LOGIC
-            # We accept the argument 'state', but we cast it to int to be safe.
             def on_bool_changed(state):
-                state_int = int(state) # Force to python integer (0, 1, or 2)
-                
-                # 0 = Unchecked
-                # 1 = PartiallyChecked (Mixed)
-                # 2 = Checked
-
-                # If the state is 'Mixed' (1), it usually means the user is cycling 
-                # through the tristate. We generally don't want to save "Mixed" to the node.
-                if state_int == 1:
-                    return
-
-                # Determine True/False based on the integer, not the Enum
+                state_int = int(state)
+                if state_int == 1: return
                 new_bool_value = (state_int == 2)
-                
-                # Apply value
                 self._apply_value(prop, nodes, new_bool_value)
-
-                # Visual Polish: Once edited, it's no longer mixed.
                 widget.setTristate(False)
 
-            # 4. CONNECT SIGNAL
             widget.stateChanged.connect(on_bool_changed)
 
         if widget:
             self.form_layout.addRow(prop.label, widget)
             self._active_widgets.append(widget)
 
-            # --- CHECK FOR PRIMARY FLAG ---
             if prop.is_primary:
                 self._primary_widget = widget
 
     def _apply_value(self, prop, nodes, value):
-        """Applies value using the property's internal logic."""
         for node in nodes:
-            # The property object itself handles the complexity now
             prop.set_value(node, value)
-        
         print(f"Updated {prop.label} for {len(nodes)} nodes.")
 
     def _on_quick_edit_shortcut(self):
-        """Restores the behavior: Focus if unfocused, Clear if focused."""
         if not self._primary_widget:
             return
 
-        # Check if the primary widget currently has focus
         if not self._primary_widget.hasFocus():
-            # Bring panel to front (if floating/docked)
             self.raise_() 
             self.activateWindow()
-            
-            # Focus and Select All text
             self._primary_widget.setFocus()
-            
-            # If it's a LineEdit or SpinBox, select the text for easy overwriting
             if hasattr(self._primary_widget, "selectAll"):
                 self._primary_widget.selectAll()
         else:
-            # If already focused, clear focus (User hit Enter to "submit")
             self._primary_widget.clearFocus()
-            # Optional: Return focus to the Graph/Canvas
-            # self.graph.setFocus()

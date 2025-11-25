@@ -84,6 +84,7 @@ class FocusNode(BaseNode):
             BoolProperty("fire_only_once", attr_name="fire_only_once"),
             BoolProperty("trigger", attr_name="trigger"),
             BoolProperty("is_triggered_only", attr_name="is_triggered_only"),
+            BoolProperty("picture", attr_name="picture"),
             ButtonProperty("Add Option", add_generic_option, "Add Option")
         ]
 
@@ -98,7 +99,36 @@ class FocusNode(BaseNode):
         if self.is_activated and hasattr(self, name):
             old_value = getattr(self, name)
 
-            #if old_value != value:
+            if old_value != value:
+
+                if name == "title":
+                    self.parent_tree.locfile.set(self.pObj.Get("title").value, value)
+
+                if name == "desc":
+                    self.parent_tree.locfile.set(self.pObj.Get("desc").value, value)
+
+                if name == "is_triggered_only":
+                    if not self.pObj.Has("is_triggered_only"):
+                        self.pObj.InsertAt("is_triggered_only = yes", 4)
+                    self.pObj.Get("is_triggered_only").value = "yes" if value else "no"
+
+                if name == "fire_only_once":
+                    if not self.pObj.Has("fire_only_once"):
+                        self.pObj.InsertAt("fire_only_once = yes", 4)
+                    self.pObj.Get("fire_only_once").value = "yes" if value else "no"
+
+                if name == "trigger":
+                    if self.pObj.Has("trigger") and not value:
+                        self.pObj.Remove("trigger")
+                    elif not self.pObj.Has("trigger") and value:
+                        self.pObj.InsertAt("trigger = { always = no } # TODO", 4)
+
+                if name == "picture":
+                    if self.pObj.Has("picture") and not value:
+                        self.pObj.Remove("picture")
+                    elif not self.pObj.Has("picture") and value:
+                        self.pObj.InsertAt("picture = GFX_report_event_ring # TODO", 4)
+
 
         super().__setattr__(name, value)
 
@@ -176,7 +206,7 @@ class FocusNode(BaseNode):
         self.props.append(
             StringProperty(option_name, attr_name=option_name, value_getter=lambda x:x.get_loc(option_name))#,   value_setter=lambda x, v:)) # TODO
         )
-        print(len(self.props))
+        #print(len(self.props))
 
         return option
 
@@ -199,6 +229,12 @@ class FocusNode(BaseNode):
 
         self.title = self.get_loc(obj.Get("title").value)
         self.desc = self.get_loc(obj.Get("desc").value)
+        if obj.Has("is_triggered_only"):
+            self.is_triggered_only = obj.GetVal("is_triggered_only").lower() == "yes"
+        if obj.Has("fire_only_once"):
+            self.fire_only_once = obj.GetVal("fire_only_once").lower() == "yes"
+        self.trigger = obj.Has("trigger")
+        self.picture = obj.Has("picture")
 
         if is_new_focus:
             pass # TODO
@@ -224,9 +260,10 @@ class FocusNode(BaseNode):
     title = ""
     desc = ""
 
-    fire_only_once = False # TODO
-    trigger = False # TODO
-    is_triggered_only = False # TODO
+    fire_only_once = False
+    trigger = False
+    is_triggered_only = False
+    picture = False
     
 
     parent_tree = None

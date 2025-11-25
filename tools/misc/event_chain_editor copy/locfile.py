@@ -61,7 +61,7 @@ class LocFile:
             return
 
         # Construct the new line
-        new_line = f'{self.indent}{key_full}:0 "{value}"\n'
+        new_line = f'\n{self.indent}{key_full}:0 "{value}"'
         
         # Insert before the last line if it's empty, or append
         # We try to stay inside the l_english block
