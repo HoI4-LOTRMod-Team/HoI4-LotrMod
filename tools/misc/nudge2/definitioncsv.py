@@ -86,14 +86,15 @@ def random_color():
     return tuple(random.randint(0, 255) for _ in range(3))
 
 # Adds:
-#   8: terrain-color
-#   9: type-color
-#  10: coastal-color
-#  11: continent-color
-#  12: state-id
-#  13: state-color
-#  14: strat-region-id
-#  15: strat-region-color
+#   8: province-color
+#   9: terrain-color
+#  10: type-color
+#  11: coastal-color
+#  12: continent-color
+#  13: state-id
+#  14: state-color
+#  15: strat-region-id
+#  16: strat-region-color
 def get_expanded_definition():
 
     csv = get_definition_csv()
@@ -103,6 +104,7 @@ def get_expanded_definition():
     terrain_colormap = get_terrain_colormap()
 
     for row in csv:
+        row.append((row[1], row[2], row[3]))
         row.append(terrain_colormap[row[6]])
         row.append(type_colormap[row[4]])
         row.append(coastal_colormap[row[5]])
@@ -115,14 +117,14 @@ def get_expanded_definition():
     for st in states:
         col = random_color()
         for prov in st.province_list:
-            csv[prov][12] = st.state_id
-            csv[prov][13] = col
+            csv[prov][13] = st.state_id
+            csv[prov][14] = col
 
     for st in regions:
         col = random_color()
         for prov in st.province_list:
-            csv[prov][14] = st.region_id
-            csv[prov][15] = col
+            csv[prov][15] = st.region_id
+            csv[prov][16] = col
 
     return csv
 

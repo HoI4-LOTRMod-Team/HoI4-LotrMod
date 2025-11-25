@@ -8,31 +8,63 @@ from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent,
                            QAction, QActionGroup)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal
 
+# Assuming this exists based on your upload
 from definitioncsv import *
 
 # --- CONFIGURATION ---
 HARDCODED_IMAGE_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\provinces - Copy.bmp'
 
+# Define your Map Modes here: ("Display Name", CSV_Column_Index)
+# Ensure the Index points to a column in your CSV that contains an RGB tuple/list.
+MAP_MODES = [
+    ("Province", 8),
+    ("Terrain", 9),
+    ("Type", 10),
+    ("Coastal", 11),
+    ("Continent", 12),
+    ("State", 14),
+    ("Strat Region", 16),
+]
+
 # ============================================================
 #  GLOBAL LUT CONFIGURATION
 # ============================================================
 
-def _create_identity_lut():
-    print("Generating LUT...")
+def generate_lut(target_column_index):
+    """
+    Generates a 3D lookup table mapping RGB -> CSV Column Value.
+    """
+    print(f"Generating LUT for CSV Column {target_column_index}...")
     
-    lut = np.zeros((256, 256, 256, 3), dtype=np.uint8)
-
-    csv = get_expanded_definition()
+    # Initialize with identity (so unmapped colors remain themselves)
+    # or zeros if you want unmapped colors to be black.
+    # using indices ensures that if a color isn't in the CSV, it looks like the raw BMP.
     lut = np.indices((256, 256, 256), dtype=np.uint8).transpose(1, 2, 3, 0)
-    for row in csv:
-        # map mode 1
-        lut[row[1], row[2], row[3]] = row[15][::-1] # the ::-1 reverses the tuple (rgb -> bgr)
+
+    try:
+        csv = get_expanded_definition()
+        for row in csv:
+            # Safety check: ensure the row has enough columns
+            if target_column_index < len(row):
+                # We assume row[1], row[2], row[3] are the Key RGB
+                # We assume row[target_column_index] is the Target Value (RGB Tuple)
+                
+                target_value = row[target_column_index]
+                
+                # Check if the target value is iterable (like a tuple/list for color)
+                # If your CSV has strings at this index, this will fail unless handled.
+                if hasattr(target_value, '__getitem__') and len(target_value) >= 3:
+                     # ::-1 reverses rgb -> bgr for QImage compatibility
+                    lut[row[1], row[2], row[3]] = target_value[::-1]
+    except Exception as e:
+        print(f"Error generating LUT: {e}")
+        print("Ensure the selected CSV column contains valid RGB tuples.")
     
     return lut
 
-# GLOBAL VARIABLE: You can overwrite this from outside or modify it here.
-# Expected Shape: (256, 256, 256, 3)
-lut = _create_identity_lut()
+# GLOBAL VARIABLE
+# Initialize with the first mode in the config
+lut = generate_lut(MAP_MODES[0][1])
 
 
 # ============================================================
@@ -118,6 +150,12 @@ class EditorView(QGraphicsView):
         self.colorChanged.emit(self.current_color)
         print(f"Color Picked: {color.name()}")
 
+    def refresh_viewport(self):
+        """Re-runs the LUT over the entire image and updates the scene."""
+        if not self.data_image: return
+        self.update_display() # Runs the LUT over the whole image
+        self.image_item.setPixmap(QPixmap.fromImage(self.display_image))
+
     def perform_paint(self, x, y):
         if not self.data_image: return
 
@@ -187,9 +225,6 @@ class EditorView(QGraphicsView):
         arr_display[y1:y2, x1:x2, 3] = arr_data[y1:y2, x1:x2, 3]
 
         # Apply LUT
-        # Using the exact logic provided:
-        # img_arr[:, :, 0:3] = lut[r_indices, g_indices, b_indices]
-        # (Where arr_display is the target img_arr)
         arr_display[y1:y2, x1:x2, 0:3] = lut[r_indices, g_indices, b_indices]
 
 
@@ -301,12 +336,25 @@ class MainWindow(QMainWindow):
         toolbar = QToolBar("Tools")
         self.addToolBar(toolbar)
 
-        toolbar.addWidget(QLabel("Mode: "))
-        self.mode_combo = QComboBox()
-        self.mode_combo.addItem("Drawing Mode", PaintMode())
-        self.mode_combo.addItem("Debug Mode", DebugMode())
-        self.mode_combo.currentIndexChanged.connect(self.change_mode)
-        toolbar.addWidget(self.mode_combo)
+        # --- MODE SELECTOR ---
+        toolbar.addWidget(QLabel("Map Mode: "))
+        self.map_mode_combo = QComboBox()
+        # Populate based on Configuration
+        for name, idx in MAP_MODES:
+            self.map_mode_combo.addItem(name, idx)
+        
+        self.map_mode_combo.currentIndexChanged.connect(self.change_map_mode)
+        toolbar.addWidget(self.map_mode_combo)
+        
+        toolbar.addSeparator()
+
+        # --- TOOL SELECTOR ---
+        toolbar.addWidget(QLabel("Tool: "))
+        self.tool_combo = QComboBox()
+        self.tool_combo.addItem("Drawing", PaintMode())
+        self.tool_combo.addItem("Debug", DebugMode())
+        self.tool_combo.currentIndexChanged.connect(self.change_tool)
+        toolbar.addWidget(self.tool_combo)
         
         toolbar.addSeparator()
 
@@ -332,8 +380,19 @@ class MainWindow(QMainWindow):
             brush_group.addAction(action)
             toolbar.addAction(action)
 
-    def change_mode(self, index):
-        new_mode = self.mode_combo.currentData()
+    def change_map_mode(self, index):
+        # 1. Get the CSV index associated with the dropdown item
+        csv_index = self.map_mode_combo.currentData()
+        
+        # 2. Update Global LUT
+        global lut
+        lut = generate_lut(csv_index)
+        
+        # 3. Force Viewer to redraw everything
+        self.viewer.refresh_viewport()
+
+    def change_tool(self, index):
+        new_mode = self.tool_combo.currentData()
         self.viewer.current_mode = new_mode
 
     def update_color_display(self, color):
