@@ -3,7 +3,7 @@ import os
 import numpy as np
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene, 
                                QGraphicsPixmapItem, QMainWindow, QToolBar, 
-                               QLabel, QWidget, QComboBox)
+                               QLabel, QWidget, QComboBox, QCheckBox)
 from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent, 
                            QAction, QActionGroup)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal
@@ -14,8 +14,7 @@ from definitioncsv import *
 # --- CONFIGURATION ---
 HARDCODED_IMAGE_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\provinces - Copy.bmp'
 
-# Define your Map Modes here: ("Display Name", CSV_Column_Index)
-# Ensure the Index points to a column in your CSV that contains an RGB tuple/list.
+# Your Custom Map Modes
 MAP_MODES = [
     ("Province", 8),
     ("Terrain", 9),
@@ -30,15 +29,15 @@ MAP_MODES = [
 #  GLOBAL LUT CONFIGURATION
 # ============================================================
 
-def generate_lut(target_column_index):
+def generate_lut(target_column_index, use_mixed_mode=False):
     """
     Generates a 3D lookup table mapping RGB -> CSV Column Value.
+    If use_mixed_mode is True, it blends the target color (80%) 
+    with the original province color (20%).
     """
-    print(f"Generating LUT for CSV Column {target_column_index}...")
+    print(f"Generating LUT (Col: {target_column_index}, Mixed: {use_mixed_mode})...")
     
-    # Initialize with identity (so unmapped colors remain themselves)
-    # or zeros if you want unmapped colors to be black.
-    # using indices ensures that if a color isn't in the CSV, it looks like the raw BMP.
+    # Initialize with identity (Unmapped colors look like the original image)
     lut = np.indices((256, 256, 256), dtype=np.uint8).transpose(1, 2, 3, 0)
 
     try:
@@ -46,25 +45,38 @@ def generate_lut(target_column_index):
         for row in csv:
             # Safety check: ensure the row has enough columns
             if target_column_index < len(row):
-                # We assume row[1], row[2], row[3] are the Key RGB
-                # We assume row[target_column_index] is the Target Value (RGB Tuple)
                 
-                target_value = row[target_column_index]
+                # 1. Get Target Color (The Map Mode Color)
+                target_val = row[target_column_index]
                 
-                # Check if the target value is iterable (like a tuple/list for color)
-                # If your CSV has strings at this index, this will fail unless handled.
-                if hasattr(target_value, '__getitem__') and len(target_value) >= 3:
-                     # ::-1 reverses rgb -> bgr for QImage compatibility
-                    lut[row[1], row[2], row[3]] = target_value[::-1]
+                if hasattr(target_val, '__getitem__') and len(target_val) >= 3:
+                    # RGB -> BGR for Qt
+                    target_bgr = np.array(target_val[::-1], dtype=np.float32)
+                    
+                    final_color = target_bgr
+
+                    # 2. Apply Mixing if requested
+                    if use_mixed_mode:
+                        # Base Color is in row[1] (R), row[2] (G), row[3] (B)
+                        # We need BGR format for the math to match target_bgr
+                        base_bgr = np.array([row[3], row[2], row[1]], dtype=np.float32)
+                        
+                        # Blend: 80% Map Mode, 20% Original Province
+                        mixed = (target_bgr * 0.65) + (base_bgr * 0.35)
+                        final_color = mixed
+
+                    # 3. Assign to LUT
+                    # lut indices are [R, G, B]
+                    lut[row[1], row[2], row[3]] = final_color.astype(np.uint8)
+
     except Exception as e:
         print(f"Error generating LUT: {e}")
-        print("Ensure the selected CSV column contains valid RGB tuples.")
     
     return lut
 
 # GLOBAL VARIABLE
 # Initialize with the first mode in the config
-lut = generate_lut(MAP_MODES[0][1])
+lut = generate_lut(MAP_MODES[0][1], False)
 
 
 # ============================================================
@@ -192,9 +204,6 @@ class EditorView(QGraphicsView):
         return arr[:, :width * 4].reshape((height, width, 4))
 
     def update_display(self, rect=None):
-        """
-        Applies the global 'lut' to the image data.
-        """
         if not self.data_image or not self.display_image: return
 
         # Get Views
@@ -216,15 +225,11 @@ class EditorView(QGraphicsView):
         # ----------------------------------------------------
         # LUT OPERATION
         # ----------------------------------------------------
-        # Source Indices (BGR format in memory: 0=Blue, 1=Green, 2=Red)
         b_indices = arr_data[y1:y2, x1:x2, 0]
         g_indices = arr_data[y1:y2, x1:x2, 1]
         r_indices = arr_data[y1:y2, x1:x2, 2]
 
-        # Copy Alpha from Source (Preserve transparency)
         arr_display[y1:y2, x1:x2, 3] = arr_data[y1:y2, x1:x2, 3]
-
-        # Apply LUT
         arr_display[y1:y2, x1:x2, 0:3] = lut[r_indices, g_indices, b_indices]
 
 
@@ -343,9 +348,14 @@ class MainWindow(QMainWindow):
         for name, idx in MAP_MODES:
             self.map_mode_combo.addItem(name, idx)
         
-        self.map_mode_combo.currentIndexChanged.connect(self.change_map_mode)
+        self.map_mode_combo.currentIndexChanged.connect(self.trigger_lut_update)
         toolbar.addWidget(self.map_mode_combo)
         
+        # --- MIX CHECKBOX ---
+        self.mix_checkbox = QCheckBox("Mixed")
+        self.mix_checkbox.stateChanged.connect(self.trigger_lut_update)
+        toolbar.addWidget(self.mix_checkbox)
+
         toolbar.addSeparator()
 
         # --- TOOL SELECTOR ---
@@ -380,15 +390,17 @@ class MainWindow(QMainWindow):
             brush_group.addAction(action)
             toolbar.addAction(action)
 
-    def change_map_mode(self, index):
-        # 1. Get the CSV index associated with the dropdown item
+    def trigger_lut_update(self):
+        """Unified handler for Combo Box or Checkbox changes"""
+        # 1. Get Settings
         csv_index = self.map_mode_combo.currentData()
-        
+        is_mixed = self.mix_checkbox.isChecked()
+
         # 2. Update Global LUT
         global lut
-        lut = generate_lut(csv_index)
+        lut = generate_lut(csv_index, is_mixed)
         
-        # 3. Force Viewer to redraw everything
+        # 3. Refresh View
         self.viewer.refresh_viewport()
 
     def change_tool(self, index):
