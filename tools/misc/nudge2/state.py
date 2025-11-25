@@ -136,6 +136,10 @@ def create_new_state(provinces, state_name):
     # TODO: fix strategic regions
 
 
+def transfer_provinces_to_state(provinces, destination_state):
+    return # TODO
+
+
 
 class StratRegion:
     pObj = None

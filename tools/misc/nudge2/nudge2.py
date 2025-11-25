@@ -226,6 +226,56 @@ class CreateStateDialog(QDialog):
             #"tag": self.tag_input.text(),
             #"overwrite": self.force_check.isChecked()
         }
+    
+class TransferProvsDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Transfer Provinces")
+        self.setModal(True) # Blocks parent window until closed
+        self.setMinimumWidth(300)
+
+        # 1. Main Layout
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        states = get_all_states()
+        provs = selected_colors_to_provinces()
+        state_loc = LocFile(STATES_LOC_DIR)
+
+        av_states = []
+        for p in provs:
+            for st in states:
+                if p in st.province_list:
+                    if st not in av_states: av_states.append(st)
+
+        # 2. Form Layout for Inputs
+        form_layout = QFormLayout()
+        
+        # -- Example Input: Number (e.g., Expansion radius) --
+        self.available_states = QComboBox()
+        for av_st in av_states:
+            self.available_states.addItem(str(av_st.state_id) + "  " + state_loc.get(str(av_st.pObj.GetVal("name")).replace('"', '')))
+        form_layout.addRow("Target:", self.available_states)
+        #self.available_states.addItem()
+
+        # -- Example Input: Checkbox --
+        #self.force_check = QCheckBox("Force Overwrite")
+        #form_layout.addRow("Mode:", self.force_check)
+
+        layout.addLayout(form_layout)
+
+        # 3. Standard Buttons (OK / Cancel)
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept) # Closes dialog with result code 1
+        self.buttons.rejected.connect(self.reject) # Closes dialog with result code 0
+        layout.addWidget(self.buttons)
+
+    def get_data(self):
+        """Helper to return all data as a dictionary"""
+        return {
+            "target_state": self.available_states.currentText(),
+            #"overwrite": self.force_check.isChecked()
+        }
 
 
 # ============================================================
@@ -638,15 +688,14 @@ class MainWindow(QMainWindow):
 
     def transfer_to_state_func(self):
         # You can reuse the same dialog class or create a different one
-        dialog = CreateStateDialog("Export Mask Settings", self)
-        
-        # Example: Pre-set values for this specific button
-        dialog.radius_input.setValue(0) 
-        dialog.tag_input.setText("default_mask")
+        dialog = TransferProvsDialog(self)
 
         if dialog.exec():
             data = dialog.get_data()
             print(f"Exporting with: {data}")
+
+            provs = selected_colors_to_provinces()
+            transfer_provinces_to_state(provs, data['target_state'])
 
     def trigger_lut_update(self):
         csv_index = self.map_mode_combo.currentData()
