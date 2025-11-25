@@ -98,6 +98,7 @@ def get_expanded_definition():
 
     csv = get_definition_csv()
     states = get_all_states()
+    regions = get_all_stratregion()
 
     terrain_colormap = get_terrain_colormap()
 
@@ -108,12 +109,20 @@ def get_expanded_definition():
         row.append(continent_colormap[row[7]])
         row.append((0,0,0))
         row.append((0,0,0))
+        row.append((0,0,0))
+        row.append((0,0,0))
 
     for st in states:
         col = random_color()
         for prov in st.province_list:
             csv[prov][12] = st.state_id
             csv[prov][13] = col
+
+    for st in regions:
+        col = random_color()
+        for prov in st.province_list:
+            csv[prov][14] = st.region_id
+            csv[prov][15] = col
 
     return csv
 

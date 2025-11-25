@@ -26,7 +26,7 @@ def _create_identity_lut():
     lut = np.indices((256, 256, 256), dtype=np.uint8).transpose(1, 2, 3, 0)
     for row in csv:
         # map mode 1
-        lut[row[1], row[2], row[3]] = row[13][::-1] # the ::-1 reverses the tuple (rgb -> bgr)
+        lut[row[1], row[2], row[3]] = row[15][::-1] # the ::-1 reverses the tuple (rgb -> bgr)
     
     return lut
 
