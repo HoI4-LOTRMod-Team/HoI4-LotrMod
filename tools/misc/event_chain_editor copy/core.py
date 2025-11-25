@@ -8,6 +8,7 @@ import string
 from Qt import QtCore, QtWidgets, QtGui
 
 from focus_node import FocusNode
+from fake_event_node import FakeFocusNode
 from NodeGraphQt import (
     NodeGraph,
     NodesPaletteWidget,
@@ -69,6 +70,7 @@ def create_node_graph():
 
     graph.register_nodes([
         FocusNode,
+        FakeFocusNode
     ])
         
 

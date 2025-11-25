@@ -21,6 +21,9 @@ class PLooseToken:
 
     def __str__(self) -> str:
         return f"{self.pre}{self.value}{self.post}"
+    
+    def ValueIsList(self) -> bool:
+        return False
 
 
 class PObj:

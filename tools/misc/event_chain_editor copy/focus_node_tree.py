@@ -11,10 +11,20 @@ class FocusNodeTree:
 
     focuses = []
 
+    fake_focuses = []
+
     root_pobj = None
+
+    graph = None
 
     def get_focus_node_by_name(self, name):
         for focus in self.focuses:
+            if focus.focus_id == name:
+                return focus
+        return None
+    
+    def get_fake_focus_node_by_name(self, name):
+        for focus in self.fake_focuses:
             if focus.focus_id == name:
                 return focus
         return None
@@ -23,6 +33,8 @@ class FocusNodeTree:
         SaveObjValueToFile(self.root_pobj, filepath)
     
     def __init__(self, graph, filepath):
+
+        self.graph = graph
 
         focus_menu = graph.get_context_menu('graph').add_menu('Focus Tree')
         focus_menu.add_command('Save Focus Tree', lambda: self.save_focus_tree(filepath), 'Ctrl+S')

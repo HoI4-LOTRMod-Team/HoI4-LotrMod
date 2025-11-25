@@ -27,7 +27,7 @@ def main():
     # create graph controller.
     graph = create_node_graph()
 
-    focus_node_tree = FocusNodeTree(graph, r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\events\MirrorEvents.txt')
+    focus_node_tree = FocusNodeTree(graph, r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\events\Gondor.txt')
     graph.focus_tree = focus_node_tree
 
     context_menu = graph.get_context_menu('graph')
@@ -45,9 +45,10 @@ def main():
     # Present
     main_window.show()
     graph.clear_selection()
+    graph.auto_layout_nodes()
     graph.fit_to_selection()
-    graph.set_layout_direction(LayoutDirectionEnum.VERTICAL.value)
-    graph.set_pipe_style(PipeLayoutEnum.ANGLE.value)
+    #graph.set_layout_direction(LayoutDirectionEnum.VERTICAL.value)
+    #graph.set_pipe_style(PipeLayoutEnum.ANGLE.value)
 
 
     # This code-block enables showing a properties widget on double clicking a node
