@@ -104,17 +104,15 @@ class EditorView(QGraphicsView):
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
 
-    # --- API FOR MODES ---
-
     def emit_current_color(self):
         self.colorChanged.emit(self.current_color)
+
+    # --- API FOR MODES ---
     
     def set_active_color(self, color):
         self.current_color = color
         self.colorChanged.emit(self.current_color)
         print(f"Color Picked: {color.name()}")
-
-    
 
     def perform_paint(self, x, y):
         """Used by DrawingMode to apply paint"""
