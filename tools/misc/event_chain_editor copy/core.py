@@ -35,7 +35,7 @@ def add_focus_to_graph(graph):
     focus.set_pos(x, y)
     focus.on_node_moved()
 
-    focus.recalculate_positions()
+    #focus.recalculate_positions()
 
 
 

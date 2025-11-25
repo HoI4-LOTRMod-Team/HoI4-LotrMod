@@ -21,6 +21,8 @@ class FocusNodeTree:
 
     locfile = None
 
+    namespace_id = ""
+
     def get_focus_node_by_name(self, name):
         for focus in self.focuses:
             if focus.focus_id == name:
@@ -47,6 +49,8 @@ class FocusNodeTree:
         focus_menu.add_command('Save Focus Tree', lambda: self.save_focus_tree(filepath, locfilepath), 'Ctrl+S')
 
         self.root_pobj = ParseListFromFile_asPObj(filepath)
+
+        self.namespace_id = self.root_pobj.GetVal("add_namespace")
 
         focuses_pobjs = self.root_pobj.GetAll("country_event").value
 

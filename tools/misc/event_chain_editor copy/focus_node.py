@@ -27,24 +27,31 @@ BASE_PATH = Path(__file__).parent.parent.resolve()
 
 
 focus_template = """
-    focus = {
-		id = ROH_new_focus_$TOKEN$
-		icon = GFX_unknown_focus
-		
-		x = 0
-		y = 0
 
-		cost = 5
-		ai_will_do = { factor = 1 }
-		
-		search_filters = { }
-		available = {
-			always = yes
-		}
-		completion_reward = {
-			# TODO
-		}
-	}
+# 
+country_event = {
+    id = $TOKEN$
+    title = $TOKEN$.t
+    desc = $TOKEN$.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = $TOKEN$.a
+    }
+}
+"""
+
+option_template = """
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = $TOKEN$
+    }
 """
 
 
@@ -60,6 +67,8 @@ def add_generic_option(node):
 class EventOption:
     option_id = ""
     port = None
+    pObj = None
+    target = ""
 
 
 class FocusNode(BaseNode):
@@ -141,7 +150,11 @@ class FocusNode(BaseNode):
     def on_input_connected(self, in_port, out_port):
         if not self.is_activated: return
 
-        # TODO
+        # get option object
+        option = next(opt for opt in out_port.node().options if opt.port==out_port)
+
+        # Add this event to it
+        option.pObj.Insert("country_event = { id = "+self.focus_id+" days = 1 }")
 
         #print("prerequitites added: " + out_port.node().focus_id)
         return
@@ -151,7 +164,22 @@ class FocusNode(BaseNode):
     def on_input_disconnected(self, in_port, out_port):
         if not self.is_activated: return
 
-        # TODO
+        # TODO: Remove this event from out_port option thing
+
+        # get option
+        option = next(opt for opt in out_port.node().options if opt.port==out_port)
+
+        # get the event we just disconnected
+        ev = option.pObj.GetAllRecurse("country_event").value[0]
+        ev.parent.RemoveAllWhereRecurse(lambda x: x.id == "country_event" and (x.value == self.focus_id or x.Get("id").value == self.focus_id))
+
+        # lazy shit solution: runt his a couple of times to account for nested scopes
+        option.pObj.RemoveAllWhereRecurse(lambda x: x.ValueIsList() and len(x.value) < 1)
+        option.pObj.RemoveAllWhereRecurse(lambda x: x.ValueIsList() and len(x.value) < 1)
+        option.pObj.RemoveAllWhereRecurse(lambda x: x.ValueIsList() and len(x.value) < 1)
+        option.pObj.RemoveAllWhereRecurse(lambda x: x.ValueIsList() and len(x.value) < 1)
+
+        option.target = ""
 
         #print("prerequitites removed!")
         return
@@ -167,7 +195,7 @@ class FocusNode(BaseNode):
             # You can change the naming logic here if 'opt' has a specific name property
             port_name = opt.Get("name").value
 
-            option = self.add_option(port_name)
+            option = self.add_option(port_name, opt)
             new_port = option.port
 
             child_events = opt.GetAllRecurse("country_event")
@@ -195,16 +223,29 @@ class FocusNode(BaseNode):
                 if target_node:
                     # --- CHANGE 2: Connect the NEW port to the target ---
                     # We use the port object directly to connect to the target's input
+                    if ev.parent.id != "option":
+                        option.target = ev.parent.id
                     new_port.connect_to(target_node.input(0))
 
 
-    def add_option(self, option_name):
+    def add_option(self, option_name, pObj=None):
         option = EventOption()
+
+        #print(option_name)
+        if pObj is None:
+            option.pObj = Parse_PObj(option_template.replace("$TOKEN$", option_name))[0]
+            self.pObj.value.append(option.pObj)
+        else:
+            option.pObj = pObj
+
         option.option_id = option_name
         option.port = self.add_output(name=option_name)
         self.options.append(option)
         self.props.append(
-            StringProperty(option_name, attr_name=option_name, value_getter=lambda x:x.get_loc(option_name))#,   value_setter=lambda x, v:)) # TODO
+            StringProperty(option_name, attr_name=option_name, value_getter=lambda x:x.get_loc(option_name),   value_setter=lambda x, v:x.parent_tree.locfile.set(option_name, v))
+        )
+        self.props.append(
+            StringProperty(option_name+"__target", attr_name=option_name+"__target", value_getter=lambda x:x.get_target(option),   value_setter=lambda x, v:x.set_target(option, v))
         )
         #print(len(self.props))
 
@@ -216,9 +257,16 @@ class FocusNode(BaseNode):
         is_new_focus = False
 
         if obj is None:
-            #template = focus_template.replace("$TOKEN$", random_string(6))
-            #obj = Parse_PObj(template)[0]
+            new_event_id = parent_tree.namespace_id
+            i = 100
+            while any(f.focus_id == new_event_id + "."+str(i) for f in parent_tree.focuses): i+=1
+            template = focus_template.replace("$TOKEN$", new_event_id+"."+str(i))
+            obj = Parse_PObj(template)[0]
             is_new_focus = True
+            parent_tree.locfile.add(obj.GetVal("title"), "TODO")
+            parent_tree.locfile.add(obj.GetVal("desc"), "TODO")
+            parent_tree.locfile.add(obj.Get("option").GetVal("name"), "Accept")
+
         self.pObj = obj
 
         self.parent_tree = parent_tree
@@ -237,7 +285,7 @@ class FocusNode(BaseNode):
         self.picture = obj.Has("picture")
 
         if is_new_focus:
-            pass # TODO
+            self.parent_tree.root_pobj.value.append(self.pObj)
 
     def get_loc(self, loc):
         loc = str(loc)
@@ -245,6 +293,33 @@ class FocusNode(BaseNode):
         if ret is None:
             return "--invalid--"
         return ret
+    
+    def get_target(self, option):
+        if len(option.port.connected_ports()) < 1:
+            return "-- No connection --"
+        return option.target
+    
+    def set_target(self, option, target):
+        # get country_event corresponding to this connection
+        ev = option.pObj.GetAllRecurse("country_event").value[0]
+
+        # We had a target previously, but now cleared it
+        if target == "":
+            ev.parent.value.remove(ev) # Remove the ev from previous parent
+            option.pObj.RemoveAllWhereRecurse(lambda x: x.ValueIsList() and len(x.value) < 1) # lazy shit way to remove empty scopes
+            option.pObj.RemoveAllWhereRecurse(lambda x: x.ValueIsList() and len(x.value) < 1)
+            option.pObj.RemoveAllWhereRecurse(lambda x: x.ValueIsList() and len(x.value) < 1)
+            option.pObj.RemoveAllWhereRecurse(lambda x: x.ValueIsList() and len(x.value) < 1)
+            option.pObj.Insert(str(ev)) # add event back without any target
+        # We previously didn't have a target, but have added one now
+        elif option.target == "":
+            ev.parent.value.remove(ev) # Remove the ev from previous parent
+            option.pObj.Insert(target + " = { "+str(ev)+" }") # add it with the new target
+        # if it doesn't have a target, enclose it in one
+        else:
+            ev.parent.id = target
+        option.target = target
+        return
 
     def activate(self):
         self.is_activated = True

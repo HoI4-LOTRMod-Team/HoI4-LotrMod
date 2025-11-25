@@ -231,6 +231,15 @@ class PObj:
             if condition(c):
                 self.value.remove(c)
         return self
+    
+    def RemoveAllWhereRecurse(self, condition):
+        for c in self.value:
+            if condition(c):
+                self.value.remove(c)
+        for c in self.value:
+            if c.ValueIsList():
+                c.RemoveAllWhereRecurse(condition)
+        return self
         
 
 
