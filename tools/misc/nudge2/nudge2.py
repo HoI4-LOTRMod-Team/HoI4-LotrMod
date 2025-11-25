@@ -8,11 +8,18 @@ from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent,
                            QAction, QActionGroup)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal
 
+# --- IMPORT PILLOW (Robust DDS Support) ---
+try:
+    from PIL import Image
+except ImportError:
+    print("CRITICAL: Pillow not found. Run 'pip install Pillow' to fix DDS loading.")
+
 # Assuming this exists based on your upload
 from definitioncsv import *
 
 # --- CONFIGURATION ---
 HARDCODED_IMAGE_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\provinces - Copy.bmp'
+OVERLAY_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\terrain\colormap_rgb_cityemissivemask_a.dds'
 
 # Your Custom Map Modes
 MAP_MODES = [
@@ -23,6 +30,7 @@ MAP_MODES = [
     ("Continent", 12),
     ("State", 14),
     ("Strat Region", 16),
+    ("Impassable", 18),
 ]
 
 # ============================================================
@@ -32,50 +40,33 @@ MAP_MODES = [
 def generate_lut(target_column_index, use_mixed_mode=False):
     """
     Generates a 3D lookup table mapping RGB -> CSV Column Value.
-    If use_mixed_mode is True, it blends the target color (80%) 
-    with the original province color (20%).
     """
     print(f"Generating LUT (Col: {target_column_index}, Mixed: {use_mixed_mode})...")
     
-    # Initialize with identity (Unmapped colors look like the original image)
     lut = np.indices((256, 256, 256), dtype=np.uint8).transpose(1, 2, 3, 0)
 
     try:
         csv = get_expanded_definition()
         for row in csv:
-            # Safety check: ensure the row has enough columns
             if target_column_index < len(row):
-                
-                # 1. Get Target Color (The Map Mode Color)
                 target_val = row[target_column_index]
                 
                 if hasattr(target_val, '__getitem__') and len(target_val) >= 3:
-                    # RGB -> BGR for Qt
                     target_bgr = np.array(target_val[::-1], dtype=np.float32)
-                    
                     final_color = target_bgr
 
-                    # 2. Apply Mixing if requested
                     if use_mixed_mode:
-                        # Base Color is in row[1] (R), row[2] (G), row[3] (B)
-                        # We need BGR format for the math to match target_bgr
                         base_bgr = np.array([row[3], row[2], row[1]], dtype=np.float32)
-                        
-                        # Blend: 80% Map Mode, 20% Original Province
                         mixed = (target_bgr * 0.65) + (base_bgr * 0.35)
                         final_color = mixed
 
-                    # 3. Assign to LUT
-                    # lut indices are [R, G, B]
                     lut[row[1], row[2], row[3]] = final_color.astype(np.uint8)
-
     except Exception as e:
         print(f"Error generating LUT: {e}")
     
     return lut
 
-# GLOBAL VARIABLE
-# Initialize with the first mode in the config
+# Initialize with defaults
 lut = generate_lut(MAP_MODES[0][1], False)
 
 
@@ -141,6 +132,10 @@ class EditorView(QGraphicsView):
         self.display_image = None
         self.image_item = None
         
+        # Overlay Data
+        self.overlay_alpha_map = None 
+        self.use_overlay = False
+
         self.current_color = QColor(255, 0, 0)
         self.brush_size = 10
         self.current_mode = PaintMode()
@@ -162,10 +157,14 @@ class EditorView(QGraphicsView):
         self.colorChanged.emit(self.current_color)
         print(f"Color Picked: {color.name()}")
 
+    def set_overlay_enabled(self, enabled):
+        self.use_overlay = enabled
+        self.refresh_viewport()
+
     def refresh_viewport(self):
-        """Re-runs the LUT over the entire image and updates the scene."""
+        """Re-runs the LUT and Overlay over the entire image."""
         if not self.data_image: return
-        self.update_display() # Runs the LUT over the whole image
+        self.update_display() 
         self.image_item.setPixmap(QPixmap.fromImage(self.display_image))
 
     def perform_paint(self, x, y):
@@ -187,7 +186,7 @@ class EditorView(QGraphicsView):
             painter.drawEllipse(dirty_rect)
         painter.end()
 
-        # 2. Update Display with LUT
+        # 2. Update Display
         safe_rect = dirty_rect.adjusted(-1, -1, 1, 1)
         self.update_display(safe_rect)
         
@@ -222,9 +221,7 @@ class EditorView(QGraphicsView):
 
         if x1 >= x2 or y1 >= y2: return
 
-        # ----------------------------------------------------
-        # LUT OPERATION
-        # ----------------------------------------------------
+        # 1. APPLY LUT
         b_indices = arr_data[y1:y2, x1:x2, 0]
         g_indices = arr_data[y1:y2, x1:x2, 1]
         r_indices = arr_data[y1:y2, x1:x2, 2]
@@ -232,8 +229,57 @@ class EditorView(QGraphicsView):
         arr_display[y1:y2, x1:x2, 3] = arr_data[y1:y2, x1:x2, 3]
         arr_display[y1:y2, x1:x2, 0:3] = lut[r_indices, g_indices, b_indices]
 
+        # 2. APPLY OVERLAY (MULTIPLY)
+        if self.use_overlay and self.overlay_alpha_map is not None:
+            # Safe slice logic to handle potential floating point mismatch in rect
+            map_h, map_w = self.overlay_alpha_map.shape
+            
+            # Ensure we don't go out of bounds of the overlay
+            safe_x2 = min(x2, map_w)
+            safe_y2 = min(y2, map_h)
+
+            if safe_x2 > x1 and safe_y2 > y1:
+                alpha_slice = self.overlay_alpha_map[y1:safe_y2, x1:safe_x2]
+                alpha_factor = alpha_slice[:, :, np.newaxis]
+
+                current_rgb = arr_display[y1:safe_y2, x1:safe_x2, 0:3].astype(np.float32)
+                blended_rgb = current_rgb * alpha_factor
+                arr_display[y1:safe_y2, x1:safe_x2, 0:3] = blended_rgb.astype(np.uint8)
 
     # --- IMAGE LOADING ---
+
+    def _load_overlay(self, width, height):
+        """Loads the overlay using Pillow (PIL) for better DDS support."""
+        if not os.path.exists(OVERLAY_PATH):
+            print(f"Overlay not found at: {OVERLAY_PATH}")
+            return
+
+        print("Loading Overlay DDS via Pillow...")
+        try:
+            # Pillow handles standard and compressed DDS (DXT1/3/5) natively
+            img = Image.open(OVERLAY_PATH)
+            
+            # Ensure size matches the map. Resize if necessary.
+            if img.size != (width, height):
+                print(f"Warning: Overlay size {img.size} != Map size {(width, height)}. Resizing...")
+                img = img.resize((width, height), Image.Resampling.NEAREST)
+            
+            # Force RGBA
+            img = img.convert("RGBA")
+            
+            # Convert to Numpy
+            arr = np.array(img)
+            raw_alpha = arr[:, :, 3].astype(np.float32) / 255.0
+            
+            # Extract Alpha (Index 3) and normalize to 0.0-1.0
+            brightness_factor = 2.0 
+            self.overlay_alpha_map = np.clip(raw_alpha * brightness_factor, 0.0, 1.0)
+            print("Overlay loaded and cached successfully.")
+            
+        except Exception as e:
+            print(f"FAILED to load DDS via Pillow: {e}")
+            print("Make sure you have installed Pillow: 'pip install Pillow'")
+
 
     def load_image(self, path):
         if not os.path.exists(path):
@@ -245,6 +291,9 @@ class EditorView(QGraphicsView):
         
         self.data_image = img.convertToFormat(QImage.Format_ARGB32)
         self.display_image = QImage(self.data_image.size(), QImage.Format_ARGB32)
+
+        # Attempt to load overlay matching these dimensions
+        self._load_overlay(self.data_image.width(), self.data_image.height())
 
         self.update_display() # Full pass
 
@@ -344,7 +393,6 @@ class MainWindow(QMainWindow):
         # --- MODE SELECTOR ---
         toolbar.addWidget(QLabel("Map Mode: "))
         self.map_mode_combo = QComboBox()
-        # Populate based on Configuration
         for name, idx in MAP_MODES:
             self.map_mode_combo.addItem(name, idx)
         
@@ -355,6 +403,11 @@ class MainWindow(QMainWindow):
         self.mix_checkbox = QCheckBox("Mixed")
         self.mix_checkbox.stateChanged.connect(self.trigger_lut_update)
         toolbar.addWidget(self.mix_checkbox)
+
+        # --- OVERLAY CHECKBOX ---
+        self.overlay_checkbox = QCheckBox("Overlay")
+        self.overlay_checkbox.stateChanged.connect(self.toggle_overlay)
+        toolbar.addWidget(self.overlay_checkbox)
 
         toolbar.addSeparator()
 
@@ -378,7 +431,7 @@ class MainWindow(QMainWindow):
 
         toolbar.addWidget(QLabel(" Size: "))
         brush_group = QActionGroup(self)
-        sizes = [("1px", 1), ("3px", 3), ("5px", 5), ("10px", 10), ("20px", 20)]
+        sizes = [("1px", 1), ("2px", 2), ("4px", 4), ("6px", 6), ("10px", 10)]
 
         for label, size in sizes:
             action = QAction(label, self)
@@ -391,17 +444,14 @@ class MainWindow(QMainWindow):
             toolbar.addAction(action)
 
     def trigger_lut_update(self):
-        """Unified handler for Combo Box or Checkbox changes"""
-        # 1. Get Settings
         csv_index = self.map_mode_combo.currentData()
         is_mixed = self.mix_checkbox.isChecked()
-
-        # 2. Update Global LUT
         global lut
         lut = generate_lut(csv_index, is_mixed)
-        
-        # 3. Refresh View
         self.viewer.refresh_viewport()
+
+    def toggle_overlay(self, state):
+        self.viewer.set_overlay_enabled(self.overlay_checkbox.isChecked())
 
     def change_tool(self, index):
         new_mode = self.tool_combo.currentData()

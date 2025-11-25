@@ -36,6 +36,11 @@ coastal_colormap = {
     False: (0, 0, 0),
 }
 
+impassable_colormap = {
+    True: (255, 128, 128),
+    False: (128, 128, 128),
+}
+
 continent_colormap = {
     0: (0, 0, 0),       # Black
     1: (0, 0, 128),     # Navy
@@ -95,6 +100,8 @@ def random_color():
 #  14: state-color
 #  15: strat-region-id
 #  16: strat-region-color
+#  17: impassable
+#  18: impassable-color
 def get_expanded_definition():
 
     csv = get_definition_csv()
@@ -113,12 +120,16 @@ def get_expanded_definition():
         row.append((0,0,0))
         row.append((0,0,0))
         row.append((0,0,0))
+        row.append((0,0,0))
+        row.append((0,0,0))
 
     for st in states:
         col = random_color()
         for prov in st.province_list:
             csv[prov][13] = st.state_id
             csv[prov][14] = col
+            csv[prov][17] = st.is_impassable
+            csv[prov][18] = impassable_colormap[st.is_impassable]
 
     for st in regions:
         col = random_color()

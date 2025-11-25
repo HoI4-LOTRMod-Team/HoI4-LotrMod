@@ -10,11 +10,13 @@ class State:
     pObj = None
     province_list = []
     state_id = -1
+    is_impassable = False
 
     def __init__(self, file):
         self.pObj = ParseListFromFile_asPObj(file).Get("state")
         self.state_id = int(self.pObj.GetVal("id"))
         self.province_list = []
+        self.is_impassable = self.pObj.Has("impassable") and self.pObj.GetVal("impassable") == "yes"
         provs = self.pObj.Get("provinces").value
         for prov in provs:
             self.province_list.append(int(prov.value))
