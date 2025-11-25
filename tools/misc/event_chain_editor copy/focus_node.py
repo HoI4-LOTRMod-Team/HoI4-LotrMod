@@ -65,6 +65,8 @@ You need to give me back the same entries but filled out properly with nice text
 Don't make it too proseful/fancy. Keep it simple and mostly to-the-point.
 Don't give me back anything else. Your response should *only* be the filled out localization entries.
 
+(Note: the event options may have comments with a hashtag saying what event they lead to.)
+
 Here's a simple example:
 
 If I give you this:
