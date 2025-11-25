@@ -40,6 +40,51 @@ class BoolProperty(NodeProperty):
         # kwargs allows passing value_getter / value_setter up to NodeProperty
         super().__init__(label, attr_name, **kwargs)
 
+class TextProperty(NodeProperty):
+    """Used for multi-line text descriptions/notes."""
+    def __init__(self, label, attr_name, placeholder="", **kwargs):
+        super().__init__(label, attr_name, **kwargs)
+        self.placeholder = placeholder
+
+class ButtonProperty(NodeProperty):
+    def __init__(self, label, callback, button_text="Execute", **kwargs):
+        # We don't need an attr_name because we aren't getting/setting a variable
+        super().__init__(label, attr_name=None, **kwargs)
+        self.callback = callback
+        self.button_text = button_text
+
+
+
+class CommitPlainTextEdit(QtWidgets.QPlainTextEdit):
+    """
+    A QPlainTextEdit that emits 'editingFinished' when it loses focus
+    or when the user presses Ctrl+Enter.
+    """
+    editingFinished = QtCore.Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setTabChangesFocus(True)
+        
+        # --- LAYOUT FIX ---
+        # 1. "Expanding" Horizontal: Fill the width of the form
+        # 2. "Maximum" Vertical: Do not expand to fill empty vertical space
+        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        
+        # Set limits so it looks like a property field, not a full text editor
+        self.setMaximumHeight(150) 
+        self.setMinimumHeight(60) 
+
+    def focusOutEvent(self, event):
+        super().focusOutEvent(event)
+        self.editingFinished.emit()
+
+    def keyPressEvent(self, event):
+        if (event.key() == QtCore.Qt.Key_Return and 
+                event.modifiers() & QtCore.Qt.ControlModifier):
+            self.clearFocus()
+            return
+        super().keyPressEvent(event)
 
 
 
@@ -140,6 +185,48 @@ class PropertiesPanel(QtWidgets.QDockWidget):
             widget.editingFinished.connect(
                 lambda: self._apply_value(prop, nodes, widget.text())
             )
+
+        # --- TEXT (MULTI-LINE) WIDGET ---
+        elif isinstance(prop, TextProperty):
+            widget = CommitPlainTextEdit()
+            if prop.placeholder: 
+                widget.setPlaceholderText(prop.placeholder)
+
+            # 1. Get Values
+            # We ensure it's a string to avoid errors if value is None
+            values = [str(prop.get_value(n)) for n in nodes]
+            
+            # 2. Handle Mixed State
+            if len(set(values)) == 1:
+                # QPlainTextEdit handles '\n' correctly by creating visual lines
+                widget.setPlainText(values[0])
+            else:
+                widget.setPlaceholderText("--- Mixed ---")
+                widget.setPlainText("")
+
+            # 3. Connect Signal
+            # GETTER: Convert literal "\n" characters to visual newlines
+            val = values[0].replace('\\n', '\n') 
+            widget.setPlainText(val)
+
+            # SETTER: Convert visual newlines back to literal "\n" characters
+            widget.editingFinished.connect(
+                lambda: self._apply_value(prop, nodes, widget.toPlainText().replace('\n', '\\n'))
+            )
+
+        # --- BUTTON WIDGET ---
+        elif isinstance(prop, ButtonProperty):
+            widget = QtWidgets.QPushButton(prop.button_text)
+            
+            # Define the logic to run when clicked
+            def on_button_clicked():
+                for node in nodes:
+                    # Call the function provided in the property definition
+                    # We pass the 'node' so the function knows who to act on
+                    prop.callback(node)
+                self.refresh_panel()
+            
+            widget.clicked.connect(on_button_clicked)
 
         # --- INT WIDGET ---
         elif isinstance(prop, IntProperty):

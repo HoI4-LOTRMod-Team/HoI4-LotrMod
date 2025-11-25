@@ -48,6 +48,20 @@ focus_template = """
 """
 
 
+def add_generic_option(node):
+    new_option_base_name = node.focus_id
+    for l in ['a', 'b', 'c', 'e', 'f', 'g']: # Skipping d because it often designates the description
+        if not any(on.option_id == new_option_base_name+"."+l for on in node.options):
+            new_option_base_name = new_option_base_name+"."+l
+            break
+    node.add_option(new_option_base_name)
+    node.parent_tree.locfile.add(new_option_base_name, "TODO")
+
+class EventOption:
+    option_id = ""
+    port = None
+
+
 class FocusNode(BaseNode):
 
     # unique node identifier.
@@ -57,9 +71,21 @@ class FocusNode(BaseNode):
     NODE_NAME = 'node A'
 
 
+    options = []
+
+
 
     def __init__(self):
         super(FocusNode, self).__init__()
+
+        self.props = [
+            StringProperty("Title", attr_name="title"),
+            TextProperty("Desc", attr_name="desc"),
+            BoolProperty("fire_only_once", attr_name="fire_only_once"),
+            BoolProperty("trigger", attr_name="trigger"),
+            BoolProperty("is_triggered_only", attr_name="is_triggered_only"),
+            ButtonProperty("Add Option", add_generic_option, "Add Option")
+        ]
 
         # create node inputs.
         self.add_input('trigger', multi_input=True)
@@ -110,9 +136,9 @@ class FocusNode(BaseNode):
             # --- CHANGE 1: Create a dynamic output for this specific option ---
             # You can change the naming logic here if 'opt' has a specific name property
             port_name = opt.Get("name").value
-            
-            # add_output returns the Port object, which we can use to connect later
-            new_port = self.add_output(name=port_name)
+
+            option = self.add_option(port_name)
+            new_port = option.port
 
             child_events = opt.GetAllRecurse("country_event")
             
@@ -142,6 +168,20 @@ class FocusNode(BaseNode):
                     new_port.connect_to(target_node.input(0))
 
 
+    def add_option(self, option_name):
+        option = EventOption()
+        option.option_id = option_name
+        option.port = self.add_output(name=option_name)
+        self.options.append(option)
+        self.props.append(
+            StringProperty(option_name, attr_name=option_name, value_getter=lambda x:x.get_loc(option_name))#,   value_setter=lambda x, v:)) # TODO
+        )
+        print(len(self.props))
+
+        return option
+
+
+
     def init(self, obj, parent_tree):
         is_new_focus = False
 
@@ -157,20 +197,36 @@ class FocusNode(BaseNode):
         self.focus_id = obj.GetVal("id")
         self.set_name(self.focus_id)
 
+        self.title = self.get_loc(obj.Get("title").value)
+        self.desc = self.get_loc(obj.Get("desc").value)
+
         if is_new_focus:
             pass # TODO
+
+    def get_loc(self, loc):
+        loc = str(loc)
+        ret = self.parent_tree.locfile.get(loc)
+        if ret is None:
+            return "--invalid--"
+        return ret
 
     def activate(self):
         self.is_activated = True
         
 
-    def get_properties(self):
+    props = [ ]
 
-        return [
-            StringProperty("ID", attr_name="focus_id", is_primary=True),
-        ]
+    def get_properties(self):
+        return self.props
 
     focus_id = ""
+
+    title = ""
+    desc = ""
+
+    fire_only_once = False # TODO
+    trigger = False # TODO
+    is_triggered_only = False # TODO
     
 
     parent_tree = None

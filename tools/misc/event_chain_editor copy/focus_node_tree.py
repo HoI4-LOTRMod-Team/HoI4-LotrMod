@@ -6,6 +6,8 @@ from core import *
 
 from focus_node import FocusNode
 
+from locfile import LocFile
+
 
 class FocusNodeTree:
 
@@ -16,6 +18,8 @@ class FocusNodeTree:
     root_pobj = None
 
     graph = None
+
+    locfile = None
 
     def get_focus_node_by_name(self, name):
         for focus in self.focuses:
@@ -29,15 +33,18 @@ class FocusNodeTree:
                 return focus
         return None
     
-    def save_focus_tree(self, filepath):
+    def save_focus_tree(self, filepath, locfilepath):
         SaveObjValueToFile(self.root_pobj, filepath)
+        self.locfile.save(locfilepath)
     
-    def __init__(self, graph, filepath):
+    def __init__(self, graph, filepath, locfilepath):
 
         self.graph = graph
 
+        self.locfile = LocFile(locfilepath)
+
         focus_menu = graph.get_context_menu('graph').add_menu('Focus Tree')
-        focus_menu.add_command('Save Focus Tree', lambda: self.save_focus_tree(filepath), 'Ctrl+S')
+        focus_menu.add_command('Save Focus Tree', lambda: self.save_focus_tree(filepath, locfilepath), 'Ctrl+S')
 
         self.root_pobj = ParseListFromFile_asPObj(filepath)
 
