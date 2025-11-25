@@ -13,7 +13,10 @@ from PySide6.QtWidgets import QGraphicsTextItem
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt
 
+from openrouter_api import query_openrouter
+
 from pdx_parser import Parse_PObj
+from helpers import get_connected_network_ordered
 
 
 from Qt import QtWidgets, QtGui, QtCore
@@ -55,6 +58,43 @@ option_template = """
 """
 
 
+ai_fill_single_prompt = """
+I'm working on a hoi4 mod that takes place in the LOTR universe and would like your help to write some of the events.
+I'm going to give you localization entries on certain events, where the entries are only rough notes/outlines for the content.
+You need to give me back the same entries but filled out properly with nice text befitting of a medieval theme.
+Don't make it too proseful/fancy. Keep it simple and mostly to-the-point.
+Don't give me back anything else. Your response should *only* be the filled out localization entries.
+
+Here's a simple example:
+
+If I give you this:
+
+lothlorien.67.t:0 "Title"
+lothlorien.67.d:0 "An event from the perspective of Lothlorien about how Moria has fallen to orcs and how we may provide them with shelter"
+lothlorien.67.a:0 "Accept"
+lothlorien.67.b:0 "Decline"
+
+You return me this:
+
+lothlorien.67.t:0 "Moria falls to the orcs"
+lothlorien.67.d:0 "After a bitter struggle, the dwarves of Moria have been driven from their kingdom by a ferocious horde of orcs. The law fobidding entry to all dwarves into Lothlórien has been lifted, and we may harbour these dwarves."
+lothlorien.67.a:0 "Provide the surviving dwarves with refuge."
+lothlorien.67.b:0 "This is not our concern."
+
+Understood? Great! Here's the entries I need you to fill out:
+
+$ENTRIES_TOKEN$
+"""
+
+# for testing
+#response = """
+#lothlorien.56.t:0 "A Message from the Golden Wood"
+#lothlorien.56.d:0 "From the heart of the enchanted forest of Lothlórien comes an emissary bearing a message of goodwill and the promise of strengthened bonds. The Lady Galadriel extends an olive branch, inviting us to foster closer ties and forge a cooperative future. This gesture speaks to the wisdom and foresight of the Elves, offering us a chance to ally with one of Middle-earth's most ancient and powerful realms."
+#lothlorien.56.a:0 "Embrace Lothlórien's offer."
+#lothlorien.56.b:0 "We shall stand alone in these uncertain times."
+#"""
+
+
 def add_generic_option(node):
     new_option_base_name = node.focus_id
     for l in ['a', 'b', 'c', 'e', 'f', 'g']: # Skipping d because it often designates the description
@@ -63,6 +103,50 @@ def add_generic_option(node):
             break
     node.add_option(new_option_base_name)
     node.parent_tree.locfile.add(new_option_base_name, "TODO")
+
+
+def ai_fill_locs_single(node):
+    entries  = node.parent_tree.locfile.get_entry(node.pObj.Get("title").value) + "\n"
+    entries += node.parent_tree.locfile.get_entry(node.pObj.Get("desc").value)  + "\n"
+    for opt in node.options:
+        entries += node.parent_tree.locfile.get_entry(opt.pObj.Get("name").value)  + "\n"
+    prompt = ai_fill_single_prompt.replace("$ENTRIES_TOKEN$", entries)
+
+    #print(prompt)
+
+    response = query_openrouter(prompt)
+
+    #print(response)
+
+    node.parent_tree.locfile.load_from_string(response)
+
+    return
+
+
+def ai_fill_locs_chain(chain_node):
+    # collect all nodes connected to this chain, starting at the highest one (if possible)
+    node_list = get_connected_network_ordered(chain_node)
+    entries = ""
+    for node in node_list:
+        entries += node.parent_tree.locfile.get_entry(node.pObj.Get("title").value) + "\n"
+        entries += node.parent_tree.locfile.get_entry(node.pObj.Get("desc").value)  + "\n"
+        for opt in node.options:
+            entries += node.parent_tree.locfile.get_entry(opt.pObj.Get("name").value)
+            if len(opt.port.connected_ports()) > 0:
+                target_ev = opt.port.connected_ports()[0].node().focus_id
+                entries += " # leads to " + target_ev
+            entries += "\n"
+
+    prompt = ai_fill_single_prompt.replace("$ENTRIES_TOKEN$", entries)
+
+    print(prompt)
+
+    response = query_openrouter(prompt)
+
+    node.parent_tree.locfile.load_from_string(response)
+
+    return
+
 
 class EventOption:
     option_id = ""
@@ -87,14 +171,19 @@ class FocusNode(BaseNode):
     def __init__(self):
         super(FocusNode, self).__init__()
 
+        self.options = []
+
         self.props = [
-            StringProperty("Title", attr_name="title"),
-            TextProperty("Desc", attr_name="desc"),
+            ButtonProperty("AI Fill (Single)", ai_fill_locs_single, "AI Fill (Single)"),
+            ButtonProperty("AI Fill (Chain)", ai_fill_locs_chain, "AI Fill (Chain)"),
+
+            StringProperty("Title", attr_name="title", value_getter=lambda x:x.get_loc(self.pObj.Get("title").value),   value_setter=lambda x, v:x.parent_tree.locfile.set(self.pObj.Get("title").value, v)),
+            TextProperty("Desc", attr_name="desc", value_getter=lambda x:x.get_loc(self.pObj.Get("desc").value),   value_setter=lambda x, v:x.parent_tree.locfile.set(self.pObj.Get("desc").value, v)),
             BoolProperty("fire_only_once", attr_name="fire_only_once"),
             BoolProperty("trigger", attr_name="trigger"),
             BoolProperty("is_triggered_only", attr_name="is_triggered_only"),
             BoolProperty("picture", attr_name="picture"),
-            ButtonProperty("Add Option", add_generic_option, "Add Option")
+            ButtonProperty("Add Option", add_generic_option, "Add Option"),
         ]
 
         # create node inputs.
@@ -109,12 +198,6 @@ class FocusNode(BaseNode):
             old_value = getattr(self, name)
 
             if old_value != value:
-
-                if name == "title":
-                    self.parent_tree.locfile.set(self.pObj.Get("title").value, value)
-
-                if name == "desc":
-                    self.parent_tree.locfile.set(self.pObj.Get("desc").value, value)
 
                 if name == "is_triggered_only":
                     if not self.pObj.Has("is_triggered_only"):
@@ -275,8 +358,6 @@ class FocusNode(BaseNode):
         self.focus_id = obj.GetVal("id")
         self.set_name(self.focus_id)
 
-        self.title = self.get_loc(obj.Get("title").value)
-        self.desc = self.get_loc(obj.Get("desc").value)
         if obj.Has("is_triggered_only"):
             self.is_triggered_only = obj.GetVal("is_triggered_only").lower() == "yes"
         if obj.Has("fire_only_once"):
@@ -331,9 +412,6 @@ class FocusNode(BaseNode):
         return self.props
 
     focus_id = ""
-
-    title = ""
-    desc = ""
 
     fire_only_once = False
     trigger = False

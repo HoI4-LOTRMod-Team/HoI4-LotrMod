@@ -29,6 +29,28 @@ class LocFile:
                 if self.indent == " ": 
                     self.indent = match.group(1)
 
+    def load_from_string(self, raw_text):
+        """
+        Parses a raw string for entries. 
+        Updates existing keys or adds new ones.
+        Ignores comments or empty lines in the input string.
+        """
+        # Split by lines and process each
+        for line in raw_text.splitlines():
+            match = self.pattern.match(line)
+            if match:
+                # We found a valid entry in the string
+                key_full = f"{match.group(2)}"
+                value = match.group(4)
+
+                if key_full in self.key_map:
+                    # Key exists in file -> Update it
+                    print("replaced: " + key_full + " with " + value)
+                    self.set(key_full, value)
+                else:
+                    # Key is new -> Add it
+                    self.add(key_full, value)
+
     def get(self, key):
         """Returns the string value for a key."""
         if key in self.key_map:
@@ -36,6 +58,18 @@ class LocFile:
             match = self.pattern.match(self.lines[index])
             if match:
                 return match.group(4)
+        return None
+    
+    def get_entry(self, key):
+        """Returns the full entry string 'key:ver "value"' without indentation or comments."""
+        if key in self.key_map:
+            index = self.key_map[key]
+            match = self.pattern.match(self.lines[index])
+            if match:
+                # Group 2 is the Key Name (e.g. key_0)
+                # Group 3 is the Version (e.g. 0)
+                # Group 4 is the Value string
+                return f'{match.group(2)}:{match.group(3)} "{match.group(4)}"'
         return None
 
     def set(self, key, value):

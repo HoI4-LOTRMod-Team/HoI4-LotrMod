@@ -87,3 +87,4 @@ def create_main_window():
     main_window.resize(1100, 800)
 
     return main_window
+
