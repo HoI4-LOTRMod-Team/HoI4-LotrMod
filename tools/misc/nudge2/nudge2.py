@@ -3,7 +3,9 @@ import os
 import numpy as np
 from PySide6.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene, 
                                QGraphicsPixmapItem, QMainWindow, QToolBar, 
-                               QLabel, QWidget, QComboBox, QCheckBox)
+                               QLabel, QWidget, QComboBox, QCheckBox, 
+                               QPushButton, QDialog, QFormLayout, QDialogButtonBox,
+                               QVBoxLayout, QSpinBox, QLineEdit)
 from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent, 
                            QAction, QActionGroup)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal
@@ -41,6 +43,15 @@ MAP_MODES = [
 base_lut = np.indices((256, 256, 256), dtype=np.uint8).transpose(1, 2, 3, 0)
 lut = base_lut.copy()
 selected_colors = set() # Stores tuples of (r, g, b)
+
+def selected_colors_to_provinces():
+    ret = []
+    csv = get_definition_csv()
+    for row in csv:
+        col = (row[1], row[2], row[3])
+        if col in selected_colors:
+            ret.append(row[0])
+    return ret
 
 def update_composite_lut():
     """
@@ -166,6 +177,55 @@ class SelectionMode(ToolMode):
         selected_colors.clear()
         update_composite_lut()
         view.refresh_viewport() # Full refresh to clear everything
+
+# ============================================================
+#  DIALOGUE FORMS
+# ============================================================
+
+class CreateStateDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Create State")
+        self.setModal(True) # Blocks parent window until closed
+        self.setMinimumWidth(300)
+
+        # 1. Main Layout
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        # 2. Form Layout for Inputs
+        form_layout = QFormLayout()
+        
+        # -- Example Input: Number (e.g., Expansion radius) --
+        #self.radius_input = QSpinBox()
+        #self.radius_input.setRange(0, 100)
+        #self.radius_input.setValue(10)
+        #form_layout.addRow("Expand Selection (px):", self.radius_input)
+
+        # -- Example Input: Text (e.g., ID or Name) --
+        self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText("Minas Tirith")
+        form_layout.addRow("State Name:", self.name_input)
+
+        # -- Example Input: Checkbox --
+        #self.force_check = QCheckBox("Force Overwrite")
+        #form_layout.addRow("Mode:", self.force_check)
+
+        layout.addLayout(form_layout)
+
+        # 3. Standard Buttons (OK / Cancel)
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept) # Closes dialog with result code 1
+        self.buttons.rejected.connect(self.reject) # Closes dialog with result code 0
+        layout.addWidget(self.buttons)
+
+    def get_data(self):
+        """Helper to return all data as a dictionary"""
+        return {
+            "state_name": self.name_input.text(),
+            #"tag": self.tag_input.text(),
+            #"overwrite": self.force_check.isChecked()
+        }
 
 
 # ============================================================
@@ -431,12 +491,19 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Pixel Editor - LUT Shader")
         self.resize(1000, 700)
 
+        # Lists to store toolbar actions for toggling visibility
+        self.paint_ui_actions = []
+        self.select_ui_actions = []
+
         self.viewer = EditorView()
         self.setCentralWidget(self.viewer)
         self.viewer.colorChanged.connect(self.update_color_display)
         
         self.setup_toolbar()
         
+        # Initialize visibility based on default tool
+        self.update_toolbar_visibility()
+
         self.viewer.load_image(HARDCODED_IMAGE_PATH)
         self.viewer.emit_current_color()
 
@@ -444,7 +511,7 @@ class MainWindow(QMainWindow):
         toolbar = QToolBar("Tools")
         self.addToolBar(toolbar)
 
-        # --- MODE SELECTOR ---
+        # --- MODE SELECTOR (Always Visible) ---
         toolbar.addWidget(QLabel("Map Mode: "))
         self.map_mode_combo = QComboBox()
         for name, idx in MAP_MODES:
@@ -453,37 +520,50 @@ class MainWindow(QMainWindow):
         self.map_mode_combo.currentIndexChanged.connect(self.trigger_lut_update)
         toolbar.addWidget(self.map_mode_combo)
         
-        # --- MIX CHECKBOX ---
+        # --- MIX CHECKBOX (Always Visible) ---
         self.mix_checkbox = QCheckBox("Mixed")
         self.mix_checkbox.stateChanged.connect(self.trigger_lut_update)
         toolbar.addWidget(self.mix_checkbox)
 
-        # --- OVERLAY CHECKBOX ---
+        # --- OVERLAY CHECKBOX (Always Visible) ---
         self.overlay_checkbox = QCheckBox("Overlay")
         self.overlay_checkbox.stateChanged.connect(self.toggle_overlay)
         toolbar.addWidget(self.overlay_checkbox)
 
         toolbar.addSeparator()
 
-        # --- TOOL SELECTOR ---
+        # --- TOOL SELECTOR (Always Visible) ---
         toolbar.addWidget(QLabel("Tool: "))
         self.tool_combo = QComboBox()
         self.tool_combo.addItem("Drawing", PaintMode())
-        self.tool_combo.addItem("Select", SelectionMode()) # CHANGED FROM DEBUG
+        self.tool_combo.addItem("Select", SelectionMode()) 
         self.tool_combo.currentIndexChanged.connect(self.change_tool)
         toolbar.addWidget(self.tool_combo)
         
         toolbar.addSeparator()
 
-        toolbar.addWidget(QLabel(" Color: "))
+        # ==========================================
+        #  DYNAMIC: PAINTING TOOLS
+        # ==========================================
+        
+        # Note: toolbar.addWidget returns a QAction. We store that QAction to hide it later.
+
+        # 1. Color Label
+        act = toolbar.addWidget(QLabel(" Color: "))
+        self.paint_ui_actions.append(act)
+
+        # 2. Color Display Box
         self.color_display = QLabel()
         self.color_display.setFixedSize(24, 24)
         self.color_display.setStyleSheet("border: 1px solid #555;") 
-        toolbar.addWidget(self.color_display)
+        act = toolbar.addWidget(self.color_display)
+        self.paint_ui_actions.append(act)
         
-        toolbar.addSeparator()
+        # 3. Size Label
+        act = toolbar.addWidget(QLabel(" Size: "))
+        self.paint_ui_actions.append(act)
 
-        toolbar.addWidget(QLabel(" Size: "))
+        # 4. Brush Size Buttons
         brush_group = QActionGroup(self)
         sizes = [("1px", 1), ("2px", 2), ("4px", 4), ("6px", 6), ("10px", 10)]
 
@@ -496,6 +576,77 @@ class MainWindow(QMainWindow):
             action.triggered.connect(lambda c, s=size: setattr(self.viewer, 'brush_size', s))
             brush_group.addAction(action)
             toolbar.addAction(action)
+            
+            # Add the action to our list so we can hide it
+            self.paint_ui_actions.append(action)
+
+        # ==========================================
+        #  DYNAMIC: SELECTION TOOLS
+        # ==========================================
+
+        # Custom Button 1
+        self.btn_action1 = QPushButton("Create State")
+        self.btn_action1.clicked.connect(self.create_state_func)
+        act = toolbar.addWidget(self.btn_action1)
+        self.select_ui_actions.append(act)
+
+        # Custom Button 2
+        self.btn_action2 = QPushButton("Transfer to State")
+        self.btn_action2.clicked.connect(self.transfer_to_state_func)
+        act = toolbar.addWidget(self.btn_action2)
+        self.select_ui_actions.append(act)
+
+    def change_tool(self, index):
+        new_mode = self.tool_combo.currentData()
+        self.viewer.current_mode = new_mode
+        self.update_toolbar_visibility()
+
+    def update_toolbar_visibility(self):
+        """Hides/Shows toolbar items based on the current mode."""
+        current_mode = self.viewer.current_mode
+        
+        # Determine which set to show
+        show_paint = isinstance(current_mode, PaintMode)
+        show_select = isinstance(current_mode, SelectionMode)
+
+        for action in self.paint_ui_actions:
+            action.setVisible(show_paint)
+
+        for action in self.select_ui_actions:
+            action.setVisible(show_select)
+
+    # --- CUSTOM FUNCTION STUBS ---
+    def create_state_func(self):
+        dialog = CreateStateDialog(self)
+        
+        # 2. Show the dialog and wait for result (exec() blocks execution)
+        if dialog.exec():
+            # 3. If User clicked "OK", get the data
+            data = dialog.get_data()
+            print(f"User confirmed! Running Fill with: {data}")
+            
+            # Example: Access specific values
+            state_name = data['state_name']
+
+            # create list of selected provinces (from selected colors)
+            provs = selected_colors_to_provinces()
+            
+            create_new_state(provs, state_name)
+            
+        else:
+            print("User cancelled.")
+
+    def transfer_to_state_func(self):
+        # You can reuse the same dialog class or create a different one
+        dialog = CreateStateDialog("Export Mask Settings", self)
+        
+        # Example: Pre-set values for this specific button
+        dialog.radius_input.setValue(0) 
+        dialog.tag_input.setText("default_mask")
+
+        if dialog.exec():
+            data = dialog.get_data()
+            print(f"Exporting with: {data}")
 
     def trigger_lut_update(self):
         csv_index = self.map_mode_combo.currentData()
@@ -506,10 +657,6 @@ class MainWindow(QMainWindow):
 
     def toggle_overlay(self, state):
         self.viewer.set_overlay_enabled(self.overlay_checkbox.isChecked())
-
-    def change_tool(self, index):
-        new_mode = self.tool_combo.currentData()
-        self.viewer.current_mode = new_mode
 
     def update_color_display(self, color):
         pixmap = QPixmap(24, 24)
