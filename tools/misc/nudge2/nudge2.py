@@ -8,28 +8,45 @@ from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent,
                            QAction, QActionGroup)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal
 
+from definitioncsv import *
+
 # --- CONFIGURATION ---
-HARDCODED_IMAGE_PATH = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\provinces - Copy.bmp'
-# ---------------------
+HARDCODED_IMAGE_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\provinces - Copy.bmp'
 
 # ============================================================
-#  MODE SYSTEM (STRATEGY PATTERN)
+#  GLOBAL LUT CONFIGURATION
+# ============================================================
+
+def _create_identity_lut():
+    print("Generating LUT...")
+    
+    lut = np.zeros((256, 256, 256, 3), dtype=np.uint8)
+
+    csv = get_expanded_definition()
+    lut = np.indices((256, 256, 256), dtype=np.uint8).transpose(1, 2, 3, 0)
+    for row in csv:
+        # map mode 1
+        lut[row[1], row[2], row[3]] = row[13][::-1] # the ::-1 reverses the tuple (rgb -> bgr)
+    
+    return lut
+
+# GLOBAL VARIABLE: You can overwrite this from outside or modify it here.
+# Expected Shape: (256, 256, 256, 3)
+lut = _create_identity_lut()
+
+
+# ============================================================
+#  MODE SYSTEM
 # ============================================================
 
 class ToolMode:
-    """Base class for all interaction modes"""
     def getName(self): return "Base"
-
-    # All methods receive: view (the editor instance), x, y, and color (QColor of the pixel)
     def on_left_click(self, view, x, y, color): pass
     def on_left_drag(self, view, x, y, color): pass
-    
     def on_right_click(self, view, x, y, color): pass
     def on_right_drag(self, view, x, y, color): pass
-    
     def on_shift_click(self, view, x, y, color): pass
     def on_alt_click(self, view, x, y, color): pass
-
 
 class PaintMode(ToolMode):
     def getName(self): return "Drawing"
@@ -43,30 +60,23 @@ class PaintMode(ToolMode):
     def on_alt_click(self, view, x, y, color):
         view.set_active_color(color)
 
-
 class DebugMode(ToolMode):
     def getName(self): return "Debug / Test"
 
     def _log(self, action, x, y, color):
-        # Helper to print formatting
         c_str = f"R:{color.red()} G:{color.green()} B:{color.blue()}"
         print(f"[DEBUG] {action} at ({x}, {y}) - Color: [{c_str}]")
 
     def on_left_click(self, view, x, y, color):
         self._log("Left Click", x, y, color)
-
     def on_left_drag(self, view, x, y, color):
-        self._log("Left Drag (Hold)", x, y, color)
-
+        self._log("Left Drag", x, y, color)
     def on_right_click(self, view, x, y, color):
         self._log("Right Click", x, y, color)
-
     def on_right_drag(self, view, x, y, color):
-        self._log("Right Drag (Hold)", x, y, color)
-
+        self._log("Right Drag", x, y, color)
     def on_shift_click(self, view, x, y, color):
         self._log("Shift + Click", x, y, color)
-
     def on_alt_click(self, view, x, y, color):
         self._log("Alt + Click", x, y, color)
 
@@ -83,21 +93,17 @@ class EditorView(QGraphicsView):
         self._scene = QGraphicsScene(self)
         self.setScene(self._scene)
 
-        # Core Data
         self.data_image = None 
         self.display_image = None
         self.image_item = None
         
-        # Settings
         self.current_color = QColor(255, 0, 0)
         self.brush_size = 10
-        self.current_mode = PaintMode() # Default Mode
+        self.current_mode = PaintMode()
 
-        # State flags
         self._is_panning = False
         self._last_pan_pos = QPointF()
 
-        # UI Config
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setRenderHint(QPainter.Antialiasing, False)
@@ -106,8 +112,6 @@ class EditorView(QGraphicsView):
 
     def emit_current_color(self):
         self.colorChanged.emit(self.current_color)
-
-    # --- API FOR MODES ---
     
     def set_active_color(self, color):
         self.current_color = color
@@ -115,7 +119,6 @@ class EditorView(QGraphicsView):
         print(f"Color Picked: {color.name()}")
 
     def perform_paint(self, x, y):
-        """Used by DrawingMode to apply paint"""
         if not self.data_image: return
 
         # 1. Modify Data
@@ -134,50 +137,61 @@ class EditorView(QGraphicsView):
             painter.drawEllipse(dirty_rect)
         painter.end()
 
-        # 2. Update Display (Shader)
+        # 2. Update Display with LUT
         safe_rect = dirty_rect.adjusted(-1, -1, 1, 1)
-        self.apply_shader_to_rect(safe_rect)
+        self.update_display(safe_rect)
+        
+        # 3. Refresh
         self.image_item.setPixmap(QPixmap.fromImage(self.display_image))
 
-    # --- SHADER LOGIC ---
+    # --- LUT / SHADER LOGIC ---
 
-    def apply_shader_numpy(self):
-        width = self.data_image.width()
-        height = self.data_image.height()
+    def _qimage_to_numpy(self, image):
+        width = image.width()
+        height = image.height()
+        ptr = image.bits()
+        arr = np.frombuffer(ptr, np.uint8).reshape((height, -1))
+        return arr[:, :width * 4].reshape((height, width, 4))
 
-        ptr_data = self.data_image.constBits()
-        arr_data = np.frombuffer(ptr_data, np.uint8).reshape((height, -1))
-        arr_data = arr_data[:, :width * 4].reshape((height, width, 4))
+    def update_display(self, rect=None):
+        """
+        Applies the global 'lut' to the image data.
+        """
+        if not self.data_image or not self.display_image: return
 
-        ptr_display = self.display_image.bits()
-        arr_display = np.frombuffer(ptr_display, np.uint8).reshape((height, -1))
-        arr_display = arr_display[:, :width * 4].reshape((height, width, 4))
+        # Get Views
+        arr_data = self._qimage_to_numpy(self.data_image)
+        arr_display = self._qimage_to_numpy(self.display_image)
 
-        # Shader: Swap Red and Green
-        arr_display[:, :, 3] = arr_data[:, :, 3] # Alpha
-        arr_display[:, :, 0] = arr_data[:, :, 0] # Blue
-        arr_display[:, :, 2] = arr_data[:, :, 1] # Red = Green
-        arr_display[:, :, 1] = arr_data[:, :, 2] # Green = Red
+        # Determine Slice
+        if rect:
+            x1 = max(0, int(rect.left()))
+            y1 = max(0, int(rect.top()))
+            x2 = min(self.data_image.width(), int(rect.right()) + 1)
+            y2 = min(self.data_image.height(), int(rect.bottom()) + 1)
+        else:
+            x1, y1 = 0, 0
+            x2, y2 = self.data_image.width(), self.data_image.height()
 
-    def translate_color(self, x, y, color_int):
-        alpha = (color_int >> 24) & 0xFF
-        red   = (color_int >> 16) & 0xFF
-        green = (color_int >> 8)  & 0xFF
-        blue  = color_int         & 0xFF
-        # Swap Red/Green
-        return (alpha << 24) | (green << 16) | (red << 8) | blue
+        if x1 >= x2 or y1 >= y2: return
 
-    def apply_shader_to_rect(self, rect):
-        left = max(0, int(rect.left()))
-        top = max(0, int(rect.top()))
-        right = min(self.data_image.width(), int(rect.right()))
-        bottom = min(self.data_image.height(), int(rect.bottom()))
+        # ----------------------------------------------------
+        # LUT OPERATION
+        # ----------------------------------------------------
+        # Source Indices (BGR format in memory: 0=Blue, 1=Green, 2=Red)
+        b_indices = arr_data[y1:y2, x1:x2, 0]
+        g_indices = arr_data[y1:y2, x1:x2, 1]
+        r_indices = arr_data[y1:y2, x1:x2, 2]
 
-        for x in range(left, right):
-            for y in range(top, bottom):
-                src_pixel = self.data_image.pixel(x, y)
-                display_pixel = self.translate_color(x, y, src_pixel)
-                self.display_image.setPixel(x, y, display_pixel)
+        # Copy Alpha from Source (Preserve transparency)
+        arr_display[y1:y2, x1:x2, 3] = arr_data[y1:y2, x1:x2, 3]
+
+        # Apply LUT
+        # Using the exact logic provided:
+        # img_arr[:, :, 0:3] = lut[r_indices, g_indices, b_indices]
+        # (Where arr_display is the target img_arr)
+        arr_display[y1:y2, x1:x2, 0:3] = lut[r_indices, g_indices, b_indices]
+
 
     # --- IMAGE LOADING ---
 
@@ -192,7 +206,7 @@ class EditorView(QGraphicsView):
         self.data_image = img.convertToFormat(QImage.Format_ARGB32)
         self.display_image = QImage(self.data_image.size(), QImage.Format_ARGB32)
 
-        self.apply_shader_numpy()
+        self.update_display() # Full pass
 
         pixmap = QPixmap.fromImage(self.display_image)
         self._scene.clear()
@@ -203,7 +217,6 @@ class EditorView(QGraphicsView):
     # --- INPUT ROUTING ---
 
     def get_interaction_data(self, window_pos):
-        """Helper to get (x, y, color) safely"""
         if not self.image_item: return None, None, None
         
         scene_pos = self.mapToScene(window_pos.toPoint())
@@ -211,13 +224,11 @@ class EditorView(QGraphicsView):
         x, y = int(item_pos.x()), int(item_pos.y())
         
         if 0 <= x < self.data_image.width() and 0 <= y < self.data_image.height():
-            # Get color from the SOURCE (Data) image
             col = self.data_image.pixelColor(x, y)
             return x, y, col
-        return x, y, QColor(0,0,0) # Out of bounds
+        return x, y, QColor(0,0,0)
 
     def mousePressEvent(self, event: QMouseEvent):
-        # 1. GLOBAL PANNING (Middle Mouse)
         if event.button() == Qt.MiddleButton:
             self._is_panning = True
             self._last_pan_pos = event.position()
@@ -225,7 +236,6 @@ class EditorView(QGraphicsView):
             event.accept()
             return
 
-        # 2. MODE HANDLING
         x, y, col = self.get_interaction_data(event.position())
         
         if event.button() == Qt.LeftButton:
@@ -235,14 +245,11 @@ class EditorView(QGraphicsView):
                 self.current_mode.on_alt_click(self, x, y, col)
             else:
                 self.current_mode.on_left_click(self, x, y, col)
-        
         elif event.button() == Qt.RightButton:
             self.current_mode.on_right_click(self, x, y, col)
-
         event.accept()
 
     def mouseMoveEvent(self, event: QMouseEvent):
-        # 1. PANNING
         if self._is_panning:
             delta = event.position() - self._last_pan_pos
             self._last_pan_pos = event.position()
@@ -253,15 +260,11 @@ class EditorView(QGraphicsView):
             event.accept()
             return
         
-        # 2. MODE HANDLING (DRAG)
         x, y, col = self.get_interaction_data(event.position())
-        
         if event.buttons() & Qt.LeftButton:
             self.current_mode.on_left_drag(self, x, y, col)
         elif event.buttons() & Qt.RightButton:
             self.current_mode.on_right_drag(self, x, y, col)
-            
-        # Standard hover processing
         super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event: QMouseEvent):
@@ -275,7 +278,6 @@ class EditorView(QGraphicsView):
         factor = zoom_in if event.angleDelta().y() > 0 else zoom_out
         self.scale(factor, factor)
 
-
 # ============================================================
 #  MAIN WINDOW
 # ============================================================
@@ -283,7 +285,7 @@ class EditorView(QGraphicsView):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Pixel Editor - Modes")
+        self.setWindowTitle("Pixel Editor - LUT Shader")
         self.resize(1000, 700)
 
         self.viewer = EditorView()
@@ -299,19 +301,15 @@ class MainWindow(QMainWindow):
         toolbar = QToolBar("Tools")
         self.addToolBar(toolbar)
 
-        # --- MODE SELECTOR ---
         toolbar.addWidget(QLabel("Mode: "))
         self.mode_combo = QComboBox()
         self.mode_combo.addItem("Drawing Mode", PaintMode())
         self.mode_combo.addItem("Debug Mode", DebugMode())
-        
-        # Connect signal
         self.mode_combo.currentIndexChanged.connect(self.change_mode)
         toolbar.addWidget(self.mode_combo)
         
         toolbar.addSeparator()
 
-        # --- COLOR DISPLAY ---
         toolbar.addWidget(QLabel(" Color: "))
         self.color_display = QLabel()
         self.color_display.setFixedSize(24, 24)
@@ -320,7 +318,6 @@ class MainWindow(QMainWindow):
         
         toolbar.addSeparator()
 
-        # --- BRUSH SIZE ---
         toolbar.addWidget(QLabel(" Size: "))
         brush_group = QActionGroup(self)
         sizes = [("1px", 1), ("3px", 3), ("5px", 5), ("10px", 10), ("20px", 20)]
@@ -336,10 +333,8 @@ class MainWindow(QMainWindow):
             toolbar.addAction(action)
 
     def change_mode(self, index):
-        # Retrieve the class instance stored in the UserData of the ComboBox
         new_mode = self.mode_combo.currentData()
         self.viewer.current_mode = new_mode
-        print(f"Switched to: {new_mode.getName()}")
 
     def update_color_display(self, color):
         pixmap = QPixmap(24, 24)

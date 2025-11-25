@@ -1,0 +1,124 @@
+import csv
+import random
+
+from pdx_parser import *
+
+from state import *
+
+
+DEFINITION_CSV_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\definition.csv'
+
+TERRAIN_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\terrain\00_terrain.txt'
+
+
+
+def get_terrain_colormap():
+    obj = ParseListFromFile_asPObj(TERRAIN_PATH)
+    cats = obj.Get("categories").value
+
+    color_map = {}
+    for cat in cats:
+        col = cat.Get("color").value
+        color_map[cat.id] = (int(col[0].value), int(col[1].value), int(col[2].value))
+
+    return color_map
+
+
+type_colormap = {
+    "land": (255, 128, 128),
+    "sea": (0, 0, 128),
+    "lake": (128, 128, 255)
+}
+
+
+coastal_colormap = {
+    True: (255, 255, 255),
+    False: (0, 0, 0),
+}
+
+continent_colormap = {
+    0: (0, 0, 0),       # Black
+    1: (0, 0, 128),     # Navy
+    2: (0, 128, 0),     # Green
+    3: (0, 128, 128),   # Teal
+    4: (128, 0, 0),     # Maroon
+    5: (128, 0, 128),   # Purple
+    6: (128, 128, 0),   # Olive
+    7: (192, 192, 192), # Silver
+    8: (128, 128, 128), # Gray
+    9: (0, 0, 255),     # Blue
+    10: (0, 255, 0),    # Lime
+    11: (0, 255, 255),  # Aqua / Cyan
+    12: (255, 0, 0),    # Red
+    13: (255, 0, 255),  # Fuchsia / Magenta
+    14: (255, 255, 0),  # Yellow
+    15: (255, 255, 255) # White
+}
+
+
+
+def get_definition_csv():
+    ret = []
+
+    # Open the file
+    with open(DEFINITION_CSV_PATH, 'r', newline='') as file:
+        # Create a reader object
+        reader = csv.reader(file, delimiter=';')
+        
+        # Loop over the rows
+        for row in reader:
+            ret.append(
+                [
+                    int(row[0]),    # id
+                    int(row[1]),    # r
+                    int(row[2]),    # g
+                    int(row[3]),    # b
+                    row[4],         # land
+                    row[5]=="true", # coastal
+                    row[6],         # terrain
+                    int(row[7]),    # continent
+                ]
+            )
+    return ret
+
+
+def random_color():
+    return tuple(random.randint(0, 255) for _ in range(3))
+
+# Adds:
+#   8: terrain-color
+#   9: type-color
+#  10: coastal-color
+#  11: continent-color
+#  12: state-id
+#  13: state-color
+#  14: strat-region-id
+#  15: strat-region-color
+def get_expanded_definition():
+
+    csv = get_definition_csv()
+    states = get_all_states()
+
+    terrain_colormap = get_terrain_colormap()
+
+    for row in csv:
+        row.append(terrain_colormap[row[6]])
+        row.append(type_colormap[row[4]])
+        row.append(coastal_colormap[row[5]])
+        row.append(continent_colormap[row[7]])
+        row.append((0,0,0))
+        row.append((0,0,0))
+
+    for st in states:
+        col = random_color()
+        for prov in st.province_list:
+            csv[prov][12] = st.state_id
+            csv[prov][13] = col
+
+    return csv
+
+
+
+
+
+
