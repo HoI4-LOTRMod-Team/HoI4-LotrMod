@@ -37,13 +37,36 @@ MAP_MODES = [
 #  GLOBAL LUT CONFIGURATION
 # ============================================================
 
+# We store the "Base" LUT (Map Mode colors) separately from the "Active" LUT (Base + Selection)
+base_lut = np.indices((256, 256, 256), dtype=np.uint8).transpose(1, 2, 3, 0)
+lut = base_lut.copy()
+selected_colors = set() # Stores tuples of (r, g, b)
+
+def update_composite_lut():
+    """
+    Copies the Base LUT and applies the Pure Red selection overlay.
+    """
+    global lut, base_lut, selected_colors
+    
+    # 1. Start with the clean map mode colors
+    lut = base_lut.copy()
+    
+    # 2. Overwrite selected colors with Pure Red [0, 0, 255] (BGR format for QImage)
+    if selected_colors:
+        for (r, g, b) in selected_colors:
+            # Safety check for valid colors
+            if 0 <= r < 256 and 0 <= g < 256 and 0 <= b < 256:
+                lut[r, g, b] = [0, 0, 255]
+
 def generate_lut(target_column_index, use_mixed_mode=False):
     """
-    Generates a 3D lookup table mapping RGB -> CSV Column Value.
+    Generates the BASE lookup table from CSV.
     """
-    print(f"Generating LUT (Col: {target_column_index}, Mixed: {use_mixed_mode})...")
+    print(f"Generating Base LUT (Col: {target_column_index}, Mixed: {use_mixed_mode})...")
     
-    lut = np.indices((256, 256, 256), dtype=np.uint8).transpose(1, 2, 3, 0)
+    global base_lut
+    # Reset base
+    base_lut = np.indices((256, 256, 256), dtype=np.uint8).transpose(1, 2, 3, 0)
 
     try:
         csv = get_expanded_definition()
@@ -60,10 +83,13 @@ def generate_lut(target_column_index, use_mixed_mode=False):
                         mixed = (target_bgr * 0.65) + (base_bgr * 0.35)
                         final_color = mixed
 
-                    lut[row[1], row[2], row[3]] = final_color.astype(np.uint8)
+                    # row[1]=R, row[2]=G, row[3]=B
+                    base_lut[row[1], row[2], row[3]] = final_color.astype(np.uint8)
     except Exception as e:
         print(f"Error generating LUT: {e}")
     
+    # After generating base, rebuild the active LUT (to keep selection if any)
+    update_composite_lut()
     return lut
 
 # Initialize with defaults
@@ -95,25 +121,51 @@ class PaintMode(ToolMode):
     def on_alt_click(self, view, x, y, color):
         view.set_active_color(color)
 
-class DebugMode(ToolMode):
-    def getName(self): return "Debug / Test"
+class SelectionMode(ToolMode):
+    def getName(self): return "Selection"
 
-    def _log(self, action, x, y, color):
-        c_str = f"R:{color.red()} G:{color.green()} B:{color.blue()}"
-        print(f"[DEBUG] {action} at ({x}, {y}) - Color: [{c_str}]")
+    def _update_selection(self, view, x, y, color, keep_existing=False):
+        global selected_colors
+        
+        # Color from input is QColor, we need (r, g, b) tuple
+        rgb_key = (color.red(), color.green(), color.blue())
+        
+        print(f"Selecting Color: {rgb_key}")
+
+        if not keep_existing:
+            selected_colors.clear()
+        
+        # Add to selection
+        selected_colors.add(rgb_key)
+
+        # Update the global lookup table with red values
+        update_composite_lut()
+
+        # Optimize: Only refresh a 300px radius around the click
+        radius = 300
+        # QRectF(x, y, w, h) - centered on click
+        update_rect = QRectF(x - radius, y - radius, radius * 2, radius * 2)
+        
+        view.refresh_viewport(update_rect)
 
     def on_left_click(self, view, x, y, color):
-        self._log("Left Click", x, y, color)
+        # Single Select
+        self._update_selection(view, x, y, color, keep_existing=False)
+
     def on_left_drag(self, view, x, y, color):
-        self._log("Left Drag", x, y, color)
-    def on_right_click(self, view, x, y, color):
-        self._log("Right Click", x, y, color)
-    def on_right_drag(self, view, x, y, color):
-        self._log("Right Drag", x, y, color)
+        # Single Select
+        self._update_selection(view, x, y, color, keep_existing=True)
+
     def on_shift_click(self, view, x, y, color):
-        self._log("Shift + Click", x, y, color)
-    def on_alt_click(self, view, x, y, color):
-        self._log("Alt + Click", x, y, color)
+        # Multi Select
+        self._update_selection(view, x, y, color, keep_existing=True)
+
+    def on_right_click(self, view, x, y, color):
+        # Clear Selection
+        global selected_colors
+        selected_colors.clear()
+        update_composite_lut()
+        view.refresh_viewport() # Full refresh to clear everything
 
 
 # ============================================================
@@ -161,10 +213,10 @@ class EditorView(QGraphicsView):
         self.use_overlay = enabled
         self.refresh_viewport()
 
-    def refresh_viewport(self):
-        """Re-runs the LUT and Overlay over the entire image."""
+    def refresh_viewport(self, rect=None):
+        """Re-runs the LUT and Overlay. If rect is provided, only updates that area."""
         if not self.data_image: return
-        self.update_display() 
+        self.update_display(rect) 
         self.image_item.setPixmap(QPixmap.fromImage(self.display_image))
 
     def perform_paint(self, x, y):
@@ -227,6 +279,8 @@ class EditorView(QGraphicsView):
         r_indices = arr_data[y1:y2, x1:x2, 2]
 
         arr_display[y1:y2, x1:x2, 3] = arr_data[y1:y2, x1:x2, 3]
+        
+        # Note: lut uses [r, g, b] indices to output [B, G, R] color
         arr_display[y1:y2, x1:x2, 0:3] = lut[r_indices, g_indices, b_indices]
 
         # 2. APPLY OVERLAY (MULTIPLY)
@@ -415,7 +469,7 @@ class MainWindow(QMainWindow):
         toolbar.addWidget(QLabel("Tool: "))
         self.tool_combo = QComboBox()
         self.tool_combo.addItem("Drawing", PaintMode())
-        self.tool_combo.addItem("Debug", DebugMode())
+        self.tool_combo.addItem("Select", SelectionMode()) # CHANGED FROM DEBUG
         self.tool_combo.currentIndexChanged.connect(self.change_tool)
         toolbar.addWidget(self.tool_combo)
         
