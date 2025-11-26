@@ -16,7 +16,7 @@ from NodeGraphQt.constants import PipeLayoutEnum
 
 import networkx as nx
 
-BASE_PATH = Path(__file__).parent.resolve()
+BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() # Points at the lotr/ directory
 
 
 def apply_clustered_layout(graph, scale=200, component_padding=500):
@@ -110,8 +110,8 @@ def main():
     graph = create_node_graph()
 
     focus_node_tree = FocusNodeTree(graph,
-        r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\events\Lothlorien.txt',
-        r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\lothlorien\lothlorien_events_l_english.yml'
+        BASE_PATH / r'events\Lothlorien.txt',
+        BASE_PATH / r'localisation\english\lothlorien\lothlorien_events_l_english.yml'
     )
     graph.focus_tree = focus_node_tree
 

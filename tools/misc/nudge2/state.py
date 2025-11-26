@@ -2,10 +2,10 @@ from pdx_parser import *
 from pathlib import Path
 from locfile import *
 
-
-STATES_DIR = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\history\states'
-STATES_LOC_DIR = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\state_names_l_english.yml'
-STRAT_REGIONS_DIR = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\strategicregions'
+BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() # Points at the lotr/ directory
+STATES_DIR = BASE_PATH / "history/states"
+STATES_LOC_DIR = BASE_PATH / "localisation/english/state_names_l_english.yml"
+STRAT_REGIONS_DIR = BASE_PATH / "map/strategicregions"
 
 
 class State:

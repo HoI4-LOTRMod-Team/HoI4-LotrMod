@@ -20,8 +20,9 @@ except ImportError:
 from definitioncsv import *
 
 # --- CONFIGURATION ---
-HARDCODED_IMAGE_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\provinces - Copy.bmp'
-OVERLAY_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\terrain\colormap_rgb_cityemissivemask_a.dds'
+BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() # Points at the lotr/ directory
+HARDCODED_IMAGE_PATH = BASE_PATH / "map" / "provinces - Copy.bmp"
+OVERLAY_PATH = BASE_PATH / "map" / "terrain" / "colormap_rgb_cityemissivemask_a.dds"
 
 # Your Custom Map Modes
 MAP_MODES = [

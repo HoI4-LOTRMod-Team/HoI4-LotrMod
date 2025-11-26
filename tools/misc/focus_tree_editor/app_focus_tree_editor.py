@@ -14,7 +14,7 @@ from properties_panel import *
 from NodeGraphQt.constants import LayoutDirectionEnum
 from NodeGraphQt.constants import PipeLayoutEnum
 
-BASE_PATH = Path(__file__).parent.resolve()
+BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() # Points at the lotr/ directory
 
 
 
@@ -27,7 +27,7 @@ def main():
     # create graph controller.
     graph = create_node_graph()
 
-    focus_node_tree = FocusNodeTree(graph, r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\rohan.txt')
+    focus_node_tree = FocusNodeTree(graph, BASE_PATH / "common/national_focus/rohan.txt")
     graph.focus_tree = focus_node_tree
 
     context_menu = graph.get_context_menu('graph')

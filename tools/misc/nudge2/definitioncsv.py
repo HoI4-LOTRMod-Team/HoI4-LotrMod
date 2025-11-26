@@ -6,9 +6,10 @@ from pdx_parser import *
 from state import *
 
 
-DEFINITION_CSV_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\map\definition.csv'
+BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() # Points at the lotr/ directory
+DEFINITION_CSV_PATH = BASE_PATH / "map/definition.csv"
 
-TERRAIN_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\terrain\00_terrain.txt'
+TERRAIN_PATH = BASE_PATH / "common/terrain/00_terrain.txt"
 
 
 
