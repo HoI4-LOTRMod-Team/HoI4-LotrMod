@@ -220,7 +220,7 @@ class TransferProvsDialog(QDialog):
     def get_data(self):
         return {"target_state": self.available_states.currentData()}
 
-class ProvincePropertiesDialog(QDialog):
+class ProvinceSetPropertiesDialog(QDialog):
     # --- CONFIGURATION: EDIT OPTIONS HERE ---
     PROPERTIES_CONFIG = {
         "type":      ["land", "sea", "lake"],
@@ -311,6 +311,7 @@ class ProvincePropertiesDialog(QDialog):
 
         # Read-only text area to show the properties
         self.text_area = QTextEdit()
+        print(text)
         self.text_area.setPlainText(text)
         self.text_area.setReadOnly(True)
         layout.addWidget(self.text_area)
@@ -760,7 +761,7 @@ class MainWindow(QMainWindow):
             return
 
         # 2. Open the Dialog
-        dialog = ProvincePropertiesDialog(self)
+        dialog = ProvinceSetPropertiesDialog(self)
         if dialog.exec():
             # 3. Get the data (only checked items)
             data = dialog.get_data()
