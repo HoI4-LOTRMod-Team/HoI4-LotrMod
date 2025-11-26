@@ -378,7 +378,12 @@ class EditorView(QGraphicsView):
         self.overlay_alpha_map = None 
         self.use_overlay = False
 
-        self.current_color = QColor(255, 0, 0)
+        # --- FIX 1: Start with No Color ---
+        self.current_color = None 
+        
+        # --- FIX 2: Start in View Mode ---
+        # (Make sure ViewMode class is defined BEFORE EditorView in your file)
+        self.current_mode = ViewMode() 
         self.brush_size = 10
         self.current_mode = PaintMode()
 
@@ -433,18 +438,10 @@ class EditorView(QGraphicsView):
 
     def _get_brush_cursor(self):
         """Generates a cursor that scales with the viewport zoom."""
-        # 1. Get the current scale factor from the view's transform matrix
-        # m11() typically holds the horizontal scale (zoom level)
+        # 1. Get scale and Calculate sizes (Same as before)
         zoom_factor = self.transform().m11()
-        
-        # 2. Calculate the visual size in SCREEN pixels
-        # If brush is 10px and zoom is 2.0x, cursor should be 20px
         visual_size = self.brush_size * zoom_factor
-        
-        # Enforce minimum size so it doesn't disappear when zoomed out far
         display_d = max(visual_size, 4)
-        
-        # Canvas needs padding to prevent clipping the antialiased edges
         canvas_size = int(display_d + 6)
         
         pix = QPixmap(canvas_size, canvas_size)
@@ -453,12 +450,22 @@ class EditorView(QGraphicsView):
         painter = QPainter(pix)
         painter.setRenderHint(QPainter.Antialiasing, True)
         
-        # Center points
         center = canvas_size / 2
         radius = display_d / 2
         
+        # --- NEW: Visual Feedback for No Color ---
+        if self.current_color is None:
+            # Draw a Red "X" or "Prohibited" sign
+            painter.setPen(QColor(255, 0, 0, 200)) # Red
+            painter.setBrush(Qt.NoBrush)
+            painter.drawEllipse(QPointF(center, center), radius, radius)
+            # Draw Cross
+            off = radius * 0.7
+            painter.drawLine(QPointF(center - off, center - off), QPointF(center + off, center + off))
+            painter.drawLine(QPointF(center + off, center - off), QPointF(center - off, center + off))
+        
         # 3. Draw the cursor
-        if display_d <= 4:
+        elif display_d <= 4:
             # Crosshair for very small visual sizes
             painter.setPen(QColor(0, 0, 0))
             painter.drawLine(int(center)-2, int(center), int(center)+2, int(center))
@@ -526,9 +533,10 @@ class EditorView(QGraphicsView):
 
     def set_creation_color(self, color):
         """Sets a specific color and arms the 'New Province' trigger."""
-        self.current_color = color
-        self.pending_province_creation = True # Next paint will trigger logic
+        self.current_color = color # This enables painting (it is no longer None)
+        self.pending_province_creation = True 
         self.colorChanged.emit(self.current_color)
+        self.update_active_cursor() # Refresh cursor to remove the Red X
         print(f"Ready to create province with color: {color.name()}")
 
     def set_overlay_enabled(self, enabled):
@@ -543,21 +551,18 @@ class EditorView(QGraphicsView):
     def perform_paint(self, x, y):
         if not self.data_image: return
 
+        if self.current_color is None:
+            print("No color selected! Use Alt+Click to pick a color.")
+            return
+
         # --- NEW PROVINCE LOGIC ---
-        # If specific button was clicked, logic triggers on FIRST paint event
         if self.pending_province_creation:
-            # 1. Get the color CURRENTLY at this pixel (the one we are about to overwrite)
             if 0 <= x < self.data_image.width() and 0 <= y < self.data_image.height():
                 old_qt_color = self.data_image.pixelColor(x, y)
                 old_rgb = (old_qt_color.red(), old_qt_color.green(), old_qt_color.blue())
                 new_rgb = (self.current_color.red(), self.current_color.green(), self.current_color.blue())
-                
-                # 2. Call external function
                 create_new_province_from(old_rgb, new_rgb)
-            
-            # 3. Disable flag so it doesn't trigger again while dragging
             self.pending_province_creation = False
-
 
         # 1. Modify Data
         painter = QPainter(self.data_image)
@@ -565,18 +570,30 @@ class EditorView(QGraphicsView):
         painter.setPen(Qt.NoPen)
         painter.setRenderHint(QPainter.Antialiasing, False) 
 
-        offset = self.brush_size / 2.0
-        dirty_rect = QRectF(x - offset, y - offset, float(self.brush_size), float(self.brush_size))
-        
+        # --- BRUSH SHAPE LOGIC ---
         if self.brush_size == 1:
             painter.setPen(self.current_color)
             painter.drawPoint(x, y)
+            
+        elif self.brush_size == 2:
+            # FIX: Force a 2x2 square. 
+            # A radius-1 circle is unstable on integer grids.
+            # (x-1, y-1) ensures the 2x2 block covers the pixel you clicked and the top-left neighbor.
+            painter.drawRect(x - 1, y - 1, 2, 2)
+            
         else:
-            painter.drawEllipse(dirty_rect)
+            # For larger brushes, the centered ellipse works fine
+            center_point = QPointF(x + 0.5, y + 0.5)
+            radius = self.brush_size / 2.0
+            painter.drawEllipse(center_point, radius, radius)
+
         painter.end()
 
         # 2. Update Display
-        safe_rect = dirty_rect.adjusted(-1, -1, 1, 1)
+        offset = self.brush_size / 2.0
+        dirty_rect = QRectF(x - offset, y - offset, float(self.brush_size), float(self.brush_size))
+        
+        safe_rect = dirty_rect.adjusted(-2, -2, 2, 2)
         self.update_display(safe_rect)
         
         # 3. Refresh
@@ -748,10 +765,15 @@ class MainWindow(QMainWindow):
         self.tab_shortcut = QShortcut(QKeySequence(Qt.Key_Tab), self)
         self.tab_shortcut.activated.connect(self.cycle_tool_mode)
 
+        self.brush_shortcut = QShortcut(QKeySequence(Qt.Key_B), self)
+        self.brush_shortcut.activated.connect(self.cycle_brush_size)
+
         self.update_toolbar_visibility() # Call once to set initial state
         
         self.viewer.load_image(HARDCODED_IMAGE_PATH)
         self.viewer.emit_current_color()
+
+        self.change_tool(0)
 
     def setup_toolbar(self):
         toolbar = QToolBar("Tools")
@@ -828,18 +850,29 @@ class MainWindow(QMainWindow):
         self.paint_ui_actions.append(act)
 
         brush_group = QActionGroup(self)
-        sizes = [("1px", 1), ("2px", 2), ("4px", 4), ("6px", 6), ("10px", 10)]
+        self.brush_sizes_list = [1, 2, 4, 6, 10] 
+        self.brush_action_map = {} # Maps size -> QAction
 
-        for label, size in sizes:
+        # Zip labels with our list
+        labels = ["1px", "2px", "4px", "6px", "10px"]
+        
+        for label, size in zip(labels, self.brush_sizes_list):
             action = QAction(label, self)
             action.setCheckable(True)
+            
             if size == 10:
                 action.setChecked(True)
                 self.viewer.brush_size = size
+            
+            # Connect to setter
             action.triggered.connect(lambda c, s=size: self.viewer.set_brush_size(s))
+            
             brush_group.addAction(action)
             toolbar.addAction(action)
             self.paint_ui_actions.append(action)
+            
+            # Save to map
+            self.brush_action_map[size] = action
 
         # ==========================================
         #  SELECTION TOOLS
@@ -1064,6 +1097,30 @@ class MainWindow(QMainWindow):
         next_index = (self.tool_combo.currentIndex() + 1) % count
         self.tool_combo.setCurrentIndex(next_index)
 
+    def cycle_brush_size(self):
+        # Only cycle if we are in Drawing Mode
+        if not isinstance(self.viewer.current_mode, PaintMode):
+            return
+
+        current_size = self.viewer.brush_size
+        
+        # Find current index
+        try:
+            current_index = self.brush_sizes_list.index(current_size)
+        except ValueError:
+            current_index = 0
+
+        # Calculate next index (wrap around with modulo)
+        next_index = (current_index + 1) % len(self.brush_sizes_list)
+        new_size = self.brush_sizes_list[next_index]
+
+        # 1. Update the UI (Check the correct button in the toolbar)
+        if new_size in self.brush_action_map:
+            self.brush_action_map[new_size].setChecked(True)
+
+        # 2. Update the Viewer (Updates brush size and cursor)
+        self.viewer.set_brush_size(new_size)
+
     def trigger_lut_update(self):
         csv_index = self.map_mode_combo.currentData()
         is_mixed = self.mix_checkbox.isChecked()
@@ -1076,7 +1133,22 @@ class MainWindow(QMainWindow):
 
     def update_color_display(self, color):
         pixmap = QPixmap(24, 24)
-        pixmap.fill(color)
+        
+        if color is None:
+            # Draw a transparent/checker pattern or just white with '?'
+            pixmap.fill(Qt.transparent)
+            painter = QPainter(pixmap)
+            # Draw a border
+            painter.setPen(Qt.black)
+            painter.drawRect(0, 0, 23, 23)
+            # Draw a Red X
+            painter.setPen(Qt.red)
+            painter.drawLine(0, 0, 23, 23)
+            painter.drawLine(0, 23, 23, 0)
+            painter.end()
+        else:
+            pixmap.fill(color)
+            
         self.color_display.setPixmap(pixmap)
 
     def save_map_data(self):
