@@ -1,0 +1,190 @@
+
+
+
+# generic selectable dicision
+	template_selectable_decision = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 10 # if above set to no, this is the cooldown for re-appear
+		cost = 0
+
+		allowed = {
+			always = yes
+		}
+
+		visible = {
+			always = yes
+		}
+
+		available = {
+			always = yes
+		}
+		
+		complete_effect = {
+			# when decision is taken
+		}
+	}
+
+
+
+	# timer decision
+	# can be selected like any other decision. When selected, starts a mission/timer
+	# an effect is executed when the timer runs out. Can be preemtpively aborted/run out
+	# is_good does not work with this
+	template_timer_decision = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 10 # if above set to no, this is the cooldown for re-appear
+		cost = 0
+
+		days_remove = 10
+
+		allowed = {
+			always = yes
+		}
+
+		visible = {
+			always = yes
+		}
+
+		available = {
+			always = yes
+		}
+
+		remove_trigger = {
+			always = no # allows the timer to be terminated pre-emtpively
+		}
+		
+		complete_effect = {
+			# when decision is taken
+		}
+
+		remove_effect = {
+			# when timer runs out or remove_trigger is true
+		}
+	}
+
+
+
+	# non-interactible mission
+	# A timer that activates on trigger and runs out. Can be cancelled one of two ways (available and cancel_trigger)
+	# Cannot be interacted with/selected
+	# activate_mission = mission_name can be used to bypass allowed and activation
+	template_non_selectable_mission = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 10 # if above set to no, this is the cooldown for re-appear
+		days_mission_timeout = 100
+		selectable_mission = no
+		is_good = no # is the timer running out a good thing?
+
+		allowed = {
+			always = yes
+		}
+
+		activation = {
+			always = yes # this decides when the mission starts/activates. Once ture, the mission continues even if this turns back false
+		}
+
+		available = {
+			always = no # this cancels the mission and triggers complete_effect. Don't remove this, because it will default to always = yes
+		}
+		complete_effect = {
+			# when the decision starts/activates
+		}
+
+		cancel_trigger = {
+			always = no # aborts the mission and triggers cancel_effect. Can be omitted
+		}
+		cancel_effect = {
+
+		}
+
+		timeout_effect = {
+			# when the timer runs out uninterrupted
+		}
+	}
+
+
+
+	# interactible mission
+	# A timer that activates on trigger and runs out. Can be "completed" by selecting it or cancelled with cancel_trigger
+	# activate_mission = mission_name can be used to bypass allowed and activation
+	template_selectable_mission = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 10 # if above set to no, this is the cooldown for re-appear
+		days_mission_timeout = 100
+		selectable_mission = yes
+		cost = 0 # what it costs to select this decision
+		is_good = no # is the timer running out a good thing?
+
+		allowed = {
+			always = yes
+		}
+
+		activation = {
+			always = yes # this decides when the mission starts/activates. Once ture, the mission continues even if this turns back false
+		}
+
+		available = {
+			always = yes # if true, then the mission can be selected/interacted with. Selecting it will cancel it and run complete_effect
+		}
+		complete_effect = {
+			# when the decision starts/activates
+		}
+
+		cancel_trigger = {
+			always = no # aborts the mission and triggers cancel_effect. Can be omitted
+		}
+		cancel_effect = {
+
+		}
+
+		timeout_effect = {
+			# when the timer runs out uninterrupted
+		}
+	}
+
+
+
+	# Decision that targets a country or state
+	template_targeted_decision = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 10 # if above set to no, this is the cooldown for re-appear
+		cost = 0 # what it costs to select this decision
+
+		# choose where the decisions appear. default is both
+		#on_map_mode = map_and_decisions_view | map_only | decision_view_only 
+
+		allowed = {
+			always = yes
+		}
+
+		target_root_trigger = {
+			always = yes # needs to be true for the country that gets this decision (not the target). Equivalent to visible. Visible also works but is superfluous and without this the decision isn't targeted
+		}
+
+		available = {
+			always = yes # if yes, then this decision can be selected, otherwise it can't
+		}
+
+		#state_target = yes # use to target states instead
+		targets = { LTH MOR MIR }
+		#target_array = neighbors # Arrays: https://hoi4.paradoxwikis.com/Data_structures#Game_arrays Some work, others don't
+		#targets_dynamic = yes # Allows you to target civil war dynamic tags by their original_tag
+		#target_non_existing = yes # Allows you to target countries that don't exist
+		target_trigger = {
+			FROM = { always = yes }	# limit targets. Runs in ROOT scope. Target can be scoped to with FROM
+		}
+		
+		complete_effect = {
+			FROM = { add_political_power = 100 } # target can be scoped to with FROM
+		}
+	}
