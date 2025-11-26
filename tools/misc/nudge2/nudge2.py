@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene,
                                QPushButton, QDialog, QFormLayout, QDialogButtonBox,
                                QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout, QTextEdit)
 from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent, 
-                           QAction, QActionGroup)
+                           QAction, QActionGroup, QCursor)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal
 
 # --- IMPORT PILLOW (Robust DDS Support) ---
@@ -135,18 +135,48 @@ class PaintMode(ToolMode):
         view.set_active_color(color)
 
 class SelectionMode(ToolMode):
+    def __init__(self):
+        super().__init__()
+        # Initialize coordinates to track the previous click
+        self.last_x = 0
+        self.last_y = 0
+
     def getName(self): return "Selection"
-    # ... (Selection logic remains unchanged) ...
+
     def _update_selection(self, view, x, y, color, keep_existing=False):
         global selected_colors
         rgb_key = (color.red(), color.green(), color.blue())
+        
+        # 1. Update the Selection Data
         if not keep_existing:
             selected_colors.clear()
         selected_colors.add(rgb_key)
+        
+        # 2. Update the Global LUT
         update_composite_lut()
+        
         radius = 300
-        update_rect = QRectF(x - radius, y - radius, radius * 2, radius * 2)
-        view.refresh_viewport(update_rect)
+        
+        # 3. Handle Visual Updates
+        # Define the area around the NEW click
+        new_rect = QRectF(x - radius, y - radius, radius * 2, radius * 2)
+        
+        if not keep_existing:
+            # If we are NOT keeping the existing selection, we must 
+            # forcefully redraw the OLD location to "turn off" its highlight.
+            old_rect = QRectF(self.last_x - radius, self.last_y - radius, radius * 2, radius * 2)
+            
+            # Optimization: If the old and new rects overlap or are close, 
+            # we could unite them, but calling refresh twice is usually 
+            # faster than redrawing the huge empty space between two distant points.
+            view.refresh_viewport(old_rect)
+
+        # Always redraw the new location
+        view.refresh_viewport(new_rect)
+
+        # 4. Save position for next time
+        self.last_x = x
+        self.last_y = y
 
     def on_left_click(self, view, x, y, color):
         self._update_selection(view, x, y, color, keep_existing=False)
@@ -161,6 +191,7 @@ class SelectionMode(ToolMode):
         global selected_colors
         selected_colors.clear()
         update_composite_lut()
+        # Full refresh is acceptable on clear, or we could use last_x/y here too
         view.refresh_viewport()
 
 # ============================================================
@@ -358,6 +389,54 @@ class EditorView(QGraphicsView):
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
 
+        # REQUIRED: Allows us to track mouse movement without clicking button
+        self.setMouseTracking(True) 
+    
+        # Make sure the view can catch key presses
+        self.setFocusPolicy(Qt.StrongFocus)
+
+    # Add this helper method to EditorView
+    def _update_picker_cursor(self, mouse_pos):
+        """
+        Creates a dynamic cursor showing the color under the mouse.
+        """
+        x, y, color = self.get_interaction_data(mouse_pos)
+        
+        # 1. Create a transparent canvas for the cursor
+        size = 32
+        pix = QPixmap(size, size)
+        pix.fill(Qt.transparent)
+        
+        painter = QPainter(pix)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        
+        # 2. Draw the color bubble
+        # White outline (visibility on dark colors)
+        painter.setPen(QColor(255, 255, 255)) 
+        painter.setBrush(color)
+        painter.drawEllipse(2, 2, size - 5, size - 5)
+        
+        # Black inner outline (visibility on light colors)
+        painter.setBrush(Qt.NoBrush)
+        painter.setPen(QColor(0, 0, 0))
+        painter.drawEllipse(3, 3, size - 7, size - 7)
+        
+        painter.end()
+        
+        # 3. Set the cursor
+        self.setCursor(QCursor(pix))
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Alt:
+            # Immediately update cursor at current mouse position
+            self._update_picker_cursor(self.mapFromGlobal(QCursor.pos()).toPointF())
+        super().keyPressEvent(event)
+
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key_Alt:
+            self.setCursor(Qt.ArrowCursor) # Or whatever your default is
+        super().keyReleaseEvent(event)
+
     def emit_current_color(self):
         self.colorChanged.emit(self.current_color)
     
@@ -542,6 +621,14 @@ class EditorView(QGraphicsView):
             vs.setValue(vs.value() - delta.y())
             event.accept()
             return
+        
+        # If ALT is held but no buttons are clicked, update the color preview
+        modifiers = QApplication.keyboardModifiers()
+        if modifiers & Qt.AltModifier and not event.buttons():
+            self._update_picker_cursor(event.position())
+            # We don't call super() here because we don't want standard hover effects interfering
+            return
+    
         x, y, col = self.get_interaction_data(event.position())
         if event.buttons() & Qt.LeftButton:
             self.current_mode.on_left_drag(self, x, y, col)
@@ -567,7 +654,7 @@ class EditorView(QGraphicsView):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Pixel Editor - LUT Shader")
+        self.setWindowTitle("Nudge Tool V2")
         self.resize(1000, 700)
 
         self.paint_ui_actions = []
