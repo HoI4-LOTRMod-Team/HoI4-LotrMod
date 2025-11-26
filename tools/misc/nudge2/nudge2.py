@@ -688,6 +688,11 @@ class MainWindow(QMainWindow):
         self.select_ui_actions.append(act)
 
         self.btn_props = QPushButton("Show Properties")
+        self.btn_props.clicked.connect(self.show_props_func)
+        act = toolbar.addWidget(self.btn_props)
+        self.select_ui_actions.append(act)
+
+        self.btn_props = QPushButton("Split Provinces")
         self.btn_props.clicked.connect(self.split_selected_provinces_func)
         act = toolbar.addWidget(self.btn_props)
         self.select_ui_actions.append(act)

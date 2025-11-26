@@ -202,7 +202,8 @@ def create_new_province_from(old_rgb_tuple, new_prov_color=None):
                 new_prov_color = get_new_province_color(row[4])
             
             # 1. construct the data string WITHOUT a leading or trailing newline first
-            new_line_content = f"{len(csv)};{new_prov_color[0]};{new_prov_color[1]};{new_prov_color[2]};"
+            new_prov_id = len(csv)
+            new_line_content = f"{new_prov_id};{new_prov_color[0]};{new_prov_color[1]};{new_prov_color[2]};"
             new_line_content += f"{cached_prov_type};{row[5]};{row[6]};{row[7]}"
 
             # 2. Open in 'a+' (Append + Read) to check the file state
@@ -222,7 +223,25 @@ def create_new_province_from(old_rgb_tuple, new_prov_color=None):
                 # 3. Write the new line
                 file.write(new_line_content)
 
-            # TODO: fix state/stratregion
+            # fix state/stratregion by adding this province to the same as the OG
+            old_prov_id = row[0]
+            print(old_prov_id)
+            states = get_all_states()
+            for st in states:
+                if old_prov_id in st.province_list:
+                    st.province_list.append(new_prov_id)
+                    st.province_list.sort()
+                    st.apply_province_changes()
+                    st.save_to_file()
+                    break
+            regions = get_all_stratregion()
+            for st in regions:
+                if old_prov_id in st.province_list:
+                    st.province_list.append(new_prov_id)
+                    st.province_list.sort()
+                    st.apply_province_changes()
+                    st.save_to_file()
+                    break
                 
             return
 
