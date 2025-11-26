@@ -106,9 +106,7 @@ def create_new_state(provinces, state_name):
     # Add localization entry
     loc = LocFile(STATES_LOC_DIR)
     loc.add("STATE_"+str(new_state_id), state_name)
-    loc.save()
-
-    # TODO: fix strategic regions
+    loc.save(STATES_LOC_DIR)
 
 
 def transfer_provinces_to_state(provinces, destination_state_id):
@@ -163,6 +161,52 @@ def transfer_provinces_to_state(provinces, destination_state_id):
         target_state.pObj.Get("history").Get("buildings").Insert(str(bld))
     target_state.save_to_file()
 
+    # fix strat regions
+    fix_strat_regions(provinces)
+
+
+def transfer_provinces_to_strategicregion(provinces, destination_region_id):
+    all_regions = get_all_stratregion()
+
+    target_region = None
+
+    # Remove the transferred provinces from other states
+    changed_regions = []
+    for st in all_regions:
+        if st.region_id != destination_region_id:
+            for p in provinces:
+                if p in st.province_list:
+                    if st not in changed_regions: changed_regions.append(st)
+                    st.province_list.remove(p)
+            st.apply_province_changes()
+        else:
+            target_region = st
+
+    # save changed state files
+    for st in changed_regions:
+        st.save_to_file()
+
+    # transfer the provinces to the target state
+    for p in provinces:
+        if p not in target_region.province_list:
+            target_region.province_list.append(p)
+    target_region.province_list.sort()
+    target_region.apply_province_changes()
+    target_region.save_to_file()
+
+
+
+def fix_strat_regions(provinces_in_state):
+    regions = get_all_stratregion()
+    prov_set = set(provinces_in_state)
+
+    # Find region with the most overlap on the changed provinces
+    best_region = max(regions, key=lambda obj: len(prov_set.intersection(obj.province_list)))
+
+    # transfer these provinces to that strat region
+    transfer_provinces_to_strategicregion(provinces_in_state, best_region.region_id)
+
+
 
 
 
@@ -170,14 +214,22 @@ class StratRegion:
     pObj = None
     province_list = []
     region_id = -1
+    filepath = ""
 
     def __init__(self, file):
         self.pObj = ParseListFromFile_asPObj(file).Get("strategic_region")
         self.region_id = int(self.pObj.GetVal("id"))
         self.province_list = []
+        self.filepath = file
         provs = self.pObj.Get("provinces").value
         for prov in provs:
             self.province_list.append(int(prov.value))
+
+    def apply_province_changes(self):
+        self.pObj.Get("provinces").value = ParseTokenList(" ".join([str(p) for p in self.province_list]), parent=self.pObj.Get("provinces"))
+
+    def save_to_file(self):
+        SaveObjToFile(self.pObj, self.filepath)
 
 
 def get_all_stratregion():
