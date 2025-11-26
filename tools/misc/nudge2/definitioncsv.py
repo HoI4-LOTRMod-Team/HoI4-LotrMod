@@ -431,5 +431,9 @@ def split_pixels_geodesic(pixels, roughness=10.0):
 
     return set_1, set_2
 
-def get_prov_id_from_color(col):
-    return 1
+def get_prov_color_from_id(id):
+    csv = get_definition_csv()
+    for row in csv:
+        if row[0] == id:
+            return ((row[1], row[2], row[3]))
+    assert(False)

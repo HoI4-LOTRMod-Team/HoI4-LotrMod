@@ -6,10 +6,10 @@ from PySide6.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene,
                                QGraphicsPixmapItem, QMainWindow, QToolBar, 
                                QLabel, QWidget, QComboBox, QCheckBox, 
                                QPushButton, QDialog, QFormLayout, QDialogButtonBox,
-                               QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout, QTextEdit)
+                               QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout, QTextEdit, QTabWidget)
 from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent, 
                            QAction, QActionGroup, QCursor, QKeySequence, QShortcut)
-from PySide6.QtCore import Qt, QPointF, QRectF, Signal
+from PySide6.QtCore import Qt, QPointF, QRectF, Signal, QSize
 
 # --- IMPORT PILLOW (Robust DDS Support) ---
 try:
@@ -357,6 +357,85 @@ class ProvincePropertiesDialog(QDialog):
         self.buttons.rejected.connect(self.reject) 
         layout.addWidget(self.buttons)
 
+class FindProvinceDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Find Province")
+        self.setModal(True)
+        self.setFixedSize(300, 200) # Slightly taller for tabs
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        # Create Tabs
+        self.tabs = QTabWidget()
+        layout.addWidget(self.tabs)
+
+        # --- TAB 1: Search by ID (Default) ---
+        self.tab_id = QWidget()
+        id_layout = QFormLayout()
+        self.tab_id.setLayout(id_layout)
+        
+        self.spin_id = QSpinBox()
+        self.spin_id.setRange(0, 999999) # High range for Map IDs
+        self.spin_id.setButtonSymbols(QSpinBox.NoButtons)
+        #self.spin_id.setPlaceholderText("e.g. 4521")
+        
+        id_layout.addRow("Province ID:", self.spin_id)
+        self.tabs.addTab(self.tab_id, "By ID")
+
+        # --- TAB 2: Search by Color ---
+        self.tab_color = QWidget()
+        color_layout = QFormLayout()
+        self.tab_color.setLayout(color_layout)
+
+        self.spin_r = QSpinBox()
+        self.spin_g = QSpinBox()
+        self.spin_b = QSpinBox()
+
+        for spin in [self.spin_r, self.spin_g, self.spin_b]:
+            spin.setRange(0, 255)
+            spin.setButtonSymbols(QSpinBox.NoButtons)
+
+        color_layout.addRow("Red:", self.spin_r)
+        color_layout.addRow("Green:", self.spin_g)
+        color_layout.addRow("Blue:", self.spin_b)
+        
+        self.tabs.addTab(self.tab_color, "By Color")
+
+        # Buttons
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        layout.addWidget(self.buttons)
+
+    def get_result(self):
+        """
+        Returns a tuple: (found_success, (r, g, b))
+        """
+        # Check which tab is currently active
+        if self.tabs.currentIndex() == 0:
+            # --- ID MODE ---
+            prov_id = self.spin_id.value()
+            try:
+                # Call the external function from definitioncsv
+                color = get_prov_color_from_id(prov_id)
+                
+                # Validation: Ensure we actually got a color back
+                if color and len(color) == 3:
+                    # definitioncsv usually returns list/tuple, e.g. [120, 50, 60]
+                    return True, (int(color[0]), int(color[1]), int(color[2]))
+                else:
+                    print(f"ID {prov_id} exists but has no valid color definition.")
+                    return False, None
+            except Exception as e:
+                print(f"Error looking up ID {prov_id}: {e}")
+                return False, None
+
+        else:
+            # --- COLOR MODE ---
+            return True, (self.spin_r.value(), self.spin_g.value(), self.spin_b.value())
+
 
 # ============================================================
 #  VIEWER
@@ -484,6 +563,39 @@ class EditorView(QGraphicsView):
         painter.end()
         
         return QCursor(pix, int(center), int(center))
+    
+    def find_pixel_by_color(self, r, g, b):
+        """
+        Scans the data image for the first occurrence of the specific RGB.
+        Returns (x, y) tuple or None if not found.
+        """
+        if not self.data_image:
+            return None
+
+        # 1. Convert to NumPy (Use existing helper)
+        # Shape is (Height, Width, 4)
+        arr = self._qimage_to_numpy(self.data_image)
+
+        # 2. Define target (QImage is BGR order at indices 0,1,2)
+        # We need to find pixels where:
+        # Blue channel (0) == b
+        # Green channel (1) == g
+        # Red channel (2) == r
+        
+        # Create a boolean mask
+        # (This is very fast compared to Python loops)
+        mask = (arr[:, :, 0] == b) & (arr[:, :, 1] == g) & (arr[:, :, 2] == r)
+
+        # 3. Find indices
+        # argwhere returns array of [row, col] -> [y, x]
+        indices = np.argwhere(mask)
+
+        if len(indices) > 0:
+            # Return the first match (y, x) -> convert to (x, y)
+            y, x = indices[0]
+            return int(x), int(y)
+        
+        return None
     
     def update_active_cursor(self):
         """Decides which cursor to show based on Keys and Mode."""
@@ -750,158 +862,178 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Nudge Tool V2")
-        self.resize(1000, 700)
+        self.resize(1200, 800) # Slightly wider to accommodate the dock
 
         self.paint_ui_actions = []
         self.select_ui_actions = []
+        self.select_view_actions = []
 
         self.viewer = EditorView()
         self.setCentralWidget(self.viewer)
         self.viewer.colorChanged.connect(self.update_color_display)
         
-        self.setup_toolbar()
-        self.update_toolbar_visibility()
-
+        # --- CHANGED ORDER HERE ---
+        self.setup_side_panel() # Create the panel first
+        self.setup_toolbar()    # Create the toolbar second
+        
         self.tab_shortcut = QShortcut(QKeySequence(Qt.Key_Tab), self)
         self.tab_shortcut.activated.connect(self.cycle_tool_mode)
 
         self.brush_shortcut = QShortcut(QKeySequence(Qt.Key_B), self)
         self.brush_shortcut.activated.connect(self.cycle_brush_size)
 
-        self.update_toolbar_visibility() # Call once to set initial state
-        
         self.viewer.load_image(HARDCODED_IMAGE_PATH)
         self.viewer.emit_current_color()
 
+        # Set initial tool
         self.change_tool(0)
 
     def setup_toolbar(self):
-        toolbar = QToolBar("Tools")
+        """Sets up the top toolbar strictly for Active Tool controls."""
+        toolbar = QToolBar("Active Tool")
+        toolbar.setIconSize(QSize(24, 24)) # Optional, requires QSize import
         self.addToolBar(toolbar)
 
-        btn_save = QPushButton("Save Map")
-        btn_save.clicked.connect(self.save_map_data)
-        toolbar.addWidget(btn_save)
-        
-        toolbar.addSeparator()
-
-        toolbar.addWidget(QLabel("Map Mode: "))
-        self.map_mode_combo = QComboBox()
-        for name, idx in MAP_MODES:
-            self.map_mode_combo.addItem(name, idx)
-        self.map_mode_combo.currentIndexChanged.connect(self.trigger_lut_update)
-        toolbar.addWidget(self.map_mode_combo)
-        
-        self.mix_checkbox = QCheckBox("Mixed")
-        self.mix_checkbox.stateChanged.connect(self.trigger_lut_update)
-        toolbar.addWidget(self.mix_checkbox)
-
-        self.overlay_checkbox = QCheckBox("Overlay")
-        self.overlay_checkbox.stateChanged.connect(self.toggle_overlay)
-        toolbar.addWidget(self.overlay_checkbox)
-
-        toolbar.addSeparator()
-
-        toolbar.addWidget(QLabel("Tool: "))
+        # 1. Main Tool Selector
+        toolbar.addWidget(QLabel("  Active Tool:  "))
         self.tool_combo = QComboBox()
         self.tool_combo.addItem("View", ViewMode()) 
-        self.tool_combo.addItem("Drawing", PaintMode())
-        self.tool_combo.addItem("Select", SelectionMode()) 
-        
+        self.tool_combo.addItem("Painting", PaintMode())
+        self.tool_combo.addItem("Selection", SelectionMode()) 
         self.tool_combo.currentIndexChanged.connect(self.change_tool)
         toolbar.addWidget(self.tool_combo)
         
         toolbar.addSeparator()
 
         # ==========================================
-        #  PAINTING TOOLS (Modified)
+        #  PAINTING TOOL UI (Dynamic)
         # ==========================================
         
-        # 1. New Buttons for Creation
-        # Using lambda default arguments to capture the string
+        # New Province Generators
         btn_land = QPushButton("New Land")
         btn_land.clicked.connect(lambda checked=False: self.setup_new_province("land"))
-        act = toolbar.addWidget(btn_land)
-        self.paint_ui_actions.append(act)
+        self.paint_ui_actions.append(toolbar.addWidget(btn_land))
 
         btn_lake = QPushButton("New Lake")
         btn_lake.clicked.connect(lambda checked=False: self.setup_new_province("lake"))
-        act = toolbar.addWidget(btn_lake)
-        self.paint_ui_actions.append(act)
+        self.paint_ui_actions.append(toolbar.addWidget(btn_lake))
 
         btn_sea = QPushButton("New Sea")
         btn_sea.clicked.connect(lambda checked=False: self.setup_new_province("sea"))
-        act = toolbar.addWidget(btn_sea)
-        self.paint_ui_actions.append(act)
+        self.paint_ui_actions.append(toolbar.addWidget(btn_sea))
 
         toolbar.addSeparator()
 
-        # 2. Standard Paint UI
-        act = toolbar.addWidget(QLabel(" Color: "))
-        self.paint_ui_actions.append(act)
-
+        # Brush Controls
+        self.paint_ui_actions.append(toolbar.addWidget(QLabel(" Color: ")))
+        
         self.color_display = QLabel()
         self.color_display.setFixedSize(24, 24)
-        self.color_display.setStyleSheet("border: 1px solid #555;") 
-        act = toolbar.addWidget(self.color_display)
-        self.paint_ui_actions.append(act)
+        self.color_display.setStyleSheet("border: 1px solid #999; background-color: transparent;") 
+        self.paint_ui_actions.append(toolbar.addWidget(self.color_display))
         
-        act = toolbar.addWidget(QLabel(" Size: "))
-        self.paint_ui_actions.append(act)
+        self.paint_ui_actions.append(toolbar.addWidget(QLabel("   Size: ")))
 
         brush_group = QActionGroup(self)
         self.brush_sizes_list = [1, 2, 4, 6, 10] 
-        self.brush_action_map = {} # Maps size -> QAction
+        self.brush_action_map = {} 
 
-        # Zip labels with our list
-        labels = ["1px", "2px", "4px", "6px", "10px"]
-        
-        for label, size in zip(labels, self.brush_sizes_list):
+        for label, size in zip(["1px", "2px", "4px", "6px", "10px"], self.brush_sizes_list):
             action = QAction(label, self)
             action.setCheckable(True)
-            
             if size == 10:
                 action.setChecked(True)
                 self.viewer.brush_size = size
-            
-            # Connect to setter
             action.triggered.connect(lambda c, s=size: self.viewer.set_brush_size(s))
-            
             brush_group.addAction(action)
             toolbar.addAction(action)
             self.paint_ui_actions.append(action)
-            
-            # Save to map
             self.brush_action_map[size] = action
 
         # ==========================================
-        #  SELECTION TOOLS
+        #  SELECTION TOOL UI (Dynamic)
         # ==========================================
 
         self.btn_action1 = QPushButton("Create State")
         self.btn_action1.clicked.connect(self.create_state_func)
-        act = toolbar.addWidget(self.btn_action1)
-        self.select_ui_actions.append(act)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_action1))
 
         self.btn_action2 = QPushButton("Transfer to State")
         self.btn_action2.clicked.connect(self.transfer_to_state_func)
-        act = toolbar.addWidget(self.btn_action2)
-        self.select_ui_actions.append(act)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_action2))
 
         self.btn_action3 = QPushButton("Set Properties")
         self.btn_action3.clicked.connect(self.set_properties_func)
-        act = toolbar.addWidget(self.btn_action3)
-        self.select_ui_actions.append(act)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_action3))
 
         self.btn_props = QPushButton("Show Properties")
         self.btn_props.clicked.connect(self.show_props_func)
-        act = toolbar.addWidget(self.btn_props)
-        self.select_ui_actions.append(act)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_props))
 
-        self.btn_props = QPushButton("Split Provinces")
-        self.btn_props.clicked.connect(self.split_selected_provinces_func)
-        act = toolbar.addWidget(self.btn_props)
-        self.select_ui_actions.append(act)
+        self.btn_split = QPushButton("Split Provinces")
+        self.btn_split.clicked.connect(self.split_selected_provinces_func)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_split))
+
+        # View tool
+
+        self.btn_find = QPushButton("Find Province")
+        self.btn_find.clicked.connect(self.find_province_func)
+        self.select_view_actions.append(toolbar.addWidget(self.btn_find))
+
+        # Initial Update
+        self.update_toolbar_visibility()
+
+    def setup_side_panel(self):
+        """Creates a Dock Widget on the right for global settings."""
+        from PySide6.QtWidgets import QDockWidget, QGroupBox # Ensure these are imported
+
+        dock = QDockWidget("Map", self)
+        dock.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
+        dock.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
+        
+        content = QWidget()
+        layout = QVBoxLayout()
+        content.setLayout(layout)
+
+        # --- SECTION 1: VISUALIZATION ---
+        vis_group = QGroupBox("Visualization")
+        vis_layout = QVBoxLayout()
+        vis_group.setLayout(vis_layout)
+
+        vis_layout.addWidget(QLabel("Map Mode:"))
+        self.map_mode_combo = QComboBox()
+        for name, idx in MAP_MODES:
+            self.map_mode_combo.addItem(name, idx)
+        self.map_mode_combo.currentIndexChanged.connect(self.trigger_lut_update)
+        vis_layout.addWidget(self.map_mode_combo)
+        
+        self.mix_checkbox = QCheckBox("Mixed Mode")
+        self.mix_checkbox.stateChanged.connect(self.trigger_lut_update)
+        vis_layout.addWidget(self.mix_checkbox)
+
+        self.overlay_checkbox = QCheckBox("Show Overlay")
+        self.overlay_checkbox.stateChanged.connect(self.toggle_overlay)
+        vis_layout.addWidget(self.overlay_checkbox)
+        
+        layout.addWidget(vis_group)
+
+        # --- SECTION 2: FILE OPS ---
+        file_group = QGroupBox("File Operations")
+        file_layout = QVBoxLayout()
+        file_group.setLayout(file_layout)
+
+        btn_save = QPushButton("Save Bitmap")
+        btn_save.setMinimumHeight(40) # Make it big so it's hard to miss
+        btn_save.clicked.connect(self.save_map_data)
+        file_layout.addWidget(btn_save)
+
+        layout.addWidget(file_group)
+
+        # Add a spacer at the bottom to push everything up
+        layout.addStretch()
+
+        dock.setWidget(content)
+        self.addDockWidget(Qt.RightDockWidgetArea, dock)
 
     def change_tool(self, index):
         new_mode = self.tool_combo.currentData()
@@ -915,12 +1047,16 @@ class MainWindow(QMainWindow):
         current_mode = self.viewer.current_mode
         show_paint = isinstance(current_mode, PaintMode)
         show_select = isinstance(current_mode, SelectionMode)
+        show_view = isinstance(current_mode, ViewMode)
 
         for action in self.paint_ui_actions:
             action.setVisible(show_paint)
 
         for action in self.select_ui_actions:
             action.setVisible(show_select)
+
+        for action in self.select_view_actions:
+            action.setVisible(show_view)
 
     # --- ACTION HANDLERS ---
 
@@ -1090,6 +1226,37 @@ class MainWindow(QMainWindow):
             self.viewer.data_image = new_qimage
             self.viewer.refresh_viewport()
             print("Split Complete.")
+
+    def find_province_func(self):
+        dialog = FindProvinceDialog(self)
+        if dialog.exec():
+            # 1. Get the color from the dialog (it handles the ID->Color conversion)
+            success, rgb = dialog.get_result()
+
+            if not success or rgb is None:
+                print("Could not find a definition for that Province ID.")
+                return
+
+            r, g, b = rgb
+            print(f"Searching for RGB: {r}, {g}, {b}...")
+
+            # 2. Search for the pixel in the image
+            coords = self.viewer.find_pixel_by_color(r, g, b)
+
+            if coords:
+                x, y = coords
+                print(f"Found at {x}, {y}")
+
+                # 3. Select it
+                selected_colors.clear()
+                selected_colors.add((r, g, b))
+                update_composite_lut()
+                
+                # 4. Pan Camera
+                self.viewer.centerOn(x, y)
+                self.viewer.refresh_viewport()
+            else:
+                print(f"Color ({r},{g},{b}) found in CSV, but not on the map bitmap!")
 
     def cycle_tool_mode(self):
         """Cycles through View -> Drawing -> Select -> View..."""
