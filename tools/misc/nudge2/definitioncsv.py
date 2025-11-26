@@ -149,9 +149,9 @@ def get_expanded_definition():
                 csv[int(vp.value[0].value)][19] = (255, 0, 255)
             for bld in st.get_bld_list():
                 if bld.id.isnumeric():
-                    col = csv[int(bld.id)][19]
-                    col = (255 if col[2]>254 else 0, 255, 0)
-                    csv[int(bld.id)][19] = col
+                    c = csv[int(bld.id)][19]
+                    c = (255 if c[2]>254 else 0, 255, 0)
+                    csv[int(bld.id)][19] = c
 
     for st in regions:
         col = random_color()
