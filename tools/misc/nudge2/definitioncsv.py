@@ -191,13 +191,54 @@ def create_new_province_from(old_rgb_tuple, new_prov_color):
 
     csv = get_definition_csv()
     for row in csv:
+        # Check if the RGB matches
         if row[1] == old_rgb_tuple[0] and row[2] == old_rgb_tuple[1] and row[3] == old_rgb_tuple[2]:
-            new_line = f"\n{len(csv)};{new_prov_color[0]};{new_prov_color[1]};{new_prov_color[2]};"
-            new_line += f"{cached_prov_type};{row[5]};{row[6]};{row[7]}"
-            with open(DEFINITION_CSV_PATH, 'a') as file:
-                file.write(new_line)
+            
+            # 1. construct the data string WITHOUT a leading or trailing newline first
+            new_line_content = f"{len(csv)};{new_prov_color[0]};{new_prov_color[1]};{new_prov_color[2]};"
+            new_line_content += f"{cached_prov_type};{row[5]};{row[6]};{row[7]}"
+
+            # 2. Open in 'a+' (Append + Read) to check the file state
+            with open(DEFINITION_CSV_PATH, 'a+') as file:
+                file.seek(0, 2) # Move cursor to the very end of the file
+                file_size = file.tell()
+                
+                # If file is not empty, check the last character
+                if file_size > 0:
+                    file.seek(file_size - 1) # Move back one character
+                    last_char = file.read(1)
+                    
+                    # If the last char is NOT a newline, we must add one to separate our new entry
+                    if last_char != '\n':
+                        file.write('\n')
+                
+                # 3. Write the new line
+                file.write(new_line_content)
+                
             return
+
     assert(False) # This code should be unreachable
+
+
+def update_province_properties(provinces, overwrite_data):
+    # 1. Read everything into memory
+    with open(DEFINITION_CSV_PATH, 'r', newline='') as f:
+        reader = csv.reader(f, delimiter=';')
+        data = list(reader) # Loads whole file into a list of lists
+
+    # 2. Modify the specific lines
+    for prov in provinces:
+        if "type" in overwrite_data.keys(): data[prov][4] = overwrite_data["type"]
+        if "coastal" in overwrite_data.keys(): data[prov][5] = overwrite_data["coastal"]
+        if "terrain" in overwrite_data.keys(): data[prov][6] = overwrite_data["terrain"]
+        if "continent" in overwrite_data.keys(): data[prov][7] = overwrite_data["continent"]
+
+    # 3. Write everything back
+    with open(DEFINITION_CSV_PATH, 'w', newline='') as f:
+        writer = csv.writer(f, delimiter=';')
+        writer.writerows(data)
+
+    print("Modified provinces: " + str(provinces) + " with values: " + str(overwrite_data))
 
 
 

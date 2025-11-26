@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene,
                                QGraphicsPixmapItem, QMainWindow, QToolBar, 
                                QLabel, QWidget, QComboBox, QCheckBox, 
                                QPushButton, QDialog, QFormLayout, QDialogButtonBox,
-                               QVBoxLayout, QSpinBox, QLineEdit)
+                               QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout)
 from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent, 
                            QAction, QActionGroup)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal
@@ -219,6 +219,85 @@ class TransferProvsDialog(QDialog):
 
     def get_data(self):
         return {"target_state": self.available_states.currentData()}
+
+class ProvincePropertiesDialog(QDialog):
+    # --- CONFIGURATION: EDIT OPTIONS HERE ---
+    PROPERTIES_CONFIG = {
+        "type":      ["land", "sea", "lake"],
+        "coastal":   ["true", "false"],
+        "terrain":   [
+            "unknown",
+            "ocean",
+            "lakes",
+            "forest",
+            "hills",
+            "mountain",
+            "plains",
+            "dark_grounds",
+            "urban",
+            "jungle",
+            "marsh",
+            "desert",
+            "water_fjords",
+            "water_shallow_sea",
+            "water_deep_ocean",
+        ],
+        "continent": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"]
+    }
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Set Province Properties")
+        self.setModal(True)
+        self.setMinimumWidth(350)
+
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+
+        # Dictionary to store widget references: {"Type": (checkbox, combobox), ...}
+        self.widgets = {}
+
+        # Generate rows based on the configuration
+        for name, options in self.PROPERTIES_CONFIG.items():
+            row_layout = QHBoxLayout()
+            
+            # The Checkbox (Enable/Disable property)
+            chk = QCheckBox(name)
+            chk.setChecked(False)
+            
+            # The Dropdown
+            combo = QComboBox()
+            combo.addItems(options)
+            combo.setEnabled(False) # Disabled by default
+            
+            # Logic: Disable combo if checkbox is unchecked
+            chk.toggled.connect(combo.setEnabled)
+
+            # Add to layout
+            row_layout.addWidget(chk)
+            row_layout.addWidget(combo)
+            self.layout.addLayout(row_layout)
+            
+            # Store reference
+            self.widgets[name] = (chk, combo)
+
+        # Standard Buttons
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        self.layout.addWidget(self.buttons)
+
+    def get_data(self):
+        """
+        Returns a dict of properties to change.
+        Format: {'Type': 'Land', 'Terrain': 'Forest'} 
+        Only includes keys where the checkbox was checked.
+        """
+        result = {}
+        for name, (chk, combo) in self.widgets.items():
+            if chk.isChecked():
+                result[name] = combo.currentText()
+        return result
 
 
 # ============================================================
@@ -582,10 +661,17 @@ class MainWindow(QMainWindow):
         act = toolbar.addWidget(self.btn_action2)
         self.select_ui_actions.append(act)
 
+        self.btn_action3 = QPushButton("Set Properties")
+        self.btn_action3.clicked.connect(self.set_properties_func)
+        act = toolbar.addWidget(self.btn_action3)
+        self.select_ui_actions.append(act)
+
     def change_tool(self, index):
         new_mode = self.tool_combo.currentData()
         self.viewer.current_mode = new_mode
         self.update_toolbar_visibility()
+        selected_colors.clear()
+        self.trigger_lut_update()
 
     def update_toolbar_visibility(self):
         current_mode = self.viewer.current_mode
@@ -634,6 +720,29 @@ class MainWindow(QMainWindow):
             transfer_provinces_to_state(provs, data['target_state'])
             selected_colors.clear()
             self.trigger_lut_update()
+
+    def set_properties_func(self):
+        # 1. Check if we actually have a selection
+        provs = selected_colors_to_provinces()
+        if not provs:
+            print("No provinces selected.")
+            return
+
+        # 2. Open the Dialog
+        dialog = ProvincePropertiesDialog(self)
+        if dialog.exec():
+            # 3. Get the data (only checked items)
+            data = dialog.get_data()
+            
+            if data:
+                # 4. Call your external logic
+                update_province_properties(provs, data)
+                
+                # 5. Cleanup (Optional: clear selection after apply)
+                selected_colors.clear()
+                self.trigger_lut_update()
+            else:
+                print("No properties selected to update.")
 
     def trigger_lut_update(self):
         csv_index = self.map_mode_combo.currentData()
