@@ -248,87 +248,6 @@ def create_new_province_from(old_rgb_tuple, new_prov_color=None):
     assert(False) # This code should be unreachable
 
 
-def update_province_properties(provinces, overwrite_data):
-    # 1. Read everything into memory
-    with open(DEFINITION_CSV_PATH, 'r', newline='') as f:
-        reader = csv.reader(f, delimiter=';')
-        data = list(reader) # Loads whole file into a list of lists
-
-    # 2. Modify the specific lines
-    for prov in provinces:
-        if "type" in overwrite_data.keys(): data[prov][4] = overwrite_data["type"]
-        if "coastal" in overwrite_data.keys(): data[prov][5] = overwrite_data["coastal"]
-        if "terrain" in overwrite_data.keys(): data[prov][6] = overwrite_data["terrain"]
-        if "continent" in overwrite_data.keys(): data[prov][7] = overwrite_data["continent"]
-
-    # 3. Write everything back
-    with open(DEFINITION_CSV_PATH, 'w', newline='') as f:
-        writer = csv.writer(f, delimiter=';')
-        writer.writerows(data)
-
-    print("Modified provinces: " + str(provinces) + " with values: " + str(overwrite_data))
-
-
-def get_province_property_text(selected_provinces):
-    """
-    Analyzes selected provinces and returns a summary string.
-    Shows specific values if all selected provinces share them,
-    otherwise shows '-- mixed --'.
-    """
-    definition = get_expanded_definition()
-    
-    if not selected_provinces:
-        return "No provinces selected."
-
-    # Configuration mapping: Index -> Label
-    # Using a list of tuples to maintain order
-    relevant_columns = [
-        (4, "Type"),
-        (5, "Coastal"),
-        (6, "Terrain"),
-        (7, "Continent"),
-        (13, "State"),
-        (15, "Region"),
-        (17, "Impassable")
-    ]
-
-    output_lines = []
-    
-    # 1. Add Header with count
-    count = len(selected_provinces)
-    output_lines.append(f"Selection Count: {count}")
-    output_lines.append(f"Selection: {selected_provinces}")
-    output_lines.append("-" * 30)
-
-    # 2. Iterate through specific columns to check properties
-    for col_index, title in relevant_columns:
-        # Extract values for this specific column from all selected rows
-        # We use a set to automatically filter down to unique values
-        values = set()
-        for prov_idx in selected_provinces:
-            # Safety check to ensure index exists in definition
-            if 0 <= prov_idx < len(definition):
-                val = definition[prov_idx][col_index]
-                values.add(val)
-        
-        # Determine display string
-        if len(values) == 1:
-            # All selected rows have the same value
-            display_value = str(list(values)[0])
-        elif len(values) > 1:
-            # Different values exist in the selection
-            display_value = "-- mixed --"
-        else:
-            # Should technically not happen unless indices were invalid
-            display_value = "N/A"
-
-        # Format line: Title (padded to 12 chars) : Value
-        output_lines.append(f"{title:<12}: {display_value}")
-
-    return "\n".join(output_lines)
-
-
-
 # geodesically splits a set of pixel coordinates
 def split_pixels_geodesic(pixels, roughness=10.0):
     """
@@ -437,3 +356,111 @@ def get_prov_color_from_id(id):
         if row[0] == id:
             return ((row[1], row[2], row[3]))
     assert(False)
+
+
+
+def update_state_properties(provinces, override_data):
+    # Get the state of the selected province
+
+    print(provinces)
+    print(override_data)
+
+    return
+
+
+#def get_prov_props(provinces):
+#    return {}
+
+def set_prov_props(provinces, overwrite_data):
+    # 1. Read everything into memory
+    with open(DEFINITION_CSV_PATH, 'r', newline='') as f:
+        reader = csv.reader(f, delimiter=';')
+        data = list(reader) # Loads whole file into a list of lists
+
+    # 2. Modify the specific lines
+    for prov in provinces:
+        if "type" in overwrite_data.keys(): data[prov][4] = overwrite_data["type"]
+        if "coastal" in overwrite_data.keys(): data[prov][5] = overwrite_data["coastal"]
+        if "terrain" in overwrite_data.keys(): data[prov][6] = overwrite_data["terrain"]
+        if "continent" in overwrite_data.keys(): data[prov][7] = overwrite_data["continent"]
+
+    # 3. Write everything back
+    with open(DEFINITION_CSV_PATH, 'w', newline='') as f:
+        writer = csv.writer(f, delimiter=';')
+        writer.writerows(data)
+
+    print("Modified provinces: " + str(provinces) + " with values: " + str(overwrite_data))
+
+
+def get_prov_props(selected_provinces):
+    """
+    Analyzes selected provinces and returns a dictionary.
+    
+    - 'type', 'coastal', 'terrain', 'continent' return as dictionary keys.
+    - 'state', 'region', 'impassable' are appended to the 'info' text.
+    """
+    definition = get_expanded_definition()
+    
+    if not selected_provinces:
+        return {"info": "No provinces selected."}
+
+    # Configuration: (Column Index, Label, Destination)
+    # Destination: 'dict' = key in return object, 'info' = append to info string
+    prop_config = [
+        (4, "type", "dict"),
+        (5, "coastal", "dict"),
+        (6, "terrain", "dict"),
+        (7, "continent", "dict"),
+        (13, "state", "info"),
+        (15, "region", "info"),
+        (17, "impassable", "info")
+    ]
+
+    # 1. Calculate values for all properties
+    calculated_props = {}
+    
+    for col_index, label, dest in prop_config:
+        values = set()
+        for prov_idx in selected_provinces:
+            if 0 <= prov_idx < len(definition):
+                values.add(definition[prov_idx][col_index])
+        
+        # Determine uniformity
+        if len(values) == 1:
+            val = list(values)[0]
+            # Convert booleans or numbers to nice strings if necessary
+            final_value = str(val) 
+        elif len(values) > 1:
+            final_value = "-- mixed --"
+        else:
+            final_value = "N/A"
+            
+        calculated_props[label] = (final_value, dest)
+
+    # 2. Build the 'info' string
+    count = len(selected_provinces)
+    
+    # Basic info
+    info_lines = [
+        f"Selection Count: {count}",
+        f"Selection: {selected_provinces}",
+        "---" # Visual separator
+    ]
+    
+    # Add the specific properties requested for the info block
+    for label, (val, dest) in calculated_props.items():
+        if dest == "info":
+            # Capitalize label for display (e.g., "state" -> "State")
+            info_lines.append(f"{label.capitalize()}: {val}")
+
+    # 3. Construct final dictionary
+    result = {
+        "info": "\n".join(info_lines)
+    }
+
+    # Add the remaining properties as dictionary keys
+    for label, (val, dest) in calculated_props.items():
+        if dest == "dict":
+            result[label] = val
+
+    return result

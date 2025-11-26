@@ -256,68 +256,89 @@ class TransferProvsDialog(QDialog):
     def get_data(self):
         return {"target_state": self.available_states.currentData()}
 
-class ProvinceSetPropertiesDialog(QDialog):
-    # --- CONFIGURATION: EDIT OPTIONS HERE ---
+class ProvincePropertiesDialog(QDialog):
+    # Shared configuration
     PROPERTIES_CONFIG = {
         "type":      ["land", "sea", "lake"],
         "coastal":   ["true", "false"],
         "terrain":   [
-            "unknown",
-            "ocean",
-            "lakes",
-            "forest",
-            "hills",
-            "mountain",
-            "plains",
-            "dark_grounds",
-            "urban",
-            "jungle",
-            "marsh",
-            "desert",
-            "water_fjords",
-            "water_shallow_sea",
-            "water_deep_ocean",
+            "unknown", "ocean", "lakes", "forest", "hills", "mountain", 
+            "plains", "dark_grounds", "urban", "jungle", "marsh", 
+            "desert", "water_fjords", "water_shallow_sea", "water_deep_ocean"
         ],
-        "continent": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"]
+        "continent": [str(i) for i in range(16)] # 0-15
     }
 
-    def __init__(self, parent=None):
+    def __init__(self, current_data, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Set Province Properties")
+        self.setWindowTitle("Province Properties")
         self.setModal(True)
-        self.setMinimumWidth(350)
+        self.resize(400, 500)
 
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-        # Dictionary to store widget references: {"Type": (checkbox, combobox), ...}
+        # --- 1. INFO SECTION (Read Only) ---
+        lbl_info = QLabel("Selection Info:")
+        lbl_info.setStyleSheet("font-weight: bold;")
+        self.layout.addWidget(lbl_info)
+
+        self.info_area = QTextEdit()
+        self.info_area.setPlainText(current_data.get("info", ""))
+        self.info_area.setReadOnly(True)
+        self.info_area.setMaximumHeight(100)
+        self.info_area.setStyleSheet("background-color: #f0f0f0; color: #333;")
+        self.layout.addWidget(self.info_area)
+
+        self.layout.addSpacing(10)
+        self.layout.addWidget(QLabel("Edit Properties (Check to Overwrite):"))
+        
         self.widgets = {}
 
-        # Generate rows based on the configuration
-        for name, options in self.PROPERTIES_CONFIG.items():
-            row_layout = QHBoxLayout()
+        form_layout = QFormLayout()
+
+        for key, options in self.PROPERTIES_CONFIG.items():
+            # Current value from selection
+            cur_val = current_data.get(key, "unknown")
+            is_mixed = cur_val == "-- mixed --"
+
+            # The Checkbox (Enable editing)
+            # Label includes the key name
+            chk = QCheckBox(key.capitalize())
+            chk.setChecked(False) # Default to OFF so we don't accidentally overwrite mixed values
             
-            # The Checkbox (Enable/Disable property)
-            chk = QCheckBox(name)
-            chk.setChecked(False)
-            
-            # The Dropdown
+            # The Combobox
             combo = QComboBox()
-            combo.addItems(options)
-            combo.setEnabled(False) # Disabled by default
             
-            # Logic: Disable combo if checkbox is unchecked
+            # Populate Combo
+            # If mixed, we add a specific item for it
+            display_options = list(options)
+            if is_mixed:
+                display_options.insert(0, "-- mixed --")
+            
+            combo.addItems(display_options)
+            
+            # Select the current value
+            index = combo.findText(cur_val, Qt.MatchFixedString)
+            if index >= 0:
+                combo.setCurrentIndex(index)
+            
+            combo.setEnabled(False) # Disabled until checkbox checked
+
+            # Logic: Toggle enable
             chk.toggled.connect(combo.setEnabled)
 
-            # Add to layout
-            row_layout.addWidget(chk)
-            row_layout.addWidget(combo)
-            self.layout.addLayout(row_layout)
-            
-            # Store reference
-            self.widgets[name] = (chk, combo)
+            # Logic: Auto-check if user changes combo manually (Optional UX polish)
+            # combo.activated.connect(lambda: chk.setChecked(True)) 
 
-        # Standard Buttons
+            # Layout: Checkbox on left, Combo on right
+            form_layout.addRow(chk, combo)
+            
+            self.widgets[key] = (chk, combo)
+
+        self.layout.addLayout(form_layout)
+
+        # --- 3. BUTTONS ---
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
@@ -325,37 +346,16 @@ class ProvinceSetPropertiesDialog(QDialog):
 
     def get_data(self):
         """
-        Returns a dict of properties to change.
-        Format: {'Type': 'Land', 'Terrain': 'Forest'} 
-        Only includes keys where the checkbox was checked.
+        Returns only the properties where the checkbox is CHECKED.
         """
         result = {}
-        for name, (chk, combo) in self.widgets.items():
+        for key, (chk, combo) in self.widgets.items():
             if chk.isChecked():
-                result[name] = combo.currentText()
+                val = combo.currentText()
+                # Don't submit "-- mixed --" if the user checked the box but didn't pick a real value
+                if val != "-- mixed --":
+                    result[key] = val
         return result
-    
-class ProvincePropertiesDialog(QDialog):
-    def __init__(self, text, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("Province Properties")
-        self.setModal(True)
-        self.resize(400, 300) # Give it a reasonable default size
-        
-        layout = QVBoxLayout()
-        self.setLayout(layout)
-
-        # Read-only text area to show the properties
-        self.text_area = QTextEdit()
-        print(text)
-        self.text_area.setPlainText(text)
-        self.text_area.setReadOnly(True)
-        layout.addWidget(self.text_area)
-
-        # Simple Close button
-        self.buttons = QDialogButtonBox(QDialogButtonBox.Close)
-        self.buttons.rejected.connect(self.reject) 
-        layout.addWidget(self.buttons)
 
 class FindProvinceDialog(QDialog):
     def __init__(self, parent=None):
@@ -962,13 +962,17 @@ class MainWindow(QMainWindow):
         self.btn_action2.clicked.connect(self.transfer_to_state_func)
         self.select_ui_actions.append(toolbar.addWidget(self.btn_action2))
 
-        self.btn_action3 = QPushButton("Set Properties")
-        self.btn_action3.clicked.connect(self.set_properties_func)
-        self.select_ui_actions.append(toolbar.addWidget(self.btn_action3))
+        self.btn_prov_props = QPushButton("Prov. Properties")
+        self.btn_prov_props.clicked.connect(self.edit_province_properties_func)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_prov_props))
 
-        self.btn_props = QPushButton("Show Properties")
-        self.btn_props.clicked.connect(self.show_props_func)
-        self.select_ui_actions.append(toolbar.addWidget(self.btn_props))
+        #self.btn_action3 = QPushButton("Set Properties")
+        #self.btn_action3.clicked.connect(self.set_properties_func)
+        #self.select_ui_actions.append(toolbar.addWidget(self.btn_action3))
+#
+        #self.btn_props = QPushButton("Show Properties")
+        #self.btn_props.clicked.connect(self.show_props_func)
+        #self.select_ui_actions.append(toolbar.addWidget(self.btn_props))
 
         self.btn_split = QPushButton("Split Provinces")
         self.btn_split.clicked.connect(self.split_selected_provinces_func)
@@ -1095,39 +1099,33 @@ class MainWindow(QMainWindow):
             selected_colors.clear()
             self.trigger_lut_update()
 
-    def set_properties_func(self):
-        # 1. Check if we actually have a selection
+    def edit_province_properties_func(self):
+        # 1. Get selected IDs
         provs = selected_colors_to_provinces()
         if not provs:
             print("No provinces selected.")
             return
 
-        # 2. Open the Dialog
-        dialog = ProvinceSetPropertiesDialog(self)
+        # 2. Gather Data (Current State)
+        # This handles the "Mixed" logic and Info string
+        current_data = get_prov_props(provs)
+
+        # 3. Open the Unified Dialog
+        dialog = ProvincePropertiesDialog(current_data, self)
+        
         if dialog.exec():
-            # 3. Get the data (only checked items)
-            data = dialog.get_data()
+            # 4. Get overrides (only what was checked)
+            changes = dialog.get_data()
             
-            if data:
-                # 4. Call your external logic
-                update_province_properties(provs, data)
+            if changes:
+                # 5. Apply changes
+                set_prov_props(provs, changes)
                 
-                # 5. Cleanup (Optional: clear selection after apply)
+                # 6. Cleanup
                 selected_colors.clear()
                 self.trigger_lut_update()
             else:
-                print("No properties selected to update.")
-
-    def show_props_func(self):
-        # 1. Get selected IDs
-        provs = selected_colors_to_provinces()
-        
-        # 2. Call the external function
-        text_content = get_province_property_text(provs)
-        
-        # 3. Show Dialog
-        dialog = ProvincePropertiesDialog(text_content, self)
-        dialog.exec()
+                print("No changes made.")
 
     def split_selected_provinces_func(self):
         # 1. Check selection
