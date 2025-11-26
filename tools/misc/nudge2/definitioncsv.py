@@ -1,6 +1,7 @@
 import csv
 import random
 import heapq
+import hashlib
 
 from pdx_parser import *
 
@@ -107,6 +108,30 @@ def get_existing_prov_colors():
 def random_color():
     return tuple(random.randint(0, 255) for _ in range(3))
 
+def get_color_from_seed(seed_str: str) -> tuple[int, int, int]:
+    """
+    Returns an RGB tuple based on a string seed.
+    Enforces the max 3-byte input constraint.
+    """
+    # 1. Enforce max 3 bytes constraint (optional based on your needs)
+    if len(seed_str.encode('utf-8')) > 3:
+        raise ValueError("Seed string exceeds 3 bytes.")
+
+    # 2. Hash the string (MD5 is fast and sufficient for non-security colors)
+    # We encode to utf-8 to get bytes
+    hash_object = hashlib.md5(seed_str.encode('utf-8'))
+    
+    # 3. Get the digest (bytes)
+    hex_digest = hash_object.hexdigest()
+
+    # 4. Convert the first 6 hex characters (3 bytes) into integers
+    # R: chars 0-2, G: chars 2-4, B: chars 4-6
+    r = int(hex_digest[0:2], 16)
+    g = int(hex_digest[2:4], 16)
+    b = int(hex_digest[4:6], 16)
+
+    return (r, g, b)
+
 # Adds:
 #   8: province-color
 #   9: terrain-color
@@ -120,6 +145,8 @@ def random_color():
 #  17: impassable
 #  18: impassable-color
 #  19: victory points and buildings
+#  20: owner country
+#  21: owner country color
 def get_expanded_definition():
 
     csv = get_definition_csv()
@@ -141,9 +168,12 @@ def get_expanded_definition():
         row.append((0,0,0))
         row.append((0,0,0))
         row.append(type_colormap[row[4]]) # using type for base for prov/build mode
+        row.append((0,0,0))
+        row.append((0,0,0))
 
     for st in states:
         col = random_color()
+        ow_col = get_color_from_seed(st.owner)
         for prov in st.province_list:
             csv[prov][13] = st.state_id
             csv[prov][14] = col
@@ -157,6 +187,9 @@ def get_expanded_definition():
                     c = csv[int(bld.id)][19]
                     c = (255 if c[2]>254 else 0, 255, 0)
                     csv[int(bld.id)][19] = c
+
+            csv[prov][20] = st.owner
+            csv[prov][21] = ow_col
 
     for st in regions:
         col = random_color()

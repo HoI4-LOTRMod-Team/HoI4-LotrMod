@@ -37,6 +37,7 @@ MAP_MODES = [
     ("Strat Region", 16),
     ("Impassable", 18),
     ("VP/Buildings", 19),
+    ("Countries", 21),
 ]
 
 # ============================================================

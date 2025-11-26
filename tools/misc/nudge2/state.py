@@ -14,6 +14,7 @@ class State:
     state_id = -1
     is_impassable = False
     filepath = ""
+    owner = ""
 
     def __init__(self, file):
         self.pObj = ParseListFromFile_asPObj(file).Get("state")
@@ -24,6 +25,9 @@ class State:
         provs = self.pObj.Get("provinces").value
         for prov in provs:
             self.province_list.append(int(prov.value))
+
+        if self.pObj.Has("history") and self.pObj.Get("history").Has("owner"):
+            self.owner = str(self.pObj.Get("history").GetVal("owner"))
 
     def apply_province_changes(self):
         self.pObj.Get("provinces").value = ParseTokenList(" ".join([str(p) for p in self.province_list]), parent=self.pObj.Get("provinces"))
