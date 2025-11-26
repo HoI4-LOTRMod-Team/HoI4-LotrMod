@@ -356,6 +356,108 @@ class ProvincePropertiesDialog(QDialog):
                 if val != "-- mixed --":
                     result[key] = val
         return result
+    
+class StatePropertiesDialog(QDialog):
+    # predefined categories for the dropdown
+    CATEGORIES = [
+        "wasteland", "enclave", "tiny_island", "pastoral", "rural", 
+        "town", "large_town", "city", "large_city", "metropolis", "megalopolis"
+    ]
+
+    def __init__(self, current_data, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("State Properties")
+        self.setModal(True)
+        self.resize(400, 450)
+
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+
+        # --- 1. INFO SECTION (Read Only) ---
+        lbl_info = QLabel("State Info:")
+        lbl_info.setStyleSheet("font-weight: bold;")
+        self.layout.addWidget(lbl_info)
+
+        self.info_area = QTextEdit()
+        self.info_area.setPlainText(current_data.get("info", ""))
+        self.info_area.setReadOnly(True)
+        self.info_area.setMaximumHeight(80)
+        self.info_area.setStyleSheet("background-color: #f0f0f0; color: #333;")
+        self.layout.addWidget(self.info_area)
+
+        self.layout.addSpacing(10)
+        self.layout.addWidget(QLabel("Edit Properties (Check to Overwrite):"))
+
+        self.widgets = {}
+        form_layout = QFormLayout()
+
+        # Helper to add rows dynamically based on widget type
+        def add_row(key, label_text, widget_obj, val_list=None):
+            cur_val = current_data.get(key, "")
+            is_mixed = cur_val == "-- mixed --"
+
+            # The Checkbox
+            chk = QCheckBox(label_text)
+            chk.setChecked(False)
+
+            # Configure Widget
+            if isinstance(widget_obj, QComboBox) and val_list:
+                display_options = list(val_list)
+                if is_mixed:
+                    display_options.insert(0, "-- mixed --")
+                widget_obj.addItems(display_options)
+                
+                # Set Index
+                index = widget_obj.findText(cur_val, Qt.MatchFixedString)
+                if index >= 0:
+                    widget_obj.setCurrentIndex(index)
+            
+            elif isinstance(widget_obj, QLineEdit):
+                widget_obj.setText(cur_val)
+                if is_mixed:
+                    widget_obj.setPlaceholderText("-- mixed --")
+                    widget_obj.setText("") # Clear text so they don't accidentally save "-- mixed --"
+
+            widget_obj.setEnabled(False)
+            chk.toggled.connect(widget_obj.setEnabled)
+
+            form_layout.addRow(chk, widget_obj)
+            self.widgets[key] = (chk, widget_obj)
+
+        # --- 2. INPUT FIELDS ---
+        
+        # Name (Text Field)
+        add_row("name", "State Name", QLineEdit())
+
+        # Impassable (Yes/No)
+        add_row("impassable", "Impassable", QComboBox(), ["yes", "no"])
+
+        # Category (Dropdown)
+        add_row("state_category", "Category", QComboBox(), self.CATEGORIES)
+
+        self.layout.addLayout(form_layout)
+
+        # --- 3. BUTTONS ---
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        self.layout.addWidget(self.buttons)
+
+    def get_data(self):
+        """ Returns only the properties where the checkbox is CHECKED. """
+        result = {}
+        for key, (chk, widget) in self.widgets.items():
+            if chk.isChecked():
+                val = None
+                if isinstance(widget, QComboBox):
+                    val = widget.currentText()
+                elif isinstance(widget, QLineEdit):
+                    val = widget.text()
+                
+                # Validation: Don't submit mixed placeholders
+                if val != "-- mixed --":
+                    result[key] = val
+        return result
 
 class FindProvinceDialog(QDialog):
     def __init__(self, parent=None):
@@ -966,13 +1068,9 @@ class MainWindow(QMainWindow):
         self.btn_prov_props.clicked.connect(self.edit_province_properties_func)
         self.select_ui_actions.append(toolbar.addWidget(self.btn_prov_props))
 
-        #self.btn_action3 = QPushButton("Set Properties")
-        #self.btn_action3.clicked.connect(self.set_properties_func)
-        #self.select_ui_actions.append(toolbar.addWidget(self.btn_action3))
-#
-        #self.btn_props = QPushButton("Show Properties")
-        #self.btn_props.clicked.connect(self.show_props_func)
-        #self.select_ui_actions.append(toolbar.addWidget(self.btn_props))
+        self.btn_state_props = QPushButton("State Properties")
+        self.btn_state_props.clicked.connect(self.edit_state_properties_func)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_state_props))
 
         self.btn_split = QPushButton("Split Provinces")
         self.btn_split.clicked.connect(self.split_selected_provinces_func)
@@ -1126,6 +1224,43 @@ class MainWindow(QMainWindow):
                 self.trigger_lut_update()
             else:
                 print("No changes made.")
+
+    def edit_state_properties_func(self):
+        # 1. Get selected IDs (We use provinces to find the states)
+        provs = selected_colors_to_provinces()
+        if not provs:
+            print("No selection to identify states.")
+            return
+
+        # 2. Gather Data 
+        # You said you will handle these functions, but the flow requires 
+        # fetching the data first to populate the dialog.
+        try:
+            # expected return: {"name": "Texas", "impassable": "no", "info": "State ID: 123..."}
+            # or {"name": "-- mixed --", ...} if multiple states selected
+            current_data = get_state_props(provs) 
+        except NameError:
+            print("Backend function 'get_state_props' not found.")
+            return
+
+        # 3. Open Dialog
+        dialog = StatePropertiesDialog(current_data, self)
+        
+        if dialog.exec():
+            changes = dialog.get_data()
+            if changes:
+                try:
+                    # You implement this: apply 'changes' dict to states belonging to 'provs'
+                    set_state_props(provs, changes) 
+                    
+                    # Cleanup
+                    selected_colors.clear()
+                    self.trigger_lut_update()
+                    print(f"State properties updated: {changes}")
+                except NameError:
+                    print("Backend function 'set_state_props' not found.")
+            else:
+                print("No state changes made.")
 
     def split_selected_provinces_func(self):
         # 1. Check selection

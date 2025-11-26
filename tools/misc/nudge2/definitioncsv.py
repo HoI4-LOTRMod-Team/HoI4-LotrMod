@@ -6,6 +6,8 @@ from pdx_parser import *
 
 from state import *
 
+from pathlib import Path
+
 from collections import deque
 
 
@@ -368,8 +370,6 @@ def update_state_properties(provinces, override_data):
     return
 
 
-#def get_prov_props(provinces):
-#    return {}
 
 def set_prov_props(provinces, overwrite_data):
     # 1. Read everything into memory
@@ -464,3 +464,54 @@ def get_prov_props(selected_provinces):
             result[label] = val
 
     return result
+
+
+def set_state_props(provinces, overwrite_data):
+    if len(provinces) < 1:
+        return {"info": "No provinces selected."}
+    
+    states = get_all_states()
+    loc = LocFile(STATES_LOC_DIR)
+
+    for st in states:
+        if provinces[0] in st.province_list:
+            rename = None
+
+            if "impassable" in overwrite_data.keys():
+                if st.pObj.Has("impassable"): st.pObj.Remove("impassable")
+                if overwrite_data["impassable"] == "yes":
+                    st.pObj.Insert("impassable = yes")
+            if "name" in overwrite_data.keys():
+                loc.set(str(st.pObj.Get("name").value).replace('"', ''), overwrite_data["name"])
+                loc.save(STATES_LOC_DIR)
+                rename = str(st.state_id) + "-" + overwrite_data["name"] + ".txt"
+            if "state_category" in overwrite_data.keys():
+                if st.pObj.Has("state_category"):
+                    st.pObj.Get("state_category").value = overwrite_data["state_category"]
+                else:
+                    st.pObj.Insert("state_category = " + overwrite_data["state_category"])
+            st.save_to_file()
+            if rename is not None:
+                og_path = Path(st.filepath)
+                new_path = og_path.with_name(rename)
+                og_path.rename(new_path)
+
+
+def get_state_props(provinces):
+    if len(provinces) < 1:
+        return {"info": "No provinces selected."}
+
+    states = get_all_states()
+    loc = LocFile(STATES_LOC_DIR)
+    for st in states:
+        if provinces[0] in st.province_list:
+            ret = {}
+            ret["impassable"] = "yes" if st.is_impassable else "no"
+            ret["name"] = loc.get(str(st.pObj.Get("name").value).replace('"', ''))
+            ret["state_category"] = str(st.pObj.Get("state_category").value)
+
+            ret["info"] = f"ID: {st.state_id}"
+            
+            return ret
+
+    assert(False)
