@@ -114,6 +114,7 @@ def random_color():
 #  16: strat-region-color
 #  17: impassable
 #  18: impassable-color
+#  19: victory points and buildings
 def get_expanded_definition():
 
     csv = get_definition_csv()
@@ -134,6 +135,7 @@ def get_expanded_definition():
         row.append((0,0,0))
         row.append((0,0,0))
         row.append((0,0,0))
+        row.append(type_colormap[row[4]]) # using type for base for prov/build mode
 
     for st in states:
         col = random_color()
@@ -142,6 +144,14 @@ def get_expanded_definition():
             csv[prov][14] = col
             csv[prov][17] = st.is_impassable
             csv[prov][18] = impassable_colormap[st.is_impassable]
+
+            for vp in st.get_vp_list():
+                csv[int(vp.value[0].value)][19] = (255, 0, 255)
+            for bld in st.get_bld_list():
+                if bld.id.isnumeric():
+                    col = csv[int(bld.id)][19]
+                    col = (255 if col[2]>254 else 0, 255, 0)
+                    csv[int(bld.id)][19] = col
 
     for st in regions:
         col = random_color()

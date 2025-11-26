@@ -31,6 +31,16 @@ class State:
     def save_to_file(self):
         SaveObjToFile(self.pObj, self.filepath)
 
+    def get_vp_list(self):
+        if self.pObj.Has("history") and self.pObj.Get("history").Has("victory_points"):
+            return self.pObj.Get("history").GetAll("victory_points").value
+        return []
+    
+    def get_bld_list(self):
+        if self.pObj.Has("history") and self.pObj.Get("history").Has("buildings"):
+            return self.pObj.Get("history").Get("buildings").value
+        return []
+
 
 def get_all_states():
     states = []
@@ -121,20 +131,18 @@ def transfer_provinces_to_state(provinces, destination_state_id):
     # fix victory points
     vps = []
     for st in changed_states:
-        if st.pObj.Has("history") and st.pObj.Get("history").Has("victory_points"):
-            for vp in st.pObj.Get("history").GetAll("victory_points").value:
-                if int(vp.value[0].value) not in st.province_list:
-                    vps.append(vp)
-                    st.pObj.Get("history").value.remove(vp)
+        for vp in st.get_vp_list():
+            if int(vp.value[0].value) not in st.province_list:
+                vps.append(vp)
+                st.pObj.Get("history").value.remove(vp)
 
     # fix buildings
     buildings = []
     for st in changed_states:
-        if st.pObj.Has("history") and st.pObj.Get("history").Has("buildings"):
-            for bld in st.pObj.Get("history").Get("buildings").value:
-                if bld.id.isnumeric() and int(bld.id) not in st.province_list:
-                    buildings.append(bld)
-                    st.pObj.Get("history").Get("buildings").value.remove(bld)
+        for bld in st.get_bld_list():
+            if bld.id.isnumeric() and int(bld.id) not in st.province_list:
+                buildings.append(bld)
+                st.pObj.Get("history").Get("buildings").value.remove(bld)
 
 
     # save changed state files

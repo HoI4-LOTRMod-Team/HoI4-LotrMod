@@ -36,6 +36,7 @@ MAP_MODES = [
     ("State", 14),
     ("Strat Region", 16),
     ("Impassable", 18),
+    ("VP/Buildings", 19),
 ]
 
 # ============================================================
@@ -485,6 +486,12 @@ class MainWindow(QMainWindow):
         toolbar = QToolBar("Tools")
         self.addToolBar(toolbar)
 
+        btn_save = QPushButton("Save Map")
+        btn_save.clicked.connect(self.save_map_data)
+        toolbar.addWidget(btn_save)
+        
+        toolbar.addSeparator()
+
         toolbar.addWidget(QLabel("Map Mode: "))
         self.map_mode_combo = QComboBox()
         for name, idx in MAP_MODES:
@@ -657,12 +664,6 @@ class MainWindow(QMainWindow):
                 print("Map saved successfully.")
             else:
                 print(f"ERROR: Failed to save map to {save_path}")
-
-    def closeEvent(self, event):
-        """Triggers when the window is closed."""
-        #self.save_map_data() # TODO: Un-comment this to actually save the bitmap
-        # Accept the event to allow the window to close
-        event.accept()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
