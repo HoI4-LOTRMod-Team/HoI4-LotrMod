@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene,
                                QPushButton, QDialog, QFormLayout, QDialogButtonBox,
                                QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout, QTextEdit)
 from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent, 
-                           QAction, QActionGroup, QCursor)
+                           QAction, QActionGroup, QCursor, QKeySequence, QShortcut)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal
 
 # --- IMPORT PILLOW (Robust DDS Support) ---
@@ -193,6 +193,11 @@ class SelectionMode(ToolMode):
         update_composite_lut()
         # Full refresh is acceptable on clear, or we could use last_x/y here too
         view.refresh_viewport()
+
+class ViewMode(ToolMode):
+    def getName(self): return "View"
+    # Inherits empty click/drag methods from ToolMode, 
+    # so clicking does nothing (safe viewing).
 
 # ============================================================
 #  DIALOGUE FORMS (Unchanged)
@@ -426,6 +431,77 @@ class EditorView(QGraphicsView):
         # 3. Set the cursor
         self.setCursor(QCursor(pix))
 
+    def _get_brush_cursor(self):
+        """Generates a cursor that scales with the viewport zoom."""
+        # 1. Get the current scale factor from the view's transform matrix
+        # m11() typically holds the horizontal scale (zoom level)
+        zoom_factor = self.transform().m11()
+        
+        # 2. Calculate the visual size in SCREEN pixels
+        # If brush is 10px and zoom is 2.0x, cursor should be 20px
+        visual_size = self.brush_size * zoom_factor
+        
+        # Enforce minimum size so it doesn't disappear when zoomed out far
+        display_d = max(visual_size, 4)
+        
+        # Canvas needs padding to prevent clipping the antialiased edges
+        canvas_size = int(display_d + 6)
+        
+        pix = QPixmap(canvas_size, canvas_size)
+        pix.fill(Qt.transparent)
+        
+        painter = QPainter(pix)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        
+        # Center points
+        center = canvas_size / 2
+        radius = display_d / 2
+        
+        # 3. Draw the cursor
+        if display_d <= 4:
+            # Crosshair for very small visual sizes
+            painter.setPen(QColor(0, 0, 0))
+            painter.drawLine(int(center)-2, int(center), int(center)+2, int(center))
+            painter.drawLine(int(center), int(center)-2, int(center), int(center)+2)
+            painter.setPen(QColor(255, 255, 255))
+            painter.drawPoint(int(center), int(center))
+        else:
+            # Circle
+            painter.setPen(QColor(255, 255, 255)) # White outer
+            painter.setBrush(Qt.NoBrush)
+            painter.drawEllipse(QPointF(center, center), radius, radius)
+            
+            painter.setPen(QColor(0, 0, 0)) # Black inner
+            painter.drawEllipse(QPointF(center, center), radius - 1, radius - 1)
+            
+        painter.end()
+        
+        return QCursor(pix, int(center), int(center))
+    
+    def update_active_cursor(self):
+        """Decides which cursor to show based on Keys and Mode."""
+        modifiers = QApplication.keyboardModifiers()
+        
+        # Priority 1: Alt Key (Color Picker)
+        if modifiers & Qt.AltModifier:
+            # We use the dynamic picker we made earlier
+            # (Requires mouse position, will be updated by mouseMove)
+            self._update_picker_cursor(self.mapFromGlobal(QCursor.pos()).toPointF())
+            return
+
+        # Priority 2: Paint Mode
+        if isinstance(self.current_mode, PaintMode):
+            self.setCursor(self._get_brush_cursor())
+            return
+            
+        # Priority 3: Default
+        self.setCursor(Qt.ArrowCursor)
+
+    def set_brush_size(self, size):
+        """Setter to ensure cursor updates immediately when size changes."""
+        self.brush_size = size
+        self.update_active_cursor()
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Alt:
             # Immediately update cursor at current mouse position
@@ -434,7 +510,8 @@ class EditorView(QGraphicsView):
 
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Alt:
-            self.setCursor(Qt.ArrowCursor) # Or whatever your default is
+            # When Alt is released, check what mode we are in and restore that cursor
+            self.update_active_cursor()
         super().keyReleaseEvent(event)
 
     def emit_current_color(self):
@@ -646,6 +723,7 @@ class EditorView(QGraphicsView):
         zoom_out = 1 / zoom_in
         factor = zoom_in if event.angleDelta().y() > 0 else zoom_out
         self.scale(factor, factor)
+        self.update_active_cursor()
 
 # ============================================================
 #  MAIN WINDOW
@@ -667,6 +745,11 @@ class MainWindow(QMainWindow):
         self.setup_toolbar()
         self.update_toolbar_visibility()
 
+        self.tab_shortcut = QShortcut(QKeySequence(Qt.Key_Tab), self)
+        self.tab_shortcut.activated.connect(self.cycle_tool_mode)
+
+        self.update_toolbar_visibility() # Call once to set initial state
+        
         self.viewer.load_image(HARDCODED_IMAGE_PATH)
         self.viewer.emit_current_color()
 
@@ -699,8 +782,10 @@ class MainWindow(QMainWindow):
 
         toolbar.addWidget(QLabel("Tool: "))
         self.tool_combo = QComboBox()
+        self.tool_combo.addItem("View", ViewMode()) 
         self.tool_combo.addItem("Drawing", PaintMode())
         self.tool_combo.addItem("Select", SelectionMode()) 
+        
         self.tool_combo.currentIndexChanged.connect(self.change_tool)
         toolbar.addWidget(self.tool_combo)
         
@@ -751,7 +836,7 @@ class MainWindow(QMainWindow):
             if size == 10:
                 action.setChecked(True)
                 self.viewer.brush_size = size
-            action.triggered.connect(lambda c, s=size: setattr(self.viewer, 'brush_size', s))
+            action.triggered.connect(lambda c, s=size: self.viewer.set_brush_size(s))
             brush_group.addAction(action)
             toolbar.addAction(action)
             self.paint_ui_actions.append(action)
@@ -791,6 +876,7 @@ class MainWindow(QMainWindow):
         self.update_toolbar_visibility()
         selected_colors.clear()
         self.trigger_lut_update()
+        self.viewer.update_active_cursor()
 
     def update_toolbar_visibility(self):
         current_mode = self.viewer.current_mode
@@ -971,6 +1057,12 @@ class MainWindow(QMainWindow):
             self.viewer.data_image = new_qimage
             self.viewer.refresh_viewport()
             print("Split Complete.")
+
+    def cycle_tool_mode(self):
+        """Cycles through View -> Drawing -> Select -> View..."""
+        count = self.tool_combo.count()
+        next_index = (self.tool_combo.currentIndex() + 1) % count
+        self.tool_combo.setCurrentIndex(next_index)
 
     def trigger_lut_update(self):
         csv_index = self.map_mode_combo.currentData()

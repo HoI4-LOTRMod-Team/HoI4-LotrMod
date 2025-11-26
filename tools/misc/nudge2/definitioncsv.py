@@ -431,3 +431,5 @@ def split_pixels_geodesic(pixels, roughness=10.0):
 
     return set_1, set_2
 
+def get_prov_id_from_color(col):
+    return 1
