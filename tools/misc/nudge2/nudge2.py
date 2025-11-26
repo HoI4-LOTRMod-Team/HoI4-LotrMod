@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene,
                                QGraphicsPixmapItem, QMainWindow, QToolBar, 
                                QLabel, QWidget, QComboBox, QCheckBox, 
                                QPushButton, QDialog, QFormLayout, QDialogButtonBox,
-                               QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout)
+                               QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout, QTextEdit)
 from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent, 
                            QAction, QActionGroup)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal
@@ -298,6 +298,27 @@ class ProvincePropertiesDialog(QDialog):
             if chk.isChecked():
                 result[name] = combo.currentText()
         return result
+    
+class ProvincePropertiesDialog(QDialog):
+    def __init__(self, text, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Province Properties")
+        self.setModal(True)
+        self.resize(400, 300) # Give it a reasonable default size
+        
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        # Read-only text area to show the properties
+        self.text_area = QTextEdit()
+        self.text_area.setPlainText(text)
+        self.text_area.setReadOnly(True)
+        layout.addWidget(self.text_area)
+
+        # Simple Close button
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Close)
+        self.buttons.rejected.connect(self.reject) 
+        layout.addWidget(self.buttons)
 
 
 # ============================================================
@@ -666,6 +687,11 @@ class MainWindow(QMainWindow):
         act = toolbar.addWidget(self.btn_action3)
         self.select_ui_actions.append(act)
 
+        self.btn_props = QPushButton("Show Properties")
+        self.btn_props.clicked.connect(self.show_props_func)
+        act = toolbar.addWidget(self.btn_props)
+        self.select_ui_actions.append(act)
+
     def change_tool(self, index):
         new_mode = self.tool_combo.currentData()
         self.viewer.current_mode = new_mode
@@ -743,6 +769,17 @@ class MainWindow(QMainWindow):
                 self.trigger_lut_update()
             else:
                 print("No properties selected to update.")
+
+    def show_props_func(self):
+        # 1. Get selected IDs
+        provs = selected_colors_to_provinces()
+        
+        # 2. Call the external function
+        text_content = get_province_property_text(provs)
+        
+        # 3. Show Dialog
+        dialog = ProvincePropertiesDialog(text_content, self)
+        dialog.exec()
 
     def trigger_lut_update(self):
         csv_index = self.map_mode_combo.currentData()

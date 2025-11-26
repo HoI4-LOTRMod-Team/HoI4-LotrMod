@@ -241,6 +241,65 @@ def update_province_properties(provinces, overwrite_data):
     print("Modified provinces: " + str(provinces) + " with values: " + str(overwrite_data))
 
 
+def get_province_property_text(selected_provinces):
+    """
+    Analyzes selected provinces and returns a summary string.
+    Shows specific values if all selected provinces share them,
+    otherwise shows '-- mixed --'.
+    """
+    definition = get_expanded_definition()
+    
+    if not selected_provinces:
+        return "No provinces selected."
+
+    # Configuration mapping: Index -> Label
+    # Using a list of tuples to maintain order
+    relevant_columns = [
+        (4, "Type"),
+        (5, "Coastal"),
+        (6, "Terrain"),
+        (7, "Continent"),
+        (13, "State"),
+        (15, "Region"),
+        (17, "Impassable")
+    ]
+
+    output_lines = []
+    
+    # 1. Add Header with count
+    count = len(selected_provinces)
+    output_lines.append(f"Selection Count: {count}")
+    output_lines.append(f"Selection: {selected_provinces}")
+    output_lines.append("-" * 30)
+
+    # 2. Iterate through specific columns to check properties
+    for col_index, title in relevant_columns:
+        # Extract values for this specific column from all selected rows
+        # We use a set to automatically filter down to unique values
+        values = set()
+        for prov_idx in selected_provinces:
+            # Safety check to ensure index exists in definition
+            if 0 <= prov_idx < len(definition):
+                val = definition[prov_idx][col_index]
+                values.add(val)
+        
+        # Determine display string
+        if len(values) == 1:
+            # All selected rows have the same value
+            display_value = str(list(values)[0])
+        elif len(values) > 1:
+            # Different values exist in the selection
+            display_value = "-- mixed --"
+        else:
+            # Should technically not happen unless indices were invalid
+            display_value = "N/A"
+
+        # Format line: Title (padded to 12 chars) : Value
+        output_lines.append(f"{title:<12}: {display_value}")
+
+    return "\n".join(output_lines)
+
+
 
 
 
