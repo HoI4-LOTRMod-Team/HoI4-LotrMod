@@ -643,6 +643,27 @@ class MainWindow(QMainWindow):
         pixmap.fill(color)
         self.color_display.setPixmap(pixmap)
 
+    def save_map_data(self):
+        """Saves the underlying data image to the hardcoded path."""
+        if self.viewer.data_image and not self.viewer.data_image.isNull():
+            # Convert Path object to string for Qt compatibility
+            save_path = str(HARDCODED_IMAGE_PATH)
+            print(f"Saving map data to: {save_path}...")
+            
+            # Save the image. Qt infers format from file extension (BMP)
+            success = self.viewer.data_image.save(save_path)
+            
+            if success:
+                print("Map saved successfully.")
+            else:
+                print(f"ERROR: Failed to save map to {save_path}")
+
+    def closeEvent(self, event):
+        """Triggers when the window is closed."""
+        #self.save_map_data() # TODO: Un-comment this to actually save the bitmap
+        # Accept the event to allow the window to close
+        event.accept()
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
