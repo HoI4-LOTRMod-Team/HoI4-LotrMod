@@ -1,9 +1,12 @@
 import csv
 import random
+import heapq
 
 from pdx_parser import *
 
 from state import *
+
+from collections import deque
 
 
 BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() # Points at the lotr/ directory
@@ -182,7 +185,7 @@ def get_new_province_color(prov_type):
             return new_col
 
 
-def create_new_province_from(old_rgb_tuple, new_prov_color):
+def create_new_province_from(old_rgb_tuple, new_prov_color=None):
     """
     Called when the user starts painting over an old province with a 'New' color.
     """
@@ -193,6 +196,10 @@ def create_new_province_from(old_rgb_tuple, new_prov_color):
     for row in csv:
         # Check if the RGB matches
         if row[1] == old_rgb_tuple[0] and row[2] == old_rgb_tuple[1] and row[3] == old_rgb_tuple[2]:
+
+            # generate new color if none was passed
+            if new_prov_color is None:
+                new_prov_color = get_new_province_color(row[4])
             
             # 1. construct the data string WITHOUT a leading or trailing newline first
             new_line_content = f"{len(csv)};{new_prov_color[0]};{new_prov_color[1]};{new_prov_color[2]};"
@@ -214,6 +221,8 @@ def create_new_province_from(old_rgb_tuple, new_prov_color):
                 
                 # 3. Write the new line
                 file.write(new_line_content)
+
+            # TODO: fix state/stratregion
                 
             return
 
@@ -301,6 +310,105 @@ def get_province_property_text(selected_provinces):
 
 
 
+# geodesically splits a set of pixel coordinates
+def split_pixels_geodesic(pixels, roughness=10.0):
+    """
+    Splits pixels into two sets with a jagged, organic boundary.
+    
+    Args:
+        pixels: List of (x,y) tuples.
+        roughness: How jagged the line should be. 
+                   0.0 = Straight/Geometric.
+                   Higher (e.g. 1.0 - 5.0) = More organic/wobbly.
+    """
+    if not pixels:
+        return [], []
 
+    pixel_set = set(pixels)
+    
+    # 1. Assign "Friction" to every pixel
+    # This creates the "rough terrain". The path will wiggle to find the easy spots.
+    # Base cost is 1.0, plus random noise.
+    weights = {p: 1.0 + random.random() * roughness for p in pixels}
 
+    # Build adjacency (4-way connectivity)
+    neighbors = {p: [] for p in pixels}
+    directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    for x, y in pixels:
+        for dx, dy in directions:
+            n = (x + dx, y + dy)
+            if n in pixel_set:
+                neighbors[(x, y)].append(n)
+
+    # Helper: Dijkstra's Algorithm (Weighted Shortest Path)
+    def get_weighted_distances(start_node):
+        # Priority Queue: stores (current_cost, pixel)
+        pq = [(0.0, start_node)]
+        distances = {start_node: 0.0}
+        farthest_node = start_node
+        max_dist = 0.0
+
+        while pq:
+            current_dist, current_node = heapq.heappop(pq)
+
+            # If we found a shorter way to this node already, skip
+            if current_dist > distances.get(current_node, float('inf')):
+                continue
+
+            # Track diameter logic
+            if current_dist > max_dist:
+                max_dist = current_dist
+                farthest_node = current_node
+
+            for neighbor in neighbors[current_node]:
+                # Cost to step onto the neighbor
+                move_cost = weights[neighbor]
+                new_dist = current_dist + move_cost
+
+                if new_dist < distances.get(neighbor, float('inf')):
+                    distances[neighbor] = new_dist
+                    heapq.heappush(pq, (new_dist, neighbor))
+        
+        return distances, farthest_node
+
+    # 2. Find endpoints (Using standard BFS distance first to find "true" ends quickly)
+    # We do a quick unweighted pass just to find the tips of the bean, 
+    # so the roughness doesn't mess up our diameter finding.
+    from collections import deque
+    def get_bfs_farthest(start):
+        q = deque([start])
+        seen = {start}
+        last = start
+        while q:
+            last = q.popleft()
+            for dx, dy in directions:
+                n = (last[0]+dx, last[1]+dy)
+                if n in pixel_set and n not in seen:
+                    seen.add(n)
+                    q.append(n)
+        return last
+
+    # Find the geometric tips of the shape
+    tip_a = get_bfs_farthest(pixels[0])
+    tip_b = get_bfs_farthest(tip_a)
+
+    # 3. Run the "Race" through the rough terrain
+    dists_a, _ = get_weighted_distances(tip_a)
+    dists_b, _ = get_weighted_distances(tip_b)
+
+    # 4. Split
+    set_1 = []
+    set_2 = []
+    
+    for p in pixels:
+        # Get distances (default to infinity if unreachable, though shouldn't happen)
+        da = dists_a.get(p, float('inf'))
+        db = dists_b.get(p, float('inf'))
+        
+        if da < db:
+            set_1.append(p)
+        else:
+            set_2.append(p)
+
+    return set_1, set_2
 

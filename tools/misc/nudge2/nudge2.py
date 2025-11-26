@@ -688,7 +688,7 @@ class MainWindow(QMainWindow):
         self.select_ui_actions.append(act)
 
         self.btn_props = QPushButton("Show Properties")
-        self.btn_props.clicked.connect(self.show_props_func)
+        self.btn_props.clicked.connect(self.split_selected_provinces_func)
         act = toolbar.addWidget(self.btn_props)
         self.select_ui_actions.append(act)
 
@@ -780,6 +780,104 @@ class MainWindow(QMainWindow):
         # 3. Show Dialog
         dialog = ProvincePropertiesDialog(text_content, self)
         dialog.exec()
+
+    def split_selected_provinces_func(self):
+        # 1. Check selection
+        if not selected_colors:
+            print("No provinces selected to split.")
+            return
+
+        # 2. Prepare Data Image as NumPy Array
+        # We use a copy to ensure we don't segfault by messing with QImage memory alignment directly 
+        # during complex ops, then we will load it back later.
+        img = self.viewer.data_image
+        width = img.width()
+        height = img.height()
+        
+        # Get raw data as a NumPy array (H, W, 4) - assuming ARGB32
+        # Note: QImage.bits() returns a pointer. We need to be careful with channel order (Usually BGR or RGB).
+        ptr = img.bits()
+        #ptr.setsize(height * width * 4)
+        arr = np.frombuffer(ptr, np.uint8).reshape((height, width, 4)).copy()
+
+        # Determine channel order based on your LUT logic. 
+        # Usually PySide QImage Format_ARGB32 is B-G-R-A in byte order on Little Endian.
+        # Your code seems to handle this in generate_lut, so check if you need to flip RGB.
+        # For this snippet, I will assume the array is [B, G, R, A].
+
+        changes_made = False
+
+        # 3. Iterate over the set of selected colors
+        # We iterate a copy of the set because we might modify the selection or colors during the process
+        current_selection = list(selected_colors) 
+
+        for color_tuple in current_selection:
+            # color_tuple is (R, G, B) from your selection logic
+            r, g, b = color_tuple
+            
+            # Create the target color array for comparison. 
+            # CAREFUL: If your array is BGR, this needs to be [b, g, r]
+            target_color = np.array([b, g, r], dtype=np.uint8)
+
+            # --- A. FIND PIXELS (The Fast Way) ---
+            # Create a boolean mask where the first 3 channels match the target color
+            # This scans the whole map in milliseconds.
+            mask = np.all(arr[:, :, :3] == target_color, axis=2)
+            
+            # Get coordinates: argwhere returns array of [y, x]
+            # We assume your split function wants [(x,y), (x,y)...]
+            coords_y, coords_x = np.where(mask)
+            
+            # Combine into list of tuples (x, y) for the external function
+            # (Zip is standard python but fast enough for this conversion)
+            pixel_list = list(zip(coords_x, coords_y))
+            
+            if not pixel_list:
+                continue
+
+            print(f"Splitting province with {len(pixel_list)} pixels...")
+
+            # --- B. SPLIT (External Function) ---
+            # Returns two lists. We only need to repaint list_b.
+            list_a, list_b = split_pixels_geodesic(pixel_list)
+
+            if not list_b:
+                print("Split resulted in empty second province. Skipping.")
+                continue
+
+            # --- C. COLOR GENERATION ---
+            # Get new color (R, G, B)
+            # Note: You might need to determine if it's Land/Sea/Lake based on the old color
+            # For now, assuming generic land or passing a type if you have it.
+            new_rgb = get_new_province_color("land") 
+            new_r, new_g, new_b = new_rgb
+            
+            # Register the new province definitions
+            create_new_province_from(color_tuple, new_rgb)
+
+            # --- D. REPAINT (The Fast Way) ---
+            # Convert list_b back to numpy indices (y, x)
+            # We unzip the list [(x,y), ...] -> (x_tuple, y_tuple)
+            b_xs, b_ys = zip(*list_b)
+            
+            # Use Advanced Integer Indexing to set color at once
+            # Remember: Array is (Y, X) and color is likely BGR
+            arr[b_ys, b_xs, 0] = new_b
+            arr[b_ys, b_xs, 1] = new_g
+            arr[b_ys, b_xs, 2] = new_r
+            # arr[..., 3] (Alpha) is likely already 255, but you can set it if needed.
+
+            changes_made = True
+
+        # 4. Write back to QImage
+        if changes_made:
+            # Construct new QImage from the modified array
+            # We must keep a reference to 'arr' or copy it, because QImage references the buffer
+            new_qimage = QImage(arr.data, width, height, width * 4, QImage.Format_ARGB32).copy()
+            
+            self.viewer.data_image = new_qimage
+            self.viewer.refresh_viewport()
+            print("Split Complete.")
 
     def trigger_lut_update(self):
         csv_index = self.map_mode_combo.currentData()
