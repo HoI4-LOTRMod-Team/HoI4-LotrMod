@@ -13,13 +13,14 @@ from PySide6.QtWidgets import QGraphicsTextItem
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt
 
-from pdx_parser import Parse_PObj
+from pdx_parser import *
 
 
 from Qt import QtWidgets, QtGui, QtCore
 
 import random
 import string
+import re
 
 from properties_panel import *
 
@@ -46,23 +47,23 @@ def random_string(length):
 
 focus_template = """
     focus = {
-		id = ROH_new_focus_$TOKEN$
-		icon = GFX_unknown_focus
-		
-		x = 0
-		y = 0
+        id = ROH_new_focus_$TOKEN$
+        icon = GFX_unknown_focus
+        
+        x = 0
+        y = 0
 
-		cost = 5
-		ai_will_do = { factor = 1 }
-		
-		search_filters = { }
-		available = {
-			always = yes
-		}
-		completion_reward = {
-			# TODO
-		}
-	}
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            
+        }
+    }
 """
 
 
@@ -85,12 +86,12 @@ class FocusNode(BaseNode):
         # create node outputs.
         self.add_output('children')
 
-        self.add_text_input
-
         # Add a label text item inside the node's graphics object
         label = QGraphicsTextItem("", self.view)
+        
+        # [OPTIONAL] You can set a default font, but setHtml in update_label will override sizes
         font = QFont()
-        font.setPointSize(8)
+        font.setPointSize(8) # Base size for the ID
         label.setFont(font)
         label.setDefaultTextColor(Qt.gray)
         
@@ -134,6 +135,26 @@ class FocusNode(BaseNode):
                 elif name == "y":
                     self.pObj.Get("y").value = str(value)
 
+                elif name == "comment":
+                    # first check if there already is a comment
+                    raw = self.pObj.Get("completion_reward").GetValueString(withBrackets=False)
+                    match = re.search(r"#.*", raw)
+                    if match and len(self.pObj.Get("completion_reward").value) > 0:
+                        raw = re.sub(r"#.*", "# " + value, raw, count=1)
+                        self.pObj.Get("completion_reward").value = Parse_List(raw, parent=self.pObj.Get("completion_reward"))
+                        #print(self.pObj.Get("completion_reward"))
+                    # Otherwise add it as a LooseToken (This is extremely cheaty and will cause problems)
+                    else:
+                        self.pObj.Get("completion_reward").InsertAt("\n"+tabspace*(self.pObj.Get("completion_reward").level)+"token = token", 0)
+                        ch = self.pObj.Get("completion_reward").value[0]
+                        ch.id = "# " + value
+                        ch.operator = ""
+                        ch.value = ""
+                        ch.post = "\n"+tabspace*(self.pObj.Get("completion_reward").level-1)
+                        print(self.pObj)
+                    super().__setattr__(name, value)
+                    self.update_label()
+
                 elif name == "focus_id":
                     # first, check if the name exists already and add random chars if it does:
                     for f in self.parent_tree.focuses:
@@ -150,7 +171,7 @@ class FocusNode(BaseNode):
                                 for pf in preq.value:
                                     if pf.value == old_value: pf.value = value
 
-                    self._label_item.setPlainText(value)
+                    self.update_label()
                     
 
 
@@ -176,7 +197,7 @@ class FocusNode(BaseNode):
         if not self.is_activated: return
 
         li = self.pObj.LastIndex(lambda x: x.id == "prerequisite") + 1
-        self.pObj.InsertAt("\tprerequisite = { focus = " + out_port.node().focus_id + " }", li)
+        self.pObj.InsertAt("prerequisite = { focus = " + out_port.node().focus_id + " }", li)
 
         #print("prerequitites added: " + out_port.node().focus_id)
         return
@@ -230,7 +251,7 @@ class FocusNode(BaseNode):
 
         if obj is None:
             template = focus_template.replace("$TOKEN$", random_string(6))
-            obj = Parse_PObj(template)[0]
+            obj = Parse_PObj(template, parent=parent_tree.root_pobj.Get("focus_tree"))[0]
             is_new_focus = True
         self.pObj = obj
 
@@ -239,12 +260,20 @@ class FocusNode(BaseNode):
         parent_tree.focuses.append(self)
 
         self.focus_id = obj.GetVal("id")
-        self._label_item.setPlainText(self.focus_id)
         self.x = int(obj.GetVal("x"))
         self.y = int(obj.GetVal("y"))
         
         if obj.Has("cost"):
             self.og_cost = self.cost = int(obj.GetVal("cost"))
+
+        # parse comment:
+        if obj.Has("completion_reward"):
+            raw = obj.Get("completion_reward").raw
+            match = re.search(r"#.*", raw)
+            if match:
+                self.comment = match.group(0).lstrip("#").strip()
+        
+        self.update_label()
 
         # We do not set relative_position_id here!
 
@@ -272,6 +301,22 @@ class FocusNode(BaseNode):
         else:
             self.x = nx
             self.y = ny
+
+    
+    def update_label(self):
+        # [CHANGE] Use HTML to format: Bold ID, smaller gray Comment
+        # The <br> adds the new lines
+        label_text = f'<b>{self.focus_id}</b>'
+        if self.comment:
+            label_text += f'<br><br><span style="font-size: 6pt; color: #aaaaaa;">{self.comment}</span>'
+        
+        self._label_item.setHtml(label_text)
+        
+        # [CHANGE] Set the width of the text item to the node width minus padding
+        # This forces the text to wrap/break words if they are too long
+        padding = 0
+        node_width = self.view.width
+        self._label_item.setTextWidth(node_width - padding)
         
 
     def get_properties(self):
@@ -295,6 +340,7 @@ class FocusNode(BaseNode):
 
         return [
             StringProperty("ID", attr_name="focus_id", is_primary=True),
+            StringProperty("Comment", attr_name="comment"),
             StringProperty(
                 "RelPosID", attr_name="relative_position_id", value_getter=rel_pos_getter, value_setter=rel_pos_setter, placeholder="Enter Target ID..."
             ),
@@ -334,6 +380,8 @@ class FocusNode(BaseNode):
     focus_id = ""
     filters = []
     cost = 10
+
+    comment = ""
     
 
     parent_tree = None
