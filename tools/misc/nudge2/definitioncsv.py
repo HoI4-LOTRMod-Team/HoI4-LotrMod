@@ -88,6 +88,17 @@ def get_definition_csv():
     return ret
 
 
+def get_existing_prov_colors():
+    cols = []
+    with open(DEFINITION_CSV_PATH, 'r', newline='') as file:
+        # Create a reader object
+        reader = csv.reader(file, delimiter=';')
+        for row in reader:
+            cols.append((int(row[1]), int(row[2]), int(row[3])))
+
+    return cols
+
+
 def random_color():
     return tuple(random.randint(0, 255) for _ in range(3))
 
@@ -139,6 +150,44 @@ def get_expanded_definition():
             csv[prov][16] = col
 
     return csv
+
+
+cached_prov_type = "land"
+
+def get_new_province_color(prov_type):
+    """
+    Returns a unique RGB tuple for a new province.
+    """
+    global cached_prov_type
+    print(f"[Stub] Generating new color for: {prov_type}")
+    # Return a random distinct color for testing
+    cached_prov_type = prov_type
+    cols = get_existing_prov_colors()
+    while True:
+        if prov_type == "land":
+            new_col = (random.randint(128, 255), random.randint(128, 255), random.randint(128, 255))
+        else: 
+            new_col = (random.randint(0, 128), random.randint(0, 128), random.randint(0, 200))
+        if new_col not in cols:
+            return new_col
+
+
+def create_new_province_from(old_rgb_tuple, new_prov_color):
+    """
+    Called when the user starts painting over an old province with a 'New' color.
+    """
+    global cached_prov_type
+    print(f"[Stub] CREATING NEW PROVINCE based on properties of color: {old_rgb_tuple}")
+
+    csv = get_definition_csv()
+    for row in csv:
+        if row[1] == old_rgb_tuple[0] and row[2] == old_rgb_tuple[1] and row[3] == old_rgb_tuple[2]:
+            new_line = f"\n{len(csv)};{new_prov_color[0]};{new_prov_color[1]};{new_prov_color[2]};"
+            new_line += f"{cached_prov_type};{row[5]};{row[6]};{row[7]}"
+            with open(DEFINITION_CSV_PATH, 'a') as file:
+                file.write(new_line)
+            return
+    assert(False) # This code should be unreachable
 
 
 
