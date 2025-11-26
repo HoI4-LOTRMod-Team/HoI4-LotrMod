@@ -59,7 +59,7 @@ state = {
 	}
 
 	provinces = {
-		$TOKEN_PROVINCES$
+		
 	}
 	manpower = 1000
 	buildings_max_level_factor = 1.000
@@ -81,23 +81,42 @@ def create_new_state(provinces, state_name):
         if st.state_id > new_state_id: new_state_id = st.state_id
     new_state_id += 1
 
-    # create template
+    # create empty template
     state_text = STATE_TEMPLATE.replace("$TOKEN_ID$", str(new_state_id))
-    state_text = state_text.replace("$TOKEN_PROVINCES$", " ".join([str(p) for p in provinces]))
 
-    # add state name to locs
+    # save to file
+    dir = STATES_DIR / (str(new_state_id) + "-" + state_name + ".txt")
+    with open(dir, "w") as f:
+        f.write(state_text)
+
+    # transfer provinces to new state
+    new_state = State(dir)
+    transfer_provinces_to_state(provinces, new_state.state_id)
+
+    # Add localization entry
     loc = LocFile(STATES_LOC_DIR)
     loc.add("STATE_"+str(new_state_id), state_name)
-    loc.save(STATES_LOC_DIR)
+    loc.save()
 
-    # remove provinces from other states
+    # TODO: fix strategic regions
+
+
+def transfer_provinces_to_state(provinces, destination_state_id):
+    all_states = get_all_states()
+
+    target_state = None
+
+    # Remove the transferred provinces from other states
     changed_states = []
     for st in all_states:
-        for p in provinces:
-            if p in st.province_list:
-                if st not in changed_states: changed_states.append(st)
-                st.province_list.remove(p)
-        st.apply_province_changes()
+        if st.state_id != destination_state_id:
+            for p in provinces:
+                if p in st.province_list:
+                    if st not in changed_states: changed_states.append(st)
+                    st.province_list.remove(p)
+            st.apply_province_changes()
+        else:
+            target_state = st
 
     # fix victory points
     vps = []
@@ -122,22 +141,20 @@ def create_new_state(provinces, state_name):
     for st in changed_states:
         st.save_to_file()
 
-    # TODO: save state file as new
-    dir = STATES_DIR + "\\" + str(new_state_id) + "-" + state_name + ".txt"
-    with open(dir, "w") as f:
-        f.write(state_text)
-    new_state = State(dir)
+    # transfer the provinces to the target state
+    for p in provinces:
+        if p not in target_state.province_list:
+            target_state.province_list.append(p)
+    target_state.province_list.sort()
+    target_state.apply_province_changes()
+
+    # transfer victory points and buildings
     for vp in vps:
-        new_state.pObj.Get("history").Insert(str(vp))
+        target_state.pObj.Get("history").Insert(str(vp))
     for bld in buildings:
-        new_state.pObj.Get("history").Get("buildings").Insert(str(bld))
-    new_state.save_to_file()
+        target_state.pObj.Get("history").Get("buildings").Insert(str(bld))
+    target_state.save_to_file()
 
-    # TODO: fix strategic regions
-
-
-def transfer_provinces_to_state(provinces, destination_state):
-    return # TODO
 
 
 

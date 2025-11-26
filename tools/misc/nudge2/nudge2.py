@@ -255,7 +255,10 @@ class TransferProvsDialog(QDialog):
         # -- Example Input: Number (e.g., Expansion radius) --
         self.available_states = QComboBox()
         for av_st in av_states:
-            self.available_states.addItem(str(av_st.state_id) + "  " + state_loc.get(str(av_st.pObj.GetVal("name")).replace('"', '')))
+            av_st_id = str(av_st.state_id)
+            av_st_name = state_loc.get(str(av_st.pObj.GetVal("name")).replace('"', ''))
+            if av_st_name is None: av_st_name = ""
+            self.available_states.addItem(av_st_id + "  " + av_st_name, av_st.state_id)
         form_layout.addRow("Target:", self.available_states)
         #self.available_states.addItem()
 
@@ -274,7 +277,7 @@ class TransferProvsDialog(QDialog):
     def get_data(self):
         """Helper to return all data as a dictionary"""
         return {
-            "target_state": self.available_states.currentText(),
+            "target_state": self.available_states.currentData(),
             #"overwrite": self.force_check.isChecked()
         }
 
@@ -683,6 +686,10 @@ class MainWindow(QMainWindow):
             provs = selected_colors_to_provinces()
             
             create_new_state(provs, state_name)
+
+            selected_colors.clear()
+
+            self.trigger_lut_update()
             
         else:
             print("User cancelled.")
@@ -697,6 +704,8 @@ class MainWindow(QMainWindow):
 
             provs = selected_colors_to_provinces()
             transfer_provinces_to_state(provs, data['target_state'])
+            selected_colors.clear()
+            self.trigger_lut_update()
 
     def trigger_lut_update(self):
         csv_index = self.map_mode_combo.currentData()
