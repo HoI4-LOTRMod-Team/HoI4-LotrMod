@@ -145,12 +145,12 @@ class FocusNode(BaseNode):
                         #print(self.pObj.Get("completion_reward"))
                     # Otherwise add it as a LooseToken (This is extremely cheaty and will cause problems)
                     else:
-                        self.pObj.Get("completion_reward").InsertAt("\n"+tabspace*(self.pObj.Get("completion_reward").level)+"token = token", 0)
+                        self.pObj.Get("completion_reward").InsertAt("\n"+tabspace*(self.pObj.Get("completion_reward").level+1)+"token = token", 0)
                         ch = self.pObj.Get("completion_reward").value[0]
                         ch.id = "# " + value
                         ch.operator = ""
                         ch.value = ""
-                        ch.post = "\n"+tabspace*(self.pObj.Get("completion_reward").level-1)
+                        ch.post = "\n"+tabspace*(self.pObj.Get("completion_reward").level)
                         print(self.pObj)
                     super().__setattr__(name, value)
                     self.update_label()
