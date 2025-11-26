@@ -162,7 +162,7 @@ def transfer_provinces_to_state(provinces, destination_state_id):
     target_state.save_to_file()
 
     # fix strat regions
-    fix_strat_regions(provinces)
+    fix_strat_regions(target_state.province_list)
 
 
 def transfer_provinces_to_strategicregion(provinces, destination_region_id):
