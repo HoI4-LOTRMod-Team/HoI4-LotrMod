@@ -127,8 +127,7 @@ entity = {
 }
 
 
-# $NEW_COUNTRY_TOKENHELPER_UNIT_MODELS
-"""
+# $NEW_COUNTRY_TOKENHELPER_UNIT_MODELS"""
 
 unit_models_content = unit_models_content.replace("$TAG$", tag)
 replace_in_file(
@@ -155,8 +154,7 @@ $TAG$ = {
 	surnames = { "" }
 	callsigns = { }
 }
-# $NEW_COUNTRY_TOKENHELPER_NAMES
-"""
+# $NEW_COUNTRY_TOKENHELPER_NAMES"""
 names_content = names_content.replace("$TAG$", tag)
 names_content = names_content.replace("$NAME$", loc_name)
 replace_in_file(
