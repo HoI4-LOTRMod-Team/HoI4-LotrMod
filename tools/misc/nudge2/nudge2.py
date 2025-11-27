@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene,
                                QGraphicsPixmapItem, QMainWindow, QToolBar, 
                                QLabel, QWidget, QComboBox, QCheckBox, 
                                QPushButton, QDialog, QFormLayout, QDialogButtonBox,
-                               QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout, QTextEdit, QTabWidget)
+                               QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout, QTextEdit, QTabWidget, QFileDialog)
 from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent, 
                            QAction, QActionGroup, QCursor, QKeySequence, QShortcut)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal, QSize
@@ -1132,10 +1132,17 @@ class MainWindow(QMainWindow):
         file_layout = QVBoxLayout()
         file_group.setLayout(file_layout)
 
-        btn_save = QPushButton("Save Bitmap")
-        btn_save.setMinimumHeight(40) # Make it big so it's hard to miss
+        # Existing Save Button
+        btn_save = QPushButton("Save Bitmap (Overwrite Source)")
+        btn_save.setMinimumHeight(40) 
         btn_save.clicked.connect(self.save_map_data)
         file_layout.addWidget(btn_save)
+
+        # --- NEW BUTTON HERE ---
+        btn_export = QPushButton("Export View As...")
+        btn_export.clicked.connect(self.export_view_map)
+        file_layout.addWidget(btn_export)
+        # -----------------------
 
         layout.addWidget(file_group)
 
@@ -1473,6 +1480,28 @@ class MainWindow(QMainWindow):
                 print("Map saved successfully.")
             else:
                 print(f"ERROR: Failed to save map to {save_path}")
+
+    def export_view_map(self):
+        """Saves the CURRENT visual display (LUT + Overlay) to a custom file."""
+        if not self.viewer.display_image or self.viewer.display_image.isNull():
+            print("No image loaded to export.")
+            return
+
+        # Open File Dialog asking user where to save
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, 
+            "Export Current View", 
+            "map_view.png", 
+            "PNG Images (*.png);;BMP Images (*.bmp);;All Files (*)"
+        )
+
+        if file_path:
+            # We save the display_image, which contains the visual output
+            success = self.viewer.display_image.save(file_path)
+            if success:
+                print(f"Exported view successfully to: {file_path}")
+            else:
+                print(f"Failed to export view to: {file_path}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
