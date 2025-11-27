@@ -110,6 +110,14 @@ def generate_lut(target_column_index, use_mixed_mode=False):
 
 lut = generate_lut(MAP_MODES[0][1], False)
 
+class ClickableLabel(QLabel):
+    clicked = Signal() # Signal to fire when clicked
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.clicked.emit()
+        super().mousePressEvent(event)
+
 
 # ============================================================
 #  MODE SYSTEM
@@ -546,6 +554,97 @@ class FindProvinceDialog(QDialog):
         else:
             # --- COLOR MODE ---
             return True, (self.spin_r.value(), self.spin_g.value(), self.spin_b.value())
+        
+
+class GoToCoordDialog(QDialog):
+    def __init__(self, max_w, max_h, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Go To Coordinates")
+        self.setModal(True)
+        self.setFixedSize(250, 150)
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        form = QFormLayout()
+
+        # X Coordinate
+        self.spin_x = QSpinBox()
+        self.spin_x.setRange(0, max_w)
+        self.spin_x.setButtonSymbols(QSpinBox.NoButtons)
+        self.spin_x.setValue(0)
+        
+        # Y Coordinate
+        self.spin_y = QSpinBox()
+        self.spin_y.setRange(0, max_h)
+        self.spin_y.setButtonSymbols(QSpinBox.NoButtons)
+        self.spin_y.setValue(0)
+
+        form.addRow("X:", self.spin_x)
+        form.addRow("Y:", self.spin_y)
+        layout.addLayout(form)
+
+        # Buttons
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        layout.addWidget(self.buttons)
+        
+        # Focus X immediately
+        self.spin_x.setFocus()
+
+    def get_coords(self):
+        return self.spin_x.value(), self.spin_y.value()
+
+
+class SetColorDialog(QDialog):
+    def __init__(self, current_color=None, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Set Custom Color")
+        self.setModal(True)
+        self.setFixedSize(250, 180)
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        form = QFormLayout()
+
+        # Defaults
+        r_def, g_def, b_def = 0, 0, 0
+        if current_color and current_color.isValid():
+            r_def, g_def, b_def = current_color.red(), current_color.green(), current_color.blue()
+
+        # R
+        self.spin_r = QSpinBox()
+        self.spin_r.setRange(0, 255)
+        self.spin_r.setButtonSymbols(QSpinBox.NoButtons)
+        self.spin_r.setValue(r_def)
+        
+        # G
+        self.spin_g = QSpinBox()
+        self.spin_g.setRange(0, 255)
+        self.spin_g.setButtonSymbols(QSpinBox.NoButtons)
+        self.spin_g.setValue(g_def)
+
+        # B
+        self.spin_b = QSpinBox()
+        self.spin_b.setRange(0, 255)
+        self.spin_b.setButtonSymbols(QSpinBox.NoButtons)
+        self.spin_b.setValue(b_def)
+
+        form.addRow("Red:", self.spin_r)
+        form.addRow("Green:", self.spin_g)
+        form.addRow("Blue:", self.spin_b)
+        layout.addLayout(form)
+
+        # Buttons
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        layout.addWidget(self.buttons)
+
+        self.spin_r.setFocus()
+
+    def get_color(self):
+        return QColor(self.spin_r.value(), self.spin_g.value(), self.spin_b.value())
 
 
 # ============================================================
@@ -1062,12 +1161,16 @@ class MainWindow(QMainWindow):
         # Brush Controls
         self.paint_ui_actions.append(toolbar.addWidget(QLabel(" Color: ")))
         
-        self.color_display = QLabel()
+        self.color_display = ClickableLabel() 
         self.color_display.setFixedSize(24, 24)
-        self.color_display.setStyleSheet("border: 1px solid #999; background-color: transparent;") 
-        self.paint_ui_actions.append(toolbar.addWidget(self.color_display))
+        self.color_display.setCursor(Qt.PointingHandCursor) # Show hand cursor on hover
+        self.color_display.setStyleSheet("border: 1px solid #999; background-color: transparent;")
+        self.color_display.setToolTip("Click to set custom RGB")
         
-        self.paint_ui_actions.append(toolbar.addWidget(QLabel("   Size: ")))
+        # 2. Connect the click signal
+        self.color_display.clicked.connect(self.open_custom_color_dialog)
+        
+        self.paint_ui_actions.append(toolbar.addWidget(self.color_display))
 
         brush_group = QActionGroup(self)
         self.brush_sizes_list = [1, 2, 4, 6, 10] 
@@ -1114,6 +1217,10 @@ class MainWindow(QMainWindow):
         self.btn_find = QPushButton("Find Province")
         self.btn_find.clicked.connect(self.find_province_func)
         self.select_view_actions.append(toolbar.addWidget(self.btn_find))
+
+        self.btn_goto = QPushButton("Go to Coords")
+        self.btn_goto.clicked.connect(self.goto_coordinates_func)
+        self.select_view_actions.append(toolbar.addWidget(self.btn_goto))
 
         # Initial Update
         self.update_toolbar_visibility()
@@ -1201,6 +1308,25 @@ class MainWindow(QMainWindow):
             action.setVisible(show_view)
 
     # --- ACTION HANDLERS ---
+
+    def open_custom_color_dialog(self):
+        # 1. Open dialog with current color as default
+        current = self.viewer.current_color
+        dialog = SetColorDialog(current, self)
+        
+        if dialog.exec():
+            # 2. Get the QColor object from the dialog
+            new_color = dialog.get_color()
+            
+            # 3. Apply it to the viewer
+            # This handles setting the internal state and emitting the signal 
+            # that updates the UI display automatically.
+            self.viewer.set_active_color(new_color)
+            
+            # 4. Optional: Switch to Paint Mode automatically for convenience
+            idx_paint = self.tool_combo.findText("Painting")
+            if idx_paint >= 0:
+                self.tool_combo.setCurrentIndex(idx_paint)
 
     def setup_new_province(self, prov_type):
         """Called when user clicks one of the new buttons."""
@@ -1430,6 +1556,37 @@ class MainWindow(QMainWindow):
                 self.viewer.refresh_viewport()
             else:
                 print(f"Color ({r},{g},{b}) found in CSV, but not on the map bitmap!")
+
+    def goto_coordinates_func(self):
+        # Safety check: Is an image loaded?
+        if not self.viewer.data_image: 
+            print("No map loaded.")
+            return
+
+        w = self.viewer.data_image.width()
+        h = self.viewer.data_image.height()
+
+        # pass width/height to dialog to set SpinBox limits
+        dialog = GoToCoordDialog(w, h, self)
+        
+        if dialog.exec():
+            x, y = dialog.get_coords()
+            
+            print(f"Panning to {x}, {y}")
+            
+            # 1. Ensure Minimum Zoom
+            # We check the current scale factor (m11). 
+            # If it's less than 4x, we reset and zoom in to 8x for precision.
+            current_zoom = self.viewer.transform().m11()
+            if current_zoom < 4.0:
+                self.viewer.resetTransform()
+                self.viewer.scale(8.0, 8.0)
+            
+            # 2. Pan to location
+            self.viewer.centerOn(x, y)
+            
+            # 3. Optional: Add a temporary cursor update or refresh
+            self.viewer.update_active_cursor()
 
     def cycle_tool_mode(self):
         """Cycles through View -> Drawing -> Select -> View..."""
