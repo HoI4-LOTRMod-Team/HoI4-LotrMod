@@ -23,7 +23,7 @@ from definitioncsv import *
 
 # --- CONFIGURATION ---
 BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() 
-HARDCODED_IMAGE_PATH = BASE_PATH / "map" / "provinces - Copy.bmp"
+HARDCODED_IMAGE_PATH = BASE_PATH / "map" / "provinces.bmp"
 OVERLAY_PATH = BASE_PATH / "map" / "terrain" / "colormap_rgb_cityemissivemask_a.dds"
 
 # Your Custom Map Modes
