@@ -25,6 +25,7 @@ from definitioncsv import *
 BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() 
 HARDCODED_IMAGE_PATH = BASE_PATH / "map" / "provinces.bmp"
 OVERLAY_PATH = BASE_PATH / "map" / "terrain" / "colormap_rgb_cityemissivemask_a.dds"
+#OVERLAY_PATH = BASE_PATH / "map" / "rivers.bmp" # works with several other files too (terrain, height etc.)
 
 # Your Custom Map Modes
 MAP_MODES = [
@@ -868,18 +869,42 @@ class EditorView(QGraphicsView):
     def _load_overlay(self, width, height):
         if not os.path.exists(OVERLAY_PATH):
             return
+
         try:
             img = Image.open(OVERLAY_PATH)
+            
+            # Resize first to match dimensions
             if img.size != (width, height):
                 img = img.resize((width, height), Image.Resampling.NEAREST)
-            img = img.convert("RGBA")
-            arr = np.array(img)
-            raw_alpha = arr[:, :, 3].astype(np.float32) / 255.0
-            brightness_factor = 2.0 
+
+            # --- LOGIC FIX START ---
+            # Check if the image mode implies it has an alpha channel (RGBA, LA, etc.)
+            # 'P' mode (Palette) requires checking 'transparency' info, usually rare for simple BMPs
+            has_alpha = img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info)
+
+            if has_alpha:
+                # IT IS A DDS/PNG (Native Transparency)
+                img = img.convert("RGBA")
+                arr = np.array(img)
+                # Take the 4th channel (Alpha)
+                raw_alpha = arr[:, :, 3].astype(np.float32) / 255.0
+            else:
+                # IT IS A BMP (No Transparency)
+                # We assume the BMP is a black/white mask.
+                # Convert to Grayscale ('L') effectively flattening RGB to one channel
+                gray_img = img.convert("L") 
+                arr = np.array(gray_img)
+                # Use the pixel intensity (whiteness) as the alpha
+                raw_alpha = arr.astype(np.float32) / 255.0
+            # --- LOGIC FIX END ---
+
+            brightness_factor = 2.0
             self.overlay_alpha_map = np.clip(raw_alpha * brightness_factor, 0.0, 1.0)
-            print("Overlay loaded and cached successfully.")
+            
+            print(f"Overlay loaded ({img.format} processed as {'Alpha-Channel' if has_alpha else 'Luminance-Mask'}).")
+
         except Exception as e:
-            print(f"FAILED to load DDS via Pillow: {e}")
+            print(f"FAILED to load overlay via Pillow: {e}")
 
     def load_image(self, path):
         if not os.path.exists(path):
