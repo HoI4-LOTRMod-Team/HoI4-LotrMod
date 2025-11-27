@@ -95,7 +95,7 @@ def generate_lut(target_column_index, use_mixed_mode=False):
 
                     if use_mixed_mode:
                         base_bgr = np.array([row[3], row[2], row[1]], dtype=np.float32)
-                        mixed = (target_bgr * 0.65) + (base_bgr * 0.35)
+                        mixed = (target_bgr * 0.8) + (base_bgr * 0.2)
                         final_color = mixed
 
                     # row[1]=R, row[2]=G, row[3]=B
