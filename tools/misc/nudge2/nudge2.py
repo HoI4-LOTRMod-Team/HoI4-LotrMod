@@ -149,9 +149,16 @@ class SelectionMode(ToolMode):
         rgb_key = (color.red(), color.green(), color.blue())
         
         # 1. Update the Selection Data
+        already_in = rgb_key in selected_colors
         if not keep_existing:
             selected_colors.clear()
-        selected_colors.add(rgb_key)
+            if not already_in:
+                selected_colors.add(rgb_key)
+        else:
+            if not already_in:
+                selected_colors.add(rgb_key)
+            else:
+                selected_colors.remove(rgb_key)
         
         # 2. Update the Global LUT
         update_composite_lut()
