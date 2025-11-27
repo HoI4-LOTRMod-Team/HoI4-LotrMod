@@ -4,9 +4,9 @@
 
 
 ## PARAMETERS:
-tag = "ABC"
-color = "128 128 128"
-loc_name = "Kingdom of ABC"
+tag = "GOB"
+color = "110 102 61"
+loc_name = "Goblin Town"
 
 
 def replace_in_file(filepath, search, replace):
@@ -22,7 +22,7 @@ def replace_in_file(filepath, search, replace):
         file.write(filedata)
 
 
-base_path = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr'
+base_path = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr'
 
 replace_in_file(
     base_path+r'\common\country_tags\lotr_00_countries.txt',
