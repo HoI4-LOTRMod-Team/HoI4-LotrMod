@@ -47,7 +47,7 @@ def random_string(length):
 
 focus_template = """
     focus = {
-        id = ROH_new_focus_$TOKEN$
+        id = SPI_$TOKEN$
         icon = GFX_unknown_focus
         
         x = 0
@@ -171,6 +171,8 @@ class FocusNode(BaseNode):
                                 for pf in preq.value:
                                     if pf.value == old_value: pf.value = value
 
+                    super().__setattr__(name, value)
+
                     self.update_label()
                     
 
@@ -250,8 +252,14 @@ class FocusNode(BaseNode):
         is_new_focus = False
 
         if obj is None:
-            template = focus_template.replace("$TOKEN$", random_string(6))
+            template = focus_template.replace("$TOKEN$", "new_focus_" + random_string(6))
             obj = Parse_PObj(template, parent=parent_tree.root_pobj.Get("focus_tree"))[0]
+            is_new_focus = True
+        if isinstance(obj, tuple) :
+            (name, comment) = obj
+            template = focus_template.replace("$TOKEN$", name)
+            obj = Parse_PObj(template, parent=parent_tree.root_pobj.Get("focus_tree"))[0]
+            self.comment = comment
             is_new_focus = True
         self.pObj = obj
 

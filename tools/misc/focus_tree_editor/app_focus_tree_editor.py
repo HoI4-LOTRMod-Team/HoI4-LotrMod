@@ -27,13 +27,15 @@ def main():
     # create graph controller.
     graph = create_node_graph()
 
-    focus_node_tree = FocusNodeTree(graph, BASE_PATH / "common/national_focus/rohan.txt")
+    focus_node_tree = FocusNodeTree(graph, BASE_PATH / "common/national_focus/spiders.txt")
     graph.focus_tree = focus_node_tree
 
     context_menu = graph.get_context_menu('graph')
     main_window = create_main_window()
     main_window.setCentralWidget(graph.widget)
     #dock_widget = create_properties_panel(main_window, graph, focus_node_tree)
+
+    setup_node_count_display(main_window, graph)
 
     properties_panel = PropertiesPanel(main_window, graph)
     main_window.addDockWidget(QtCore.Qt.RightDockWidgetArea, properties_panel)
