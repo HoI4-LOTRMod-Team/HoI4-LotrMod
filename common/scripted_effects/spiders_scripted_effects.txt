@@ -1,0 +1,75 @@
+
+
+
+
+
+spiders_country_setup = {
+	SPI = {
+		set_variable = { inflicted_casualties = 0 }
+		set_variable = { inflicted_casualties_prev = 0 }
+
+		set_variable = { taken_casualties_prev = 0 }
+
+		set_variable = { casualties_inflicted_to_mp_factor = 1000.0 }
+		set_variable = { casualties_taken_to_mp_factor = 1.0 }
+
+		set_variable = { mp_gained_from_enemy_casualties = 0 }
+		set_variable = { mp_gained_from_own_casualties = 0 }
+
+		init_casualties_counts = yes
+	}
+}
+
+
+
+
+spiders_weekly_tick = {
+	SPI = {
+
+		# NOTE: as cursed as the count_casualties code is, I've run it through the profiler and it seems to run remarkably fast (literally just 1ms), so fuck it
+		count_inflicted_casualties_on_all_countries = yes
+
+		if = {
+			limit = {
+				check_variable = { inflicted_casualties > inflicted_casualties_prev }
+			}
+
+			# calculate casualties diff
+			set_temp_variable = { temp_casualties_diff = inflicted_casualties }
+			subtract_from_temp_variable = { temp_casualties_diff = inflicted_casualties_prev }
+			multiply_temp_variable = { temp_casualties_diff = casualties_inflicted_to_mp_factor }
+
+			# add equivalent manpower
+			add_manpower = temp_casualties_diff
+			add_to_variable = { mp_gained_from_enemy_casualties = temp_casualties_diff }
+
+			# update prev
+			set_variable = { taken_casualties_prev = inflicted_casualties }
+		}
+
+		if = {
+			limit = {
+				check_variable = { inflicted_casualties_prev > taken_casualties_prev }
+			}
+
+			# calculate casualties diff
+			set_temp_variable = { temp_casualties_diff = casualties }
+			subtract_from_temp_variable = { temp_casualties_diff = taken_casualties_prev }
+			multiply_temp_variable = { temp_casualties_diff = casualties_taken_to_mp_factor }
+
+			# add equivalent manpower
+			add_manpower = temp_casualties_diff
+			add_to_variable = { mp_gained_from_own_casualties = temp_casualties_diff }
+
+			# update prev
+			set_variable = { taken_casualties_prev = casualties }
+		}
+	}
+}
+
+
+# For debugging. TODO: remove later
+debug_log_spi = {
+	log = "[?var:mp_gained_from_enemy_casualties] from enemy"
+	log = "[?var:mp_gained_from_own_casualties] from own"
+}
