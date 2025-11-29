@@ -213,7 +213,7 @@ class FocusNode(BaseNode):
 
         self.remove_all_preqs_with_name(preq_name)
 
-        #print("prerequitites removed!")
+        print("prerequitites removed!")
         return
 
     

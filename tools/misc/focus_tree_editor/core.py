@@ -121,6 +121,28 @@ class FocusNodeGraph(NodeGraph):
 
         super(FocusNodeGraph, self)._on_nodes_moved(node_data)
 
+    def delete_nodes(self, nodes, push_undo=True):
+        """
+        Override the bulk deletion method to inject pre-deletion logic.
+        """
+        # 1. Safety check (Base class does this, but good to check before iterating)
+        if not nodes:
+            return
+
+        # 2. RUN YOUR CUSTOM LOGIC HERE
+        # The 'nodes' list contains the actual NodeObjects before they are destroyed.
+        try:
+            for node in nodes:
+                print(f"PRE-DELETE: Preparing to delete '{node.name()}' (ID: {node.id})")
+                
+                node.pObj.parent.value.remove(node.pObj)
+
+        except Exception as e:
+            print(f"Error in pre-delete logic: {e}")
+
+        # 3. Call the original implementation to handle the actual removal
+        super(FocusNodeGraph, self).delete_nodes(nodes, push_undo)
+
 
 def create_node_graph():
     graph = FocusNodeGraph()
