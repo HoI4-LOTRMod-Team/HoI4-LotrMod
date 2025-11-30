@@ -17,6 +17,34 @@ from NodeGraphQt.constants import PipeLayoutEnum
 BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() # Points at the lotr/ directory
 
 
+def draw_origin_axes(scene, length=10000, width=2):
+    # X-Axis (Red)
+    # Line from (-length, 0) to (+length, 0)
+    x_axis = QtWidgets.QGraphicsLineItem(-length, 0, length, 0)
+    pen_x = QtGui.QPen(QtCore.Qt.red)
+    pen_x.setWidth(width)
+    x_axis.setPen(pen_x)
+    
+    # Y-Axis (Green)
+    # Line from (0, -length) to (0, +length)
+    y_axis = QtWidgets.QGraphicsLineItem(0, -length, 0, length)
+    pen_y = QtGui.QPen(QtCore.Qt.green)
+    pen_y.setWidth(width)
+    y_axis.setPen(pen_y)
+
+    # 4. Configure items (Z-order and Selection)
+    # ZValue: -1 ensures it draws behind nodes (usually Z=0+) but in front of the grid
+    x_axis.setZValue(-1)
+    y_axis.setZValue(-1)
+    
+    # Disable selection so you don't accidentally grab the axes
+    x_axis.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+    y_axis.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, False)
+
+    # Add to scene
+    scene.addItem(x_axis)
+    scene.addItem(y_axis)
+
 
 def main():
     # handle SIGINT to make the app terminate on CTRL+C
@@ -27,7 +55,7 @@ def main():
     # create graph controller.
     graph = create_node_graph()
 
-    focus_node_tree = FocusNodeTree(graph, BASE_PATH / "common/national_focus/dolguldur.txt")
+    focus_node_tree = FocusNodeTree(graph, BASE_PATH / "common/national_focus/spiders.txt")
     graph.focus_tree = focus_node_tree
 
     context_menu = graph.get_context_menu('graph')
@@ -42,6 +70,17 @@ def main():
     properties_panel.setFloating(True)
     properties_panel.resize(450, 800) 
     properties_panel.move(100, 100)
+
+
+    graph_widget = graph.widget
+    graph_widget.show()
+
+    # 2. Access the internal QGraphicsScene
+    # NodeGraphQt wraps the view inside a widget, so we find the view first.
+    viewer = graph_widget.findChild(QtWidgets.QGraphicsView)
+    scene = viewer.scene()
+
+    #draw_origin_axes(scene) # Use this to draw axes to position the entire tree nicely. Disable afterwards because it causes error-spam
 
 
     # Present
