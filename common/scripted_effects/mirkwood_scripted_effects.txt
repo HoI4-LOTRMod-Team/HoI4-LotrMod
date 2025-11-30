@@ -33,6 +33,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 4 }
 		set_variable = { cfm_presence_DGU = 2 }
 		set_variable = { cfm_presence_SPI = 0 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 227 - West Undeep (the other outskirts)
@@ -40,6 +41,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 4 }
 		set_variable = { cfm_presence_DGU = 1 }
 		set_variable = { cfm_presence_SPI = 0 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 231 - Darkmist (southern dgu borderstate)
@@ -47,6 +49,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 3 }
 		set_variable = { cfm_presence_DGU = 2 }
 		set_variable = { cfm_presence_SPI = 0 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 233 - Amon Lanc Outskits (middle dgu bordder)
@@ -54,6 +57,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 3 }
 		set_variable = { cfm_presence_DGU = 2 }
 		set_variable = { cfm_presence_SPI = 0 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 232 - Gathburz (northern dgu border)
@@ -61,6 +65,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 2 }
 		set_variable = { cfm_presence_DGU = 1 }
 		set_variable = { cfm_presence_SPI = 0 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 86  - Southern Mirkwood / Drownholt
@@ -68,6 +73,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 2 }
 		set_variable = { cfm_presence_DGU = 0 }
 		set_variable = { cfm_presence_SPI = 0 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 228 - Naur Hoit (south-eastern tip)
@@ -75,6 +81,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 2 }
 		set_variable = { cfm_presence_DGU = 0 }
 		set_variable = { cfm_presence_SPI = 0 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 190 - Forest Narrows
@@ -82,6 +89,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 4 }
 		set_variable = { cfm_presence_DGU = 0 }
 		set_variable = { cfm_presence_SPI = 0 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 85  - Taur Morvith (western middle, owned by MIR)
@@ -89,6 +97,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 4 }
 		set_variable = { cfm_presence_DGU = 0 }
 		set_variable = { cfm_presence_SPI = 2 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 230 - Mirk-Eaves (above Eastbight)
@@ -96,6 +105,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 4 }
 		set_variable = { cfm_presence_DGU = 1 }
 		set_variable = { cfm_presence_SPI = 1 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 84  - Emyn Lum (Underneath Thranduils halls to the right)
@@ -103,6 +113,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 6 }
 		set_variable = { cfm_presence_DGU = 0 }
 		set_variable = { cfm_presence_SPI = 1 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 80  - Ashenlades (border with ERE)
@@ -110,6 +121,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 6 }
 		set_variable = { cfm_presence_DGU = 0 }
 		set_variable = { cfm_presence_SPI = 2 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 226 - Scuttledells (spider north)
@@ -117,6 +129,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 2 }
 		set_variable = { cfm_presence_DGU = 0 }
 		set_variable = { cfm_presence_SPI = 4 }
+		set_state_flag = cfm_enabled
 	}
 
 	# :: 229 - Dourstocks (southern spider territory (west)
@@ -124,6 +137,7 @@ contest_for_mirkwood_setup = {
 		set_variable = { cfm_presence_MIR = 2 }
 		set_variable = { cfm_presence_DGU = 0 }
 		set_variable = { cfm_presence_SPI = 5 }
+		set_state_flag = cfm_enabled
 	}
 }
 
@@ -131,21 +145,27 @@ contest_for_mirkwood_setup = {
 
 cfm_increase_presence_in_state = {
 	if = {
-		limit = { PREV = { tag = MIR } }
-		add_to_variable = { cfm_presence_MIR = 1 }
+		limit = { has_state_flag = cfm_enabled }
+
+		if = {
+			limit = { PREV = { tag = MIR } }
+			add_to_variable = { cfm_presence_MIR = 1 }
+		}
+		else_if = {
+			limit = { PREV = { tag = DGU } }
+			add_to_variable = { cfm_presence_DGU = 1 }
+		}
+		else_if = {
+			limit = { PREV = { tag = SPI } }
+			add_to_variable = { cfm_presence_SPI = 1 }
+		}
+		else = {
+			log = "Something went wrong!"
+		}
+		cfm_on_state_presence_update = yes
 	}
-	else_if = {
-		limit = { PREV = { tag = DGU } }
-		add_to_variable = { cfm_presence_DGU = 1 }
-	}
-	else_if = {
-		limit = { PREV = { tag = SPI } }
-		add_to_variable = { cfm_presence_SPI = 1 }
-	}
-	else = {
-		log = "Something went wrong!"
-	}
-	cfm_on_state_presence_update = yes
+
+	# TODO: tooltip
 }
 
 
@@ -179,4 +199,7 @@ cfm_on_state_presence_update = {
 }
 
 
-
+cfm_gain_presence_point = {
+	# TODO
+	custom_effect_tooltip = "Gain +1 presence"
+}
