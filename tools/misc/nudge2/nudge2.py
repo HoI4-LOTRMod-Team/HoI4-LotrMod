@@ -19,6 +19,7 @@ except ImportError:
 
 # Assuming this exists based on your upload
 from definitioncsv import *
+from relax_provinces import *
 
 
 # --- CONFIGURATION ---
@@ -1212,6 +1213,10 @@ class MainWindow(QMainWindow):
         self.btn_split.clicked.connect(self.split_selected_provinces_func)
         self.select_ui_actions.append(toolbar.addWidget(self.btn_split))
 
+        self.btn_relax = QPushButton("Relax Provinces")
+        self.btn_relax.clicked.connect(self.relax_selected_provinces_func)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_relax))
+
         # View tool
 
         self.btn_find = QPushButton("Find Province")
@@ -1427,6 +1432,101 @@ class MainWindow(QMainWindow):
                     print("Backend function 'set_state_props' not found.")
             else:
                 print("No state changes made.")
+
+    def relax_selected_provinces_func(self):
+        # 1. Check selection
+        if not selected_colors:
+            print("No provinces selected to relax.")
+            return
+
+        # 2. Prepare Data Image as NumPy Array
+        img = self.viewer.data_image
+        width = img.width()
+        height = img.height()
+        
+        ptr = img.bits()
+        # Create a view of the data (H, W, 4). Copying to ensure safety during manipulation.
+        arr = np.frombuffer(ptr, np.uint8).reshape((height, width, 4)).copy()
+
+        # 3. Create a Single Mask for ALL selected provinces
+        # We need a boolean mask where True = "Any of the selected colors"
+        combined_mask = np.zeros((height, width), dtype=bool)
+        
+        # We slice the first 3 channels (B, G, R) for comparison
+        img_bgr = arr[:, :, :3]
+
+        found_any = False
+        
+        # Build the mask by combining all selected colors
+        # Note: If you select 100 provinces, this loop runs 100 times over the array.
+        # For very large selections, this can be optimized, but it's usually fine.
+        for color_tuple in selected_colors:
+            r, g, b = color_tuple
+            # Match channel order (B, G, R)
+            target_color = np.array([b, g, r], dtype=np.uint8)
+            
+            # Check where image matches target
+            # axis=2 means we check if [B,G,R] matches [target] at that pixel
+            matches = np.all(img_bgr == target_color, axis=2)
+            
+            if np.any(matches):
+                combined_mask |= matches # Logical OR to add to the group
+                found_any = True
+
+        if not found_any:
+            print("Selected colors not found in image.")
+            return
+
+        print("Preparing to relax selection...")
+
+        # 4. Bounding Box Optimization (Crucial for performance)
+        # We don't want to run the expensive Voronoi math on the empty white parts of the map.
+        
+        # Find rows and cols that have at least one selected pixel
+        rows = np.any(combined_mask, axis=1)
+        cols = np.any(combined_mask, axis=0)
+        
+        # Get indices
+        y_min, y_max = np.where(rows)[0][[0, -1]]
+        x_min, x_max = np.where(cols)[0][[0, -1]]
+        
+        # Add Padding (so the relaxation has room to wiggle at the edges)
+        pad = 50 
+        y_min = max(0, y_min - pad)
+        y_max = min(height, y_max + pad)
+        x_min = max(0, x_min - pad)
+        x_max = min(width, x_max + pad)
+
+        # 5. Extract Crops (ROI - Region of Interest)
+        # We only pass the first 3 channels (BGR) to the relax function
+        roi_img = arr[y_min:y_max, x_min:x_max, :3]
+        roi_mask = combined_mask[y_min:y_max, x_min:x_max]
+
+        # 6. Run the Relaxation Algorithm
+        # Note: relax_layer expects BGR/RGB and returns the same format.
+        # We pass our ROI.
+        print(f"Processing ROI: {x_max-x_min}x{y_max-y_min} pixels...")
+        
+        relaxed_roi = relax_layer(
+            roi_img, 
+            mask=roi_mask, 
+            iterations=15, 
+            distortion_scale=25, 
+            distortion_magnitude=1
+        )
+
+        # 7. Write Result back to Main Array
+        # We paste the BGR result back into the 4-channel array
+        arr[y_min:y_max, x_min:x_max, :3] = relaxed_roi
+
+        # 8. Update QImage
+        # Create new QImage from the modified array
+        new_qimage = QImage(arr.data, width, height, width * 4, QImage.Format_ARGB32).copy()
+        
+        self.viewer.data_image = new_qimage
+        selected_colors.clear()
+        self.viewer.refresh_viewport()
+        print("Relaxation Complete.")
 
     def split_selected_provinces_func(self):
         # 1. Check selection
