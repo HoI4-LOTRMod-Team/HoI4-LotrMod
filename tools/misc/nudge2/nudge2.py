@@ -646,6 +646,50 @@ class SetColorDialog(QDialog):
 
     def get_color(self):
         return QColor(self.spin_r.value(), self.spin_g.value(), self.spin_b.value())
+    
+
+class RelaxSettingsDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Relax Options")
+        self.setModal(True)
+        self.setFixedSize(300, 180)
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        form = QFormLayout()
+
+        # Iterations
+        self.spin_iter = QSpinBox()
+        self.spin_iter.setRange(1, 100)
+        self.spin_iter.setValue(10) # Default
+        self.spin_iter.setToolTip("How many times to apply the relaxation smoothing.")
+
+        # Distortion Scale
+        self.spin_scale = QSpinBox()
+        self.spin_scale.setRange(1, 500)
+        self.spin_scale.setValue(20) # Default
+        self.spin_scale.setToolTip("Frequency of the noise. Lower = jagged, Higher = wavy.")
+
+        # Distortion Magnitude
+        self.spin_mag = QSpinBox()
+        self.spin_mag.setRange(0, 100)
+        self.spin_mag.setValue(3) # Default
+        self.spin_mag.setToolTip("How far pixels can be pushed (strength).")
+
+        form.addRow("Iterations:", self.spin_iter)
+        form.addRow("Distortion Scale:", self.spin_scale)
+        form.addRow("Distortion Mag:", self.spin_mag)
+        layout.addLayout(form)
+
+        # Buttons
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        layout.addWidget(self.buttons)
+
+    def get_values(self):
+        return (self.spin_iter.value(), self.spin_scale.value(), self.spin_mag.value())
 
 
 # ============================================================
@@ -1439,6 +1483,14 @@ class MainWindow(QMainWindow):
             print("No provinces selected to relax.")
             return
 
+        # --- NEW: Dialog for Settings ---
+        dialog = RelaxSettingsDialog(self)
+        if not dialog.exec():
+            return # User cancelled
+        
+        # Get values from dialog
+        iters, d_scale, d_mag = dialog.get_values()
+
         # 2. Prepare Data Image as NumPy Array
         img = self.viewer.data_image
         width = img.width()
@@ -1458,15 +1510,12 @@ class MainWindow(QMainWindow):
         found_any = False
         
         # Build the mask by combining all selected colors
-        # Note: If you select 100 provinces, this loop runs 100 times over the array.
-        # For very large selections, this can be optimized, but it's usually fine.
         for color_tuple in selected_colors:
             r, g, b = color_tuple
             # Match channel order (B, G, R)
             target_color = np.array([b, g, r], dtype=np.uint8)
             
             # Check where image matches target
-            # axis=2 means we check if [B,G,R] matches [target] at that pixel
             matches = np.all(img_bgr == target_color, axis=2)
             
             if np.any(matches):
@@ -1477,11 +1526,9 @@ class MainWindow(QMainWindow):
             print("Selected colors not found in image.")
             return
 
-        print("Preparing to relax selection...")
+        print(f"Preparing to relax selection (Iter: {iters}, Scale: {d_scale}, Mag: {d_mag})...")
 
         # 4. Bounding Box Optimization (Crucial for performance)
-        # We don't want to run the expensive Voronoi math on the empty white parts of the map.
-        
         # Find rows and cols that have at least one selected pixel
         rows = np.any(combined_mask, axis=1)
         cols = np.any(combined_mask, axis=0)
@@ -1498,34 +1545,34 @@ class MainWindow(QMainWindow):
         x_max = min(width, x_max + pad)
 
         # 5. Extract Crops (ROI - Region of Interest)
-        # We only pass the first 3 channels (BGR) to the relax function
         roi_img = arr[y_min:y_max, x_min:x_max, :3]
         roi_mask = combined_mask[y_min:y_max, x_min:x_max]
 
         # 6. Run the Relaxation Algorithm
-        # Note: relax_layer expects BGR/RGB and returns the same format.
-        # We pass our ROI.
+        # Note: We pass the variables collected from the dialog
         print(f"Processing ROI: {x_max-x_min}x{y_max-y_min} pixels...")
         
         relaxed_roi = relax_layer(
             roi_img, 
             mask=roi_mask, 
-            iterations=15, 
-            distortion_scale=25, 
-            distortion_magnitude=1
+            iterations=iters, 
+            distortion_scale=d_scale, 
+            distortion_magnitude=d_mag
         )
 
         # 7. Write Result back to Main Array
-        # We paste the BGR result back into the 4-channel array
         arr[y_min:y_max, x_min:x_max, :3] = relaxed_roi
 
         # 8. Update QImage
-        # Create new QImage from the modified array
         new_qimage = QImage(arr.data, width, height, width * 4, QImage.Format_ARGB32).copy()
         
         self.viewer.data_image = new_qimage
-        selected_colors.clear()
         self.viewer.refresh_viewport()
+
+        # --- NEW: Clear Selection after completion ---
+        selected_colors.clear()
+        self.trigger_lut_update()
+        
         print("Relaxation Complete.")
 
     def split_selected_provinces_func(self):
