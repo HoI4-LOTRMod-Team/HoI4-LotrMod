@@ -147,3 +147,115 @@ set_as_likely_next_random_war_target = {
 SPI_enable_random_war_declarations = {
     # TODO
 }
+
+# states bordering the Mirkwood (wood, not country):
+# 193 90 211 94 212 96 99 97 205 227 191 198 261 199 71 196 260
+# NOTE: If the Mirkwood borders change, this needs to be adjusted!
+# or, alternatively, find a way to compute it automatically
+spiders_daily_tick = {
+	if = {
+		limit = { has_completed_focus = SPI_the_mothers_guard }
+
+		# for all states bordering mirkwood:
+
+		if = {
+			limit = {
+				num_battalions_in_states = {
+					count > 0
+					states = { 193 90 211 94 212 96 99 97 205 227 191 198 261 199 71 196 260 }
+					types = { nest_mothers }
+				}
+			}
+
+			delete_nest_guardians = yes
+		}
+	}
+}
+
+create_nest_guardians = {
+	division_template = {
+		name = "Nest Guardians"
+		is_locked = yes
+		division_cap = 1
+		force_allow_recruiting = no
+		priority = 2
+		#template_counter = 0 # use if I want to change the icon
+		regiments = {
+			nest_mothers = { x = 0 y = 0 } # TODO
+			nest_mothers = { x = 0 y = 1 }
+			nest_mothers = { x = 0 y = 2 }
+			nest_mothers = { x = 0 y = 3 }
+		}
+		support = {
+			
+		}
+	}
+
+	82 = {
+		create_unit = {
+    		division = "name = \"Nest Guardians\" division_template = \"Nest Guardians\" start_experience_factor = 1.0"
+    		owner = SPI
+		}
+	}
+}
+
+
+delete_nest_guardians = {
+	# TODO: this should trigger an event notifying the player
+	delete_unit_template_and_units = {
+		division_template = "Nest Guardians"
+		disband = no
+	}
+}
+
+
+
+empower_shelob = {
+	SPI_shelob = {
+		add_country_leader_role = {
+			promote_leader = yes
+			country_leader={
+				ideology=federative
+				expire="1980.1.1.1"
+				traits = { }
+				id=-1
+			}
+		}
+		add_country_leader_role = {
+			promote_leader = yes
+			country_leader={
+				ideology=survivalist
+				expire="1980.1.1.1"
+				traits = { }
+				id=-1
+			}
+		}
+		add_country_leader_role = {
+			promote_leader = yes
+			country_leader={
+				ideology=supremacist
+				expire="1980.1.1.1"
+				traits = { }
+				id=-1
+			}
+		}
+		add_country_leader_role = {
+			promote_leader = yes
+			country_leader={
+				ideology=devouring_swarm
+				expire="1980.1.1.1"
+				traits = { }
+				id=-1
+			}
+		}
+		add_field_marshal_role={
+			traits = { offensive_doctrine }
+			skill=4
+			attack_skill=4
+			defense_skill=2
+			planning_skill=3
+			logistics_skill=2
+			legacy_id=-1
+		}
+	}
+}

@@ -110,8 +110,8 @@ def main():
     graph = create_node_graph()
 
     focus_node_tree = FocusNodeTree(graph,
-        BASE_PATH / r'events\Lothlorien.txt',
-        BASE_PATH / r'localisation\english\lothlorien\lothlorien_events_l_english.yml'
+        BASE_PATH / r'events\Spiders.txt',
+        BASE_PATH / r'localisation\english\spiders\spiders_events_l_english.yml'
     )
     graph.focus_tree = focus_node_tree
 

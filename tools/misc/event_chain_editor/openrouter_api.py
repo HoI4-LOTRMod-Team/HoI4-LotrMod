@@ -1,6 +1,8 @@
+from pathlib import Path
 import requests
 
-key_path = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\OPR_KEY.txt'
+BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() 
+key_path = BASE_PATH / r'..\OPR_KEY.txt'
 
 def query_openrouter(prompt, model="openai/gpt-4o"):
     
