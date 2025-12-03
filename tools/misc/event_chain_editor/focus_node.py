@@ -62,7 +62,7 @@ ai_fill_single_prompt = """
 I'm working on a hoi4 mod that takes place in the LOTR universe and would like your help to write some of the events.
 I'm going to give you localization entries on certain events, where the entries are only rough notes/outlines for the content.
 You need to give me back the same entries but filled out properly with nice text befitting of a medieval theme.
-Don't make it too proseful/fancy. Keep it simple and mostly to-the-point.
+Don't make it too proseful/fancy. Keep it simple and mostly to-the-point. Write in a "we/us" perspective from the given POV. You don't need to add introductory lines mentioning the place or POV unless specified otherwise.
 Don't give me back anything else. Your response should *only* be the filled out localization entries.
 
 (Note: the event options may have comments with a hashtag saying what event they lead to.)
@@ -79,7 +79,7 @@ lothlorien.67.b:0 "Decline"
 You return me this:
 
 lothlorien.67.t:0 "Moria falls to the orcs"
-lothlorien.67.d:0 "After a bitter struggle, the dwarves of Moria have been driven from their kingdom by a ferocious horde of orcs. The law fobidding entry to all dwarves into Lothlórien has been lifted, and we may harbour these dwarves."
+lothlorien.67.d:0 "After a bitter struggle, the dwarves of Moria have been driven from their kingdom by a ferocious horde of orcs. The law fobidding entry to all dwarves into Lothlórien has been lifted, and we may harbour these dwarves if we wish."
 lothlorien.67.a:0 "Provide the surviving dwarves with refuge."
 lothlorien.67.b:0 "This is not our concern."
 

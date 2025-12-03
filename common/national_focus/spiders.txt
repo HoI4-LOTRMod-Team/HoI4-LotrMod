@@ -144,9 +144,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# late game hunger upgrade poggers  
+            late_game_hunger_upgrade = yes
 		}
     }
 
@@ -237,12 +238,8 @@ focus_tree = {
         }
         
         completion_reward = {
-			# gain a super strong div that can dies when exits mirkwood  
-            create_nest_guardians = yes
-            # TODO: This should probs be an event
-            # TODO: random idea: first have this division unable to leave the nest. Afterwards the entire wood
-
-            # random idea for somewehre else: A division that "splits" into two every year
+			# gain a super strong div that can dies when exits nest
+            country_event = spiders.103
 		}
     }
 
@@ -309,9 +306,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
         completion_reward = {
-			# gain presence points to spend (over time??)
+			# gain presence points to spend
+            cfm_gain_presence_point_3x = yes
 		}
     }
 
@@ -378,9 +375,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
         completion_reward = {
 			# get rid of resistance  
+            226 = { force_disable_resistance = SPI }
+            229 = { force_disable_resistance = SPI }
 		}
     }
 
@@ -400,9 +398,16 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# send event to Mordor  
+            if = {
+                limit = { MOR = { is_faction_leader = yes } }
+                MOR = { country_event = { id = spiders.106 days = 1 } }
+            }
+            else = {
+                MOR = { country_event = { id = spiders.116 days = 1 } }
+            }
 		}
     }
 
@@ -489,11 +494,22 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            MIR = {
+                OR = {
+                    is_faction_leader = yes
+                    is_in_faction = no
+                }
+            }
         }
-        # TODO
         completion_reward = {
 			# send event to elves  
+            if = {
+                limit = { MIR = { is_faction_leader = yes } }
+                MIR = { ask_to_join_faction = yes }
+            }
+            else = {
+                MIR = { country_event = { id = spiders.116 days = 1 } }
+            }
 		}
     }
 
@@ -670,15 +686,20 @@ focus_tree = {
             random_list = {
                 10 = {
                     complete_national_focus = SPI_the_alpha_hunter
+                    SPI_broodmother_council = { lotr_kill_character = yes }
+                    SPI_khazherze = { lotr_kill_character = yes }
                 }
                 10 = {
                     complete_national_focus = SPI_the_great_weaver
+                    SPI_khazherze = { lotr_kill_character = yes }
+                    SPI_shrazul = { lotr_kill_character = yes }
                 }
                 10 = {
                     complete_national_focus = SPI_the_dream_weaver
+                    SPI_broodmother_council = { lotr_kill_character = yes }
+                    SPI_shrazul = { lotr_kill_character = yes }
                 }
             }
-            # TODO: remove the other leaders from advisor/general pool
 		}
     }
 
@@ -723,6 +744,7 @@ focus_tree = {
         }
         completion_reward = {
 			# all unit leaders gain extra skill level  
+            promote_character = SPI_shrazul
             every_unit_leader = {
                 add_skill_level = 1
             }
@@ -773,6 +795,7 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
+            promote_character = SPI_broodmother_council
 			# lower cost of all other focuses by 7 days  
             # TODO: I need a list of *all* focuses. Can only do this at the end
 		}
@@ -795,6 +818,7 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
+            promote_character = SPI_khazherze
             # slow research for a year, after that gain +1 research slot
             add_timed_idea = {
                 idea = SPI_mind_of_the_hive
@@ -2678,5 +2702,27 @@ focus_tree = {
         completion_reward = {
 			# get more mp from killing orcs  
 		}
+    }
+
+    focus = {
+        id = SPI_extend_the_perimeter
+		prerequisite = { focus = SPI_the_mothers_guard }
+        
+        icon = GFX_unknown_focus
+        
+        x = 20
+        y = 12
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        # Improve nest guardians
+        completion_reward = {
+            country_event = spiders.104
+        }
     }
 }

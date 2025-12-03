@@ -103,6 +103,11 @@ add_unit_scaling_from_enemy_casualties = {
 	custom_effect_tooltip = "Add unit stats (attack defense) based on casualties"
 }
 
+late_game_hunger_upgrade = {
+	# TODO
+}
+
+
 
 
 spiders_on_hire_small_council_advisor = {
@@ -154,20 +159,40 @@ SPI_enable_random_war_declarations = {
 # or, alternatively, find a way to compute it automatically
 spiders_daily_tick = {
 	if = {
-		limit = { has_completed_focus = SPI_the_mothers_guard }
+		limit = {
+			has_completed_focus = SPI_the_mothers_guard
+			NOT = { has_completed_focus = SPI_extend_the_perimeter }
+		}
 
-		# for all states bordering mirkwood:
 
 		if = {
 			limit = {
 				num_battalions_in_states = {
 					count > 0
-					states = { 193 90 211 94 212 96 99 97 205 227 191 198 261 199 71 196 260 }
+					states = { 229 71 260 193 226 83 80 } # states bordering Spider's nest state
 					types = { nest_mothers }
 				}
 			}
 
-			delete_nest_guardians = yes
+			country_event = spiders.105
+		}
+	}
+	else_if = {
+		limit = {
+			has_completed_focus = SPI_the_mothers_guard
+			has_completed_focus = SPI_extend_the_perimeter
+		}
+
+		if = {
+			limit = {
+				num_battalions_in_states = {
+					count > 0
+					states = { 193 90 211 94 212 96 99 97 205 227 191 198 261 199 71 196 260 } # states bordering all of mirkwood
+					types = { nest_mothers }
+				}
+			}
+
+			country_event = spiders.105
 		}
 	}
 }
@@ -197,11 +222,18 @@ create_nest_guardians = {
     		owner = SPI
 		}
 	}
+
+	custom_effect_tooltip = "TODO: say in this tooltip that if they leave the Spiders Nest state, they instantly die"
+}
+
+empower_nest_guardians = {
+	# TODO: improve the division
+
+	custom_effect_tooltip = "TODO: say in this tooltip that if they leave the Mirkwood forest state, they instantly die"
 }
 
 
 delete_nest_guardians = {
-	# TODO: this should trigger an event notifying the player
 	delete_unit_template_and_units = {
 		division_template = "Nest Guardians"
 		disband = no
