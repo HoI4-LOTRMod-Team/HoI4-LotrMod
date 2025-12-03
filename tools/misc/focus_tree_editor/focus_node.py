@@ -245,7 +245,11 @@ class FocusNode(BaseNode):
             for preq in preqs.value:
                 preq_focuses = preq.GetAll("focus")
                 for preq_focus in preq_focuses.value:
-                    self.parent_tree.get_focus_node_by_name(preq_focus.value).set_output(0, curr_f.input(0))
+                    #print(preq_focus.value)
+                    try:
+                        self.parent_tree.get_focus_node_by_name(preq_focus.value).set_output(0, curr_f.input(0))
+                    except:
+                        print("Could not find preequisite focus: " + preq_focus.value)
 
 
     def init(self, obj, parent_tree):
