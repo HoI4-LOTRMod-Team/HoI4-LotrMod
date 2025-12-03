@@ -1,8 +1,4 @@
 
-# NOTE: This script was written by the incredibly based Yard1: https://gist.github.com/Yard1/478809101f5c00d5a9bb1c389742d91f
-
-# Hopefully paradox will bless us with just a variable for that
-
 
 init_casualties_counts = {
 	for_each_scope_loop = {
@@ -10,10 +6,18 @@ init_casualties_counts = {
 
 		set_variable = { PREV.inflicted_casualties_on_@THIS = 0 }
 	}
+	set_variable = { casualties_on_elves_total = 0 }
+	set_variable = { casualties_on_orcs_total = 0 }
+	set_variable = { casualties_total = 0 }
 }
 
 
-count_inflicted_casualties_on_current_enemies = {
+
+count_casualties_inflicted = {
+	set_variable = { casualties_this_week = 0 }
+	set_variable = { casualties_on_elves_this_week = 0 }
+	set_variable = { casualties_on_orcs_this_week = 0 }
+
 	every_enemy_country = {
 		limit = {
 			casualties_inflicted_by = {
@@ -21,142 +25,40 @@ count_inflicted_casualties_on_current_enemies = {
 				thousands > PREV.inflicted_casualties_on_@THIS
 			}
 		}
-		clear_array = PREV.digits
-		resize_array = {
-			array = PREV.digits
-			size = 9
-		}
-		for_each_loop = {
-			array = PREV.digits
-			index = i
-			value = v
-			break = b
-			for_loop_effect = {
-				start = 0
-				end = 10
-				value = j
-				set_variable = { PREV.digits^i = j }
-				meta_effect = {
-					text = {
-						set_temp_variable = {
-							inflicted_casualties_temp = [DIGIT0][DIGIT1][DIGIT2][DIGIT3][DIGIT4][DIGIT5].[DIGIT6][DIGIT7][DIGIT8]
-						}
-					}
-					DIGIT0 = "[?PREV.digits^0|0]"
-					DIGIT1 = "[?PREV.digits^1|0]"
-					DIGIT2 = "[?PREV.digits^2|0]"
-					DIGIT3 = "[?PREV.digits^3|0]"
-					DIGIT4 = "[?PREV.digits^4|0]"
-					DIGIT5 = "[?PREV.digits^5|0]"
-					DIGIT6 = "[?PREV.digits^6|0]"
-					DIGIT7 = "[?PREV.digits^7|0]"
-					DIGIT8 = "[?PREV.digits^8|0]"
-				}
-				if = {
-					limit = {
-						casualties_inflicted_by = {
-							opponent = PREV
-							thousands < inflicted_casualties_temp
-						}
-					}
-					subtract_from_variable = { PREV.digits^i = 1 }
-					set_temp_variable = { break = 1 }
-				}
-			}
-		}
-		subtract_from_temp_variable = { inflicted_casualties_temp = 0.001 }
-		set_temp_variable = { inflicted_casualties_diff = inflicted_casualties_temp }
-		subtract_from_temp_variable = { inflicted_casualties_diff = PREV.inflicted_casualties_on_@THIS }
-		add_to_variable = { PREV.inflicted_casualties = inflicted_casualties_diff }
-		set_variable = { PREV.inflicted_casualties_on_@THIS = inflicted_casualties_temp }
-	}
-	clear_array = digits
-}
-
-count_inflicted_casualties_on_all_countries = {
-	clear_variable = inflicted_casualties
-	for_each_scope_loop = {
-		array = global.countries
-		break = bb
-		set_temp_variable = {
-			inflicted_casualties_temp = 0
-		}
-		if = {
-			limit = {
-				casualties_inflicted_by = {
-					opponent = PREV
-					thousands > PREV.inflicted_casualties_on_@THIS
-				}
-			}
-			clear_array = PREV.digits
-			resize_array = {
-				array = PREV.digits
-				size = 9
-			}
-			for_each_loop = {
-				array = PREV.digits
-				index = i
-				value = v
-				break = b
-				for_loop_effect = {
-					start = 0
-					end = 10
-					value = j
-					set_variable = { PREV.digits^i = j }
-					meta_effect = {
-						text = {
-							set_temp_variable = {
-								inflicted_casualties_temp = [DIGIT0][DIGIT1][DIGIT2][DIGIT3][DIGIT4][DIGIT5].[DIGIT6][DIGIT7][DIGIT8]
-							}
-						}
-						DIGIT0 = "[?PREV.digits^0|0]"
-						DIGIT1 = "[?PREV.digits^1|0]"
-						DIGIT2 = "[?PREV.digits^2|0]"
-						DIGIT3 = "[?PREV.digits^3|0]"
-						DIGIT4 = "[?PREV.digits^4|0]"
-						DIGIT5 = "[?PREV.digits^5|0]"
-						DIGIT6 = "[?PREV.digits^6|0]"
-						DIGIT7 = "[?PREV.digits^7|0]"
-						DIGIT8 = "[?PREV.digits^8|0]"
-					}
-					if = {
-						limit = {
-							casualties_inflicted_by = {
-								opponent = PREV
-								thousands < inflicted_casualties_temp
-							}
-						}
-						subtract_from_variable = { PREV.digits^i = 1 }
-						set_temp_variable = { break = 1 }
+		set_temp_variable = { temp_cas_counter = PREV.inflicted_casualties_on_@THIS }
+		for_loop_effect = {
+			end = 10
+			#value = value_name
+			break = break_name
+			if = {
+				limit = {
+					casualties_inflicted_by = {
+						opponent = PREV
+						thousands > temp_cas_counter
 					}
 				}
+				add_to_variable = { temp_cas_counter = 1 }
 			}
-			subtract_from_temp_variable = { inflicted_casualties_temp = 0.001 }
-			set_variable = { PREV.inflicted_casualties_on_@THIS = inflicted_casualties_temp }
 		}
-		add_to_variable = { PREV.inflicted_casualties = PREV.inflicted_casualties_on_@THIS }
-	}
-	clear_array = digits
-}
+		subtract_from_temp_variable = { temp_cas_counter = 1 }
+		clamp_temp_variable = { var = temp_cas_counter min = 0 }
 
-
-
-testeroo_lol = {
-	for_each_scope_loop = {
-		array = global.countries
-		break = bb
-
-		set_variable = { PREV.inflicted_casualties_on_@THIS = 100 }
+		set_temp_variable = { this_week_diff = temp_cas_counter }
+		subtract_from_temp_variable = { this_week_diff = PREV.inflicted_casualties_on_@THIS }
+		add_to_variable = { PREV.casualties_this_week = this_week_diff }
+		add_to_variable = { PREV.casualties_total = this_week_diff }
 
 		if = {
-			limit = {
-				casualties_inflicted_by = {
-					opponent = PREV
-					thousands < var:PREV.inflicted_casualties_on_@THIS
-				}
-			}
-			log = "hi there"
+			limit = { is_elves = yes }
+			add_to_variable = { PREV.casualties_on_elves_this_week = this_week_diff }
+			add_to_variable = { PREV.casualties_on_elves_total = this_week_diff }
 		}
+		else_if = {
+			limit = { is_orcs = yes }
+			add_to_variable = { PREV.casualties_on_elves_this_week = this_week_diff }
+			add_to_variable = { PREV.casualties_on_elves_total = this_week_diff }
+		}
+
+		set_variable = { PREV.inflicted_casualties_on_@THIS = temp_cas_counter }
 	}
-	#clear_array = digits
 }
