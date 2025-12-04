@@ -1019,3 +1019,110 @@ country_event = {
 		
 	}
 }
+# DUN/ENE accepts becoming puppet to join faction
+country_event = {
+	id = isengard.29
+	title = isengard.29.t
+	desc = isengard.29.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.29.a
+		ai_chance = { base = 50 }
+		set_autonomy = {
+			target = FROM
+			autonomous_state = autonomy_puppet
+		}
+		add_political_power = 100
+	}
+}
+
+# DUN/ENE declines becoming puppet to join faction
+country_event = {
+	id = isengard.30
+	title = isengard.30.t
+	desc = isengard.30.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.30.a
+		ai_chance = { base = 50 }
+		add_political_power = -50
+		add_opinion_modifier = { target = FROM modifier = medium_decrease }
+	}
+}
+
+# Request to join faction
+country_event = {
+	id = isengard.31
+	title = isengard.31.t
+	desc = isengard.31.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = isengard.31.a
+		ai_chance = {
+			base = 25	
+            modifier = {
+				add = 10
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
+            modifier = {
+                add = 25
+                FROM = { has_government = belligerent }
+                has_government = belligerent
+            }
+            modifier = {
+				add = 5
+				has_non_aggression_pact_with = FROM
+			}
+			modifier = {
+				add = 999
+				is_historical_focus_on = yes
+			}
+        }
+        add_opinion_modifier = { target = FROM modifier = small_increase }
+        add_to_faction = FROM
+        FROM = { country_event = { id = tribes.1 } }
+	}
+    option = { # Demand to become puppet
+		name = isengard.31.b
+		ai_chance = { base = 25 }
+
+        FROM = { 
+			add_opinion_modifier = { target = ISE modifier = medium_decrease }
+			country_event = { id = tribes.4 }
+		}
+	}
+    option = { # Decline
+		name = isengard.31.c
+		ai_chance = {
+			base = 15			
+            modifier = {
+				add = 10
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+            modifier = {
+                add = 10
+                has_completed_focus = ISE_increase_influence
+            }
+            modifier = {
+                add = 25
+                has_completed_focus = ISE_they_will_listen
+            }
+        }
+        FROM = { country_event = { id = tribes.2 } }
+	}
+}
