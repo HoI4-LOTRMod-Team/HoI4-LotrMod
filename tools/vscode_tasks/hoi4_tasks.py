@@ -7,13 +7,13 @@ from pdx_parser import *
 # CONFIGURATION
 
 BASE_PATH = Path(__file__).parent.parent.parent.resolve()
-ideas_file = BASE_PATH / r'common\ideas\spiders.txt'
-country_leader_traits_file = BASE_PATH / r'common\country_leader\00_traits_lotr_spi.txt'
-army_leader_traits_file = BASE_PATH / r'common\unit_leader\00_traits_lotr_spiders.txt'
-characters_file = BASE_PATH / r'common\characters\SPI.txt'
-history_file = BASE_PATH / r'history\countries\SPI - Spiders.txt'
-scripted_effects_file = BASE_PATH / r'common\scripted_effects\spiders_scripted_effects.txt'
-scripted_triggers_file = BASE_PATH / r'common\scripted_triggers\spiders_scripted_effects.txt'
+ideas_file = BASE_PATH / r'common\ideas\dolguldur.txt'
+country_leader_traits_file = BASE_PATH / r'common\country_leader\00_traits_lotr_dgu.txt'
+army_leader_traits_file = BASE_PATH / r'common\unit_leader\00_traits_lotr_dolguldur.txt'
+characters_file = BASE_PATH / r'common\characters\DGU.txt'
+history_file = BASE_PATH / r'history\countries\DGU - Dolguldur.txt'
+scripted_effects_file = BASE_PATH / r'common\scripted_effects\dolguldur_scripted_effects.txt'
+scripted_triggers_file = BASE_PATH / r'common\scripted_triggers\dolguldur_scripted_effects.txt'
 tag = "SPI"
 
 
