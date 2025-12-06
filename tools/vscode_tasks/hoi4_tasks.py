@@ -1,6 +1,7 @@
 from pathlib import Path
 import sys
 import datetime
+import subprocess
 
 from pdx_parser import *
 
@@ -14,7 +15,8 @@ characters_file = BASE_PATH / r'common\characters\DGU.txt'
 history_file = BASE_PATH / r'history\countries\DGU - Dolguldur.txt'
 scripted_effects_file = BASE_PATH / r'common\scripted_effects\dolguldur_scripted_effects.txt'
 scripted_triggers_file = BASE_PATH / r'common\scripted_triggers\dolguldur_scripted_effects.txt'
-tag = "SPI"
+events_file = BASE_PATH / r'events\DolGuldur.txt'
+tag = "DGU"
 
 
 new_idea_template = """
@@ -86,6 +88,25 @@ new_character_template = """
 	}
 """
 
+new_event_template = """
+# $TOKEN_COMMENT$
+country_event = {
+	id = $TOKEN_ID$.$TOKEN_NUM$
+	title = $TOKEN_ID$.$TOKEN_NUM$.t
+	desc = $TOKEN_ID$.$TOKEN_NUM$.d
+	picture = GFX_report_event_elven_alliance # TODO
+
+	is_triggered_only = yes
+
+	option = {
+		name = $TOKEN_ID$.$TOKEN_NUM$.a
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+"""
+
 
 def add_idea(name):
     ideas = ParseListFromFile_asPObj(ideas_file)
@@ -132,6 +153,24 @@ def add_new_character(name):
     SaveObjValueToFile(chars, characters_file)
 
 
+def add_new_event(name):
+    events = ParseListFromFile_asPObj(events_file)
+    namespace = events.Get("add_namespace").value
+    max_id = -1
+    evs = events.GetAll("country_event").value
+    for obj in evs:
+        raw = obj.GetVal("id")
+        number = int(raw.split(".")[-1])  
+        if number > max_id:
+            max_id = number
+    if max_id < 0: max_id = 1
+    else: max_id += 1
+    event_text = new_event_template.replace("$TOKEN_COMMENT$", name).replace("$TOKEN_NUM$", str(max_id)).replace("$TOKEN_ID$", namespace)
+    events.Insert(event_text)
+    SaveObjValueToFile(events, events_file)
+    subprocess.run("clip", text=True, input=namespace+"."+str(max_id))
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Please provide a command (add, clear, count)")
@@ -154,5 +193,7 @@ if __name__ == "__main__":
         add_new_scripted_trigger(args)
     elif command == "character":
         add_new_character(args)
+    elif command == "event":
+        add_new_event(args)
     else:
         print(f"Unknown command: {command}")

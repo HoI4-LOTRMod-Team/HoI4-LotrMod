@@ -78,8 +78,14 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            add_popularity = {
+                ideology = belligerent
+                popularity = 0.15
+            }
+            add_ideas = hardline_discipline_spirit
+        }
     }
 
     focus = {
@@ -98,8 +104,14 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            add_popularity = {
+                ideology = revolutionary
+                popularity = 0.15
+            }
+            add_ideas = meritocratic_command_spirit
+        }
     }
 
     focus = {
@@ -118,8 +130,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            add_timed_idea = {
+				idea = army_xp_gain
+				days = 250
+			}
+        }
     }
 
     focus = {
@@ -138,9 +155,21 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# improve previous spirit  
+            # Every unit leader of skill level 2 or lower will be dismissed
+            every_unit_leader = {
+                limit = {
+                    check_variable = { skill_level < 3 }
+                }
+                lotr_retire_character = yes
+            }
+            # Improve previous idea so that new commanders start at higher level
+            swap_ideas = {
+                remove_idea = meritocratic_command_spirit
+                add_idea = meritocratic_command_spirit_improved
+            }
 		}
     }
 
@@ -164,7 +193,7 @@ focus_tree = {
         
         completion_reward = {
 			# add planning and stuff. cant be chosen if mordor cucks  
-            add_ideas = DGU_grand_plan # TODO: make sure this gives planning and such
+            add_ideas = DGU_grand_plan
 		}
     }
 
@@ -209,8 +238,40 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            # in specific states surrounding DGU, convert half the wood into twice as much coal
+            if = {
+                limit = { 232 = { is_controlled_by = ROOT } }
+                232 = {
+                    set_temp_variable = { temp_wood_amount = var:resource@chromium }
+                    multiply_temp_variable = { temp_wood_amount = 0.5 }
+                    add_resource = { type = coal amount = temp_wood_amount }
+                    multiply_temp_variable = { temp_wood_amount = -1 }
+                    add_resource = { type = chromium amount = temp_wood_amount }
+                }
+            }
+            if = {
+                limit = { 233 = { is_controlled_by = ROOT } }
+                233 = {
+                    set_temp_variable = { temp_wood_amount = var:resource@chromium }
+                    multiply_temp_variable = { temp_wood_amount = 0.5 }
+                    add_resource = { type = coal amount = temp_wood_amount }
+                    multiply_temp_variable = { temp_wood_amount = -1 }
+                    add_resource = { type = chromium amount = temp_wood_amount }
+                }
+            }
+            if = {
+                limit = { 231 = { is_controlled_by = ROOT } }
+                231 = {
+                    set_temp_variable = { temp_wood_amount = var:resource@chromium }
+                    multiply_temp_variable = { temp_wood_amount = 0.5 }
+                    add_resource = { type = coal amount = temp_wood_amount }
+                    multiply_temp_variable = { temp_wood_amount = -1 }
+                    add_resource = { type = chromium amount = temp_wood_amount }
+                }
+            }
+        }
     }
 
     focus = {
@@ -229,8 +290,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            MIR = {
+                hidden_effect = { country_event = dolguldur.1 }
+                event_option_tooltip = dolguldur.1.a
+            }
+            LTH = {
+                hidden_effect = { country_event = dolguldur.1 }
+                event_option_tooltip = dolguldur.1.a
+            }
+        }
     }
 
     focus = {
@@ -249,8 +319,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            MIR = {
+                hidden_effect = { country_event = dolguldur.2 }
+                event_option_tooltip = dolguldur.2.a
+            }
+            LTH = {
+                hidden_effect = { country_event = dolguldur.2 }
+                event_option_tooltip = dolguldur.2.a
+            }
+        }
     }
 
     focus = {
@@ -270,13 +349,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            # TODO: It will cost MIR a lot more to spend presence points south of the forest Narrows
+        }
     }
 
     focus = {
         id = DGU_the_siege_of_the_elven_halls
 		prerequisite = { focus = DGU_focus_on_mirkwood }
+
+        will_lead_to_war_with = MIR
         
         icon = GFX_unknown_focus
         
@@ -290,8 +373,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            declare_war_on = {
+                target = MIR
+                type = annex_everything
+            }
+        }
     }
 
     focus = {
@@ -335,8 +423,18 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            VAL = {
+                give_intel_on_country = yes
+            }
+            GLD = {
+                give_intel_on_country = yes
+            }
+            RGL = {
+                give_intel_on_country = yes
+            }
+        }
     }
 
     focus = {
@@ -355,8 +453,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            declare_war_on = {
+                target = GLD
+                type = annex_everything
+            }
+        }
     }
 
     focus = {
@@ -375,8 +478,21 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            VAL = {
+                country_event = dolguldur.3
+                event_option_tooltip = dolguldur.3.a
+            }
+            GLD = {
+                country_event = dolguldur.3
+                event_option_tooltip = dolguldur.3.a
+            }
+            RGL = {
+                country_event = dolguldur.3
+                event_option_tooltip = dolguldur.3.a
+            }
+        }
     }
 
     focus = {
@@ -420,8 +536,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            MOR = { swear_secret_fealty = yes }
+        }
     }
 
     focus = {
@@ -550,9 +668,26 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# intelligence agency  
+            if = {
+                limit = {
+                    has_intelligence_agency = no
+                    has_dlc = "La Resistance"
+                }
+                create_intelligence_agency = yes
+            }
+            else = {
+                every_neighbor_country = {
+                    ROOT = {
+                        add_decryption = {
+                            target = PREV
+                            ratio = 0.1
+                        }
+                    }
+                }
+            }
 		}
     }
 
@@ -572,8 +707,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            add_breakthrough_points = {
+                specialization = all
+                value = 2
+            }
+        }
     }
 
     focus = {
@@ -696,9 +836,14 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# gain a bit of revo, add manpower  
+            add_popularity = {
+                ideology = revolutionary
+                popularity = 0.2
+            }
+            add_manpower = 50000
 		}
     }
 
@@ -741,9 +886,16 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# late game manifest if we own all mirkwood  
+            every_state = {
+                limit = {
+                    is_on_continent = mirkwood
+                }
+                add_core_of = ROOT
+            }
+            add_ideas = DGU_masters_of_mirkwood
 		}
     }
 
@@ -765,9 +917,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
         completion_reward = {
 			# if we fulfilled plan, get a bunch of cool stuff  
+            hidden_effect = {
+                country_event = { id = dolguldur.5 days = 1 }
+            }
+            event_option_tooltip = dolguldur.5.a
 		}
     }
 
@@ -787,8 +942,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            hidden_effect = {
+                MOR = { country_event = dolguldur.4 }   
+            }
+            MOR = {
+                event_option_tooltip = dolguldur.4.a
+            }
+        }
     }
 
     focus = {
@@ -807,9 +969,27 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# if friendly, gain cool stuff  
+            if = {
+                limit = { is_in_faction_with = SPI }
+                87 = {
+                    add_resource = {
+                        type = tungsten
+                        amount = 10
+                    }
+                }
+                set_technology = {
+                    paralytic_venom_others = 1
+                }
+
+            }
+            else = {
+                set_technology = {
+                    paralytic_venom_others = 1
+                }
+            }
 		}
     }
 
@@ -880,7 +1060,10 @@ focus_tree = {
                     NOT = { is_orcs = yes }
                     NOT = { is_ally_with = ROOT }
                 }
-                add_stability = -0.1 # TODO: Maybe this should be an event
+                hidden_effect = {
+                    country_event = dolguldur.6
+                }
+                event_option_tooltip = dolguldur.6.a
             }
 		}
     }
@@ -901,9 +1084,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        # TODO: Idk if "gather intelligence" is good here... We already have at least 2 other intel focuses in this tree?
+        # if I dont have any other ideas i guess...
         completion_reward = {
-			# get intel  
+
 		}
     }
 
@@ -923,9 +1107,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# choose if mordor alignment or no  
+            country_event = dolguldur.7
 		}
     }
 
@@ -946,7 +1131,12 @@ focus_tree = {
             always = yes
         }
         # TODO
-        completion_reward = { }
+        completion_reward = {
+            add_popularity = {
+                ideology = belligerent
+                popularity = -0.2
+            }
+        }
     }
 
     focus = {
@@ -1398,8 +1588,11 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            custom_effect_tooltip = "When we declare war on Lothlorien we will gain for 140 days:"
+            show_ideas_tooltip = DGU_focus_on_lothlorien
+        }
     }
 
     focus = {
@@ -1418,13 +1611,18 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            custom_effect_tooltip = "When we declare war on Mirkwood we will gain for 140 days:"
+            show_ideas_tooltip = DGU_focus_on_mirkwood
+        }
     }
 
     focus = {
         id = DGU_the_assault_on_lorien
 		prerequisite = { focus = DGU_focus_on_lothlorien }
+
+        will_lead_to_war_with = LTH
         
         icon = GFX_unknown_focus
         
@@ -1438,8 +1636,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            declare_war_on = {
+                target = LTH
+                type = annex_everything
+            }
+        }
     }
 
     focus = {
@@ -1457,8 +1660,18 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            if = {
+                limit = { 198 = { NOT = { is_controlled_by = ROOT } } }
+                198 = { cfm_gain_presence_point_2x = yes }
+            }
+            # If we already own state 198, then gain the points in 191 instead
+            else_if = {
+                limit = { 191 = { NOT = { is_controlled_by = ROOT } } }
+                191 = { cfm_gain_presence_point_2x = yes }
+            }
+        }
     }
 
     focus = {
@@ -1477,12 +1690,22 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            if = {
+                limit = { 232 = { NOT = { is_controlled_by = ROOT } } }
+                232 = { cfm_gain_presence_point_2x = yes }
+            }
+            # If we already own snorth, gain points in narrows instead
+            else_if = {
+                limit = { 190 = { NOT = { is_controlled_by = ROOT } } }
+                190 = { cfm_gain_presence_point_2x = yes }
+            }
+        }
     }
 
     focus = {
-        id = DGU_new_focus_4BSTtg
+        id = DGU_probing_raids
 		prerequisite = { focus = DGU_cut_off_elven_reinforcements }
         
         icon = GFX_unknown_focus
@@ -1497,14 +1720,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            unlock_decision_tooltip = raid_lothlorien
+            unlock_decision_tooltip = raid_mirkwood
+        }
     }
 
     focus = {
         id = DGU_elves_in_chains
 		prerequisite = { focus = DGU_the_assault_on_lorien }
-		prerequisite = { focus = DGU_new_focus_4BSTtg }
+		prerequisite = { focus = DGU_probing_raids }
 		prerequisite = { focus = DGU_the_siege_of_the_elven_halls }
         
         icon = GFX_unknown_focus
