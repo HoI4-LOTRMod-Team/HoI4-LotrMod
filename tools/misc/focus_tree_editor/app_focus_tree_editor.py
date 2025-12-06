@@ -80,7 +80,7 @@ def main():
     viewer = graph_widget.findChild(QtWidgets.QGraphicsView)
     scene = viewer.scene()
 
-    #draw_origin_axes(scene) # Use this to draw axes to position the entire tree nicely. Disable afterwards because it causes error-spam
+    draw_origin_axes(scene) # Use this to draw axes to position the entire tree nicely. Disable afterwards because it causes error-spam
 
 
     # Present
