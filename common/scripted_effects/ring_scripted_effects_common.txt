@@ -609,6 +609,69 @@ ring_execute_interception_attempt = {
 
 	ring_interception_detection_check = yes
 
+	# If attacking country is mirkwood and Legolas or Tauriel is in fellowship, they have a 50% chance of switching sides and grant an extra attack
+	# TODO: I have no clue if this works. TEST!
+	if = {
+		limit = { ROOT = { tag = MIR has_completed_focus = MIR_insider_agent } }
+		random_list = {
+			# betrayal
+			50 = {
+				# Tauriel betrayal
+				if = {
+					limit = { SHI = { FS_tauriel = { is_in_array = { global.fs_members = THIS } } } }
+					SHI = { FS_tauriel = { ring_remove_member_from_fellowship_nolog = yes } }
+					MIR = { MIR_tauriel = { ring_add_member_to_hunting_party = yes } }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_tauriel_betrayal }
+					ring_trim_eventlog = yes
+
+					MIR = { MIR_tauriel = { set_temp_variable = { temp_attacker = THIS } } }
+					random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+					ring_combat_execute_attack = yes
+				}
+				# Legolas betrayal
+				else_if = {
+					limit = { SHI = { FS_legolas = { is_in_array = { global.fs_members = THIS } } } }
+					SHI = { FS_legolas = { ring_remove_member_from_fellowship_nolog = yes } }
+					MIR = { MIR_legolas = { ring_add_member_to_hunting_party = yes } }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_legolas_betrayal }
+					ring_trim_eventlog = yes
+
+					MIR = { MIR_legolas = { set_temp_variable = { temp_attacker = THIS } } }
+					random_scope_in_array = { array = ROOT.fs_hunting_party set_temp_variable = { temp_defender = THIS } }
+					ring_combat_execute_attack = yes
+				}
+			}
+
+			# loyalty
+			50 = {
+				# Tauriel 
+				if = {
+					limit = { SHI = { FS_tauriel = { is_in_array = { global.fs_members = THIS } } } }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_tauriel_loyal }
+					ring_trim_eventlog = yes
+				}
+				# Legolas 
+				else_if = {
+					limit = { SHI = { FS_legolas = { is_in_array = { global.fs_members = THIS } } } }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_legolas_loyal }
+					ring_trim_eventlog = yes
+				}
+			}
+		}
+	}
+
 	for_loop_effect = {
 	    end = 4
 	    value = temp_attempt

@@ -1119,9 +1119,33 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
-            # some army leaders will have a "highborn" traits
+            # give highborn trait to all important dudes
+            if = {
+                limit = { MIR_thranduil = { is_unit_leader = yes } }
+                MIR_thranduil = { add_unit_leader_trait = highborn_elf }
+            }
+            if = {
+                limit = { MIR_legolas = { is_unit_leader = yes } }
+                MIR_legolas = { add_unit_leader_trait = highborn_elf }
+            }
+            if = {
+                limit = { MIR_tauriel = { is_unit_leader = yes } }
+                MIR_tauriel = { add_unit_leader_trait = highborn_elf }
+            }
+            # the rest gets randomized
+            every_unit_leader = {
+                limit = {
+                    NOT = { has_trait = highborn_elf }
+                }
+                random_list = {
+                    50 = {
+                        add_unit_leader_trait = highborn_elf
+                    }
+                    50 = { }
+                }
+            }
         }
     }
 
@@ -1164,9 +1188,18 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # get rid of all army leaders without the highborn trait. Improve the highborn trait
+            every_unit_leader = {
+                limit = { NOT = { has_trait = highborn_elf } }
+                remove_unit_leader = yes
+            }
+            every_unit_leader = {
+                limit = { has_trait = highborn_elf }
+                remove_unit_leader_trait = highborn_elf
+                add_unit_leader_trait = highborn_elf_2
+            }
         }
     }
 
@@ -1208,9 +1241,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
-            # create a cool special unit
+            # if an enemy attacks enchanted vale state, insta-spawn a cool unit in Halls
+            # (impl complete)
         }
     }
 
@@ -1409,10 +1443,11 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # closed economy
-            # add idea?
+            add_ideas = lth_special_closed_economy
+			# TODO: add extra idea?
         }
     }
 
@@ -1506,9 +1541,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
-            # add idea or mils or something to prep for war
+            # add prep idea that gets removed when at war
+            add_ideas = MIR_bracing_for_war # NOTE/TODO: will be rmeoved when at war
         }
     }
 
@@ -1638,9 +1674,30 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # prep to move 50% of population from other states to "core" states
+            set_variable = {
+                mir_evacuated_population_k = 0
+            }
+            every_controlled_state = {
+                limit = {
+                    is_on_continent = mirkwood
+                    NOT = { state = 83 } # enchanted vale
+                    NOT = { state = 81 } # mountains
+                    NOT = { state = 84 } # south of mountains
+                    NOT = { state = 80 } # north glades
+                    NOT = { state = 235 } # north glades (impassable)
+                    NOT = { state = 242 } # south (impassable)
+                    NOT = { state = 243 } # south (impassable)
+                }
+                set_temp_variable = { temp_population_amount = state_population_k }
+                multiply_temp_variable = { temp_population_amount = 0.5 }
+                add_to_variable = { mir_evacuated_population_k = temp_population_amount }
+                custom_effect_tooltip = "Evacuate [?temp_population_amount]k from [THIS.GetName] "
+                multiply_temp_variable = { temp_population_amount = -1000 }
+                add_manpower = temp_population_amount
+            }
         }
     }
 
@@ -1660,9 +1717,36 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # prep to move significant industry from other states to "core" states
+            set_variable = {
+                mir_evacuated_civs = 0
+                mir_evacuated_mils = 0
+            }
+            every_controlled_state = {
+                limit = {
+                    is_on_continent = mirkwood
+                    NOT = { state = 83 } # enchanted vale
+                    NOT = { state = 81 } # mountains
+                    NOT = { state = 84 } # south of mountains
+                    NOT = { state = 80 } # north glades
+                    NOT = { state = 235 } # north glades (impassable)
+                    NOT = { state = 242 } # south (impassable)
+                    NOT = { state = 243 } # south (impassable)
+                }
+                set_temp_variable = { temp_factories = arms_factory_level }
+                multiply_temp_variable = { temp_factories = 0.66 }
+                add_to_variable = { mir_evacuated_mils = temp_factories }
+                custom_effect_tooltip = "Evacuate [?temp_factories] military factories from [THIS.GetName] "
+                remove_building = { type = arms_factory level = temp_factories }
+
+                set_temp_variable = { temp_factories = industrial_complex_level }
+                multiply_temp_variable = { temp_factories = 0.66 }
+                add_to_variable = { mir_evacuated_civs = temp_factories }
+                custom_effect_tooltip = "Evacuate [?temp_factories] civilian factories from [THIS.GetName] "
+                remove_building = { type = industrial_complex level = temp_factories }
+            }
         }
     }
 
@@ -1793,10 +1877,19 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
-            # forfeit all presence points
-            # add all the stuff "prepped" in prev focuses
+            # TODO?: forfeit all presence points
+
+            # add population evacuated in prev focus
+            set_temp_variable = { temp_population_amount = mir_evacuated_population_k }
+            multiply_temp_variable = { temp_population_amount = 500 } # * 0.5 * 1000
+            83 = { add_manpower = temp_population_amount }
+            84 = { add_manpower = temp_population_amount }
+
+            # add civs/mils evacuated in prev focus
+            83 = { add_building_construction = { type = industrial_complex level = mir_evacuated_civs instant_build = yes } }
+            84 = { add_building_construction = { type = arms_factory level = mir_evacuated_mils instant_build = yes } }
         }
     }
 
@@ -2237,9 +2330,33 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
-            # get claim on every single forest tile
+            # get claim on every single passable state that has > 60% forest or jungle provinces. 
+            # This list was generated using find_forest_states.py
+            if = { limit = { 128 = { NOT = { is_claimed_by = ROOT } } } 128   = { add_claim_by = ROOT } }
+            if = { limit = { 190 = { NOT = { is_claimed_by = ROOT } } } 190   = { add_claim_by = ROOT } }
+            if = { limit = { 212 = { NOT = { is_claimed_by = ROOT } } } 212   = { add_claim_by = ROOT } }
+            if = { limit = { 222 = { NOT = { is_claimed_by = ROOT } } } 222   = { add_claim_by = ROOT } }
+            if = { limit = { 226 = { NOT = { is_claimed_by = ROOT } } } 226   = { add_claim_by = ROOT } }
+            if = { limit = { 228 = { NOT = { is_claimed_by = ROOT } } } 228   = { add_claim_by = ROOT } }
+            if = { limit = { 229 = { NOT = { is_claimed_by = ROOT } } } 229   = { add_claim_by = ROOT } }
+            if = { limit = { 230 = { NOT = { is_claimed_by = ROOT } } } 230   = { add_claim_by = ROOT } }
+            if = { limit = { 231 = { NOT = { is_claimed_by = ROOT } } } 231   = { add_claim_by = ROOT } }
+            if = { limit = { 232 = { NOT = { is_claimed_by = ROOT } } } 232   = { add_claim_by = ROOT } }
+            if = { limit = { 233 = { NOT = { is_claimed_by = ROOT } } } 233   = { add_claim_by = ROOT } }
+            if = { limit = { 29  = { NOT = { is_claimed_by = ROOT } } } 29    = { add_claim_by = ROOT } }
+            if = { limit = { 33  = { NOT = { is_claimed_by = ROOT } } } 33    = { add_claim_by = ROOT } }
+            if = { limit = { 36  = { NOT = { is_claimed_by = ROOT } } } 36    = { add_claim_by = ROOT } }
+            if = { limit = { 37  = { NOT = { is_claimed_by = ROOT } } } 37    = { add_claim_by = ROOT } }
+            if = { limit = { 38  = { NOT = { is_claimed_by = ROOT } } } 38    = { add_claim_by = ROOT } }
+            if = { limit = { 80  = { NOT = { is_claimed_by = ROOT } } } 80    = { add_claim_by = ROOT } }
+            if = { limit = { 82  = { NOT = { is_claimed_by = ROOT } } } 82    = { add_claim_by = ROOT } }
+            if = { limit = { 83  = { NOT = { is_claimed_by = ROOT } } } 83    = { add_claim_by = ROOT } }
+            if = { limit = { 84  = { NOT = { is_claimed_by = ROOT } } } 84    = { add_claim_by = ROOT } }
+            if = { limit = { 85  = { NOT = { is_claimed_by = ROOT } } } 85    = { add_claim_by = ROOT } }
+            if = { limit = { 86  = { NOT = { is_claimed_by = ROOT } } } 86    = { add_claim_by = ROOT } }
+            if = { limit = { 87  = { NOT = { is_claimed_by = ROOT } } } 87    = { add_claim_by = ROOT } }
         }
     }
 
@@ -2311,9 +2428,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
             # gain cores on all Mirkwood
+            every_state = {
+                limit = { is_on_continent = mirkwood }
+                add_core_of = ROOT
+            }
         }
     }
 
@@ -2355,9 +2475,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # add trait to Thran
+            add_country_leader_trait = the_exalted
         }
     }
 
@@ -2806,6 +2927,7 @@ focus_tree = {
         # TODO1
         completion_reward = {
             # start transition into orcs
+            
         }
     }
 
@@ -2847,9 +2969,11 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # turn to orcs, gain some stuff
+            lotr_switch_to_orcs = yes
+            # TODO: add idea?
         }
     }
 
@@ -2892,9 +3016,14 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # gain trolls
+            MOR = {
+                country_event = { id = mordor.50 }
+            }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = mordor.50.a
         }
     }
 
@@ -2960,7 +3089,7 @@ focus_tree = {
         }
         # TODO1
         completion_reward = {
-            # get cucked to MOR
+            # get cucked by MOR
         }
     }
 
@@ -3098,9 +3227,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # gain core on every jungle/forest state
+            every_state = {
+                limit = { is_claimed_by = ROOT NOT = { is_core_of = ROOT } }
+                add_core_of = ROOT
+            }
         }
     }
 
@@ -3120,9 +3253,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
-            # make it so that if we intercept, Legolas betrays the fellowship
+            # make it so that if we intercept, there's a 50% chance Legolas/Tauriel betray the fellowship and we get a free attack
+            # Implementation should be done
         }
     }
 }
