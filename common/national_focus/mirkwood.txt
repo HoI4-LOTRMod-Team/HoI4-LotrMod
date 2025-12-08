@@ -210,9 +210,16 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
 			# remove "neglected region from north"
+            80 = {
+                remove_dynamic_modifier = { modifier = mir_neglected_region }
+            }
+            235 = {
+                add_building_slot_and_civ = yes
+                remove_dynamic_modifier = { modifier = mir_neglected_region }
+            }
 		}
     }
 
@@ -300,9 +307,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
 			# allow mercenary recruiotment (change existing idea)
+            swap_ideas = {
+                remove_idea = MIR_elven_arrogance
+                add_idea = MIR_elven_arrogance_2
+            }
 		}
     }
 
@@ -369,9 +380,39 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
-			# see rohan focus
+			# Gondor, Dorwinion, Dale, Rhun, Harad, Angmar
+			# each who has > 10 opinion of us will send a specialized research-advisor that will becojme available to us
+			# current scholars we will receive:
+			# ... a list
+			custom_effect_tooltip = ROH_attract_foreign_scholars_tt
+
+			if = {
+				limit = { GON = { exists = yes has_opinion = { target = ROOT value > 10 } NOT = { has_war_with = ROOT } } }
+				set_country_flag = gon_scholar_unlocked
+				custom_effect_tooltip = gon_scholar_tt
+			}
+			if = {
+				limit = { DOR = { exists = yes has_opinion = { target = ROOT value > 10 } NOT = { has_war_with = ROOT } } }
+				set_country_flag = dor_scholar_unlocked
+				custom_effect_tooltip = dor_scholar_tt
+			}
+			if = {
+				limit = { ERE = { exists = yes has_opinion = { target = ROOT value > 10 } NOT = { has_war_with = ROOT } } }
+				set_country_flag = ere_scholar_unlocked
+				custom_effect_tooltip = ere_scholar_tt
+			}
+			if = {
+				limit = { RIV = { exists = yes has_opinion = { target = ROOT value > 10 } NOT = { has_war_with = ROOT } } }
+				set_country_flag = riv_scholar_unlocked
+				custom_effect_tooltip = riv_scholar_tt
+			}
+			if = {
+				limit = { ANG = { exists = yes has_opinion = { target = ROOT value > 10 } NOT = { has_war_with = ROOT } } }
+				set_country_flag = ang_scholar_unlocked
+				custom_effect_tooltip = ang_scholar_tt
+			}
 		}
     }
 
@@ -459,9 +500,49 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # add watchtowers/radars in places
+            if = {
+                limit = { controls_state = 83 }
+                83 = {
+                    add_building_construction = {
+                        type = radar_station
+                        level = 2
+                        instant_build = yes
+                    }
+                }
+            }
+            if = {
+                limit = { controls_state = 81 }
+                81 = {
+                    add_building_construction = {
+                        type = radar_station
+                        level = 2
+                        instant_build = yes
+                    }
+                }
+            }
+            if = {
+                limit = { controls_state = 84 }
+                84 = {
+                    add_building_construction = {
+                        type = radar_station
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+            }
+            if = {
+                limit = { controls_state = 80 }
+                80 = {
+                    add_building_construction = {
+                        type = radar_station
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+            }
         }
     }
 
@@ -701,9 +782,34 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # build food silos and maybe a farm or smth
+            if = {
+                limit = { controls_state = 83 }
+                 83 = {
+                    add_building_construction = {
+                        type = fuel_silo
+                        level = 2
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = synthetic_refinery
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+            }
+            else_if = {
+                limit = { controls_state = 81 }
+                 81 = {
+                    add_building_construction = {
+                        type = fuel_silo
+                        level = 2
+                        instant_build = yes
+                    }
+                }
+            }
         }
     }
 
@@ -747,9 +853,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
             # secret elven research group?
+            add_to_tech_sharing_group = mirkwood_elves_group
+            every_country = {
+                limit = {
+                    NOT = { tag = ROOT }
+                    NOT = { has_war_with = ROOT }
+                    is_elves = yes
+                }
+                country_event = { id = mirkwood.14 }
+            }
         }
     }
 
