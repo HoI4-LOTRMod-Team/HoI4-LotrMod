@@ -175,7 +175,7 @@ focus_tree = {
 
     focus = {
         id = DGU_the_grand_strategy
-		prerequisite = { focus = DGU_gather_intelligence }
+		prerequisite = { focus = DGU_centralize_military_planning }
 		prerequisite = { focus = DGU_master_of_the_fortress }
         
         icon = GFX_unknown_focus
@@ -1032,8 +1032,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            add_stability = 0.1
+        }
     }
 
     focus = {
@@ -1069,7 +1071,7 @@ focus_tree = {
     }
 
     focus = {
-        id = DGU_gather_intelligence
+        id = DGU_centralize_military_planning
 		prerequisite = { focus = DGU_quell_the_infighting }
         
         icon = GFX_unknown_focus
@@ -1084,9 +1086,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO: Idk if "gather intelligence" is good here... We already have at least 2 other intel focuses in this tree?
-        # if I dont have any other ideas i guess...
-        completion_reward = { }
+        
+        completion_reward = {
+            remove_ideas = DGU_incoherent_military_command
+        }
     }
 
     focus = {
@@ -1433,9 +1436,11 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# make spiders more annoying against elves (+ presence)  
+            SPI = { country_event = { id = dolguldur.100 days = 3 } }
+            custom_effect_tooltip = "A host of spiders will raid the elves of Mirkwood, harming their relations and causing damage to both sides."
 		}
     }
 
@@ -1636,9 +1641,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# less supply in state  
+            every_controlled_state = {
+                limit = {
+                    necromantic_forge > 0
+                }
+                add_dynamic_modifier = {
+                    modifier = supply_depots
+                }
+            }
 		}
     }
 
@@ -1658,9 +1671,21 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        # Gain 2k manpower per state with necro forge
         completion_reward = {
 			# extra manpower  
+            set_temp_variable = {
+                temp_mp_bonus = 0
+            }
+            every_controlled_state = {
+                limit = {
+                    necromantic_forge > 0
+                }
+                add_to_temp_variable = {
+                    temp_mp_bonus = 2000
+                }
+            }
+            add_manpower = temp_mp_bonus
 		}
     }
 
@@ -1882,8 +1907,11 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            country_event = dolguldur.102
+            custom_effect_tooltip = "We will be given a choice to forge a secret pact with one of the clans of the Anduin."
+        }
     }
 
     focus = {

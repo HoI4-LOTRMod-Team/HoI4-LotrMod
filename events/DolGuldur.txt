@@ -1,7 +1,9 @@
 
 
 add_namespace = dolguldur
-	
+
+# TODO: none of these events (or only very few) have localisation yet
+
 # DGU poisons the river Anduin
 country_event = {
 	id = dolguldur.1
@@ -18,7 +20,7 @@ country_event = {
 		}
 	}
 }
-	
+
 # DGU launches skirmishes and sabotage, weaking MIR/LTH
 country_event = {
 	id = dolguldur.2
@@ -35,7 +37,7 @@ country_event = {
 		}
 	}
 }
-	
+
 # DGU causes division and strife between the nations of the vale
 country_event = {
 	id = dolguldur.3
@@ -53,7 +55,7 @@ country_event = {
 		add_ideas = DGU_division_and_strife
 	}
 }
-	
+
 # DGU rejects Mordor leadership
 country_event = {
 	id = dolguldur.4
@@ -71,7 +73,7 @@ country_event = {
 		DGU = { swear_eternal_animosity = yes }
 	}
 }
-	
+
 # DGU gets a reward from Mordor for achieving the schedule
 country_event = {
 	id = dolguldur.5
@@ -89,7 +91,7 @@ country_event = {
 		# TODO: get all kinds of cool stuff
 	}
 }
-	
+
 # Something evil is stirring in DGU and lowering our stability
 country_event = {
 	id = dolguldur.6
@@ -107,7 +109,7 @@ country_event = {
 		add_stability = -0.1
 	}
 }
-	
+
 # DGU needs to choose whether to align with Mordor or without (Master of the fortress focus)
 country_event = {
 	id = dolguldur.7
@@ -124,7 +126,7 @@ country_event = {
 		}
 	}
 }
-	
+
 # DGU sends event to puppet spiders. If spiders are AI, each necroforge increases their chance of accepting by 10%
 country_event = {
 	id = dolguldur.8
@@ -166,3 +168,598 @@ country_event = {
 }
 
 
+
+
+# POV: Spiders. DGU has spurred some of our spiders into an attack on the elves of mirkwood
+country_event = {
+	id = dolguldur.100
+	title = dolguldur.100.t
+	desc = dolguldur.100.desc
+
+	is_triggered_only = yes
+
+	# try to minimize damage
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.100.a
+
+		add_manpower = -500
+
+		MIR = { country_event = { id = dolguldur.101 days = 3 } }
+		custom_effect_tooltip = dolguldur.101.a
+	}
+
+	# encourage them
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.100.b
+
+		add_manpower = -1000
+		add_war_support = 0.03
+
+		MIR = { country_event = { id = dolguldur.104 days = 3 } }
+		custom_effect_tooltip = dolguldur.104.a
+	}
+}
+
+
+# POV: Mirkwood. We have been attacked by spiders, little damage
+country_event = {
+	id = dolguldur.101
+	title = dolguldur.101.t
+	desc = dolguldur.101.desc
+
+	is_triggered_only = yes
+
+	# let it slide
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.101.a
+
+		MIR = {
+			add_manpower = -1000
+			add_stability = -0.03
+			add_opinion_modifier = {
+				target = SPI
+				modifier = medium_decrease
+			}
+		}
+	}
+
+	# retaliate
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.101.b
+
+		MIR = {
+			add_manpower = -2000
+			add_war_support = 0.03
+			add_opinion_modifier = {
+				target = SPI
+				modifier = medium_decrease
+			}
+		}
+
+		SPI = { country_event = { id = dolguldur.103 days = 5 } }
+		event_option_tooltip = dolguldur.103.a
+	}
+}
+
+
+# POV: DGU. Ask one of the kingdoms of the Vales to join a secret deal
+country_event = {
+	id = dolguldur.102
+	title = dolguldur.102.t
+	desc = dolguldur.102.desc
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			RGL = {
+				is_subject = no
+				NOT = { has_war_with = DGU }
+				is_in_faction = no
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.102.a
+		RGL = { country_event = { id = dolguldur.105 days = 3 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.108.a
+	}
+
+	option = {
+		trigger = {
+			GLD = {
+				is_subject = no
+				NOT = { has_war_with = DGU }
+				is_in_faction = no
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.102.b
+		GLD = { country_event = { id = dolguldur.106 days = 3 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.110.a
+	}
+
+	option = {
+		trigger = {
+			VAL = {
+				is_subject = no
+				NOT = { has_war_with = DGU }
+				is_in_faction = no
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.102.c
+		VAL = { country_event = { id = dolguldur.107 days = 3 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.112.a
+	}
+
+	# Shows up when the other options are not available
+	option = {
+		trigger = {
+			RGL = { OR = { is_subject = yes has_war_with = DGU is_in_faction = yes } }
+			GLD = { OR = { is_subject = yes has_war_with = DGU is_in_faction = yes } }
+			VAL = { OR = { is_subject = yes has_war_with = DGU is_in_faction = yes } }
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.102.d
+
+		add_political_power = 150
+	}
+}
+
+
+# POV: Spiders. Mirkwood elves retaliated against us for our attack
+country_event = {
+	id = dolguldur.103
+	title = dolguldur.103.t
+	desc = dolguldur.103.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.103.a
+
+		SPI = {
+			add_manpower = -1500
+			add_stability = -0.03
+			random_controlled_state = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+			}
+			add_opinion_modifier = {
+				target = SPI
+				modifier = large_decrease
+			}
+		}
+	}
+}
+
+
+# POV: Mirkwood. We have been attacked by spiders, big damage
+country_event = {
+	id = dolguldur.104
+	title = dolguldur.104.t
+	desc = dolguldur.104.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.104.a
+
+		MIR = {
+			add_manpower = -2000
+			add_stability = -0.05
+			random_controlled_state = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+				damage_building = {
+					type = industrial_complex
+					damage = 1
+				}
+			}
+			add_opinion_modifier = {
+				target = SPI
+				modifier = medium_decrease
+			}
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.104.b
+
+		MIR = {
+			add_manpower = -3000
+			add_stability = -0.03
+			add_war_support = 0.03
+			random_controlled_state = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+				damage_building = {
+					type = industrial_complex
+					damage = 1
+				}
+			}
+			add_opinion_modifier = {
+				target = SPI
+				modifier = medium_decrease
+			}
+		}
+
+		SPI = { country_event = { id = dolguldur.103 days = 5 } }
+		event_option_tooltip = dolguldur.103.a
+	}
+}
+
+
+# Ask Rhosgobel to attack Chiefdoms of Gladden together
+country_event = {
+	id = dolguldur.105
+	title = dolguldur.105.t
+	desc = dolguldur.105.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.105.a
+		DGU = { country_event = { id = dolguldur.108 days = 3 } }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.105.b
+		DGU = { country_event = { id = dolguldur.109 days = 3 } }
+	}
+}
+
+
+# Ask Gladden to attack Rhosgobel together
+country_event = {
+	id = dolguldur.106
+	title = dolguldur.106.t
+	desc = dolguldur.106.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.106.a
+		DGU = { country_event = { id = dolguldur.110 days = 3 } }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.106.b
+		DGU = { country_event = { id = dolguldur.111 days = 3 } }
+	}
+}
+
+
+# Ask vales to attack Gladden while we attack Rhosgobel
+country_event = {
+	id = dolguldur.107
+	title = dolguldur.107.t
+	desc = dolguldur.107.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.107.a
+		DGU = { country_event = { id = dolguldur.112 days = 3 } }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.107.b
+		DGU = { country_event = { id = dolguldur.113 days = 3 } }
+	}
+}
+
+
+# Rhosgobel accepts the secret deal
+country_event = {
+	id = dolguldur.108
+	title = dolguldur.108.t
+	desc = dolguldur.108.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.108.a
+
+		RGL = {
+			set_country_flag = DGU_secret_deal_accepted
+			custom_effect_tooltip = "§OWhen Dol Guldur declares war on [GLD.GetName], [RGL.GetName] will immediately also declare war on them and grant [DGU.GetName] military access.§!"
+		}
+	}
+}
+
+
+# Rhosgobel declines the secret deal
+country_event = {
+	id = dolguldur.109
+	title = dolguldur.109.t
+	desc = dolguldur.109.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.109.a
+
+		RGL = {
+			decrease_our_opinion_of_them_small = yes
+		}
+	}
+}
+
+
+# Gladden accepts the secret deal
+country_event = {
+	id = dolguldur.110
+	title = dolguldur.110.t
+	desc = dolguldur.110.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.110.a
+
+		GLD = {
+			set_country_flag = DGU_secret_deal_accepted
+			custom_effect_tooltip = "§OWhen Dol Guldur declares war on [RGL.GetName], [GLD.GetName] will immediately also declare war on them.§!"
+		}
+	}
+}
+
+
+# Gladden declines the secret deal
+country_event = {
+	id = dolguldur.111
+	title = dolguldur.111.t
+	desc = dolguldur.111.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.111.a
+
+		GLD = {
+			decrease_our_opinion_of_them_small = yes
+		}
+	}
+}
+
+
+# Vales accepts the secret deal
+country_event = {
+	id = dolguldur.112
+	title = dolguldur.112.t
+	desc = dolguldur.112.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.112.a
+
+		VAL = {
+			set_country_flag = DGU_secret_deal_accepted
+			custom_effect_tooltip = "§OWhen Dol Guldur declares war on [RGL.GetName], [VAL.GetName] will immediately declare war on [GLD.GetName].§!"
+		}
+	}
+}
+
+
+# Vales declines the secret deal
+country_event = {
+	id = dolguldur.113
+	title = dolguldur.113.t
+	desc = dolguldur.113.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.113.a
+
+		VAL = {
+			decrease_our_opinion_of_them_small = yes
+		}
+	}
+}
+
+
+# Rhosgobel called to the secret deal
+country_event = {
+	id = dolguldur.114
+	title = dolguldur.114.t
+	desc = dolguldur.114.desc
+
+	fire_only_once = yes
+	trigger = {
+		tag = RGL
+		has_country_flag = DGU_secret_deal_accepted
+		NOT = { has_war_with = DGU }
+		is_subject = no
+		
+		DGU = { has_war_with = GLD }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.114.a
+
+		declare_war_on = {
+			target = GLD
+			type = annex_everything
+		}
+		give_military_access = DGU
+	}
+
+	option = {
+		trigger = {
+			has_war = yes
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.114.b
+
+		add_political_power = -500
+		add_stability = -0.15
+	}
+}
+
+
+# Gladden called to the secret deal
+country_event = {
+	id = dolguldur.115
+	title = dolguldur.115.t
+	desc = dolguldur.115.desc
+
+	fire_only_once = yes
+	trigger = {
+		tag = GLD
+		has_country_flag = DGU_secret_deal_accepted
+		NOT = { has_war_with = DGU }
+		is_subject = no
+		
+		DGU = { has_war_with = RGL }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.115.a
+
+		declare_war_on = {
+			target = RGL
+			type = annex_everything
+		}
+	}
+
+	option = {
+		trigger = {
+			has_war = yes
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.115.b
+
+		add_political_power = -500
+		add_stability = -0.15
+	}
+}
+
+
+# Vales called to the secret deal
+country_event = {
+	id = dolguldur.116
+	title = dolguldur.116.t
+	desc = dolguldur.116.desc
+
+	fire_only_once = yes
+	trigger = {
+		tag = VAL
+		has_country_flag = DGU_secret_deal_accepted
+		NOT = { has_war_with = DGU }
+		is_subject = no
+		
+		DGU = { has_war_with = RGL }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.116.a
+
+		declare_war_on = {
+			target = GLD
+			type = annex_everything
+		}
+	}
+
+	option = {
+		trigger = {
+			has_war = yes
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.116.b
+
+		add_political_power = -500
+		add_stability = -0.15
+	}
+}
