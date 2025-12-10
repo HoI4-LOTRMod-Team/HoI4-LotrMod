@@ -196,6 +196,7 @@ country_event = {
 				autonomy_state = autonomy_bulwark
 			}
 		}
+        # TODO: tooltip that being allied with spiders and having a border with them can lead to incidents
 	}
 }
 
@@ -284,6 +285,7 @@ country_event = {
         name = spiders.110.a
 		MOR = {
 			add_to_faction = SPI
+            # TODO: tooltip that being allied with spiders and having a border with them can lead to incidents
 			send_equipment = {
 				equipment = infantry_equipment
 				amount = 3000
@@ -334,6 +336,7 @@ country_event = {
         name = spiders.112.a
 		MOR = {
 			add_to_faction = SPI
+            # TODO: tooltip that being allied with spiders and having a border with them can lead to incidents
 			send_equipment = {
 				equipment = infantry_equipment
 				amount = 1500
@@ -397,6 +400,7 @@ country_event = {
 
 		MOR = {
 			add_to_faction = SPI
+            # TODO: tooltip that being allied with spiders and having a border with them can lead to incidents
 		}
     }
 }
@@ -486,6 +490,7 @@ country_event = {
 			template = faction_template_generic
 		}
 		add_to_faction = FROM
+        # TODO: tooltip that being allied with spiders and having a border with them can lead to incidents
     }
 }
 
@@ -558,6 +563,7 @@ country_event = {
 			template = faction_template_generic
 		}
 		add_to_faction = SPI
+        # TODO: tooltip that being allied with spiders and having a border with them can lead to incidents
     }
 }
 
@@ -673,4 +679,218 @@ country_event = {
         }
     }
 }
+	
+# Spiders and elves settle territorial disputes (TODO: localization)
+country_event = {
+	id = spiders.124
+	title = spiders.124.t
+	desc = spiders.124.d
+	picture = GFX_report_event_elven_alliance # TODO
 
+	is_triggered_only = yes
+
+	option = {
+		name = spiders.124.a
+		ai_chance = {
+			base = 1
+		}
+        if = {
+            limit = {
+                OR = {
+                    AND = { SPI = { is_ai = yes } MIR = { is_ai = no } tag = MIR }
+                    AND = { SPI = { is_ai = no } tag = SPI }
+                    AND = { MIR = { is_ai = yes } tag = SPI }
+                }
+            }
+            SPI = {
+                every_controlled_state = {
+                    if = { limit = { is_claimed_by = MIR } remove_claim_by = MIR }
+                    if = { limit = { is_core_of = MIR } remove_core_of = MIR }
+                }
+            }
+            MIR = {
+                every_controlled_state = {
+                    if = { limit = { is_claimed_by = SPI } remove_claim_by = SPI }
+                    if = { limit = { is_core_of = SPI } remove_core_of = SPI }
+                }
+            }
+            cfm_end = yes
+        }
+        else = {
+            effect_tooltip = {
+                SPI = {
+                    every_controlled_state = {
+                        if = { limit = { is_claimed_by = MIR } remove_claim_by = MIR }
+                        if = { limit = { is_core_of = MIR } remove_core_of = MIR }
+                    }
+                }
+                MIR = {
+                    every_controlled_state = {
+                        if = { limit = { is_claimed_by = SPI } remove_claim_by = SPI }
+                        if = { limit = { is_core_of = SPI } remove_core_of = SPI }
+                    }
+                }
+                cfm_end = yes
+            }
+        }
+	}
+}
+
+
+
+# Spiders seek knowledge for intel
+country_event = {
+    id = spiders.125
+    title = spiders.125.t
+    desc = spiders.125.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.125.a
+		SPI = { country_event = { id = spiders.129 days = 3 } }
+        event_option_tooltip = spiders.129.a
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.125.b
+	    SPI = { country_event = { id = spiders.130 days = 3 } }
+        event_option_tooltip = spiders.130.a
+	}
+}
+
+
+# Spiders ask to eat our prisoners in exchange for peace
+country_event = {
+    id = spiders.126
+    title = spiders.126.t
+    desc = spiders.126.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.126.a
+		SPI = { country_event = { id = spiders.127 days = 3 } }
+        event_option_tooltip = spiders.127.a
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.126.b
+	    SPI = { country_event = { id = spiders.128 days = 3 } }
+        event_option_tooltip = spiders.128.a
+	}
+}
+
+
+# Elves accept to let us eat their prisoners
+country_event = {
+    id = spiders.127
+    title = spiders.127.t
+    desc = spiders.127.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.127.a
+
+        MIR = {
+            add_manpower = -3000
+        }
+
+        SPI = {
+            add_manpower = 6000
+        }
+
+        MIR = {
+            spider_disable_incidents = yes
+            add_stability = -0.05
+        }
+    }
+}
+
+
+# Elves refuse to let us eat their prisoners
+country_event = {
+    id = spiders.128
+    title = spiders.128.t
+    desc = spiders.128.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.128.a
+
+        SPI = {
+            add_opinion_modifier = {
+                target = MIR
+                modifier = medium_decrease
+            }
+        }
+
+        MIR = {
+            spider_increase_incident_frequency = yes
+        }
+    }
+}
+
+
+# Elves accept to give us wisdom
+country_event = {
+    id = spiders.129
+    title = spiders.129.t
+    desc = spiders.129.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.129.a
+
+        SPI = { add_to_tech_sharing_group = elves_and_spiders }
+        MIR = { add_to_tech_sharing_group = elves_and_spiders }
+    }
+}
+
+
+# Elves refuse to give us wisdom
+country_event = {
+    id = spiders.130
+    title = spiders.130.t
+    desc = spiders.130.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.130.a
+
+        SPI = {
+            add_opinion_modifier = {
+                target = MIR
+                modifier = medium_decrease
+            }
+        }
+    }
+}

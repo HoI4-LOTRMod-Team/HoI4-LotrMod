@@ -63,7 +63,7 @@ focus_tree = {
     }
 
     focus = {
-        id = SPI_new_focus_juPUCt
+        id = SPI_feed_and_breed
 		prerequisite = { focus = SPI_matriphagy }
         
         icon = GFX_unknown_focus
@@ -124,8 +124,7 @@ focus_tree = {
         }
         completion_reward = { 
 			# gain good divs later  
-            # TODO: should be gained LATER (start a mission/decision)
-            load_oob = SPI_matured_eggs
+            activate_mission = SPI_maturing_eggs
 		}
     }
 
@@ -817,11 +816,10 @@ focus_tree = {
         }
         completion_reward = {
             promote_character = SPI_khazherze
-            # slow research for a year, after that gain +1 research slot
-            # TODO: Maybe lessen the malus, but increase the time to 2 years
+            # slow research for two years, after that gain +1 research slot
             add_timed_idea = {
                 idea = SPI_mind_of_the_hive
-                days = 370
+                days = 730
             }
         }
     }
@@ -1040,11 +1038,13 @@ focus_tree = {
             add_tech_bonus = {
                 name = special_bonus
                 category = lotr_labour_construction
-                uses = 3
+                uses = 1
                 bonus = 0.3
             }
-            # TODO: since we have construction boosts over in the research tree
-            # maybe this could be a lesser bonus and in return give a timed idea that boosts construction speed for a while?
+            add_timed_idea = {
+                idea = generic_improved_construction
+                days = 365
+            }
 		}
     }
 
@@ -1087,9 +1087,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        # all countries currently at war with us receive a 100% penalty for night attack
+        # (removed once they are no longer at war with us)
         completion_reward = {
-            # Maybe some kind of decision that lets us "zap" out manpower from conquered states?
+            every_enemy_country = {
+                add_ideas = SPI_consume_the_light
+            }
         }
     }
 
@@ -1208,9 +1211,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
             # extra building slots, higher state category, and infrastructure
+            82 = {
+                set_state_category = large_city
+                add_building_construction = { type = infrastructure level = 2 instant_build = yes }
+            }
         }
     }
 
@@ -1259,9 +1266,24 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
             # Remove org debuff from hunger idea
+            if = {
+                limit = { has_dynamic_modifier = unceasing_hunger_00 }
+                remove_dynamic_modifier = { modifier = unceasing_hunger_00 }
+                add_dynamic_modifier = { modifier = unceasing_hunger_10 }
+            }
+            else_if = {
+                limit = { has_dynamic_modifier = unceasing_hunger_01 }
+                remove_dynamic_modifier = { modifier = unceasing_hunger_01 }
+                add_dynamic_modifier = { modifier = unceasing_hunger_11 }
+            }
+            else_if = {
+                limit = { has_dynamic_modifier = unceasing_hunger_02 }
+                remove_dynamic_modifier = { modifier = unceasing_hunger_02 }
+                add_dynamic_modifier = { modifier = unceasing_hunger_12 }
+            }
         }
     }
 
@@ -1281,8 +1303,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            add_manpower = 3000
+        }
     }
 
     focus = {
@@ -1302,10 +1326,22 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
-			# conquer world  
-            # get claims on a bunch of states?
+			# claim every anduinian-state not allied with SPI and some more
+            every_state = {
+                limit = {
+                    OR = {
+                        is_core_of = GLD
+                        is_core_of = RGL
+                        is_core_of = VAL
+                        is_core_of = LTH
+                    }
+                    NOT = { controller = { is_ally_with = SPI } }
+                    NOT = { is_core_of = SPI }
+                }
+                add_claim_by = SPI
+            }
 		}
     }
 
@@ -1323,12 +1359,19 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            # needs to control 30% of all states in the game
+            set_temp_variable = { states_amount = global.states^num }
+            multiply_temp_variable = { states_amount = 0.3 }
+            check_variable = {
+                var:num_controlled_states > states_amount
+            }
         }
-        # TODO
+        
         completion_reward = {
 			# late game manifest  
             # change name/flag and maybe something else that's cool (formable nation effectively)
+            set_cosmetic_tag = SPIEMPIRE
+            # TODO: this cosmetic tag hasn't been implemented yet
 		}
     }
 
@@ -1651,7 +1694,7 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
             # sacrifice a research slot in exchange for a large number of research boosts to essential categories
             add_research_slot = -1
@@ -1800,9 +1843,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
-			# own faction?  
+			# own faction
+            create_faction_from_template = {
+                template = faction_template_generic
+                name = "Arachnid Alliance"
+            }
 		}
     }
 
@@ -2119,9 +2166,11 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# settle territorial disputes, giving up claims and cores  
+            SPI = { country_event = spiders.124 }
+            MIR = { country_event = spiders.124 }
 		}
     }
 
@@ -2141,8 +2190,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            MIR = { country_event = spiders.125 }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = spiders.129.a
+        }
     }
 
     focus = {
@@ -2161,9 +2214,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
             # NA pact and spider_disable_incidents
+            MIR = { country_event = spiders.126 }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = spiders.127.a
         }
     }
 
@@ -2183,9 +2239,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# ents  
+            ENT = { invite_to_faction = yes }
 		}
     }
 
@@ -2205,9 +2262,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
-			# vales  
+			# vales
+            VAL = { invite_to_faction = yes }
+            GLD = { invite_to_faction = yes }
+            RGL = { invite_to_faction = yes }
 		}
     }
 
@@ -2227,9 +2287,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
 			# dol guldur  
+            DGU = { invite_to_faction = yes }
 		}
     }
 
@@ -2251,9 +2312,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        
         completion_reward = {
-			# generic bonuses or custom faction goals?  
+			# No idea what this does lol. If I can be arsed: Add a faction goal here (TODO5)
+            add_faction_initiative = {
+                initiative = 0.2
+                days = 180
+            }
 		}
     }
 
@@ -2350,7 +2415,9 @@ focus_tree = {
             always = yes
         }
         # TODO
-        completion_reward = { }
+        completion_reward = {
+            
+        }
     }
 
     focus = {
@@ -2778,7 +2845,7 @@ focus_tree = {
         }
         # TODO
         completion_reward = {
-			# late game hunger uprade2  
+			# Maybe some kind of decision that lets us "zap" out manpower from conquered states?
 		}
     }
 
@@ -2802,6 +2869,18 @@ focus_tree = {
         completion_reward = {
 			# get more mp from killing elves  
             custom_effect_tooltip = "Gain +50% more manpower from casualties inflicted against elven countries"
+
+            # Remove org debuff from hunger idea
+            if = {
+                limit = { has_dynamic_modifier = unceasing_hunger_00 }
+                remove_dynamic_modifier = { modifier = unceasing_hunger_00 }
+                add_dynamic_modifier = { modifier = unceasing_hunger_01 }
+            }
+            else_if = {
+                limit = { has_dynamic_modifier = unceasing_hunger_10 }
+                remove_dynamic_modifier = { modifier = unceasing_hunger_10 }
+                add_dynamic_modifier = { modifier = unceasing_hunger_11 }
+            }
 		}
     }
 
@@ -2825,6 +2904,18 @@ focus_tree = {
         completion_reward = {
 			# get more mp from killing orcs  
             custom_effect_tooltip = "Gain +50% more manpower from casualties inflicted against orc countries"
+
+            # Remove org debuff from hunger idea
+            if = {
+                limit = { has_dynamic_modifier = unceasing_hunger_00 }
+                remove_dynamic_modifier = { modifier = unceasing_hunger_00 }
+                add_dynamic_modifier = { modifier = unceasing_hunger_02 }
+            }
+            else_if = {
+                limit = { has_dynamic_modifier = unceasing_hunger_10 }
+                remove_dynamic_modifier = { modifier = unceasing_hunger_10 }
+                add_dynamic_modifier = { modifier = unceasing_hunger_12 }
+            }
 		}
     }
 
