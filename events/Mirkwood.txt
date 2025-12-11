@@ -1136,7 +1136,7 @@ country_event = {
 }
 
 
-# TODO: unused event
+# POV: MIR. What do we do about Lothlorien?
 country_event = {
 	id = mirkwood.115
 	title = mirkwood.115.t
@@ -1144,10 +1144,287 @@ country_event = {
 
 	is_triggered_only = yes
 
+	# If LTH is belliegerent, ask for alliance
 	option = {
+		trigger = {
+			LTH = { has_government = belligerent }
+		}
 		ai_chance = {
 			base = 1
 		}
 		name = mirkwood.115.a
+		LTH = {
+			country_event = { id = mirkwood.116 days = 3 }
+		}
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.116.a
 	}
+
+	# Ask LTH to become vassal
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.115.b
+		LTH = {
+			country_event = { id = mirkwood.117 days = 3 }
+		}
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.117.a
+	}
+
+	# Ask for guarantees in return
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.115.c
+		LTH = {
+			country_event = { id = mirkwood.118 days = 3 }
+		}
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.118.a
+	}
+}
+
+
+# POV: Belligerent LTH. Belligerent MIR asks for alliance
+country_event = {
+	id = mirkwood.116
+	title = mirkwood.116.t
+	desc = mirkwood.116.desc
+
+	is_triggered_only = yes
+
+	# yes
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.116.a
+		MIR = {
+			country_event = { id = mirkwood.119 days = 3 }
+		}
+		if = {
+			limit = { MIR = { is_faction_leader = yes } }
+			MIR = { add_to_faction = LTH }
+		}
+		else_if = {
+			limit = { LTH = { is_faction_leader = yes } }
+			LTH = { add_to_faction = MIR }
+		}
+		else_if = {
+			limit = { LTH = { is_in_faction = no } MIR = { is_in_faction = no } }
+			MIR = {
+				create_faction_from_template = {
+					template = faction_template_belligerent_expansionist
+					name = "Mirkwood Alliance"
+				}
+				add_to_faction = LTH
+			}
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.116.b
+		MIR = {
+			country_event = { id = mirkwood.120 days = 3 }
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_decrease
+			}
+		}
+		custom_effect_tooltip = "Mirkwood may withdraw their guarantee, or even declare war."
+	}
+}
+
+
+# POV: LTH. MIR asks for us to submit and become vassal
+country_event = {
+	id = mirkwood.117
+	title = mirkwood.117.t
+	desc = mirkwood.117.desc
+
+	is_triggered_only = yes
+
+	# yes
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.117.a
+		MIR = {
+			country_event = { id = mirkwood.119 days = 3 }
+			set_autonomy = {
+				target = LTH
+				autonomy_state = autonomy_autonomous_tributary
+			}
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.117.b
+		MIR = {
+			country_event = { id = mirkwood.120 days = 3 }
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_decrease
+			}
+		}
+		custom_effect_tooltip = "Mirkwood may withdraw their guarantee, or even declare war."
+	}
+}
+
+
+# POV: LTH. MIR asks for guarantees
+country_event = {
+	id = mirkwood.118
+	title = mirkwood.118.t
+	desc = mirkwood.118.desc
+
+	is_triggered_only = yes
+
+	# yes
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.118.a
+		MIR = {
+			country_event = { id = mirkwood.119 days = 3 }
+		}
+		LTH = {
+			give_guarantee = MIR
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.118.b
+		MIR = {
+			country_event = { id = mirkwood.120 days = 3 }
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_decrease
+			}
+		}
+		custom_effect_tooltip = "Mirkwood may withdraw their guarantee, or even declare war."
+	}
+}
+
+
+# POV: MIR. LTH accepts
+country_event = {
+	id = mirkwood.119
+	title = mirkwood.119.t
+	desc = mirkwood.119.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.119.a
+		MIR = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = small_increase
+			}
+		}
+	}
+}
+
+
+# POV MIR. LTH refuses
+country_event = {
+	id = mirkwood.120
+	title = mirkwood.120.t
+	desc = mirkwood.120.desc
+
+	is_triggered_only = yes
+
+	# do nothing
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.120.a
+		add_political_power = -50
+	}
+
+	# war it is then
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.120.b
+		create_wargoal = {
+			target = LTH
+			type = puppet_wargoal_focus
+		}
+	}
+
+	# withdraw guarantee
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.120.c
+		MIR = {
+			diplomatic_relation = {
+				country = LTH
+				relation = guarantee
+				active = no
+			}
+		}
+	}
+}
+
+
+# POV: ERE. MIR expells diplomats
+country_event = {
+    id = mirkwood.121
+    title = mirkwood.121.t
+    desc = mirkwood.121.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.121.a
+
+		MIR = {
+			reduce_focus_completion_cost = { cost = -5 focus = MIR_reclaim_the_gems_of_lasgalen }
+		}
+		add_political_power = -75
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.121.b
+
+		MIR = {
+			add_opinion_modifier = {
+				target = ERE
+				modifier = large_decrease
+			}
+			reduce_focus_completion_cost = { cost = 5 focus = MIR_reclaim_the_gems_of_lasgalen }
+		}
+    }
 }
