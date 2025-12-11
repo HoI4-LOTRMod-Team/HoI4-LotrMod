@@ -647,7 +647,7 @@ country_event = {
 		has_country_flag = DGU_secret_deal_accepted
 		NOT = { has_war_with = DGU }
 		is_subject = no
-		
+
 		DGU = { has_war_with = GLD }
 	}
 
@@ -691,7 +691,7 @@ country_event = {
 		has_country_flag = DGU_secret_deal_accepted
 		NOT = { has_war_with = DGU }
 		is_subject = no
-		
+
 		DGU = { has_war_with = RGL }
 	}
 
@@ -734,7 +734,7 @@ country_event = {
 		has_country_flag = DGU_secret_deal_accepted
 		NOT = { has_war_with = DGU }
 		is_subject = no
-		
+
 		DGU = { has_war_with = RGL }
 	}
 
@@ -758,6 +758,523 @@ country_event = {
 			base = 1
 		}
 		name = dolguldur.116.b
+
+		add_political_power = -500
+		add_stability = -0.15
+	}
+}
+
+
+# POV: Goblin Town. Dol Guldur asks us to join their offensive against one of their neighbors
+country_event = {
+	id = dolguldur.117
+	title = dolguldur.117.t
+	desc = dolguldur.117.desc
+
+	is_triggered_only = yes
+
+	# yes
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.117.a
+
+		DGU = { country_event = { id = dolguldur.118 days = 3 } }
+		event_option_tooltip = dolguldur.118.a
+
+		custom_effect_tooltip = "[GOB.GetName] will declare war on all neighboring countries that Dol Guldur is at war with."
+		hidden_effect = {
+			every_neighbor_country = {
+				limit = { has_war_with = DGU }
+				ROOT = {
+					declare_war_on = {
+						target = PREV
+						type = annex_everything
+					}
+				}
+			}	
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.117.b
+
+		DGU = { country_event = { id = dolguldur.119 days = 3 } }
+		event_option_tooltip = dolguldur.119.a
+	}
+
+	# yes, but only in return for stuff
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.117.c
+
+		DGU = { country_event = { id = dolguldur.120 days = 3 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.121.a
+	}
+}
+
+
+# POV: DGU: Goblin Town agrees to join our offensive
+country_event = {
+	id = dolguldur.118
+	title = dolguldur.118.t
+	desc = dolguldur.118.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.118.a
+
+		DGU = {
+			add_opinion_modifier = {
+				target = GOB
+				modifier = medium_increase
+			}
+		}
+	}
+}
+
+
+# POV: DGU: Goblin Town refuses to join our offensive
+country_event = {
+	id = dolguldur.119
+	title = dolguldur.119.t
+	desc = dolguldur.119.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.119.a
+
+		DGU = {
+			add_opinion_modifier = {
+				target = GOB
+				modifier = medium_decrease
+			}
+		}
+	}
+}
+
+
+# POV: DGU: Goblin Town wants a reward for joining our offensive
+country_event = {
+	id = dolguldur.120
+	title = dolguldur.120.t
+	desc = dolguldur.120.desc
+
+	is_triggered_only = yes
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.120.a
+		GOB = { country_event = { id = dolguldur.121 days = 3 } }
+	}
+
+	# reject
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.120.b
+		GOB = { country_event = { id = dolguldur.122 days = 3 } }
+	}
+}
+
+
+# POV: GOB. DGU agrees to our reward demands
+country_event = {
+	id = dolguldur.121
+	title = dolguldur.121.t
+	desc = dolguldur.121.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.121.a
+
+		DGU = {
+			send_equipment = {
+				type = infantry_equipment
+				amount = 2000
+				target = GOB
+			}
+			send_equipment = {
+				type = support_equipment
+				amount = 150
+				target = GOB
+			}
+			pay_3_civs_for_180_day = yes
+		}
+
+		custom_effect_tooltip = "[GOB.GetName] will declare war on all neighboring countries that Dol Guldur is at war with."
+		hidden_effect = {
+			every_neighbor_country = {
+				limit = { has_war_with = DGU }
+				ROOT = {
+					declare_war_on = {
+						target = PREV
+						type = annex_everything
+					}
+				}
+			}	
+		}
+	}
+}
+
+
+# POV: GOB. DGU refuses our reward demands
+country_event = {
+	id = dolguldur.122
+	title = dolguldur.122.t
+	desc = dolguldur.122.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.122.a
+
+		GOB = {
+			add_opinion_modifier = {
+				target = DGU
+				modifier = small_decrease
+			}
+		}
+	}
+}
+
+
+# POV: DGU. How shall we coorindate with Gundabad?
+country_event = {
+	id = dolguldur.123
+	title = dolguldur.123.t
+	desc = dolguldur.123.desc
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			NOT = { VAL = { has_country_flag = DGU_secret_deal_accepted } }
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.123.a
+		GUN = { country_event = { id = dolguldur.124 days = 3 } }
+
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.124.a
+	}
+
+	option = {
+		trigger = {
+			VAL = { has_country_flag = DGU_secret_deal_accepted }
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.123.b
+		GUN = { country_event = { id = dolguldur.125 days = 3 } }
+
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.125.a
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.123.c
+		GUN = { country_event = { id = dolguldur.126 days = 3 } }
+
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.126.a
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.123.e
+
+		add_war_support = 0.1
+	}
+}
+
+
+# POV: GUN. DGU wants us to attack vales when they go to war
+country_event = {
+	id = dolguldur.124
+	title = dolguldur.124.t
+	desc = dolguldur.124.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.124.a
+		DGU = { country_event = { id = dolguldur.128 days = 3 } }
+
+		custom_effect_tooltip = "§OWhen [DGU.GetName] completes their§! §YInvasion§! §Ofocus, [GUN.GetName] will receive an event to attack [VAL.GetName].§!"
+		set_country_flag = DGU_GUN_agree_to_attack_VAL
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.124.b
+
+		DGU = { country_event = { id = dolguldur.129 days = 3 } }
+	}
+}
+
+
+# POV: GUN. DGU wants us to attack Vales when Vales go to war (backstab)
+country_event = {
+	id = dolguldur.125
+	title = dolguldur.125.t
+	desc = dolguldur.125.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.125.a
+		DGU = { country_event = { id = dolguldur.128 days = 3 } }
+
+		custom_effect_tooltip = "§OWhen [VAL.GetName] attacks [GLD.GetName], [GUN.GetName] will receive an event to attack [VAL.GetName].§!"
+		set_country_flag = DGU_GUN_agree_to_backstab_VAL
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.125.b
+
+		DGU = { country_event = { id = dolguldur.129 days = 3 } }
+	}
+}
+
+
+# POV: GUN. DGU wants supplies for their upcoming war
+country_event = {
+	id = dolguldur.126
+	title = dolguldur.126.t
+	desc = dolguldur.126.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.126.a
+
+		DGU = { country_event = { id = dolguldur.127 days = 3 } }
+
+		GUN = {
+			send_equipment = {
+				type = infantry_equipment
+				amount = 2000
+				target = DGU
+			}
+			send_equipment = {
+				type = support_equipment
+				amount = 150
+				target = DGU
+			}
+		}
+		DGU = {
+			army_experience = 50
+			add_war_support = 0.05
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.126.b
+
+		DGU = { country_event = { id = dolguldur.130 days = 3 } }
+	}
+}
+
+
+# POV: DGU. Gun agrees to supply us
+country_event = {
+	id = dolguldur.127
+	title = dolguldur.127.t
+	desc = dolguldur.127.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.127.a
+
+		GUN = { increase_our_opinion_of_them_medium = yes }
+	}
+}
+
+
+# POV: DGU. Gun agrees to attack Vales (both scenarios)
+country_event = {
+	id = dolguldur.128
+	title = dolguldur.128.t
+	desc = dolguldur.128.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.128.a
+	}
+}
+
+
+# POV: DGU. Gun declines to attack Vales (both scenarios)
+country_event = {
+	id = dolguldur.129
+	title = dolguldur.129.t
+	desc = dolguldur.129.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.129.a
+
+		GUN = { decrease_our_opinion_of_them_small = yes }
+	}
+}
+
+
+# POV: DGU. Gun declines to supply us
+country_event = {
+	id = dolguldur.130
+	title = dolguldur.130.t
+	desc = dolguldur.130.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.130.a
+
+		GUN = { decrease_our_opinion_of_them_small = yes }
+	}
+}
+
+# GUN prompted to attack VALES as backstab
+country_event = {
+	id = dolguldur.131
+	title = dolguldur.131.t
+	desc = dolguldur.131.desc
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = GUN
+		VAL = { 
+			has_country_flag = DGU_secret_deal_accepted
+			has_war_with = GLD
+		}
+
+		has_country_flag = DGU_GUN_agree_to_backstab_VAL
+
+		NOT = { has_war_with = DGU }
+		is_subject = no
+
+		DGU = { has_war_with = RGL }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.131.a
+
+		declare_war_on = {
+			target = VAL
+			type = annex_everything
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.131.b
+
+		add_political_power = -500
+		add_stability = -0.15
+	}
+}
+
+# GUN prompted to attack VALES as part of deal
+country_event = {
+	id = dolguldur.132
+	title = dolguldur.132.t
+	desc = dolguldur.132.desc
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.132.a
+
+		declare_war_on = {
+			target = VAL
+			type = annex_everything
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.132.b
 
 		add_political_power = -500
 		add_stability = -0.15

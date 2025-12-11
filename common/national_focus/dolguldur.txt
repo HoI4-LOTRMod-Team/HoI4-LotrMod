@@ -455,7 +455,7 @@ focus_tree = {
         }
         
         completion_reward = {
-            declare_war_on = {
+            create_wargoal = {
                 target = GLD
                 type = annex_everything
             }
@@ -1958,8 +1958,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            GOB = { country_event = { id = dolguldur.117 days = 3 } }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = dolguldur.117.a
+        }
     }
 
     focus = {
@@ -1978,8 +1982,76 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            if = {
+                limit = {
+                    RGL = { has_country_flag = DGU_secret_deal_accepted }
+                    NOT = { MOR = { is_ally_with = GLD } has_completed_focus = DGU_the_armies_of_the_necromancer }
+                    NOT = { has_non_aggression_pact_with = GLD }
+                    NOT = { is_ally_with = GLD }
+                }
+                declare_war_on = {
+                    target = GLD
+                    type = annex_everything
+                }
+            }
+            else_if = {
+                limit = {
+                    GLD = { has_country_flag = DGU_secret_deal_accepted }
+                    NOT = { MOR = { is_ally_with = RGL } has_completed_focus = DGU_the_armies_of_the_necromancer }
+                    NOT = { has_non_aggression_pact_with = RGL }
+                    NOT = { is_ally_with = RGL }
+                }
+                declare_war_on = {
+                    target = RGL
+                    type = annex_everything
+                }
+            }
+            else_if = {
+                limit = {
+                    VAL = { has_country_flag = DGU_secret_deal_accepted }
+                    NOT = { MOR = { is_ally_with = VAL } has_completed_focus = DGU_the_armies_of_the_necromancer }
+                    NOT = { has_non_aggression_pact_with = VAL }
+                    NOT = { is_ally_with = VAL }
+                }
+                declare_war_on = {
+                    target = VAL
+                    type = annex_everything
+                }
+            }
+            # backup
+            else = {
+                create_wargoal = {
+                    target = RGL
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    GUN = {
+                        has_country_flag = DGU_GUN_agree_to_attack_VAL
+                        NOT = { has_war_with = DGU }
+		                is_subject = no
+                    }
+                }
+                GUN = {
+                    country_event = { id = dolguldur.132 days = 1 }
+                }
+            }
+            if = {
+                limit = { has_completed_focus = DGU_sabotage_supplies }
+                every_enemy_country = {
+                    every_core_state = {
+                        add_dynamic_modifier = {
+                            modifier = sabotaged_supplies
+                            days = 90
+                        }
+                    }
+                }
+            }
+            custom_effect_tooltip = "§OThe effects of this focus can change based on our decisions taken in previous focuses and events.§!"
+        }
     }
 
     focus = {
@@ -1999,8 +2071,11 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            country_event = dolguldur.123
+            custom_effect_tooltip = "We will be given a choice between asking Gundabd for equipment, or coordinating an attack against the men of the Anduin with them."
+        }
     }
 
     focus = {
@@ -2019,8 +2094,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            custom_effect_tooltip = "When we complete our §YInvasion§! focus, all enemy states will suffer supply debuffs for 90 days."
+        }
     }
 
     focus = {
@@ -2041,7 +2118,7 @@ focus_tree = {
         }
         
         completion_reward = {
-            add_ideas = DGU_preparing_for_all_out_offensive # should give a ton of max-planning
+            # TODO
         }
     }
 
@@ -2063,25 +2140,7 @@ focus_tree = {
         }
         
         completion_reward = {
-            # declare war against every neighbour that's not orc, allied or NA-pacted
-            # if we're aligned with mordor, we won't declare war on Mordor's allies either
-            every_neighbor_country = {
-                limit = {
-                    NOT = { is_orcs = yes }
-                    NOT = { has_non_aggression_pact_with = ROOT }
-                    NOT = { is_ally_with = ROOT }
-                    OR = {
-                        NOT = { is_ally_with = MOR }
-                        ROOT = { has_completed_focus = DGU_shadow_without_master }
-                    }
-                }
-                ROOT = {
-                    declare_war_on = {
-                        target = PREV
-                        type = annex_everything
-                    }
-                }
-            }
+            # TODO
         }
     }
 
@@ -2435,7 +2494,9 @@ focus_tree = {
             always = yes
         }
         # TODO
-        completion_reward = { }
+        completion_reward = {
+            add_ideas = DGU_preparing_for_all_out_offensive # should give a ton of max-planning
+        }
     }
 
     focus = {
@@ -2454,8 +2515,28 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            # declare war against every neighbour that's not orc, allied or NA-pacted
+            # if we're aligned with mordor, we won't declare war on Mordor's allies either
+            every_neighbor_country = {
+                limit = {
+                    NOT = { is_orcs = yes }
+                    NOT = { has_non_aggression_pact_with = ROOT }
+                    NOT = { is_ally_with = ROOT }
+                    OR = {
+                        NOT = { is_ally_with = MOR }
+                        ROOT = { has_completed_focus = DGU_shadow_without_master }
+                    }
+                }
+                ROOT = {
+                    declare_war_on = {
+                        target = PREV
+                        type = annex_everything
+                    }
+                }
+            }
+        }
     }
 
     focus = {
