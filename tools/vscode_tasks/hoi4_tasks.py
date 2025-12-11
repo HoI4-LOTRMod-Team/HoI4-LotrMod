@@ -8,7 +8,7 @@ from pdx_parser import *
 # CONFIGURATION
 
 BASE_PATH = Path(__file__).parent.parent.parent.resolve()
-ideas_file = BASE_PATH / r'common\ideas\spiders.txt'
+ideas_file = BASE_PATH / r'common\ideas\dolguldur.txt'
 country_leader_traits_file = BASE_PATH / r'common\country_leader\00_traits_lotr_spi.txt'
 army_leader_traits_file = BASE_PATH / r'common\unit_leader\00_traits_lotr_spi.txt'
 characters_file = BASE_PATH / r'common\characters\SPI.txt'

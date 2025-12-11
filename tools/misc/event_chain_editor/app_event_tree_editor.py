@@ -110,8 +110,8 @@ def main():
     graph = create_node_graph()
 
     focus_node_tree = FocusNodeTree(graph,
-        BASE_PATH / r'events\DolGuldur.txt',
-        BASE_PATH / r'localisation\english\dolguldur\dolguldur_events_l_english.yml'
+        BASE_PATH / r'events\Mirkwood.txt',
+        BASE_PATH / r'localisation\english\mirkwood\mirkwood_events_l_english.yml'
     )
     graph.focus_tree = focus_node_tree
 
@@ -130,8 +130,8 @@ def main():
     # Present
     main_window.show()
     graph.clear_selection()
-    #graph.auto_layout_nodes()
-    apply_clustered_layout(graph)
+    graph.auto_layout_nodes()
+    #apply_clustered_layout(graph)
     graph.fit_to_selection()
     #graph.set_layout_direction(LayoutDirectionEnum.VERTICAL.value)
     #graph.set_pipe_style(PipeLayoutEnum.ANGLE.value)

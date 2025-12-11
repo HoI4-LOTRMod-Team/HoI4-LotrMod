@@ -239,7 +239,7 @@ class FocusNode(BaseNode):
         option = next(opt for opt in out_port.node().options if opt.port==out_port)
 
         # Add this event to it
-        option.pObj.Insert("country_event = { id = "+self.focus_id+" days = 1 }")
+        option.pObj.Insert("country_event = { id = "+self.focus_id+" days = 3 }")
 
         #print("prerequitites added: " + out_port.node().focus_id)
         return
@@ -248,8 +248,6 @@ class FocusNode(BaseNode):
 
     def on_input_disconnected(self, in_port, out_port):
         if not self.is_activated: return
-
-        # TODO: Remove this event from out_port option thing
 
         # get option
         option = next(opt for opt in out_port.node().options if opt.port==out_port)
@@ -397,7 +395,7 @@ class FocusNode(BaseNode):
         # We previously didn't have a target, but have added one now
         elif option.target == "":
             ev.parent.value.remove(ev) # Remove the ev from previous parent
-            option.pObj.Insert(target + " = { "+str(ev)+" }") # add it with the new target
+            option.pObj.Insert(target + " = {\n"+str(ev)+"}") # add it with the new target
         # if it doesn't have a target, enclose it in one
         else:
             ev.parent.id = target
