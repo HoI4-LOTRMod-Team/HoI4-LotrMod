@@ -616,9 +616,20 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO0
+        
         completion_reward = {
 			# start of coop branch, but allowed at coop %  
+            add_political_power = 75
+            every_country = {
+                limit = {
+                    NOT = { has_war_with = ROOT }
+                    is_elves = yes
+                }
+                add_opinion_modifier = {
+                    target = ROOT
+                    modifier = medium_increase
+                }
+            }
 		}
     }
 
@@ -937,9 +948,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # if loth gets attacked by DGU, we join in
+            custom_effect_tooltip = "If Lothlorien is attacked by Dol Guldur, we will be compelled to join the defense."
+            hidden_effect = {
+                LTH = { country_event = { id = mirkwood.130 days = 1 } }
+            }
         }
     }
 
@@ -959,9 +974,24 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # something with fellowship or something
+            custom_effect_tooltip = "If one of our army leaders joins the Fellowship of the Ring, they will receive §G+1§! to all their stats."
+            hidden_effect = {
+                FS_tauriel = {
+                    add_attack = 1
+                    add_defense = 1
+                    add_planning = 1
+                    add_logistics = 1
+                }
+                FS_legolas = {
+                    add_attack = 1
+                    add_defense = 1
+                    add_planning = 1
+                    add_logistics = 1
+                }
+            }
         }
     }
 
@@ -2596,9 +2626,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # send delegation to other elves?
+            every_country = {
+                limit = {
+                    is_elves = yes
+                    NOT = { tag = ROOT }
+                }
+                send_delegation_to_country = yes
+                add_political_power = 50
+            }
         }
     }
 
@@ -2618,9 +2656,21 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
-            # ask Loth? for help against DGU
+             # ask for helg against spoders
+            custom_effect_tooltip = "Every non-hostile elven nation will be asked to aid us against [DGU.GetName]. Countries that neighbor us or the spiders will have the option to join the war."
+            hidden_effect = {
+                every_country = {
+                    limit = {
+                        is_elves = yes
+                        NOT = { tag = ROOT }
+                        NOT = { has_war_with = ROOT }
+                    }
+                    # send event to other elves to ask for help against spiders
+                    country_event = { id = mirkwood.132 days = 1 }
+                }
+            }
         }
     }
 
@@ -2640,9 +2690,21 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # ask for helg against spoders
+            custom_effect_tooltip = "Every non-hostile elven nation will be asked to aid us against [SPI.GetName]. Countries that neighbor us or the spiders will have the option to join the war."
+            hidden_effect = {
+                every_country = {
+                    limit = {
+                        is_elves = yes
+                        NOT = { tag = ROOT }
+                        NOT = { has_war_with = ROOT }
+                    }
+                    # send event to other elves to ask for help against spiders
+                    country_event = { id = mirkwood.133 days = 1 }
+                }
+            }
         }
     }
 
@@ -2662,9 +2724,22 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # defensive and research alliance with LTH and RIV
+            create_faction_from_template = {
+                template = faction_template_defensive_cooperative
+                name = "Council of the Three Realms"
+            }
+            set_faction_rule = joining_rule_elves_only
+            if = {
+                limit = { LTH = { NOT = { has_war_with = ROOT } } }
+                LTH = { invite_to_faction = yes }
+            }
+            if = {
+                limit = { RIV = { NOT = { has_war_with = ROOT } } }
+                RIV = { invite_to_faction = yes }
+            }
         }
     }
 
@@ -2684,9 +2759,35 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # army xp and mastery gain for all
+            custom_effect_tooltip = "We and every elven ally receive:"
+            effect_tooltip = {
+                add_army_experience = 50
+                add_doctrine_cost_reduction = {
+                    cost_reduction = 0.5
+                    uses = 1
+                    name = doctrine_effort
+                }
+            }
+            hidden_effect = {
+                every_country = {
+                    limit = {
+                        is_elves = yes
+                        OR = {
+                            is_ally_with = ROOT
+                            tag = ROOT
+                        }
+                    }
+                    add_army_experience = 50
+                    add_doctrine_cost_reduction = {
+                        cost_reduction = 0.5
+                        uses = 1
+                        name = doctrine_effort
+                    }
+                }
+            }
         }
     }
 
@@ -2706,9 +2807,27 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
             # stability and stuff for all
+            custom_effect_tooltip = "We and every elven ally receive:"
+            effect_tooltip = {
+                add_stability = 0.1
+                add_war_support = 0.1
+            }
+            hidden_effect = {
+                every_country = {
+                    limit = {
+                        is_elves = yes
+                        OR = {
+                            is_ally_with = ROOT
+                            tag = ROOT
+                        }
+                    }
+                    add_stability = 0.1
+                    add_war_support = 0.1
+                }   
+            }
         }
     }
 
@@ -2729,9 +2848,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
+        
         completion_reward = {
-            # preemptive war against some evil shit
+            add_faction_goal = faction_goal_defeat_of_belligerent
+            create_wargoal = {
+                target = MOR
+                type = puppet_wargoal_focus
+            }
         }
     }
 
