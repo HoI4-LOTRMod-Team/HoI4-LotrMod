@@ -8,15 +8,15 @@ from pdx_parser import *
 # CONFIGURATION
 
 BASE_PATH = Path(__file__).parent.parent.parent.resolve()
-ideas_file = BASE_PATH / r'common\ideas\dolguldur.txt'
-country_leader_traits_file = BASE_PATH / r'common\country_leader\00_traits_lotr_spi.txt'
-army_leader_traits_file = BASE_PATH / r'common\unit_leader\00_traits_lotr_spi.txt'
-characters_file = BASE_PATH / r'common\characters\SPI.txt'
-history_file = BASE_PATH / r'history\countries\SPI - Spiders.txt'
-scripted_effects_file = BASE_PATH / r'common\scripted_effects\spiders_scripted_effects.txt'
-scripted_triggers_file = BASE_PATH / r'common\scripted_triggers\spiders_scripted_effects.txt'
-events_file = BASE_PATH / r'events\Spiders.txt'
-tag = "SPI"
+ideas_file = BASE_PATH / r'common\ideas\mirkwood.txt'
+country_leader_traits_file = BASE_PATH / r'common\country_leader\00_traits_lotr_mir.txt'
+army_leader_traits_file = BASE_PATH / r'common\unit_leader\00_traits_lotr_mir.txt'
+characters_file = BASE_PATH / r'common\characters\MIR.txt'
+history_file = BASE_PATH / r'history\countries\MIR - Mirkwood.txt'
+scripted_effects_file = BASE_PATH / r'common\scripted_effects\mirkwood_scripted_effects.txt'
+scripted_triggers_file = BASE_PATH / r'common\scripted_triggers\mirkwood_scripted_effects.txt'
+events_file = BASE_PATH / r'events\Mirkwood.txt'
+tag = "MIR"
 
 new_idea_template = """
         $TOKEN_NAME$ = {

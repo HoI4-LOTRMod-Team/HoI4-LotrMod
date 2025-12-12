@@ -1395,29 +1395,29 @@ country_event = {
 
 # POV: ERE. MIR expells diplomats
 country_event = {
-    id = mirkwood.121
-    title = mirkwood.121.t
-    desc = mirkwood.121.desc
+	id = mirkwood.121
+	title = mirkwood.121.t
+	desc = mirkwood.121.desc
 
-    is_triggered_only = yes
+	is_triggered_only = yes
 
-    option = {
-        ai_chance = {
-            base = 1
-        }
-        name = mirkwood.121.a
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.121.a
 
 		MIR = {
 			reduce_focus_completion_cost = { cost = -5 focus = MIR_reclaim_the_gems_of_lasgalen }
 		}
 		add_political_power = -75
-    }
+	}
 
-    option = {
-        ai_chance = {
-            base = 1
-        }
-        name = mirkwood.121.b
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.121.b
 
 		MIR = {
 			add_opinion_modifier = {
@@ -1426,5 +1426,300 @@ country_event = {
 			}
 			reduce_focus_completion_cost = { cost = 5 focus = MIR_reclaim_the_gems_of_lasgalen }
 		}
-    }
+	}
+}
+
+
+# POV: MIR. How to deal with spiders?
+country_event = {
+	id = mirkwood.122
+	title = mirkwood.122.t
+	desc = mirkwood.122.desc
+
+	is_triggered_only = yes
+
+	# Ask for NA pact
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.122.a
+
+		SPI = {
+			country_event = { id = mirkwood.123 days = 3 }
+		}
+		custom_effect_tooltip = if_they_accept_newline_tt
+		effect_tooltip = {
+			SPI = {
+				diplomatic_relation = {
+					country = MIR
+					relation = non_aggression_pact
+					active = yes
+				}
+			}
+		}
+	}
+
+	# Bolster numbers and defenses
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.122.b
+
+		hidden_effect = {
+			SPI = { country_event = { id = mirkwood.124 days = 3 } }	
+		}
+
+		MIR = {
+			cfm_gain_presence_point_3x = yes
+		}
+	}
+
+	# Assemble for war
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.122.c
+
+		hidden_effect = {
+			SPI = { country_event = { id = mirkwood.125 days = 3 } }	
+		}
+
+		MIR = {
+			if = { limit = { threat < 0.1 }
+				add_political_power = -350
+				add_stability = -0.1
+				add_war_support = -0.2
+			}
+			else_if = { limit = { threat < 0.3 }
+				add_political_power = -250
+				add_stability = -0.05
+				add_war_support = -0.15
+			}
+			else_if = { limit = { threat < 0.6 }
+				add_political_power = -150
+				add_war_support = -0.1
+			}
+		}
+
+		MIR = {
+			add_timed_idea = {
+				idea = MIR_prepare_for_war_against_spiders
+				days = 120
+			}
+		}
+	}
+}
+
+
+# POV: SPI. MIR asks for NA-pact
+country_event = {
+	id = mirkwood.123
+	title = mirkwood.123.t
+	desc = mirkwood.123.desc
+
+	is_triggered_only = yes
+
+	# eat envoy
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.123.a
+		hidden_effect = {
+			MIR = { country_event = { id = mirkwood.126 days = 3 } }	
+		}
+
+		MIR = {
+			add_manpower = -1
+			add_opinion_modifier = {
+				target = SPI
+				modifier = large_decrease
+			}
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.123.b
+
+		hidden_effect = { MIR = { country_event = { id = mirkwood.127 days = 3 } } }
+
+		MIR = {
+			add_opinion_modifier = {
+				target = SPI
+				modifier = small_decrease
+			}
+		}
+	}
+
+	# yes
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.123.c
+
+		hidden_effect = { MIR = { country_event = { id = mirkwood.128 days = 3 } } }
+
+		SPI = {
+			diplomatic_relation = {
+				country = MIR
+				relation = non_aggression_pact
+				active = yes
+			}
+		}
+	}	
+}
+
+
+# POV: SPI. MIR bolsters numbers and defenses
+country_event = {
+	id = mirkwood.124
+	title = mirkwood.124.t
+	desc = mirkwood.124.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.124.a
+
+		event_option_tooltip = mirkwood.122.b
+	}
+}
+
+
+# POV: SPI. MIR assembles for war
+country_event = {
+	id = mirkwood.125
+	title = mirkwood.125.t
+	desc = mirkwood.125.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.125.a
+
+		event_option_tooltip = mirkwood.122.c
+	}
+}
+
+
+# POV: MIR. SPI ate our envoy
+country_event = {
+	id = mirkwood.126
+	title = mirkwood.126.t
+	desc = mirkwood.126.desc
+
+	is_triggered_only = yes
+
+	# retaliate
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.126.a
+
+		event_option_tooltip = mirkwood.123.a
+
+		hidden_effect = {
+			SPI = { country_event = { id = mirkwood.129 days = 3 } }	
+		}
+
+		MIR = {
+			add_command_power = -100
+		}
+
+		SPI = {
+			random_state = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+			}
+
+			add_opinion_modifier = {
+				target = MIR
+				modifier = medium_decrease
+			}
+		}
+	}
+
+	# let it slide
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.126.b
+
+		event_option_tooltip = mirkwood.123.a
+	}
+}
+
+
+# POV: MIR. SPI refuses NA-pact
+country_event = {
+	id = mirkwood.127
+	title = mirkwood.127.t
+	desc = mirkwood.127.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.127.a
+
+		event_option_tooltip = mirkwood.123.b
+	}
+}
+
+
+# POV: MIR. SPI agrees to NA pact
+country_event = {
+	id = mirkwood.128
+	title = mirkwood.128.t
+	desc = mirkwood.128.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.128.a
+
+		event_option_tooltip = mirkwood.123.c
+	}
+}
+
+
+# POV: SPI. MIR retaliates
+country_event = {
+	id = mirkwood.129
+	title = mirkwood.129.t
+	desc = mirkwood.129.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.129.a
+
+		event_option_tooltip = mirkwood.126.a
+	}
 }
