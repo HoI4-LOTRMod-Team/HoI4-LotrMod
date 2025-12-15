@@ -36,76 +36,91 @@ contest_for_mirkwood_setup = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_DGU
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	227 = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_DGU
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	231 = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_DGU
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	233 = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_DGU
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	232 = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_DGU
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	86  = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_DGU
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	228 = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_DGU
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	262 = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_DGU
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	190 = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_SPI
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	85  = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_SPI
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	230 = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_SPI
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	84  = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_SPI
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	80  = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_SPI
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	226 = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_SPI
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 	229 = {
 		set_state_flag = cfm_allowed
 		set_state_flag = cfm_allowed_SPI
 		set_variable = { cfm_presence = 0.0 }
+		add_to_array = { global.cfm_states = THIS }
 	}
 
 	cfm_full_integrity_check = yes
@@ -169,6 +184,10 @@ cfm_disable_in_state_permanent = {
 	clr_state_flag = cfm_allowed_DGU
 	clr_state_flag = cfm_allowed_SPI
 	clear_variable = cfm_presence
+	remove_from_array = {
+		array = global.cfm_states
+		value = THIS
+	}
 }
 
 # disable cfm in a state
@@ -286,11 +305,76 @@ cfm_increase_in_state_10p = {
 cfm_increase_per_week_low_30days = {
 	if = {
 		limit = { has_state_flag = cfm_enabled }
-		
+
 		add_dynamic_modifier = {
-			modifier = unceasing_hunger_12 # TODO: This doesnt do anything
+			modifier = increased_presence_low
 			days = 30
 		}
 	}
+
 	# TODO: tooltip
+}
+
+cfm_increase_per_week_medium_30days = {
+	if = {
+		limit = { has_state_flag = cfm_enabled }
+
+		add_dynamic_modifier = {
+			modifier = increased_presence_medium
+			days = 30
+		}
+	}
+
+	# TODO: tooltip
+}
+
+cfm_increase_per_week_high_30days = {
+	if = {
+		limit = { has_state_flag = cfm_enabled }
+
+		add_dynamic_modifier = {
+			modifier = increased_presence_high
+			days = 30
+		}
+	}
+
+	# TODO: tooltip
+}
+
+
+cfm_daily_update = {
+	for_each_scope_loop = {
+    	array = global.cfm_states
+
+		if = {
+			limit = { has_state_flag = cfm_enabled }
+
+			set_temp_variable = { temp_on_changed = 0 }
+
+			if = {
+				limit = { has_dynamic_modifier = increased_presence_low }
+				add_to_variable = { cfm_presence = 0.002 } # TODO: These numbers are made up
+				set_temp_variable = { temp_on_changed = 1 }
+			}
+
+			if = {
+				limit = { has_dynamic_modifier = increased_presence_medium }
+				add_to_variable = { cfm_presence = 0.004 }
+				set_temp_variable = { temp_on_changed = 1 }
+			}
+
+			if = {
+				limit = { has_dynamic_modifier = increased_presence_high }
+				add_to_variable = { cfm_presence = 0.006 }
+				set_temp_variable = { temp_on_changed = 1 }
+			}
+
+			if = {
+				limit = {
+					check_variable = { temp_on_changed > 0 }
+				}
+				cfm_on_presence_changed_check = yes
+			}
+		}
+	}
 }
