@@ -5,14 +5,13 @@ from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QLabel, QHBoxLayout, 
     QVBoxLayout, QFrame, QPushButton, QSpinBox, QComboBox,
     QGraphicsView, QGraphicsScene, QGraphicsPixmapItem, QStackedWidget,
-    QGridLayout, QScrollArea
+    QGridLayout, QGraphicsItem
 )
-from PySide6.QtGui import QPixmap, QColor, QFont, QPainter
+from PySide6.QtGui import QPixmap, QColor, QFont, QPainter, QTransform, QAction, QKeySequence
 from PySide6.QtCore import Qt
 from pathlib import Path
 
 # --- RESTORED IMPORTS ---
-# We assume definitioncsv exists in your directory
 from definitioncsv import * # --- CONSTANTS ---
 MODE_MANPOWER = "Manpower"
 MODE_INFRASTRUCTURE = "Infrastructure"
@@ -26,7 +25,6 @@ CATEGORIES = [
     "town", "large_town", "city", "large_city", "metropolis", "megalopolis"
 ]
 
-# Resource IDs and their short display names
 RESOURCE_TYPES = ["oil", "aluminium", "rubber", "tungsten", "steel", "chromium", "coal"]
 RESOURCE_SHORTS = {
     "oil": "oil", "aluminium": "alu", "rubber": "rub", 
@@ -53,12 +51,10 @@ class ImageAnalyzer:
         results = []
         total_pixels_all_selected = 0
 
-        # Helper to get numeric value safely
         def get_val(obj, default=0):
             try: return int(obj.value)
             except: return default
 
-        # Helper to get string value safely
         def get_str(obj, default=""):
             try: return str(obj.value)
             except: return default
@@ -77,7 +73,6 @@ class ImageAnalyzer:
                 center_y = int(np.mean(y_indices))
                 
                 # --- DATA EXTRACTION ---
-                
                 # 1. Manpower
                 try: mp_val = get_val(state_obj.pObj.Get("manpower"))
                 except: mp_val = 0
@@ -105,14 +100,12 @@ class ImageAnalyzer:
                         val = 0
                         if res_obj.Has(r_type):
                             try:
-                                # Specific float->int conversion as requested
                                 val = int(float(res_obj.Get(r_type).value))
                             except:
                                 val = 0
                         res_dict[r_type] = val
                         res_total += val
                 except:
-                    # If resources block is missing completely
                     for r_type in RESOURCE_TYPES: res_dict[r_type] = 0
 
                 results.append({
@@ -187,8 +180,6 @@ class OverlayMarker(QPushButton):
         self.clicked.connect(lambda: self.clicked_callback(self.data))
 
     def refresh_text(self, mode):
-        """Updates the text based on current data values and mode."""
-        
         val_str = "?"
         show_share = True
 
@@ -199,26 +190,19 @@ class OverlayMarker(QPushButton):
             return
         
         elif mode == MODE_RESOURCES:
-            # Build string like "5rub, 3chr"
             parts = []
             res_data = self.data.get('resources', {})
-            # Sort for consistent order or use list order
             for r_type in RESOURCE_TYPES:
                 val = res_data.get(r_type, 0)
                 if val > 0:
                     short = RESOURCE_SHORTS.get(r_type, r_type[:3])
                     parts.append(f"{val}{short}")
             
-            if not parts:
-                val_str = "-"
+            if not parts: val_str = "-"
             else:
                 val_str = ", ".join(parts)
-                # Break lines if too long?
                 if len(val_str) > 15:
                     val_str = val_str.replace(", ", "\n")
-            
-            # For resources, we might still show percentage share of global resources?
-            # Or just the raw values. Let's show just values as it gets crowded.
             show_share = False 
 
         elif mode == MODE_MANPOWER:
@@ -240,7 +224,6 @@ class OverlayMarker(QPushButton):
         self.adjustSize()
 
 class ResourceEditorWidget(QWidget):
-    """Sub-widget for editing 7 distinct resource values."""
     def __init__(self, parent_callback):
         super().__init__()
         self.parent_callback = parent_callback
@@ -249,7 +232,6 @@ class ResourceEditorWidget(QWidget):
         layout = QGridLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         
-        # Create a spinbox for each resource type
         for idx, r_type in enumerate(RESOURCE_TYPES):
             lbl = QLabel(r_type.title() + ":")
             lbl.setFont(QFont("Arial", 9))
@@ -257,12 +239,10 @@ class ResourceEditorWidget(QWidget):
             sb = QSpinBox()
             sb.setRange(0, 9999)
             sb.setSingleStep(1)
-            # Store type in the widget for the callback
             sb.setProperty("resource_type", r_type)
             sb.valueChanged.connect(self.on_val_changed)
             
             self.spinboxes[r_type] = sb
-            
             layout.addWidget(lbl, idx, 0)
             layout.addWidget(sb, idx, 1)
 
@@ -278,10 +258,12 @@ class ResourceEditorWidget(QWidget):
             sb.blockSignals(False)
 
 class PropertiesPanel(QFrame):
-    def __init__(self, on_value_change_callback, on_mode_change_callback):
+    def __init__(self, on_value_change_callback, on_mode_change_callback, on_save_callback):
         super().__init__()
         self.on_value_change = on_value_change_callback
         self.on_mode_change = on_mode_change_callback
+        self.on_save = on_save_callback
+        
         self.current_data = None
         self.is_updating_ui = False 
         self.current_mode = MODE_MANPOWER
@@ -293,26 +275,20 @@ class PropertiesPanel(QFrame):
         layout = QVBoxLayout(self)
         layout.setAlignment(Qt.AlignTop)
         
-        # --- Mode Selection ---
         lbl_mode = QLabel("Editing Mode:")
         lbl_mode.setFont(QFont("Arial", 10, QFont.Bold))
         layout.addWidget(lbl_mode)
         
         self.combo_mode = QComboBox()
         self.combo_mode.addItems([
-            MODE_MANPOWER, 
-            MODE_INFRASTRUCTURE,
-            MODE_ARMS,
-            MODE_INDUSTRY,
-            MODE_CATEGORY,
-            MODE_RESOURCES
+            MODE_MANPOWER, MODE_INFRASTRUCTURE, MODE_ARMS,
+            MODE_INDUSTRY, MODE_CATEGORY, MODE_RESOURCES
         ])
         self.combo_mode.currentTextChanged.connect(self.on_mode_changed_internal)
         layout.addWidget(self.combo_mode)
         
         layout.addSpacing(10)
         
-        # --- Global Stats ---
         self.lbl_total_global = QLabel("Total: 0")
         self.lbl_total_global.setFont(QFont("Arial", 10, QFont.Bold))
         self.lbl_total_global.setStyleSheet("color: #333; padding: 5px; border: 1px solid #aaa; background: white;")
@@ -339,49 +315,59 @@ class PropertiesPanel(QFrame):
         self.lbl_edit.setFont(QFont("Arial", 10, QFont.Bold))
         layout.addWidget(self.lbl_edit)
 
-        # --- Stacked Widget for Inputs ---
         self.input_stack = QStackedWidget()
-        
-        # 1. Spinbox for single numbers
         self.spin_value = QSpinBox()
         self.spin_value.valueChanged.connect(self.on_spinbox_changed)
         self.input_stack.addWidget(self.spin_value)
         
-        # 2. Combobox for Categories
         self.combo_category = QComboBox()
         self.combo_category.addItems(CATEGORIES)
         self.combo_category.currentTextChanged.connect(self.on_category_changed)
         self.input_stack.addWidget(self.combo_category)
 
-        # 3. Resources Editor (Scrollable if screen small, but 7 items fit fine)
         self.res_editor = ResourceEditorWidget(self.on_resource_changed)
         self.input_stack.addWidget(self.res_editor)
         
         layout.addWidget(self.input_stack)
         
+        # Spacer to push save button to bottom
         layout.addStretch()
         
+        # --- SAVE BUTTON ---
+        self.btn_save = QPushButton("Save Changes")
+        self.btn_save.setFixedHeight(40)
+        self.btn_save.setStyleSheet("""
+            QPushButton {
+                background-color: #4CAF50; 
+                color: white; 
+                font-weight: bold; 
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+        """)
+        self.btn_save.clicked.connect(self.on_save)
+        layout.addWidget(self.btn_save)
+
         self.update_ui_mode_state()
 
     def update_ui_mode_state(self):
-        """Adjusts inputs and labels based on mode."""
         self.spin_value.blockSignals(True)
         
-        # Visibility Logic
         if self.current_mode == MODE_CATEGORY:
             self.input_stack.setCurrentWidget(self.combo_category)
             self.lbl_total_global.setVisible(False)
             self.lbl_share_stats.setVisible(False)
         elif self.current_mode == MODE_RESOURCES:
             self.input_stack.setCurrentWidget(self.res_editor)
-            self.lbl_total_global.setVisible(True) # Show total resource units globally
-            self.lbl_share_stats.setVisible(False) # Share is ambiguous for multiple resources
+            self.lbl_total_global.setVisible(True) 
+            self.lbl_share_stats.setVisible(False) 
         else:
             self.input_stack.setCurrentWidget(self.spin_value)
             self.lbl_total_global.setVisible(True)
             self.lbl_share_stats.setVisible(True)
 
-            # Constraints for spinbox
             if self.current_mode == MODE_MANPOWER:
                 self.spin_value.setRange(0, 99999999)
                 self.spin_value.setSingleStep(100)
@@ -400,14 +386,10 @@ class PropertiesPanel(QFrame):
         self.on_mode_change(text)
 
     def update_global_total(self, total_val):
-        if self.current_mode == MODE_CATEGORY:
-            return 
-            
+        if self.current_mode == MODE_CATEGORY: return 
         formatted = format_k(total_val) if self.current_mode == MODE_MANPOWER else str(total_val)
         label_txt = f"Total {self.current_mode}:"
-        if self.current_mode == MODE_RESOURCES:
-            label_txt = "Total Units:"
-        
+        if self.current_mode == MODE_RESOURCES: label_txt = "Total Units:"
         self.lbl_total_global.setText(f"{label_txt} {formatted}")
 
     def update_info(self, data):
@@ -423,23 +405,18 @@ class PropertiesPanel(QFrame):
         self.lbl_area_stats.setText(f"Area: {data['count']} px ({data['area_percentage']:.1f}%)")
         self.lbl_share_stats.setText(f"Group Share: {data['percentage_share']:.1f}%")
         
-        # Populate Inputs
         if self.current_mode == MODE_CATEGORY:
             current_cat = data.get('state_category', 'rural')
             idx = self.combo_category.findText(current_cat)
             self.combo_category.setCurrentIndex(max(0, idx))
             
         elif self.current_mode == MODE_RESOURCES:
-            # Load dictionary into the 7 spinboxes
             self.res_editor.load_values(data.get('resources', {}))
             
         else:
-            # Numeric modes
             key_map = {
-                MODE_MANPOWER: 'manpower',
-                MODE_INFRASTRUCTURE: 'infrastructure',
-                MODE_ARMS: 'arms_factory',
-                MODE_INDUSTRY: 'industrial_complex'
+                MODE_MANPOWER: 'manpower', MODE_INFRASTRUCTURE: 'infrastructure',
+                MODE_ARMS: 'arms_factory', MODE_INDUSTRY: 'industrial_complex'
             }
             key = key_map.get(self.current_mode, 'manpower')
             self.spin_value.setValue(data.get(key, 0))
@@ -465,8 +442,7 @@ class PropertiesPanel(QFrame):
                 st.pObj.Get("history").Get("buildings").Get("industrial_complex").value = str(value)
                 
             self.on_value_change()
-        except Exception as e:
-            print(f"Update failed: {e}")
+        except Exception as e: print(f"Update failed: {e}")
 
     def on_category_changed(self, value_text):
         if self.is_updating_ui or self.current_data is None: return
@@ -474,39 +450,26 @@ class PropertiesPanel(QFrame):
             self.current_data['state_category'] = value_text
             self.current_data['state'].pObj.Get("state_category").value = value_text
             self.on_value_change()
-        except Exception as e:
-            print(f"Category update failed: {e}")
+        except Exception as e: print(f"Category update failed: {e}")
 
     def on_resource_changed(self, r_type, value):
         if self.is_updating_ui or self.current_data is None: return
         
         try:
             st_obj = self.current_data['state']
-            res_obj = st_obj.pObj.Get("resources") # Assume resources block exists
+            res_obj = st_obj.pObj.Get("resources") 
             
-            # Update internal dictionary
             self.current_data['resources'][r_type] = value
             
-            # Update external Object
             if value > 0:
-                if res_obj.Has(r_type):
-                    # Direct update
-                    res_obj.Get(r_type).value = str(value)
-                else:
-                    # Insert new definition
-                    res_obj.Insert(f"{r_type} = {value}")
+                if res_obj.Has(r_type): res_obj.Get(r_type).value = str(value)
+                else: res_obj.Insert(f"\n\t\t{r_type} = {value}")
             else:
-                # Value is 0
-                if res_obj.Has(r_type):
-                    # Remove definition
-                    res_obj.Remove(r_type)
+                if res_obj.Has(r_type): res_obj.Remove(r_type)
             
-            # Recalculate total for this state (just sum of units)
             self.current_data['resources_total'] = sum(self.current_data['resources'].values())
-            
             self.on_value_change()
-        except Exception as e:
-            print(f"Resource update failed: {e}")
+        except Exception as e: print(f"Resource update failed: {e}")
 
 class MainWindow(QMainWindow):
     def __init__(self, image_path, target_data):
@@ -514,9 +477,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("State Distribution Tool")
         self.resize(1100, 750)
         self.current_mode = MODE_MANPOWER
+        
+        # Store original target_data so we can save even those not visible on map
+        self.original_target_data = target_data
         self.markers_widgets = [] 
         
-        # 1. Process Data
         pil_img, self.markers_data = ImageAnalyzer.analyze_states(image_path, target_data)
         
         self.recalculate_stats()
@@ -525,7 +490,6 @@ class MainWindow(QMainWindow):
             self.show_error(f"Could not load image: {image_path}")
             return
 
-        # 2. Layouts
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         main_layout = QHBoxLayout(central_widget)
@@ -539,45 +503,58 @@ class MainWindow(QMainWindow):
         
         self.props_panel = PropertiesPanel(
             on_value_change_callback=self.on_data_changed,
-            on_mode_change_callback=self.on_mode_changed
+            on_mode_change_callback=self.on_mode_changed,
+            on_save_callback=self.save_changes
         )
         
         main_layout.addWidget(self.view, 1)
         main_layout.addWidget(self.props_panel)
         
         self.create_overlays()
-        
         self.update_global_total_label()
 
-    def recalculate_stats(self):
-        """Recalculates percentage shares."""
-        if self.current_mode == MODE_CATEGORY:
-            return 0 
+        # Add Status Bar for save confirmation
+        self.statusBar = self.statusBar()
+        
+        # Setup shortcut (Ctrl+S)
+        self.save_action = QAction("Save", self)
+        self.save_action.setShortcut(QKeySequence("Ctrl+S"))
+        self.save_action.triggered.connect(self.save_changes)
+        self.addAction(self.save_action)
 
-        # Determine total sum based on mode
+    def save_changes(self):
+        """Iterates through all target states and calls save_to_file."""
+        count = 0
+        try:
+            for item in self.original_target_data:
+                st = item['state']
+                st.save_to_file()
+                count += 1
+            
+            self.statusBar.showMessage(f"Successfully saved {count} states to file.", 5000)
+            print(f"Saved {count} states.")
+        except Exception as e:
+            self.statusBar.showMessage(f"Error saving files: {str(e)}", 5000)
+            print(f"Save error: {e}")
+
+    def recalculate_stats(self):
+        if self.current_mode == MODE_CATEGORY: return 0 
         total = 0
         if self.current_mode == MODE_RESOURCES:
-            # Sum of all resource units everywhere
             total = sum(item['resources_total'] for item in self.markers_data)
         else:
             key_map = {
-                MODE_MANPOWER: 'manpower',
-                MODE_INFRASTRUCTURE: 'infrastructure',
-                MODE_ARMS: 'arms_factory',
-                MODE_INDUSTRY: 'industrial_complex'
+                MODE_MANPOWER: 'manpower', MODE_INFRASTRUCTURE: 'infrastructure',
+                MODE_ARMS: 'arms_factory', MODE_INDUSTRY: 'industrial_complex'
             }
             key = key_map.get(self.current_mode)
             total = sum(item[key] for item in self.markers_data)
         
-        # Calculate shares (only relevant for numeric single-value modes)
         if self.current_mode != MODE_RESOURCES:
             key = key_map.get(self.current_mode)
             for item in self.markers_data:
-                if total > 0:
-                    item['percentage_share'] = (item[key] / total) * 100.0
-                else:
-                    item['percentage_share'] = 0.0
-        
+                if total > 0: item['percentage_share'] = (item[key] / total) * 100.0
+                else: item['percentage_share'] = 0.0
         return total
 
     def update_global_total_label(self):
@@ -593,11 +570,9 @@ class MainWindow(QMainWindow):
 
     def refresh_all_views(self):
         self.update_global_total_label()
-        
         for marker in self.markers_widgets:
             marker.refresh_text(self.current_mode)
             self.update_marker_position(marker)
-
         if self.props_panel.current_data:
             self.props_panel.update_info(self.props_panel.current_data)
 
@@ -605,6 +580,12 @@ class MainWindow(QMainWindow):
         for data in self.markers_data:
             marker = OverlayMarker(data, self.on_marker_clicked)
             proxy = self.scene.addWidget(marker)
+            
+            # --- CRITICAL CHANGE FOR FIXED SIZE ---
+            # This flag makes the item ignore the view's scaling
+            proxy.setFlag(QGraphicsItem.ItemIgnoresTransformations)
+            proxy.setZValue(10) 
+            
             marker.scene_proxy = proxy
             marker.refresh_text(self.current_mode)
             self.update_marker_position(marker)
@@ -615,7 +596,10 @@ class MainWindow(QMainWindow):
         w = marker.width()
         h = marker.height()
         if hasattr(marker, 'scene_proxy'):
-            marker.scene_proxy.setPos(cx - w / 2, cy - h / 2)
+            # 1. Set the anchor point in the scene
+            marker.scene_proxy.setPos(cx, cy)
+            # 2. Apply a local translation to center the widget on that anchor point
+            marker.scene_proxy.setTransform(QTransform().translate(-w/2, -h/2))
 
     def on_marker_clicked(self, data):
         self.props_panel.update_info(data)
@@ -629,26 +613,16 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     
     IMAGE_PATH = Path.cwd() / "tools/misc/nudge2/states_view.png"
-    
     target_data = []
     
     try:
         states = get_all_states() 
         for st in states:
-            if st.owner != "MIR": 
-                continue
-            
+            if st.owner != "MIR": continue
             col = get_color_from_seed(str(st.state_id))
-            
-            target_data.append({
-                "state": st,
-                "color": col
-            })
-            
-    except Exception as e:
-        print(f"Error initializing data: {e}")
+            target_data.append({ "state": st, "color": col })
+    except Exception as e: print(f"Error initializing data: {e}")
 
     window = MainWindow(IMAGE_PATH, target_data)
     window.show()
-    
     sys.exit(app.exec())
