@@ -193,6 +193,13 @@ class FocusNode(BaseNode):
         self.set_pos(new_x, new_y)
         self.recalculate_positions()
 
+    def on_node_moved_bare(self):
+        # snap position based on scaling
+        (x, y) = (self.pos()[0], self.pos()[1])
+        new_x = round(x / x_scaling) * x_scaling
+        new_y = round(y / y_scaling) * y_scaling
+
+        self.set_pos(new_x, new_y)
 
 
     def on_input_connected(self, in_port, out_port):

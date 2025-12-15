@@ -112,10 +112,11 @@ class FocusNodeGraph(NodeGraph):
         """
 
         for node_view, prev_pos in node_data.items():
-            node = self._model.nodes[node_view.id]
+                node = self._model.nodes[node_view.id]
+                node.on_node_moved_bare()
+        for node in self.focus_tree.focuses:
+            node.recalculate_positions()
 
-            # This snaps the nodes in this graph to coordinates that are a multiple of 100
-            node.on_node_moved()
 
         self._undo_stack.endMacro()
 
