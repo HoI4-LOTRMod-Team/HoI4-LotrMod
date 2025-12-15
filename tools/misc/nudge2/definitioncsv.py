@@ -132,6 +132,7 @@ def get_color_from_seed(seed_str: str) -> tuple[int, int, int]:
 
     return (r, g, b)
 
+
 # Adds:
 #   8: province-color
 #   9: terrain-color
@@ -172,7 +173,7 @@ def get_expanded_definition():
         row.append((0,0,0))
 
     for st in states:
-        col = random_color()
+        col = get_color_from_seed(str(st.state_id))
         ow_col = get_color_from_seed(st.owner)
         for prov in st.province_list:
             csv[prov][13] = st.state_id
@@ -192,7 +193,7 @@ def get_expanded_definition():
             csv[prov][21] = ow_col
 
     for st in regions:
-        col = random_color()
+        col = get_color_from_seed(str(st.region_id))
         for prov in st.province_list:
             csv[prov][15] = st.region_id
             csv[prov][16] = col
