@@ -208,8 +208,9 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			set_technology = { warg_horses_module = 1 }
+			#set_technology = { warg_horses_module = 1 }
 			army_experience = 25
+			add_ideas = ISE_wargs_masters
 			add_tech_bonus = {
 				bonus = 0.75
 				uses = 2
@@ -562,7 +563,7 @@ focus_tree = {
 
 	focus = {
 		id = ISE_shire_infiltration
-		icon = GFX_goal_elu_unrest_in_the_shire
+		icon = GFX_goal_generic_conspiracy_dagger
 		ai_will_do = { base = 100 }
 		available = {
 			has_global_flag = ise_orthanc_has_fallen
@@ -735,14 +736,32 @@ focus_tree = {
 		x = 0
 		y = 1
 		prerequisite = { focus = ISE_expand_to_the_north }
-		available = {
-			ART = { has_completed_focus = ART_unite_the_kingdom_of_arnor }
-		}
+		available = { ART = { has_completed_focus = ART_unite_the_kingdom_of_arnor } }
+		bypass = { ART = { OR = { has_completed_focus = lettherangersprevail has_completed_focus = forgeanewpath } } }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			add_war_support = 0.1
+			add_timed_idea = {
+				idea = ISE_rally_the_army_against_men
+				days = 365
+			}
 			create_wargoal = { target = ART type = annex_everything }
+		}
+	}
+
+	focus = {
+		id = ISE_the_shire_will_fall
+		icon = GFX_goal_elu_unrest_in_the_shire
+		ai_will_do = { base = 100 }
+		relative_position_id = ISE_arnor_my_ass
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_arnor_my_ass }
+		available = { SHI = { exists = yes NOT = { is_in_faction_with = ISE } } }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			create_wargoal = { target = SHI type = annex_everything }
 		}
 	}
 
@@ -3584,7 +3603,7 @@ focus_tree = {
 	focus = {
 		id = ISE_quarrel_with_rohan
 		icon = GFX_goal_roh_rohan_flag
-		ai_will_do = { factor = 15 }
+		ai_will_do = { base = 0 }
 		relative_position_id = ISE_firm_hand
 		prerequisite = { focus = ISE_firm_hand }
 		x = 5
@@ -3594,6 +3613,18 @@ focus_tree = {
 		completion_reward = {
 			ROH = { add_opinion_modifier = { target = ISE modifier = isr_quarrel } }
 			ISE = { add_opinion_modifier = { target = ROH modifier = isr_quarrel } }
+			add_war_support = 0.05
+			add_political_power = 100
+			if = {
+				limit = { has_dlc = "No Compromise, No Surrender"  }
+				add_faction_goal_slot = { category = long_term value = 1}
+				if = {
+					limit = { is_in_faction = no }
+					custom_effect_tooltip = ISE_tooltip_gain_faction_goal_defeat_rohan
+				} else = {
+					add_faction_goal = faction_goal_defeating_rohan
+				}
+			}
 			hidden_effect = {news_event = { hours = 48 id = news.335 }}
 		}
 	}
@@ -3612,8 +3643,6 @@ focus_tree = {
 		completion_reward = {
 			add_named_threat = { threat = 1 name = "Orcs pillaging Rohan villages" }
 			increase_orc_pillaging = yes
-			set_variable = { global.influence_rohan_gap = 0 }
-			set_variable = { global.influence_west_march = 0 }
 		}
 	}
 
