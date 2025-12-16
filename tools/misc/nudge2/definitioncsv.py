@@ -17,6 +17,8 @@ DEFINITION_CSV_PATH = BASE_PATH / "map/definition.csv"
 
 TERRAIN_PATH = BASE_PATH / "common/terrain/00_terrain.txt"
 
+VPS_LOC_PATH = BASE_PATH / "localisation/english/victory_points_l_english.yml"
+
 
 
 def get_terrain_colormap():
@@ -395,16 +397,6 @@ def get_prov_color_from_id(id):
 
 
 
-def update_state_properties(provinces, override_data):
-    # Get the state of the selected province
-
-    print(provinces)
-    print(override_data)
-
-    return
-
-
-
 def set_prov_props(provinces, overwrite_data):
     # 1. Read everything into memory
     with open(DEFINITION_CSV_PATH, 'r', newline='') as f:
@@ -549,3 +541,81 @@ def get_state_props(provinces):
             return ret
 
     assert(False)
+
+
+def get_victory_points(provinces):
+    locs = LocFile(VPS_LOC_PATH)
+    vps = []
+    states = get_all_states()
+    for st in states:
+        for vp in st.get_vp_list():
+            prov_id = int(vp.value[0].value)
+            if prov_id in provinces:
+                vps.append({
+                    "province": prov_id,
+                    "value": int(vp.value[1].value),
+                    #"buildings": [bld.id for bld in st.get_bld_list() if int(bld.id) == prov_id]
+                    "name": locs.get(f"VICTORY_POINTS_{prov_id}")
+                })
+    return vps
+
+def set_victory_points(vps):
+    locs = LocFile(VPS_LOC_PATH)
+    states = get_all_states()
+    changed_states = set()
+
+    for vp_data in vps:
+        prov_id = vp_data["province"]
+        value = vp_data["value"]
+        name = vp_data["name"]
+        loc_key = f"VICTORY_POINTS_{prov_id}"
+
+        for st in states:
+
+            if prov_id in st.province_list: # found correct state
+                history = st.pObj.Get("history") if st.pObj.Has("history") else None
+
+                # Find existing VP entry for this province (if any)
+                existing_vp = None
+                for vp in st.get_vp_list():
+                    if int(vp.value[0].value) == prov_id:
+                        existing_vp = vp
+                        break
+
+                if value <= 0:
+                    # Remove existing VP if it exists
+                    if history is not None and existing_vp is not None:
+                        history.value.remove(existing_vp)
+                        changed_states.add(st)
+
+                    # Optional: clear localisation entry if it exists
+                    if locs.get(loc_key) is not None:
+                        # We can't truly delete lines via LocFile, but we can blank the name
+                        #locs.set(loc_key, "")
+                        locs.remove(loc_key)
+                        
+                else:
+                    # Add or update VP entry
+                    if history is not None:
+                        if existing_vp is not None:
+                            # Update VP value
+                            existing_vp.value[1].value = str(value)
+                        else:
+                            # Insert new VP history entry
+                            history.Insert(f"victory_points = {{ {prov_id} {value} }}")
+                        changed_states.add(st)
+
+                    # Update localisation (name may be empty to keep or blank out)
+                    if name is not None and name != "":
+                        if locs.get(loc_key) is not None:
+                            locs.set(loc_key, name)
+                        else:
+                            locs.add(loc_key, name)
+
+                # Done with this province; no need to check other states
+                break
+    # Save all modified state files
+    for st in changed_states:
+        st.save_to_file()
+
+    locs.save(VPS_LOC_PATH)

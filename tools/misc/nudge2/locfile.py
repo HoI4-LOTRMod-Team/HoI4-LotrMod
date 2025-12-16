@@ -86,6 +86,22 @@ class LocFile:
         else:
             print(f"Key '{key}' not found. Use add() for new keys.")
 
+    def remove(self, key):
+        """Removes a key from the file."""
+        if key in self.key_map:
+            index = self.key_map[key]
+            # Remove the line
+            del self.lines[index]
+            # Rebuild the key_map since line indices have changed
+            self.key_map = {}
+            for idx, line in enumerate(self.lines):
+                match = self.pattern.match(line)
+                if match:
+                    full_key = f"{match.group(2)}"
+                    self.key_map[full_key] = idx
+        else:
+            print(f"Key '{key}' not found. Cannot remove.")
+
     def add(self, key_full, value):
         """Adds a new key to the end of the file inside the block."""
         # key_full should be "key_name:0"

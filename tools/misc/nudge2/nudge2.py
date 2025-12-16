@@ -6,7 +6,8 @@ from PySide6.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene,
                                QGraphicsPixmapItem, QMainWindow, QToolBar, 
                                QLabel, QWidget, QComboBox, QCheckBox, 
                                QPushButton, QDialog, QFormLayout, QDialogButtonBox,
-                               QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout, QTextEdit, QTabWidget, QFileDialog)
+                               QVBoxLayout, QSpinBox, QLineEdit, QHBoxLayout, QTextEdit, QTabWidget, QFileDialog,
+                               QTableWidget, QTableWidgetItem, QAbstractItemView)
 from PySide6.QtGui import (QPixmap, QPainter, QImage, QColor, QMouseEvent, 
                            QAction, QActionGroup, QCursor, QKeySequence, QShortcut)
 from PySide6.QtCore import Qt, QPointF, QRectF, Signal, QSize
@@ -475,6 +476,113 @@ class StatePropertiesDialog(QDialog):
                 # Validation: Don't submit mixed placeholders
                 if val != "-- mixed --":
                     result[key] = val
+        return result
+
+
+class VictoryPointsDialog(QDialog):
+    """Dialog to view and edit Victory Points for selected provinces."""
+
+    def __init__(self, vps, provinces, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Edit Victory Points")
+        self.setModal(True)
+        self.resize(500, 400)
+
+        self._selected_provinces = list(provinces) if provinces is not None else []
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        info_label = QLabel("Victory Points for selected provinces:")
+        layout.addWidget(info_label)
+
+        # Table setup
+        self.table = QTableWidget()
+        self.table.setColumnCount(3)
+        self.table.setHorizontalHeaderLabels(["Province ID", "Value", "Name"])
+        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table.setSelectionMode(QAbstractItemView.SingleSelection)
+
+        layout.addWidget(self.table)
+
+        # Populate existing VPs
+        for vp in vps:
+            self._add_row(vp.get("province", 0), vp.get("value", 0), vp.get("name", ""))
+
+        # Controls for adding/removing rows
+        controls_layout = QHBoxLayout()
+
+        btn_add = QPushButton("Add VP")
+        #btn_remove = QPushButton("Remove Selected")
+
+        btn_add.clicked.connect(self._on_add_row)
+        #btn_remove.clicked.connect(self._on_remove_selected)
+
+        controls_layout.addWidget(btn_add)
+        #controls_layout.addWidget(btn_remove)
+        controls_layout.addStretch()
+
+        layout.addLayout(controls_layout)
+
+        # Buttons
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        layout.addWidget(self.buttons)
+
+    def _add_row(self, province_id=0, value=0, name=""):
+        row = self.table.rowCount()
+        self.table.insertRow(row)
+
+        spin_prov = QSpinBox()
+        spin_prov.setRange(0, 999999)
+        spin_prov.setValue(int(province_id))
+
+        spin_value = QSpinBox()
+        spin_value.setRange(0, 1000)
+        spin_value.setValue(int(value))
+
+        line_name = QLineEdit()
+        line_name.setText(name if name is not None else "")
+
+        self.table.setCellWidget(row, 0, spin_prov)
+        self.table.setCellWidget(row, 1, spin_value)
+        self.table.setCellWidget(row, 2, line_name)
+
+        # Provide a visual row label (optional, but nice UX)
+        self.table.setVerticalHeaderItem(row, QTableWidgetItem(str(row + 1)))
+
+    def _on_add_row(self):
+        # Default province: first selected province if available
+        default_prov = self._selected_provinces[0] if self._selected_provinces else 0
+        self._add_row(default_prov, 1, "")
+
+    def _on_remove_selected(self):
+        selected_rows = {idx.row() for idx in self.table.selectedIndexes()}
+        for row in sorted(selected_rows, reverse=True):
+            self.table.removeRow(row)
+
+    def get_vps(self):
+        """Return list of VP dicts suitable for set_victory_points."""
+        result = []
+        for row in range(self.table.rowCount()):
+            spin_prov = self.table.cellWidget(row, 0)
+            spin_value = self.table.cellWidget(row, 1)
+            line_name = self.table.cellWidget(row, 2)
+
+            if not spin_prov or not spin_value or not line_name:
+                continue
+
+            prov_id = int(spin_prov.value())
+            value = int(spin_value.value())
+            name = line_name.text().strip()
+
+            result.append({
+                "province": prov_id,
+                "value": value,
+                "name": name,
+            })
+
         return result
 
 class FindProvinceDialog(QDialog):
@@ -1253,6 +1361,10 @@ class MainWindow(QMainWindow):
         self.btn_state_props.clicked.connect(self.edit_state_properties_func)
         self.select_ui_actions.append(toolbar.addWidget(self.btn_state_props))
 
+        self.btn_edit_vps = QPushButton("Edit VPs")
+        self.btn_edit_vps.clicked.connect(self.edit_vps_func)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_edit_vps))
+
         self.btn_split = QPushButton("Split Provinces")
         self.btn_split.clicked.connect(self.split_selected_provinces_func)
         self.select_ui_actions.append(toolbar.addWidget(self.btn_split))
@@ -1476,6 +1588,31 @@ class MainWindow(QMainWindow):
                     print("Backend function 'set_state_props' not found.")
             else:
                 print("No state changes made.")
+
+    def edit_vps_func(self):
+        """Edit victory points for the currently selected provinces."""
+        provs = selected_colors_to_provinces()
+        if not provs:
+            print("No provinces selected.")
+            return
+
+        try:
+            vps = get_victory_points(provs)
+        except NameError:
+            print("Backend function 'get_victory_points' not found.")
+            return
+
+        dialog = VictoryPointsDialog(vps, provs, self)
+        if dialog.exec():
+            new_vps = dialog.get_vps()
+            try:
+                set_victory_points(new_vps)
+                # Clear selection and refresh visualization so VP map mode updates
+                selected_colors.clear()
+                self.trigger_lut_update()
+                print(f"Victory points updated: {new_vps}")
+            except NameError:
+                print("Backend function 'set_victory_points' not found.")
 
     def relax_selected_provinces_func(self):
         # 1. Check selection
