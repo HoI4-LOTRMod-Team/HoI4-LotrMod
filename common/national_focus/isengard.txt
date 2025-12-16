@@ -193,6 +193,7 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
+			add_stability = 0.1
 			add_ideas = ISE_the_white_hand_0
 		}
 	}
@@ -430,7 +431,7 @@ focus_tree = {
 		y = 1
 		relative_position_id = ISE_orcs_need_no_break
 		prerequisite = { focus = ISE_orcs_need_no_break }
-		cost = 10
+		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
 			swap_ideas = { remove_idea = ISE_orc_breeding_1 add_idea = ISE_orc_breeding_2 }
@@ -496,9 +497,17 @@ focus_tree = {
 		icon = GFX_goal_ise_the_white_hand_flag
 		ai_will_do = { base = 100 }
 		available = {
-			controls_state = 77
-			controls_state = 156
-			controls_state = 78
+			OR = {
+				AND = {
+					controls_state = 77 #South Enedwaith
+					controls_state = 156 # Lond Daer
+					controls_state = 78 #Dunland
+				}
+				AND = {
+					DUN = { is_puppet_of = ISE }
+					DUN = { is_puppet_of = ENE }
+				}
+			}
 		}
 		prerequisite = { focus = ISE_white_hand_control }
 		relative_position_id = ISE_white_hand_control
@@ -1404,7 +1413,7 @@ focus_tree = {
 		x = 2
 		y = 1
 		prerequisite = { focus = ISE_increase_influence}
-		cost = 10
+		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
 			if = {
@@ -1430,7 +1439,7 @@ focus_tree = {
 		x = 0
 		y = 1
 		prerequisite = { focus = ISE_increase_influence}
-		cost = 10
+		cost = 5
 		available_if_capitulated = no
 		completion_reward = {
 			custom_effect_tooltip = ISE_tooltip_will_start_as_a_puppet
@@ -1461,9 +1470,11 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = no
 		available = {
-			DUN = { 
-				belligerent > 0.5 
-				NOT = { has_idea = tribes_united_country }
+			DUN = {
+				OR = {
+					belligerent > 0.5 
+					has_government = belligerent
+				}
 			}
 		}
 		completion_reward = {
