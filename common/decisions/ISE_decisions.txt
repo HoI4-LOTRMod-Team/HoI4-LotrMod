@@ -449,38 +449,23 @@ ISE_pillage_rohan = {
         icon = GFX_decision_generic_2
 		cost = 150
         visible = {
-            #has_completed_focus = ISE_establish_camps_in_the_area
-            FROM = { 
-                owner = { tag = ROH } 
-            }
+            has_completed_focus = ISE_establish_camps_in_the_area
+            FROM = {  owner = { tag = ROH } }
         }
         available = {
-           #has_completed_focus = ISE_establish_camps_in_the_area
-           FROM = { 
-                owner = { tag = ROH } 
-           }
+            has_completed_focus = ISE_establish_camps_in_the_area
+            FROM = {  owner = { tag = ROH } }
         }
         state_target = yes
-        targets = { 23 24 }
+        targets = { 23 }
 		days_remove = 50
 		fire_only_once = yes
         fixed_random_seed = no
 		remove_effect = {
-            if = {
-                limit = {
-                    check_variable = { FROM.id = 23.id }
-                }
-                increase_west_march_influence_20 = yes
-            }
-            else_if = {
-                limit = {
-                    check_variable = { FROM.id = 24.id }
-                }
-                increase_rohan_gap_influence_20 = yes
-            }
             FROM = {
-                owner = {
+                owner = { #owner is always ROH
                     add_stability = -0.01
+                    add_manpower = -500
                     random_list = {
                         75 = {
                             increase_orc_pillaging = yes
@@ -521,6 +506,12 @@ ISE_pillage_rohan = {
             FROM = {
                 owner = {
                     add_stability = -0.01
+                    if = {
+                        limit = { has_idea = ROH_orc_pillage_0 }
+                        add_manpower = -750
+                    }else = {
+                        add_manpower = -500
+                    }
                     random_list = {
                         50 = {
                             increase_orc_pillaging = yes
@@ -537,71 +528,24 @@ ISE_pillage_rohan = {
 			factor = 2
 		}
 	}
-    ISE_incease_influence_rohan = {
-        icon = GFX_decision_generic_2
-		cost = 175
-
-        state_target = yes
-        targets = { 23 24 }
-        visible = {
-           FROM = { 
-                owner = { tag = ROH } 
-           }
-        }
-        available = {
-           FROM = { 
-                owner = { tag = ROH } 
-           }
-        }
-		days_remove = 50
-        days_re_enable = 100
-		fire_only_once = no
-        fixed_random_seed = no
-		remove_effect = {
-            #Increase influence
-            if = {
-                limit = {
-                    check_variable = { FROM.id = 23.id }
-                }
-                increase_west_march_influence = yes
-            }
-            else_if = {
-                limit = {
-                    check_variable = { FROM.id = 24.id }
-                }
-                increase_rohan_gap_influence = yes
-            }
-		}
-		ai_will_do = {
-			factor = 2
-		}
-    }
     ISE_annex_state = {
         icon = GFX_decision_generic_2
 		cost = 200
-
         state_target = yes
-        targets = { 23, 24 }
+        targets = { 23 }
         available = {
-            check_variable = { global.influence_west_march > 10}
+            ROH = {
+                has_idea = ROH_orc_pillage_2
+                has_stability < 0.6
+            }
         }
 		days_remove = 50
         days_re_enable = 100
 		fire_only_once = no
         fixed_random_seed = no
 		remove_effect = {
-            if = {
-                limit = {
-                    check_variable = { FROM.id = 23.id }
-                }
-                transfer_state = 23
-            }
-            else_if = {
-                limit = {
-                    check_variable = { FROM.id = 24.id }
-                }  
-                transfer_state = 24
-            }
+            transfer_state = 23
+            #news event
 		}
 		ai_will_do = {
 			factor = 2
