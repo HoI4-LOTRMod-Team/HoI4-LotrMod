@@ -436,10 +436,16 @@ class PropertiesPanel(QFrame):
                 st.pObj.Get("history").Get("buildings").Get("infrastructure").value = str(value)
             elif self.current_mode == MODE_ARMS:
                 self.current_data['arms_factory'] = value
-                st.pObj.Get("history").Get("buildings").Get("arms_factory").value = str(value)
+                if st.pObj.Get("history").Get("buildings").Has("arms_factory"):
+                    st.pObj.Get("history").Get("buildings").Get("arms_factory").value = str(value)
+                else:
+                    st.pObj.Get("history").Get("buildings").Insert(f"\n\t\t\tarms_factory = {value}")
             elif self.current_mode == MODE_INDUSTRY:
                 self.current_data['industrial_complex'] = value
-                st.pObj.Get("history").Get("buildings").Get("industrial_complex").value = str(value)
+                if st.pObj.Get("history").Get("buildings").Has("industrial_complex"):
+                    st.pObj.Get("history").Get("buildings").Get("industrial_complex").value = str(value)
+                else:
+                    st.pObj.Get("history").Get("buildings").Insert(f"\n\t\t\tindustrial_complex = {value}")
                 
             self.on_value_change()
         except Exception as e: print(f"Update failed: {e}")
