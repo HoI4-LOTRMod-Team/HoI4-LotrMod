@@ -386,11 +386,34 @@ class PropertiesPanel(QFrame):
         self.on_mode_change(text)
 
     def update_global_total(self, total_val):
-        if self.current_mode == MODE_CATEGORY: return 
-        formatted = format_k(total_val) if self.current_mode == MODE_MANPOWER else str(total_val)
-        label_txt = f"Total {self.current_mode}:"
-        if self.current_mode == MODE_RESOURCES: label_txt = "Total Units:"
-        self.lbl_total_global.setText(f"{label_txt} {formatted}")
+        # Enable word wrap so the list of resources doesn't get cut off
+        self.lbl_total_global.setWordWrap(True)
+        
+        if self.current_mode == MODE_CATEGORY: 
+            return 
+            
+        if self.current_mode == MODE_RESOURCES and isinstance(total_val, dict):
+            # --- NEW LOGIC FOR RESOURCES ---
+            parts = []
+            for r_type in RESOURCE_TYPES:
+                val = total_val.get(r_type, 0)
+                # Only show resources that actually exist (value > 0)
+                if val > 0:
+                    # Get short name (e.g., "oil" -> "Oil", "aluminium" -> "Alu")
+                    short_name = RESOURCE_SHORTS.get(r_type, r_type[:3]).title()
+                    val_str = format_k(val)
+                    parts.append(f"{short_name}: {val_str}")
+            
+            if not parts:
+                self.lbl_total_global.setText("Total Resources: 0")
+            else:
+                # Join with commas
+                self.lbl_total_global.setText("Totals: " + ", ".join(parts))
+        else:
+            # --- EXISTING LOGIC FOR OTHER MODES ---
+            formatted = format_k(total_val) if self.current_mode == MODE_MANPOWER else str(total_val)
+            label_txt = f"Total {self.current_mode}:"
+            self.lbl_total_global.setText(f"{label_txt} {formatted}")
 
     def update_info(self, data):
         self.current_data = data
@@ -545,23 +568,34 @@ class MainWindow(QMainWindow):
 
     def recalculate_stats(self):
         if self.current_mode == MODE_CATEGORY: return 0 
-        total = 0
+        
         if self.current_mode == MODE_RESOURCES:
-            total = sum(item['resources_total'] for item in self.markers_data)
+            # --- NEW LOGIC: Sum each resource type individually ---
+            totals = {r: 0 for r in RESOURCE_TYPES}
+            for item in self.markers_data:
+                res_dict = item.get('resources', {})
+                for r in RESOURCE_TYPES:
+                    totals[r] += res_dict.get(r, 0)
+            return totals # Returns a dictionary like {'oil': 10, 'steel': 50...}
+            
         else:
+            # --- EXISTING LOGIC FOR OTHER MODES ---
             key_map = {
                 MODE_MANPOWER: 'manpower', MODE_INFRASTRUCTURE: 'infrastructure',
                 MODE_ARMS: 'arms_factory', MODE_INDUSTRY: 'industrial_complex'
             }
             key = key_map.get(self.current_mode)
+            
             total = sum(item[key] for item in self.markers_data)
         
-        if self.current_mode != MODE_RESOURCES:
-            key = key_map.get(self.current_mode)
+            # Update percentage shares (only relevant for single-value modes)
             for item in self.markers_data:
-                if total > 0: item['percentage_share'] = (item[key] / total) * 100.0
-                else: item['percentage_share'] = 0.0
-        return total
+                if total > 0: 
+                    item['percentage_share'] = (item[key] / total) * 100.0
+                else: 
+                    item['percentage_share'] = 0.0
+            
+            return total
 
     def update_global_total_label(self):
         total = self.recalculate_stats()
