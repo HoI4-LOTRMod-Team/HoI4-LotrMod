@@ -488,6 +488,9 @@ class PropertiesPanel(QFrame):
             st_obj = self.current_data['state']
             res_obj = st_obj.pObj.Get("resources") 
             
+            if res_obj is None:
+                res_obj = st_obj.pObj.Insert("\n\tresources = { }").Get("resources")
+            
             self.current_data['resources'][r_type] = value
             
             if value > 0:
