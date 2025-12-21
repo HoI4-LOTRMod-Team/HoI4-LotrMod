@@ -1126,3 +1126,67 @@ country_event = {
         FROM = { country_event = { id = tribes.2 } }
 	}
 }
+
+# Demand other belligerent nations to follow you and betray Sauron
+country_event = {
+	id = isengard.32
+	title = isengard.32.t
+	desc = isengard.32.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = isengard.32.a
+		ai_chance = { base = 50 }
+		add_stability = -0.05
+		MOR = { country_event = { id = mordor.74 } }
+		FROM = {
+			country_event = { id = isengard.33 }
+			event_option_tooltip = isengard.33.a
+		}
+	}
+	option = { # Deny
+		name = isengard.32.b
+		ai_chance = { base = 50 }
+		add_war_support = 0.1
+		FROM = { 
+			country_event = { id = isengard.34 }
+			event_option_tooltip = isengard.34.a
+		}
+	}
+}
+
+# Accepted and betraying Sauron aswell
+country_event = {
+	id = isengard.33
+	title = isengard.33.t
+	desc = isengard.33.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.33.a
+		ai_chance = { base = 50 }
+		add_opinion_modifier = { target = FROM modifier = medium_increase } 
+		add_to_faction = FROM
+	}
+}
+
+# Denied, staying loyal to Sauron
+country_event = {
+	id = isengard.34
+	title = isengard.34.t
+	desc = isengard.34.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { 
+		name = isengard.34.a
+		ai_chance = { base = 50 }
+		add_opinion_modifier = { target = FROM modifier = medium_decrease } 
+		create_wargoal = { target = FROM type = puppet_wargoal_focus }
+	}
+}
