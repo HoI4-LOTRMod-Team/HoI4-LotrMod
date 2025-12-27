@@ -1,0 +1,393 @@
+types = {
+
+	DGU_raid_fields_of_rhovanion = {
+
+		days_to_prepare = 15
+		speed_multiplier = 1.25
+		category = land_infiltration_raids
+		custom_map_icon = GFX_raid_target_icon_guerilla_raid
+		target_icon = GFX_other_target_icon
+		target_loc_key = raid_target_name_supply_hub
+		launch_sound = raid_land_launchable_sound
+		fire_only_once = yes
+
+		arrow = {
+		    type = land
+		}
+
+     	unit_model = {
+        	entity = motorized_vehicle_entity
+     	}
+
+		ai_will_do = {
+			base = 100
+
+			# TODO: make the AI use this a bit more "humanly"
+		}
+
+		command_power = 25
+
+		allowed = {
+			original_tag = DGU
+		}
+
+		visible = {
+			has_completed_focus = DGU_raid_the_fields_of_rhovanion
+		}
+
+		show_target = {
+			var:target_state = {
+				is_core_of = RHO
+				is_controlled_by = RHO
+			}
+		}
+
+		available = {
+			NOT = { is_ally_with = RHO }
+			NOT = { has_non_aggression_pact_with = RHO }
+		}
+
+		launchable = {
+			always = yes
+		}
+		
+		starting_point = {
+		    building_types = { supply_node }
+		    allow_faction_buildings = yes
+		}
+
+		unit_requirements = {
+			battalion_types = {
+				infantry = { min = 4 }
+			}
+		}
+		unit_requirements = {
+			battalion_types = {
+				militia = { min = 4 }
+			}
+		}
+		unit_requirements = {
+			battalion_types = {
+				mountaineers = { min = 4 }
+			}
+		}
+		#essential_equipment = {
+		#	transport_plane_equipment = 5
+		#}
+
+		additional_equipment = {
+			# list of equipment archetypes and numbers
+			#support_equipment = 25
+			#infantry_equipment = 100
+		}
+
+		target_type = {
+			building = {
+				type = supply_node
+			}
+		}
+
+		success_factors = {
+			success = {
+				base = 0.9
+
+				# Raiding unit modifiers
+				experience = {
+					weight = 0.25
+					start_weight = -0.2
+					reference = 1.0
+				}
+
+				organisation = {
+					weight = 0.1
+					start_weight = -0.1
+					reference = 100
+				}
+				strength = {
+					weight = 0.1
+					start_weight = -0.1
+					reference = 1
+				}
+				recon = {
+					weight = 0.05
+					reference = 10
+				}
+
+				### Target Modifiers
+
+				air_superiority = {
+					reference = 1
+					start_reference = 0.5
+					weight = 0.2
+				}
+
+				enemy_units = {
+					reference = 4 # More than 4 DIVs in the target Province shouldn't make any difference
+					weight = -0.4
+				}
+				intel = {
+					weight = 0.2
+					#start_reference = 50
+					reference = 100
+				}
+			}
+		}
+
+		# TODO: refine this, by adding stuff like army xp, civs etc. and weaken RHO
+		# all effects shuld set the "has raided" flag
+		success_levels = {
+			failure = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { supply_node > 0 }
+							damage_building = {
+								type = supply_node
+								damage = 1 # levels of damage
+								province = var:ROOT.target_province
+							}
+						}
+					}
+
+					set_global_flag = DGU_raided_RHO
+			    }
+				actor_effects = {
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.95
+						str_damage = 0.95
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.05
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+			limited_success = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { supply_node > 0 }
+							damage_building = {
+								type = supply_node
+								damage = 1 # levels of damage
+								province = var:ROOT.target_province
+								repair_speed_modifier = -0.1
+							}
+						}
+					}
+					var:victim_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = -100
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -50
+						}
+
+					}
+
+					set_global_flag = DGU_raided_RHO
+				}
+				actor_effects = {
+					
+ 					set_temp_variable = { PRC_equipment_producer = var:victim_country } 
+
+					var:actor_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = 100
+							producer = PRC_equipment_producer
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = 50
+							producer = PRC_equipment_producer
+						}
+					}
+
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.65
+						str_damage = 0.3
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.15
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_limited_success_entity"
+					animation = "attack"
+				}
+			}
+			success = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { supply_node > 0 }
+							damage_building = {
+								type = supply_node
+								damage = 4 # levels of damage
+								province = var:ROOT.target_province
+								repair_speed_modifier = -0.25
+							}
+						}
+
+					}
+					var:victim_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = -250
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -75
+						}
+
+						add_equipment_to_stockpile = { 
+							type = artillery_equipment
+							amount = -25
+						}
+					}
+
+					set_global_flag = DGU_raided_RHO
+				}
+				actor_effects = {
+					
+					set_temp_variable = { PRC_equipment_producer = var:victim_country } 
+
+					var:actor_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = 250
+							producer = PRC_equipment_producer
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = 75
+							producer = PRC_equipment_producer
+						}
+
+						add_equipment_to_stockpile = { 
+							type = artillery_equipment
+							amount = 25
+							producer = PRC_equipment_producer
+						}
+					}
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.45
+						str_damage = 0.2
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.2
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_success_entity"
+					animation = "attack"
+				}
+			}
+			critical_success = {
+			    victim_effects = {
+					var:target_state = {
+						IF = {
+							limit = { supply_node > 0 }
+							damage_building = {
+								type = supply_node
+								damage = 6 # levels of damage
+								province = var:ROOT.target_province
+								repair_speed_modifier = -0.4
+							}
+						}
+					}
+					var:victim_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = -500
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = -150
+						}
+						add_equipment_to_stockpile = { 
+							type = artillery_equipment
+							amount = -50
+						}
+					}
+
+					set_global_flag = DGU_raided_RHO
+				}
+				actor_effects = {
+					
+					set_temp_variable = { PRC_equipment_producer = var:victim_country } 
+
+					var:actor_country = {
+						add_equipment_to_stockpile = { 
+							type = infantry_equipment
+							amount = 500
+							producer = PRC_equipment_producer
+						}
+						add_equipment_to_stockpile = {
+							type = support_equipment
+							amount = 150
+							producer = PRC_equipment_producer
+						}
+
+						add_equipment_to_stockpile = { 
+							type = artillery_equipment
+							amount = 50
+							producer = PRC_equipment_producer
+						}
+					}
+
+					# Damage to unit
+					raid_damage_units = {
+						org_damage = 0.25
+						str_damage = 0.15
+						ratio = yes
+					}
+
+					# Unit Experience
+					raid_add_unit_experience = 0.35
+					add_raid_history_entry = yes
+				}
+				# Other unit effects
+				division_effects = {
+					add_divisional_commander_xp = 50
+				}
+				visual_effect = {
+					entity = "land_raids_critical_success_entity"
+					animation = "attack"
+				}
+			}
+		}
+	}
+
+
+}

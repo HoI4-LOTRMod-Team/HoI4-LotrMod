@@ -337,13 +337,9 @@ focus_tree = {
         }
         
         completion_reward = {
-            # TODO2: this should be an event
-            MIR = {
-                add_timed_idea = {
-                    idea = DGU_southern_logistics_sabotaged
-                    days = 240
-                }
-            }
+            # give MIR a debuff
+            hidden_effect = { MIR = { country_event = dolguldur.137 } }
+            event_option_tooltip = dolguldur.137.a
         }
     }
 
@@ -966,8 +962,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
-            # TODO: has accepted event
+            has_global_flag = SPI_responded_well_to_DGU
+            NOT = { has_war_with = SPI }
+            country_exists = SPI
         }
         
         completion_reward = {
@@ -1526,7 +1523,7 @@ focus_tree = {
 
     focus = {
         id = DGU_prepare_a_ring_interception
-		prerequisite = { focus = MIR_insurgent_raids }
+		prerequisite = { focus = DGU_insurgent_raids }
         
         icon = GFX_unknown_focus
         
@@ -2149,7 +2146,13 @@ focus_tree = {
         bypass = { }
         
         completion_reward = {
-            # TODO: add presence in southern states
+            # add presence in southern states
+            cfm_add_presence_boost = yes
+
+            231 = { cfm_restrict_to_state = yes }
+            232 = { cfm_restrict_to_state = yes }
+            233 = { cfm_restrict_to_state = yes }
+
         }
     }
 
@@ -2172,7 +2175,11 @@ focus_tree = {
         bypass = { }
         
         completion_reward = {
-            # TODO: add presence in southern states
+            # add presence in southern states
+            cfm_add_presence_boost = yes
+
+            86 = { cfm_restrict_to_state = yes }
+            228 = { cfm_restrict_to_state = yes }
         }
     }
 
@@ -2220,8 +2227,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            # TODO: railroads and stuff
+        }
     }
 
     focus = {
@@ -2240,8 +2249,11 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            # unlock a raid
+            custom_effect_tooltip = "Unlock a powerful raid against Rhovanion that (if successful) will grant us civs and weaken them."
+        }
     }
 
     focus = {
@@ -2260,8 +2272,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+    
+        completion_reward = {
+            declare_war_on = {
+                target = RHO
+                type = annex_everything
+            }
+        }
     }
 
     focus = {
@@ -2305,12 +2322,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = DGU_grand_plan_well_timed_distraction
+                add_idea = DGU_grand_plan_well_timed_distraction_2
+            }
+        }
     }
 
     focus = {
-        id = DGU_raid_the_surrounding_countryside
+        id = DGU_secret_army_drills
 		prerequisite = { focus = DGU_build_up_our_forces }
         
         icon = GFX_unknown_focus
@@ -2325,12 +2347,18 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            add_mastery = {
+                amount = 200
+                folder = land
+            }
+            army_experience = 50
+        }
     }
 
     focus = {
-        id = DGU_secure_more_territory
+        id = DGU_secure_a_perimeter
 		prerequisite = { focus = DGU_build_up_our_forces }
         
         icon = GFX_unknown_focus
@@ -2345,14 +2373,21 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
-        completion_reward = { }
+        
+        completion_reward = {
+            cfm_add_presence_boost = yes
+
+            231 = { cfm_restrict_to_state = yes }
+            232 = { cfm_restrict_to_state = yes }
+            233 = { cfm_restrict_to_state = yes }
+            191 = { cfm_restrict_to_state = yes }
+        }
     }
 
     focus = {
         id = DGU_await_the_signal
-		prerequisite = { focus = DGU_secure_more_territory }
-		prerequisite = { focus = DGU_raid_the_surrounding_countryside }
+		prerequisite = { focus = DGU_secure_a_perimeter }
+		prerequisite = { focus = DGU_secret_army_drills }
         
         icon = GFX_unknown_focus
         
@@ -2426,12 +2461,15 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
-            # TODO: has declined event
+            has_global_flag = SPI_responded_badly_to_DGU
         }
-        # TODO
+        
         completion_reward = {
 			# if not friendly, gain wargoal  
+            create_wargoal = {
+                target = SPI
+                type = annex_everything
+            }
 		}
     }
 
@@ -2874,7 +2912,7 @@ focus_tree = {
     }
 
     focus = {
-        id = MIR_aggressive_expansion
+        id = DGU_aggressive_expansion
 		prerequisite = { focus = DGU_territorial_incursions }
         
         icon = GFX_unknown_focus
@@ -2896,7 +2934,7 @@ focus_tree = {
     }
 
     focus = {
-        id = MIR_creeping_presence
+        id = DGU_creeping_presence
 		prerequisite = { focus = DGU_territorial_incursions }
         
         icon = GFX_unknown_focus
@@ -2918,8 +2956,8 @@ focus_tree = {
     }
 
     focus = {
-        id = MIR_insurgent_raids
-		prerequisite = { focus = MIR_aggressive_expansion }
+        id = DGU_insurgent_raids
+		prerequisite = { focus = DGU_aggressive_expansion }
         
         icon = GFX_unknown_focus
         
@@ -2940,8 +2978,8 @@ focus_tree = {
     }
 
     focus = {
-        id = MIR_northwards_expansion
-		prerequisite = { focus = MIR_insurgent_raids }
+        id = DGU_northwards_expansion
+		prerequisite = { focus = DGU_insurgent_raids }
         
         icon = GFX_unknown_focus
         
@@ -2962,8 +3000,8 @@ focus_tree = {
     }
 
     focus = {
-        id = MIR_southern_consolidation
-		prerequisite = { focus = MIR_insurgent_raids }
+        id = DGU_southern_consolidation
+		prerequisite = { focus = DGU_insurgent_raids }
         
         icon = GFX_unknown_focus
         
@@ -2984,8 +3022,8 @@ focus_tree = {
     }
 
     focus = {
-        id = MIR_strengthen_our_grip
-		prerequisite = { focus = MIR_creeping_presence }
+        id = DGU_strengthen_our_grip
+		prerequisite = { focus = DGU_creeping_presence }
         
         icon = GFX_unknown_focus
         
@@ -3006,8 +3044,8 @@ focus_tree = {
     }
 
     focus = {
-        id = MIR_resistance_suppression
-		prerequisite = { focus = MIR_strengthen_our_grip }
+        id = DGU_resistance_suppression
+		prerequisite = { focus = DGU_strengthen_our_grip }
         
         icon = GFX_unknown_focus
         
@@ -3028,8 +3066,8 @@ focus_tree = {
     }
 
     focus = {
-        id = MIR_resource_extraction
-		prerequisite = { focus = MIR_resistance_suppression }
+        id = DGU_resource_extraction
+		prerequisite = { focus = DGU_resistance_suppression }
         
         icon = GFX_unknown_focus
         
@@ -3050,8 +3088,8 @@ focus_tree = {
     }
 
     focus = {
-        id = MIR_assert_control
-		prerequisite = { focus = MIR_strengthen_our_grip }
+        id = DGU_assert_control
+		prerequisite = { focus = DGU_strengthen_our_grip }
         
         icon = GFX_unknown_focus
         
