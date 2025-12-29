@@ -721,9 +721,14 @@ focus_tree = {
         completion_reward = {
 			# unlock necro forge  
             remove_ideas = DGU_dark_constructs
-            set_technology = {
-                necromantic_forge_tech = 1
+            
+            hidden_effect = {
+                set_technology = {
+                    necromantic_forge_tech = 1
+                    popup = no
+                }
             }
+            custom_effect_tooltip = "Unlock the §Y$necromantic_forge$§!, a powerful building that acts as both a §Ycivilian§! and §Ymilitary§! factory, while also generating §Yweekly manpower§!.\n\nIncrease the cost of §Y$industrial_complex$§Y and §Y$arms_factory$§! buildings by §R+25%§!."
 		}
     }
 
@@ -888,15 +893,18 @@ focus_tree = {
         
         completion_reward = {
 			# late game manifest if we own all mirkwood  
-            every_state = {
-                limit = {
-                    is_on_continent = mirkwood
-                    NOT = { is_core_of = DGU }
-                    impassable = no
-                }
-                add_compliance = 25
-            }
             add_ideas = DGU_masters_of_mirkwood
+            hidden_effect = {
+                every_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        NOT = { is_core_of = DGU }
+                        impassable = no
+                    }
+                    add_compliance = 25
+                }
+            }
+            custom_effect_tooltip = "Gain §G+25%§! §Ycompliance§! on all Mirkwood states."
 		}
     }
 
@@ -1179,7 +1187,7 @@ focus_tree = {
         completion_reward = {
 			# create special project that eats some civs *until* we reach necro forge (but also grants some minor bonus)  
             add_ideas = DGU_dark_constructs
-            custom_effect_tooltip = "This idea will be removed once we complete the necromantic forge focus"
+            custom_effect_tooltip = "§Y$DGU_dark_constructs$§! will be removed upon completing the §Y$DGU_necromantic_forge$§! focus."
 		}
     }
 
@@ -1413,7 +1421,7 @@ focus_tree = {
 			# temporary constr. boost to necr forges  
             add_timed_idea = {
                 idea = DGU_necroforge_construction_efforts
-                days = 170
+                days = 200
             }
 		}
     }
@@ -1436,7 +1444,13 @@ focus_tree = {
         }
         
         completion_reward = {
-            add_ideas = DGU_improved_necromantic_forges
+            custom_effect_tooltip = "§G+1§! maximum state level for §Y$necromantic_forge$§!"
+            hidden_effect = {
+                set_technology = {
+                    necromantic_forge_tech_2 = 1
+                    popup = no
+                }
+            }
         }
     }
 
@@ -1458,15 +1472,19 @@ focus_tree = {
         }
         
         completion_reward = {
-			# AA  
-            every_controlled_state = {
-                limit = {
-                    necromantic_forge > 0
-                }
-                add_building_construction = {
-                    type = anti_air_building
-                    level = 1
-                    instant_build = yes
+            custom_effect_tooltip = "Add a level 1 §Y$anti_air_building$§! to every controlled state with a §Y$necromantic_forge$§!."
+            hidden_effect = {
+			    # AA  
+                every_controlled_state = {
+                    limit = {
+                        necromantic_forge > 0
+                        anti_air_building < 5
+                    }
+                    add_building_construction = {
+                        type = anti_air_building
+                        level = 1
+                        instant_build = yes
+                    }
                 }
             }
 		}
@@ -1490,13 +1508,16 @@ focus_tree = {
         }
         
         completion_reward = {
-			# less supply in state  
-            every_controlled_state = {
-                limit = {
-                    necromantic_forge > 0
-                }
-                add_dynamic_modifier = {
-                    modifier = supply_depots
+            custom_effect_tooltip = "For every controlled state with a §Y$necromantic_forge$§!:\n\nAdd §Y$supply_depots$§!, granting §G+25%§! supplies for controller."
+            hidden_effect = {
+			    # less supply in state  
+                every_controlled_state = {
+                    limit = {
+                        necromantic_forge > 0
+                    }
+                    add_dynamic_modifier = {
+                        modifier = supply_depots
+                    }
                 }
             }
 		}
@@ -1520,19 +1541,22 @@ focus_tree = {
         }
         # Gain 2k manpower per state with necro forge
         completion_reward = {
-			# extra manpower  
-            set_temp_variable = {
-                temp_mp_bonus = 0
-            }
-            every_controlled_state = {
-                limit = {
-                    necromantic_forge > 0
+            custom_effect_tooltip = "Gain §G+2000§! §Ymanpower§! for every controlled state with a §Y$necromantic_forge$§!."
+            hidden_effect = {
+                # extra manpower  
+                set_temp_variable = {
+                    temp_mp_bonus = 0
                 }
-                add_to_temp_variable = {
-                    temp_mp_bonus = 2000
+                every_controlled_state = {
+                    limit = {
+                        necromantic_forge > 0
+                    }
+                    add_to_temp_variable = {
+                        temp_mp_bonus = 2000
+                    }
                 }
+                add_manpower = temp_mp_bonus
             }
-            add_manpower = temp_mp_bonus
 		}
     }
 
