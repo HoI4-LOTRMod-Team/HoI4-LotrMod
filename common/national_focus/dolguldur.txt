@@ -856,8 +856,7 @@ focus_tree = {
         bypass_if_unavailable = yes
         
         completion_reward = {
-			# gain presence point  
-            cfm_gain_presence_point = yes
+			# TODO: unlock some decisions relating to cfm
 		}
     }
 
@@ -875,7 +874,16 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            custom_trigger_tooltip = {
+                tooltip = "We control every Mirkwood state."
+                all_state = {
+                    OR = {
+                        NOT = { is_on_continent = mirkwood }
+                        is_controlled_by = ROOT
+                        is_core_of = ROOT
+                    }
+                }
+            }
         }
         
         completion_reward = {
@@ -883,8 +891,10 @@ focus_tree = {
             every_state = {
                 limit = {
                     is_on_continent = mirkwood
+                    NOT = { is_core_of = DGU }
+                    impassable = no
                 }
-                add_core_of = ROOT
+                add_compliance = 25
             }
             add_ideas = DGU_masters_of_mirkwood
 		}
@@ -1057,14 +1067,18 @@ focus_tree = {
         search_filters = { }
         completion_reward = {
 			# lower stability in all neighbors that arent orcs  
-            every_neighbor_country = {
+            every_country = {
                 limit = { 
+                    OR = {
+                        is_neighbor_of = ROOT
+                        tag = LTH
+                    }
                     NOT = { is_orcs = yes }
                     NOT = { is_ally_with = ROOT }
                     NOT = { has_war_with = ROOT }
                 }
                 hidden_effect = {
-                    country_event = dolguldur.6
+                    country_event = { id = dolguldur.6 days = 1 }
                 }
                 event_option_tooltip = dolguldur.6.a
             }
@@ -1229,8 +1243,7 @@ focus_tree = {
         bypass_if_unavailable = yes
         
         completion_reward = {
-			# gain several presence points  
-            cfm_gain_presence_point_3x = yes
+			# TODO: unlock some decisions relating to cfm
 		}
     }
 
