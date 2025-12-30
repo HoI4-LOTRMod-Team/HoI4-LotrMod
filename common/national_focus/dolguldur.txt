@@ -2498,6 +2498,7 @@ focus_tree = {
         }
         
         completion_reward = {
+            # This is a hidden idea
             add_ideas = DGU_preparing_for_all_out_offensive # should give a ton of max-planning
         }
     }
@@ -2516,12 +2517,29 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            if = {
+                limit = { has_completed_focus = DGU_shadow_without_master }
+                always = yes
+            }
+            else = {
+                custom_trigger_tooltip = {
+                    MOR = { has_war = yes }
+                }
+            }
         }
         
         completion_reward = {
             # declare war against every neighbour that's not orc, allied or NA-pacted
             # if we're aligned with mordor, we won't declare war on Mordor's allies either
+            custom_effect_tooltip = "Declare war on every non-orc, non-allied neighbour."
+            if = {
+                limit = { has_completed_focus = DGU_shadow_without_master }
+                custom_effect_tooltip = "(Countries that have non-aggression pacts with us are exempt)"
+            }
+            else = {
+                custom_effect_tooltip = "(Countries that are allies of Mordor or have non-aggression pacts with us are exempt)"
+            }
+            custom_effect_tooltip = "\nCurrent effects:"
             every_neighbor_country = {
                 limit = {
                     NOT = { is_orcs = yes }
