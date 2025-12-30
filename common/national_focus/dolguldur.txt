@@ -18,7 +18,7 @@ focus_tree = {
 	
 
     focus = {
-        id = DGU_the_great_plan
+        id = DGU_rearmament_effort
         icon = GFX_unknown_focus
         
         x = -21
@@ -30,7 +30,7 @@ focus_tree = {
         search_filters = { }
         
         completion_reward = {
-            # TODO
+            add_ideas = DGU_rearmament_effort
 		}
     }
 
@@ -54,7 +54,7 @@ focus_tree = {
 
     focus = {
         id = DGU_instill_strict_discipline
-		prerequisite = { focus = DGU_the_great_plan }
+		prerequisite = { focus = DGU_rearmament_effort }
         
         icon = GFX_unknown_focus
 
@@ -71,17 +71,24 @@ focus_tree = {
         search_filters = { }
         
         completion_reward = {
-            add_popularity = {
-                ideology = belligerent
-                popularity = 0.15
+            add_timed_idea = {
+                idea = generic_belligerent
+                days = 240
             }
-            add_ideas = hardline_discipline_spirit
+            if = {
+                limit = { has_dlc = "No Step Back" }
+                add_ideas = hardline_discipline_spirit
+            }
+            else = {
+                army_experience = 50
+            }
+            
         }
     }
 
     focus = {
         id = DGU_encourage_individual_initiative
-		prerequisite = { focus = DGU_the_great_plan }
+		prerequisite = { focus = DGU_rearmament_effort }
         
         icon = GFX_unknown_focus
 
@@ -101,11 +108,30 @@ focus_tree = {
         }
         
         completion_reward = {
-            add_popularity = {
-                ideology = revolutionary
-                popularity = 0.15
+            add_timed_idea = {
+                idea = generic_revolutionary
+                days = 240
             }
-            add_ideas = meritocratic_command_spirit
+            if = {
+                limit = { has_dlc = "No Step Back" }
+                add_ideas = meritocratic_command_spirit
+            }
+            else = {
+                hidden_effect = {
+                    create_corps_commander = {
+                        name = "Korbuz"
+                        skill = 3
+                        attack_skill = 3
+                        defense_skill = 1
+                        planning_skill = 2
+                        logistics_skill = 2
+                        traits = {
+                            skilled_staffer
+                        }
+                    }
+                }
+                custom_effect_tooltip = "Gain a new general with skill level §Y3§!"
+            }
         }
     }
 
@@ -147,9 +173,28 @@ focus_tree = {
         
         completion_reward = {
             # Improve previous idea so that new commanders start at higher level
-            swap_ideas = {
-                remove_idea = meritocratic_command_spirit
-                add_idea = meritocratic_command_spirit_improved
+            if = {
+                limit = { has_dlc = "No Step Back" }
+                swap_ideas = {
+                    remove_idea = meritocratic_command_spirit
+                    add_idea = meritocratic_command_spirit_improved
+                }
+            }
+            else = {
+                hidden_effect = {
+                    create_corps_commander = {
+                        name = "Storbutz"
+                        skill = 4
+                        attack_skill = 1
+                        defense_skill = 5
+                        planning_skill = 3
+                        logistics_skill = 2
+                        traits = {
+                            logistics_wizard
+                        }
+                    }
+                }
+                custom_effect_tooltip = "Gain a new general with skill level §Y4§!"
             }
 		}
     }
@@ -515,6 +560,10 @@ focus_tree = {
 
         cost = 5
         ai_will_do = { factor = 1 }
+
+        mutually_exclusive = {
+            focus = DGU_shadow_without_master
+        }
         
         search_filters = { }
         available = {
@@ -550,13 +599,13 @@ focus_tree = {
                 }
                 add_equipment_to_stockpile = {
                     type = orc_troll_equipment_2
-                    amount = 350
+                    amount = 600
                 }
             }
             else = {
                 add_equipment_to_stockpile = {
                     type = orc_troll_equipment_1
-                    amount = 350
+                    amount = 600
                 }
             }
 		}
@@ -640,7 +689,7 @@ focus_tree = {
         id = DGU_the_eyes_eyes
 		prerequisite = { focus = DGU_the_armies_of_the_necromancer }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_sauron_eye
         
         x = -15
         y = 6
@@ -663,13 +712,11 @@ focus_tree = {
                 create_intelligence_agency = yes
             }
             else = {
-                every_neighbor_country = {
-                    ROOT = {
-                        add_decryption = {
-                            target = PREV
-                            ratio = 0.1
-                        }
-                    }
+                add_tech_bonus = {
+                    name = special_bonus
+                    category = lotr_knowledge_intrigue
+                    uses = 2
+                    bonus = 0.5
                 }
             }
 		}
@@ -819,7 +866,7 @@ focus_tree = {
         id = DGU_expand_the_thrall_pits
 		prerequisite = { focus = DGU_shadow_without_master }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_mor_meat_back_skulls_knife
         
         x = -10
         y = 6
@@ -838,7 +885,7 @@ focus_tree = {
                 ideology = revolutionary
                 popularity = 0.2
             }
-            add_manpower = 50000
+            add_manpower = 25000
 		}
     }
 
@@ -946,6 +993,10 @@ focus_tree = {
 
         cost = 5
         ai_will_do = { factor = 1 }
+
+        mutually_exclusive = {
+            focus = DGU_the_armies_of_the_necromancer
+        }
         
         search_filters = { }
         available = {
@@ -956,8 +1007,8 @@ focus_tree = {
             hidden_effect = {
                 MOR = { country_event = dolguldur.4 }   
             }
-            MOR = {
-                event_option_tooltip = dolguldur.4.a
+            effect_tooltip = {
+                MOR = { DGU = { swear_eternal_animosity = yes } }
             }
         }
     }
@@ -1139,7 +1190,7 @@ focus_tree = {
         id = DGU_purge_the_eyes_faithful
 		prerequisite = { focus = DGU_shadow_without_master }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_lth_sauron_eye_contained_war
         
         x = -12
         y = 6
@@ -1157,12 +1208,17 @@ focus_tree = {
                 ideology = belligerent
                 popularity = -0.2
             }
-            # retire 30% of our unit leaders (randomly)
-            every_unit_leader = {
-                random_list = {
-                    30 = { lotr_retire_character = yes }
-                    70 = { }
-                }
+            add_stability = -0.1
+            add_war_support = -0.1
+            custom_effect_tooltip = "Every unit leader will have a §R50%§! chance of being purged."
+            hidden_effect = {
+                # retire 30% of our unit leaders (randomly)
+                every_unit_leader = {
+                    random_list = {
+                        50 = { lotr_retire_character = yes }
+                        50 = { }
+                    }
+                }   
             }
         }
     }
@@ -2514,8 +2570,7 @@ focus_tree = {
 
     focus = {
         id = DGU_quell_the_infighting
-		prerequisite = { focus = DGU_revised_army_drills }
-		prerequisite = { focus = DGU_meritocratic_army_command }
+		prerequisite = { focus = DGU_revised_army_drills focus = DGU_meritocratic_army_command }
         
         icon = GFX_unknown_focus
         
@@ -2634,7 +2689,7 @@ focus_tree = {
         id = DGU_ward_against_the_east
 		prerequisite = { focus = DGU_expand_the_thrall_pits }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_goal_generic_defence
         
         x = -10
         y = 7
@@ -2649,7 +2704,7 @@ focus_tree = {
         
         completion_reward = {
 			# gain bonuses against mordor  
-            add_ideas = DGU_stragglers_of_mordor
+            add_ideas = DGU_stragglers_of_mordor            
 		}
     }
 
