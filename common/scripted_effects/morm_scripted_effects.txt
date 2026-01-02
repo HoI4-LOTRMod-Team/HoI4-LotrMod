@@ -1,0 +1,192 @@
+
+
+
+morm_initialize = {
+	# total/current menace
+	set_variable = { morm_menace = 0 }
+	set_variable = { morm_menace_prev = 0 }
+
+	# total/current menace from different sources
+	set_variable = { morm_menace_from_tension = 0 }
+	set_variable = { morm_menace_from_time_passed = 0 }
+	set_variable = { morm_menace_from_industry = 0 }
+	set_variable = { morm_menace_from_battalions = 0 }
+	set_variable = { morm_menace_from_casualties_inflicted = 0 }
+	set_variable = { morm_menace_from_territory_seized = 0 }
+	set_variable = { morm_menace_from_other = 0 }
+
+	# statring values (0)
+	set_variable = { morm_tension_prev = threat }
+	set_variable = { morm_time_prev = global.days_since_start }
+	set_variable = { morm_industry_prev = num_of_factories }
+	set_variable = { morm_battalions_prev = num_battalions }
+	set_variable = { morm_casualties_prev = casualties_inflicted_k } # TODO: This variable doesnt do anything it's not implemented
+	set_variable = { morm_territory_prev = num_controlled_states }
+}
+
+
+
+@menace_per_tension = 0.1
+@menace_per_time = 0.01
+@menace_per_industry = 0.02
+@menace_per_battalion = 0.05
+@menace_per_casualties = 0.01
+@menace_per_state_seized = 0.03
+
+
+morm_recalculate_menace = {
+	# TODO/NOTE: I can set/adjuste the factor of new tension added for specific things here.
+	# I could, for instance, add a "secret rearmament" focus or something that reduces the menace added by battalions
+
+	# menace from tension
+	if = {
+		limit = { check_variable = { threat > morm_tension_prev } }
+		set_temp_variable = { temp_diff = threat }
+		subtract_from_temp_variable = { temp_diff = morm_tension_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_tension }
+		add_to_variable = { morm_menace_from_tension = temp_diff }
+		set_variable = { morm_tension_prev = threat }
+	}
+	# menace from time passed
+	if = {
+		limit = { check_variable = { global.days_since_start > morm_time_prev } }
+		set_temp_variable = { temp_diff = global.days_since_start }
+		subtract_from_temp_variable = { temp_diff = morm_time_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_time }
+		add_to_variable = { morm_menace_from_time_passed = temp_diff }
+		set_variable = { morm_time_prev = global.days_since_start }
+	}
+	# menace from industry
+	if = {
+		limit = { check_variable = { num_of_factories > morm_industry_prev } }
+		set_temp_variable = { temp_diff = num_of_factories }
+		subtract_from_temp_variable = { temp_diff = morm_industry_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_industry }
+		add_to_variable = { morm_menace_from_industry = temp_diff }
+		set_variable = { morm_industry_prev = num_of_factories }
+	}
+	# menace from battalions
+	if = {
+		limit = { check_variable = { num_battalions > morm_battalions_prev } }
+		set_temp_variable = { temp_diff = num_battalions }
+		subtract_from_temp_variable = { temp_diff = morm_battalions_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_battalion }
+		add_to_variable = { morm_menace_from_battalions = temp_diff }
+		set_variable = { morm_battalions_prev = num_battalions }
+	}
+	# menace from casualties
+	if = {
+		limit = { check_variable = { casualties_inflicted_k > morm_casualties_prev } }
+		set_temp_variable = { temp_diff = casualties_inflicted_k }
+		subtract_from_temp_variable = { temp_diff = morm_casualties_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_casualties }
+		add_to_variable = { morm_menace_from_casualties_inflicted = temp_diff }
+		set_variable = { morm_casualties_prev = casualties_inflicted_k }
+	}
+	# menace from casualties
+	if = {
+		limit = { check_variable = { num_controlled_states > morm_territory_prev } }
+		set_temp_variable = { temp_diff = num_controlled_states }
+		subtract_from_temp_variable = { temp_diff = morm_territory_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_state_seized }
+		add_to_variable = { morm_menace_from_territory_seized = temp_diff }
+		set_variable = { morm_territory_prev = num_controlled_states }
+	}
+
+	# calculate total menace
+	set_variable = { morm_menace = 0 }
+	add_to_variable = { morm_menace = morm_menace_from_tension }
+	add_to_variable = { morm_menace = morm_menace_from_time_passed }
+	add_to_variable = { morm_menace = morm_menace_from_industry }
+	add_to_variable = { morm_menace = morm_menace_from_battalions }
+	add_to_variable = { morm_menace = morm_menace_from_casualties_inflicted }
+	add_to_variable = { morm_menace = morm_menace_from_territory_seized }
+	add_to_variable = { morm_menace = morm_menace_from_other }
+
+	morm_menace_thresholds_check = yes
+}
+
+
+morm_increase_menace = {
+	add_to_variable = { morm_menace_from_other = 2 }
+	morm_menace_thresholds_check = yes
+}
+
+
+@morm_menace_threshold_1 = 10
+@morm_menace_threshold_2 = 30
+@morm_menace_threshold_3 = 60
+@morm_menace_threshold_4 = 90
+
+# put effects based on menace here
+morm_menace_thresholds_check = {
+	if = {
+		limit = { check_variable = { morm_menace > morm_menace_prev } }
+
+
+		if = {
+			limit = {
+				morm_threshold_1 = yes
+				morm_threshold_1_prev = no
+			}
+			morm_level_1_effects = yes
+		}
+
+		else_if = {
+			limit = {
+				morm_threshold_2 = yes
+				morm_threshold_2_prev = no
+			}
+			morm_level_2_effects = yes
+		}
+
+		else_if = {
+			limit = {
+				morm_threshold_3 = yes
+				morm_threshold_3_prev = no
+			}
+			morm_level_3_effects = yes
+		}
+
+		else_if = {
+			limit = {
+				morm_threshold_4 = yes
+				morm_threshold_4_prev = no
+			}
+			morm_level_4_effects = yes
+		}
+
+		
+
+
+		set_variable = { morm_menace_prev = morm_menace }
+	}
+}
+
+
+
+morm_level_1_effects = {
+	# TODO
+}
+
+morm_level_2_effects = {
+	every_possible_country = {
+		limit = { NOT = { original_tag = MOR } }
+		add_ideas = menace_level_2
+	}
+
+	# TODO
+}
+
+morm_level_3_effects = {
+	# TODO
+}
+
+morm_level_4_effects = {
+	# TODO
+}
+
+morm_end_menace = {
+	# TODO: remove all modifers and everything. Disable mechanic (Mordor defeated)
+}
+
