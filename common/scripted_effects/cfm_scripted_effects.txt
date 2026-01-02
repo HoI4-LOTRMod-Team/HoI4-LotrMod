@@ -100,10 +100,11 @@ cfm_increase_5p = {
 		limit = { has_cfm_active = yes }
 		add_to_variable = {
 			var = cfm_presence
-			value = 5.0
+			value = 100.0
 			tooltip = "TODO"
 		}
 	}
+	cfm_on_presence_changed = yes
 }
 
 cfm_weekly_update = {
@@ -121,6 +122,19 @@ cfm_update_presence_weekly = {
 
 	# increase presence
 	add_to_variable = { cfm_presence = temp_presence_gain }
+
+	cfm_on_presence_changed = yes
+}
+
+cfm_on_presence_changed = {
+	if = {
+		limit = {
+			has_cfm_active = yes
+			has_100_presence = yes
+		}
+		cfm_reset_presence = yes
+		cfm_show_event_window = yes
+	}
 }
 
 cfm_reset_presence = {
@@ -133,14 +147,17 @@ cfm_reset_presence = {
 cfm_show_event_window = {
 	set_country_flag = {
 		flag = cfm_event_window_visible
-		days = 14
+		days = 3000 # TODO: add some kind of auto-resolve and shorter duration to use
+		value = 1
 	}
 }
 
 cfm_attack_state = {
 	# TODO (event and such)
 	transfer_state_to = ROOT
-	clr_country_flag = cfm_event_window_visible
+	ROOT = {
+		clr_country_flag = cfm_event_window_visible
+	}
 }
 
 cfm_restrict_to_state = {
