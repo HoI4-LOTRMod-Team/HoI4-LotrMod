@@ -225,6 +225,13 @@ focus_tree = {
 		prerequisite = { focus = DGU_the_grand_strategy }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = DGU_a_well_timed_distraction
+            focus = DGU_attack_rohan
+            focus = DGU_terror_of_the_anduin
+            focus = DGU_threaten_the_east
+        }
         
         x = -30
         y = 6
@@ -378,7 +385,7 @@ focus_tree = {
         }
         
         completion_reward = {
-            # give MIR a debuff
+            # give MIR a debuff and decrease infra
             hidden_effect = { MIR = { country_event = dolguldur.137 } }
             event_option_tooltip = dolguldur.137.a
         }
@@ -422,6 +429,13 @@ focus_tree = {
 
         cost = 5
         ai_will_do = { factor = 1 }
+
+        mutually_exclusive = {
+            focus = DGU_a_well_timed_distraction
+            focus = DGU_attack_rohan
+            focus = DGU_enxtinguish_elven_light
+            focus = DGU_threaten_the_east
+        }
         
         search_filters = { }
         available = {
@@ -529,6 +543,13 @@ focus_tree = {
 		prerequisite = { focus = DGU_the_grand_strategy }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = DGU_a_well_timed_distraction
+            focus = DGU_enxtinguish_elven_light
+            focus = DGU_terror_of_the_anduin
+            focus = DGU_threaten_the_east
+        }
         
         x = -26
         y = 6
@@ -1641,6 +1662,10 @@ focus_tree = {
 		prerequisite = { focus = DGU_cut_off_elven_reinforcements }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = DGU_focus_on_mirkwood
+        }
         
         x = -29
         y = 9
@@ -1664,6 +1689,10 @@ focus_tree = {
 		prerequisite = { focus = DGU_cut_off_elven_reinforcements }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = DGU_focus_on_lothlorien
+        }
         
         x = -31
         y = 9
@@ -1728,13 +1757,15 @@ focus_tree = {
         completion_reward = {
             if = {
                 limit = { 198 = { NOT = { is_controlled_by = ROOT } } }
-                198 = { cfm_gain_presence_point_2x = yes }
+                198 = { cfm_restrict_to_state = yes }
             }
             # If we already own state 198, then gain the points in 191 instead
             else_if = {
                 limit = { 191 = { NOT = { is_controlled_by = ROOT } } }
-                191 = { cfm_gain_presence_point_2x = yes }
+                191 = { cfm_restrict_to_state = yes }
             }
+
+            cfm_add_presence_boost = yes
         }
     }
 
@@ -1758,13 +1789,14 @@ focus_tree = {
         completion_reward = {
             if = {
                 limit = { 232 = { NOT = { is_controlled_by = ROOT } } }
-                232 = { cfm_gain_presence_point_2x = yes }
+                232 = { cfm_restrict_to_state = yes }
             }
             # If we already own snorth, gain points in narrows instead
             else_if = {
                 limit = { 190 = { NOT = { is_controlled_by = ROOT } } }
-                190 = { cfm_gain_presence_point_2x = yes }
+                190 = { cfm_restrict_to_state = yes }
             }
+            cfm_add_presence_boost = yes
         }
     }
 
@@ -1786,6 +1818,7 @@ focus_tree = {
         }
         
         completion_reward = {
+            # TODO: These should be actual raids, possibly with different options? But at least one. Possibly make them dependent on "focus on" focus choice
             unlock_decision_tooltip = raid_lothlorien
             unlock_decision_tooltip = raid_mirkwood
         }
@@ -1793,9 +1826,8 @@ focus_tree = {
 
     focus = {
         id = DGU_elves_in_chains
-		prerequisite = { focus = DGU_the_assault_on_lorien }
-		prerequisite = { focus = DGU_probing_raids }
-		prerequisite = { focus = DGU_the_siege_of_the_elven_halls }
+
+		prerequisite = { focus = DGU_the_siege_of_the_elven_halls focus = DGU_the_assault_on_lorien }
         
         icon = GFX_unknown_focus
         
@@ -1980,8 +2012,7 @@ focus_tree = {
 
     focus = {
         id = DGU_coordinate_with_gundabad
-		prerequisite = { focus = DGU_offer_support }
-		prerequisite = { focus = DGU_sabotage_supplies }
+		prerequisite = { focus = DGU_offer_support focus = DGU_sabotage_supplies }
         
         icon = GFX_unknown_focus
         
@@ -2141,7 +2172,9 @@ focus_tree = {
         }
         
         completion_reward = {
-            198 = { cfm_gain_presence_point_2x = yes }
+            cfm_add_presence_boost = yes
+
+            198 = { cfm_restrict_to_state = yes }
         }
     }
 
@@ -2205,6 +2238,13 @@ focus_tree = {
 		prerequisite = { focus = DGU_the_grand_strategy }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = DGU_a_well_timed_distraction
+            focus = DGU_attack_rohan
+            focus = DGU_enxtinguish_elven_light
+            focus = DGU_terror_of_the_anduin
+        }
         
         x = -38
         y = 6
@@ -2379,6 +2419,13 @@ focus_tree = {
     focus = {
         id = DGU_a_well_timed_distraction
 		prerequisite = { focus = DGU_the_grand_strategy }
+
+        mutually_exclusive = {
+            focus = DGU_attack_rohan
+            focus = DGU_enxtinguish_elven_light
+            focus = DGU_terror_of_the_anduin
+            focus = DGU_threaten_the_east
+        }
         
         icon = GFX_unknown_focus
         
@@ -2500,6 +2547,11 @@ focus_tree = {
         completion_reward = {
             # This is a hidden idea
             add_ideas = DGU_preparing_for_all_out_offensive # should give a ton of max-planning
+
+            set_country_flag = {
+                flag = dgu_has_completed_await_the_signal
+                days = 70
+            }
         }
     }
 
@@ -2519,7 +2571,10 @@ focus_tree = {
         available = {
             if = {
                 limit = { has_completed_focus = DGU_shadow_without_master }
-                always = yes
+                custom_trigger_tooltip = {
+                    tooltip = "More than 70 days have passed since completing the §Y$DGU_await_the_signal$§! focus."
+                    NOT = { has_country_flag = dgu_has_completed_await_the_signal }
+                }
             }
             else = {
                 custom_trigger_tooltip = {
