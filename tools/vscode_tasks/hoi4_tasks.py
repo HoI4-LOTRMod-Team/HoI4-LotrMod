@@ -175,26 +175,18 @@ def add_new_event(name):
 
 
 def process_location(loc):
-    # Find all double quotes (") that are NOT preceded by a backslash (\)
-    # The regex (?<!\\)" uses a negative lookbehind to check for the absence of a \
-    unescaped_indices = [m.start() for m in re.finditer(r'(?<!\\)"', loc)]
-    count = len(unescaped_indices)
-
-    if count == 2:
-        # Extract the content between the two unescaped quotes
-        start, end = unescaped_indices
-        return loc[start + 1 : end]
-    
-    elif count == 1 or count > 2:
-        # Throw an exception if there is 1 or more than 2 unescaped quotes
-        raise ValueError(f"Invalid string: found {count} unescaped double quotes. Expected 0 or 2.")
-
-    # Otherwise (0 unescaped quotes), return the string as is
-    return loc
+    s = loc  # Ensure you define 's' or just use 'loc' throughout
+    if len(s) >= 2:
+        # Check if it starts/ends with quotes and strip them
+        if s[0] == '"' and (len(s) == 1 or s[1] != '\\'):
+            s = s[1:]
+        if s[-1] == '"' and len(s) >= 2 and s[-2] != '\\':
+            s = s[:-1]
+    return s
 
 def copy2clip(txt):
-    cmd='echo '+txt.strip()+'|clip'
-    return subprocess.check_call(cmd, shell=True)
+    process = subprocess.Popen(['clip'], stdin=subprocess.PIPE, text=True)
+    process.communicate(input=txt.strip())
 
 def extract_localization(name, loc):
     print(name)
