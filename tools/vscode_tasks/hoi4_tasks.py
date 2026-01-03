@@ -2,8 +2,10 @@ from pathlib import Path
 import sys
 import datetime
 import subprocess
+import re
 
 from pdx_parser import *
+from locfile import *
 
 # CONFIGURATION
 
@@ -17,6 +19,8 @@ scripted_effects_file = BASE_PATH / r'common\scripted_effects\dolguldur_scripted
 scripted_triggers_file = BASE_PATH / r'common\scripted_triggers\dolguldur_scripted_effects.txt'
 events_file = BASE_PATH / r'events\DolGuldur.txt'
 tag = "DGU"
+
+lotr_locs_file = BASE_PATH / r'localisation\english\0_lotr_core\lotr_misc_l_english.yml'
 
 new_idea_template = """
         $TOKEN_NAME$ = {
@@ -170,6 +174,39 @@ def add_new_event(name):
     subprocess.run("clip", text=True, input=namespace+"."+str(max_id))
 
 
+def process_location(loc):
+    # Find all double quotes (") that are NOT preceded by a backslash (\)
+    # The regex (?<!\\)" uses a negative lookbehind to check for the absence of a \
+    unescaped_indices = [m.start() for m in re.finditer(r'(?<!\\)"', loc)]
+    count = len(unescaped_indices)
+
+    if count == 2:
+        # Extract the content between the two unescaped quotes
+        start, end = unescaped_indices
+        return loc[start + 1 : end]
+    
+    elif count == 1 or count > 2:
+        # Throw an exception if there is 1 or more than 2 unescaped quotes
+        raise ValueError(f"Invalid string: found {count} unescaped double quotes. Expected 0 or 2.")
+
+    # Otherwise (0 unescaped quotes), return the string as is
+    return loc
+
+def copy2clip(txt):
+    cmd='echo '+txt.strip()+'|clip'
+    return subprocess.check_call(cmd, shell=True)
+
+def extract_localization(name, loc):
+    print(name)
+    print(loc)
+    locf = LocFile(lotr_locs_file)
+    loc = process_location(loc)
+    locf.add(name, loc)
+    locf.save(lotr_locs_file)
+    copy2clip(name)
+
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Please provide a command (add, clear, count)")
@@ -194,5 +231,7 @@ if __name__ == "__main__":
         add_new_character(args)
     elif command == "event":
         add_new_event(args)
+    elif command == "localization":
+        extract_localization(sys.argv[2], " ".join(sys.argv[3:]))
     else:
         print(f"Unknown command: {command}")
