@@ -1,385 +1,275 @@
 types = {
 
-	DGU_raid_fields_of_rhovanion = {
+	DGU_raid_countryside = {
 
-		days_to_prepare = 15
-		speed_multiplier = 1.25
+		days_to_prepare = 14
+		speed_multiplier = 2.5
 		category = land_infiltration_raids
+
 		custom_map_icon = GFX_raid_target_icon_guerilla_raid
 		target_icon = GFX_other_target_icon
-		target_loc_key = raid_target_name_supply_hub
+		target_loc_key = raid_target_name_terrorize_populace
 		launch_sound = raid_land_launchable_sound
-		fire_only_once = yes
 
 		arrow = {
-		    type = land
+			type = land
 		}
 
-     	unit_model = {
-        	entity = motorized_vehicle_entity
-     	}
+		unit_model = {
+			entity = motorized_vehicle_entity
+		}
 
+		# AI Logic: High desire to do this if command power is available
 		ai_will_do = {
-			base = 100
-
-			# TODO: make the AI use this a bit more "humanly"
+			base = 10
+			modifier = {
+				factor = 0
+				command_power < 25
+			}
 		}
 
-		command_power = 25
+		command_power = 50
 
+		# Restrict to Dol Guldur
 		allowed = {
 			original_tag = DGU
 		}
 
+		fire_only_once = yes
+
+		# Visible only if targets exist and user is DGU
 		visible = {
-			has_completed_focus = DGU_raid_the_fields_of_rhovanion
+			original_tag = DGU
 		}
 
+		# Restrict targets to the specific tags requested
 		show_target = {
 			var:target_state = {
-				is_core_of = RHO
-				is_controlled_by = RHO
+				industrial_complex > 0
+				controller = {
+					OR = {
+						AND = {
+							original_tag = RHO
+							ROOT = { has_completed_focus = DGU_raid_the_fields_of_rhovanion }
+						}
+						AND = {
+							original_tag = LTH
+							ROOT = { has_completed_focus = DGU_probing_raids }
+						}
+						AND = {
+							original_tag = MIR
+							ROOT = { has_completed_focus = DGU_probing_raids }
+						}
+						AND = {
+							original_tag = RHD
+							ROOT = { has_completed_focus = DGU_to_the_mountains_and_beyond }
+						}
+					}
+					NOT = { is_ally_with = ROOT }
+				}
 			}
 		}
 
+		# Required conditions to start planning
 		available = {
-			NOT = { is_ally_with = RHO }
-			NOT = { has_non_aggression_pact_with = RHO }
+			always = yes
 		}
 
+		# Logic for when the button can be clicked.
+		# Leaving this empty of "has_war_with" allows it to fire in Peacetime.
 		launchable = {
-			always = yes
+			# Optional: Require non-aggression pact to be broken? 
+			# For now, allowed freely as requested.
 		}
 		
 		starting_point = {
-		    building_types = { supply_node }
-		    allow_faction_buildings = yes
+			building_types = { supply_node }
+			allow_faction_buildings = yes
 		}
 
+		# Unit Requirements: Orc Infantry (using generic 'infantry' type)
 		unit_requirements = {
 			battalion_types = {
 				infantry = { min = 4 }
 			}
 		}
-		unit_requirements = {
-			battalion_types = {
-				militia = { min = 4 }
-			}
-		}
-		unit_requirements = {
-			battalion_types = {
-				mountaineers = { min = 4 }
-			}
-		}
-		#essential_equipment = {
-		#	transport_plane_equipment = 5
-		#}
 
-		additional_equipment = {
-			# list of equipment archetypes and numbers
-			#support_equipment = 25
-			#infantry_equipment = 100
-		}
-
+		# No specific target building needed, targeting the state population/economy generally
 		target_type = {
-			building = {
-				type = supply_node
+			state = {
+				always = yes
 			}
 		}
 
 		success_factors = {
 			success = {
-				base = 0.9
+				base = 0.60
 
-				# Raiding unit modifiers
+				# Unit Stats [cite: 3]
 				experience = {
-					weight = 0.25
-					start_weight = -0.2
+					weight = 0.2
 					reference = 1.0
 				}
-
 				organisation = {
 					weight = 0.1
-					start_weight = -0.1
-					reference = 100
+					reference = 60
 				}
 				strength = {
 					weight = 0.1
-					start_weight = -0.1
-					reference = 1
+					reference = 1.0
 				}
-				recon = {
-					weight = 0.05
-					reference = 10
-				}
-
-				### Target Modifiers
-
-				air_superiority = {
-					reference = 1
-					start_reference = 0.5
-					weight = 0.2
-				}
-
-				enemy_units = {
-					reference = 4 # More than 4 DIVs in the target Province shouldn't make any difference
-					weight = -0.4
+				
+				# Target Stats [cite: 3, 4]
+				resistance = {
+					reference = 100
+					start_reference = 10
+					weight = 0.3
 				}
 				intel = {
 					weight = 0.2
-					#start_reference = 50
 					reference = 100
 				}
 			}
 		}
 
-		# TODO: refine this, by adding stuff like army xp, civs etc. and weaken RHO
-		# all effects shuld set the "has raided" flag
 		success_levels = {
 			failure = {
-			    victim_effects = {
-					var:target_state = {
-						IF = {
-							limit = { supply_node > 0 }
-							damage_building = {
-								type = supply_node
-								damage = 1 # levels of damage
-								province = var:ROOT.target_province
-							}
-						}
+				victim_effects = {
+					# Victim gains some intel or defense bonus potentially
+					var:victim_country = {
+						add_war_support = 0.05
 					}
-
-					set_global_flag = DGU_raided_RHO
-			    }
+				}
 				actor_effects = {
-
-					# Damage to unit
+					# Heavy damage to the raiding party [cite: 4]
 					raid_damage_units = {
-						org_damage = 0.95
-						str_damage = 0.95
+						org_damage = 0.8
+						str_damage = 0.5
 						ratio = yes
 					}
-
-					# Unit Experience
 					raid_add_unit_experience = 0.05
 					add_raid_history_entry = yes
-				}
-				# Other unit effects
-				division_effects = {
-					add_divisional_commander_xp = 50
 				}
 				visual_effect = {
 					entity = "raid_failed_entity"
 					animation = "attack"
 				}
 			}
+
 			limited_success = {
-			    victim_effects = {
-					var:target_state = {
-						IF = {
-							limit = { supply_node > 0 }
-							damage_building = {
-								type = supply_node
-								damage = 1 # levels of damage
-								province = var:ROOT.target_province
-								repair_speed_modifier = -0.1
-							}
-						}
-					}
+				victim_effects = {
+					# Minor terror effects
 					var:victim_country = {
-						add_equipment_to_stockpile = { 
-							type = infantry_equipment
-							amount = -100
-						}
-						add_equipment_to_stockpile = {
-							type = support_equipment
-							amount = -50
-						}
-
+						add_stability = -0.03
 					}
-
-					set_global_flag = DGU_raided_RHO
+					var:target_state = {
+						damage_building = {
+							type = infrastructure
+							damage = 2
+							province = var:ROOT.target_province
+						}
+					}
 				}
 				actor_effects = {
-					
- 					set_temp_variable = { PRC_equipment_producer = var:victim_country } 
-
-					var:actor_country = {
-						add_equipment_to_stockpile = { 
-							type = infantry_equipment
-							amount = 100
-							producer = PRC_equipment_producer
-						}
-						add_equipment_to_stockpile = {
-							type = support_equipment
-							amount = 50
-							producer = PRC_equipment_producer
-						}
-					}
-
-
-					# Damage to unit
+					# Moderate damage to units [cite: 5]
 					raid_damage_units = {
-						org_damage = 0.65
-						str_damage = 0.3
+						org_damage = 0.5
+						str_damage = 0.2
 						ratio = yes
 					}
+					
+					# Small loot reward (Political Power representing loot distribution)
+					var:actor_country = {
+						add_political_power = 25
+					}
 
-					# Unit Experience
 					raid_add_unit_experience = 0.15
 					add_raid_history_entry = yes
-				}
-				# Other unit effects
-				division_effects = {
-					add_divisional_commander_xp = 50
 				}
 				visual_effect = {
 					entity = "land_raids_limited_success_entity"
 					animation = "attack"
 				}
 			}
+
 			success = {
-			    victim_effects = {
-					var:target_state = {
-						IF = {
-							limit = { supply_node > 0 }
-							damage_building = {
-								type = supply_node
-								damage = 4 # levels of damage
-								province = var:ROOT.target_province
-								repair_speed_modifier = -0.25
-							}
-						}
-
-					}
+				victim_effects = {
+					# Significant terror effects
 					var:victim_country = {
-						add_equipment_to_stockpile = { 
-							type = infantry_equipment
-							amount = -250
-						}
-						add_equipment_to_stockpile = {
-							type = support_equipment
-							amount = -75
-						}
-
-						add_equipment_to_stockpile = { 
-							type = artillery_equipment
-							amount = -25
+						add_stability = -0.05
+						add_war_support = -0.05
+					}
+					# Sabotage Industry
+					var:target_state = {
+						damage_building = {
+							type = industrial_complex
+							damage = 3
+							province = var:ROOT.target_province
 						}
 					}
-
-					set_global_flag = DGU_raided_RHO
 				}
 				actor_effects = {
-					
-					set_temp_variable = { PRC_equipment_producer = var:victim_country } 
-
-					var:actor_country = {
-						add_equipment_to_stockpile = { 
-							type = infantry_equipment
-							amount = 250
-							producer = PRC_equipment_producer
-						}
-						add_equipment_to_stockpile = {
-							type = support_equipment
-							amount = 75
-							producer = PRC_equipment_producer
-						}
-
-						add_equipment_to_stockpile = { 
-							type = artillery_equipment
-							amount = 25
-							producer = PRC_equipment_producer
-						}
-					}
-
-					# Damage to unit
+					# Low damage to units
 					raid_damage_units = {
-						org_damage = 0.45
-						str_damage = 0.2
+						org_damage = 0.2
+						str_damage = 0.1
 						ratio = yes
 					}
 
-					# Unit Experience
-					raid_add_unit_experience = 0.2
+					# THE REWARD: Slave labor / Looted machinery
+					# Grants 1 Off-map Civilian Factory
+					var:actor_country = {
+						add_offsite_building = {
+							type = industrial_complex
+							level = 1
+						}
+					}
+
+					raid_add_unit_experience = 0.3
 					add_raid_history_entry = yes
-				}
-				# Other unit effects
-				division_effects = {
-					add_divisional_commander_xp = 50
 				}
 				visual_effect = {
 					entity = "land_raids_success_entity"
 					animation = "attack"
 				}
 			}
-			critical_success = {
-			    victim_effects = {
-					var:target_state = {
-						IF = {
-							limit = { supply_node > 0 }
-							damage_building = {
-								type = supply_node
-								damage = 6 # levels of damage
-								province = var:ROOT.target_province
-								repair_speed_modifier = -0.4
-							}
-						}
-					}
-					var:victim_country = {
-						add_equipment_to_stockpile = { 
-							type = infantry_equipment
-							amount = -500
-						}
-						add_equipment_to_stockpile = {
-							type = support_equipment
-							amount = -150
-						}
-						add_equipment_to_stockpile = { 
-							type = artillery_equipment
-							amount = -50
-						}
-					}
 
-					set_global_flag = DGU_raided_RHO
+			critical_success = {
+				victim_effects = {
+					# Major terror effects
+					var:victim_country = {
+						add_stability = -0.08
+						add_war_support = -0.08
+					}
+					# Heavy Industrial Sabotage
+					var:target_state = {
+						damage_building = {
+							type = industrial_complex
+							damage = 10
+							province = var:ROOT.target_province
+						}
+					}
 				}
 				actor_effects = {
-					
-					set_temp_variable = { PRC_equipment_producer = var:victim_country } 
-
-					var:actor_country = {
-						add_equipment_to_stockpile = { 
-							type = infantry_equipment
-							amount = 500
-							producer = PRC_equipment_producer
-						}
-						add_equipment_to_stockpile = {
-							type = support_equipment
-							amount = 150
-							producer = PRC_equipment_producer
-						}
-
-						add_equipment_to_stockpile = { 
-							type = artillery_equipment
-							amount = 50
-							producer = PRC_equipment_producer
-						}
-					}
-
-					# Damage to unit
+					# Negligible damage to units [cite: 8]
 					raid_damage_units = {
-						org_damage = 0.25
-						str_damage = 0.15
+						org_damage = 0.1
+						str_damage = 0.05
 						ratio = yes
 					}
 
-					# Unit Experience
-					raid_add_unit_experience = 0.35
+					# THE REWARD: Massive haul
+					# Grants 2 Off-map Civilian Factories
+					var:actor_country = {
+						add_offsite_building = {
+							type = industrial_complex
+							level = 2
+						}
+						add_political_power = 100
+					}
+
+					raid_add_unit_experience = 0.5
 					add_raid_history_entry = yes
-				}
-				# Other unit effects
-				division_effects = {
-					add_divisional_commander_xp = 50
 				}
 				visual_effect = {
 					entity = "land_raids_critical_success_entity"
@@ -388,6 +278,5 @@ types = {
 			}
 		}
 	}
-
 
 }
