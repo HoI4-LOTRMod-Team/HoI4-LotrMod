@@ -1,0 +1,120 @@
+################
+##### MIR ######
+################
+
+
+cfm_contest_for_mirkwood = {
+
+    cfm_attack_state_decision = {
+		icon = generic_research # TODO
+
+		fire_only_once = no
+		days_re_enable = 14
+		cost = 0
+
+		allowed = {
+            OR = {
+			    tag = DGU
+                tag = SPI
+            }
+		}
+
+		target_root_trigger = {
+			has_cfm_active = yes
+            has_100_presence = yes
+		}
+
+		available = {
+			always = yes
+		}
+
+		state_target = yes
+		targets = {
+            191 227 231 233 232 86 228 262 190 85 230 84 80 226 229
+        }
+		target_trigger = {
+			FROM = {
+                state_is_valid_cfm_target = yes
+            }
+            ROOT = {
+                has_cfm_active = yes
+                has_100_presence = yes
+            }
+		}
+		
+		complete_effect = {
+			FROM = { cfm_attack_state = yes }
+		}
+	}
+
+
+
+
+    cfm_dgu_projection_of_power = {
+		icon = generic_prepare_border_war
+		allowed = { original_tag = DGU }
+		
+		available = {
+			strength_ratio = { tag = MIR ratio > 0.85 }
+			
+			# Prevent using this to insta-win at the very end
+			has_under_70_presence = yes
+		}
+
+		visible = {
+			has_cfm_active = yes
+		}
+
+		cost = 25
+		fire_only_once = yes
+
+		complete_effect = {
+			# Direct addition to the variable
+			add_to_variable = {
+				var = cfm_presence
+				value = 15
+				tooltip = cfm_increase_presence_tt
+			}
+		}
+
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+
+    
+    cfm_dgu_dark_rituals = {
+		icon = generic_construction
+		allowed = { original_tag = DGU }
+
+        visible = {
+			has_cfm_active = yes
+		}
+
+		available = {
+			# Requires at least some industrial base
+			num_of_civilian_factories > 0 
+		}
+
+		cost = 10
+		
+		# Duration of the modifier (180 days / 6 months)
+		days_remove = 180
+		
+		# Cooldown after it finishes before it can be taken again
+		days_re_enable = 30 
+
+		modifier = {
+			# Increase all presence gain by 20%
+			cfm_presence_gain_factor = 0.3
+			
+			# Simulates diverting a factory by increasing consumer goods demand
+			civilian_factory_use = 1
+		}
+
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}
