@@ -372,7 +372,10 @@ class FocusNode(BaseNode):
         loc = str(loc)
         ret = self.parent_tree.locfile.get(loc)
         if ret is None:
-            return "--invalid--"
+            self.parent_tree.locfile.add(loc, "TODO")
+            return "TODO"
+        #if ret is None:
+        #    return "--invalid--"
         return ret
     
     def get_target(self, option):
