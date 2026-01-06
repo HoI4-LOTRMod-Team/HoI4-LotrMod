@@ -280,7 +280,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 7
+        x = 8
         y = 5
 
         cost = 5
@@ -297,35 +297,26 @@ focus_tree = {
         
         completion_reward = {
             # in specific states surrounding DGU, convert half the wood into twice as much coal
+            custom_effect_tooltip = DGU_burn_the_ancient_woods_tt
+            set_temp_variable = { temp_total_wood = 0 }
+            add_to_temp_variable = { temp_total_wood = 87.resource@chromium }
             if = {
                 limit = { 232 = { is_controlled_by = ROOT } }
-                232 = {
-                    set_temp_variable = { temp_wood_amount = var:resource@chromium }
-                    multiply_temp_variable = { temp_wood_amount = 0.5 }
-                    add_resource = { type = coal amount = temp_wood_amount }
-                    multiply_temp_variable = { temp_wood_amount = -1 }
-                    add_resource = { type = chromium amount = temp_wood_amount }
-                }
+                add_to_temp_variable = { temp_total_wood = 232.resource@chromium }
             }
             if = {
                 limit = { 233 = { is_controlled_by = ROOT } }
-                233 = {
-                    set_temp_variable = { temp_wood_amount = var:resource@chromium }
-                    multiply_temp_variable = { temp_wood_amount = 0.5 }
-                    add_resource = { type = coal amount = temp_wood_amount }
-                    multiply_temp_variable = { temp_wood_amount = -1 }
-                    add_resource = { type = chromium amount = temp_wood_amount }
-                }
+                add_to_temp_variable = { temp_total_wood = 233.resource@chromium }
             }
             if = {
                 limit = { 231 = { is_controlled_by = ROOT } }
-                231 = {
-                    set_temp_variable = { temp_wood_amount = var:resource@chromium }
-                    multiply_temp_variable = { temp_wood_amount = 0.5 }
-                    add_resource = { type = coal amount = temp_wood_amount }
-                    multiply_temp_variable = { temp_wood_amount = -1 }
-                    add_resource = { type = chromium amount = temp_wood_amount }
-                }
+                add_to_temp_variable = { temp_total_wood = 231.resource@chromium }
+            }
+            multiply_temp_variable = { temp_total_wood = 0.5 }
+            add_resource = {
+                type = coal
+                amount = temp_total_wood
+                state = 87
             }
         }
     }
@@ -644,7 +635,7 @@ focus_tree = {
 
     focus = {
         id = DGU_siege_trolls
-		prerequisite = { focus = DGU_specialized_equipment }
+		prerequisite = { focus = DGU_better_army_leaders }
         
         icon = GFX_goal_mor_troll_warriors
         
@@ -675,6 +666,7 @@ focus_tree = {
                     amount = 600
                 }
             }
+            custom_effect_tooltip = DGU_siege_trolls_tt
 		}
     }
 
@@ -962,7 +954,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 10
+        x = 11
         y = 4
 
         cost = 5
@@ -1015,7 +1007,7 @@ focus_tree = {
                         NOT = { is_core_of = DGU }
                         impassable = no
                     }
-                    add_compliance = 25
+                    add_compliance = 35
                 }
             }
             custom_effect_tooltip = DGU_masters_of_the_mirkwood_tt
@@ -1024,7 +1016,7 @@ focus_tree = {
 
     focus = {
         id = DGU_a_reward_from_mordor
-		prerequisite = { focus = DGU_siege_trolls focus = DGU_better_army_leaders focus = DGU_dark_sorcery }
+		prerequisite = { focus = DGU_siege_trolls focus = DGU_specialized_equipment focus = DGU_dark_sorcery }
         
         icon = GFX_unknown_focus
         
@@ -1277,13 +1269,13 @@ focus_tree = {
             }
             add_stability = -0.1
             add_war_support = -0.1
-            custom_effect_tooltip = "Every unit leader will have a §R50%§! chance of being purged."
+            custom_effect_tooltip = DGU_purge_the_eyes_faithful_tt
             hidden_effect = {
                 # retire 30% of our unit leaders (randomly)
                 every_unit_leader = {
                     random_list = {
-                        50 = { lotr_retire_character = yes }
-                        50 = { }
+                        30 = { lotr_retire_character = yes }
+                        70 = { }
                     }
                 }   
             }
@@ -1360,7 +1352,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 10
+        x = 11
         y = 5
 
         cost = 5
@@ -1383,7 +1375,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 7
+        x = 8
         y = 7
 
         cost = 5
@@ -1404,8 +1396,10 @@ focus_tree = {
         
         completion_reward = {
 			# make spiders more annoying against elves (+ presence)  
-            SPI = { country_event = { id = dolguldur.100 days = 3 } }
-            custom_effect_tooltip = "A host of spiders will raid the elves of Mirkwood, harming their relations and causing damage to both sides."
+            hidden_effect = {
+                SPI = { country_event = { id = dolguldur.100 days = 3 } }
+            }
+            custom_effect_tooltip = DGU_spur_the_spiders_tt
 		}
     }
 
@@ -1415,7 +1409,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 13
+        x = 14
         y = 5
 
         cost = 5
@@ -1446,7 +1440,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 13
+        x = 14
         y = 7
 
         cost = 5
@@ -1688,7 +1682,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 11
+        x = 12
         y = 9
 
         cost = 5
@@ -2763,12 +2757,12 @@ focus_tree = {
 
     focus = {
         id = DGU_specialized_equipment
-		prerequisite = { focus = DGU_the_armies_of_the_necromancer }
+		prerequisite = { focus = DGU_meat_from_mordor }
         
         icon = GFX_goal_ELU_aid_supply_crate_equipment
         
-        x = -19
-        y = 6
+        x = -17
+        y = 7
 
         cost = 5
         ai_will_do = { factor = 1 }
@@ -2791,12 +2785,12 @@ focus_tree = {
 
     focus = {
         id = DGU_better_army_leaders
-		prerequisite = { focus = DGU_meat_from_mordor }
+		prerequisite = { focus = DGU_the_armies_of_the_necromancer }
         
         icon = GFX_goal_lth_elite_special_forces
         
-        x = -17
-        y = 7
+        x = -19
+        y = 6
 
         cost = 5
         ai_will_do = { factor = 1 }
@@ -2808,7 +2802,7 @@ focus_tree = {
         
         completion_reward = {
 			# gain better leaders  
-            custom_effect_tooltip = "Unlock 3 new, capable army leaders."
+            custom_effect_tooltip = DGU_better_army_leaders_tt
 		}
     }
 
@@ -3130,8 +3124,7 @@ focus_tree = {
 
     focus = {
         id = DGU_fellbeast_supremacy
-		prerequisite = { focus = DGU_war_riders_of_the_dark_hill }
-		prerequisite = { focus = DGU_machines_of_war }
+		prerequisite = { focus = DGU_war_riders_of_the_dark_hill focus = DGU_machines_of_war }
         
         icon = GFX_goal_generic_air_fellbeast
         
@@ -3164,7 +3157,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 11
+        x = 12
         y = 6
 
         cost = 5
@@ -3189,7 +3182,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 9
+        x = 10
         y = 6
 
         cost = 5
@@ -3214,7 +3207,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 11
+        x = 12
         y = 7
 
         cost = 5
@@ -3236,7 +3229,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 12
+        x = 13
         y = 8
 
         cost = 5
@@ -3257,7 +3250,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 10
+        x = 11
         y = 8
 
         cost = 5
@@ -3278,7 +3271,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 9
+        x = 10
         y = 7
 
         cost = 5
@@ -3300,7 +3293,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 8
+        x = 9
         y = 8
 
         cost = 5
@@ -3324,7 +3317,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 8
+        x = 9
         y = 10
 
         cost = 5
@@ -3348,7 +3341,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 9
+        x = 10
         y = 9
 
         cost = 5
@@ -3387,5 +3380,343 @@ focus_tree = {
         completion_reward = {
             # TODO: build supplyline to LTH
         }
+    }
+
+    focus = {
+        id = DGU_unlock_mordors_knowledge
+		prerequisite = { focus = DGU_a_reward_from_mordor }
+        
+        icon = GFX_unknown_focus
+        
+        x = -17
+        y = 9
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            add_research_slot = 1
+        }
+    }
+
+    focus = {
+        id = DGU_forest_of_shadows
+		prerequisite = { focus = DGU_the_masters_of_the_mirkwood }
+        
+        icon = GFX_unknown_focus
+        
+        x = 6
+        y = 6
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+            # TODO: Has held all Mirkwood states for at least X amount of time
+        }
+        completion_reward = {
+            hidden_effect = {
+                every_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        NOT = { is_core_of = DGU }
+                    }
+                    add_core_of = DGU
+                }
+            }
+            custom_effect_tooltip = DGU_forest_of_shadows_tt
+        }
+    }
+
+    focus = {
+        id = DGU_extra_research_slot
+		prerequisite = { focus = DGU_inner_chamber_storage }
+		prerequisite = { focus = DGU_black_smoke_rises }
+        
+        icon = GFX_unknown_focus
+        
+        x = 3
+        y = 11
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = { }
+    }
+
+    focus = {
+        id = MIR_new_focus_0XDUyf
+		prerequisite = { focus = DGU_reasearch_and_misc }
+        
+        icon = GFX_unknown_focus
+        
+        x = -5
+        y = 8
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# TODO: These focuses are "placeholders" Addd some late game shit, long focuses and stuff for whatrever is missing here
+		}
+    }
+
+    focus = {
+        id = MIR_new_focus_sDAGcc
+		prerequisite = { focus = MIR_new_focus_0XDUyf }
+        
+        icon = GFX_unknown_focus
+        
+        x = -6
+        y = 9
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# TODO  
+		}
+    }
+
+    focus = {
+        id = MIR_new_focus_EtaBBN
+		prerequisite = { focus = MIR_new_focus_0XDUyf }
+        
+        icon = GFX_unknown_focus
+        
+        x = -4
+        y = 9
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# TODO  
+		}
+    }
+
+    focus = {
+        id = MIR_new_focus_DxFRWy
+		prerequisite = { focus = MIR_new_focus_EtaBBN }
+		prerequisite = { focus = MIR_new_focus_sDAGcc }
+        
+        icon = GFX_unknown_focus
+        
+        x = -5
+        y = 10
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# TODO  
+		}
+    }
+
+    focus = {
+        id = MIR_new_focus_8QEGaV
+		prerequisite = { focus = MIR_new_focus_sDAGcc }
+        
+        icon = GFX_unknown_focus
+        
+        x = -6
+        y = 11
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# TODO  
+		}
+    }
+
+    focus = {
+        id = MIR_new_focus_fgdz38
+		prerequisite = { focus = MIR_new_focus_EtaBBN }
+        
+        icon = GFX_unknown_focus
+        
+        x = -4
+        y = 11
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# TODO  
+		}
+    }
+
+    focus = {
+        id = MIR_new_focus_cFfIt5
+		prerequisite = { focus = DGU_master_of_the_fortress }
+        
+        icon = GFX_unknown_focus
+        
+        x = -14
+        y = 9
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            # TODO: Placeholder focuses to add lategame misc focuses too.
+            # Can also be deleted if needed
+        }
+    }
+
+    focus = {
+        id = MIR_new_focus_VWDbf3
+		prerequisite = { focus = MIR_new_focus_cFfIt5 }
+        
+        icon = GFX_unknown_focus
+        
+        x = -16
+        y = 10
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = { }
+    }
+
+    focus = {
+        id = MIR_new_focus_U5PeqG
+		prerequisite = { focus = MIR_new_focus_cFfIt5 }
+        
+        icon = GFX_unknown_focus
+        
+        x = -14
+        y = 10
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = { }
+    }
+
+    focus = {
+        id = MIR_new_focus_h22rnU
+		prerequisite = { focus = MIR_new_focus_cFfIt5 }
+        
+        icon = GFX_unknown_focus
+        
+        x = -12
+        y = 10
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = { }
+    }
+
+    focus = {
+        id = MIR_new_focus_VJYH3E
+		prerequisite = { focus = MIR_new_focus_U5PeqG }
+		prerequisite = { focus = MIR_new_focus_VWDbf3 }
+        
+        icon = GFX_unknown_focus
+        
+        x = -15
+        y = 11
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = { }
+    }
+
+    focus = {
+        id = MIR_new_focus_RKxUth
+		prerequisite = { focus = MIR_new_focus_h22rnU }
+		prerequisite = { focus = MIR_new_focus_U5PeqG }
+        
+        icon = GFX_unknown_focus
+        
+        x = -13
+        y = 11
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = { }
+    }
+
+    focus = {
+        id = MIR_new_focus_JuDjyJ
+		prerequisite = { focus = MIR_new_focus_VJYH3E }
+		prerequisite = { focus = MIR_new_focus_RKxUth }
+        
+        icon = GFX_unknown_focus
+        
+        x = -14
+        y = 12
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = { }
     }
 }
