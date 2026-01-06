@@ -280,4 +280,277 @@ types = {
 		}
 	}
 
+	DGU_raid_thranduils_halls = {
+
+		days_to_prepare = 30 # Longer preparation for an audacious raid
+		speed_multiplier = 1.5 # Slower movement due to difficult infiltration
+
+		category = land_infiltration_raids
+
+		# Visuals
+		custom_map_icon = GFX_raid_target_icon_guerilla_raid # Replace if you have a specific icon for Elven halls
+		target_icon = GFX_other_target_icon
+		target_loc_key = raid_target_name_thranduils_halls
+		launch_sound = raid_land_launchable_sound
+
+		arrow = {
+			type = land
+		}
+
+		unit_model = {
+			entity = motorized_vehicle_entity # Placeholder: Replace with DGU/Orc entity
+		}
+
+		# AI Logic
+		ai_will_do = {
+			base = 1
+		}
+
+		command_power = 50 # High cost
+
+		allowed = {
+			original_tag = DGU
+		}
+
+		fire_only_once = no # Can be repeated, or set to 'yes' if it's a unique historic event
+
+		# Visibility: Target must be Mirkwood and they must control Thranduil's Halls
+		visible = {
+			original_tag = DGU
+			has_completed_focus = DGU_an_audacious_move
+			MIR = { owns_state = 83 } 
+			has_cfm_active = yes
+			NOT = { is_ally_with = MIR }
+		}
+
+		# Target Filtering: Specifically State 83
+		show_target = {
+			var:target_state = {
+				state = 83
+				controller = {
+					original_tag = MIR
+				}
+			}
+		}
+
+		# Availability: Distance check and other prerequisites
+		available = {
+			var:target_state = {
+				state = 83 # Redundant but safe
+			}
+		}
+
+		launchable = {
+			always = yes
+		}
+		
+		starting_point = {
+			building_types = { supply_node }
+			allow_faction_buildings = yes
+		}
+
+		unit_requirements = {
+			battalion_types = {
+				infantry = { min = 6 } # Requires a substantial force
+			}
+		}
+		
+		# Targeting a supply node ensures "enemy_units" works for difficulty calculation
+		target_type = {
+			building = {
+				type = supply_node
+				level = { min = 1 }
+			}
+		}
+
+		success_factors = {
+			success = {
+				base = 0.4 # Low base chance = High Difficulty
+
+				#--- Unit Modifiers ---
+				experience = {
+					weight = 0.3
+					reference = 1.0
+				}
+				organisation = {
+					weight = 0.15
+					reference = 60
+				}
+				
+				#--- Target Modifiers (Difficulty) ---
+				
+				# "More difficult based on how many troops etc. Mirkwood has" [cite: 3]
+				enemy_units = {
+					reference = 6 # If they have 6+ divs in the province, heavy penalty
+					weight = -0.5 # Significant penalty
+				}
+
+				resistance = {
+					reference = 50 # Elven resistance
+					weight = -0.2
+				}
+
+				intel = {
+					weight = 0.25
+					reference = 100
+				}
+			}
+		}
+
+		success_levels = {
+			failure = {
+				victim_effects = {
+					# MIR gains a morale boost for repelling the attack
+					var:victim_country = {
+						add_war_support = 0.05
+					}
+				}
+				actor_effects = {
+					# Heavy casualties for DGU
+					raid_damage_units = {
+						org_damage = 0.9
+						str_damage = 0.7
+						ratio = yes
+					}
+					raid_add_unit_experience = 0.05
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+
+			limited_success = {
+				victim_effects = {
+					var:victim_country = {
+						add_stability = -0.02
+						add_war_support = -0.02
+					}
+					var:target_state = {
+						damage_building = {
+							type = infrastructure
+							damage = 1
+							repair_speed_modifier = -0.2
+						}
+					}
+				}
+				actor_effects = {
+					# Moderate casualties
+					raid_damage_units = {
+						org_damage = 0.6
+						str_damage = 0.4
+						ratio = yes
+					}
+
+					# Reward: Small Presence Increase
+					var:actor_country = {
+						add_to_variable = {
+							var = cfm_presence
+							value = 25
+							tooltip = cfm_increase_presence_tt
+						}
+						cfm_on_presence_changed = yes
+					}
+
+					raid_add_unit_experience = 0.15
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_limited_success_entity"
+					animation = "attack"
+				}
+			}
+
+			success = {
+				victim_effects = {
+					var:victim_country = {
+						add_stability = -0.05
+						add_war_support = -0.05
+					}
+					var:target_state = {
+						damage_building = {
+							type = infrastructure
+							damage = 3
+							repair_speed_modifier = -0.5
+						}
+					}
+				}
+				actor_effects = {
+					# Light casualties
+					raid_damage_units = {
+						org_damage = 0.4
+						str_damage = 0.2
+						ratio = yes
+					}
+
+					# Reward: Moderate Presence Increase
+					var:actor_country = {
+						add_to_variable = {
+							var = cfm_presence
+							value = 40
+							tooltip = cfm_increase_presence_tt
+						}
+						cfm_on_presence_changed = yes
+					}
+
+					raid_add_unit_experience = 0.25
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_success_entity"
+					animation = "attack"
+				}
+			}
+
+			critical_success = {
+				victim_effects = {
+					# Max Damage Capped at -0.08 as requested
+					var:victim_country = {
+						add_stability = -0.08
+						add_war_support = -0.08
+					}
+					var:target_state = {
+						# Severe damage + slow repair
+						damage_building = {
+							type = infrastructure
+							damage = 5
+							repair_speed_modifier = -0.8
+						}
+						# Optional: Damage bunkers/forts if they exist
+						damage_building = {
+							type = bunker
+							damage = 2
+						}
+					}
+				}
+				actor_effects = {
+					# Minimal casualties
+					raid_damage_units = {
+						org_damage = 0.2
+						str_damage = 0.1
+						ratio = yes
+					}
+
+					# Reward: MAX Presence Increase
+					var:actor_country = {
+						add_to_variable = {
+							var = cfm_presence
+							value = 60
+							tooltip = cfm_increase_presence_tt
+						}
+						cfm_on_presence_changed = yes
+					}
+
+					raid_add_unit_experience = 0.5
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_critical_success_entity"
+					animation = "attack"
+				}
+			}
+		}
+	}
+
 }
