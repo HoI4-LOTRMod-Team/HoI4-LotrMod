@@ -31,11 +31,11 @@
 contest_for_mirkwood_setup = {
 	set_global_flag = cfm_active
 	SPI = {
-		add_ideas = CFM_base_gain
+		add_ideas = CFM_base_gain_SPI
 		set_country_flag = cfm_allowed
 	}
 	DGU = {
-		add_ideas = CFM_base_gain
+		add_ideas = CFM_base_gain_DGU
 		set_country_flag = cfm_allowed
 	}
 
@@ -135,6 +135,47 @@ cfm_attack_state = {
 	transfer_state_to = ROOT
 	ROOT = {
 		clr_country_flag = cfm_event_window_visible
+	}
+
+	if = {
+		limit = {
+			ROOT = { tag = DGU has_completed_focus = DGU_local_propaganda }
+		}
+		ROOT = { add_political_power = 75 }
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+		}
+	}
+	if = {
+		limit = {
+			ROOT = { tag = DGU has_completed_focus = DGU_local_recruitment }
+		}
+
+		if = {
+			limit = {
+				ROOT = { NOT = { has_template = "Local Militia" } }
+			}
+			ROOT = {
+				division_template = {
+					name = "Local Militia"
+					priority = 0
+					template_counter = 0
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+						infantry = { x = 1 y = 0 }
+						infantry = { x = 1 y = 1 }
+					}
+				}
+			}
+		}
+		create_unit = {
+			division = "name = \"Local Militiamen\" division_template = \"Local Militia\" start_experience_factor = 0.5"
+			owner = DGU
+		}
 	}
 }
 
