@@ -2098,3 +2098,159 @@ country_event = {
 		}
 	}
 }
+
+
+# DGU asks RHU for cooperation attacking RHO
+country_event = {
+    id = dolguldur.147
+    title = dolguldur.147.t
+    desc = dolguldur.147.desc
+
+    is_triggered_only = yes
+
+	# join war when time comes
+    option = {
+        ai_chance = {
+            base = 1
+			modifier = {
+				factor = 0
+				has_war = yes
+			}
+			modifier = {
+				factor = 0
+				DGU = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 0
+				DGU = { has_government = revolutionary }
+			}
+        }
+        name = dolguldur.147.a
+		hidden_effect = {
+			DGU = { country_event = { id = dolguldur.148 days = 3 } }
+		}
+		add_political_power = -150
+		add_stability = -0.05
+		event_option_tooltip = dolguldur.148.a
+	}
+
+	# send supplies
+    option = {
+        ai_chance = {
+            base = 3
+        }
+        name = dolguldur.147.b
+		hidden_effect = {
+			DGU = { country_event = { id = dolguldur.149 days = 3 } }
+		}
+		event_option_tooltip = dolguldur.148.b
+	}
+
+	# nothing
+    option = {
+        ai_chance = {
+            base = 1
+			modifier = {
+				factor = 2
+				has_war = yes
+			}
+        }
+        name = dolguldur.147.c
+		hidden_effect = {
+			DGU = { country_event = { id = dolguldur.150 days = 3 } }
+		}
+		event_option_tooltip = dolguldur.148.c
+	}
+}
+
+
+# RHU agrees to cooperation
+country_event = {
+    id = dolguldur.148
+    title = dolguldur.148.t
+    desc = dolguldur.148.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.148.a
+
+		# TODO: This is currently localized as RHU joning the war, but that's too much. 
+		# Change this to something like: When we declare war, spawn some divisions near RHO borders.
+		# This needs all RHU map changes to be done before that.
+
+		DGU = {
+			add_opinion_modifier = {
+				target = RHU
+				modifier = large_increase
+			}
+		}
+    }
+}
+
+
+# RHU sends supplies
+country_event = {
+    id = dolguldur.149
+    title = dolguldur.149.t
+    desc = dolguldur.149.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.149.a
+
+		RHU = {
+			add_political_power = 50
+			send_equipment = {
+				amount = 800
+				equipment = infantry_equipment
+				target = DGU
+			}
+		}
+
+		DGU = {
+			army_experience = 15
+			add_political_power = 50
+			add_timed_idea = {
+				idea = CFM_generic_boost
+				days = 90
+			}
+
+			add_opinion_modifier = {
+				target = RHU
+				modifier = medium_increase
+			}
+		}
+    }
+}
+
+
+# RHU refuses cooperation
+country_event = {
+    id = dolguldur.150
+    title = dolguldur.150.t
+    desc = dolguldur.150.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.150.a
+
+		DGU = {
+			add_opinion_modifier = {
+				target = RHU
+				modifier = small_decrease
+			}
+		}
+    }
+}

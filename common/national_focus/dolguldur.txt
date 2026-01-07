@@ -339,10 +339,6 @@ focus_tree = {
         }
         
         completion_reward = {
-            MIR = {
-                hidden_effect = { country_event = dolguldur.1 }
-                event_option_tooltip = dolguldur.1.a
-            }
             LTH = {
                 hidden_effect = { country_event = dolguldur.1 }
                 event_option_tooltip = dolguldur.1.a
@@ -372,15 +368,11 @@ focus_tree = {
                 hidden_effect = { country_event = dolguldur.2 }
                 event_option_tooltip = dolguldur.2.a
             }
-            LTH = {
-                hidden_effect = { country_event = dolguldur.2 }
-                event_option_tooltip = dolguldur.2.a
-            }
         }
     }
 
     focus = {
-        id = DGU_cut_off_elven_reinforcements
+        id = DGU_a_match_for_elven_might
 		prerequisite = { focus = DGU_enxtinguish_elven_light }
         
         icon = GFX_unknown_focus
@@ -397,10 +389,8 @@ focus_tree = {
         }
         
         completion_reward = {
-            # TODO: This should be changed. we have way too many "event to elven country" things
-            # give MIR a debuff and decrease infra
-            hidden_effect = { MIR = { country_event = dolguldur.137 } }
-            event_option_tooltip = dolguldur.137.a
+            87 = { add_building_slot_and_mil_x2 = yes }
+            add_manpower = 1800
         }
     }
 
@@ -1824,7 +1814,7 @@ focus_tree = {
 
     focus = {
         id = DGU_probing_raids
-		prerequisite = { focus = DGU_cut_off_elven_reinforcements }
+		prerequisite = { focus = DGU_a_match_for_elven_might }
         
         icon = GFX_unknown_focus
         
@@ -2032,7 +2022,7 @@ focus_tree = {
                     }
                 }
             }
-            custom_effect_tooltip = "§OThe effects of this focus can change based on our decisions taken in previous focuses and events.§!"
+            custom_effect_tooltip = DGU_effects_change_discl_tt
         }
     }
 
@@ -2057,7 +2047,7 @@ focus_tree = {
             hidden_effect = {
                 country_event = dolguldur.123
             }
-            custom_effect_tooltip = "We will be given a choice between asking Gundabd for equipment, or coordinating an attack against the men of the Anduin with them."
+            custom_effect_tooltip = DGU_coordinate_with_gundabad_tt
         }
     }
 
@@ -2079,7 +2069,7 @@ focus_tree = {
         }
         
         completion_reward = {
-            custom_effect_tooltip = "When we complete our §YInvasion§! focus, all enemy states will suffer supply debuffs for 90 days."
+            custom_effect_tooltip = DGU_sabotage_supplies_tt
         }
     }
 
@@ -2192,7 +2182,7 @@ focus_tree = {
             # which they receive when they both end up at war with ROH (and not with each other)
             ISE = { country_event = dolguldur.133 }
             custom_effect_tooltip = if_they_accept_newline_tt
-            custom_effect_tooltip = "Gain three options for a bonus we receive when at war with Rohan with Isengard"
+            custom_effect_tooltip = DGU_coordinate_with_isengard_tt
         }
     }
 
@@ -2339,10 +2329,7 @@ focus_tree = {
             # add presence in southern states
             cfm_add_restricted_boost = yes
 
-            231 = { cfm_restrict_to_state = yes }
-            232 = { cfm_restrict_to_state = yes }
-            233 = { cfm_restrict_to_state = yes }
-
+            86 = { cfm_restrict_to_state = yes }
         }
     }
 
@@ -2368,7 +2355,6 @@ focus_tree = {
             # add presence in southern states
             cfm_add_restricted_boost = yes
 
-            86 = { cfm_restrict_to_state = yes }
             228 = { cfm_restrict_to_state = yes }
         }
     }
@@ -2397,8 +2383,13 @@ focus_tree = {
             }
             NOT = { has_war_with = RHU }
         }
-        # TODO: Could need/use the reworked Rhun focus tree. But should be similar event than the "coordinate with isengard" one
-        completion_reward = { }
+        
+        completion_reward = {
+            hidden_effect = {
+                RHU = { country_event = { id = dolguldur.147 days = 1 } }
+            }
+            custom_effect_tooltip = DGU_coordinate_with_rhun_tt
+        }
     }
 
     focus = {
@@ -2534,6 +2525,8 @@ focus_tree = {
                 remove_idea = DGU_grand_plan_well_timed_distraction
                 add_idea = DGU_grand_plan_well_timed_distraction_2
             }
+            87 = { add_building_slot_and_mil_x2 = yes }
+            add_manpower = 1800
         }
     }
 
@@ -2581,12 +2574,11 @@ focus_tree = {
         }
         
         completion_reward = {
-            cfm_add_presence_boost = yes
-
-            231 = { cfm_restrict_to_state = yes }
-            232 = { cfm_restrict_to_state = yes }
-            233 = { cfm_restrict_to_state = yes }
-            191 = { cfm_restrict_to_state = yes }
+            custom_effect_tooltip = DGU_secure_a_perimeter_tt
+            add_timed_idea = {
+                idea = CFM_generic_boost
+                days = 1090
+            }
         }
     }
 
@@ -2614,7 +2606,7 @@ focus_tree = {
 
             set_country_flag = {
                 flag = dgu_has_completed_await_the_signal
-                days = 70
+                days = 120
                 value = 1
             }
         }
@@ -2637,7 +2629,7 @@ focus_tree = {
             if = {
                 limit = { has_completed_focus = DGU_shadow_without_master }
                 custom_trigger_tooltip = {
-                    tooltip = "More than 70 days have passed since completing the §Y$DGU_await_the_signal$§! focus."
+                    tooltip = DGU_in_all_directions_condition_tt
                     NOT = { has_country_flag = dgu_has_completed_await_the_signal }
                 }
             }
@@ -2649,15 +2641,15 @@ focus_tree = {
         completion_reward = {
             # declare war against every neighbour that's not orc, allied or NA-pacted
             # if we're aligned with mordor, we won't declare war on Mordor's allies either
-            custom_effect_tooltip = "Declare war on every non-orc, non-allied neighbour."
+            custom_effect_tooltip = DGU_in_all_directions_tt
             if = {
                 limit = { has_completed_focus = DGU_shadow_without_master }
-                custom_effect_tooltip = "(Countries that have non-aggression pacts with us are exempt)\n"
+                custom_effect_tooltip = DGU_in_all_directions_na_disc_tt
             }
             else = {
-                custom_effect_tooltip = "(Countries that are allies of Mordor or have non-aggression pacts with us are exempt)\n"
+                custom_effect_tooltip = DGU_in_all_directions_na_disc_2_tt
             }
-            custom_effect_tooltip = "Current effects:"
+            custom_effect_tooltip = generic_current_effects
             every_neighbor_country = {
                 limit = {
                     NOT = { is_orcs = yes }
