@@ -426,6 +426,11 @@ focus_tree = {
 		prerequisite = { focus = SPI_alliance_building }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = SPI_we_spin_our_own_threads
+            focus = SPI_light_and_shadow
+        }
         
         x = 31
         y = 11
@@ -524,6 +529,11 @@ focus_tree = {
 		prerequisite = { focus = SPI_alliance_building }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = SPI_we_spin_our_own_threads
+            focus = SPI_heed_the_necromancer
+        }
         
         x = 41
         y = 11
@@ -576,7 +586,13 @@ focus_tree = {
                 limit = { 5 = { is_controlled_by = ROOT } }
                 empower_shelob = yes
             }
-            5 = { controller = { country_event = { id = spiders.100 days = 1 } } }
+            else = {
+                5 = { controller = { country_event = { id = spiders.100 days = 1 } } }
+                custom_effect_tooltip = if_they_accept_tt
+                effect_tooltip = {
+                    empower_shelob = yes
+                }
+            }
 		}
     }
 
@@ -1357,7 +1373,10 @@ focus_tree = {
         
         completion_reward = {
             # Remove org debuff from hunger idea
-            # TODO?
+            add_to_variable = { hunger_org_penalty = 0.1 }
+            add_to_variable = { hunger_strength_penalty = 0.1 }
+            custom_effect_tooltip = SPI_direct_the_hunting_brood_tt
+            
         }
     }
 
@@ -1948,6 +1967,11 @@ focus_tree = {
 		prerequisite = { focus = SPI_alliance_building }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = SPI_heed_the_necromancer
+            focus = SPI_light_and_shadow
+        }
         
         x = 36
         y = 11
@@ -1963,7 +1987,7 @@ focus_tree = {
         completion_reward = {
 			# own faction
             create_faction_from_template = {
-                template = faction_template_generic
+                template = faction_template_generic # TODO: make a custom template for spiders?
                 name = "Arachnid Alliance"
             }
 		}
@@ -2347,8 +2371,13 @@ focus_tree = {
         
         completion_reward = {
 			# settle territorial disputes, giving up claims and cores  
-            SPI = { country_event = spiders.124 }
-            MIR = { country_event = spiders.124 }
+            hidden_effect = {
+                SPI = { country_event = spiders.124 }
+                MIR = { country_event = spiders.124 }
+            }
+            custom_effect_tooltip = SPI_settle_territorial_disputes_tt
+            add_political_power = 150
+            add_stability = 0.05
 		}
     }
 
@@ -2406,6 +2435,11 @@ focus_tree = {
 		prerequisite = { focus = SPI_we_spin_our_own_threads }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = SPI_pact_of_shadows
+            focus = SPI_look_west_for_aid
+        }
         
         x = 38
         y = 12
@@ -2429,6 +2463,11 @@ focus_tree = {
 		prerequisite = { focus = SPI_we_spin_our_own_threads }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = SPI_pact_of_shadows
+            focus = SPI_alliance_of_the_deep_woods
+        }
         
         x = 34
         y = 12
@@ -2454,6 +2493,11 @@ focus_tree = {
 		prerequisite = { focus = SPI_we_spin_our_own_threads }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = SPI_look_west_for_aid
+            focus = SPI_alliance_of_the_deep_woods
+        }
         
         x = 36
         y = 12
@@ -2513,7 +2557,7 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO
+        # TODO: disable incidents
         completion_reward = { }
     }
 
@@ -2593,15 +2637,21 @@ focus_tree = {
         completion_reward = {
             # remove 10% of population from all states with dwarven cores we control.
             # Gain +1% entrenchment for every 10k population removed this way.
-            spiders_init_devour_modifiers = yes
+            custom_effect_tooltip = SPI_devour_the_deep_kin_tt
 
-            every_controlled_state = {
-                limit = { any_country_with_core = { is_dwarves = yes } }
-                set_temp_variable = { temp_pop_remove = state_population }
-                multiply_temp_variable = { temp_pop_remove = -0.1 }
-                add_manpower = temp_pop_remove
-                multiply_temp_variable = { temp_pop_remove = -0.0001 }
-                add_to_variable = { spider_bonus_from_dwarves = temp_pop_remove }
+            hidden_effect = {
+                spiders_init_devour_modifiers = yes
+            }
+
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = { any_country_with_core = { is_dwarves = yes } }
+                    set_temp_variable = { temp_pop_remove = state_population }
+                    multiply_temp_variable = { temp_pop_remove = -0.1 }
+                    add_manpower = temp_pop_remove
+                    multiply_temp_variable = { temp_pop_remove = -0.0001 }
+                    add_to_variable = { spider_bonus_from_dwarves = temp_pop_remove }
+                }
             }
         }
     }
@@ -2625,15 +2675,19 @@ focus_tree = {
         
         completion_reward = {
             # gain 1% org for every 10k we eat
-            spiders_init_devour_modifiers = yes
+            custom_effect_tooltip = SPI_feast_on_the_fair_tt
 
-            every_controlled_state = {
-                limit = { any_country_with_core = { is_elves = yes } }
-                set_temp_variable = { temp_pop_remove = state_population }
-                multiply_temp_variable = { temp_pop_remove = -0.1 }
-                add_manpower = temp_pop_remove
-                multiply_temp_variable = { temp_pop_remove = -0.0001 }
-                add_to_variable = { spider_bonus_from_elves = temp_pop_remove }
+            hidden_effect = {
+                spiders_init_devour_modifiers = yes
+    
+                every_controlled_state = {
+                    limit = { any_country_with_core = { is_elves = yes } }
+                    set_temp_variable = { temp_pop_remove = state_population }
+                    multiply_temp_variable = { temp_pop_remove = -0.1 }
+                    add_manpower = temp_pop_remove
+                    multiply_temp_variable = { temp_pop_remove = -0.0001 }
+                    add_to_variable = { spider_bonus_from_elves = temp_pop_remove }
+                }
             }
         }
     }
@@ -2657,15 +2711,19 @@ focus_tree = {
         
         completion_reward = {
             # gain 1% strength for every 10k we eat
-            spiders_init_devour_modifiers = yes
+            custom_effect_tooltip = SPI_webs_over_the_black_tower_tt
 
-            every_controlled_state = {
-                limit = { any_country_with_core = { is_orcs = yes } }
-                set_temp_variable = { temp_pop_remove = state_population }
-                multiply_temp_variable = { temp_pop_remove = -0.1 }
-                add_manpower = temp_pop_remove
-                multiply_temp_variable = { temp_pop_remove = -0.0001 }
-                add_to_variable = { spider_bonus_from_orcs = temp_pop_remove }
+            hidden_effect = {
+                spiders_init_devour_modifiers = yes
+    
+                every_controlled_state = {
+                    limit = { any_country_with_core = { is_orcs = yes } }
+                    set_temp_variable = { temp_pop_remove = state_population }
+                    multiply_temp_variable = { temp_pop_remove = -0.1 }
+                    add_manpower = temp_pop_remove
+                    multiply_temp_variable = { temp_pop_remove = -0.0001 }
+                    add_to_variable = { spider_bonus_from_orcs = temp_pop_remove }
+                }
             }
         }
     }
@@ -2689,15 +2747,18 @@ focus_tree = {
         
         completion_reward = {
             # gain 1% morale for every 10k we eat
-            spiders_init_devour_modifiers = yes
-
-            every_controlled_state = {
-                limit = { any_country_with_core = { is_men = yes } }
-                set_temp_variable = { temp_pop_remove = state_population }
-                multiply_temp_variable = { temp_pop_remove = -0.1 }
-                add_manpower = temp_pop_remove
-                multiply_temp_variable = { temp_pop_remove = -0.0001 }
-                add_to_variable = { spider_bonus_from_men = temp_pop_remove }
+            custom_effect_tooltip = SPI_delicous_warm_blood_tt
+            hidden_effect = {
+                spiders_init_devour_modifiers = yes
+    
+                every_controlled_state = {
+                    limit = { any_country_with_core = { is_men = yes } }
+                    set_temp_variable = { temp_pop_remove = state_population }
+                    multiply_temp_variable = { temp_pop_remove = -0.1 }
+                    add_manpower = temp_pop_remove
+                    multiply_temp_variable = { temp_pop_remove = -0.0001 }
+                    add_to_variable = { spider_bonus_from_men = temp_pop_remove }
+                }
             }
 		}
     }

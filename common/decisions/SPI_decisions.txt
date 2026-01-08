@@ -65,15 +65,37 @@ spi_restless_hunger_decision_category = {
 			custom_effect_tooltip = "After §Y70 days§!, declare war on a §Yrandom§! neighbour.\n(Allied nations and non-aggression pacts are exempt)"
 
 			hidden_effect = {
-				random_neighbor_country = {
-					limit = {
-						NOT = { has_war_with = SPI }
-						NOT = { is_ally_with = SPI }
-						NOT = { has_non_aggression_pact_with = SPI }
+
+				random_list = {
+					50 = {
+						modifier = {
+							factor = 0
+							OR = {
+								NOT = { has_country_flag = has_likely_next_random_war_target }
+								NOT = { is_neighbor_of = var:likely_next_random_war_target }
+								has_war_with = var:likely_next_random_war_target
+								is_ally_with = var:likely_next_random_war_target
+								has_non_aggression_pact_with = var:likely_next_random_war_target
+							}
+						}
+						var:likely_next_random_war_target = {
+							set_variable = { SPI.random_war_target = THIS }
+						}
+						activate_mission = SPI_unleash_the_brood
+						clr_country_flag = has_likely_next_random_war_target
 					}
-					set_variable = { SPI.random_war_target = THIS }
+					50 = {
+						random_neighbor_country = {
+							limit = {
+								NOT = { has_war_with = SPI }
+								NOT = { is_ally_with = SPI }
+								NOT = { has_non_aggression_pact_with = SPI }
+							}
+							set_variable = { SPI.random_war_target = THIS }
+							activate_mission = SPI_unleash_the_brood
+						}
+					}
 				}
-				activate_mission = SPI_unleash_the_brood
 			}
 		}
 	}
