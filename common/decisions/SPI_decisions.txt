@@ -1,7 +1,10 @@
 
 
 
-special_projects = {
+
+
+
+spi_restless_hunger_decision_category = {
 
 	# activate_mission = mission_name can be used to bypass allowed and activation
 	SPI_maturing_eggs = {
@@ -33,5 +36,86 @@ special_projects = {
 		}
 	}
 
+	# This starts the other thing
+	SPI_unleash_the_brood_select = {
+		icon = generic_research # TODO
 
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 150 # if above set to no, this is the cooldown for re-appear
+		cost = 100
+
+		allowed = {
+			original_tag = SPI
+		}
+
+		visible = {
+			has_completed_focus = SPI_let_roam_the_brood
+		}
+
+		available = {
+			any_neighbor_country = {
+				NOT = { has_war_with = SPI }
+				NOT = { is_ally_with = SPI }
+				NOT = { has_non_aggression_pact_with = SPI }
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			custom_effect_tooltip = "After §Y70 days§!, declare war on a §Yrandom§! neighbour.\n(Allied nations and non-aggression pacts are exempt)"
+
+			hidden_effect = {
+				random_neighbor_country = {
+					limit = {
+						NOT = { has_war_with = SPI }
+						NOT = { is_ally_with = SPI }
+						NOT = { has_non_aggression_pact_with = SPI }
+					}
+					set_variable = { SPI.random_war_target = THIS }
+				}
+				activate_mission = SPI_unleash_the_brood
+			}
+		}
+	}
+
+	# non-interactible mission
+	# A timer that activates on trigger and runs out. Can be cancelled one of two ways (available and cancel_trigger)
+	# Cannot be interacted with/selected
+	# activate_mission = mission_name can be used to bypass allowed and activation
+	SPI_unleash_the_brood = {
+		icon = generic_research # TODO
+
+		fire_only_once = no # allow decision to reappear
+		days_mission_timeout = 70
+		selectable_mission = no
+		is_good = yes
+
+		war_with_on_timeout = SPI.random_war_target
+
+		allowed = {
+			always = no
+		}
+
+		activation = {
+			always = no
+		}
+
+		available = {
+			SPI.random_war_target = {
+				OR = {
+					has_war_with = SPI
+					is_ally_with = SPI
+					has_non_aggression_pact_with = SPI
+					exists = no
+				}
+			}
+		}
+
+		timeout_effect = {
+			declare_war_on = {
+				target = SPI.random_war_target
+				type = annex_everything
+			}
+		}
+	}
 }
