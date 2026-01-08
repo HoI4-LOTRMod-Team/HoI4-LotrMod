@@ -118,7 +118,11 @@ class FocusNode(BaseNode):
                     self.pObj.Get("cost").value = str(value)
 
                 elif name == "filters" and self.pObj.Has("search_filters"):
-                    self.pObj.Get("search_filters").value = "{" + " ".join(self.filters) + " }"
+                    super().__setattr__(name, value)
+                    if len(self.filters) < 1:
+                        self.pObj.Get("search_filters").value = "{ }"
+                    else:
+                        self.pObj.Get("search_filters").value = "{ " + " ".join(self.filters) + " }"
 
                 elif name == "relative_position_id":
                     if self.pObj.Has("relative_position_id"):
