@@ -387,6 +387,9 @@ class FocusNode(BaseNode):
             BoolProperty("FOCUS_FILTER_ARMY_XP",  attr_name="FOCUS_FILTER_ARMY_XP", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_ARMY_XP"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_ARMY_XP")),
             BoolProperty("FOCUS_FILTER_NAVY_XP",  attr_name="FOCUS_FILTER_NAVY_XP", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_NAVY_XP"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_NAVY_XP")),
             BoolProperty("FOCUS_FILTER_AIR_XP",  attr_name="FOCUS_FILTER_AIR_XP", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_AIR_XP"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_AIR_XP")),
+            BoolProperty("FOCUS_FILTER_NECROMANTIC_FORGE",  attr_name="FOCUS_FILTER_NECROMANTIC_FORGE", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_NECROMANTIC_FORGE"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_NECROMANTIC_FORGE")),
+            BoolProperty("FOCUS_FILTER_SAURONS_SCHEDULE",  attr_name="FOCUS_FILTER_SAURONS_SCHEDULE", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_SAURONS_SCHEDULE"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_SAURONS_SCHEDULE")),
+            BoolProperty("FOCUS_FILTER_CONTEST_FOR_MIRKWOOD",  attr_name="FOCUS_FILTER_CONTEST_FOR_MIRKWOOD", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_CONTEST_FOR_MIRKWOOD"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_CONTEST_FOR_MIRKWOOD")),
         ]
 
         
