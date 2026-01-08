@@ -8,8 +8,11 @@ spiders_country_setup = {
 		set_variable = { casualties_inflicted_to_mp_factor = 1.0 }
 		set_variable = { casualties_taken_to_mp_factor = 1.0 }
 
-		set_variable = { mp_gained_from_enemy_casualties = 0 }
-		set_variable = { mp_gained_from_own_casualties = 0 }
+		set_variable = { mp_gained_from_enemy_casualties = 0 } # in thousands
+		set_variable = { mp_gained_from_own_casualties = 0 } # in thousands
+		set_variable = { mp_gained_total = 0 } # in thousands
+
+		set_variable = { mp_unit_stats_bonus = 0 }
 
 		set_variable = { taken_casualties_prev = 0 }
 
@@ -23,7 +26,7 @@ spiders_country_setup = {
 spiders_weekly_tick = {
 	SPI = {
 
-		# NOTE: as cursed as the count_casualties code is, I've run it through the profiler and it seems to run remarkably fast (literally just 1ms), so fuck it
+		# NOTE: as cursed as the count_casualties code is, I've run it through the profiler and it seems to run remarkably fast (literally <1ms), so fuck it
 		count_casualties_inflicted = yes
 
 		if = {
@@ -33,7 +36,7 @@ spiders_weekly_tick = {
 
 			if = {
 				limit = {
-					has_completed_focus = SPI_new_focus_xRZcsz # the focus that gives more for elves
+					has_completed_focus = SPI_tender_flesh # the focus that gives more for elves
 					check_variable = { casualties_on_elves_this_week > 0 }
 				}
 				# add 0.5 times this to this week's casualties
@@ -43,7 +46,7 @@ spiders_weekly_tick = {
 
 			if = {
 				limit = {
-					has_completed_focus = SPI_new_focus_U1jja4 # the focus that gives more for orcs
+					has_completed_focus = SPI_black_blood # the focus that gives more for orcs
 					check_variable = { casualties_on_orcs_this_week > 0 }
 				}
 				# add 0.5 times this to this week's casualties
@@ -53,12 +56,12 @@ spiders_weekly_tick = {
 
 			# calculate casualties diff
 			set_temp_variable = { temp_casualties_diff = casualties_this_week }
-			multiply_temp_variable = { temp_casualties_diff = 1000 }
 			multiply_temp_variable = { temp_casualties_diff = casualties_inflicted_to_mp_factor }
 
 			# add equivalent manpower
-			add_manpower = temp_casualties_diff
 			add_to_variable = { mp_gained_from_enemy_casualties = temp_casualties_diff }
+			multiply_temp_variable = { temp_casualties_diff = 1000 }
+			add_manpower = temp_casualties_diff
 		}
 
 		if = {
@@ -67,16 +70,22 @@ spiders_weekly_tick = {
 			}
 			set_temp_variable = { temp_casualties_diff = casualties_k }
 			subtract_from_temp_variable = { temp_casualties_diff = taken_casualties_prev }
-			multiply_temp_variable = { temp_casualties_diff = 1000 }
 			multiply_temp_variable = { temp_casualties_diff = casualties_taken_to_mp_factor }
 
 			# add equivalent manpower
-			add_manpower = temp_casualties_diff
 			add_to_variable = { mp_gained_from_own_casualties = temp_casualties_diff }
+			multiply_temp_variable = { temp_casualties_diff = 1000 }
+			add_manpower = temp_casualties_diff
 
 			# set prev
 			set_variable = { taken_casualties_prev = casualties_k }
 		}
+
+		set_variable = { mp_gained_total = 0 }
+		add_to_variable = { mp_gained_total = mp_gained_from_own_casualties }
+		add_to_variable = { mp_gained_total = mp_gained_from_enemy_casualties }
+		set_variable = { mp_unit_stats_bonus = mp_gained_total }
+		multiply_variable = { mp_unit_stats_bonus = 0.015 }
 	}
 }
 
@@ -90,14 +99,22 @@ debug_log_spi = {
 
 
 increase_mp_from_self_casualties = {
-	# TODO implement
-	custom_effect_tooltip = "increase mp from self casualties"
+	custom_effect_tooltip = unceasing_hunger_change_tt
+	custom_effect_tooltip = "Increase §Ymanpower§! gained from §Oour own§! casualties by §G+500§!."
+	
+	add_to_variable = {
+		casualties_taken_to_mp_factor = 0.5
+	}
 }
 
 
 increase_mp_from_enemy_casualties = {
-	# TODO implement
-	custom_effect_tooltip = "increase mp from enemy casualties"
+	custom_effect_tooltip = unceasing_hunger_change_tt
+	custom_effect_tooltip = "Increase §Ymanpower§! gained from §Oenemy§! casualties by §G+500§!."
+
+	add_to_variable = {
+		casualties_inflicted_to_mp_factor = 0.5
+	}
 }
 
 
@@ -108,6 +125,22 @@ add_unit_scaling_from_enemy_casualties = {
 
 late_game_hunger_upgrade = {
 	# TODO
+}
+
+add_vs_orcs_bonus = {
+	custom_effect_tooltip = "§YManpower§! gained from §OOrc§! enemies is §G+50%§! higher."
+	hidden_effect = {
+		remove_dynamic_modifier = { modifier = unceasing_hunger }
+		add_dynamic_modifier = { modifier = unceasing_hunger_vs_orcs }
+	}
+}
+
+add_vs_elves_bonus = {
+	custom_effect_tooltip = "§YManpower§! gained from §OElven§! enemies is §G+50%§! higher."
+	hidden_effect = {
+		remove_dynamic_modifier = { modifier = unceasing_hunger }
+		add_dynamic_modifier = { modifier = unceasing_hunger_vs_elves }
+	}
 }
 
 
