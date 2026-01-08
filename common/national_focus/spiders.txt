@@ -97,6 +97,10 @@ focus_tree = {
 		prerequisite = { focus = SPI_proliferation_of_the_swarm }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = SPI_let_eggs_mature
+        }
         
         x = 19
         y = 10
@@ -110,7 +114,10 @@ focus_tree = {
         }
         completion_reward = {
 			# gain bad divs now  
-            load_oob = SPI_hatchlings
+            hidden_effect = {
+                load_oob = SPI_hatchlings
+            }
+            custom_effect_tooltip = SPI_call_up_the_hatchlings_tt
 		}
     }
 
@@ -119,6 +126,10 @@ focus_tree = {
 		prerequisite = { focus = SPI_proliferation_of_the_swarm }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = SPI_call_up_the_hatchlings
+        }
         
         x = 21
         y = 10
@@ -132,7 +143,10 @@ focus_tree = {
         }
         completion_reward = { 
 			# gain good divs later  
-            activate_mission = SPI_maturing_eggs
+            hidden_effect = {
+                activate_mission = SPI_maturing_eggs
+            }
+            custom_effect_tooltip = SPI_let_eggs_mature_tt
 		}
     }
 
@@ -228,6 +242,14 @@ focus_tree = {
         }
         completion_reward = {
 			# add a landmark building doing cool stuff
+            82 = {
+                add_building_construction = {
+                    type = landmark_spiders_nest
+                    level = 1
+                    instant_build = yes
+                    province = 9131
+                }
+            }
 		}
     }
 
@@ -250,7 +272,10 @@ focus_tree = {
         
         completion_reward = {
 			# gain a super strong div that can dies when exits nest
-            country_event = spiders.103
+            hidden_effect = {
+                country_event = spiders.103
+            }
+            custom_effect_tooltip = SPI_the_mothers_guard_tt
 		}
     }
 
@@ -272,7 +297,7 @@ focus_tree = {
         }
         completion_reward = {
 			# gain +1 presence  
-            cfm_gain_presence_point = yes
+            cfm_add_presence_boost = yes
 		}
     }
 
@@ -297,11 +322,7 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# gain presence in all our owned states  
-            every_owned_state = {
-                limit = { has_state_flag = cfm_enabled }
-                cfm_increase_presence_in_state = yes
-            }
+			# TODO
 		}
     }
 
@@ -326,8 +347,7 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# gain presence points to spend
-            cfm_gain_presence_point_3x = yes
+			# TODO
 		}
     }
 
@@ -603,10 +623,13 @@ focus_tree = {
         }
         completion_reward = {
 			# gain cores on all of Mirkwood  
-            every_owned_state = {
-                limit = { is_on_continent = mirkwood }
-                add_core_of = ROOT
+            hidden_effect = {
+                every_owned_state = {
+                    limit = { is_on_continent = mirkwood }
+                    add_core_of = ROOT
+                }
             }
+            custom_effect_tooltip = DGU_forest_of_shadows_tt
 		}
     }
 
@@ -629,6 +652,7 @@ focus_tree = {
         
         completion_reward = {
 			# debuff to enemies in mirkwood  
+            custom_effect_tooltip = for_every_core_state_tt
             every_core_state = {
                 add_dynamic_modifier = {
                     modifier = web_traps
@@ -657,9 +681,12 @@ focus_tree = {
         
         completion_reward = {
 			# +AA  
-            every_core_state = {
-                add_building_construction = { type = anti_air_building level = 2 instant_build = yes }
+            hidden_effect = {
+                every_core_state = {
+                    add_building_construction = { type = anti_air_building level = 2 instant_build = yes }
+                }
             }
+            custom_effect_tooltip = SPI_aerial_webwalls_tt
 		}
     }
 
@@ -1041,7 +1068,11 @@ focus_tree = {
         
         completion_reward = {
 			# decrease PP malus (improve centralization)
-            add_ideas = improved_swarm_centralization
+            #add_ideas = improved_swarm_centralization
+            swap_ideas = {
+                remove_idea = swarm_centralization
+                add_idea = improved_swarm_centralization
+            }
 		}
     }
 
@@ -1064,10 +1095,13 @@ focus_tree = {
         
         completion_reward = {
 			# something with military and traits  
-            every_unit_leader = {
-                remove_unit_leader_trait = instinct_driven
-                add_unit_leader_trait = instinct_driven_improved
+            hidden_effect = {
+                every_unit_leader = {
+                    remove_unit_leader_trait = instinct_driven
+                    add_unit_leader_trait = instinct_driven_improved
+                }
             }
+            custom_effect_tooltip = SPI_exalt_the_brood_warriors_tt
 		}
     }
 
@@ -2021,10 +2055,57 @@ focus_tree = {
         completion_reward = {
 			# build castle in nest  
             82 = {
+                if = {
+                    limit = {
+                        ROOT = { is_ai = yes }
+                    }
+                    add_building_construction = {
+                        type = castle
+                        level = 3
+                        province = 9131
+                    }
+                }
+                else = {
+                    add_building_construction = {
+                        type = castle
+                        level = 2
+                        province = 9131
+                    }
+                }
                 add_building_construction = {
-                    type = castle
+                    type = bunker
+                    level = 2
+                    province = 1074
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = 3022
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = 5848
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = 9126
+                }
+                add_building_construction = {
+                    type = bunker
                     level = 2
                     province = 9131
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = 9132
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = 9133
                 }
             }
 		}
@@ -2050,7 +2131,14 @@ focus_tree = {
         
         completion_reward = {
             # get extra resources in nest
-            country_event = spiders.122
+            hidden_effect = {
+                country_event = spiders.122
+            }
+
+            custom_effect_tooltip = choose_between_tt
+            event_option_tooltip = spiders.122.a
+            custom_effect_tooltip = choose_between_OR_tt
+            event_option_tooltip = spiders.122.b
         }
     }
 
@@ -2121,6 +2209,7 @@ focus_tree = {
         completion_reward = {
 			# late game cool thingy  
             # get 1 AA, 1 civ, 1 mil and the state modifier on every core state (that isn't the nest)
+            custom_effect_tooltip = for_every_core_state_except_capital_tt
             every_core_state = {
                 limit = {
                     impassable = no
@@ -2129,7 +2218,6 @@ focus_tree = {
                 add_building_construction = { type = anti_air_building level = 1 instant_build = yes }
                 add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
                 add_building_construction = { type = arms_factory level = 1 instant_build = yes }
-                add_dynamic_modifier = { modifier = spiders_nest }
             }
 		}
     }
@@ -2633,7 +2721,10 @@ focus_tree = {
         
         completion_reward = {
 			# less consumers  
-            add_ideas = economy_of_hunger_2
+            swap_ideas = {
+                remove_idea = economy_of_hunger
+                add_idea = economy_of_hunger_2
+            }
 		}
     }
 
@@ -2665,6 +2756,10 @@ focus_tree = {
 		prerequisite = { focus = SPI_aggresive_stance }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = SPI_move_south
+        }
         
         x = 9
         y = 7
@@ -2680,8 +2775,10 @@ focus_tree = {
         completion_reward = {
 			# put presence in certain state  
             80 = {
-                cfm_increase_presence_in_state = yes
+                cfm_restrict_to_state = yes
             }
+            # TODO
+
 		}
     }
 
@@ -2703,8 +2800,7 @@ focus_tree = {
         }
         
         completion_reward = {
-			# gain all presence points invested in non-controlled states back  
-            cfm_regain_all_invested_presence = yes
+			# TODO
 		}
     }
 
@@ -2713,6 +2809,10 @@ focus_tree = {
 		prerequisite = { focus = SPI_aggresive_stance }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = SPI_strike_north
+        }
         
         x = 11
         y = 7
@@ -2730,6 +2830,7 @@ focus_tree = {
             85 = {
                 cfm_increase_presence_in_state = yes
             }
+            # TODO
 		}
     }
 
@@ -2751,17 +2852,13 @@ focus_tree = {
         }
         
         completion_reward = {
-			# secure/core state1  
-            226 = {
-                cfm_secure_state = yes
-            }
+			# TODO: building sot state 226
 		}
     }
 
     focus = {
         id = SPI_endless_sprawl
-		prerequisite = { focus = SPI_strike_north }
-		prerequisite = { focus = SPI_move_south }
+		prerequisite = { focus = SPI_strike_north focus = SPI_move_south }
         
         icon = GFX_unknown_focus
         
@@ -2778,7 +2875,7 @@ focus_tree = {
         
         completion_reward = {
 			# generic give presence points every year or something idk  
-            cfm_gain_presence_point_3x = yes
+            # TODO
 		}
     }
 
@@ -2800,10 +2897,7 @@ focus_tree = {
         }
         
         completion_reward = {
-			# secure/core state2  
-            229 = {
-                cfm_secure_state = yes
-            }
+			# TODO: building sot state 229
 		}
     }
 
@@ -3069,7 +3163,10 @@ focus_tree = {
         }
         # Improve nest guardians
         completion_reward = {
-            country_event = spiders.104
+            hidden_effect = {
+                country_event = spiders.104
+            }
+            custom_effect_tooltip = SPI_extend_the_perimeter_tt
         }
     }
 }
