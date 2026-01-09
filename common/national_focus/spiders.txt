@@ -58,7 +58,17 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            if = {
+                limit = { is_ai = no }
+                has_army_manpower = {
+                    size > 5000
+                }
+            }
+            else = {
+                has_army_manpower = {
+                    size > 4000
+                }
+            }
         }
         completion_reward = {
 			# increase mp from self-casualties  
@@ -110,7 +120,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         completion_reward = {
 			# gain bad divs now  
@@ -139,7 +149,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         completion_reward = { 
 			# gain good divs later  
@@ -193,7 +203,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         completion_reward = {
 			# gain idea with a small amount of weekly mp  
@@ -215,8 +225,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
+        bypass_if_unavailable = yes
         completion_reward = {
 			# gain lump of mp  
             add_manpower = 3000
@@ -238,7 +249,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         completion_reward = {
 			# add a landmark building doing cool stuff
@@ -267,7 +278,8 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
+            has_tech = great_webstalkers
         }
         
         completion_reward = {
@@ -293,8 +305,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_cfm_active = yes
         }
+        bypass_if_unavailable = yes
         completion_reward = {
 			# gain +1 presence  
             add_timed_idea = {
@@ -322,7 +335,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            always = yes # TODO
         }
         completion_reward = {
 			# TODO
@@ -347,7 +360,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_cfm_active = yes
         }
         completion_reward = {
 			cfm_add_presence_boost = yes
@@ -368,7 +381,20 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            if = {
+                limit = { is_ai = no }
+                custom_trigger_tooltip = {
+                    tooltip = SPI_step_out_of_the_shadows_condition_tt
+                    any_controlled_state = {
+                        NOT = { is_on_continent = mirkwood }
+                    }
+                }
+            }
+            else = {
+                any_enemy_country = {
+                    capital = { NOT = { is_on_continent = mirkwood } }
+                }
+            }
         }
         
         completion_reward = {
@@ -444,8 +470,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 226
+            controls_state = 229
         }
+        bypass_if_unavailable = yes
         completion_reward = {
 			# get rid of resistance  
             226 = { force_disable_resistance = SPI }
@@ -471,8 +499,22 @@ focus_tree = {
         ai_will_do = { factor = 1 }
         
         search_filters = { }
+        bypass = {
+            is_ally_with = MOR
+        }
         available = {
-            always = yes
+            NOT = { has_war_with = MOR }
+            NOT = { is_in_faction = yes }
+            country_exists = MOR
+            is_subject = no
+            MOR = {
+                is_subject = no
+                OR = {
+                    is_faction_leader = yes
+                    is_in_faction = no
+                }
+            }
+            MOR = { NOT = { eternal_animosity_exists_between = yes } }
         }
         
         completion_reward = {
@@ -574,13 +616,22 @@ focus_tree = {
         ai_will_do = { factor = 1 }
         
         search_filters = { }
+        bypass = {
+            is_ally_with = MIR
+        }
         available = {
+            NOT = { has_war_with = MIR }
+            NOT = { is_in_faction = yes }
+            country_exists = MIR
+            is_subject = no
             MIR = {
+                is_subject = no
                 OR = {
                     is_faction_leader = yes
                     is_in_faction = no
                 }
             }
+            MIR = { NOT = { eternal_animosity_exists_between = yes } }
         }
         completion_reward = {
 			# send event to elves  
@@ -609,7 +660,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            OR = {
+                5 = { controller = { is_ally_with = SPI } }
+                5 = { is_controlled_by = SPI }
+                # TODO: Only if Shelob got the ring, or if the controller of state 5 is friendly
+            }
         }
         
         completion_reward = {
@@ -642,7 +697,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_country_leader = {
+	            character = SPI_shelob
+	            ruling_only = yes
+            }
         }
         
         completion_reward = {
@@ -667,7 +725,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            control_all_mirkwood_states = yes
         }
         completion_reward = {
 			# gain cores on all of Mirkwood  
@@ -844,7 +902,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_character = SPI_shrazul
         }
         completion_reward = {
 			# all unit leaders gain extra skill level  
@@ -903,7 +961,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_character = SPI_broodmother_council
         }
         completion_reward = {
             promote_character = SPI_broodmother_council
@@ -927,7 +985,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_character = SPI_khazherze
         }
         completion_reward = {
             promote_character = SPI_khazherze
@@ -1111,8 +1169,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_idea = swarm_centralization
         }
+        bypass_if_unavailable = yes
         
         completion_reward = {
 			# decrease PP malus (improve centralization)
@@ -1221,7 +1280,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_war = yes
+            any_enemy_country = {
+                is_neighbor_of = SPI
+            }
         }
         # all neighbouring countries currently at war with us receive a 100% penalty for night attack
         # (removed once they are no longer at war with us)
@@ -1278,7 +1340,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         completion_reward = {
 			# civs  
@@ -1303,7 +1365,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         
         completion_reward = {
@@ -1326,7 +1388,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         
         completion_reward = {
@@ -1351,7 +1413,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         
         completion_reward = {
@@ -1377,7 +1439,16 @@ focus_tree = {
         
         search_filters = { }
         available = {            
-            has_political_power > global.days_until_3021    # possible to skip by spanding 1 PP per day ahead
+            custom_trigger_tooltip = {
+                tooltip = SPI_alliance_building_condition_tt
+                has_political_power > global.days_until_3021    # possible to skip by spanding 1 PP per day ahead
+            }
+        }
+        bypass = {
+            OR = {
+                is_in_faction = yes
+                is_subject = yes
+            }
         }
         select_effect = {
             set_temp_variable = { temp_subtr_pp = global.days_until_3021 }
@@ -1432,7 +1503,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         
         completion_reward = {
@@ -1455,7 +1526,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_subject = no
+            has_army_manpower = {
+                size = 15000
+            }
         }
         
         completion_reward = {
@@ -1491,10 +1565,13 @@ focus_tree = {
         search_filters = { }
         available = {
             # needs to control 30% of all states in the game
-            set_temp_variable = { states_amount = global.states^num }
-            multiply_temp_variable = { states_amount = 0.3 }
-            check_variable = {
-                var:num_controlled_states > states_amount
+            custom_trigger_tooltip = {
+                set_temp_variable = { states_amount = global.states^num }
+                multiply_temp_variable = { states_amount = 0.25 }
+                check_variable = {
+                    var:num_controlled_states > states_amount
+                }
+                tooltip = SPI_world_wide_web_condition_tt
             }
         }
         
@@ -1910,7 +1987,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            any_neighbor_country = {
+                is_spiders = no NOT = { has_war_with = SPI }
+            }
         }
         
         completion_reward = {
@@ -2028,7 +2107,14 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            NOT = { is_in_faction = yes }
+            is_subject = no
+        }
+        bypass = {
+            OR = {
+                is_faction_leader = yes
+                is_ally_with = DGU
+            }
         }
         
         completion_reward = {
@@ -2121,7 +2207,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         completion_reward = {
 			# build castle in nest  
@@ -2197,7 +2283,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         
         completion_reward = {
@@ -2227,7 +2313,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         completion_reward = {
 			# mils  
@@ -2252,7 +2338,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
         }
         completion_reward = {
 			# extra research slot  
@@ -2274,7 +2360,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            any_controlled_state = {
+                is_core_of = SPI
+                NOT = { state = 82 }
+                impassable = no
+            }
         }
         
         completion_reward = {
@@ -2369,7 +2459,8 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_ally_with = MOR
+            MOR = { is_faction_leader = yes }
         }
         # TODO
         completion_reward = {
@@ -2391,7 +2482,8 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_ally_with = MOR
+            MOR = { is_faction_leader = yes }
         }
         # TODO
         completion_reward = {
@@ -2413,7 +2505,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_ally_with = MIR
         }
         
         completion_reward = {
@@ -2442,7 +2534,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_ally_with = MIR
         }
         
         completion_reward = {
@@ -2466,7 +2558,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_ally_with = MIR
         }
         
         completion_reward = {
@@ -2496,7 +2588,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_faction_leader = yes
+            is_subject = no
+            NOT = { is_ally_with = DGU }
+            NOT = { has_war_with = ENT }
+            ENT = { exists = yes is_subject = no }
         }
         
         completion_reward = {
@@ -2524,7 +2620,17 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_faction_leader = yes
+            is_subject = no
+            NOT = { is_ally_with = DGU }
+
+            NOT = { has_war_with = VAL }
+            NOT = { has_war_with = GLD }
+            NOT = { has_war_with = RGL }
+            
+            VAL = { exists = yes is_subject = no }
+            GLD = { exists = yes is_subject = no }
+            RGL = { exists = yes is_subject = no }
         }
         
         completion_reward = {
@@ -2554,7 +2660,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_faction_leader = yes
+            is_subject = no
+            NOT = { has_war_with = DGU }
+            DGU = { exists = yes is_subject = no }
+        }
+        bypass = {
+            is_ally_with = DGU
         }
         
         completion_reward = {
@@ -2579,12 +2691,19 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_in_faction = yes
         }
         
         completion_reward = {
 			# No idea what this does lol. If I can be arsed: Add a faction goal here (TODO5)
-            add_faction_initiative = 100
+            if = {
+                limit = { has_dlc = "No Compromise, No Surrender" }
+                add_faction_initiative = 100
+            }
+            else = {
+                add_political_power = 100
+                add_stability = 0.05
+            }
 		}
     }
 
@@ -2602,7 +2721,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_in_faction = yes
         }
         # TODO: disable incidents
         completion_reward = { }
@@ -2869,7 +2988,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_cfm_active = yes
+        }
+        bypass = {
+            controls_state = 80
         }
         
         completion_reward = {
@@ -2896,7 +3018,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            always = yes # TODO
         }
         
         completion_reward = {
@@ -2922,7 +3044,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_cfm_active = yes
+        }
+        bypass = {
+            controls_state = 85
         }
         
         completion_reward = {
@@ -2948,7 +3073,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 226
         }
         
         completion_reward = {
@@ -2974,7 +3099,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            NOT = { is_ally_with = MIR }
+            country_exists = MIR
+            is_neighbor_of = MIR
         }
         
         completion_reward = {
@@ -3014,7 +3141,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 226
         }
         
         completion_reward = {
@@ -3100,7 +3227,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            always = yes # TODO
         }
         # TODO
         completion_reward = {
@@ -3122,7 +3249,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            always = yes # TODO
         }
         # TODO
         completion_reward = {
@@ -3144,7 +3271,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            always = yes # TODO
         }
         # TODO
         completion_reward = {
@@ -3166,7 +3293,8 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            NOT = { ring_seized = yes }
+            NOT = { has_country_flag = fs_interceptions_disabled }
         }
         # TODO
         completion_reward = {
@@ -3188,7 +3316,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_in_faction = yes
         }
         # TODO
         completion_reward = { }
@@ -3284,7 +3412,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 82
+            has_tech = great_webstalkers
+            num_controlled_states > 7
+            has_war = yes
         }
         # Improve nest guardians
         completion_reward = {
