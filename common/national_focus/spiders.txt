@@ -297,7 +297,10 @@ focus_tree = {
         }
         completion_reward = {
 			# gain +1 presence  
-            cfm_add_presence_boost = yes
+            add_timed_idea = {
+                idea = CFM_creeping_gloom
+                days = 700
+            }
 		}
     }
 
@@ -347,7 +350,7 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# TODO
+			cfm_add_presence_boost = yes
 		}
     }
 
@@ -370,8 +373,37 @@ focus_tree = {
         
         completion_reward = {
 			# remove debuff on non-jungle terrain  
-            set_technology = {
-                spider_sunlight_immunity = 1
+            custom_effect_tooltip = SPI_step_out_of_the_shadows_tt
+            hidden_effect = {
+                add_unit_bonus = {
+                    category_special_spiders = {
+                        hills = {
+                            movement = 0.2
+                            defence = 0.2
+                            attack = 0.2
+                        }
+                        mountain = {
+                            movement = 0.2
+                            defence = 0.2
+                            attack = 0.2
+                        }
+                        marsh = {
+                            movement = 0.2
+                            defence = 0.2
+                            attack = 0.2
+                        }
+                        plains = {
+                            movement = 0.2
+                            defence = 0.2
+                            attack = 0.2
+                        }
+                        desert = {
+                            movement = 0.2
+                            defence = 0.2
+                            attack = 0.2
+                        }
+                    }
+                }
             }
 		}
     }
@@ -1191,11 +1223,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        # all countries currently at war with us receive a 100% penalty for night attack
+        # all neighbouring countries currently at war with us receive a 100% penalty for night attack
         # (removed once they are no longer at war with us)
         completion_reward = {
-            every_enemy_country = {
-                add_ideas = SPI_consume_the_light
+            custom_effect_tooltip = SPI_consume_the_light_tt
+            hidden_effect = {
+                every_enemy_country = {
+                    limit = {
+                        is_neighbor_of = SPI
+                    }
+                    add_ideas = SPI_consume_the_light
+                }
             }
         }
     }
@@ -1465,6 +1503,15 @@ focus_tree = {
             # change name/flag and maybe something else that's cool (formable nation effectively)
             set_cosmetic_tag = SPIEMPIRE
             # TODO: this cosmetic tag hasn't been implemented yet
+            custom_effect_tooltip = SPI_world_wide_web_tt
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = {
+                        NOT = { is_core_of = SPI }
+                    }
+                    add_compliance = 15
+                }
+            }
 		}
     }
 
@@ -2647,9 +2694,7 @@ focus_tree = {
                 every_controlled_state = {
                     limit = { any_country_with_core = { is_dwarves = yes } }
                     set_temp_variable = { temp_pop_remove = state_population }
-                    multiply_temp_variable = { temp_pop_remove = -0.1 }
-                    add_manpower = temp_pop_remove
-                    multiply_temp_variable = { temp_pop_remove = -0.0001 }
+                    multiply_temp_variable = { temp_pop_remove = 0.001 }
                     add_to_variable = { spider_bonus_from_dwarves = temp_pop_remove }
                 }
             }
@@ -2683,9 +2728,7 @@ focus_tree = {
                 every_controlled_state = {
                     limit = { any_country_with_core = { is_elves = yes } }
                     set_temp_variable = { temp_pop_remove = state_population }
-                    multiply_temp_variable = { temp_pop_remove = -0.1 }
-                    add_manpower = temp_pop_remove
-                    multiply_temp_variable = { temp_pop_remove = -0.0001 }
+                    multiply_temp_variable = { temp_pop_remove = 0.001 }
                     add_to_variable = { spider_bonus_from_elves = temp_pop_remove }
                 }
             }
@@ -2719,9 +2762,7 @@ focus_tree = {
                 every_controlled_state = {
                     limit = { any_country_with_core = { is_orcs = yes } }
                     set_temp_variable = { temp_pop_remove = state_population }
-                    multiply_temp_variable = { temp_pop_remove = -0.1 }
-                    add_manpower = temp_pop_remove
-                    multiply_temp_variable = { temp_pop_remove = -0.0001 }
+                    multiply_temp_variable = { temp_pop_remove = 0.001 }
                     add_to_variable = { spider_bonus_from_orcs = temp_pop_remove }
                 }
             }
@@ -2754,9 +2795,7 @@ focus_tree = {
                 every_controlled_state = {
                     limit = { any_country_with_core = { is_men = yes } }
                     set_temp_variable = { temp_pop_remove = state_population }
-                    multiply_temp_variable = { temp_pop_remove = -0.1 }
-                    add_manpower = temp_pop_remove
-                    multiply_temp_variable = { temp_pop_remove = -0.0001 }
+                    multiply_temp_variable = { temp_pop_remove = 0.001 }
                     add_to_variable = { spider_bonus_from_men = temp_pop_remove }
                 }
             }
@@ -2838,7 +2877,7 @@ focus_tree = {
             80 = {
                 cfm_restrict_to_state = yes
             }
-            # TODO
+            cfm_add_presence_boost = yes
 
 		}
     }
@@ -2891,7 +2930,7 @@ focus_tree = {
             85 = {
                 cfm_increase_presence_in_state = yes
             }
-            # TODO
+            cfm_add_presence_boost = yes
 		}
     }
 
@@ -2913,13 +2952,17 @@ focus_tree = {
         }
         
         completion_reward = {
-			# TODO: building sot state 226
+			# building sot state 226
+            226 = {
+                add_building_slot_and_mil = yes
+                add_building_slot_and_civ = yes
+            }
 		}
     }
 
     focus = {
         id = SPI_endless_sprawl
-		prerequisite = { focus = SPI_strike_north focus = SPI_move_south }
+		prerequisite = { focus = SPI_aggresive_stance }
         
         icon = GFX_unknown_focus
         
@@ -2935,8 +2978,25 @@ focus_tree = {
         }
         
         completion_reward = {
-			# generic give presence points every year or something idk  
-            # TODO
+			# add spider infestation to all neighbour mirkwood states. Gain 25 pp per state affected.
+            # TODO: possibly unlock some CFM related decisions
+            custom_effect_tooltip = SPI_endless_sprawl_tt
+            hidden_effect = {
+                every_neighbor_state = {
+                    limit = {
+                        is_on_continent = MIR
+                        NOT = { is_controlled_by = SPI }
+                        controller = { NOT = { is_ally_with = SPI } }
+                        impassable = no
+                    }
+                    add_dynamic_modifier = {
+                        modifier = spider_infestation
+                    }
+                    SPI = {
+                        add_political_power = 25
+                    }
+                }
+            }
 		}
     }
 
@@ -2958,7 +3018,11 @@ focus_tree = {
         }
         
         completion_reward = {
-			# TODO: building sot state 229
+			# building sot state 229
+            229 = {
+                add_building_slot_and_mil = yes
+                add_building_slot_and_civ = yes
+            }
 		}
     }
 
