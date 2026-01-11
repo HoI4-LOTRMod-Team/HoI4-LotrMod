@@ -250,6 +250,3 @@ def get_all_stratregion():
 
 
 
-
-
-

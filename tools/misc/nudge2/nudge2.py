@@ -243,14 +243,17 @@ class CreateStateDialog(QDialog):
         return {"state_name": self.name_input.text()}
     
 class TransferProvsDialog(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, ToStratRegion=False):
         super().__init__(parent)
         self.setWindowTitle("Transfer Provinces")
         self.setModal(True)
         self.setMinimumWidth(300)
         layout = QVBoxLayout()
         self.setLayout(layout)
-        states = get_all_states()
+        if not ToStratRegion:
+            states = get_all_states()
+        else:
+            states = get_all_stratregion()
         provs = selected_colors_to_provinces()
         state_loc = LocFile(STATES_LOC_DIR)
         av_states = []
@@ -261,10 +264,17 @@ class TransferProvsDialog(QDialog):
         form_layout = QFormLayout()
         self.available_states = QComboBox()
         for av_st in av_states:
-            av_st_id = str(av_st.state_id)
+
+            if ToStratRegion:
+                st_id = av_st.region_id
+                av_st_id = str(av_st.region_id)
+            else:
+                st_id = av_st.state_id
+                av_st_id = str(av_st.state_id)
+
             av_st_name = state_loc.get(str(av_st.pObj.GetVal("name")).replace('"', ''))
             if av_st_name is None: av_st_name = ""
-            self.available_states.addItem(av_st_id + "  " + av_st_name, av_st.state_id)
+            self.available_states.addItem(av_st_id + "  " + av_st_name, st_id)
         form_layout.addRow("Target:", self.available_states)
         layout.addLayout(form_layout)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -1353,6 +1363,10 @@ class MainWindow(QMainWindow):
         self.btn_action2.clicked.connect(self.transfer_to_state_func)
         self.select_ui_actions.append(toolbar.addWidget(self.btn_action2))
 
+        self.btn_action3 = QPushButton("Transfer to StratReg")
+        self.btn_action3.clicked.connect(self.transfer_to_stratregion_func)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_action3))
+
         self.btn_prov_props = QPushButton("Prov. Properties")
         self.btn_prov_props.clicked.connect(self.edit_province_properties_func)
         self.select_ui_actions.append(toolbar.addWidget(self.btn_prov_props))
@@ -1512,6 +1526,15 @@ class MainWindow(QMainWindow):
             state_name = data['state_name']
             provs = selected_colors_to_provinces()
             create_new_state(provs, state_name)
+            selected_colors.clear()
+            self.trigger_lut_update()
+
+    def transfer_to_stratregion_func(self):
+        dialog = TransferProvsDialog(self, ToStratRegion=True)
+        if dialog.exec():
+            data = dialog.get_data()
+            provs = selected_colors_to_provinces()
+            transfer_provinces_to_strategicregion(provs, data['target_state'])
             selected_colors.clear()
             self.trigger_lut_update()
 
