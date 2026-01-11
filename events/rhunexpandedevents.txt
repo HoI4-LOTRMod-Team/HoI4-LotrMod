@@ -1,0 +1,949 @@
+###########################
+# Rhun Events
+###########################
+
+add_namespace = rhunexpanded
+add_namespace = merc
+
+	country_event = {
+	id = rhunexpanded.1
+	title = rhunmercenary.t
+	desc = rhunmercenary.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpandedmerc.a
+	ai_chance = {
+	base = 100 }
+	RHU = {
+	131 = {
+	create_unit = {
+    division = "name = \"Easterling Mercenaries\" division_template = \"Easterling Division\" start_manpower_factor = 1"
+    owner = RHU
+    count = 24 } } } }
+
+ }
+	country_event = {
+	id = rhunexpanded.2
+	title = rhunspecialists.t
+	desc = rhunspecialists.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpandedspecialist.a
+	ai_chance = {
+	base = 100 }
+	RHU = {
+	131 = {
+	create_unit = {
+    division = "name = \"Easterling Mercenaries\" division_template = \"Easterling Division\" start_manpower_factor = 0.3"
+    owner = RHU
+    count = 10 } } } }
+
+ }
+ 
+	country_event = {
+	id = rhunexpanded.3
+	title = rhunborderwarexpandedwon.t
+	desc = rhunborderwarexpandedwon.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunborderwarexpandedwon.a
+	ai_chance = {
+	base = 100 }
+	RHU = {
+	add_stability = 0.05
+	add_war_support = 0.05 } }
+ }
+	country_event = {
+	id = rhunexpanded.4
+	title = rhunborderwarexpandedloss.t
+	desc = rhunborderwarexpandedloss.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunborderwarexpandedloss.a
+	ai_chance = {
+	base = 100 }
+	RHU = {
+	add_stability = -0.05
+	add_war_support = -0.05 } }
+ }
+	country_event = {
+	id = rhunexpanded.5
+	title = mordorborderwar.t
+	desc = mordorborderwar.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = mordorborderwar.a
+	ai_chance = {
+	base = 100 }
+	RHU = {
+	country_event = rhunexpanded.6
+	start_border_war = {
+    change_state_after_war = no
+    attacker = {
+        state = 3
+        num_provinces = 1
+        on_win = rhunexpanded.3
+        on_lose = rhunexpanded.4
+        on_cancel = rhunexpanded.4
+        modifier = 0.1
+        dig_in_factor = 0
+        terrain_factor = 0
+    }	
+    defender = {
+        state = 124
+        num_provinces = 1
+        on_win = rhunexpanded.3
+        on_lose = rhunexpanded.4
+        on_cancel = rhunexpanded.4 } } } }
+	
+	option = { # Decline
+	name = mordorborderwarno.a
+	ai_chance = {
+	base = 0 }
+	add_stability = -0.05
+	add_war_support = -0.05 }
+	
+ }
+	country_event = {
+	id = rhunexpanded.6
+	title = mordorstrikesback.t
+	desc = mordorstrikesback.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = mordorstrikesback.a
+	ai_chance = {
+	base = 100 } }
+ }
+	country_event = {
+	id = rhunexpanded.7
+	title = rhunexpanded.7.t
+	desc = rhunexpanded.7.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.7.a
+	ai_chance = {
+	base = 100 }
+	add_timed_idea = {
+		idea = RHUN_one_ring_destroyed
+		days = 90 } }
+ }
+ 
+# Start of cooperative civil war
+country_event = {
+	id = rhunexpanded.8
+	title = rhunexpanded.8.t
+	desc = rhunexpanded.8.d
+	picture = GFX_report_event_peasant_revolt3
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = rhunexpanded.8.a
+		ai_chance = {
+			base = 50
+		}
+		hidden_effect = {
+		news_event = {
+		id = my_event.1
+		days = 3
+		random_hours = 12
+		random_days = 1
+		}
+        RHU = {
+			set_politics = {
+				ruling_party = belligerent
+				elections_allowed = no
+			}
+		
+			set_popularities = {
+				cooperative = 0
+				unaligned = 0
+				belligerent = 100
+				revolutionary = 0
+			}
+		}
+		
+		RHU = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment_0
+                amount = 3000
+            }
+			add_timed_idea = {
+				idea = RHUN_civil_war
+				days = 365
+			}
+			uncomplete_national_focus = {
+				focus = RHUN_break_free_from_mordor
+				uncomplete_children = yes
+				refund_political_power = no
+			}
+        }
+		##Load templates
+			RHU = {
+			load_oob = "rhun/CV_templates" }
+		## If land is controlled
+            if = {
+                limit = {
+                    controls_state = 132 #rhudel steppe
+                }
+                load_oob = "rhun/CV_rhudel_steppe"
+            }
+            if = {
+                limit = {
+                    controls_state = 124 #mountains of ash
+                }
+                load_oob = "rhun/CV_mountains_of_ash"
+            }
+            if = {
+                limit = {
+                    controls_state = 131 #rhudel
+                }
+                load_oob = "rhun/CV_rhudel"
+            }
+			if = {
+                limit = {
+                    controls_state = 104 #south rhun
+                }
+                load_oob = "rhun/CV_south_rhun"
+            }
+		}
+	##transfering civil war states
+        hidden_effect = {
+            for_each_loop = {
+                array = RHU_list_states_civil_war
+                DRH = {
+                    transfer_state = v
+                }
+            }
+
+
+			DRH = {
+				transfer_state = 130
+				inherit_technology = RHU
+
+				declare_war_on = { target = RHU type = civil_war }
+				add_civil_war_target = RHU
+				add_ideas = limited_levy
+				set_capital = { state = 130 }
+
+				set_politics = {
+					ruling_party = cooperative
+				}
+
+				set_popularities = {
+					cooperative = 60
+					unaligned = 40
+					belligerent = 0
+					revolutionary = 0
+				}
+			}
+			##transfering units
+			transfer_units_fraction= {
+				target = DRH
+				size = 0.5
+				stockpile_ratio = 0.5
+				army_ratio = 0.5
+				navy_ratio = 0.5
+				air_ratio = 0.5
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
+			}
+			130 = {
+				teleport_armies = {
+					limit = {
+						tag = RHU
+					}
+					to_state_array = owned_controlled_states
+				}
+			}
+				
+			DRH = {
+				change_tag_from = RHU
+			}
+			set_nationality = {
+				target_country = DRH
+				character = RHU_nezarg
+			}
+			set_nationality = {
+				target_country = DRH
+				character = RHU_wizards
+			}
+			set_nationality = {
+				target_country = DRH
+				character = RHU_alatar
+			}
+			set_nationality = {
+				target_country = DRH
+				character = RHU_pallando
+			}
+			DRH = {
+				promote_character = RHU_nezarg
+			}
+			##Rhun focus branch flag checks 
+			RHU = {
+				if = {
+					limit = {
+						has_global_flag = RHU_sabotaged_military
+					}
+					add_timed_idea = {
+						idea = RHUN_sabotaged_military
+						days = 365
+					}
+				}
+			}
+			##Free Rhun focus branch flag checks
+			DRH = {
+				##Army defection
+				if = {
+					limit = {
+						has_global_flag = RHU_army_defection
+					}
+					set_nationality = {
+						target_country = DRH
+						character = RHU_tazurak
+					}
+				}
+				##Fierce resistance
+				if = {
+					limit = {
+						has_global_flag = RHU_fierce_resistance
+					}
+					add_timed_idea = {
+						idea = RHUN_fierce_resistance
+						days = 365
+					}
+				}
+				##Chariots stockpiled
+				if = {
+					limit = {
+						has_global_flag = RHU_chariots_stockpiled
+					}
+					add_equipment_to_stockpile = {
+						type = chariot_chassis
+						amount = 500
+					}
+				}
+				##spears stockpiled
+				if = {
+					limit = {
+						has_global_flag = RHU_spears_stockpiled
+					}
+					add_equipment_to_stockpile = {
+						type = infantry_equipment_0
+						amount = 5000
+					}
+				}
+				##Hidden supplies
+				if = {
+					limit = {
+						has_global_flag = RHU_hidden_supplies
+					}
+					add_timed_idea = {
+					idea = RHUN_hidden_supplies
+					days = 365 }
+				}
+				##Offshore industry
+				if = {
+					limit = {
+						has_global_flag = RHU_offshore_industry_cv
+					}
+					add_offsite_building = { type = arms_factory level = 2 }
+					add_offsite_building = { type = industrial_complex level = 2 }
+				}
+				##Secret mines
+				if = {
+					limit = {
+						has_global_flag = RHU_offshore_industry_cv
+					}
+					129 = {
+						add_resource = {
+							type = steel
+							amount = 15
+						}
+					}
+				}
+				##Secret militias
+				if = {
+					limit = {
+						has_global_flag = RHU_secret_militias
+					}
+					130 = {
+						add_extra_state_shared_building_slots = 1
+						add_building_construction = {
+							type = barracks
+							level = 1
+							instant_build = yes
+						}
+					}
+				}
+				##flags 
+				set_global_flag = DRH_civil_war_flag
+			}
+		}##end hidden stuff pt1
+	
+		##Load templates
+		hidden_effect = {
+			DRH = {
+				load_oob = "rhun/CV_templates"
+				## If troops are rallied
+				if = {
+					limit = {
+					has_global_flag = easterlings_agasha_rallied
+					}
+					load_oob = "rhun/CV_rally_troops_agasha_dag"
+				}
+				if = {
+					limit = {
+						has_global_flag = easterlings_east_rhun_rallied
+					}
+					load_oob = "rhun/CV_rally_troops_east_rhun"
+				}
+				if = {
+					limit = {
+						has_global_flag = easterlings_central_rhun_rallied
+					}
+					load_oob = "rhun/CV_rally_troops_central_rhun"
+				}
+				division_template = {
+					name = "Wainriders"			# Represents three-division infantry corps (generally poorly-equipped militias)
+
+					regiments = {
+						chariot = { x = 0 y = 0 }
+						chariot = { x = 0 y = 1 }
+						chariot = { x = 1 y = 0 }
+						chariot = { x = 1 y = 1 }
+						chariot = { x = 2 y = 0 }
+						chariot = { x = 2 y = 1 }
+						chariot = { x = 3 y = 0 }
+						chariot = { x = 3 y = 1 }
+					}
+				}
+			}
+		}
+		##uncomplete focus
+		RHU = {
+			uncomplete_national_focus = {
+				focus = RHUN_break_free_from_mordor
+				uncomplete_children = yes
+				refund_political_power = no
+			}
+		}
+		##refresh focus tree
+		mark_focus_tree_layout_dirty = yes
+		##automatic focuses done
+		RHU = { complete_national_focus = RHUN_teachings_of_morgoth }
+		RHU = { complete_national_focus = RHUN_guide_the_tribes }
+		RHU = { complete_national_focus = RHUN_one_tribe_supremacy }
+		
+	}#end option
+}
+	country_event = {
+	id = rhunexpanded.9
+	title = rhunexpanded.9.t
+	desc = rhunexpanded.9.d
+	picture = GFX_report_event_army_camp
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.9.a
+	ai_chance = {
+	base = 1
+	modifier = {
+		add = 1
+	strength_ratio = {
+    tag = RHU
+    ratio < 1 } }
+	}
+	208 = { transfer_state_to = RHU }
+	add_war_support = -0.1
+	RHU = {
+	set_truce = {
+    target = DOR
+    days = 365 }
+	create_wargoal = {
+    type = take_state_focus
+    target = DOR
+    generator = { 103 137 } } 
+	country_event = {
+    id = rhunexpanded.10
+    days = 5
+    random_hours = 12
+    random_days = 2 }
+		}
+	}
+	
+	option = { # Reject
+	name = rhunexpanded.9.b
+	ai_chance = {
+	base = 1 }
+	add_stability = -0.1
+	RHU = {
+	create_wargoal = {
+    type = take_state_focus
+    target = DOR
+    generator = { 208 103 137 } } 
+	country_event = {
+    id = rhunexpanded.11
+    days = 5
+    random_hours = 12
+    random_days = 2 }
+		}
+	}
+}
+
+country_event = {
+	id = rhunexpanded.10
+	title = rhunexpanded.10.t
+	desc = rhunexpanded.10.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.10.a
+	ai_chance = { 
+	base = 100 }
+	}
+}
+
+country_event = {
+	id = rhunexpanded.11
+	title = rhunexpanded.11.t
+	desc = rhunexpanded.11.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.11.a
+	ai_chance = { 
+	base = 100 }
+	}
+}
+
+	country_event = {
+	id = rhunexpanded.12
+	title = rhunexpanded.12.t
+	desc = rhunexpanded.12.d
+	picture = GFX_report_event_generic_reading
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.12.a
+	ai_chance = {
+	base = 4
+	modifier = {
+		add = 1
+	DOR = {
+		has_opinion = { target = RHU value > 10 }
+	} }
+	}
+	add_stability = -0.02
+	137 = {
+		add_resource = {
+			type = oil
+			amount = 10
+		}
+		add_extra_state_shared_building_slots = 2
+		add_building_construction = { type = fuel_silo level = 2 instant_build = yes }
+	}
+	RHU = {
+	country_event = {
+    id = rhunexpanded.13
+    days = 5
+    random_hours = 12
+    random_days = 2 }
+		}
+	}
+	
+	option = { # Reject
+	name = rhunexpanded.12.b
+	ai_chance = {
+	base = 1 }
+	add_war_support = 0.05
+	RHU = {
+	country_event = {
+    id = rhunexpanded.14
+    days = 5
+    random_hours = 12
+    random_days = 2 }
+		}
+	}
+}
+
+country_event = {
+	id = rhunexpanded.13
+	title = rhunexpanded.13.t
+	desc = rhunexpanded.13.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.13.a
+	ai_chance = { 
+	base = 100 }
+	add_offsite_building = { type = arms_factory level = 1 }
+	}
+}
+
+country_event = {
+	id = rhunexpanded.14
+	title = rhunexpanded.14.t
+	desc = rhunexpanded.14.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.14.a
+	ai_chance = { 
+	base = 100 }
+	}
+}
+
+	country_event = {
+	id = rhunexpanded.15
+	title = rhunexpanded.15.t
+	desc = rhunexpanded.15.d
+	picture = GFX_report_event_army_camp
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.15.a
+	ai_chance = {
+	base = 1
+	modifier = {
+		add = 2
+	strength_ratio = {
+    tag = RHU
+    ratio < 1 } }
+	modifier = {
+		add = 1000
+	is_historical_focus_on = yes }
+	}
+	RHU = {
+	puppet = RHO
+	country_event = {
+    id = rhunexpanded.16
+    days = 5
+    random_hours = 12
+    random_days = 2 }
+		}
+	}
+	
+	option = { # Reject
+	name = rhunexpanded.15.b
+	ai_chance = {
+	base = 1
+	modifier = {
+		add = 2
+	strength_ratio = {
+    tag = RHU
+    ratio > 1 } }
+	}
+	add_stability = -0.1
+	add_war_support = 0.05
+	RHU = {
+	country_event = {
+    id = rhunexpanded.17
+    days = 5
+    random_hours = 12
+    random_days = 2 }
+		}
+	}
+}
+
+country_event = {
+	id = rhunexpanded.16
+	title = rhunexpanded.16.t
+	desc = rhunexpanded.16.d
+	picture = GFX_report_event_cavalry_knights
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.16.a
+	ai_chance = { 
+	base = 100 }
+	}
+}
+
+country_event = {
+	id = rhunexpanded.17
+	title = rhunexpanded.17.t
+	desc = rhunexpanded.17.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.17.a
+	ai_chance = { 
+	base = 100 }
+		RHU = {
+			create_wargoal = {
+				type = take_state_focus
+				target = RHO
+				generator = { 208 103 137 }
+			}
+		}
+	}
+}
+
+	country_event = {
+	id = rhunexpanded.18
+	title = rhunexpanded.18.t
+	desc = rhunexpanded.18.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.18.a
+	ai_chance = {
+	base = 5
+		modifier = {
+			add = 2
+			strength_ratio = {
+			tag = RHU
+			ratio < 1 }
+		}
+		modifier = {
+			add = 5
+			HAR = { is_in_faction_with = RHU }
+		}
+	}
+	HAR = {
+		add_opinion_modifier = {
+			target = RHU
+			modifier = medium_increase
+		}
+	}
+	RHU = {
+		add_opinion_modifier = {
+			target = HAR
+			modifier = medium_increase
+		}
+	}
+	RHU = {
+	country_event = {
+    id = rhunexpanded.19
+    days = 3
+    random_hours = 12
+    random_days = 2 }
+		}
+	}
+	
+	option = { # Reject
+	name = rhunexpanded.18.b
+	ai_chance = {
+	base = 1
+	modifier = {
+		add = 2
+	strength_ratio = {
+    tag = RHU
+    ratio > 1 } }
+	}
+	HAR = {
+		add_opinion_modifier = {
+		target = RHU
+		modifier = medium_decrease
+		}
+	}
+	RHU = {
+		add_opinion_modifier = {
+			target = HAR
+			modifier = medium_decrease
+		}
+	}
+	RHU = {
+	country_event = {
+    id = rhunexpanded.20
+    days = 3
+    random_hours = 12
+    random_days = 2 }
+		}
+	}
+}
+
+country_event = {
+	id = rhunexpanded.19
+	title = rhunexpanded.19.t
+	desc = rhunexpanded.19.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.19.a
+	ai_chance = { 
+	base = 100 }
+	216 = { transfer_state_to = KND }
+	}
+}
+
+country_event = {
+	id = rhunexpanded.20
+	title = rhunexpanded.20.t
+	desc = rhunexpanded.20.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.20.a
+	ai_chance = { 
+	base = 100 }
+	}
+}
+
+country_event = {
+	id = rhunexpanded.21
+	title = rhunexpanded.21.t
+	desc = rhunexpanded.21.d
+	picture = GFX_report_event_rangers
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.21.a
+	ai_chance = { 
+	base = 100 }
+	115 = { transfer_state_to = KND }
+	117 = { transfer_state_to = KND }
+	}
+}
+
+country_event = {
+	id = rhunexpanded.22
+	title = rhunexpanded.22.t
+	desc = rhunexpanded.22.d
+	picture = GFX_report_event_rangers
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.22.a
+	ai_chance = { 
+	base = 100 }
+	}
+}
+
+country_event = {
+	id = rhunexpanded.23
+	title = rhunexpanded.23.t
+	desc = rhunexpanded.23.d
+	picture = GFX_report_event_rangers
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.23.a
+	ai_chance = { 
+	base = 100 }
+	}
+}
+
+country_event = {
+	id = rhunexpanded.24
+	title = rhunexpanded.24.t
+	desc = rhunexpanded.24.d
+	picture = GFX_report_event_rangers
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.24.a
+	ai_chance = { 
+	base = 100 }
+	}
+}
+
+country_event = {
+	id = rhunexpanded.25
+	title = rhunexpanded.25.t
+	desc = rhunexpanded.25.d
+	picture = GFX_report_event_nazgul
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+	name = rhunexpanded.25.a
+	ai_chance = { 
+	base = 100 }
+	}
+}
