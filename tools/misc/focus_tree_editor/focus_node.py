@@ -47,7 +47,7 @@ def random_string(length):
 
 focus_template = """
     focus = {
-        id = GLD_$TOKEN$
+        id = RGL_$TOKEN$
         icon = GFX_unknown_focus
         
         x = 0
