@@ -10,15 +10,14 @@ from locfile import *
 # CONFIGURATION
 
 BASE_PATH = Path(__file__).parent.parent.parent.resolve()
-ideas_file = BASE_PATH / r'common\ideas\dolguldur.txt'
-country_leader_traits_file = BASE_PATH / r'common\country_leader\00_traits_lotr_dgu.txt'
-army_leader_traits_file = BASE_PATH / r'common\unit_leader\00_traits_lotr_dgu.txt'
-characters_file = BASE_PATH / r'common\characters\DGU.txt'
-history_file = BASE_PATH / r'history\countries\DGU - DolGuldur.txt'
-scripted_effects_file = BASE_PATH / r'common\scripted_effects\dolguldur_scripted_effects.txt'
-scripted_triggers_file = BASE_PATH / r'common\scripted_triggers\dolguldur_scripted_effects.txt'
-events_file = BASE_PATH / r'events\DolGuldur.txt'
-tag = "DGU"
+ideas_file = BASE_PATH / r'common\ideas\TEMP.txt'
+country_leader_traits_file = BASE_PATH / r'common\country_leader\00_traits_lotr_TEMP.txt'
+army_leader_traits_file = BASE_PATH / r'common\unit_leader\00_traits_lotr_TEMP.txt'
+characters_file = BASE_PATH / r'common\characters\TEMP.txt'
+scripted_effects_file = BASE_PATH / r'common\scripted_effects\temp_scripted_effects.txt'
+scripted_triggers_file = BASE_PATH / r'common\scripted_triggers\temp_scripted_triggers.txt'
+
+events_file = BASE_PATH / r'events\Temp.txt'
 
 lotr_locs_file = BASE_PATH / r'localisation\english\0_lotr_core\lotr_misc_l_english.yml'
 
@@ -149,9 +148,6 @@ def add_new_character(name):
     chars = ParseListFromFile_asPObj(characters_file)
     new_char_text = new_character_template.replace("$TOKEN_NAME$", name)
     chars.Get("characters").Insert(new_char_text)
-    
-    with open(history_file, "a") as f:
-        f.write("\n\nrecruit_character = "+name)
 
     SaveObjValueToFile(chars, characters_file)
 
