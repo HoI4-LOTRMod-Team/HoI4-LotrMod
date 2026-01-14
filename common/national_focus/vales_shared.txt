@@ -1,10 +1,14 @@
 #!gfx:interface\auto_generated\lotr_goals.gfx	
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_river_trade
-		prerequisite = { focus = VAL_new_focus_6TCV0P }
+		prerequisite = { focus = VAL_river_crossing_specialists }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_self_reliance
+        }
         
         x = 26
         y = 7
@@ -18,14 +22,40 @@
         }
         completion_reward = {
 			# trade opinion and market subsidy  
+            if = {
+                limit = { has_dlc = "La Resistance" }
+                    add_equipment_subsidy = {
+                    cic = 1000
+                    equipment_type = infantry_equipment
+                    seller_tags = { LTH GON MIR VAL GLD RGL ROH } 
+                }
+            }
+            else = {
+                add_opinion_modifier = {
+                    target = LTH
+                    modifier = long_term_trade_partner
+                }
+                add_opinion_modifier = {
+                    target = GON
+                    modifier = long_term_trade_partner
+                }
+                add_opinion_modifier = {
+                    target = ROH
+                    modifier = long_term_trade_partner
+                }
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_self_reliance
-		prerequisite = { focus = VAL_new_focus_6TCV0P }
+		prerequisite = { focus = VAL_river_crossing_specialists }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_river_trade
+        }
         
         x = 30
         y = 7
@@ -39,10 +69,11 @@
         }
         completion_reward = {
 			# resource extraction  
+            add_ideas = VAL_self_reliance_focus
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_life_along_the_anduin
         icon = GFX_unknown_focus
         
@@ -58,14 +89,20 @@
         }
         completion_reward = {
 			# PP/stab  
+            add_political_power = 75
+            add_stability = 0.05
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_expand_river_settlements
 		prerequisite = { focus = VAL_river_trade }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_local_markets
+        }
         
         x = 25
         y = 8
@@ -79,36 +116,31 @@
         }
         completion_reward = {
 			# add manpower to states  
+            every_controlled_state = {
+                limit = {
+                    OR = {
+                        state = 69
+                        state = 196
+                        state = 71
+                        state = 70
+                        state = 72
+                        state = 195
+                    }
+                }
+                add_manpower = 10000
+            }
 		}
     }
 
-    shared_focus = { # TODO
-        id = VAL_river_trading
-		prerequisite = { focus = VAL_local_markets }
-		prerequisite = { focus = VAL_expand_river_settlements }
-        
-        icon = GFX_unknown_focus
-        
-        x = 26
-        y = 9
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# trade opinion  
-		}
-    }
-
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_urban_focus
 		prerequisite = { focus = VAL_village_councils }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_rural_focus
+        }
         
         x = 27
         y = 2
@@ -122,14 +154,19 @@
         }
         completion_reward = {
 			# mils  
+            random_state_add_building_slot_and_mil_x2 = yes
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_rural_focus
 		prerequisite = { focus = VAL_village_councils }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_urban_focus
+        }
         
         x = 29
         y = 2
@@ -143,16 +180,17 @@
         }
         completion_reward = {
 			# civs  
+            random_state_add_building_slot_and_civ_x2 = yes
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_traditional_crafts
 		prerequisite = { focus = VAL_life_along_the_anduin }
         
         icon = GFX_unknown_focus
         
-        x = 19
+        x = 21
         y = 1
 
         cost = 5
@@ -164,37 +202,22 @@
         }
         completion_reward = {
 			# labor research  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour
+                uses = 1
+                bonus = 0.35
+            }
 		}
     }
 
-    shared_focus = { # TODO
-        id = VAL_vastness_of_the_vales
-		prerequisite = { focus = VAL_life_along_the_anduin }
-        
-        icon = GFX_unknown_focus
-        
-        x = 33
-        y = 1
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# add infra  
-		}
-    }
-
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_guard_the_homelands
 		prerequisite = { focus = VAL_life_along_the_anduin }
         
         icon = GFX_unknown_focus
         
-        x = 37
+        x = 35
         y = 1
 
         cost = 5
@@ -206,16 +229,25 @@
         }
         completion_reward = {
 			# add barracks  
+            add_war_support = 0.05
+            random_core_state = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = barracks
+                    level = 1
+                    instant_build = yes
+                }
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_lore_of_the_wild
 		prerequisite = { focus = VAL_life_along_the_anduin }
         
         icon = GFX_unknown_focus
         
-        x = 24
+        x = 25
         y = 1
 
         cost = 5
@@ -227,12 +259,18 @@
         }
         completion_reward = {
 			# generic research boos  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_knowledge
+                uses = 1
+                bonus = 0.35
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_maintain_the_old_roads
-		prerequisite = { focus = VAL_vastness_of_the_vales }
+	prerequisite = { focus = VAL_dredge_the_shallows }
         
         icon = GFX_unknown_focus
         
@@ -248,16 +286,17 @@
         }
         completion_reward = {
 			# add rails  
+            # TODO: build roads based on which state we own
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_smiths_of_the_vales
 		prerequisite = { focus = VAL_traditional_crafts }
         
         icon = GFX_unknown_focus
         
-        x = 20
+        x = 22
         y = 2
 
         cost = 5
@@ -269,16 +308,17 @@
         }
         completion_reward = {
 			# mils  
+            random_state_add_building_slot_and_mil = yes
 		}
     }
 
-    shared_focus = { # TODO
-        id = VAL_standardized_tools
+    shared_focus = {
+        id = VAL_waterwheels
 		prerequisite = { focus = VAL_smiths_of_the_vales }
         
         icon = GFX_unknown_focus
         
-        x = 20
+        x = 22
         y = 3
 
         cost = 5
@@ -289,11 +329,29 @@
             always = yes
         }
         completion_reward = {
-			# metalworking research boost  
+			every_controlled_state = {
+                limit = {
+                    whaterwheel < 1
+                    OR = {
+                        state = 69
+                        state = 196
+                        state = 71
+                        state = 70
+                        state = 72
+                        state = 195
+                    }
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = whaterwheel
+                    level = 1
+                    instant_build = yes
+                }
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_rural_workshops
 		prerequisite = { focus = VAL_prospecting_the_hills }
 		prerequisite = { focus = VAL_timber_and_tallow }
@@ -312,15 +370,13 @@
         }
         completion_reward = {
 			# civs  
+            random_state_add_building_slot_and_civ = yes
 		}
     }
 
     shared_focus = { # TODO
         id = VAL_library
-		prerequisite = { focus = VAL_urban_focus }
-		prerequisite = { focus = VAL_new_focus_ueuXCk }
-        
-        icon = GFX_unknown_focus
+		icon = GFX_unknown_focus
         
         x = 26
         y = 3
@@ -337,14 +393,14 @@
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_stockpiled_arms
 		prerequisite = { focus = VAL_defensive_preparations }
         
         icon = GFX_unknown_focus
         
-        x = 40
-        y = 3
+        x = 37
+        y = 4
 
         cost = 5
         ai_will_do = { factor = 1 }
@@ -355,11 +411,33 @@
         }
         completion_reward = {
 			# when in defensive war, gain weapons  
+            create_defensive_weapons_stockpile = yes
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_hardened_settlements
+		prerequisite = { focus = VAL_guard_the_homelands }
+        
+        icon = GFX_unknown_focus
+        
+        x = 35
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# TODO: improve an existing idea to give defense on core territorys
+		}
+    }
+
+    shared_focus = {
+        id = VAL_defensive_preparations
 		prerequisite = { focus = VAL_guard_the_homelands }
         
         icon = GFX_unknown_focus
@@ -375,38 +453,21 @@
             always = yes
         }
         completion_reward = {
-			# add some encampments?  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_defensive_preparations
-		prerequisite = { focus = VAL_guard_the_homelands }
-        
-        icon = GFX_unknown_focus
-        
-        x = 39
-        y = 2
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
 			# temp defense idea  
+            add_timed_idea = {
+                idea = defense_construction
+                days = 365
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_local_musters
 		prerequisite = { focus = VAL_defensive_preparations }
         
         icon = GFX_unknown_focus
         
-        x = 38
+        x = 36
         y = 3
 
         cost = 5
@@ -418,17 +479,18 @@
         }
         completion_reward = {
 			# when in defensive war, gain manpower  
+            create_defensive_musters = yes
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_dredge_the_shallows
-		prerequisite = { focus = VAL_maintain_the_old_roads }
+	prerequisite = { focus = VAL_life_along_the_anduin }
         
         icon = GFX_unknown_focus
         
         x = 33
-        y = 4
+        y = 1
 
         cost = 5
         ai_will_do = { factor = 1 }
@@ -439,10 +501,18 @@
         }
         completion_reward = {
 			# add infra  
+            every_core_state = {
+                random_select_amount = 2
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                    instant_build = yes
+                }
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_watchtpowers_at_the_fords
 		prerequisite = { focus = VAL_hardened_settlements }
 		prerequisite = { focus = VAL_maintain_the_old_roads }
@@ -461,14 +531,26 @@
         }
         completion_reward = {
 			# add watchtowers  
+            every_core_state = {
+                random_select_amount = 2
+                add_building_construction = {
+                    type = radar_station
+                    level = 2
+                    instant_build = yes
+                }
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_local_fishing
 		prerequisite = { focus = VAL_self_reliance }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_local_hemp_farms
+        }
         
         x = 31
         y = 8
@@ -482,10 +564,29 @@
         }
         completion_reward = {
 			# add fishery  
+            every_controlled_state = {
+                limit = {
+                    fishery < 1
+                    OR = {
+                        state = 69
+                        state = 196
+                        state = 71
+                        state = 70
+                        state = 72
+                        state = 195
+                    }
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = fishery
+                    level = 1
+                    instant_build = yes
+                }
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_seasonal_labor_cycles
 		prerequisite = { focus = VAL_village_councils }
         
@@ -503,10 +604,15 @@
         }
         completion_reward = {
 			# add idea that changes based on winter/summer  
+            add_ideas = VAL_seasonal_labor_cycles
+            hidden_effect = {
+                add_ideas = VAL_winter_labor
+                add_ideas = VAL_summer_labor
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_village_councils
 		prerequisite = { focus = VAL_life_along_the_anduin }
         
@@ -524,10 +630,11 @@
         }
         completion_reward = {
 			# increase centralization  
+            increase_centralization = yes
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_clear_new_farmland
 		prerequisite = { focus = VAL_rural_focus }
         
@@ -545,14 +652,26 @@
         }
         completion_reward = {
 			# add farms  
+            random_core_state = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+                    type = synthetic_refinery
+                    level = 2
+                    instant_build = yes
+                }
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_local_markets
 		prerequisite = { focus = VAL_river_trade }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_expand_river_settlements
+        }
         
         x = 27
         y = 8
@@ -566,10 +685,18 @@
         }
         completion_reward = {
 			# add markets  
+            random_core_state = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = markets
+                    level = 1
+                    instant_build = yes
+                }
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_timber_and_tallow
 		prerequisite = { focus = VAL_rural_focus }
 		prerequisite = { focus = VAL_maintain_the_old_roads }
@@ -588,10 +715,23 @@
         }
         completion_reward = {
 			# get wood  
+            every_core_state = {
+                limit = {
+                    OR = {
+                        state = 260
+                        state = 71
+                        state = 261
+                    }
+                }
+                add_resource = {
+                    type = chromium
+                    amount = 10
+                }
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_hides_and_leather
 		prerequisite = { focus = VAL_clear_new_farmland }
         
@@ -609,10 +749,15 @@
         }
         completion_reward = {
 			# farms give more leather  
+            modify_building_resources = {
+                building = synthetic_refinery
+                resource = rubber
+                amount = 3
+            }
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_prospecting_the_hills
 		prerequisite = { focus = VAL_maintain_the_old_roads }
 		prerequisite = { focus = VAL_rural_focus }
@@ -630,38 +775,17 @@
             always = yes
         }
         completion_reward = {
-			# get decisions for resources like steel and coal  
+			# TODO: get decisions for resources like steel and coal  
 		}
     }
 
-    shared_focus = { # TODO
+    shared_focus = {
         id = VAL_winter_stores
-		prerequisite = { focus = VAL_hardened_settlements }
+	prerequisite = { focus = VAL_hardened_settlements }
         
         icon = GFX_unknown_focus
         
-        x = 36
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# add food silo  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_the_militia_call
-		prerequisite = { focus = VAL_hardened_settlements }
-        
-        icon = GFX_unknown_focus
-        
-        x = 37
+        x = 35
         y = 4
 
         cost = 5
@@ -672,12 +796,21 @@
             always = yes
         }
         completion_reward = {
-			# resistance or something  
+			# add food silo  
+            every_core_state = {
+                random_select_amount = 2
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = fuel_silo
+                    level = 1
+                    instant_build = yes
+                }
+            }
 		}
     }
 
-    shared_focus = { # TODO
-        id = VAL_new_focus_6TCV0P
+    shared_focus = {
+        id = VAL_river_crossing_specialists
 		prerequisite = { focus = VAL_seasonal_labor_cycles }
         
         icon = GFX_unknown_focus
@@ -694,288 +827,24 @@
         }
         completion_reward = {
 			# reduce river crossing penalty, add marine bonus  
+            add_unit_bonus = {
+                category_all_infantry = {
+                    river_crossing_factor = -0.3
+                }
+            }
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_infantry_specialforces_marines
+                uses = 1
+                bonus = 0.5
+            }
 		}
     }
 
-    shared_focus = { # TODO
-        id = VAL_inf_equip
+    shared_focus = {
+        id = VAL_improve_weaponry
 		prerequisite = { focus = VAL_smiths_of_the_vales }
-		prerequisite = { focus = VAL_new_focus_ueuXCk }
-        
-        icon = GFX_unknown_focus
-        
-        x = 22
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# inf equip research  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_b65MRd
-		prerequisite = { focus = VAL_urban_focus }
-        
-        icon = GFX_unknown_focus
-        
-        x = 27
-        y = 4
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = { }
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_VcS83C
-		prerequisite = { focus = VAL_new_focus_b65MRd }
-        
-        icon = GFX_unknown_focus
-        
-        x = 27
-        y = 5
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# gain stab and ws  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_ueuXCk
-		prerequisite = { focus = VAL_lore_of_the_wild }
-        
-        icon = GFX_unknown_focus
-        
-        x = 24
-        y = 2
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# special men research  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_VIkFgM
-		prerequisite = { focus = VAL_new_focus_ueuXCk }
-        
-        icon = GFX_unknown_focus
-        
-        x = 24
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# generic military research  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_local_hemp_farms
-		prerequisite = { focus = VAL_self_reliance }
-        
-        icon = GFX_unknown_focus
-        
-        x = 29
-        y = 8
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# add string  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_83K5t8
-		prerequisite = { focus = VAL_local_hemp_farms }
-		prerequisite = { focus = VAL_local_fishing }
-        
-        icon = GFX_unknown_focus
-        
-        x = 30
-        y = 9
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# resource extraction and war support  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_F6qZcU
-		prerequisite = { focus = VAL_traditional_crafts }
-        
-        icon = GFX_unknown_focus
-        
-        x = 18
-        y = 2
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# construction research boost  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_ZToeiS
-		prerequisite = { focus = VAL_new_focus_F6qZcU }
-        
-        icon = GFX_unknown_focus
-        
-        x = 18
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# something with guilds  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_ynjeVQ
-		prerequisite = { focus = VAL_new_focus_5dprSW }
-        
-        icon = GFX_unknown_focus
-        
-        x = 22
-        y = 5
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# cav research  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_kOXm8V
-		prerequisite = { focus = VAL_new_focus_5dprSW }
-        
-        icon = GFX_unknown_focus
-        
-        x = 24
-        y = 5
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# siege research  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_3t78gS
-		prerequisite = { focus = VAL_standardized_tools }
-		prerequisite = { focus = VAL_new_focus_ZToeiS }
-        
-        icon = GFX_unknown_focus
-        
-        x = 19
-        y = 4
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# ???  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_hIZ5Lk
-		prerequisite = { focus = VAL_library }
-		prerequisite = { focus = VAL_new_focus_VIkFgM }
-        
-        icon = GFX_unknown_focus
-        
-        x = 25
-        y = 4
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# mils  
-		}
-    }
-
-    shared_focus = { # TODO
-        id = VAL_new_focus_5dprSW
-		prerequisite = { focus = VAL_new_focus_VIkFgM }
-		prerequisite = { focus = VAL_inf_equip }
+		prerequisite = { focus = VAL_specialized_knoweldge }
         
         icon = GFX_unknown_focus
         
@@ -990,17 +859,23 @@
             always = yes
         }
         completion_reward = {
-			# supp equip research  
+			# inf equip research  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_infantry_weapons
+                uses = 1
+                bonus = 0.35
+            }
 		}
     }
 
-    shared_focus = { # TODO
-        id = VAL_new_focus_yBfvxS
-		prerequisite = { focus = VAL_defensive_preparations }
+    shared_focus = {
+        id = VAL_city_walls
+		prerequisite = { focus = VAL_urban_focus }
         
         icon = GFX_unknown_focus
         
-        x = 39
+        x = 27
         y = 4
 
         cost = 5
@@ -1010,18 +885,287 @@
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            # encampment in every vp  
+            hidden_effect = {
+                every_core_state = {
+                    add_building_construction = {
+                        type = bunker
+                        level = 2
+                        instant_build = yes
+                        province = {
+                            all_provinces = yes
+                            limit_to_victory_point > 1
+                        }
+                    }    
+                }
+            }
+            custom_effect_tooltip = VAL_city_walls_tt
+            
+        }
     }
 
-    shared_focus = { # TODO
-        id = VAL_new_focus_ECHq4c
-		prerequisite = { focus = VAL_new_focus_83K5t8 }
-		prerequisite = { focus = VAL_river_trading }
+    shared_focus = {
+        id = VAL_city_markets
+		prerequisite = { focus = VAL_city_walls }
+        
+        icon = GFX_unknown_focus
+        
+        x = 27
+        y = 5
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            capital_scope = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = markets
+                    level = 1
+                    instant_build = yes
+                }
+            }
+        }
+    }
+
+    shared_focus = {
+        id = VAL_specialized_knoweldge
+		prerequisite = { focus = VAL_lore_of_the_wild }
+        
+        icon = GFX_unknown_focus
+        
+        x = 25
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# special men research  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_men_secrets
+                uses = 1
+                bonus = 0.5
+            }
+		}
+    }
+
+    shared_focus = {
+        id = VAL_improve_army_coherence
+		icon = GFX_unknown_focus
+        
+        x = 24
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# generic military research  
+            army_experience = 25
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_infantry
+                uses = 1
+                bonus = 0.25
+            }
+		}
+    }
+
+    shared_focus = {
+        id = VAL_local_hemp_farms
+		prerequisite = { focus = VAL_self_reliance }
+        
+        icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_local_fishing
+        }
+        
+        x = 29
+        y = 8
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# add string  
+            random_core_state = {
+                add_resource = {
+                    type = tungsten
+                    amount = 5
+                }
+            }
+		}
+    }
+
+    shared_focus = {
+        id = VAL_construction_techniques
+		prerequisite = { focus = VAL_traditional_crafts }
+        
+        icon = GFX_unknown_focus
+        
+        x = 20
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# construction research boost  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour_construction
+                uses = 1
+                bonus = 0.35
+            }
+		}
+    }
+
+    shared_focus = {
+        id = VAL_riders_of_the_anduin
+		prerequisite = { focus = VAL_infantry_support_gear }
+	prerequisite = { focus = VAL_improve_weaponry }
+        
+        icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_machines_of_war
+        }
+        
+        x = 23
+        y = 5
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# cav research  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_cavalry
+                uses = 1
+                bonus = 0.35
+            }
+		}
+    }
+
+    shared_focus = {
+        id = VAL_machines_of_war
+		prerequisite = { focus = VAL_infantry_support_gear }
+	prerequisite = { focus = VAL_improve_weaponry }
+        
+        icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_riders_of_the_anduin
+        }
+        
+        x = 25
+        y = 5
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# siege research 
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_machines
+                uses = 1
+                bonus = 0.35
+            } 
+		}
+    }
+
+    shared_focus = {
+        id = VAL_encourage_blacksmithing
+	prerequisite = { focus = VAL_urban_focus }
+	prerequisite = { focus = VAL_specialized_knoweldge }
+        
+        icon = GFX_unknown_focus
+        
+        x = 26
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# mils  
+            random_state_add_building_slot_and_mil = yes
+		}
+    }
+
+    shared_focus = {
+        id = VAL_infantry_support_gear
+	prerequisite = { focus = VAL_specialized_knoweldge }
+        
+        icon = GFX_unknown_focus
+        
+        x = 25
+        y = 4
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# supp equip research  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_infantry_supportweapons
+                uses = 1
+                bonus = 0.35
+            }
+		}
+    }
+
+    shared_focus = {
+        id = VAL_acquire_new_knowledge
+		prerequisite = { focus = VAL_expand_river_settlements focus = VAL_local_markets focus = VAL_local_fishing focus = VAL_local_fishing }
         
         icon = GFX_unknown_focus
         
         x = 28
-        y = 10
+        y = 9
 
         cost = 5
         ai_will_do = { factor = 1 }
@@ -1032,5 +1176,6 @@
         }
         completion_reward = {
 			# research slot  
+            add_research_slot = 1
 		}
     }
