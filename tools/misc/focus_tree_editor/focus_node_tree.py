@@ -28,9 +28,11 @@ class FocusNodeTree:
         focus_menu.add_command('Save Focus Tree', lambda: self.save_focus_tree(filepath), 'Ctrl+S')
 
         self.root_pobj = ParseListFromFile_asPObj(filepath)
-        focus_list = self.root_pobj.Get("focus_tree")
-
-        focuses_pobjs = focus_list.GetAll("focus").value
+        if self.root_pobj.Has("focus_tree"):
+            focus_list = self.root_pobj.Get("focus_tree")
+            focuses_pobjs = focus_list.GetAll("focus").value
+        else:
+            focuses_pobjs = self.root_pobj.GetAll("shared_focus").value
 
         # Create a node in the graph for each focus and set the respective values
         for focus in focuses_pobjs:
