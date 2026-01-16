@@ -69,7 +69,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_seek_a_protector
 		prerequisite = { focus = RGL_diplomatic_outreach }
         
@@ -87,10 +87,11 @@ focus_tree = {
         }
         completion_reward = {
 			# add PP  
+            add_political_power = 100
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_stand_alone
 		prerequisite = { focus = RGL_defensive_paranoia }
         
@@ -106,7 +107,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            add_war_support = 0.1
+        }
     }
 
     focus = {
@@ -472,7 +475,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_invite_radagast
 		prerequisite = { focus = RGL_the_elven_kings_shield }
         
@@ -490,6 +493,11 @@ focus_tree = {
         }
         completion_reward = {
 			# event to ask for radagast as advisor  
+            MIR = {
+                country_event = { id =  mirkwood.134 days = 3 }
+            }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = mirkwood.135.a
 		}
     }
 
@@ -617,11 +625,16 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_provoke_an_attack
 		prerequisite = { focus = RGL_stability_through_safety }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = RGL_economic_improvements
+            focus = RGL_grow_bolder
+        }
         
         x = 9
         y = 9
@@ -635,6 +648,10 @@ focus_tree = {
         }
         completion_reward = {
 			# goad someone into going to war with you  
+            hidden_effect = {
+                country_event = anduin.2
+            }
+            custom_effect_tooltip = RGL_provoke_an_attack_tt
 		}
     }
 
@@ -643,6 +660,11 @@ focus_tree = {
 		prerequisite = { focus = RGL_stability_through_safety }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = RGL_provoke_an_attack
+            focus = RGL_grow_bolder
+        }
         
         x = 11
         y = 9
@@ -661,11 +683,15 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_diplomatic_outreach
 		prerequisite = { focus = RGL_the_politics_of_survival }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = RGL_defensive_paranoia
+        }
         
         x = 8
         y = 2
@@ -677,14 +703,25 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            every_neighbor_country = {
+                add_opinion_modifier = {
+                    target = ROOT
+                    modifier = small_increase
+                }
+            }
+        }
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_defensive_paranoia
 		prerequisite = { focus = RGL_the_politics_of_survival }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = RGL_diplomatic_outreach
+        }
         
         x = 15
         y = 2
@@ -698,14 +735,19 @@ focus_tree = {
         }
         completion_reward = {
 			# add idea  
+            add_ideas = RGL_defensive_paranoia_idea
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_fortification_focus
 		prerequisite = { focus = RGL_stand_alone }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = RGL_armed_resistance_focus
+        }
         
         x = 14
         y = 4
@@ -719,14 +761,22 @@ focus_tree = {
         }
         completion_reward = {
 			# change idea to give better fort effectiveness  
+            swap_ideas = {
+                remove_idea = RGL_defensive_paranoia_idea
+                add_idea = RGL_defensive_paranoia_idea_forts
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_armed_resistance_focus
 		prerequisite = { focus = RGL_stand_alone }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = RGL_fortification_focus
+        }
         
         x = 16
         y = 4
@@ -740,6 +790,10 @@ focus_tree = {
         }
         completion_reward = {
 			# modify idea to give division speed and equipment capture  
+            swap_ideas = {
+                remove_idea = RGL_defensive_paranoia_idea
+                add_idea = RGL_defensive_paranoia_idea_resistance
+            }
 		}
     }
 
@@ -771,7 +825,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_provide_tribute
 		prerequisite = { focus = RGL_invite_radagast }
 		prerequisite = { focus = RGL_galadhrim_marchwardens }
@@ -790,7 +844,30 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            if = {
+                limit = { has_completed_focus = RGL_the_elven_kings_shield }
+                MIR = { pay_3_civs_for_180_day = yes }
+            }
+            else_if = {
+                limit = { has_completed_focus = RGL_the_shroud_of_dol_guldur }
+                DGU = { pay_3_civs_for_180_day = yes }
+            }
+            else_if = {
+                limit = { has_completed_focus = RGL_protection_of_the_golden_wood }
+                LTH = { pay_3_civs_for_180_day = yes }
+            }
+            else_if = {
+                limit = { has_completed_focus = RGL_the_gladden_chiefs }
+                GLD = { pay_3_civs_for_180_day = yes }
+            }
+            add_stability = 0.1
+            add_political_power = 150
+            add_timed_idea = {
+                idea = RGL_overlord_support
+                days = 180
+            }
+        }
     }
 
     focus = {
@@ -1011,7 +1088,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_protect_administrative_centers
 		prerequisite = { focus = RGL_fortification_focus }
         
@@ -1029,6 +1106,10 @@ focus_tree = {
         }
         completion_reward = {
 			# modify idea to give extra stab at war  
+            swap_ideas = {
+                remove_idea = RGL_defensive_paranoia_idea_forts
+                add_idea = RGL_defensive_paranoia_idea_forts2
+            }
 		}
     }
 
@@ -1109,7 +1190,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_freedom_fighters
 		prerequisite = { focus = RGL_refugee_levies }
 		prerequisite = { focus = RGL_conceal_production }
@@ -1128,10 +1209,15 @@ focus_tree = {
         }
         completion_reward = {
 			# dynamic modifer to states  
+            every_core_state = {
+                add_dynamic_modifier = {
+                    modifier = lotr_state_armed_resistance
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_the_great_wall
 		prerequisite = { focus = RGL_protect_administrative_centers }
 		prerequisite = { focus = RGL_refugee_levies }
@@ -1150,6 +1236,20 @@ focus_tree = {
         }
         completion_reward = {
 			# add a shit ton of forts and stuff all over the place  
+            custom_effect_tooltip = RGL_the_great_wall_tt
+            hidden_effect = {
+                every_controlled_state = {
+                    add_building_construction = {
+                        type = bunker
+                        level = 2
+                        instant_build = yes
+                        province = {
+                            all_provinces = yes
+                            limit_to_border = yes
+                        }
+                    }
+                }
+            }
 		}
     }
 
@@ -1250,7 +1350,7 @@ focus_tree = {
         }
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_try_to_barter_with_the_spiders
 		prerequisite = { focus = RGL_expand_woodside_villages }
         
@@ -1268,6 +1368,10 @@ focus_tree = {
         }
         completion_reward = {
 			# send event to spiders asking for string or NA pact  
+            hidden_effect = {
+                country_event = { id = anduin.100 days = 1 }
+            }
+            custom_effect_tooltip = RGL_try_to_barter_with_the_spiders_tt
 		}
     }
 
@@ -1339,11 +1443,16 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RGL_grow_bolder
 		prerequisite = { focus = RGL_stability_through_safety }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = RGL_economic_improvements
+            focus = RGL_provoke_an_attack
+        }
         
         x = 13
         y = 9
@@ -1357,6 +1466,10 @@ focus_tree = {
         }
         completion_reward = {
 			# get option to claim some states  
+            hidden_effect = {
+                country_event = anduin.107
+            }
+            custom_effect_tooltip = RGL_grow_bolder_tt
 		}
     }
 }
