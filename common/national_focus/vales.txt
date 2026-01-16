@@ -25,6 +25,10 @@ focus_tree = {
 		prerequisite = { focus = VAL_grimbeorns_rule }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_unify_the_clans
+        }
         
         x = 4
         y = 1
@@ -104,7 +108,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_oaths_of_mutual_defense
 		prerequisite = { focus = VAL_unify_the_clans }
         
@@ -122,6 +126,8 @@ focus_tree = {
         }
         completion_reward = {
 			# send events asking for *mutual* guarantees  
+            GLD = { ask_for_mutual_guarantee = yes }
+            RGL = { ask_for_mutual_guarantee = yes }
 		}
     }
 
@@ -171,7 +177,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_envoys_to_the_lonely_mountain
 		prerequisite = { focus = VAL_the_northern_frontiers }
         
@@ -189,6 +195,7 @@ focus_tree = {
         }
         completion_reward = {
 			# envoys to ERE  
+            ERE = { send_delegation_to_country = yes }
 		}
     }
 
@@ -216,8 +223,7 @@ focus_tree = {
 
     focus = { # TODO
         id = VAL_the_north_stands_united
-		prerequisite = { focus = VAL_call_the_banners }
-		prerequisite = { focus = VAL_prioritize_northern_safety }
+		prerequisite = { focus = VAL_call_the_banners focus = VAL_prioritize_northern_safety }
         
         icon = GFX_unknown_focus
         
@@ -236,7 +242,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_dwarven_mining_expertise
 		prerequisite = { focus = VAL_envoys_to_the_lonely_mountain }
         
@@ -254,6 +260,9 @@ focus_tree = {
         }
         completion_reward = {
 			# resource extraction  
+            set_technology = {
+                dwarven_mining = 1
+            }
 		}
     }
 
@@ -326,6 +335,10 @@ focus_tree = {
 		prerequisite = { focus = VAL_grimbeorns_rule }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_the_northern_frontiers
+        }
         
         x = -2
         y = 1
@@ -343,14 +356,20 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_strike_first
 		prerequisite = { focus = VAL_no_peace_with_the_enemy }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_fortify_the_western_front
+        }
         
         x = 4
         y = 5
+
+        will_lead_to_war_with = GUN
 
         cost = 5
         ai_will_do = { factor = 1 }
@@ -361,10 +380,14 @@ focus_tree = {
         }
         completion_reward = {
 			# wargoal against GUN  
+            create_wargoal = {
+                target = GUN
+                type = puppet_wargoal_focus
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_call_the_banners
 		prerequisite = { focus = VAL_invite_rhosgobel }
 		prerequisite = { focus = VAL_invite_gladden }
@@ -383,6 +406,37 @@ focus_tree = {
         }
         completion_reward = {
 			# spawn div on every anduin state controlled by us or an ally  
+            custom_effect_tooltip = VAL_call_the_banners_tt
+            hidden_effect = {
+                division_template = {
+                    name = "Summoned Banner"
+                    regiments = {
+                        infantry = { x = 0 y = 0 }
+                        infantry = { x = 0 y = 1 }
+                        infantry = { x = 0 y = 2 }
+                        infantry = { x = 1 y = 0 }
+                        infantry = { x = 1 y = 1 }
+                    }
+                    support = {
+                        artillery = { x = 0 y = 0 }
+                    }
+                }
+                every_state = {
+                    limit = {
+                        impassable = no
+                        controller = {
+                            OR = {
+                                tag = ROOT
+                                is_ally_with = ROOT
+                            }
+                        }
+                    }
+                    create_unit = {
+                        division = "name = \"Summoned Banner\" division_template = \"Summoned Banner\" start_experience_factor = 0.25"
+                        owner = ROOT
+                    }
+                }
+            }
 		}
     }
 
@@ -407,7 +461,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_honeycake_traditions
 		prerequisite = { focus = VAL_lord_of_the_upper_vales }
         
@@ -425,6 +479,7 @@ focus_tree = {
         }
         completion_reward = {
 			# add stability  
+            add_stability = 0.1
 		}
     }
 
@@ -433,6 +488,11 @@ focus_tree = {
 		prerequisite = { focus = VAL_blood_and_honey }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_the_council_of_elders
+            focus = VAL_frothkar_the_man_of_stone
+        }
         
         x = 10
         y = 4
@@ -454,6 +514,10 @@ focus_tree = {
 		prerequisite = { focus = VAL_empower_the_mountain_clans }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_antagonize_the_dwarves
+        }
         
         x = 15
         y = 7
@@ -535,7 +599,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_diplomatic_benefits
 		prerequisite = { focus = VAL_oaths_of_mutual_defense }
         
@@ -553,10 +617,14 @@ focus_tree = {
         }
         completion_reward = {
 			# get civs, PP etc.  
+            add_timed_idea = {
+                idea = VAL_diplomatic_benefits
+                days = 365
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_unite_the_cause
 		prerequisite = { focus = VAL_diplomatic_benefits }
         
@@ -574,6 +642,10 @@ focus_tree = {
         }
         completion_reward = {
 			# create faction  
+            create_faction_from_template = {
+                template = faction_template_generic
+                name = "Anduin Assembly"
+            }
 		}
     }
 
@@ -649,6 +721,10 @@ focus_tree = {
 		prerequisite = { focus = VAL_no_peace_with_the_enemy }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_strike_first
+        }
         
         x = 2
         y = 5
@@ -665,7 +741,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_secure_support_from_angmar
 		prerequisite = { focus = VAL_fortify_the_western_front }
         
@@ -683,10 +759,11 @@ focus_tree = {
         }
         completion_reward = {
 			# ask ANG for guarantees  
+            ANG = { ask_for_guarantee_of_independence = yes }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_join_erebor
 		prerequisite = { focus = VAL_steel_for_grain }
         
@@ -704,6 +781,7 @@ focus_tree = {
         }
         completion_reward = {
 			# ask ERE to join faction  
+            ERE = { ask_to_join_faction = yes }
 		}
     }
 
@@ -770,7 +848,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_great_library_of_greylin
 		prerequisite = { focus = VAL_the_north_stands_united }
         
@@ -788,6 +866,14 @@ focus_tree = {
         }
         completion_reward = {
 			# library + research slot  
+            68 = {
+                add_building_construction = {
+                    type = library
+                    level = 1
+                    instant_build = yes
+                }
+            }
+            add_research_slot = 1
 		}
     }
 
@@ -909,6 +995,8 @@ focus_tree = {
         }
         completion_reward = {
 			# gain stability and some ws  
+            add_stability = 0.05
+            add_war_support = 0.05
 		}
     }
 
@@ -938,6 +1026,11 @@ focus_tree = {
 		prerequisite = { focus = VAL_blood_and_honey }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_skalor_the_usurper
+            focus = VAL_frothkar_the_man_of_stone
+        }
         
         x = 13
         y = 4
@@ -959,6 +1052,11 @@ focus_tree = {
 		prerequisite = { focus = VAL_blood_and_honey }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_the_council_of_elders
+            focus = VAL_skalor_the_usurper
+        }
         
         x = 16
         y = 4
@@ -1018,7 +1116,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_scorch_resisting_villages
 		prerequisite = { focus = VAL_skalor_the_usurper }
         
@@ -1036,6 +1134,9 @@ focus_tree = {
         }
         completion_reward = {
 			# less stab and ws, more PP  
+            add_stability = -0.1
+            add_war_support = -0.1
+            add_political_power = 150
 		}
     }
 
@@ -1081,11 +1182,13 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_war_with_gladden
 		prerequisite = { focus = VAL_subjugate_gladden }
         
         icon = GFX_unknown_focus
+
+        will_lead_to_war_with = GLD
         
         x = 9
         y = 10
@@ -1099,10 +1202,14 @@ focus_tree = {
         }
         completion_reward = {
 			# wargoal  
+            create_wargoal = {
+                target = GLD
+                type = puppet_wargoal_focus
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = { 
         id = VAL_war_with_rhosgobel
 		prerequisite = { focus = VAL_subjugate_rhosgobel }
         
@@ -1113,6 +1220,8 @@ focus_tree = {
 
         cost = 5
         ai_will_do = { factor = 1 }
+
+        will_lead_to_war_with = RGL
         
         search_filters = { }
         available = {
@@ -1120,6 +1229,10 @@ focus_tree = {
         }
         completion_reward = {
 			# wargoal  
+            create_wargoal = {
+                target = RGL
+                type = puppet_wargoal_focus
+            }
 		}
     }
 
@@ -1144,7 +1257,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_invite_forodwaith_settlers
 		prerequisite = { focus = VAL_empower_the_mountain_clans }
         
@@ -1162,6 +1275,10 @@ focus_tree = {
         }
         completion_reward = {
 			# gain some mp  
+            add_timed_idea = {
+                idea = ANG_forodwaith_settlers
+                days = 365
+            }
 		}
     }
 
@@ -1170,6 +1287,10 @@ focus_tree = {
 		prerequisite = { focus = VAL_empower_the_mountain_clans }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = VAL_look_west
+        }
         
         x = 17
         y = 7
@@ -1228,7 +1349,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_new_research_slot
 		prerequisite = { focus = VAL_glorious_triumph }
         
@@ -1246,6 +1367,7 @@ focus_tree = {
         }
         completion_reward = {
 			# reseach slot  
+            add_research_slot = 1
 		}
     }
 
@@ -1271,7 +1393,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_the_northern_maesters
 		prerequisite = { focus = VAL_greylin_fortress }
         
@@ -1289,10 +1411,11 @@ focus_tree = {
         }
         completion_reward = {
 			# gain research slot  
+            add_research_slot = 1
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_improve_blacksmithing
 		prerequisite = { focus = VAL_the_northern_maesters }
         
@@ -1310,10 +1433,11 @@ focus_tree = {
         }
         completion_reward = {
 			# mils  
+            random_state_add_building_slot_and_mil_x3 = yes
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_expand_workshops
 		prerequisite = { focus = VAL_the_northern_maesters }
         
@@ -1331,10 +1455,11 @@ focus_tree = {
         }
         completion_reward = {
 			# civs  
+            random_state_add_building_slot_and_civ_x3 = yes
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = VAL_relocate_scholars_north
 		prerequisite = { focus = VAL_subjugate_rhosgobel }
 		prerequisite = { focus = VAL_subjugate_gladden }
@@ -1353,6 +1478,7 @@ focus_tree = {
         }
         completion_reward = {
 			# research slot  
+            add_research_slot = 1
 		}
     }
 
