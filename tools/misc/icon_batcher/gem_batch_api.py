@@ -62,6 +62,7 @@ def retrieve(job):
 
         for line in file_content.splitlines():
             if line:
+                print(line)
                 parsed_response = json.loads(line)
                 for part in parsed_response['response']['candidates'][0]['content']['parts']:
                     item_counter += 1
