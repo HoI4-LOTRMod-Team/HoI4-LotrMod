@@ -111,8 +111,9 @@ def upload_file(filepath, name):
 def create_job(json_filepath, model_name, job_name="my-batch-job"):
     print(f"Uploading JSONL file: {json_filepath}")
     batch_input_file = client.files.upload(
-        file=json_filepath
-        )
+        file=json_filepath,
+        config=types.UploadFileConfig(display_name=job_name+"-json")
+    )
     print(f"Uploaded JSONL file: {batch_input_file.name}")
 
     print("\nCreating batch job...")
