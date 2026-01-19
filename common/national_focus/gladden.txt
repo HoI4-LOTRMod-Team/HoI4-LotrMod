@@ -20,7 +20,7 @@ focus_tree = {
 
 	
 
-    focus = { # TODO
+    focus = {
         id = GLD_ascend_the_carrock
 		prerequisite = { focus = GLD_the_west_bank }
         
@@ -37,11 +37,17 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# ???  
+            268 = {
+                add_building_construction = {
+                    type = castle
+                    level = 1
+                    province = 9268
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_tame_the_eagles_of_the_eyrie
 		prerequisite = { focus = GLD_ascend_the_carrock }
         
@@ -59,10 +65,20 @@ focus_tree = {
         }
         completion_reward = {
 			# unlock eagle tech  
+            set_technology = {
+				eagle_domestication = 1
+				fighter_eagle = 1
+			}
+            custom_effect_tooltip = lth_eaglesofmanwe_tt
+            add_equipment_to_stockpile = {
+    			type = fighter_eagle_airframe_0
+    			amount = 10
+    			producer = GLD
+			}
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_eyes_of_the_mountain
 		prerequisite = { focus = GLD_tame_the_eagles_of_the_eyrie }
         
@@ -80,10 +96,18 @@ focus_tree = {
         }
         completion_reward = {
 			# intel  
+            268 = {
+                add_building_construction = {
+                    type = radar_station
+                    level = 3
+                    instant_build = yes
+                }
+            }
+            increase_eagles_cap_5 = yes
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_tribute_to_gwaihir
 		prerequisite = { focus = GLD_tame_the_eagles_of_the_eyrie }
         
@@ -99,7 +123,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            add_ideas = GLD_great_eagle_gwaihir
+            increase_eagles_cap_5 = yes
+        }
     }
 
     focus = { # TODO
@@ -121,11 +148,18 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_purge_the_undercity
 		prerequisite = { focus = GLD_the_mountain_problem }
         
         icon = GFX_unknown_focus
+
+        will_lead_to_war_with = GOB
+
+        mutually_exclusive = {
+            focus = GLD_parley_with_the_goblins
+            focus = GLD_fortify_the_mountain_passes
+        }
         
         x = -14
         y = 4
@@ -139,14 +173,23 @@ focus_tree = {
         }
         completion_reward = {
 			# wargoal against GOB  
+            create_wargoal = {
+                target = GOB
+                type = annex_everything
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_fortify_the_mountain_passes
 		prerequisite = { focus = GLD_the_mountain_problem }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GLD_parley_with_the_goblins
+            focus = GLD_purge_the_undercity
+        }
         
         x = -16
         y = 4
@@ -160,6 +203,17 @@ focus_tree = {
         }
         completion_reward = {
 			# add fortifications, make it less likely for goblin raids to succeed  
+            197 = {
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = GOB
+                    }
+                }
+            }
 		}
     }
 
@@ -168,6 +222,11 @@ focus_tree = {
 		prerequisite = { focus = GLD_the_mountain_problem }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GLD_purge_the_undercity
+            focus = GLD_fortify_the_mountain_passes
+        }
         
         x = -12
         y = 4
@@ -184,11 +243,13 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_sack_of_the_hill_men
 		prerequisite = { focus = GLD_the_backdoor_to_the_west }
         
         icon = GFX_unknown_focus
+
+        will_lead_to_war_with = RHD
         
         x = -11
         y = 6
@@ -202,6 +263,10 @@ focus_tree = {
         }
         completion_reward = {
 			# wargoal against RHD  
+            create_wargoal = {
+                target = RHD
+                type = puppet_wargoal_focus
+            }
 		}
     }
 
@@ -249,7 +314,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_assert_the_high_chief
 		prerequisite = { focus = GLD_lords_of_the_gladden_fields }
         
@@ -267,6 +332,7 @@ focus_tree = {
         }
         completion_reward = {
 			# give leader a trait  
+            add_country_leader_trait = high_chief
 		}
     }
 
@@ -289,10 +355,9 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_arms_before_comfort
-		prerequisite = { focus = GLD_middle_of_the_road }
-		prerequisite = { focus = GLD_the_strong_lead_the_weak }
+		prerequisite = { focus = GLD_middle_of_the_road focus = GLD_the_strong_lead_the_weak }
         
         icon = GFX_unknown_focus
         
@@ -308,14 +373,21 @@ focus_tree = {
         }
         completion_reward = {
 			# mils  
+            add_stability = -0.05
+            random_state_add_building_slot_and_mil_x2 = yes
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_the_strong_lead_the_weak
 		prerequisite = { focus = GLD_assert_the_high_chief }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GLD_middle_of_the_road
+            focus = GLD_among_the_free_peoples
+        }
         
         x = -8
         y = 2
@@ -329,6 +401,14 @@ focus_tree = {
         }
         completion_reward = {
 			# belli support  
+            add_popularity = {
+                ideology = belligerent
+                popularity = 0.17
+            }
+            add_timed_idea = {
+                idea = belligerent_influence
+                days = 270
+            }
 		}
     }
 
@@ -351,7 +431,7 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_lords_of_the_gladden_fields
         icon = GFX_unknown_focus
         
@@ -367,6 +447,7 @@ focus_tree = {
         }
         completion_reward = {
 			# give PP, maybe smth with advisors  
+            add_political_power = 100
 		}
     }
 
@@ -375,6 +456,10 @@ focus_tree = {
 		prerequisite = { focus = GLD_war_councils_of_gladden }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GLD_unify_the_vales
+        }
         
         x = -10
         y = 4
@@ -389,7 +474,7 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_the_west_bank
 		prerequisite = { focus = GLD_lords_of_the_gladden_fields }
         
@@ -407,10 +492,13 @@ focus_tree = {
         }
         completion_reward = {
 			# add infra to west bank  
+            197 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+            70 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+            #195 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_the_east_bank
 		prerequisite = { focus = GLD_lords_of_the_gladden_fields }
         
@@ -428,6 +516,13 @@ focus_tree = {
         }
         completion_reward = {
 			# infra to east bank  
+            71 = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 2
+                    instant_build = yes
+                }
+            }
 		}
     }
 
@@ -495,6 +590,10 @@ focus_tree = {
 		prerequisite = { focus = GLD_deal_with_the_great_spiders }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GLD_burn_the_nests
+        }
         
         x = 13
         y = 3
@@ -516,6 +615,10 @@ focus_tree = {
 		prerequisite = { focus = GLD_deal_with_the_great_spiders }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GLD_lifestock_for_peace
+        }
         
         x = 15
         y = 3
@@ -614,7 +717,7 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_skirmish_doctrine
 		prerequisite = { focus = GLD_riders_of_the_gladden }
 		prerequisite = { focus = GLD_horse_breeding_clans }
@@ -633,6 +736,10 @@ focus_tree = {
         }
         completion_reward = {
 			# mastery doctrine  
+            add_mastery = {
+                amount = 150
+                grand_doctrine = swift_strike_doctrine
+            }
 		}
     }
 
@@ -657,11 +764,16 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_among_the_free_peoples
 		prerequisite = { focus = GLD_assert_the_high_chief }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GLD_middle_of_the_road
+            focus = GLD_the_strong_lead_the_weak
+        }
         
         x = 4
         y = 2
@@ -675,14 +787,27 @@ focus_tree = {
         }
         completion_reward = {
 			# coop support  
+            add_popularity = {
+                ideology = cooperative
+                popularity = 0.17
+            }
+            add_timed_idea = {
+                idea = cooperative_influence
+                days = 270
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_middle_of_the_road
 		prerequisite = { focus = GLD_assert_the_high_chief }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GLD_the_strong_lead_the_weak
+            focus = GLD_among_the_free_peoples
+        }
         
         x = -2
         y = 2
@@ -694,10 +819,19 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            add_popularity = {
+                ideology = unaligned
+                popularity = 0.17
+            }
+            add_timed_idea = {
+                idea = unaligned_influence
+                days = 270
+            }
+        }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_honor_old_friendships
 		prerequisite = { focus = GLD_among_the_free_peoples }
         
@@ -715,10 +849,23 @@ focus_tree = {
         }
         completion_reward = {
 			# improve opinions  
+            add_political_power = 75
+            RGL = {
+                add_opinion_modifier = {
+                    target = ROOT
+                    modifier = medium_increase
+                }
+            }
+            VAL = {
+                add_opinion_modifier = {
+                    target = ROOT
+                    modifier = medium_increase
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_reach_out_to_rohan
 		prerequisite = { focus = GLD_honor_old_friendships }
 		prerequisite = { focus = GLD_legacy_of_the_eotheod }
@@ -737,10 +884,11 @@ focus_tree = {
         }
         completion_reward = {
 			# emissaries to rohan  
+            ROH = { send_delegation_to_country = yes }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_send_riders_to_rohan
 		prerequisite = { focus = GLD_reach_out_to_rohan }
         
@@ -754,14 +902,27 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_equipment = {
+                light_cavalry_chassis > 200
+            }
         }
         completion_reward = {
 			# send division to ROH  
+            add_equipment_to_stockpile = {
+                type = light_cavalry_chassis
+                amount = 200
+            }
+            hidden_effect = {
+                ROH = {
+                    country_event = { id = anduin.108 days = 3 }
+                }
+            }
+            custom_effect_tooltip = GLD_send_riders_to_rohan_tt
+
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_the_council_of_the_vales
 		prerequisite = { focus = GLD_honor_old_friendships }
         
@@ -779,10 +940,20 @@ focus_tree = {
         }
         completion_reward = {
 			# switch to coop  
+            set_politics = {
+                ruling_party = cooperative
+            }
+            if = {
+                limit = { NOT = { is_in_faction = yes } }
+                create_faction_from_template = {
+                    template = faction_template_generic
+                    name = "Anduin Alliance"
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_approach_rhosgobel
 		prerequisite = { focus = GLD_the_council_of_the_vales }
         
@@ -800,10 +971,11 @@ focus_tree = {
         }
         completion_reward = {
 			# invite RGL to faction  
+            RGL = { invite_to_faction = yes }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_approach_the_beornings
 		prerequisite = { focus = GLD_the_council_of_the_vales }
         
@@ -821,10 +993,11 @@ focus_tree = {
         }
         completion_reward = {
 			# invite VAL to faction  
+            VAL = { invite_to_faction = yes }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_emissaries_to_the_woods
 		prerequisite = { focus = GLD_honor_old_friendships }
         
@@ -842,10 +1015,11 @@ focus_tree = {
         }
         completion_reward = {
 			# send delegation to MIR  
+            MIR = { send_delegation_to_country = yes }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_in_pursuit_of_a_throne
 		prerequisite = { focus = GLD_the_council_of_the_vales }
         
@@ -863,10 +1037,11 @@ focus_tree = {
         }
         completion_reward = {
 			# gain idea with stuff  
+            add_ideas = GLD_forming_a_kingdom
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_offer_rhosgobel_protection
 		prerequisite = { focus = GLD_approach_rhosgobel }
         
@@ -884,6 +1059,7 @@ focus_tree = {
         }
         completion_reward = {
 			# ask RGL to become puppet  
+            offer_to_become_puppet = yes
 		}
     }
 
@@ -948,10 +1124,9 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_long_term_growth
-		prerequisite = { focus = GLD_middle_of_the_road }
-		prerequisite = { focus = GLD_among_the_free_peoples }
+		prerequisite = { focus = GLD_middle_of_the_road focus = GLD_among_the_free_peoples }
         
         icon = GFX_unknown_focus
         
@@ -967,10 +1142,12 @@ focus_tree = {
         }
         completion_reward = {
 			# civs  
+            random_state_add_building_slot_and_civ_x2 = yes
+            add_war_support = -0.05
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_cultivate_the_foodplains
 		prerequisite = { focus = GLD_long_term_growth }
         
@@ -988,10 +1165,18 @@ focus_tree = {
         }
         completion_reward = {
 			# farm + civs  
+            every_core_state = {
+                random_select_amount = 2
+                add_building_construction = {
+                    type = synthetic_refinery
+                    level = 1
+                    instant_build = yes
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_expand_the_rivermarkets
 		prerequisite = { focus = GLD_cultivate_the_foodplains }
         
@@ -1007,7 +1192,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            70 = {
+                add_building_construction = {
+                    type = markets
+                    level = 1
+                    instant_build = yes
+                }
+            }
+        }
     }
 
     focus = { # TODO
@@ -1029,7 +1222,7 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_eastside_forges
 		prerequisite = { focus = GLD_war_camp_economy }
         
@@ -1045,7 +1238,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            71 = {
+                add_building_construction = {
+                    type = foundry
+                    level = 1
+                    instant_build = yes
+                }
+            }
+        }
     }
 
     focus = { # TODO
@@ -1054,6 +1255,10 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
+        mutually_exclusive = {
+            focus = GLD_bolder_not_safer
+        }
+
         x = -8
         y = 4
 
@@ -1086,11 +1291,13 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_attack_the_beornings
 		prerequisite = { focus = GLD_test_the_borders }
         
         icon = GFX_unknown_focus
+
+        will_lead_to_war_with = VAL
         
         x = -9
         y = 6
@@ -1104,14 +1311,20 @@ focus_tree = {
         }
         completion_reward = {
 			# war against VAL  
+            create_wargoal = {
+                target = VAL
+                type = puppet_wargoal_focus
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_attack_rhosgobel
 		prerequisite = { focus = GLD_test_the_borders }
         
         icon = GFX_unknown_focus
+
+        will_lead_to_war_with = RGL
         
         x = -7
         y = 6
@@ -1125,6 +1338,10 @@ focus_tree = {
         }
         completion_reward = {
 			# war against RGL  
+            create_wargoal = {
+                target = RGL
+                type = puppet_wargoal_focus
+            }
 		}
     }
 
@@ -1187,7 +1404,7 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_expand_the_nest
 		prerequisite = { focus = GLD_tame_the_eagles_of_the_eyrie }
         
@@ -1205,6 +1422,14 @@ focus_tree = {
         }
         completion_reward = {
 			# big airport and extra capacity  
+            268 = {
+                add_building_construction = {
+                    type = air_base
+                    level = 4
+                    instant_build = yes
+                }
+            }
+            increase_eagles_cap_15 = yes
 		}
     }
 
@@ -1226,6 +1451,11 @@ focus_tree = {
         }
         completion_reward = {
 			# send event asking for elven bows  
+            MIR = {
+                country_event = { id = anduin.113 days = 1 }
+            }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = anduin.114.a
 		}
     }
 
@@ -1248,6 +1478,12 @@ focus_tree = {
         }
         completion_reward = {
 			# send event to Rohan, let them choose a monarch for us  
+            hidden_effect = {
+                ROH = {
+                    country_event = { id = anduin.109 days = 1 }
+                }
+            }
+            custom_effect_tooltip = GLD_request_an_heir_tt
 		}
     }
 
@@ -1269,6 +1505,10 @@ focus_tree = {
         }
         completion_reward = {
 			# change name and flag and stuff  
+            swap_ideas = {
+                remove_idea = GLD_forming_a_kingdom
+                add_idea = GLD_kingdom_of_gladden
+            }
 		}
     }
 }

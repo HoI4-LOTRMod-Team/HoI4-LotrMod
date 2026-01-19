@@ -531,45 +531,377 @@ country_event = {
 
 # RGL: claims states
 country_event = {
-    id = anduin.107
-    title = anduin.107.t
-    desc = anduin.107.desc
+	id = anduin.107
+	title = anduin.107.t
+	desc = anduin.107.desc
 
-    is_triggered_only = yes
+	is_triggered_only = yes
 
-    option = {
-        ai_chance = {
-            base = 1
-        }
-        name = anduin.107.a
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.107.a
 		232 = {
 			add_claim_by = RGL
 		}
 		85 = {
 			add_claim_by = RGL
 		}
-    }
+	}
 
-    option = {
-        ai_chance = {
-            base = 1
-        }
-        name = anduin.107.b
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.107.b
 		every_state = {
 			limit = {
 				is_core_of = GLD
 			}
 			add_claim_by = RGL
 		}
-    }
+	}
 
-    option = {
-        ai_chance = {
-            base = 1
-        }
-        name = anduin.107.c
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.107.c
 		87 = {
 			add_claim_by = RGL
 		}
-    }
+	}
+}
+
+
+# GLD sends riders to ROH
+country_event = {
+	id = anduin.108
+	title = anduin.108.t
+	desc = anduin.108.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.108.a
+
+		division_template = {
+			name = "Riders of Gladden"
+			override_model = GLD_light_cavalry_entity
+			regiments = { 
+				light_cavalry = { x = 0 y = 0 }
+				light_cavalry = { x = 0 y = 1 }
+				light_cavalry = { x = 0 y = 2 }
+				light_cavalry = { x = 1 y = 0 }
+				light_cavalry = { x = 1 y = 1 }
+				light_cavalry = { x = 1 y = 2 }
+			}
+			support = {
+				recon = { x = 0 y = 0 }
+			}
+		}
+		capital_scope = {
+			create_unit = {
+				division = "name = \"Riders of Gladden\" division_template = \"Riders of Gladden\" start_experience_factor = 0.5"
+    			owner = ROH
+				allow_spawning_on_enemy_provs = no
+				count = 2
+			}
+		}
+
+		GLD = { increase_our_opinion_of_them_large = yes }
+	}
+}
+
+
+# GLD asks ROH for heir
+country_event = {
+	id = anduin.109
+	title = anduin.109.t
+	desc = anduin.109.desc
+
+	is_triggered_only = yes
+
+	# Eowyn
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		trigger = {
+			ROH_eowyn = {
+				is_alive = yes
+				NOT = { is_country_leader = yes }
+			}
+			NOT = { has_completed_focus = ROH_settle_the_succession }
+		}
+		name = anduin.109.a
+
+		ROH = {
+			ROH_eowyn = {
+				lotr_retire_character = yes	
+			}
+			hidden_effect = {
+				rohan_lords_update_regions = yes
+			}
+		}
+
+		hidden_effect = {
+			FROM = {
+				country_event = { id = anduin.110 days = 3 }
+			}
+		}
+		custom_effect_tooltip = anduin.110.a
+	}
+
+	# Dernfa
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.109.b
+
+		ROH = {
+			ROH_dernfa = {
+				lotr_retire_character = yes	
+			}
+			hidden_effect = {
+				rohan_lords_update_regions = yes
+			}
+		}
+
+		hidden_effect = {
+			FROM = {
+				country_event = { id = anduin.112 days = 3 }
+			}
+		}
+		custom_effect_tooltip = anduin.112.a
+	}
+
+	# Nobody
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.109.c
+		hidden_effect = {
+			FROM = {
+				country_event = { id = anduin.111 days = 3 }
+			}
+		}
+		custom_effect_tooltip = anduin.111.a
+		add_political_power = -100
+	}
+}
+
+
+# ROH sends Eowyn
+country_event = {
+	id = anduin.110
+	title = anduin.110.t
+	desc = anduin.110.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.110.a
+
+		GLD = {
+			GLD_eowyn = {
+				add_country_leader_role = {
+					promote_leader = yes
+					country_leader = {
+						traits = { shieldmaiden_of_rohan righteous_protector }
+						ideology = mercantile
+					}
+				}
+				add_country_leader_role = {
+					promote_leader = yes
+					country_leader = {
+						traits = { shieldmaiden_of_rohan righteous_protector }
+						ideology = expansionist
+					}
+				}
+				add_country_leader_role = {
+					promote_leader = yes
+					country_leader = {
+						traits = { shieldmaiden_of_rohan righteous_protector }
+						ideology = vigilant
+					}
+				}
+			}
+			add_opinion_modifier = {
+				target = ROH
+				modifier = huge_increase
+			}
+			ROH = {
+				swear_secret_fealty = yes
+			}
+		}
+	}
+}
+
+
+# ROH sends nobody
+country_event = {
+	id = anduin.111
+	title = anduin.111.t
+	desc = anduin.111.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.111.a
+		GLD = {
+			add_opinion_modifier = {
+				target = ROH
+				modifier = medium_decrease
+			}
+		}
+	}
+}
+
+
+# ROH sends Dernfa
+country_event = {
+	id = anduin.112
+	title = anduin.112.t
+	desc = anduin.112.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.112.a
+
+		GLD = {
+			GLD_dernfa = {
+				add_country_leader_role = {
+					promote_leader = yes
+					country_leader = {
+						traits = { financial_expert }
+						ideology = mercantile
+					}
+				}
+				add_country_leader_role = {
+					promote_leader = yes
+					country_leader = {
+						traits = { financial_expert }
+						ideology = expansionist
+					}
+				}
+				add_country_leader_role = {
+					promote_leader = yes
+					country_leader = {
+						traits = { financial_expert }
+						ideology = vigilant
+					}
+				}
+			}
+			add_opinion_modifier = {
+				target = ROH
+				modifier = small_increase
+			}
+		}
+	}
+}
+
+
+# MIR asked to send elven bows
+country_event = {
+	id = anduin.113
+	title = anduin.113.t
+	desc = anduin.113.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.113.a
+		hidden_effect = {
+			FROM = {
+				country_event = { id = anduin.114 days = 3 }
+			}
+		}
+		event_option_tooltip = anduin.114.a
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.113.b
+		hidden_effect = {
+			FROM = {
+				country_event = { id = anduin.115 days = 3 }
+			}
+		}
+		add_political_power = -35
+	}
+}
+
+
+# MIR accepts to send elven bows
+country_event = {
+	id = anduin.114
+	title = anduin.114.t
+	desc = anduin.114.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.114.a
+		if = {
+			limit = {
+				date < "3020.1.1"
+			}
+			GLD = {
+				set_technology = {
+					elven_bows = 1
+				}
+			}
+		}
+		else = {
+			GLD = {
+				set_technology = {
+					elven_bows = 1
+					elven_bows2 = 1
+				}
+			}
+		}
+	}
+}
+
+
+# MIR refuses to send elven bows
+country_event = {
+	id = anduin.115
+	title = anduin.115.t
+	desc = anduin.115.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = anduin.115.a
+		MIR = { decrease_our_opinion_of_them_small = yes }
+	}
 }
