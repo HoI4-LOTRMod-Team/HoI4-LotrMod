@@ -43,11 +43,8 @@ def update_job_status(job):
 def retrieve(job):
     if job.state.name == 'JOB_STATE_SUCCEEDED':
         # 1. Setup the directory structure
-        # Path.cwd().parent goes "one out" from the working directory
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         output_dir = Path.cwd().parent / "retrievals" / timestamp
-        
-        # Create directories if they don't exist (parents=True creates retrievals/ too)
         output_dir.mkdir(parents=True, exist_ok=True)
         
         result_file_name = job.dest.file_name
@@ -61,20 +58,39 @@ def retrieve(job):
         item_counter = 0
 
         for line in file_content.splitlines():
-            if line:
-                print(line)
-                parsed_response = json.loads(line)
-                for part in parsed_response['response']['candidates'][0]['content']['parts']:
+            if not line.strip():
+                continue
+                
+            parsed_response = json.loads(line)
+            request_key = parsed_response.get('key', 'unknown_request')
+
+            # 2. Check for Errors in the response line
+            if 'error' in parsed_response:
+                err_msg = parsed_response['error'].get('message', 'Unknown error')
+                err_code = parsed_response['error'].get('code', 'N/A')
+                print(f"⚠️ Error in {request_key}: [{err_code}] {err_msg}")
+                continue # Skip to the next line
+
+            # 3. Process Successful Response
+            # Safely navigate the nested dictionary
+            try:
+                candidates = parsed_response.get('response', {}).get('candidates', [])
+                if not candidates:
+                    print(f"ℹ️ No candidates found for {request_key}")
+                    continue
+
+                print(f"✅ Processing success: {request_key}")
+                
+                for part in candidates[0].get('content', {}).get('parts', []):
                     item_counter += 1
                     
                     # Handle Text Content
                     if 'text' in part:
                         filename = f"output_text_{item_counter}.md"
                         file_path = output_dir / filename
-                        
                         with open(file_path, "w", encoding="utf-8") as f:
                             f.write(part['text'])
-                        print(f"Saved text to: {file_path}")
+                        print(f"   -> Saved text to: {filename}")
 
                     # Handle Image/Multimodal Content
                     elif 'inlineData' in part:
@@ -84,10 +100,12 @@ def retrieve(job):
                         
                         filename = f"output_file_{item_counter}.{ext}"
                         file_path = output_dir / filename
-                        
                         with open(file_path, "wb") as f:
                             f.write(data)
-                        print(f"Saved media to: {file_path}")
+                        print(f"   -> Saved media ({mime}) to: {filename}")
+
+            except KeyError as e:
+                print(f"ERR: Unexpected format in {request_key}: Missing key {e}")
 
 
 
