@@ -129,7 +129,7 @@ focus_tree = {
         }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_the_mountain_problem
 		prerequisite = { focus = GLD_the_west_bank }
         
@@ -145,7 +145,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            # TODO: railway?
+        }
     }
 
     focus = {
@@ -217,7 +219,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_parley_with_the_goblins
 		prerequisite = { focus = GLD_the_mountain_problem }
         
@@ -240,6 +242,7 @@ focus_tree = {
         }
         completion_reward = {
 			# send event to GOB to pay them off for no raids  
+            # TODO: requires GOB raids to be implemented
 		}
     }
 
@@ -270,7 +273,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_the_backdoor_to_the_west
 		prerequisite = { focus = GLD_parley_with_the_goblins }
 		prerequisite = { focus = GLD_bolder_not_safer }
@@ -289,10 +292,11 @@ focus_tree = {
         }
         completion_reward = {
 			# borrow high pass from GOB  
+            # TODO: requires GOB lend out mechanic to be implemented.
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_eagle_patrols
 		prerequisite = { focus = GLD_fortify_the_mountain_passes }
 		prerequisite = { focus = GLD_eyes_of_the_mountain }
@@ -311,6 +315,7 @@ focus_tree = {
         }
         completion_reward = {
 			# make it less likely for goblin raids to succeed (+ something else?)  
+            # TODO: requires GOB raids to be implemented
 		}
     }
 
@@ -336,7 +341,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_war_councils_of_gladden
 		prerequisite = { focus = GLD_the_strong_lead_the_weak }
         
@@ -352,7 +357,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            set_politics = {
+                ruling_party = belligerent
+            }
+            add_timed_idea = {
+                idea = generic_military_reorganization
+                days = 200
+            }
+        }
     }
 
     focus = {
@@ -451,7 +464,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_bolder_not_safer
 		prerequisite = { focus = GLD_war_councils_of_gladden }
         
@@ -471,7 +484,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            add_ideas = GLD_crossing_of_the_misty_mountains
+        }
     }
 
     focus = {
@@ -526,7 +541,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_deal_with_the_great_spiders
 		prerequisite = { focus = GLD_the_east_bank }
         
@@ -542,10 +557,16 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            add_intel = {
+                target = SPI
+                army_intel = 0.15
+                civilian_intel = 0.15
+            }
+        }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_legacy_of_the_eotheod
 		prerequisite = { focus = GLD_the_east_bank }
         
@@ -561,10 +582,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            add_tech_bonus = {
+                name = special_bonus
+                uses = 2
+                bonus = 0.35
+                category = lotr_cavalry
+            }
+        }
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_secure_the_forest_edge
 		prerequisite = { focus = GLD_deal_with_the_great_spiders }
         
@@ -582,10 +610,24 @@ focus_tree = {
         }
         completion_reward = {
 			# add forts  
+            every_core_state = {
+                limit = {
+                    is_controlled_by = ROOT
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = SPI
+                    }
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_lifestock_for_peace
 		prerequisite = { focus = GLD_deal_with_the_great_spiders }
         
@@ -607,10 +649,16 @@ focus_tree = {
         }
         completion_reward = {
 			# send event to SPI offering food ine xchange for NA-pact  
+            hidden_effect = {
+                SPI = {
+                    country_event = { id = anduin.101 days = 3 }
+                }
+            }
+            custom_effect_tooltip = GLD_lifestock_for_peace_tt
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_burn_the_nests
 		prerequisite = { focus = GLD_deal_with_the_great_spiders }
         
@@ -632,14 +680,17 @@ focus_tree = {
         }
         completion_reward = {
 			# raid against SPI  
+            custom_effect_tooltip = GLD_burn_the_nests_tt
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_attack_spiders
 		prerequisite = { focus = GLD_burn_the_nests }
         
         icon = GFX_unknown_focus
+
+        will_lead_to_war_with = SPI
         
         x = 15
         y = 5
@@ -653,10 +704,14 @@ focus_tree = {
         }
         completion_reward = {
 			# wargoal against SPI  
+            create_wargoal = {
+                target = SPI
+                type = annex_everything
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_trade_for_spidersilk
 		prerequisite = { focus = GLD_lifestock_for_peace }
         
@@ -674,10 +729,16 @@ focus_tree = {
         }
         completion_reward = {
 			# get some string  
+            SPI = {
+                country_event = { id = anduin.102 days = 3 }
+            }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = anduin.103.a
+
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_riders_of_the_gladden
 		prerequisite = { focus = GLD_legacy_of_the_eotheod }
         
@@ -695,10 +756,35 @@ focus_tree = {
         }
         completion_reward = {
 			# gain some cav divs  
+            custom_effect_tooltip = "Gain §Y2 Light Cavalry divisions (12 width)§!."
+            hidden_effect = {
+                division_template = {
+                    name = "Riders of Gladden"
+                    regiments = { 
+                        light_cavalry = { x = 0 y = 0 }
+                        light_cavalry = { x = 0 y = 1 }
+                        light_cavalry = { x = 0 y = 2 }
+                        light_cavalry = { x = 1 y = 0 }
+                        light_cavalry = { x = 1 y = 1 }
+                        light_cavalry = { x = 1 y = 2 }
+                    }
+                    support = {
+                        recon = { x = 0 y = 0 }
+                    }
+                }
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"Riders of Gladden\" division_template = \"Riders of Gladden\" start_experience_factor = 0.5"
+                        owner = GLD
+                        allow_spawning_on_enemy_provs = no
+                        count = 2
+                    }
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_thunder_on_the_plains
 		prerequisite = { focus = GLD_skirmish_doctrine }
         
@@ -714,7 +800,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            add_unit_bonus = {
+                category_cavalry = {
+                    breakthrough = 0.1
+                    soft_attack = 0.1
+                    hard_attack = 0.1
+                }
+            }
+        }
     }
 
     focus = {
@@ -743,7 +837,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GLD_horse_breeding_clans
 		prerequisite = { focus = GLD_legacy_of_the_eotheod }
         
@@ -761,6 +855,16 @@ focus_tree = {
         }
         completion_reward = {
 			# gain leather and a bunch of cav equipment  
+            add_equipment_to_stockpile = {
+                type = light_cavalry_chassis_0
+                amount = 200
+            }
+            71 = {
+                add_resource = {
+                    type = rubber
+                    amount = 12
+                }
+            }
 		}
     }
 
@@ -1273,7 +1377,7 @@ focus_tree = {
     }
 
     focus = { # TODO
-        id = GLD_punitive_raidss
+        id = GLD_punitive_raids
 		prerequisite = { focus = GLD_war_councils_of_gladden }
         
         icon = GFX_unknown_focus
@@ -1359,7 +1463,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            DGU = {
+                exists = yes
+                NOT = { has_completed_focus = DGU_offer_support }
+            }
         }
         completion_reward = {
 			# coordinate with DGU in reverse  
