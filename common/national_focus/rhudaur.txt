@@ -21,6 +21,10 @@ focus_tree = {
 		cost = 10
 		completion_reward = {
 			army_experience = 25
+			add_timed_idea = {
+				idea = generic_military_mobilization
+				days = 365
+			}
 		}
 	}
 	
@@ -35,11 +39,11 @@ focus_tree = {
 		}
 		cost = 10
 		completion_reward = {
-			army_experience = 75
+			army_experience = 50
 		}
 	}
 	
-	focus = {
+	focus = { 
 		id = RHD_indoctrinate
 		icon = GFX_goal_generic_army_doctrines
 		relative_position_id = RHD_gather_forces
@@ -65,16 +69,18 @@ focus_tree = {
 		relative_position_id = RHD_indoctrinate
 		x = -1
 		y = 1
+		mutually_exclusive = {
+			focus = RHD_learn_from_the_field
+		}
 		prerequisite = {
 			focus = RHD_indoctrinate
 		}
 		cost = 10
 		completion_reward = {
-			add_doctrine_cost_reduction = {
-				name = land_doc_bonus
-				cost_reduction = 0.5
-				uses = 1
-				category = land_doctrine
+			army_experience = 5
+			add_mastery = {
+				amount = 100
+				folder = land
 			}
 		}
 	}
@@ -90,11 +96,10 @@ focus_tree = {
 		}
 		cost = 10
 		completion_reward = {
-			add_doctrine_cost_reduction = {
-				name = land_doc_bonus
-				cost_reduction = 0.5
-				uses = 1
-				category = land_doctrine
+			army_experience = 5
+			add_mastery = {
+				amount = 100
+				folder = land
 			}
 		}
 	}
@@ -112,9 +117,10 @@ focus_tree = {
 		prerequisite = { focus = RHD_learn_from_the_field_2 }
 		completion_reward = {
 			add_mastery = {
-				amount = 100
+				amount = 200
 				folder = land
 			}
+			army_experience = 50
 		}
 	}
 	
@@ -156,9 +162,10 @@ focus_tree = {
 			add_tech_bonus = {
 				name = infantry_bonus
 				bonus = 0.25
-				uses = 3
+				uses = 2
 				category = lotr_infantry
 			}
+			add_ideas = recruit_more_hillmen
 		}
 	}
 	
@@ -196,20 +203,29 @@ focus_tree = {
 		x = 0
 		y = 1
 		completion_reward = { 
-			add_ideas = recruit_more_hillmen
+			swap_ideas = {
+				remove_idea = recruit_more_hillmen
+				add_idea = recruit_more_hillmen_2
+			}
 		}
 	}
 	
 	focus = {
 		id = RHD_contact_the_eagles
-		prerequisite = { focus = RHD_new_settlements_in_the_east }
+		prerequisite = { focus = RHD_mountain_settlements }
 		icon = GFX_goal_lth_nature_eagles
 		cost = 5
 		relative_position_id = RHD_gather_forces
 		x = 17
 		y = 2
 		completion_reward = {
-			air_experience = 50
+			air_experience = 25
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_eagles
+				uses = 1
+				bonus = 0.5
+			}
 		}
 	}
 	
@@ -225,10 +241,11 @@ focus_tree = {
 		}
 		completion_reward = {
 			air_experience = 25
+			increase_eagles_cap_5 = yes
 			151 = {
 				add_building_construction = {
 					type = air_base
-					level = 5
+					level = 3
 					instant_build = yes
 				}
 			}
@@ -243,8 +260,13 @@ focus_tree = {
 		x = 4
 		y = 1
 		completion_reward = { 
-			add_manpower = -500
-			army_experience = 10
+			add_manpower = -250
+			army_experience = 5
+			151 = {
+				remove_dynamic_modifier = {
+					modifier = lotr_roaming_trolls
+				}
+			}
 		}
 	}
 	
@@ -340,6 +362,9 @@ focus_tree = {
 		}
 		completion_reward = {
 			random_owned_controlled_state = {
+				limit = {
+					impassable = no
+				}
 				add_building_construction = {
 					type = infrastructure
 					level = 1
@@ -347,6 +372,9 @@ focus_tree = {
 				}
 			}
 			random_owned_controlled_state = {
+				limit = {
+					impassable = no
+				}
 				add_building_construction = {
 					type = infrastructure
 					level = 1
@@ -367,14 +395,7 @@ focus_tree = {
 			focus = RHD_further_infrastructure_improvement
 		}
 		completion_reward = { 
-			random_owned_controlled_state = {
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = industrial_complex
-					level = 1
-					instant_build = yes
-				}
-			}
+			random_state_add_building_slot_and_civ = yes
 		}
 	}
 	
@@ -389,14 +410,7 @@ focus_tree = {
 			focus = RHD_further_infrastructure_improvement
 		}
 		completion_reward = { 
-			random_owned_controlled_state = {
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = arms_factory
-					level = 1
-					instant_build = yes
-				}
-			}
+			random_state_add_building_slot_and_mil = yes
 		}
 	}
 	
@@ -411,14 +425,7 @@ focus_tree = {
 			focus = RHD_expand_civilian_industry
 		}
 		completion_reward = { 
-			random_owned_controlled_state = {
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = {
-					type = industrial_complex
-					level = 2
-					instant_build = yes
-				}
-			}
+			random_state_add_building_slot_and_civ_x2 = yes
 		}
 	}
 	
@@ -433,14 +440,7 @@ focus_tree = {
 			focus = RHD_ramp_civilian_production
 		}
 		completion_reward = { 
-			random_owned_controlled_state = {
-				add_extra_state_shared_building_slots = 3
-				add_building_construction = {
-					type = industrial_complex
-					level = 3
-					instant_build = yes
-				}
-			}
+			random_state_add_building_slot_and_civ_x2 = yes
 		}
 	}
 	
@@ -455,14 +455,7 @@ focus_tree = {
 			focus = RHD_expand_military_industry
 		}
 		completion_reward = { 
-			random_owned_controlled_state = {
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = {
-					type = arms_factory
-					level = 2
-					instant_build = yes
-				}
-			}
+			random_state_add_building_slot_and_mil_x2 = yes
 		}
 	}
 	
@@ -477,14 +470,7 @@ focus_tree = {
 			focus = RHD_ramp_military_production
 		}
 		completion_reward = { 
-			random_owned_controlled_state = {
-				add_extra_state_shared_building_slots = 3
-				add_building_construction = {
-					type = arms_factory
-					level = 3
-					instant_build = yes
-				}
-			}
+			random_state_add_building_slot_and_mil_x2 = yes
 		}
 	}
 	
@@ -525,8 +511,13 @@ focus_tree = {
 		y = 0
 		prerequisite = { focus = RHD_taming_the_hills_of_rhudaur }
 		completion_reward = { 
-			add_manpower = -300
-			army_experience = 15
+			add_manpower = -250
+			army_experience = 5
+			153 = {
+				remove_dynamic_modifier = {
+					modifier = lotr_roaming_trolls
+				}
+			}
 			if = {
 				limit = {
 					is_subject_of = ANG
@@ -589,12 +580,12 @@ focus_tree = {
 			}
 			add_resource = {
 				type = steel
-				amount = 15
+				amount = 10
 				state = 63
 			}
 			add_resource = {
 				type = steel
-				amount = 15
+				amount = 10
 				state = 153
 			}
 		}
@@ -682,10 +673,10 @@ focus_tree = {
 				}
 			}
 			63 = {
-				add_extra_state_shared_building_slots = 3
+				add_extra_state_shared_building_slots = 2
 				add_building_construction = {
 					type = industrial_complex
-					level = 2
+					level = 1
 					instant_build = yes
 				}
 				add_building_construction = {
@@ -695,10 +686,10 @@ focus_tree = {
 				}
 			}
 			153 = {
-				add_extra_state_shared_building_slots = 3
+				add_extra_state_shared_building_slots = 2
 				add_building_construction = {
 					type = industrial_complex
-					level = 2
+					level = 1
 					instant_build = yes
 				}
 				add_building_construction = {
@@ -852,7 +843,7 @@ focus_tree = {
 			focus = RHD_fate_of_rhudaur
 		}
 		completion_reward = { 
-			add_political_power = 50
+			country_event = bonus_event.100
 		}
 	}
 	
@@ -870,7 +861,7 @@ focus_tree = {
 		}
 		x = -8
 		y = 1
-		mutually_exclusive = { focus = RHD_not_choose_sides focus = RHD_side_with_darkness}
+		mutually_exclusive = { focus = RHD_watchful_isolation focus = RHD_join_the_shadows }
 		prerequisite = {
 			focus = RHD_hold_a_council
 		}
@@ -905,7 +896,7 @@ focus_tree = {
 		}
 		x = 0
 		y = 1
-		mutually_exclusive = { focus = RHD_reaffiliate_with_arnor focus = RHD_side_with_darkness}
+		mutually_exclusive = { focus = RHD_numenorean_heritage focus = RHD_join_the_shadows }
 		prerequisite = {
 			focus = RHD_hold_a_council
 		}
@@ -928,7 +919,7 @@ focus_tree = {
 		}
 		x = 9
 		y = 1
-		mutually_exclusive = { focus = RHD_not_choose_sides focus = RHD_reaffiliate_with_arnor}
+		mutually_exclusive = { focus = RHD_watchful_isolation focus = RHD_numenorean_heritage}
 		prerequisite = {
 			focus = RHD_hold_a_council
 		}
@@ -971,7 +962,7 @@ focus_tree = {
 			every_neighbor_country = {
 				add_opinion_modifier = {
 					target = RHD
-					modifier = large_increase
+					modifier = medium_increase
 				}
 			}
 		}
@@ -988,8 +979,21 @@ focus_tree = {
 			focus = RHD_favor_with_neighbors
 		}
 		completion_reward = { 
-			every_neighbor_country = {
-				country_event = bonus_event.1
+			if = {
+				limit = {
+					ART = { exists = yes NOT = { has_war_with = RHD } NOT = { has_non_aggression_pact_with = RHD } }
+				}
+				ART = {
+					invite_to_non_aggession_pact = yes
+				}
+			}
+			if = {
+				limit = {
+					RIV = { exists = yes NOT = { has_war_with = RHD } NOT = { has_non_aggression_pact_with = RHD } }
+				}
+				RIV = {
+					invite_to_non_aggession_pact = yes
+				}
 			}
 		}
 	}
@@ -1005,8 +1009,21 @@ focus_tree = {
 			focus = RHD_look_for_security
 		}
 		completion_reward = { 
-			every_neighbor_country = {
-				country_event = bonus_event.2
+			if = {
+				limit = {
+					ART = { exists = yes NOT = { has_war_with = RHD } NOT = { has_guaranteed = RHD } }
+				}
+				ART = {
+					ask_for_guarantee_of_independence = yes
+				}
+			}
+			if = {
+				limit = {
+					RIV = { exists = yes NOT = { has_war_with = RHD } NOT = { has_guaranteed = RHD } }
+				}
+				RIV = {
+					ask_for_guarantee_of_independence = yes
+				}
 			}
 		}
 	}
@@ -1025,13 +1042,13 @@ focus_tree = {
 			151 = {
 				add_building_construction = {
 					type = bunker
-					level = 5
+					level = 3
 					instant_build = yes
 					province = 5886
 				}
 				add_building_construction = {
 					type = castle
-					level = 3
+					level = 2
 					instant_build = yes
 					province = 5886
 				}
@@ -1040,7 +1057,32 @@ focus_tree = {
 	}
 	
 	focus = {
-		id = RHD_defend_the_south_borders
+		id = RHD_defend_the_northern_borders
+		prerequisite = { focus = RHD_isolate_and_defend }
+		icon = GFX_goal_a_land_of_mountains
+		available = {
+			controls_state = 62
+		}
+		cost = 12
+		relative_position_id = RHD_defend_the_capital
+		x = 1
+		y = -1
+		completion_reward = {
+			62 = {
+				add_building_construction = {
+					type = bunker
+					level = 1
+					province = {
+						all_provinces = yes
+						limit_to_border = yes
+					}
+				}
+			}
+		}
+	}
+	
+	focus = {
+		id = RHD_defend_the_southern_borders
 		prerequisite = { focus = RHD_isolate_and_defend }
 		icon = GFX_goal_a_land_of_mountains
 		available = {
@@ -1048,160 +1090,17 @@ focus_tree = {
 		}
 		cost = 12
 		relative_position_id = RHD_defend_the_capital
-		x = 1
+		x = -1
 		y = -1
 		completion_reward = {
-			151 = {
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 4468
-				}
-			}
 			64 = {
 				add_building_construction = {
 					type = bunker
 					level = 2
-					instant_build = yes
-					province = 6056
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 2547
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 3980
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 1724
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 3087
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 897
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 6184
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 2879
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 6153
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 1376
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 4507
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 3259
-				}
-			}
-		}
-	}
-	
-	focus = {
-		id = RHD_defend_the_east_borders
-		prerequisite = { focus = RHD_isolate_and_defend }
-		icon = GFX_goal_a_land_of_mountains
-		available = {
-			controls_state = 151
-		}
-		cost = 12
-		relative_position_id = RHD_defend_the_capital
-		x = -1
-		y = -1
-		completion_reward = {
-			151 = {
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 2779
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 2169
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 6012
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 3763
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 5994
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 5963
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 3328
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 4164
-				}
-				add_building_construction = {
-					type = bunker
-					level = 2
-					instant_build = yes
-					province = 5964
+					province = {
+						all_provinces = yes
+						limit_to_border = yes
+					}
 				}
 			}
 		}
@@ -1275,6 +1174,7 @@ focus_tree = {
 		}
 		available = { belligerent > 0.65 }
 		completion_reward = { 
+			add_stability = -0.05
 			add_war_support = 0.05
 			army_experience = 5
 			remove_ideas = political_discourse
@@ -1314,7 +1214,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			retire_character = RHD_nathod
-			retire_character = RHD_tanner
+			retire_character = RHD_tanner # TODO: What is this?
 			swap_ideas = {
 				remove_idea = RHD_dispersing_dunedain
 				add_idea = RHD_rangers_villified
@@ -1372,9 +1272,8 @@ focus_tree = {
 		}
 		completion_reward = { 
 			MOR = {
-				country_event = {
-					id = mordor.52
-				}
+				increase_our_opinion_of_them_medium = yes
+				increase_their_opinion_of_us_medium = yes
 			}
 		}
 	}
@@ -1403,9 +1302,8 @@ focus_tree = {
 		}
 		completion_reward = {
 			ANG = {
-				country_event = {
-					id = bonus_event.3
-				}
+				increase_our_opinion_of_them_medium = yes
+				increase_their_opinion_of_us_medium = yes
 			}
 		}
 	}
@@ -1427,6 +1325,9 @@ focus_tree = {
 		}
 		completion_reward = { 
 			add_ideas = RHD_alone_we_fight
+			MOR = {
+				swear_eternal_animosity = yes
+			}
 		}
 	}
 	
@@ -1472,7 +1373,10 @@ focus_tree = {
 		x = 1
 		y = 5
 		completion_reward = { 
-			add_ideas = RHD_rallying_rangers
+			add_timed_idea = {
+				idea = RHD_rallying_rangers
+				days = 720
+			}
 		}
 	}
 	
@@ -1575,9 +1479,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			ART = {
-				country_event = {
-					id = generic.2
-				}
+				ask_to_join_faction = yes
 			}
 		}
 	}
@@ -1611,7 +1513,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			ANG = {
-				country_event = { id = generic.2 }
+				ask_to_join_faction = yes
 			}
 		}
 	}
@@ -1677,7 +1579,7 @@ focus_tree = {
 		icon = GFX_goal_riv_elrond
 		available = {
 			has_government = cooperative
-			is_in_faction = yes
+			is_faction_leader = yes
 			RIV = {
 				exists = yes
 				is_in_faction = no
@@ -1695,7 +1597,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			RIV = {
-				country_event = generic.5
+				invite_to_faction = yes
 			}
 		}
 	}
@@ -1778,6 +1680,7 @@ focus_tree = {
 		x = -1
 		y = 3
 		completion_reward = { 
+			custom_effect_tooltip = RHD_carve_out_rot_tt
 			if = {
 				limit = { 
 					CAR = {
@@ -1879,36 +1782,13 @@ focus_tree = {
 		icon = GFX_focus_research
 		available = {
 			has_government = cooperative
-			NOT = {
-				CAR = {
-					OR = {
-						has_government = belligerent
-						has_government = revolutionary
-					}
-				}
-				ART = {
-					OR = {
-						has_government = belligerent
-						has_government = revolutionary
-					}
-				}
-				SHI = {
-					OR = {
-						has_government = belligerent
-						has_government = revolutionary
-					}
-				}
-			}
 		}
 		cost = 10
 		relative_position_id = RHD_bring_peace_to_the_west
-		x = -1
-		y = 2
+		x = 0
+		y = 3
 		prerequisite = {
-			focus = RHD_carve_out_rot
-		}
-		prerequisite = {
-			focus = RHD_protect_arnor_inhabitants
+			focus = RHD_peace_in_arnor
 		}
 		completion_reward = { 
 			add_research_slot = 1
@@ -1920,6 +1800,9 @@ focus_tree = {
 		icon = GFX_goal_generic_peace_dove
 		available = {
 			has_government = cooperative
+			all_neighbor_country = {
+				NOT = { has_war_with = ROOT }
+			}
 			NOT = {
 				CAR = {
 					OR = {
@@ -1943,13 +1826,10 @@ focus_tree = {
 		}
 		cost = 10
 		relative_position_id = RHD_bring_peace_to_the_west
-		x = 1
+		x = 0
 		y = 2
 		prerequisite = {
-			focus = RHD_carve_out_rot
-		}
-		prerequisite = {
-			focus = RHD_protect_arnor_inhabitants
+			focus = RHD_carve_out_rot focus = RHD_protect_arnor_inhabitants
 		}
 		completion_reward = { 
 			add_ideas = RHD_peace_at_last
@@ -1972,8 +1852,17 @@ focus_tree = {
 		}
 		prerequisite = { focus = RHD_settle_disputes }
 		completion_reward = {
-			RHD = {army_experience = 50}
-			ART = {army_experience = 50}
+			RHD = {
+				give_steal_tech_from_country = yes
+			}
+			ART = {
+				add_tech_bonus = {
+					name = special_bonus
+					category = lotr_men_secrets
+					uses = 1
+					bonus = 0.5
+				}
+			}
 		}
 	}
 	
@@ -1994,7 +1883,7 @@ focus_tree = {
 		completion_reward = {
 			add_ideas = RHD_arnor_rhudaur_recruitment
 			ART = {
-				add_ideas = RHD_arnor_rhudaur_recruitment
+				add_ideas = RHD_arnor_rhudaur_recruitment # TODO: event to ask?
 			}
 		}
 	}
@@ -2013,7 +1902,12 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_timed_idea = {
+				idea = generic_infrastructure_effort
+				days = 270
+			}
+		}
 	}
 
 	focus = {
@@ -2032,7 +1926,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			# TODO: Event to ART and build road from RHD captial to ART capital
+		}
 	}
 
 	focus = {
@@ -2052,12 +1948,14 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = RHD_improved_rangers
+		}
 	}
 
 	focus = {
 		id = RHD_protect_against_goblin_town
-		prerequisite = { focus = RHD_new_settlements_in_the_east }
+		prerequisite = { focus = RHD_mountain_settlements }
 
 		icon = GFX_unknown_focus
 
@@ -2071,7 +1969,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			GOB = { fortify_border_core_x2 = yes }
+		}
 	}
 
 	focus = {
@@ -2090,7 +1990,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			GLD = { send_delegation_to_country = yes }
+		}
 	}
 
 	focus = {
@@ -2110,7 +2012,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = GLD_great_eagle_gwaihir
+		}
 	}
 
 	focus = {
@@ -2118,6 +2022,10 @@ focus_tree = {
 		prerequisite = { focus = RHD_indoctrinate }
 
 		icon = GFX_unknown_focus
+
+		mutually_exclusive = {
+			focus = RHD_doctrine_effort
+		}
 
 		x = -8
 		y = 2
@@ -2129,7 +2037,14 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			army_experience = 5
+			add_mastery_bonus = {
+				name = mastery_bonus
+				bonus = 0.25
+				days = 270
+			}
+		}
 	}
 
 	focus = {
@@ -2148,7 +2063,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_political_power = 100
+		}
 	}
 
 	focus = {
@@ -2167,11 +2084,22 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_opinion_modifier = {
+				target = ART
+				modifier = improved_trade_relations
+			}
+			ART = {
+				add_opinion_modifier = {
+					target = RHD
+					modifier = improved_trade_relations
+				}
+			}
+		}
 	}
 
 	focus = {
-		id = RHD_new_settlements_in_the_east
+		id = RHD_mountain_settlements
 		prerequisite = { focus = RHD_taming_the_hills_of_rhudaur }
 
 		icon = GFX_unknown_focus
@@ -2186,7 +2114,14 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			249 = {
+				add_manpower = 1000
+			}
+			251 = {
+				add_manpower = 1000
+			}
+		}
 	}
 
 	focus = {
@@ -2206,7 +2141,12 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_equipment_to_stockpile = {
+				type = train_equipment_1
+				amount = 15
+			}
+		}
 	}
 
 	focus = {
@@ -2225,7 +2165,12 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = RHD_improved_rangers
+				add_idea = RHD_improved_rangers_2
+			}
+		}
 	}
 
 	focus = {
@@ -2244,11 +2189,18 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			capital_scope = {
+				add_building_construction = {
+					type = fuel_silo
+					level = 1
+				}
+			}
+		}
 	}
 
 	focus = {
-		id = VAL_new_focus_3xpgeu
+		id = RHD_calm_through_safety
 		prerequisite = { focus = RHD_look_for_security }
 
 		icon = GFX_unknown_focus
@@ -2263,7 +2215,25 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			# gain pp and stab for every neighbor with NA pact with us
+			custom_effect_tooltip = RHD_calm_through_safety_tt
+			hidden_effect = {
+				every_country = {
+					limit = {
+						OR = {
+							has_non_aggression_pact_with = ROOT
+							is_ally_with = ROOT
+							has_guaranteed = ROOT
+						}
+					}
+					ROOT = {
+						add_political_power = 50
+						add_stability = 0.03
+					}
+				}
+			}
+		}
 	}
 
 	focus = {
@@ -2282,7 +2252,10 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			lotr_advisors_improve_long_term_planner = yes
+			lotr_advisors_improve_pedantic_organizer = yes
+		}
 	}
 
 	focus = {
@@ -2301,7 +2274,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = RHD_limited_intervention_idea
+		}
 	}
 
 	focus = {
@@ -2320,7 +2295,12 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = RHD_limited_intervention_idea
+				add_idea = RHD_limited_intervention_idea_2
+			}
+		}
 	}
 
 	focus = {
@@ -2339,7 +2319,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			custom_effect_tooltip = RHD_welcome_war_refugees_tt
+		}
 	}
 
 	focus = {
@@ -2356,9 +2338,17 @@ focus_tree = {
 
 		search_filters = { }
 		available = {
-			always = yes
+			custom_trigger_tooltip = {
+				tooltip = RHD_growing_workforce_cond_tt
+				check_variable = {
+					war_refugees_count > 2999
+				}
+			}
 		}
-		completion_reward = { }
+		completion_reward = {
+			random_state_add_building_slot_and_civ_x2 = yes
+			random_state_add_building_slot_and_mil = yes
+		}
 	}
 
 	focus = {
@@ -2378,7 +2368,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			GLD = { request_aid = yes }
+		}
 	}
 
 	focus = {
@@ -2397,7 +2389,14 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			army_experience = 5
+			add_mastery_bonus = {
+				name = mastery_bonus
+				bonus = 0.25
+				days = 270
+			}
+		}
 	}
 
 	focus = {
@@ -2406,6 +2405,11 @@ focus_tree = {
 		prerequisite = { focus = RHD_look_to_the_north }
 
 		icon = GFX_unknown_focus
+
+		mutually_exclusive = {
+			focus = RHD_they_will_not_expect_this
+			focus = RHD_end_eldar_arrogance
+		}
 
 		x = 30
 		y = 7
@@ -2417,7 +2421,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = RHD_war_of_unification
+		}
 	}
 
 	focus = {
@@ -2426,6 +2432,11 @@ focus_tree = {
 		prerequisite = { focus = RHD_our_own_way }
 
 		icon = GFX_unknown_focus
+
+		mutually_exclusive = {
+			focus = RHD_they_will_not_expect_this
+			focus = RHD_attack_arnor
+		}
 
 		x = 36
 		y = 7
@@ -2437,7 +2448,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = RHD_war_on_elves
+		}
 	}
 
 	focus = {
@@ -2445,6 +2458,11 @@ focus_tree = {
 		prerequisite = { focus = RHD_our_own_way }
 
 		icon = GFX_unknown_focus
+
+		mutually_exclusive = {
+			focus = RHD_attack_arnor
+			focus = RHD_end_eldar_arrogance
+		}
 
 		x = 33
 		y = 7
@@ -2456,7 +2474,18 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_war_support = 0.08
+			add_unit_bonus = {
+				category_all_infantry = {
+					mountain = {
+						attack = 0.1
+						movement = 0.1
+					}
+					# TODO: tunnel terrain too
+				}
+			}
+		}
 	}
 
 	focus = {
@@ -2475,7 +2504,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = RHD_autarky_of_the_wild
+		}
 	}
 
 	focus = {
@@ -2494,7 +2525,21 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			custom_effect_tooltip = RHD_raid_and_pillage_tt
+			hidden_effect = {
+				RHD_neleorion = {
+					add_advisor_role = {
+						advisor = {
+							slot = treasurer
+							traits = {
+								ruthless_pillager
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	focus = {
@@ -2513,7 +2558,11 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			ANG = {
+				ask_to_join_faction = yes
+			}
+		}
 	}
 
 	focus = {
@@ -2532,7 +2581,11 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			MOR = {
+				ask_to_join_faction = yes
+			}
+		}
 	}
 
 	focus = {
@@ -2549,10 +2602,22 @@ focus_tree = {
 
 		search_filters = { }
 		available = {
-			always = yes
+			custom_trigger_tooltip = {
+				tooltip = RHD_a_reward_from_mordor_cond_tt
+				RIV = { has_capitulated = yes }
+				war_length_with = {
+    				tag = RIV
+    				months > 0
+				}
+				war_length_with = {
+    				tag = RIV
+    				months < 12
+				}
+			}
 		}
 		completion_reward = {
 			# riv has capitulated within 1 year of us going tow ar with them  
+			# TODO: event
 		}
 	}
 
@@ -2572,7 +2637,13 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_manpower = 2000
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 2000
+			}
+		}
 	}
 
 	focus = {
@@ -2591,7 +2662,12 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			create_wargoal = {
+				target = RIV
+				type = annex_everything
+			}
+		}
 	}
 
 	focus = {
@@ -2612,6 +2688,26 @@ focus_tree = {
 		}
 		completion_reward = {
 			# convert civs in rivendell to mils  
+			custom_effect_tooltip = RHD_repurpose_elven_workshops_tt
+			65 = {
+				add_compliance = 0.1
+			}
+			hidden_effect = {
+				65 = {
+					set_temp_variable = { temp_num_mils = industrial_complex_level }
+					remove_building = {
+						type = industrial_complex
+						level = temp_num_mils
+					}
+					multiply_temp_variable = {
+						var:temp_num_mils = 1.2
+					}
+					add_building_construction = {
+						type = arms_factory
+						level = temp_num_mils
+					}
+				}
+			}
 		}
 	}
 
@@ -2633,6 +2729,14 @@ focus_tree = {
 		}
 		completion_reward = {
 			# add barracks to rivendell  
+			65 = {
+				add_compliance = 0.1
+				add_building_construction = {
+					type = barracks
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 
@@ -2652,7 +2756,16 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			remove_opinion_modifier = {
+				target = ANG
+				modifier = ANG_enemy_of_the_past
+			}
+			remove_opinion_modifier = {
+				target = ANG
+				modifier = ANG_enemy_of_the_past_trade
+			}
+		}
 	}
 
 	focus = {
@@ -2671,7 +2784,9 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			# TODO: requries GOB impl
+		}
 	}
 
 	focus = {
@@ -2690,7 +2805,11 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			145 = {
+				claim_state = yes
+			}
+		}
 	}
 
 	focus = {
@@ -2698,6 +2817,8 @@ focus_tree = {
 		prerequisite = { focus = RHD_claim_the_weathertop }
 
 		icon = GFX_unknown_focus
+
+		will_lead_to_war_with = ART
 
 		x = 29
 		y = 9
@@ -2709,7 +2830,12 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			create_wargoal = {
+				target = ART
+				type = annex_everything
+			}
+		}
 	}
 
 	focus = {
@@ -2717,6 +2843,8 @@ focus_tree = {
 		prerequisite = { focus = RHD_claim_the_weathertop }
 
 		icon = GFX_unknown_focus
+
+		will_lead_to_war_with = CAR
 
 		x = 31
 		y = 9
@@ -2728,7 +2856,12 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			create_wargoal = {
+				target = CAR
+				type = annex_everything
+			}
+		}
 	}
 
 	focus = {
@@ -2747,7 +2880,17 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			custom_effect_tooltip = RHD_integrate_arthedain_administration_tt
+			hidden_effect = {
+				every_controlled_state = {
+					limit = {
+						is_core_of = ART
+					}
+					add_compliance = 0.35
+				}
+			}
+		}
 	}
 
 	focus = {
@@ -2766,7 +2909,17 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			custom_effect_tooltip = RHD_integrate_cardolan_administration_tt
+			hidden_effect = {
+				every_controlled_state = {
+					limit = {
+						is_core_of = CAR
+					}
+					add_compliance = 0.35
+				}
+			}
+		}
 	}
 
 	focus = {
@@ -2781,11 +2934,18 @@ focus_tree = {
 		cost = 5
 		ai_will_do = { factor = 1 }
 
+		will_lead_to_war_with = GLD
+
 		search_filters = { }
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			create_wargoal = {
+				target = GLD
+				type = puppet_wargoal_focus
+			}
+		}
 	}
 
 	focus = {
@@ -2804,7 +2964,15 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_manpower = -250
+			army_experience = 5
+			64 = {
+				remove_dynamic_modifier = {
+					modifier = lotr_roaming_trolls
+				}
+			}
+		}
 	}
 
 	focus = {
@@ -2823,7 +2991,15 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			64 = {
+				add_building_construction = {
+					type = synthetic_refinery
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
 	}
 
 	focus = {
@@ -2842,6 +3018,14 @@ focus_tree = {
 		available = {
 			always = yes
 		}
-		completion_reward = { }
+		completion_reward = {
+			64 = {
+				add_building_construction = {
+					type = barracks
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
 	}
 }

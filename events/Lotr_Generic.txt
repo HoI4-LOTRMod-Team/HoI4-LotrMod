@@ -1760,7 +1760,7 @@ country_event = {
 				country_event = { id = lotr_generic.121 days = 3 }
 			}
 		}
-		event_target:target_state  = {
+		event_target:target_state = {
 			transfer_state_to = FROM
 		}
 	}
@@ -1871,6 +1871,125 @@ country_event = {
 		add_opinion_modifier = {
 			target = FROM
 			modifier = medium_decrease
+		}
+    }
+}
+
+
+# FROM requests support
+country_event = {
+    id = lotr_generic.125
+    title = lotr_generic.125.t
+    desc = lotr_generic.125.desc
+
+    is_triggered_only = yes
+
+	# send supplies
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = lotr_generic.125.a
+		FROM = {
+			hidden_effect = {
+				country_event = { id = lotr_generic.126 days = 3 }
+			}
+			effect_tooltip = {
+				send_equipment = {
+					target = FROM
+					equipment = infantry_equipment
+					amount = 500
+				}
+				if = {
+					limit = { has_equipment = { support_equipment > 100 } }
+					send_equipment = {
+						target = FROM
+						equipment = support_equipment
+						amount = 100
+					}
+				}
+			}
+		}
+	}
+
+	# send military advice and thoughts+prayers
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = lotr_generic.125.b
+		FROM = {
+			hidden_effect = {
+				country_event = { id = lotr_generic.127 days = 3 }
+			}
+			event_option_tooltip = lotr_generic.126.b
+		}
+	}
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = lotr_generic.125.c
+		add_political_power = -25
+		FROM = { decrease_their_opinion_of_us_small = yes }
+	}
+}
+
+
+# FROM sends supplies
+country_event = {
+    id = lotr_generic.126
+    title = lotr_generic.126.t
+    desc = lotr_generic.126.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = lotr_generic.126.a
+
+		add_fuel = 3000
+		FROM = {
+			send_equipment = {
+				target = ROOT
+				equipment = infantry_equipment
+				amount = 500
+			}
+			if = {
+				limit = { has_equipment = { support_equipment > 100 } }
+				send_equipment = {
+					target = ROOT
+					equipment = support_equipment
+					amount = 100
+				}
+			}
+		}
+    }
+}
+
+
+# FROM sends advice and thoughts+prayers
+country_event = {
+    id = lotr_generic.127
+    title = lotr_generic.127.t
+    desc = lotr_generic.127.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = lotr_generic.127.a
+
+		add_war_support = 0.05
+		army_experience = 5
+		add_mastery = {
+			amount = 25
+			folder = land
 		}
     }
 }
