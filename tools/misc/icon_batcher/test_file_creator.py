@@ -55,14 +55,15 @@ I've attached some example images as a style guide, which would correspond to th
 "Faramir and Eowyn from LOTR holding hands while getting wed".
 
 **Artistic Style (Reference Examples):**
-Follow the painterly, hand-illustrated style of these examples. Use muted, grounded colors, realistic textures (metal, cloth, wood), and soft cinematic lighting. Avoid flat colors, thick black outlines, and the "mobile-game cartoon" look.
+Follow the hand-illustrated, realistic and cinematic style of these examples. Use muted, grounded colors, realistic textures (metal, cloth, wood). Avoid flat colors, black outlines, and the "mobile-game cartoon" look.
 $RANDOM$
 
 **Readability & Scale:**
 The final icon will be displayed at a small size (200x200). To ensure clarity at this scale:
 - Focus on a **strong, recognizable silhouette**.
-- Use **bold primary forms** and high-contrast lighting to define the shape.
+- Use **bold primary forms** to define the shape.
 - Prioritize the "feel" of the texture over microscopic details that would disappear when shrunk.
+- Use a realsitic looking style, but avoid excessive detail that would clutter the small icon.
 
 **Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
 
