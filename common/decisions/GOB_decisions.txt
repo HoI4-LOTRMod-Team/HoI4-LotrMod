@@ -1,0 +1,354 @@
+
+
+GOB_unrest_and_displeasure = {
+	GOB_overthrow_timer = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_mission_timeout = 365
+		selectable_mission = no
+		is_good = no # is the timer running out a good thing?
+
+		allowed = {
+			always = no
+		}
+
+		activation = {
+			always = no
+		}
+
+		available = {
+			gob_has_not_overthrow_timer = yes
+		}
+
+		timeout_effect = {
+			# when the timer runs out uninterrupted
+			# TODO: This should 100% contain an event
+			hidden_effect = {
+				add_popularity = {
+					ideology = revolutionary
+					popularity = 0.1
+				}
+				kill_country_leader = yes
+				hidden_effect = {
+					GOB_no_leader = {
+						add_country_leader_role = {
+							promote_leader = yes
+							country_leader = {
+								ideology = mutinous
+								traits = { gob_power_vacuum }
+							}
+						}
+						add_country_leader_role = {
+							promote_leader = yes
+							country_leader = {
+								ideology = secluded
+								traits = { gob_power_vacuum }
+							}
+						}
+						add_country_leader_role = {
+							promote_leader = yes
+							country_leader = {
+								ideology = federative
+								traits = { gob_power_vacuum }
+							}
+						}
+						add_country_leader_role = {
+							promote_leader = yes
+							country_leader = {
+								ideology = expansionist
+								traits = { gob_power_vacuum }
+							}
+						}
+					}
+				}
+				add_timed_idea = {
+					idea = GOB_power_vacuum
+					days = 90
+				}
+			}
+			custom_effect_tooltip = gob_overthrow_timer_tt
+		}
+	}
+}
+
+
+political_actions = {
+	work_the_forges = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 30 # if above set to no, this is the cooldown for re-appear
+		cost = 20
+
+		days_remove = 90
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_snaga_work_gangs
+		}
+
+		available = {
+			NOT = {
+				has_country_flag = GOB_work_decision_taken
+			}
+		}
+
+		modifier = {
+			stability_weekly = -0.003
+			industrial_capacity_factory = 0.25
+		}
+
+		complete_effect = {
+			# when decision is taken
+			set_country_flag = GOB_work_decision_taken
+		}
+
+		remove_effect = {
+			# when timer runs out or remove_trigger is true
+			clr_country_flag = GOB_work_decision_taken
+		}
+	}
+
+	work_the_builders = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 30 # if above set to no, this is the cooldown for re-appear
+		cost = 20
+
+		days_remove = 90
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_snaga_work_gangs
+		}
+
+		available = {
+			NOT = {
+				has_country_flag = GOB_work_decision_taken
+			}
+		}
+
+		modifier = {
+			stability_weekly = -0.003
+			production_speed_buildings_factor = 0.25
+			repair_speed_factor = 0.25
+		}
+
+		complete_effect = {
+			# when decision is taken
+			set_country_flag = GOB_work_decision_taken
+		}
+
+		remove_effect = {
+			# when timer runs out or remove_trigger is true
+			clr_country_flag = GOB_work_decision_taken
+		}
+	}
+
+	work_the_miners = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 30 # if above set to no, this is the cooldown for re-appear
+		cost = 20
+
+		days_remove = 90
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_snaga_work_gangs
+		}
+
+		available = {
+			NOT = {
+				has_country_flag = GOB_work_decision_taken
+			}
+		}
+
+		modifier = {
+			stability_weekly = -0.003
+			local_resources_factor = 0.25
+		}
+
+		complete_effect = {
+			# when decision is taken
+			set_country_flag = GOB_work_decision_taken
+		}
+
+		remove_effect = {
+			# when timer runs out or remove_trigger is true
+			clr_country_flag = GOB_work_decision_taken
+		}
+	}
+}
+
+
+GOB_scrap_collection = {
+	
+	convert_scrap_into_infantry_equipment = {
+		icon = generic_research # TODO (for the otherse below too)
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 70 # if above set to no, this is the cooldown for re-appear
+		cost = 5
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_nothing_goes_to_waste
+		}
+
+		available = {
+			check_variable = {
+				var = scrap
+				value = 250
+				compare = greater_than_or_equals
+				tooltip = more_scrap_than_tt
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			subtract_from_variable = {
+				var = scrap
+				value = 250
+				tooltip = spend_scrap_tt
+			}
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 250
+			}
+		}
+	}
+
+	convert_scrap_into_support_equipment = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 70 # if above set to no, this is the cooldown for re-appear
+		cost = 5
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_nothing_goes_to_waste
+		}
+
+		available = {
+			check_variable = {
+				var = scrap
+				value = 250
+				compare = greater_than_or_equals
+				tooltip = more_scrap_than_tt
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			subtract_from_variable = {
+				var = scrap
+				value = 250
+				tooltip = spend_scrap_tt
+			}
+			add_equipment_to_stockpile = {
+				type = support_equipment
+				amount = 60
+			}
+		}
+	}
+
+	convert_scrap_into_archery_equipment = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 70 # if above set to no, this is the cooldown for re-appear
+		cost = 5
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_nothing_goes_to_waste
+		}
+
+		available = {
+			check_variable = {
+				var = scrap
+				value = 250
+				compare = greater_than_or_equals
+				tooltip = more_scrap_than_tt
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			subtract_from_variable = {
+				var = scrap
+				value = 250
+				tooltip = spend_scrap_tt
+			}
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = 60
+			}
+		}
+	}
+
+	convert_scrap_into_steel_equipment = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 70 # if above set to no, this is the cooldown for re-appear
+		cost = 5
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_nothing_goes_to_waste
+		}
+
+		available = {
+			check_variable = {
+				var = scrap
+				value = 250
+				compare = greater_than_or_equals
+				tooltip = more_scrap_than_tt
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			subtract_from_variable = {
+				var = scrap
+				value = 250
+				tooltip = spend_scrap_tt
+			}
+			random_core_state = {
+				add_resource = {
+					type = steel
+					amount = 1
+				}
+			}
+		}
+	}
+
+
+}
