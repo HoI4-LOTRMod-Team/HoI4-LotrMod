@@ -580,3 +580,146 @@ gob_begin_overthrow_timer = {
         activate_mission = GOB_overthrow_timer
     }
 }
+
+
+gob_create_merc_divisions_unequipped = {
+    set_country_flag = gob_country_has_mercenaries
+    if = {
+        limit = { NOT = { tag = GOB } }
+        gob_start_mercenary_contract = yes
+    }
+    if = {
+        limit = {
+            NOT = { has_template = "Goblin Mercenaries" }
+        }
+        division_template = {
+            name = "Goblin Mercenaries"
+            is_locked = yes
+            override_model = GOB_infantry_entity
+            division_cap = 5
+            
+            regiments = {
+                goblin_mercenary_infantry = { x = 0 y = 0 }
+                goblin_mercenary_infantry = { x = 0 y = 1 }
+                goblin_mercenary_infantry = { x = 0 y = 2 }
+
+                goblin_mercenary_infantry = { x = 1 y = 0 }
+                goblin_mercenary_infantry = { x = 1 y = 1 }
+                goblin_mercenary_infantry = { x = 1 y = 2 }
+                
+                goblin_mercenary_infantry = { x = 2 y = 0 }
+                goblin_mercenary_infantry = { x = 2 y = 1 }
+                goblin_mercenary_infantry = { x = 2 y = 2 }
+
+                artillery_brigade = { x = 0 y = 1 }
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                recon = { x = 0 y = 1 }
+            }
+        }
+    }
+
+    random_controlled_state = {
+        limit = {
+            impassable = no
+        }
+        create_unit = {
+            division = "name = \"Goblin Mercenaries\" division_template = \"Goblin Mercenaries\" start_experience_factor = 0.5 start_equipment_factor = 0.1 start_manpower_factor = 0.1"
+            owner = ROOT
+            count = 5
+            allow_spawning_on_enemy_provs = no
+        }
+    }
+}
+
+gob_create_merc_divisions_equipped = {
+    set_country_flag = gob_country_has_mercenaries
+    if = {
+        limit = { NOT = { tag = GOB } }
+        gob_start_mercenary_contract = yes
+    }
+    if = {
+        limit = {
+            NOT = { has_template = "Goblin Mercenaries" }
+        }
+        division_template = {
+            name = "Goblin Mercenaries"
+            is_locked = yes
+            override_model = GOB_infantry_entity
+            division_cap = 5
+            
+            regiments = {
+                goblin_mercenary_infantry = { x = 0 y = 0 }
+                goblin_mercenary_infantry = { x = 0 y = 1 }
+                goblin_mercenary_infantry = { x = 0 y = 2 }
+
+                goblin_mercenary_infantry = { x = 1 y = 0 }
+                goblin_mercenary_infantry = { x = 1 y = 1 }
+                goblin_mercenary_infantry = { x = 1 y = 2 }
+                
+                goblin_mercenary_infantry = { x = 2 y = 0 }
+                goblin_mercenary_infantry = { x = 2 y = 1 }
+                goblin_mercenary_infantry = { x = 2 y = 2 }
+
+                artillery_brigade = { x = 0 y = 1 }
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                recon = { x = 0 y = 1 }
+            }
+        }
+    }
+
+    random_controlled_state = {
+        limit = {
+            impassable = no
+        }
+        create_unit = {
+            division = "name = \"Goblin Mercenaries\" division_template = \"Goblin Mercenaries\" start_experience_factor = 0.5 start_equipment_factor = 1.0 start_manpower_factor = 1.0"
+            owner = ROOT
+            count = 5
+            allow_spawning_on_enemy_provs = no
+        }
+    }
+}
+
+
+
+gob_remove_mercs = {
+    clr_country_flag = gob_country_has_mercenaries
+    delete_unit = {
+        division_template = "Goblin Mercenaries"
+    }
+}
+
+gob_remove_mercs_and_template = {
+    clr_country_flag = gob_country_has_mercenaries
+    delete_unit_template_and_units = {
+        division_template = "Goblin Mercenaries"
+        disband = no
+    }
+}
+
+gob_start_mercenary_contract = {
+    activate_mission = gob_mercenary_contract
+}
+
+
+gob_offer_mercenary_contract = {
+    country_event = goblintown.112
+    custom_effect_tooltip = if_they_accept_newline_tt
+    event_option_tooltip = goblintown.113.a
+}
+
+
+gob_recall_mercenaries = {
+    # stop current contract mission
+    remove_mission = gob_mercenary_contract
+
+    # send notice event to country
+    country_event = goblintown.115
+
+    # start notice-period mission
+    activate_mission = gob_mercenaries_being_recalled
+}

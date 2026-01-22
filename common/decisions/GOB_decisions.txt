@@ -74,6 +74,164 @@ GOB_unrest_and_displeasure = {
 
 
 political_actions = {
+
+	offer_merc_contract = {
+		icon = generic_research
+
+		fire_only_once = no
+		days_re_enable = 100 # To avoid spamming # TODO: if FROM is a player, make sure to not spam
+		cost = 25
+
+		#on_map_mode = map_and_decisions_view | map_only | decision_view_only 
+
+		allowed = {
+			tag = GOB
+		}
+
+		target_root_trigger = {
+			has_completed_focus = GOB_send_out_the_boys
+			has_war = no
+			has_country_flag = gob_country_has_mercenaries
+		}
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = gob_mercs_equipped_tt
+				NOT = {
+					any_country_division = {
+						division_has_majority_template = goblin_mercenary_infantry
+						unit_strength < 0.95
+					}
+				}
+			}
+		}
+
+		target_array = countries
+		#targets_dynamic = yes # Allows you to target civil war dynamic tags by their original_tag
+		
+		target_trigger = {
+			FROM = {
+				NOT = { has_war_with = GOB }
+				has_war = yes
+				alliance_strength_ratio < 1.5
+				#has_country_flag = rng_80p_flag_1 # not all countries available # TODO: idk if I want this
+			}
+		}
+		
+		complete_effect = {
+			FROM = { country_event = { id = goblintown.112 days = 1 } } # target can be scoped to with FROM
+			custom_effect_tooltip = if_they_accept_newline_tt
+			custom_effect_tooltip = offer_merc_contract_tt
+		}
+	}
+
+	gob_recall_mercenaries = {
+		icon = generic_research
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 10 # if above set to no, this is the cooldown for re-appear
+		cost = 25
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_send_out_the_boys
+			any_country = {
+				NOT = { tag = GOB }
+				has_country_flag = gob_country_has_mercenaries
+			}
+		}
+
+		available = {
+			has_war = yes
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			every_country = {
+				limit = {
+					NOT = { tag = GOB }
+					has_country_flag = gob_country_has_mercenaries
+				}
+				country_event = goblintown.115
+			}
+
+			custom_effect_tooltip = gob_recall_mercenaries_tt
+		}
+	}
+
+	gob_mercenary_contract = {
+		icon = generic_research
+
+		fire_only_once = no
+		days_re_enable = 10
+		days_mission_timeout = 180
+		selectable_mission = no
+		is_good = yes
+
+		allowed = {
+			always = no
+		}
+
+		activation = {
+			always = no
+		}
+
+		available = {
+			NOT = { has_country_flag = gob_country_has_mercenaries }
+		}
+
+		timeout_effect = {
+			# Get event to decide if to extend contract or no
+			hidden_effect = {
+				country_event = goblintown.109
+			}
+			custom_effect_tooltip = gob_mercenary_contract_timeout_tt
+		}
+
+		targeted_modifier = {
+			tag = GOB
+			cic_to_target_factor = 0.2
+		}
+	}
+
+
+	gob_mercenaries_being_recalled = {
+		icon = generic_research
+
+		fire_only_once = no
+		days_mission_timeout = 70
+		selectable_mission = no
+		is_good = no
+
+		allowed = {
+			always = no
+		}
+
+		activation = {
+			always = no
+		}
+
+		available = {
+			always = no
+		}
+
+		timeout_effect = {
+			# Get event to decide if to extend contract or no
+			custom_effect_tooltip = goblintown.109.b_tt
+			hidden_effect = {
+				gob_remove_mercs_and_template = yes
+				GOB = {
+					country_event = goblintown.116
+					gob_create_merc_divisions_equipped = yes
+				}
+			}
+		}
+	}
+
+
 	work_the_forges = {
 		icon = generic_research
 
