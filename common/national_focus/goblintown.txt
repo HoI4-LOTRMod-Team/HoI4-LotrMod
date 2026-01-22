@@ -17,7 +17,7 @@ focus_tree = {
 
 	
 
-    focus = { # TODO
+    focus = {
         id = GOB_raid_and_pillage
 		prerequisite = { focus = GOB_wealth_driven_ventures }
         
@@ -35,10 +35,18 @@ focus_tree = {
         }
         completion_reward = {
 			# war support  
+            add_war_support = 0.05
+
+            hidden_effect = {
+                reduce_focus_completion_cost = { focus = GOB_the_high_pass_tolls cost = -35 }
+                reduce_focus_completion_cost = { focus = GOB_trade_and_profit cost = -35 }
+                reduce_focus_completion_cost = { focus = GOB_war_profiteering cost = -35 }
+            }
+            custom_effect_tooltip = GOB_raid_and_pillage_tt
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_trade_and_profit
 		prerequisite = { focus = GOB_wealth_driven_ventures }
         
@@ -56,10 +64,23 @@ focus_tree = {
         }
         completion_reward = {
 			# trade opinion  
+            every_neighbor_country = {
+                add_opinion_modifier = {
+                    target = ROOT
+                    modifier = improved_trade_relations
+                }
+            }
+
+            hidden_effect = {
+                reduce_focus_completion_cost = { focus = GOB_the_high_pass_tolls cost = -35 }
+                reduce_focus_completion_cost = { focus = GOB_raid_and_pillage cost = -35 }
+                reduce_focus_completion_cost = { focus = GOB_war_profiteering cost = -35 }
+            }
+            custom_effect_tooltip = GOB_trade_and_profit_tt
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_war_profiteering
 		prerequisite = { focus = GOB_wealth_driven_ventures }
         
@@ -77,10 +98,25 @@ focus_tree = {
         }
         completion_reward = {
 			# market bonus  
+            if = {
+                limit = { has_dlc = "Arms Against Tyranny" }
+                add_cic = 1000
+            }
+            else = {
+                random_state_add_building_slot_and_civ = yes # kinda lame
+            }
+
+
+            hidden_effect = {
+                reduce_focus_completion_cost = { focus = GOB_the_high_pass_tolls cost = -35 }
+                reduce_focus_completion_cost = { focus = GOB_raid_and_pillage cost = -35 }
+                reduce_focus_completion_cost = { focus = GOB_trade_and_profit cost = -35 }
+            }
+            custom_effect_tooltip = GOB_war_profiteering_tt
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_the_high_pass_tolls
 		prerequisite = { focus = GOB_wealth_driven_ventures }
         
@@ -98,6 +134,14 @@ focus_tree = {
         }
         completion_reward = {
 			# pp  
+            add_political_power = 150
+
+            hidden_effect = {
+                reduce_focus_completion_cost = { focus = GOB_raid_and_pillage cost = -35 }
+                reduce_focus_completion_cost = { focus = GOB_trade_and_profit cost = -35 }
+                reduce_focus_completion_cost = { focus = GOB_war_profiteering cost = -35 }
+            }
+            custom_effect_tooltip = GOB_the_high_pass_tolls_tt
 		}
     }
 
@@ -159,13 +203,13 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_wealth_driven_ventures
 		prerequisite = { focus = GOB_nothing_goes_to_waste }
 		prerequisite = { focus = GOB_hammer_and_chain }
 		prerequisite = { focus = GOB_subterranean_workshops }
-		prerequisite = { focus = GOB_population_growth }
 		prerequisite = { focus = GOB_increase_centralization }
+		prerequisite = { focus = GOB_fill_the_stores }
         
         icon = GFX_unknown_focus
         
@@ -181,10 +225,14 @@ focus_tree = {
         }
         completion_reward = {
 			# unlock slightly higher tax law  
+            swap_ideas = {
+                remove_idea = lack_of_tax_enforcement
+                add_idea = no_taxes
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_secure_the_kings_hold
 		prerequisite = { focus = GOB_wealth_driven_ventures }
         
@@ -202,6 +250,8 @@ focus_tree = {
         }
         completion_reward = {
 			# unlock increased tax law  
+            custom_effect_tooltip = GOB_secure_the_kings_hold_tt
+            random_state_add_building_slot_and_civ_x2 = yes
 		}
     }
 
@@ -1070,14 +1120,14 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
-        id = GOB_meat_for_the_clans
+    focus = {
+        id = GOB_meat_for_the_warclans
 		prerequisite = { focus = GOB_topside_hunting }
         
         icon = GFX_unknown_focus
 
         mutually_exclusive = {
-            focus = GOB_cut_rations
+            focus = GOB_cut_army_rations
         }
         
         x = 16
@@ -1091,7 +1141,8 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# more food use per pops, less usurp timer  
+			# more food consumption by army, give ws
+            add_ideas = GOB_food_management_toarmy
 		}
     }
 
@@ -1126,14 +1177,14 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
-        id = GOB_cut_rations
+    focus = {
+        id = GOB_cut_army_rations
 		prerequisite = { focus = GOB_topside_hunting }
         
         icon = GFX_unknown_focus
 
         mutually_exclusive = {
-            focus = GOB_meat_for_the_clans
+            focus = GOB_meat_for_the_warclans
         }
         
         x = 18
@@ -1147,7 +1198,8 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# decrease food per pop  
+			# less food conusmption by army, lose ws and stats
+            add_ideas = GOB_food_management_fromarmy
 		}
     }
 
@@ -1234,52 +1286,9 @@ focus_tree = {
     }
 
     focus = {
-        id = GOB_improve_stability
-		prerequisite = { focus = GOB_meat_for_the_clans }
-        
-        icon = GFX_unknown_focus
-        
-        x = 16
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# gain stability  
-            add_stability = 0.1
-		}
-    }
-
-    focus = { # TODO
-        id = GOB_enforced_austerity
-		prerequisite = { focus = GOB_cut_rations }
-        
-        icon = GFX_unknown_focus
-        
-        x = 18
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# add idea, loose stability  
-		}
-    }
-
-    focus = { # TODO
-        id = GOB_population_growth
+        id = GOB_fill_the_stores
 		prerequisite = { focus = GOB_enforced_austerity }
-		prerequisite = { focus = GOB_improve_stability }
+		prerequisite = { focus = GOB_population_growth }
         
         icon = GFX_unknown_focus
         
@@ -1294,7 +1303,100 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# add  pop growth idea  
+            # Fill up on food, if already full, gain stability
+            if = {
+                limit = { fuel_ratio > 0.9 }
+                add_stability = 0.05
+            }
+            else = {
+			    set_fuel_ratio = 1.0
+            }
+		}
+    }
+
+    focus = {
+        id = GOB_enforced_austerity
+		prerequisite = { focus = GOB_meat_for_the_warclans }
+		prerequisite = { focus = GOB_cut_army_rations }
+        
+        icon = GFX_unknown_focus
+        mutually_exclusive = {
+            focus = GOB_population_growth
+        }
+        
+        x = 18
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# less food from pops, lose stab
+            # more food from pops add  pop growth idea  
+            if = {
+                limit = { has_idea = GOB_food_management_toarmy }
+                swap_ideas = {
+                    remove_idea = GOB_food_management_toarmy
+                    add_idea = GOB_food_management_toarmy_fromciv
+                }
+            }
+            else_if = {
+                limit = { has_idea = GOB_food_management_fromarmy }
+                swap_ideas = {
+                    remove_idea = GOB_food_management_fromarmy
+                    add_idea = GOB_food_management_fromarmy_fromciv
+                }
+            }
+            else = {
+                add_ideas = GOB_food_management_DUMMY_fromciv
+            }
+		}
+    }
+
+    focus = {
+        id = GOB_population_growth
+		prerequisite = { focus = GOB_cut_army_rations }
+		prerequisite = { focus = GOB_meat_for_the_warclans }
+        
+        icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GOB_enforced_austerity
+        }
+        
+        x = 16
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# more food from pops add  pop growth idea  
+            if = {
+                limit = { has_idea = GOB_food_management_toarmy }
+                swap_ideas = {
+                    remove_idea = GOB_food_management_toarmy
+                    add_idea = GOB_food_management_toarmy_tociv
+                }
+            }
+            else_if = {
+                limit = { has_idea = GOB_food_management_fromarmy }
+                swap_ideas = {
+                    remove_idea = GOB_food_management_fromarmy
+                    add_idea = GOB_food_management_fromarmy_tociv
+                }
+            }
+            else = {
+                add_ideas = GOB_food_management_DUMMY_tociv
+            }
 		}
     }
 
@@ -1621,7 +1723,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_open_the_black_markets
 		prerequisite = { focus = GOB_trade_and_profit }
         
@@ -1638,11 +1740,13 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# change trade law to something cool  
+			# change trade law to something cool
+            custom_effect_tooltip = GOB_open_the_black_markets_tt
+            show_ideas_tooltip = gob_special_free_trade
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_anyone_with_coin_welcome
 		prerequisite = { focus = GOB_open_the_black_markets }
         
@@ -1660,10 +1764,14 @@ focus_tree = {
         }
         completion_reward = {
 			# trade opinion  
+            swap_ideas = {
+                remove_idea = gob_special_free_trade
+                add_idea = gob_special_free_trade_2
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_secure_high_demand_goods
 		prerequisite = { focus = GOB_trade_and_profit }
         
@@ -1680,7 +1788,13 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# gain extr resource extraction  
+			# gain intrigue boost
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_knowledge_intrigue
+                uses = 1
+                bonus = 0.35
+            }
 		}
     }
 
@@ -1722,11 +1836,11 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# raid to Bree to get some cool stuff  
+			# raid to Bree to get leather
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_sabotage_the_competition
 		prerequisite = { focus = GOB_anyone_with_coin_welcome }
         
@@ -1743,7 +1857,48 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# less trade opinion to biggest exporters  
+            custom_effect_tooltip = GOB_sabotage_the_competition_tt
+            # TODO: check if this works
+
+            custom_effect_tooltip = generic_current_effects
+            # less trade opinion to biggest exporters  
+            get_sorted_scored_countries_temp = { scorer = biggest_exporter_leather array = temp_exporters_array }
+
+            for_loop_effect = {
+                end = 3
+                value = s
+                temp_exporters_array^s = { add_ideas = GOB_sabotaged_trade }
+            }
+
+            add_to_temp_array = { temp_exporters_array = NEP }
+            clear_array = temp_exporters_array
+            get_sorted_scored_countries_temp = { scorer = biggest_exporter_steel array = temp_exporters_array }
+
+            for_loop_effect = {
+                end = 3
+                value = s
+                temp_exporters_array^s = { add_ideas = GOB_sabotaged_trade }
+            }
+
+            add_to_temp_array = { temp_exporters_array = NEP }
+            clear_array = temp_exporters_array
+            get_sorted_scored_countries_temp = { scorer = biggest_exporter_string array = temp_exporters_array }
+
+            for_loop_effect = {
+                end = 3
+                value = s
+                temp_exporters_array^s = { add_ideas = GOB_sabotaged_trade }
+            }
+
+            add_to_temp_array = { temp_exporters_array = NEP }
+            clear_array = temp_exporters_array
+            get_sorted_scored_countries_temp = { scorer = biggest_exporter_wood array = temp_exporters_array }
+
+            for_loop_effect = {
+                end = 3
+                value = s
+                temp_exporters_array^s = { add_ideas = GOB_sabotaged_trade }
+            }
 		}
     }
 
@@ -1785,7 +1940,7 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# market stuff  
+			# big, war-going countries get equipment subsidy on GOB
 		}
     }
 
