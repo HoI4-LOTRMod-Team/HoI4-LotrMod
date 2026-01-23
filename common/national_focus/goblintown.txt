@@ -100,7 +100,9 @@ focus_tree = {
 			# market bonus  
             if = {
                 limit = { has_dlc = "Arms Against Tyranny" }
-                add_cic = 1000
+                set_rule = {
+                    can_access_market = yes
+                }
             }
             else = {
                 random_state_add_building_slot_and_civ = yes # kinda lame
@@ -1639,7 +1641,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_burn_and_take
 		prerequisite = { focus = GOB_send_out_the_clans }
         
@@ -1656,11 +1658,22 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# raids give more stuff  
+			# get advisor
+            custom_effect_tooltip = GOB_burn_and_take_tt
+            hidden_effect = {
+                GOB_tuitolb = {
+                    add_advisor_role = {
+                        advisor = {
+                            slot = treasurer
+                            traits = { ruthless_pillager }
+                        }
+                    }
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_daring_raid_on_imladris
 		prerequisite = { focus = GOB_raid_and_pillage }
         
@@ -1678,6 +1691,7 @@ focus_tree = {
         }
         completion_reward = {
 			# special, daring raid on imladris  
+            custom_effect_tooltip = GOB_daring_raid_on_imladris_tt
 		}
     }
 
@@ -1925,7 +1939,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_arms_for_coin
 		prerequisite = { focus = GOB_war_profiteering }
         
@@ -1942,12 +1956,25 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# big, war-going countries get equipment subsidy on GOB
+			# Get advisor with imporved backalley_dealer trait
+            custom_effect_tooltip = GOB_arms_for_coin_tt
+            hidden_effect = {
+                GOB_utlong = {
+                    add_advisor_role = {
+                        advisor = {
+                            slot = treasurer
+                            traits = {
+                                backalley_dealer_gob
+                            }
+                        }
+                    }
+                }
+            }
 		}
     }
 
     focus = {
-        id = GOB_blades_for_hire
+        id = GOB_soldiers_for_hire
 		prerequisite = { focus = GOB_war_profiteering }
         
         icon = GFX_unknown_focus
@@ -1972,7 +1999,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_feed_the_war
 		prerequisite = { focus = GOB_arms_for_coin }
         
@@ -1989,13 +2016,38 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# get events to sell equipment to loosing countries  
+            if = {
+                limit = { has_dlc = "Arms Against Tyranny" }
+                custom_effect_tooltip = GOB_arms_for_coin_tt
+                every_country = {
+                    limit = { is_major = yes }
+                    add_equipment_subsidy = {
+                        cic = 1000
+                        equipment_type = infantry_equipment
+                    }
+                    add_equipment_subsidy = {
+                        cic = 300
+                        equipment_type = support_equipment
+                    }
+                    add_equipment_subsidy = {
+                        cic = 300
+                        equipment_type = artillery_equipment
+                    }
+                }
+            }
+            else = {
+                add_timed_idea = {
+                    idea = generic_construction_boost # lame fallback
+                    days = 120
+                }
+            }
 		}
     }
 
-    focus = { # TODO
-        id = GOB_the_business_of_battle
-		prerequisite = { focus = GOB_war_profiteering }
+    focus = {
+        id = GOB_war_loot
+		prerequisite = { focus = GOB_arms_for_coin }
+        prerequisite = { focus = GOB_soldiers_for_hire }
         
         icon = GFX_unknown_focus
         
@@ -2010,13 +2062,14 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# gain some shit every time one of our mercs wins a battle?  
+			# gain some scrap every time one of our mercs wins a battle
+            custom_effect_tooltip = GOB_war_loot_tt
 		}
     }
 
     focus = {
         id = GOB_send_out_the_boys
-		prerequisite = { focus = GOB_blades_for_hire }
+		prerequisite = { focus = GOB_soldiers_for_hire }
         
         icon = GFX_unknown_focus
         

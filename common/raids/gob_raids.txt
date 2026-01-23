@@ -1,586 +1,831 @@
-GOB_raid_steal_spider_silk = {
+types = {
 
-	# --- Basic Configuration ---
-	category = land_infiltration_raids
-	
-	# Visuals (Generic placeholders used - replace if you have specific GFX)
-	custom_map_icon = GFX_raid_target_icon_guerilla_raid
-	target_icon = GFX_other_target_icon
-	target_loc_key = raid_target_name_steal_spider_silk
-	launch_sound = raid_land_launchable_sound
+	GOB_raid_steal_spider_silk = {
 
-	arrow = {
-		type = line
-	}
-
-	unit_model = {
-		type = equipment
-		scale = 0.5
-	}
-
-	# --- Costs & Cooldowns ---
-	command_power = 40
-	days_to_prepare = 30
-	speed_multiplier = 1.0
-	fire_only_once = yes
-
-	# --- AI Logic ---
-	ai_will_do = {
-		base = 10
-		modifier = {
-			factor = 0
-			command_power < 50
-		}
-	}
-
-	# --- Permissions ---
-	
-	# [Only Goblin Town (GOB) can do this
-	allowed = {
-		original_tag = GOB
-	}
-
-	# Visible if Spiders (SPI) own the nest (State 82)
-	visible = {
-		original_tag = GOB
-		SPI = { owns_state = 82 }
-		has_completed_focus = GOB_the_greenwood_expedition
-		NOT = { is_ally_with = SPI }
-	}
-
-	# Targeting Logic: specifically the Spider's Nest (State 82)
-	show_target = {
-		var:target_state = {
-			state = 82
-			controller = {
-				original_tag = SPI
-				NOT = { has_war_with = ROOT } # Must be at peace
-			}
-		}
-	}
-
-	# Can be launched if target is valid
-	available = {
-		var:target_state = {
-			state = 82
-		}
-	}
-	
-	# --- Launch Conditions ---
-	launchable = {
-		# Peacetime requirement is handled in show_target logic
-		always = yes
-	}
-
-	# --- Raid Execution Details ---
-
-	starting_point = {
-		# Goblins likely launching from their own caves/mountains
-		types = { supply_node }
-		allow_faction_buildings = yes
-	}
-
-	# Target the state directly for resource theft
-	target_types = { state }
-
-	# Unit: Goblin Infantry (min 4 battalions)
-	unit_requirements = {
-		battalion_types = {
-			infantry = { min = 4 }
-		}
-	}
-
-	# --- Success Calculation ---
-	success_factors = {
-		success = {
-			base = 0.5
-
-			# Unit Skill
-			experience = {
-				weight = 0.2
-				reference = 1.0
-			}
-			organisation = {
-				weight = 0.1
-				reference = 50
-			}
-
-			# Difficulty Modifiers
-			# If the spiders have many units guarding the nest
-			enemy_units = {
-				reference = 4
-				weight = -0.3
-			}
-			
-			# Intel helps navigate the dark webs
-			intel = {
-				weight = 0.2
-				reference = 100
-			}
-		}
-
-		critical = {
-			base = 0.1
-			experience = {
-				weight = 0.1
-				reference = 1.0
-			}
-		}
-	}
-
-	# --- Outcomes ---
-	success_levels = {
+		# --- Basic Configuration ---
+		category = land_infiltration_raids
 		
-		# --- FAILURE ---
-		failure = {
-			victim_effects = {
-				# Event: Spiders catch the thieves
-				var:victim_country = {
-					country_event = goblintown.103
-				}
-			}
-			actor_effects = {
-				# Event: Failed raid report
-				var:actor_country = {
-					country_event = goblintown.102
-				}
-				
-				# Severe Damage (Simulating being eaten/caught in webs)
-				raid_damage_units = {
-					org_damage = 0.99
-					str_damage = 0.99 # High chance of unit destruction
-					ratio = yes
-				}
+		# Visuals (Generic placeholders used - replace if you have specific GFX)
+		custom_map_icon = GFX_raid_target_icon_guerilla_raid
+		target_icon = GFX_other_target_icon
+		target_loc_key = raid_target_name_steal_spider_silk
+		launch_sound = raid_land_launchable_sound
 
-				raid_add_unit_experience = 0.05
-				add_raid_history_entry = yes
-			}
-			visual_effect = {
-				entity = "raid_failed_entity"
-				animation = "attack"
+		arrow = {
+			type = line
+		}
+
+		unit_model = {
+			type = equipment
+			scale = 0.5
+		}
+
+		target_type = {
+			province = 9131
+		}
+
+		# --- Costs & Cooldowns ---
+		command_power = 40
+		days_to_prepare = 30
+		speed_multiplier = 1.0
+		fire_only_once = yes
+
+		# --- AI Logic ---
+		ai_will_do = {
+			base = 10
+			modifier = {
+				factor = 0
+				command_power < 50
 			}
 		}
 
-		# --- LIMITED SUCCESS ---
-		limited_success = {
-			victim_effects = {
-				# Event: Spiders notice theft
-				var:victim_country = {
-					country_event = goblintown.101
-				}
-				
-				# Remove Resources (Tungsten = Silk)
-				# Removing 8 units
-				var:target_state = {
-					modify_state_resources = {
-						resource = tungsten
-						amount = -8
-					}
-				}
-			}
-			actor_effects = {
-				# Event: Successful heist
-				var:actor_country = {
-					country_event = goblintown.100
-				}
-
-				# Add Resources to Goblin Town (State 245)
-				# Adding 10 units
-				245 = {
-					modify_state_resources = {
-						resource = tungsten
-						amount = 10
-					}
-				}
-
-				# Moderate Damage (Fought off some spiders)
-				raid_damage_units = {
-					org_damage = 0.5
-					str_damage = 0.3
-					ratio = yes
-				}
-
-				raid_add_unit_experience = 0.15
-				add_raid_history_entry = yes
-			}
-			visual_effect = {
-				entity = "land_raids_limited_success_entity"
-				animation = "attack"
-			}
-		}
-
-		# --- SUCCESS ---
-		success = {
-			victim_effects = {
-				var:victim_country = {
-					country_event = goblintown.101
-				}
-				
-				# Remove Resources: 14 units
-				var:target_state = {
-					modify_state_resources = {
-						resource = tungsten
-						amount = -14
-					}
-				}
-			}
-			actor_effects = {
-				var:actor_country = {
-					country_event = goblintown.100
-				}
-
-				# Add Resources: 18 units
-				245 = {
-					modify_state_resources = {
-						resource = tungsten
-						amount = 18
-					}
-				}
-
-				# Low Damage
-				raid_damage_units = {
-					org_damage = 0.3
-					str_damage = 0.2
-					ratio = yes
-				}
-
-				raid_add_unit_experience = 0.3
-				add_raid_history_entry = yes
-			}
-			visual_effect = {
-				entity = "land_raids_success_entity"
-				animation = "attack"
-			}
-		}
-
-		# --- CRITICAL SUCCESS ---
-		critical_success = {
-			victim_effects = {
-				var:victim_country = {
-					country_event = goblintown.101
-				}
-				
-				# Remove Resources: 20 units (Massive theft)
-				var:target_state = {
-					modify_state_resources = {
-						resource = tungsten
-						amount = -20
-					}
-				}
-			}
-			actor_effects = {
-				var:actor_country = {
-					country_event = goblintown.100
-				}
-
-				# Add Resources: 25 units
-				245 = {
-					modify_state_resources = {
-						resource = tungsten
-						amount = 25
-					}
-				}
-
-				# Minimal Damage (Sneaky goblins undetected)
-				raid_damage_units = {
-					org_damage = 0.1
-					str_damage = 0.1
-					ratio = yes
-				}
-
-				raid_add_unit_experience = 0.5
-				add_raid_history_entry = yes
-			}
-			visual_effect = {
-				entity = "land_raids_critical_success_entity"
-				animation = "attack"
-			}
-		}
-	}
-}
-
-GOB_raid_steal_bree_leather = {
-
-	# --- Basic Configuration ---
-	category = land_infiltration_raids
-	
-	# Visuals
-	custom_map_icon = GFX_raid_target_icon_guerilla_raid
-	target_icon = GFX_other_target_icon
-	target_loc_key = raid_target_name_steal_bree_leather
-	launch_sound = raid_land_launchable_sound
-
-	arrow = {
-		type = line
-	}
-
-	unit_model = {
-		type = equipment
-		scale = 0.5
-	}
-
-	# --- Costs & Cooldowns ---
-	command_power = 40
-	days_to_prepare = 30
-	speed_multiplier = 1.0
-	fire_only_once = yes
-
-	# --- AI Logic ---
-	ai_will_do = {
-		base = 10
-		modifier = {
-			factor = 0
-			command_power < 50
-		}
-	}
-
-	# --- Permissions ---
-	
-	# Only Goblin Town (GOB) can do this
-	allowed = {
-		original_tag = GOB
-	}
-
-	# Visible if Cardolan (CAR) owns Bree (State 149)
-	visible = {
-		original_tag = GOB
-		CAR = { owns_state = 149 }
-		has_completed_focus = GOB_the_bree_expedition
-		NOT = { is_ally_with = CAR }
-	}
-
-	# Targeting Logic: specifically Bree (State 149)
-	show_target = {
-		var:target_state = {
-			state = 149
-			controller = {
-				original_tag = CAR
-				NOT = { has_war_with = ROOT } # Must be at peace
-			}
-		}
-	}
-
-	# Can be launched if target is valid
-	available = {
-		var:target_state = {
-			state = 149
-		}
-	}
-	
-	# --- Launch Conditions ---
-	launchable = {
-		always = yes
-	}
-
-	# --- Raid Execution Details ---
-
-	starting_point = {
-		types = { supply_node }
-		allow_faction_buildings = yes
-	}
-
-	# Target the state directly for resource theft
-	target_types = { state }
-
-	# Unit: Goblin Infantry (min 4 battalions)
-	unit_requirements = {
-		battalion_types = {
-			infantry = { min = 4 }
-		}
-	}
-
-	# --- Success Calculation ---
-	success_factors = {
-		success = {
-			base = 0.5
-
-			# Unit Skill
-			experience = {
-				weight = 0.2
-				reference = 1.0
-			}
-			organisation = {
-				weight = 0.1
-				reference = 50
-			}
-
-			# Difficulty Modifiers
-			enemy_units = {
-				reference = 4
-				weight = -0.3
-			}
-			
-			intel = {
-				weight = 0.2
-				reference = 100
-			}
-		}
-
-		critical = {
-			base = 0.1
-			experience = {
-				weight = 0.1
-				reference = 1.0
-			}
-		}
-	}
-
-	# --- Outcomes ---
-	success_levels = {
+		# --- Permissions ---
 		
-		# --- FAILURE ---
-		failure = {
-			victim_effects = {
-				# Event: Cardolan catches them
-				var:victim_country = {
-					country_event = goblintown.106
-				}
-			}
-			actor_effects = {
-				# No event for GOB
-				
-				# Severe Damage
-				raid_damage_units = {
-					org_damage = 0.99
-					str_damage = 0.99 # High chance of unit destruction
-					ratio = yes
-				}
+		# [Only Goblin Town (GOB) can do this
+		allowed = {
+			original_tag = GOB
+		}
 
-				raid_add_unit_experience = 0.05
-				add_raid_history_entry = yes
-			}
-			visual_effect = {
-				entity = "raid_failed_entity"
-				animation = "attack"
+		# Visible if Spiders (SPI) own the nest (State 82)
+		visible = {
+			original_tag = GOB
+			SPI = { controls_state = 82 }
+			has_completed_focus = GOB_the_greenwood_expedition
+			NOT = { is_ally_with = SPI }
+		}
+
+		# Targeting Logic: specifically the Spider's Nest (State 82)
+		show_target = {
+			var:target_state = {
+				state = 82
+				controller = {
+					original_tag = SPI
+					NOT = { has_war_with = ROOT } # Must be at peace
+				}
 			}
 		}
 
-		# --- LIMITED SUCCESS ---
-		limited_success = {
-			victim_effects = {
-				# Event: Cardolan notices theft
-				var:victim_country = {
-					country_event = goblintown.105
-				}
-				
-				# Remove Resources (Rubber = Leather)
-				# Removing 5 units
-				var:target_state = {
-					modify_state_resources = {
-						resource = rubber
-						amount = -5
-					}
-				}
+		# Can be launched if target is valid
+		available = {
+			var:target_state = {
+				state = 82
 			}
-			actor_effects = {
-				# No event for GOB
+		}
+		
+		# --- Launch Conditions ---
+		launchable = {
+			# Peacetime requirement is handled in show_target logic
+			always = yes
+		}
 
-				# Add Resources to Goblin Town (State 245)
-				# Adding 10 units
-				245 = {
-					modify_state_resources = {
-						resource = rubber
-						amount = 10
-					}
-				}
+		# --- Raid Execution Details ---
 
-				# Moderate Damage
-				raid_damage_units = {
-					org_damage = 0.5
-					str_damage = 0.3
-					ratio = yes
-				}
+		starting_point = {
+			# Goblins likely launching from their own caves/mountains
+			types = { supply_node }
+			allow_faction_buildings = yes
+		}
 
-				raid_add_unit_experience = 0.15
-				add_raid_history_entry = yes
-			}
-			visual_effect = {
-				entity = "land_raids_limited_success_entity"
-				animation = "attack"
+		# Target the state directly for resource theft
+		target_types = { state }
+
+		# Unit: Goblin Infantry (min 4 battalions)
+		unit_requirements = {
+			battalion_types = {
+				infantry = { min = 4 }
 			}
 		}
 
-		# --- SUCCESS ---
-		success = {
-			victim_effects = {
-				var:victim_country = {
-					country_event = goblintown.105
+		# --- Success Calculation ---
+		success_factors = {
+			success = {
+				base = 0.5
+
+				# Unit Skill
+				experience = {
+					weight = 0.2
+					reference = 1.0
+				}
+				organisation = {
+					weight = 0.1
+					reference = 50
+				}
+
+				# Difficulty Modifiers
+				# If the spiders have many units guarding the nest
+				enemy_units = {
+					reference = 4
+					weight = -0.3
 				}
 				
-				# Remove Resources: 10 units
-				var:target_state = {
-					modify_state_resources = {
-						resource = rubber
-						amount = -10
-					}
+				# Intel helps navigate the dark webs
+				intel = {
+					weight = 0.2
+					reference = 100
 				}
 			}
-			actor_effects = {
-				# No event for GOB
 
-				# Add Resources: 15 units
-				245 = {
-					modify_state_resources = {
-						resource = rubber
-						amount = 15
-					}
+			critical = {
+				base = 0.1
+				experience = {
+					weight = 0.1
+					reference = 1.0
 				}
-
-				# Low Damage
-				raid_damage_units = {
-					org_damage = 0.3
-					str_damage = 0.2
-					ratio = yes
-				}
-
-				raid_add_unit_experience = 0.3
-				add_raid_history_entry = yes
-			}
-			visual_effect = {
-				entity = "land_raids_success_entity"
-				animation = "attack"
 			}
 		}
 
-		# --- CRITICAL SUCCESS ---
-		critical_success = {
-			victim_effects = {
-				var:victim_country = {
-					country_event = goblintown.105
+		# --- Outcomes ---
+		success_levels = {
+			
+			# --- FAILURE ---
+			failure = {
+				victim_effects = {
+					# Event: Spiders catch the thieves
+					var:victim_country = {
+						country_event = goblintown.103
+					}
+				}
+				actor_effects = {
+					# Event: Failed raid report
+					var:actor_country = {
+						country_event = goblintown.102
+					}
+					
+					# Severe Damage (Simulating being eaten/caught in webs)
+					raid_damage_units = {
+						org_damage = 0.99
+						str_damage = 0.99 # High chance of unit destruction
+						ratio = yes
+					}
+
+					raid_add_unit_experience = 0.05
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+
+			# --- LIMITED SUCCESS ---
+			limited_success = {
+				victim_effects = {
+					# Event: Spiders notice theft
+					var:victim_country = {
+						country_event = goblintown.101
+					}
+					
+					# Remove Resources (Tungsten = Silk)
+					# Removing 8 units
+					var:target_state = {
+						modify_state_resources = {
+							resource = tungsten
+							amount = -8
+						}
+					}
+				}
+				actor_effects = {
+					# Event: Successful heist
+					var:actor_country = {
+						country_event = goblintown.100
+					}
+
+					# Add Resources to Goblin Town (State 245)
+					# Adding 10 units
+					245 = {
+						modify_state_resources = {
+							resource = tungsten
+							amount = 10
+						}
+					}
+
+					# Moderate Damage (Fought off some spiders)
+					raid_damage_units = {
+						org_damage = 0.5
+						str_damage = 0.3
+						ratio = yes
+					}
+
+					raid_add_unit_experience = 0.15
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_limited_success_entity"
+					animation = "attack"
+				}
+			}
+
+			# --- SUCCESS ---
+			success = {
+				victim_effects = {
+					var:victim_country = {
+						country_event = goblintown.101
+					}
+					
+					# Remove Resources: 14 units
+					var:target_state = {
+						modify_state_resources = {
+							resource = tungsten
+							amount = -14
+						}
+					}
+				}
+				actor_effects = {
+					var:actor_country = {
+						country_event = goblintown.100
+					}
+
+					# Add Resources: 18 units
+					245 = {
+						modify_state_resources = {
+							resource = tungsten
+							amount = 18
+						}
+					}
+
+					# Low Damage
+					raid_damage_units = {
+						org_damage = 0.3
+						str_damage = 0.2
+						ratio = yes
+					}
+
+					raid_add_unit_experience = 0.3
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_success_entity"
+					animation = "attack"
+				}
+			}
+
+			# --- CRITICAL SUCCESS ---
+			critical_success = {
+				victim_effects = {
+					var:victim_country = {
+						country_event = goblintown.101
+					}
+					
+					# Remove Resources: 20 units (Massive theft)
+					var:target_state = {
+						modify_state_resources = {
+							resource = tungsten
+							amount = -20
+						}
+					}
+				}
+				actor_effects = {
+					var:actor_country = {
+						country_event = goblintown.100
+					}
+
+					# Add Resources: 25 units
+					245 = {
+						modify_state_resources = {
+							resource = tungsten
+							amount = 25
+						}
+					}
+
+					# Minimal Damage (Sneaky goblins undetected)
+					raid_damage_units = {
+						org_damage = 0.1
+						str_damage = 0.1
+						ratio = yes
+					}
+
+					raid_add_unit_experience = 0.5
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_critical_success_entity"
+					animation = "attack"
+				}
+			}
+		}
+	}
+
+	GOB_raid_steal_bree_leather = {
+
+		# --- Basic Configuration ---
+		category = land_infiltration_raids
+		
+		# Visuals
+		custom_map_icon = GFX_raid_target_icon_guerilla_raid
+		target_icon = GFX_other_target_icon
+		target_loc_key = raid_target_name_steal_bree_leather
+		launch_sound = raid_land_launchable_sound
+
+		arrow = {
+			type = line
+		}
+
+		unit_model = {
+			type = equipment
+			scale = 0.5
+		}
+
+		target_type = {
+			province = 6092
+		}
+
+		# --- Costs & Cooldowns ---
+		command_power = 40
+		days_to_prepare = 30
+		speed_multiplier = 1.0
+		fire_only_once = yes
+
+		# --- AI Logic ---
+		ai_will_do = {
+			base = 10
+			modifier = {
+				factor = 0
+				command_power < 50
+			}
+		}
+
+		# --- Permissions ---
+		
+		# Only Goblin Town (GOB) can do this
+		allowed = {
+			original_tag = GOB
+		}
+
+		# Visible if Cardolan (CAR) owns Bree (State 149)
+		visible = {
+			original_tag = GOB
+			CAR = { controls_state = 149 }
+			has_completed_focus = GOB_the_bree_expedition
+			NOT = { is_ally_with = CAR }
+		}
+
+		# Targeting Logic: specifically Bree (State 149)
+		show_target = {
+			var:target_state = {
+				state = 149
+				controller = {
+					original_tag = CAR
+					NOT = { has_war_with = ROOT } # Must be at peace
+				}
+			}
+		}
+
+		# Can be launched if target is valid
+		available = {
+			var:target_state = {
+				state = 149
+			}
+		}
+		
+		# --- Launch Conditions ---
+		launchable = {
+			always = yes
+		}
+
+		# --- Raid Execution Details ---
+
+		starting_point = {
+			types = { supply_node }
+			allow_faction_buildings = yes
+		}
+
+		# Target the state directly for resource theft
+		target_types = { state }
+
+		# Unit: Goblin Infantry (min 4 battalions)
+		unit_requirements = {
+			battalion_types = {
+				infantry = { min = 4 }
+			}
+		}
+
+		# --- Success Calculation ---
+		success_factors = {
+			success = {
+				base = 0.5
+
+				# Unit Skill
+				experience = {
+					weight = 0.2
+					reference = 1.0
+				}
+				organisation = {
+					weight = 0.1
+					reference = 50
+				}
+
+				# Difficulty Modifiers
+				enemy_units = {
+					reference = 4
+					weight = -0.3
 				}
 				
-				# Remove Resources: 15 units
-				var:target_state = {
-					modify_state_resources = {
-						resource = rubber
-						amount = -15
-					}
+				intel = {
+					weight = 0.2
+					reference = 100
 				}
 			}
-			actor_effects = {
-				# No event for GOB
 
-				# Add Resources: 20 units
-				245 = {
-					modify_state_resources = {
-						resource = rubber
-						amount = 20
+			critical = {
+				base = 0.1
+				experience = {
+					weight = 0.1
+					reference = 1.0
+				}
+			}
+		}
+
+		# --- Outcomes ---
+		success_levels = {
+			
+			# --- FAILURE ---
+			failure = {
+				victim_effects = {
+					# Event: Cardolan catches them
+					var:victim_country = {
+						country_event = goblintown.106
 					}
 				}
+				actor_effects = {
+					# No event for GOB
+					
+					# Severe Damage
+					raid_damage_units = {
+						org_damage = 0.99
+						str_damage = 0.99 # High chance of unit destruction
+						ratio = yes
+					}
 
-				# Minimal Damage
-				raid_damage_units = {
-					org_damage = 0.1
-					str_damage = 0.1
-					ratio = yes
+					raid_add_unit_experience = 0.05
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+
+			# --- LIMITED SUCCESS ---
+			limited_success = {
+				victim_effects = {
+					# Event: Cardolan notices theft
+					var:victim_country = {
+						country_event = goblintown.105
+					}
+					
+					# Remove Resources (Rubber = Leather)
+					# Removing 5 units
+					var:target_state = {
+						modify_state_resources = {
+							resource = rubber
+							amount = -5
+						}
+					}
+				}
+				actor_effects = {
+					# No event for GOB
+
+					# Add Resources to Goblin Town (State 245)
+					# Adding 10 units
+					245 = {
+						modify_state_resources = {
+							resource = rubber
+							amount = 10
+						}
+					}
+
+					# Moderate Damage
+					raid_damage_units = {
+						org_damage = 0.5
+						str_damage = 0.3
+						ratio = yes
+					}
+
+					raid_add_unit_experience = 0.15
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_limited_success_entity"
+					animation = "attack"
+				}
+			}
+
+			# --- SUCCESS ---
+			success = {
+				victim_effects = {
+					var:victim_country = {
+						country_event = goblintown.105
+					}
+					
+					# Remove Resources: 10 units
+					var:target_state = {
+						modify_state_resources = {
+							resource = rubber
+							amount = -10
+						}
+					}
+				}
+				actor_effects = {
+					# No event for GOB
+
+					# Add Resources: 15 units
+					245 = {
+						modify_state_resources = {
+							resource = rubber
+							amount = 15
+						}
+					}
+
+					# Low Damage
+					raid_damage_units = {
+						org_damage = 0.3
+						str_damage = 0.2
+						ratio = yes
+					}
+
+					raid_add_unit_experience = 0.3
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_success_entity"
+					animation = "attack"
+				}
+			}
+
+			# --- CRITICAL SUCCESS ---
+			critical_success = {
+				victim_effects = {
+					var:victim_country = {
+						country_event = goblintown.105
+					}
+					
+					# Remove Resources: 15 units
+					var:target_state = {
+						modify_state_resources = {
+							resource = rubber
+							amount = -15
+						}
+					}
+				}
+				actor_effects = {
+					# No event for GOB
+
+					# Add Resources: 20 units
+					245 = {
+						modify_state_resources = {
+							resource = rubber
+							amount = 20
+						}
+					}
+
+					# Minimal Damage
+					raid_damage_units = {
+						org_damage = 0.1
+						str_damage = 0.1
+						ratio = yes
+					}
+
+					raid_add_unit_experience = 0.5
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_critical_success_entity"
+					animation = "attack"
+				}
+			}
+		}
+	}
+
+	GOB_raid_rivendell_heist = {
+
+		#--- General Settings ---
+		icon = GFX_raid_target_icon_guerilla_raid # Placeholder icon
+		category = land_infiltration_raids
+
+		target_type = {
+			province = 1088
+		}
+		
+		# High Command Power cost for a major operation
+		command_power = 60 
+		
+		days_to_prepare = 30
+		days_re_enable = 0 # One-time use, but fire_only_once handles the lock
+		fire_only_once = yes 
+		
+		# Movement settings
+		speed_multiplier = 1.0 
+		arrow = {
+			type = land
+		}
+
+		#--- Permissions & Visibility ---
+		allowed = {
+			original_tag = GOB
+		}
+
+		visible = {
+			original_tag = GOB
+
+			RIV = { NOT = { has_war_with = ROOT } }
+
+			# [cite_start]Only visible if Rivendell still owns the capital [cite: 3]
+			RIV = { controls_state = 65 }
+
+			65 = { industrial_complex > 2 }
+		}
+
+		available = {
+			command_power > 60
+		}
+
+		# Targeting Logic: Specifically Rivendell's capital (State 65)
+		# "regardless of if they are neighbours" is handled by selecting the state directly here.
+		show_target = {
+			var:target_state = {
+				state = 65
+				controller = {
+					original_tag = RIV
+				}
+			}
+		}
+
+		#--- Launch Conditions ---
+		launchable = {
+			# "raid should only be doable in peace-time"
+			#RIV = { NOT = { has_war_with = ROOT } }
+			always = yes
+		}
+
+		#--- Unit & Equipment ---
+		starting_point = {
+			building_types = { supply_node }
+			allow_faction_buildings = yes
+		}
+
+		unit_requirements = {
+			battalion_types = {
+				# Assuming Goblins use basic infantry or militia types
+				infantry = { min = 6 }
+			}
+		}
+
+		#--- Difficulty Calculation ---
+		success_factors = {
+			success = {
+				base = 0.3 # Low base chance = High Risk
+
+				# Unit Experience helps significantly
+				experience = {
+					weight = 0.3
+					reference = 1.0
+				}
+				
+				# Enemy Intel is crucial for a heist
+				intel = {
+					weight = 0.25
+					reference = 100
 				}
 
-				raid_add_unit_experience = 0.5
-				add_raid_history_entry = yes
+				# Resistance/Garrison in the target state makes it harder
+				resistance = {
+					reference = 50
+					weight = -0.2
+				}
 			}
-			visual_effect = {
-				entity = "land_raids_critical_success_entity"
-				animation = "attack"
+		}
+
+		#--- Outcomes ---
+		success_levels = {
+			
+			# CASE: FAILURE
+			# "kill the entire unit (think 99% damage)"
+			failure = {
+				victim_effects = {
+					# Trigger failure event for Rivendell
+					var:victim_country = {
+						country_event = { id = goblintown.120 }
+					}
+					# Rivendell gains War Support/Intel for catching them
+					var:victim_country = {
+						add_war_support = 0.05
+					}
+				}
+				actor_effects = {
+					var:actor_country = {
+						add_war_support = -0.03
+					}
+					# [cite_start]Total Wipeout [cite: 8]
+					raid_damage_units = {
+						damage = 0.99
+						ratio = yes
+					}
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+
+			# CASE: LIMITED SUCCESS (Steal 1 Factory)
+			limited_success = {
+				victim_effects = {
+					var:victim_country = {
+						country_event = { id = goblintown.119 }
+						add_stability = -0.05
+					}
+					# Remove 1 Factory from Rivendell (State 65)
+					65 = {
+						remove_building = { type = industrial_complex level = 1 }
+					}
+				}
+				actor_effects = {
+					# High Damage (escaped by the skin of their teeth)
+					raid_damage_units = {
+						damage = 0.7
+						ratio = yes
+					}
+					# Add 1 Factory to Goblin Town (State 245)
+					# (Using vanilla syntax for 1 factory as user custom effect specified 'x2')
+					245 = {
+						add_building_slot_and_civ = yes
+					}
+					raid_add_unit_experience = 0.2
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_limited_success_entity"
+					animation = "attack"
+				}
+			}
+
+			# CASE: SUCCESS (Steal 2 Factories)
+			success = {
+				victim_effects = {
+					var:victim_country = {
+						country_event = { id = goblintown.119 }
+						add_stability = -0.10
+					}
+					# Remove 2 Factories
+					65 = {
+						remove_building = { type = industrial_complex level = 2 }
+					}
+				}
+				actor_effects = {
+					var:actor_country = {
+						add_war_support = 0.02
+					}
+					# Moderate Damage
+					raid_damage_units = {
+						damage = 0.4
+						ratio = yes
+					}
+					# Add 2 Factories (Using your provided custom effect)
+					245 = {
+						add_building_slot_and_civ_x2 = yes
+					}
+					raid_add_unit_experience = 0.4
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_success_entity"
+					animation = "attack"
+				}
+			}
+
+			# CASE: CRITICAL SUCCESS (Steal 3 Factories)
+			critical_success = {
+				victim_effects = {
+					var:victim_country = {
+						country_event = { id = goblintown.119 }
+						add_stability = -0.15
+					}
+					# Remove 3 Factories
+					65 = {
+						remove_building = { type = industrial_complex level = 3 }
+					}
+				}
+				actor_effects = {
+					var:actor_country = {
+						add_war_support = 0.03
+					}
+					# Light Damage (Clean getaway)
+					raid_damage_units = {
+						damage = 0.1
+						ratio = yes
+					}
+					# Add 3 Factories (Combining your custom effect + vanilla for the 3rd)
+					245 = {
+						add_building_slot_and_civ_x3 = yes
+					}
+					raid_add_unit_experience = 0.6
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_critical_success_entity"
+					animation = "attack"
+				}
 			}
 		}
 	}
