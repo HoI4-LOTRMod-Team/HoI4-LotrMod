@@ -485,7 +485,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_emergency_muster_protocols
 		prerequisite = { focus = GOB_plan_out_a_defense }
         
@@ -503,10 +503,11 @@ focus_tree = {
         }
         completion_reward = {
 			# when in def war, get manpower  
+            create_defensive_musters = yes
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_food_stores
 		prerequisite = { focus = GOB_plan_out_a_defense }
         
@@ -524,10 +525,17 @@ focus_tree = {
         }
         completion_reward = {
 			# add food silo  
+            random_core_state = {
+                add_building_construction = {
+                    type = fuel_silo
+                    level = 1
+                    instant_build = yes
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_stockpile_scrap_and_stone
 		prerequisite = { focus = GOB_plan_out_a_defense }
         
@@ -545,6 +553,7 @@ focus_tree = {
         }
         completion_reward = {
 			# when in def war, gain equipment  
+            custom_effect_tooltip = GOB_stockpile_scrap_and_stone_tt
 		}
     }
 
@@ -599,9 +608,9 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_undaunted_defense
-		prerequisite = { focus = GOB_rouse_the_rabble }
+		prerequisite = { focus = GOB_break_the_first_wave }
         
         icon = GFX_unknown_focus
         
@@ -617,11 +626,15 @@ focus_tree = {
         }
         completion_reward = {
 			# leader gains cool defense trait  
+            add_timed_idea = {
+                idea = GOB_the_last_stand
+                days = 365
+            }
 		}
     }
 
-    focus = { # TODO
-        id = GOB_sound_the_horns_below
+    focus = {
+        id = GOB_sound_the_horns_wake_the_guards
 		prerequisite = { focus = GOB_emergency_measures }
         
         icon = GFX_unknown_focus
@@ -637,16 +650,49 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# spawn divisions  
+			# load oob of a few, powerful divs
+            custom_effect_tooltip = GOB_sound_the_horns_wake_the_guards_tt
+            hidden_effect = {
+                division_template = {
+                    name = "Tunnel Guards"
+                    regiments = {
+                        infantry = { x = 0 y = 1 }
+                        infantry = { x = 0 y = 2 }
+                        infantry = { x = 0 y = 3 }
+                        infantry = { x = 1 y = 1 }
+                        infantry = { x = 1 y = 2 }
+                        infantry = { x = 1 y = 3 }
+                        infantry = { x = 2 y = 1 }
+                        infantry = { x = 2 y = 2 }
+                        infantry = { x = 2 y = 3 }
+                    }
+                    support = {
+                        artillery = { x = 0 y = 1 }
+                        engineer = { x = 0 y = 1 }
+                    }
+                }
+                random_core_state = {
+                    limit = { is_controlled_by = GOB }
+                    create_unit = {
+                        division = "name = \"Tunnel Guards\" division_template = \"Tunnel Guards\" start_experience_factor = 0.5"
+                        owner = GOB
+                        count = 2
+                        allow_spawning_on_enemy_provs = no
+                    }
+                }
+            }
+            
 		}
     }
 
     focus = {
         id = GOB_collapse_the_side_shafts
-		prerequisite = { focus = GOB_sound_the_horns_below }
+		prerequisite = { focus = GOB_sound_the_horns_wake_the_guards }
 		prerequisite = { focus = GOB_survey_the_collapse_points }
         
         icon = GFX_unknown_focus
+
+        cancelable = no # Once you light the fuse, there's no going back
         
         x = 21
         y = 6
@@ -687,7 +733,7 @@ focus_tree = {
 
     focus = {
         id = GOB_factory_conversion
-		prerequisite = { focus = GOB_sound_the_horns_below }
+		prerequisite = { focus = GOB_sound_the_horns_wake_the_guards }
         
         icon = GFX_unknown_focus
         
@@ -724,6 +770,10 @@ focus_tree = {
 		prerequisite = { focus = GOB_fortress_under_the_mountains }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GOB_tunnel_ambushes
+        }
         
         x = 23
         y = 8
@@ -745,6 +795,10 @@ focus_tree = {
 		prerequisite = { focus = GOB_fortress_under_the_mountains }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GOB_bar_the_gate_tunnels
+        }
         
         x = 25
         y = 8
@@ -803,8 +857,52 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_rouse_the_rabble
+		prerequisite = { focus = GOB_break_the_first_wave }
+		prerequisite = { focus = GOB_stockpile_scrap_and_stone }
+        
+        icon = GFX_unknown_focus
+        
+        x = 27
+        y = 6
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# load an oob of a lot of shitty divs
+            custom_effect_tooltip = GOB_rouse_the_rabble_tt
+            hidden_effect = {
+                division_template = {
+                    name = "Emergency Militia"
+                    regiments = {
+                        infantry = { x = 0 y = 1 }
+                        infantry = { x = 0 y = 2 }
+                        infantry = { x = 1 y = 1 }
+                        infantry = { x = 1 y = 2 }
+                        infantry = { x = 2 y = 1 }
+                    }
+                }
+                random_core_state = {
+                    limit = { is_controlled_by = GOB }
+                    create_unit = {
+                        division = "name = \"Emergency Militia\" division_template = \"Emergency Militia\" start_experience_factor = 0.0 start_equipment_factor = 0.5 start_manpower_factor = 0.7"
+                        owner = GOB
+                        count = 5
+                        allow_spawning_on_enemy_provs = no
+                    }
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = GOB_break_the_first_wave
 		prerequisite = { focus = GOB_emergency_measures }
         
         icon = GFX_unknown_focus
@@ -820,31 +918,18 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# load an oob  
-		}
-    }
-
-    focus = { # TODO
-        id = GOB_no_step_back
-		prerequisite = { focus = GOB_rouse_the_rabble }
-		prerequisite = { focus = GOB_stockpile_scrap_and_stone }
-        
-        icon = GFX_unknown_focus
-        
-        x = 27
-        y = 6
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
+            every_unit_leader = {
+                add_temporary_buff_to_units = {
+                    combat_defense = 0.25
+                    combat_entrenchment = 0.25
+                    days = 90
+                    tooltip = GOB_break_the_first_wave
+                }
+            }
         }
-        completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_fortress_under_the_mountains
 		prerequisite = { focus = GOB_emergency_measures }
         
@@ -862,6 +947,19 @@ focus_tree = {
         }
         completion_reward = {
 			# add forts and castles to VPs
+            custom_effect_tooltip = GOB_fortress_under_the_mountains_tt
+            hidden_effect = {
+                every_core_state = {
+                    add_building_construction = {
+                        type = castle
+                        level = 1
+                        province = {
+                            all_provinces = yes
+                            limit_to_victory_point = yes
+                        }
+                    }
+                }
+            }
 		}
     }
 
