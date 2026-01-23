@@ -257,7 +257,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_fix_politics
 		prerequisite = { focus = GOB_secure_the_kings_hold }
         
@@ -275,10 +275,14 @@ focus_tree = {
         }
         completion_reward = {
 			# fix PP gain  
+            swap_ideas = {
+                remove_idea = GOB_tunnel_lord_division
+                add_idea = GOB_tunnel_lord_division_2
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_fix_research
 		prerequisite = { focus = GOB_secure_the_kings_hold }
         
@@ -296,10 +300,15 @@ focus_tree = {
         }
         completion_reward = {
 			# gain research boost  
+            add_tech_bonus = {
+                name = special_bonus
+                uses = 5
+                bonus = 0.1
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_fix_military
 		prerequisite = { focus = GOB_secure_the_kings_hold }
         
@@ -316,11 +325,16 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# unlock higher levies  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_infantry
+                uses = 2
+                bonus = 0.5
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_crack_down_on_the_clans
 		prerequisite = { focus = GOB_fix_politics }
         
@@ -338,10 +352,11 @@ focus_tree = {
         }
         completion_reward = {
 			# remove overthrow timer  
+            custom_effect_tooltip = GOB_crack_down_on_the_clans_tt
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_silence_the_tunnel_lords
 		prerequisite = { focus = GOB_crack_down_on_the_clans }
         
@@ -359,10 +374,14 @@ focus_tree = {
         }
         completion_reward = {
 			# remove debuff/unlock higher centralization  
+            swap_ideas = {
+                remove_idea = GOB_tunnel_lord_division_2
+                add_idea = GOB_tunnel_lord_division_3
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_defensive_measures
         icon = GFX_unknown_focus
         
@@ -378,6 +397,7 @@ focus_tree = {
         }
         completion_reward = {
 			# generic idea or building?  
+            add_ideas = GOB_defensive_measures
 		}
     }
 
@@ -440,7 +460,7 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# build some defensive buildings  
+			# build some smaller defensive buildings  
 		}
     }
 
@@ -528,7 +548,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_survey_the_collapse_points
 		prerequisite = { focus = GOB_mapping_the_tunnels }
         
@@ -546,10 +566,16 @@ focus_tree = {
         }
         completion_reward = {
 			# add tech bonus to construction or smth  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour_construction
+                uses = 1
+                bonus = 0.35
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_emergency_measures
 		prerequisite = { focus = GOB_defensive_measures }
         
@@ -567,6 +593,9 @@ focus_tree = {
         }
         completion_reward = {
 			# gain stab and warsupp  
+            add_command_power = 100
+            add_stability = 0.05
+            add_war_support = 0.1
 		}
     }
 
@@ -612,7 +641,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_collapse_the_side_shafts
 		prerequisite = { focus = GOB_sound_the_horns_below }
 		prerequisite = { focus = GOB_survey_the_collapse_points }
@@ -631,10 +660,32 @@ focus_tree = {
         }
         completion_reward = {
 			# fuck up enemy troops in our states by a lot  
+            custom_effect_tooltip = for_every_core_state_tt
+            custom_effect_tooltip = GOB_collapse_the_side_shafts_tt
+            hidden_effect = {
+                267 = {
+                    gob_collapse_tunnels = yes
+                }
+                263 = {
+                    gob_collapse_tunnels = yes
+                }
+                245 = {
+                    gob_collapse_tunnels = yes
+                }
+                every_enemy_country = {
+                    limit = {
+                        num_divisions_in_states = {
+                            count > 0
+                            states = { 267 263 245 }
+                        }
+                    }
+                    country_event = goblintown.123
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_factory_conversion
 		prerequisite = { focus = GOB_sound_the_horns_below }
         
@@ -652,6 +703,19 @@ focus_tree = {
         }
         completion_reward = {
 			# switch some civs to mils, also gain some mils  
+            custom_effect_tooltip = GOB_factory_conversion_tt
+            hidden_effect = {
+                random_core_state = {
+                    limit = { industrial_complex > 0 }
+                    remove_building = { type = industrial_complex level = 1 }
+                    add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+                }
+                random_core_state = {
+                    limit = { industrial_complex > 0 }
+                    remove_building = { type = industrial_complex level = 1 }
+                    add_building_construction = { type = arms_factory level = 1 instant_build = yes }
+                }
+            }
 		}
     }
 
@@ -797,7 +861,7 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# add forts and castles and shit  
+			# add forts and castles to VPs
 		}
     }
 
@@ -1452,7 +1516,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_restore_the_high_pass
 		prerequisite = { focus = GOB_the_high_pass_tolls }
         
@@ -1470,6 +1534,14 @@ focus_tree = {
         }
         completion_reward = {
 			# add infra and rail to high pass  
+            263 = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 3
+                    instant_build = yes
+                }
+                # TODO: supply nodes and railway
+            }
 		}
     }
 
@@ -1499,6 +1571,10 @@ focus_tree = {
 		prerequisite = { focus = GOB_restore_the_high_pass }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GOB_retain_control_over_the_high_pass
+        }
         
         x = 2
         y = 8
@@ -1578,11 +1654,15 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_retain_control_over_the_high_pass
 		prerequisite = { focus = GOB_restore_the_high_pass }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GOB_open_for_business
+        }
         
         x = 4
         y = 8
@@ -1596,10 +1676,15 @@ focus_tree = {
         }
         completion_reward = {
 			# core high pass  
+            263 = {
+                add_core_of = GOB
+                add_manpower = 5000
+                set_state_category = rural
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_improve_high_pass_economy
 		prerequisite = { focus = GOB_retain_control_over_the_high_pass }
         
@@ -1617,6 +1702,10 @@ focus_tree = {
         }
         completion_reward = {
 			# add some buildings to high pass (including a civ)  
+            263 = {
+                add_building_slot_and_civ = yes
+                add_building_slot_and_mil = yes
+            }
 		}
     }
 
@@ -2100,7 +2189,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_fear_before_gold
 		prerequisite = { focus = GOB_fix_politics }
         
@@ -2117,11 +2206,16 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# gain stability based on how many civs we have?  
+            custom_effect_tooltip = GOB_fear_before_gold_tt
+			set_temp_variable = { temp_add = num_of_available_civilian_factories }
+            multiply_temp_variable = { temp_add = 10 }
+            add_political_power = temp_add
+            multiply_temp_variable = { temp_add = 0.01 }
+            add_stability = temp_add
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_the_king_takes_his_cut
 		prerequisite = { focus = GOB_fear_before_gold }
         
@@ -2138,11 +2232,20 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# loose stability, unlock very high taxation or somth  
+			custom_effect_tooltip = GOB_fear_before_gold_tt
+            if = {
+                limit = {
+                    has_idea = high_taxes
+                }
+                swap_ideas = {
+                    remove_idea = high_taxes
+                    add_idea = high_taxes_gob
+                }
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_cash_in_interest
 		prerequisite = { focus = GOB_fear_before_gold }
         
@@ -2159,11 +2262,15 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# gain 20% factories we gained throughout the game (civs only)  
+			# gain 25% factories we gained throughout the game (civs only)  
+            custom_effect_tooltip = GOB_cash_in_interest_tt
+            set_temp_variable = { temp_factories = total_constructed_civilian_factory }
+            multiply_temp_variable = { temp_factories = 0.25 }
+            add_offsite_building = { type = industrial_complex level = temp_factories }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_political_consolidation
 		prerequisite = { focus = GOB_crack_down_on_the_clans }
         
@@ -2181,10 +2288,11 @@ focus_tree = {
         }
         completion_reward = {
 			# pp  
+            add_political_power = 200
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_foreign_policy
 		prerequisite = { focus = GOB_fix_politics }
         
@@ -2198,10 +2306,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            always = yes # This focus should only be able to be taken at certain world tension, but the restriction can be bypassed by spending an additional 10pp per missing % world tension.
         }
         completion_reward = {
 			# remove foreign policy restrictions  
+            remove_ideas = GOB_underground_isolation
 		}
     }
 
@@ -2210,6 +2319,11 @@ focus_tree = {
 		prerequisite = { focus = GOB_foreign_policy }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GOB_pro_sauron
+            focus = GOB_unhinged
+        }
         
         x = 10
         y = 16
@@ -2229,6 +2343,11 @@ focus_tree = {
 		prerequisite = { focus = GOB_foreign_policy }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GOB_neutral
+            focus = GOB_unhinged
+        }
         
         x = 7
         y = 16
@@ -2250,6 +2369,11 @@ focus_tree = {
 		prerequisite = { focus = GOB_foreign_policy }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GOB_neutral
+            focus = GOB_pro_sauron
+        }
         
         x = 13
         y = 16
@@ -2274,7 +2398,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_goblin_scribes
 		prerequisite = { focus = GOB_fix_research }
         
@@ -2292,10 +2416,17 @@ focus_tree = {
         }
         completion_reward = {
 			# generic scriptiorium boosts  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_knowledge
+                bonus = 0.5
+                uses = 2
+
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_explosive_excavation
 		prerequisite = { focus = GOB_fix_research }
         
@@ -2309,10 +2440,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_tech = explosives
         }
         completion_reward = {
 			# needs explosive tech and gives resource gain  
+            every_core_state = {
+                increase_resources_in_state_10p = yes
+            }
 		}
     }
 
@@ -2338,7 +2472,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_exercise_mandates
 		prerequisite = { focus = GOB_fix_military }
         
@@ -2356,10 +2490,16 @@ focus_tree = {
         }
         completion_reward = {
 			# exp and mastery  
+            army_experience = 50
+            add_mastery_bonus = {
+                name = special_bonus
+                bonus = 0.5
+                days = 120
+            }
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_leader_selection
 		prerequisite = { focus = GOB_exercise_mandates }
         
@@ -2377,11 +2517,21 @@ focus_tree = {
         }
         completion_reward = {
 			# improve leaders or something  
+            custom_effect_tooltip = GOB_leader_selection_tt
+            hidden_effect = {
+                every_unit_leader = {
+                    add_skill_level = 1
+                    random = {
+                        chance = 0.25
+                        lotr_retire_character = yes
+                    }
+                }
+            }
 		}
     }
 
-    focus = { # TODO
-        id = GOB_tunnel_warfare_JBuU71
+    focus = {
+        id = GOB_tunnel_warfare
 		prerequisite = { focus = GOB_fix_military }
         
         icon = GFX_unknown_focus
@@ -2398,6 +2548,7 @@ focus_tree = {
         }
         completion_reward = {
 			# gain bonus on tunnel terrain  
+            # TODO: needs custom terrain type
 		}
     }
 
@@ -2441,11 +2592,15 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_non_aggression_pacts
 		prerequisite = { focus = GOB_continued_profit_flow }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GOB_war_provocations
+        }
         
         x = 9
         y = 18
@@ -2459,6 +2614,14 @@ focus_tree = {
         }
         completion_reward = {
 			# make NA pacts with others  
+            every_neighbor_country = {
+                limit = {
+                    NOT = { has_war_with = GOB }
+                    NOT = { has_non_aggression_pact_with = GOB }
+                    NOT = { is_ally_with = GOB }
+                }
+                invite_to_non_aggession_pact = yes
+            }
 		}
     }
 
@@ -2467,6 +2630,10 @@ focus_tree = {
 		prerequisite = { focus = GOB_continued_profit_flow }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = GOB_non_aggression_pacts
+        }
         
         x = 11
         y = 18
@@ -2480,6 +2647,7 @@ focus_tree = {
         }
         completion_reward = {
 			# provoke another country into war  
+            
 		}
     }
 
@@ -2595,7 +2763,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GOB_mountain_empire
 		prerequisite = { focus = GOB_unhinged }
         
@@ -2613,6 +2781,10 @@ focus_tree = {
         }
         completion_reward = {
 			# claims and stuff  
+            69 = { add_claim_by = GOB }
+            65 = { add_claim_by = GOB }
+            202 = { add_claim_by = GOB }
+            66 = { add_claim_by = GOB }
 		}
     }
 }
