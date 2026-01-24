@@ -742,21 +742,29 @@ gob_recall_mercenaries = {
 }
 
 
-gob_loan_out_high_pass = {
+gob_borrow_high_pass = {
     set_state_controller = 245
-    set_country_flag = gob_country_has_high_pass
-    add_ideas = GOB_high_pass_contract
-
-    GOB = { set_country_flag = gob_high_pass_loaned_out }
-
-    # TODO: Should probably send event to the country on the other side.
-    # Also: Should send event to GOB and the loading country to confirm everything
+    custom_effect_tooltip = gob_borrow_high_pass_tt
+    hidden_effect = {
+        add_ideas = GOB_high_pass_contract
+    
+        GOB = { set_country_flag = gob_high_pass_loaned_out }
+    
+        # Notify neighbours
+        every_country = {
+            limit = {
+                NOT = { tag = GOB }
+                OR = {
+                    controls_state = 197
+                    controls_state = 151
+                    controls_state = 63
+                }
+                NOT = { controls_state = 245 }
+            }
+            country_event = goblintown.132
+        }
+    }
 }
-
-gob_take_back_high_pass = {
-    # TODO   
-}
-
 
 
 gob_collapse_tunnels = {
@@ -792,4 +800,26 @@ provoke_war_with = {
         country_event = { id = lotr_generic.128 days = 1 }
     }
     custom_effect_tooltip = provoke_war_with_tt
+}
+
+
+
+gob_return_high_pass = {
+    GOB = {
+        clr_country_flag = gob_high_pass_loaned_out
+        set_state_controller = 245
+    }
+    remove_ideas = GOB_high_pass_contract
+
+    GOB = { country_event = goblintown.135 }
+}
+
+
+
+transfer_high_pass_contract = {
+    add_ideas = GOB_high_pass_contract
+
+    country_event = goblintown.133
+
+    GOB = { country_event = goblintown.134 }
 }
