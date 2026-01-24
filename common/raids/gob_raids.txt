@@ -829,4 +829,283 @@ types = {
 			}
 		}
 	}
+
+	GOB_raid_punitive_pillage = {
+
+		#--- General Settings ---
+		icon = GFX_raid_target_icon_guerilla_raid # Placeholder
+		category = land_infiltration_raids # Fits the "pillage" theme
+		
+		command_power = 25 # Lower cost than the heist, as it's a border raid
+		
+		days_to_prepare = 14
+		days_re_enable = 60 # Can be repeated after a cooldown
+		fire_only_once = no
+		
+		speed_multiplier = 1.0 
+		arrow = {
+			type = land
+		}
+
+		target_type = {
+			state = {
+				impassable = no
+			}
+		}
+
+		#--- Permissions & Visibility ---
+		allowed = {
+			original_tag = GOB
+		}
+
+		# Visible generally if you are GOB
+		visible = {
+			original_tag = GOB
+			has_completed_focus = GOB_gold_for_peace
+			has_war = no
+		}
+
+		available = {
+			always = yes
+		}
+
+		#--- Target Selection ---
+		show_target = {
+			var:target_state = {
+				# MUST be a neighbor
+				is_neighbor_of = ROOT
+				
+				# MUST NOT be impassable
+				impassable = no
+				
+				# Controller MUST have refused tribute
+				controller = {
+					has_country_flag = gob_refused_tribute
+					ROOT = { war_with_is_possible = yes }
+				}
+			}
+		}
+
+		#--- Launch Conditions ---
+		launchable = {
+			always = yes
+		}
+
+		#--- Unit & Equipment ---
+		starting_point = {
+			building_types = { supply_node }
+			allow_faction_buildings = yes
+		}
+
+		unit_requirements = {
+			battalion_types = {
+				infantry = { min = 4 } # Smaller force needed for border pillaging
+			}
+		}
+
+		#--- Success Factors ---
+		success_factors = {
+			success = {
+				base = 0.5 
+
+				experience = {
+					weight = 0.2
+					reference = 1.0
+				}
+				
+				# Resistance makes pillaging harder
+				resistance = {
+					reference = 50
+					weight = -0.2
+				}
+
+				intel = {
+					weight = 0.1
+					reference = 100
+				}
+			}
+		}
+
+		#--- Outcomes ---
+		success_levels = {
+			
+			# CASE: FAILURE
+			# No loot, unit takes damage, minimal impact on enemy
+			failure = {
+				victim_effects = {
+					# Defender morale boost
+					var:victim_country = {
+						add_war_support = 0.02
+						clr_country_flag = gob_refused_tribute
+					}
+				}
+				actor_effects = {
+					raid_damage_units = {
+						damage = 0.8
+						ratio = yes
+					}
+					raid_add_unit_experience = 0.05
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+
+			# CASE: LIMITED SUCCESS
+			# 0 Factories, Light Damage to enemy
+			limited_success = {
+				victim_effects = {
+					var:victim_country = {
+						add_stability = -0.01
+						clr_country_flag = gob_refused_tribute
+					}
+					var:target_state = {
+						# Small manpower loss
+						add_manpower = -200
+						
+						# Conditional Damage: Industry
+						if = {
+							limit = { industrial_complex > 0 }
+							damage_building = {
+								type = industrial_complex
+								damage = 1
+								repair_speed_modifier = -0.25
+							}
+						}
+						# Conditional Damage: Infrastructure
+						if = {
+							limit = { infrastructure > 0 }
+							damage_building = {
+								type = infrastructure
+								damage = 1
+								repair_speed_modifier = -0.25
+							}
+						}
+					}
+				}
+				actor_effects = {
+					raid_damage_units = {
+						damage = 0.3
+						ratio = yes
+					}
+					# Small loot (Political Power instead of factories)
+					var:actor_country = {
+						add_political_power = 15
+					}
+					raid_add_unit_experience = 0.1
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_limited_success_entity"
+					animation = "attack"
+				}
+			}
+
+			# CASE: SUCCESS
+			# 1 Factory, Moderate Damage
+			success = {
+				victim_effects = {
+					var:victim_country = {
+						add_stability = -0.02
+						clr_country_flag = gob_refused_tribute
+					}
+					var:target_state = {
+						# Moderate manpower loss
+						add_manpower = -500
+						
+						# Moderate Damage: Industry
+						if = {
+							limit = { industrial_complex > 0 }
+							damage_building = {
+								type = industrial_complex
+								damage = 1
+								repair_speed_modifier = -0.7
+							}
+						}
+						# Moderate Damage: Infrastructure
+						if = {
+							limit = { infrastructure > 0 }
+							damage_building = {
+								type = infrastructure
+								damage = 2
+								repair_speed_modifier = -0.7
+							}
+						}
+					}
+				}
+				actor_effects = {
+					raid_damage_units = {
+						damage = 0.15
+						ratio = yes
+					}
+					
+					# REWARD: 1 Civilian Factory for Goblin Town (State 245)
+					245 = {
+						add_building_slot_and_civ = yes
+					}
+					
+					raid_add_unit_experience = 0.25
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_success_entity"
+					animation = "attack"
+				}
+			}
+
+			# CASE: CRITICAL SUCCESS
+			# 2 Factories, Severe Damage, Max Manpower loss
+			critical_success = {
+				victim_effects = {
+					var:victim_country = {
+						add_stability = -0.03
+						clr_country_flag = gob_refused_tribute
+					}
+					var:target_state = {
+						# Max manpower loss
+						add_manpower = -1000
+						
+						# Severe Damage: Industry
+						if = {
+							limit = { industrial_complex > 0 }
+							damage_building = {
+								type = industrial_complex
+								damage = 1
+								repair_speed_modifier = -0.85
+							}
+						}
+						# Severe Damage: Infrastructure
+						if = {
+							limit = { infrastructure > 0 }
+							damage_building = {
+								type = infrastructure
+								damage = 3
+								repair_speed_modifier = -0.75
+							}
+						}
+					}
+				}
+				actor_effects = {
+					raid_damage_units = {
+						damage = 0.05
+						ratio = yes
+					}
+					
+					# REWARD: 2 Civilian Factories for Goblin Town (State 245)
+					245 = {
+						add_building_slot_and_civ_x2 = yes
+					}
+					
+					raid_add_unit_experience = 0.4
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_critical_success_entity"
+					animation = "attack"
+				}
+			}
+		}
+	}
 }
