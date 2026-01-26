@@ -2869,13 +2869,14 @@ focus_tree = {
         
         completion_reward = {
              # ask for helg against spoders
-            custom_effect_tooltip = "Every non-hostile elven nation will be asked to aid us against [DGU.GetName]. Countries that neighbor us or the spiders will have the option to join the war."
+            custom_effect_tooltip = MIR_request_aid_against_dol_guldur_tt
             hidden_effect = {
                 every_country = {
                     limit = {
                         is_elves = yes
                         NOT = { tag = ROOT }
                         NOT = { has_war_with = ROOT }
+                        NOT = { has_war_with = DGU }
                     }
                     # send event to other elves to ask for help against spiders
                     country_event = { id = mirkwood.132 days = 1 }
@@ -2903,13 +2904,14 @@ focus_tree = {
         
         completion_reward = {
             # ask for helg against spoders
-            custom_effect_tooltip = "Every non-hostile elven nation will be asked to aid us against [SPI.GetName]. Countries that neighbor us or the spiders will have the option to join the war."
+            custom_effect_tooltip = MIR_request_aid_against_the_spiders_tt
             hidden_effect = {
                 every_country = {
                     limit = {
                         is_elves = yes
                         NOT = { tag = ROOT }
                         NOT = { has_war_with = ROOT }
+                        NOT = { has_war_with = SPI }
                     }
                     # send event to other elves to ask for help against spiders
                     country_event = { id = mirkwood.133 days = 1 }
@@ -2943,11 +2945,11 @@ focus_tree = {
             }
             set_faction_rule = joining_rule_elves_only
             if = {
-                limit = { LTH = { NOT = { has_war_with = ROOT } } }
+                limit = { LTH = { is_elves = yes NOT = { has_war_with = ROOT } is_in_faction = no } }
                 LTH = { invite_to_faction = yes }
             }
             if = {
-                limit = { RIV = { NOT = { has_war_with = ROOT } } }
+                limit = { RIV = { is_elves = yes NOT = { has_war_with = ROOT } is_in_faction = no } }
                 RIV = { invite_to_faction = yes }
             }
         }
@@ -2972,7 +2974,7 @@ focus_tree = {
         
         completion_reward = {
             # army xp and mastery gain for all
-            custom_effect_tooltip = "We and every elven ally receive:"
+            custom_effect_tooltip = MIR_elven_shared_army_training_tt
             effect_tooltip = {
                 army_experience = 50
                 add_doctrine_cost_reduction = {
@@ -3020,7 +3022,7 @@ focus_tree = {
         
         completion_reward = {
             # stability and stuff for all
-            custom_effect_tooltip = "We and every elven ally receive:"
+            custom_effect_tooltip = MIR_elven_shared_army_training_tt
             effect_tooltip = {
                 add_stability = 0.1
                 add_war_support = 0.1
@@ -3901,7 +3903,18 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            effect_tooltip = {
+                ERE = {
+                    add_timed_idea = {
+                        idea = generic_belligerent
+                        days = 365
+                    }
+                }
+            }
+            ERE = { country_event = { id = mirkwood.148 days = 1 } }
+            
+        }
     }
 
     focus = {
@@ -3920,7 +3933,18 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            custom_effect_tooltip = MIR_support_a_firebeard_rebellion_tt
+            hidden_effect = {
+                if = {
+                    limit = { ERE = { belligerent < 0.6 } }
+                    ERE = { country_event = { id = mirkwood.149 days = 1 } }
+                }
+                else = {
+                    ERE = { country_event = { id = mirkwood.150 days = 1 } }
+                }
+            }
+        }
     }
 
     focus = {
@@ -3939,7 +3963,58 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            custom_effect_tooltip = MIR_plunder_the_mountain_jewels_tt
+
+            set_temp_variable = { rem_civs = 90.industrial_complex_level }
+            set_temp_variable = { rem_res1 = 90.resource@chromium }
+            set_temp_variable = { rem_res2 = 90.resource@aluminium }
+            set_temp_variable = { rem_res3 = 90.resource@coal }
+            set_temp_variable = { rem_res4 = 90.resource@oil }
+            set_temp_variable = { rem_res5 = 90.resource@rubber }
+            set_temp_variable = { rem_res6 = 90.resource@steel }
+            set_temp_variable = { rem_res7 = 90.resource@tungsten }
+
+            multiply_temp_variable = { rem_civs = 0.5 }
+            multiply_temp_variable = { rem_res1 = -0.5 }
+            multiply_temp_variable = { rem_res2 = -0.5 }
+            multiply_temp_variable = { rem_res3 = -0.5 }
+            multiply_temp_variable = { rem_res4 = -0.5 }
+            multiply_temp_variable = { rem_res5 = -0.5 }
+            multiply_temp_variable = { rem_res6 = -0.5 }
+            multiply_temp_variable = { rem_res7 = -0.5 }
+
+            90 = {
+                remove_building = { type = industrial_complex level = rem_civs }
+                add_resource = { type = chromium amount = rem_res1 }
+                add_resource = { type = aluminium amount = rem_res2 }
+                add_resource = { type = coal amount = rem_res3 }
+                add_resource = { type = oil amount = rem_res4 }
+                add_resource = { type = rubber amount = rem_res5 }
+                add_resource = { type = steel amount = rem_res6 }
+                add_resource = { type = tungsten amount = rem_res7 }
+            }
+
+            multiply_temp_variable = { rem_res1 = -1.0 }
+            multiply_temp_variable = { rem_res2 = -1.0 }
+            multiply_temp_variable = { rem_res3 = -1.0 }
+            multiply_temp_variable = { rem_res4 = -1.0 }
+            multiply_temp_variable = { rem_res5 = -1.0 }
+            multiply_temp_variable = { rem_res6 = -1.0 }
+            multiply_temp_variable = { rem_res7 = -1.0 }
+
+            83 = {
+                add_extra_state_shared_building_slots = rem_civs
+                add_building_construction = { type = industrial_complex level = rem_civs instant_build = yes }
+                add_resource = { type = chromium amount = rem_res1 }
+                add_resource = { type = aluminium amount = rem_res2 }
+                add_resource = { type = coal amount = rem_res3 }
+                add_resource = { type = oil amount = rem_res4 }
+                add_resource = { type = rubber amount = rem_res5 }
+                add_resource = { type = steel amount = rem_res6 }
+                add_resource = { type = tungsten amount = rem_res7 }
+            }
+        }
     }
 
     focus = {
@@ -4244,6 +4319,8 @@ focus_tree = {
 		prerequisite = { focus = MIR_bulwark_against_the_dark }
         
         icon = GFX_unknown_focus
+
+        will_lead_to_war_with = SPI
         
         x = -7
         y = 7
@@ -4255,7 +4332,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            create_wargoal = {
+                target = SPI
+                type = annex_everything
+            }
+        }
     }
 
     focus = {
@@ -4263,6 +4345,8 @@ focus_tree = {
 		prerequisite = { focus = MIR_bulwark_against_the_dark }
         
         icon = GFX_unknown_focus
+
+        will_lead_to_war_with = DGU
         
         x = -5
         y = 7
@@ -4274,7 +4358,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            create_wargoal = {
+                target = DGU
+                type = annex_everything
+            }
+        }
     }
 
     focus = {
@@ -4294,7 +4383,11 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            add_stability = 0.1
+            add_war_support = 0.1
+            add_political_power = 150
+        }
     }
 
     focus = {
