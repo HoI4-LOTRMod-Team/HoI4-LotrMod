@@ -110,8 +110,8 @@ def main():
     graph = create_node_graph()
 
     focus_node_tree = FocusNodeTree(graph,
-        BASE_PATH / r'events\GoblinTown.txt',
-        BASE_PATH / r'localisation\english\goblintown\goblintown_events_l_english.yml'
+        BASE_PATH / r'events\Mirkwood.txt',
+        BASE_PATH / r'localisation\english\mirkwood\mirkwood_events_l_english.yml'
         #BASE_PATH / r'events\Lotr_Generic.txt',
         #BASE_PATH / r'localisation\english\0_lotr_core\lotr_generic_events_l_english.yml'
     )
