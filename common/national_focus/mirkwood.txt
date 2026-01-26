@@ -957,6 +957,9 @@ focus_tree = {
                 ideology = belligerent
                 popularity = 0.15
             }
+
+            add_stability = -0.05
+            add_war_support = -0.05
 		}
     }
 
@@ -3407,9 +3410,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
             # get event to choose next focus
+            hidden_effect = {
+                country_event = { id = mirkwood.153 }
+            }
+            custom_effect_tooltip = MIR_the_roles_of_orcs_and_elves_tt
         }
     }
 
@@ -3418,6 +3424,10 @@ focus_tree = {
 		prerequisite = { focus = MIR_the_roles_of_orcs_and_elves }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = MIR_hold_on_to_the_light
+        }
         
         x = 15
         y = 8
@@ -3429,9 +3439,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
             # start transition into orcs
+            add_timed_idea = {
+                idea = MIR_elven_recession
+                days = 180
+            }
             
         }
     }
@@ -3441,6 +3454,10 @@ focus_tree = {
 		prerequisite = { focus = MIR_the_roles_of_orcs_and_elves }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = MIR_forsake_the_past
+        }
         
         x = 17
         y = 8
@@ -3452,9 +3469,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
             # stay elven
+            add_stability = 0.05
+            add_war_support = 0.05
         }
     }
 
@@ -3472,13 +3490,12 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            NOT = { has_idea = MIR_elven_recession }
         }
         
         completion_reward = {
             # turn to orcs, gain some stuff
             lotr_switch_to_orcs = yes
-            # TODO: add idea?
         }
     }
 
@@ -3498,9 +3515,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
             # gain idea with mixed modifiers, but also some MP
+            add_ideas = MIR_mixed_legions
         }
     }
 
@@ -3548,9 +3565,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
             # event to choose next focus
+            hidden_effect = {
+                country_event = { id = mirkwood.154 }
+            }
+            custom_effect_tooltip = MIR_the_roles_of_orcs_and_elves_tt
         }
     }
 
@@ -3559,6 +3579,10 @@ focus_tree = {
 		prerequisite = { focus = MIR_which_way_the_shadows_fall }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = MIR_vassal_of_the_eye
+        }
         
         x = 11
         y = 8
@@ -3570,9 +3594,14 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
-            # idk
+            MOR = {
+                swear_eternal_animosity = yes
+            }
+            create_faction_from_template = {
+                template = faction_template_belligerent_expansionist
+                name = "Dark Realm of Mirkwood"
+            }
         }
     }
 
@@ -3581,6 +3610,10 @@ focus_tree = {
 		prerequisite = { focus = MIR_which_way_the_shadows_fall }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = MIR_a_new_dark_realm
+        }
         
         x = 13
         y = 8
@@ -3592,9 +3625,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
             # get cucked by MOR
+            MOR = { ask_to_join_faction = yes }
         }
     }
 
@@ -3614,9 +3647,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
             # get cool stuff from MOR
+            MOR = { ask_for_aid = yes }
         }
     }
 
@@ -3636,9 +3669,30 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
             # invite or try to create faction with DGU, GUN or GOB
+            custom_effect_tooltip = MIR_pick_up_the_leftovers_tt
+            if = {
+                limit = { VAL = { can_invite_to_faction = yes } }
+                VAL = { invite_to_faction = yes }
+            }
+            if = {
+                limit = { GUN = { can_invite_to_faction = yes } } # TODO: has completed anti-sauron focus
+                GUN = { invite_to_faction = yes }
+            }
+            if = {
+                limit = { GOB = { can_invite_to_faction = yes OR = { has_completed_focus = GOB_unhinged has_completed_focus = GOB_neutral } } }
+                GOB = { invite_to_faction = yes }
+            }
+            if = {
+                limit = { DGU = { can_invite_to_faction = yes has_completed_focus = DGU_shadow_without_master } }
+                DGU = { invite_to_faction = yes }
+            }
+            if = {
+                limit = { LTH = { can_invite_to_faction = yes } }
+                LTH = { invite_to_faction = yes }
+            }
+
         }
     }
 
@@ -3658,9 +3712,11 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
-            # no clue
+            add_timed_idea = {
+                idea = generic_preparing_for_war
+                days = 365
+            }
         }
     }
 
@@ -4204,7 +4260,18 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            every_country = {
+                limit = {
+                    is_elves = yes
+                    NOT = { is_ally_with = ROOT }
+                }
+                add_opinion_modifier = {
+                    target = MIR
+                    modifier = faction_traitor
+                }
+            }
+        }
     }
 
     focus = {
@@ -4223,7 +4290,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            add_unit_bonus = {
+                category_all_infantry = {
+                    max_organisation = 0.1
+                }
+            }
+        }
     }
 
     focus = {
@@ -4242,7 +4315,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            create_wargoal = {
+                target = RIV
+                type = annex_everything
+            }
+        }
     }
 
     focus = {
@@ -4262,7 +4340,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            create_wargoal = {
+                target = LTH
+                type = annex_everything
+            }
+        }
     }
 
     focus = {
