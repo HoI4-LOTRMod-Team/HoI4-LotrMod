@@ -2257,6 +2257,10 @@ focus_tree = {
 		prerequisite = { focus = MIR_adaptive_presence_strategy }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = MIR_focus_on_dolgulddur
+        }
         
         x = 31
         y = 3
@@ -2279,6 +2283,10 @@ focus_tree = {
 		prerequisite = { focus = MIR_adaptive_presence_strategy }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = MIR_focus_on_spiders
+        }
         
         x = 29
         y = 3
@@ -3898,6 +3906,10 @@ focus_tree = {
 		prerequisite = { focus = MIR_ring_gambit }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = MIR_prepare_an_ambush
+        }
         
         x = 28
         y = 5
@@ -3913,6 +3925,7 @@ focus_tree = {
         completion_reward = {
             # make it so that if we intercept, there's a 50% chance Legolas/Tauriel betray the fellowship and we get a free attack
             # Implementation should be done
+            custom_effect_tooltip = MIR_insider_agent
         }
     }
 
@@ -4594,6 +4607,10 @@ focus_tree = {
 		prerequisite = { focus = MIR_ring_gambit }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = MIR_insider_agent
+        }
         
         x = 26
         y = 5
@@ -4607,6 +4624,7 @@ focus_tree = {
         }
         completion_reward = {
 			# get extra attacks  
+            ring_disable_stealth_check = yes
 		}
     }
 
@@ -4686,7 +4704,25 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        NOT = { is_core_of = MIR }
+                        impassable = no
+                    }
+                    add_compliance = 35
+                }
+            }
+            custom_effect_tooltip = DGU_masters_of_the_mirkwood_tt
+
+            set_country_flag = {
+                flag = DGU_completed_masters_of_mirkwood
+                value = 1
+                days = 365
+            }
+        }
     }
 
     focus = {
@@ -4703,9 +4739,25 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            custom_trigger_tooltip = {
+                tooltip = MIR_forest_of_shadows_condition_tt
+                control_all_mirkwood_states = yes
+                NOT = { has_country_flag = DGU_completed_masters_of_mirkwood }
+                NOT = { has_country_flag = dgu_lost_mirkwood_control }   
+            }
         }
-        completion_reward = { }
+        completion_reward = {
+            hidden_effect = {
+                every_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        NOT = { is_core_of = MIR }
+                    }
+                    add_core_of = MIR
+                }
+            }
+            custom_effect_tooltip = DGU_forest_of_shadows_tt
+        }
     }
 
     focus = {
@@ -4801,7 +4853,20 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            if = {
+                limit = { controls_state = 85 }
+                85 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+            }
+            if = {
+                limit = { controls_state = 229 }
+                229 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+            }
+            if = {
+                limit = { controls_state = 226 }
+                226 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+            }
+        }
     }
 
     focus = {
@@ -4896,6 +4961,10 @@ focus_tree = {
         }
         completion_reward = {
 			# VAL gets lembas tech, we gain stability or food or smth  
+            hidden_effect = {
+                VAL = { country_event = mirkwood.155 }
+            }
+            event_option_tooltip = mirkwood.155.a
 		}
     }
 
@@ -4916,7 +4985,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            add_timed_idea = {
+                idea = MIR_mannish_settlers
+                days = 720
+            }
+        }
     }
 
     focus = {
