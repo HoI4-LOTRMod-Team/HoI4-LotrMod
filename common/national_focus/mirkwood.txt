@@ -35,7 +35,7 @@ focus_tree = {
         }
         
         completion_reward = {
-            add_political_power = 150
+            add_political_power = 100
         }
     }
 
@@ -107,9 +107,8 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
-            # give presence point?
+            add_political_power = 100
             
         }
     }
@@ -130,9 +129,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
-            # no clue
+            # Add claims on SPI and DGU territory
+            82 = { add_claim_by = MIR }
+            226 = { add_claim_by = MIR }
+            229 = { add_claim_by = MIR }
+            236 = { add_claim_by = MIR }
+            237 = { add_claim_by = MIR }
+            238 = { add_claim_by = MIR }
+            87 = { add_claim_by = MIR }
         }
     }
 
@@ -2121,6 +2126,10 @@ focus_tree = {
 		prerequisite = { focus = MIR_threat_containment }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = MIR_withdraw_to_safety
+        }
         
         x = 30
         y = 2
@@ -2134,7 +2143,7 @@ focus_tree = {
         }
         # TODO1
         completion_reward = {
-            # gain a bunch of presence points
+            # gain extra decisions to deal with presence
         }
     }
 
@@ -2143,6 +2152,10 @@ focus_tree = {
 		prerequisite = { focus = MIR_threat_containment }
         
         icon = GFX_unknown_focus
+
+        mutually_exclusive = {
+            focus = MIR_adaptive_presence_strategy
+        }
         
         x = 22
         y = 2
@@ -2154,9 +2167,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
-            # no clue
+            add_political_power = 150
+            custom_effect_tooltip = MIR_withdraw_to_safety_tt
         }
     }
 
@@ -2179,6 +2192,7 @@ focus_tree = {
         
         completion_reward = {
             # prep to move 50% of population from other states to "core" states
+            custom_effect_tooltip = MIR_evacuate_population_tt
             set_variable = {
                 mir_evacuated_population_k = 0
             }
@@ -2196,7 +2210,7 @@ focus_tree = {
                 set_temp_variable = { temp_population_amount = state_population_k }
                 multiply_temp_variable = { temp_population_amount = 0.5 }
                 add_to_variable = { mir_evacuated_population_k = temp_population_amount }
-                custom_effect_tooltip = "Evacuate [?temp_population_amount]k from [THIS.GetName] "
+                custom_effect_tooltip = MIR_evacuate_population_evac_tt
                 multiply_temp_variable = { temp_population_amount = -1000 }
                 add_manpower = temp_population_amount
             }
@@ -2222,6 +2236,7 @@ focus_tree = {
         
         completion_reward = {
             # prep to move significant industry from other states to "core" states
+            custom_effect_tooltip = MIR_evacuate_industry_tt
             set_variable = {
                 mir_evacuated_civs = 0
                 mir_evacuated_mils = 0
@@ -2240,13 +2255,13 @@ focus_tree = {
                 set_temp_variable = { temp_factories = arms_factory_level }
                 multiply_temp_variable = { temp_factories = 0.66 }
                 add_to_variable = { mir_evacuated_mils = temp_factories }
-                custom_effect_tooltip = "Evacuate [?temp_factories] military factories from [THIS.GetName] "
+                custom_effect_tooltip = MIR_evacuate_industry_mils_tt
                 remove_building = { type = arms_factory level = temp_factories }
 
                 set_temp_variable = { temp_factories = industrial_complex_level }
                 multiply_temp_variable = { temp_factories = 0.66 }
                 add_to_variable = { mir_evacuated_civs = temp_factories }
-                custom_effect_tooltip = "Evacuate [?temp_factories] civilian factories from [THIS.GetName] "
+                custom_effect_tooltip = MIR_evacuate_industry_civs_tt
                 remove_building = { type = industrial_complex level = temp_factories }
             }
         }
@@ -2272,9 +2287,14 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
-            # gain presence near spiders
+            # SPI reduced presence gain
+            SPI = {
+                add_timed_idea = {
+                    idea = CFM_presence_containment
+                    days = 720
+                }
+            }
         }
     }
 
@@ -2298,9 +2318,14 @@ focus_tree = {
         available = {
             always = yes
         }
-        # TODO1
         completion_reward = {
-            # gain presence near DGU
+            # DGU reduced presence gain
+            DGU = {
+                add_timed_idea = {
+                    idea = CFM_presence_containment
+                    days = 720
+                }
+            }
         }
     }
 
@@ -2323,7 +2348,7 @@ focus_tree = {
         }
         
         completion_reward = {
-            # TODO?: forfeit all presence points
+            custom_effect_tooltip = MIR_complete_the_evacuation_tt
 
             # add population evacuated in prev focus
             set_temp_variable = { temp_population_amount = mir_evacuated_population_k }
@@ -2343,7 +2368,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 31
+        x = 29
         y = 4
 
         cost = 5
@@ -2365,7 +2390,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 29
+        x = 31
         y = 4
 
         cost = 5
@@ -4556,7 +4581,7 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# gain decisions for presence stuff  
+			# decrease presence gain on everyone for a limited time
 		}
     }
 
@@ -4578,6 +4603,7 @@ focus_tree = {
         }
         completion_reward = {
 			# Gain decision to lock areas  
+            # this is a targeted-state decision
 		}
     }
 
@@ -4599,6 +4625,20 @@ focus_tree = {
         }
         completion_reward = {
 			# remove neglected region  
+            190 = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                    instant_build = yes
+                }
+            }
+            230 = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                    instant_build = yes
+                }
+            }
 		}
     }
 
@@ -4646,6 +4686,13 @@ focus_tree = {
         }
         completion_reward = {
 			# barracks  
+            190 = {
+                add_building_construction = {
+                    type = barracks
+                    level = 1
+                    instant_build = yes
+                }
+            }
 		}
     }
 
@@ -4665,7 +4712,32 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            if = {
+                limit = {
+                    controls_state = 190
+                }
+                190 = {
+                    add_building_construction = {
+                        type = radar_station
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    controls_state = 228
+                }
+                228 = {
+                    add_building_construction = {
+                        type = radar_station
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+            }
+        }
     }
 
     focus = {
@@ -5481,7 +5553,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+            DGU = { fortify_border = yes }
+        }
     }
 
     focus = {
