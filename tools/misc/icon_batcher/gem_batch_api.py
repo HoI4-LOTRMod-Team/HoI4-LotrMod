@@ -29,7 +29,7 @@ client = genai.Client(api_key=api_key)
 
 
 def get_jobs_list():
-    return client.batches.list(config={'page_size': 10})
+    return client.batches.list(config={'page_size': 20})
 
 
 def cancel_job(job):
@@ -111,7 +111,7 @@ def retrieve(job):
 
 
 def get_files_list():
-    return client.files.list(config={'page_size': 10})
+    return client.files.list(config={'page_size': 20})
 
 def delete_file(file):
     client.files.delete(name=file.name)
