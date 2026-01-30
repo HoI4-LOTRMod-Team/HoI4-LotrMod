@@ -214,10 +214,63 @@ country_event = {
 
     is_triggered_only = yes
 
+    # NOTE: I've literally made a graph plotting out the chances of the AI accepting this offer :skull:. You can see it here: https://i.imgur.com/brqPLsD.png
+
     # extend
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                set_temp_variable = { temp_str_inv = 1 }
+                divide_temp_variable = { temp_str_inv = alliance_strength_ratio }
+                factor = temp_str_inv
+            }
+            modifier = {
+                factor = 2
+                ai_has_under_25p_wanted_divs = yes
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                factor = 1.5
+                ai_has_under_50p_wanted_divs = yes
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                # evenly matched -> need every advantage
+                factor = 2
+                alliance_strength_ratio > 0.75
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                # offer made by player -> more likely to accept
+                factor = 1.3
+                GOB = { is_ai = no }
+            }
+            modifier = {
+                # we have overwhelming force -> no need
+                factor = 0.001
+                alliance_strength_ratio > 2.0
+            }
+            modifier = {
+                # we are at peace -> no need
+                factor = 0.001
+                has_war = no
+            }
+            modifier = {
+                 # 30% chance to refuse regardless
+                factor = 0.001
+                has_country_flag = rng_30p_flag_2
+            }
+            modifier = {
+                # elves don't like goblins much
+                factor = 0.25
+                is_elves = yes
+                alliance_strength_ratio > 0.5 # I'll take those odds!
+            }
+            modifier = {
+                factor = 1.25
+                has_government = belligerent
+            }
         }
         trigger = {
             # no point in extending if they no longer have mercs
@@ -236,6 +289,22 @@ country_event = {
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                # we are facing tough odds -> need mercs
+                set_temp_variable = { temp_str = alliance_strength_ratio }
+                multiply_temp_variable = { temp_str = alliance_strength_ratio } # alliance ratio squared
+                factor = temp_str
+            }
+            modifier = {
+                # we are loosing -> need mercs
+                factor = 0.001
+                surrender_progress > 0.12
+            }
+            modifier = {
+                # we are outnumbered -> need mercs
+                factor = 0.001
+                alliance_strength_ratio < 0.5
+            }
         }
         name = goblintown.109.b
         custom_effect_tooltip = goblintown.109.b_tt
@@ -292,9 +361,62 @@ country_event = {
 
     is_triggered_only = yes
 
+    # NOTE: I've literally made a graph plotting out the chances of the AI accepting this offer :skull:. You can see it here: https://i.imgur.com/brqPLsD.png
+
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                set_temp_variable = { temp_str_inv = 1 }
+                divide_temp_variable = { temp_str_inv = alliance_strength_ratio }
+                factor = temp_str_inv
+            }
+            modifier = {
+                factor = 2
+                ai_has_under_25p_wanted_divs = yes
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                factor = 1.5
+                ai_has_under_50p_wanted_divs = yes
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                # evenly matched -> need every advantage
+                factor = 2
+                alliance_strength_ratio > 0.75
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                # offer made by player -> more likely to accept
+                factor = 1.3
+                GOB = { is_ai = no }
+            }
+            modifier = {
+                # we have overwhelming force -> no need
+                factor = 0.001
+                alliance_strength_ratio > 2.0
+            }
+            modifier = {
+                # we are at peace -> no need
+                factor = 0.001
+                has_war = no
+            }
+            modifier = {
+                 # 30% chance to refuse regardless
+                factor = 0.001
+                has_country_flag = rng_30p_flag_2
+            }
+            modifier = {
+                # elves don't like goblins much
+                factor = 0.25
+                is_elves = yes
+                alliance_strength_ratio > 0.5 # I'll take those odds!
+            }
+            modifier = {
+                factor = 1.25
+                has_government = belligerent
+            }
         }
         name = goblintown.112.a
         hidden_effect = {
@@ -316,6 +438,31 @@ country_event = {
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                # we are facing tough odds -> need mercs
+                set_temp_variable = { temp_str = alliance_strength_ratio }
+                multiply_temp_variable = { temp_str = alliance_strength_ratio } # alliance ratio squared
+                factor = temp_str
+            }
+            modifier = {
+                # we are loosing -> need mercs
+                factor = 0.001
+                surrender_progress > 0.12
+            }
+            modifier = {
+                # we are outnumbered -> need mercs
+                factor = 0.001
+                alliance_strength_ratio < 0.5
+            }
+            modifier = {
+                factor = 3
+                # supremacsists or demineering non-orcs won't work with goblins
+                OR = {
+                    has_country_leader_ideology = supremacist
+                    has_country_leader_ideology = domineering
+                }
+                is_orcs = no
+            }
         }
         name = goblintown.112.b
         hidden_effect = {
@@ -446,7 +593,20 @@ country_event = {
 
     option = {
         ai_chance = {
-            base = 1
+            base = 3
+            modifier = {
+                factor = 2
+                GOB = { is_weaker = yes is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 2
+                GOB = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                GOB = { has_war = yes }
+                has_war = no
+            }
         }
         trigger = {
             any_country = {
@@ -474,6 +634,19 @@ country_event = {
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                factor = 2
+                has_war = yes
+            }
+            modifier = {
+                factor = 3
+                alliance_strength_ratio < 1.2
+            }
+            modifier = {
+                factor = 100
+                GOB = { is_weaker = no }
+                has_war = yes
+            }
         }
         name = goblintown.119.b
 	    hidden_effect = {
@@ -498,7 +671,7 @@ country_event = {
 
     option = {
         ai_chance = {
-            base = 1
+            base = 2
         }
         name = goblintown.120.a
         add_war_support = 0.03
@@ -510,7 +683,7 @@ country_event = {
 
     option = {
         ai_chance = {
-            base = 1
+            base = 3
         }
         name = goblintown.120.b
 	    hidden_effect = {
@@ -613,9 +786,27 @@ country_event = {
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                factor = 4
+                GLD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 2
+                GLD = { is_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                GLD = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                GLD = { has_war = yes }
+                has_war = no
+            }
         }
         trigger = {
             GLD = { war_with_is_possible = yes }
+            NOT = { GLD = { has_idea = GOB_high_pass_contract } }
         }
         name = goblintown.124.a
         GLD = { provoke_war_with = yes }
@@ -624,9 +815,27 @@ country_event = {
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                factor = 4
+                RHD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 2
+                RHD = { is_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                RHD = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                RHD = { has_war = yes }
+                has_war = no
+            }
         }
         trigger = {
             RHD = { war_with_is_possible = yes }
+            NOT = { RHD = { has_idea = GOB_high_pass_contract } }
         }
         name = goblintown.124.b
         RHD = { provoke_war_with = yes }
@@ -644,7 +853,19 @@ country_event = {
 
     option = {
         ai_chance = {
-            base = 1
+            base = 3
+            modifier = {
+                factor = 1.5
+                has_government = belligerent
+            }
+            modifier = {
+                factor = 1.5
+                GOB = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 1.25
+                is_in_faction = yes
+            }
         }
         name = goblintown.125.a
 		hidden_effect = {
@@ -659,7 +880,15 @@ country_event = {
 
     option = {
         ai_chance = {
-            base = 1
+            base = 4
+            modifier = {
+                factor = 1.3
+                is_isolated_target = yes
+            }
+            modifier = {
+                factor = 1.75
+                has_war = yes
+            }
         }
         name = goblintown.125.b
 	    hidden_effect = {
@@ -761,7 +990,19 @@ country_event = {
 
     option = {
         ai_chance = {
-            base = 1
+            base = 3
+            modifier = {
+                factor = 2
+                FROM = { is_ai = no }
+            }
+            modifier = {
+                factor = 5
+                OR = {
+                    FROM = { has_completed_focus = GLD_parley_with_the_goblins }
+                    FROM = { has_completed_focus = GLD_bolder_not_safer }
+                    FROM = { has_completed_focus = RHD_they_will_not_expect_this }
+                }
+            }
         }
         name = goblintown.129.a
 		hidden_effect = {
@@ -773,6 +1014,18 @@ country_event = {
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                factor = 15
+                has_country_flag = rng_50p_flag_1 # 25 % chance to just not be in the mood
+                has_country_flag = rng_50p_flag_4
+                FROM = { is_ai = no }
+            }
+            modifier = {
+                factor = 12
+                has_country_flag = rng_50p_flag_1 # 25 % chance to just not be in the mood (less for player)
+                has_country_flag = rng_50p_flag_4
+                FROM = { is_ai = yes }
+            }
         }
         name = goblintown.129.b
 	    hidden_effect = {
@@ -950,6 +1203,38 @@ country_event = {
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                factor = 0
+                surrender_progress > 0.05
+            }
+            modifier = {
+                factor = 0
+                alliance_strength_ratio < 0.8
+            }
+            modifier = {
+                factor = 0.5
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                factor = 2
+                GLD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 1.5
+                GLD = { is_weaker = yes }
+            }
+            modifier = {
+                factor = 1.5
+                GLD = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                GOB = { is_ai = no }
+            }
+            modifier = {
+                factor = 0.5
+                has_war = yes
+            }
         }
         name = goblintown.138.a
 		hidden_effect = {
@@ -964,6 +1249,18 @@ country_event = {
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                factor = 0
+                has_war = no
+                GLD = { is_weaker = yes }
+                GLD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 0
+                has_war = no
+                GLD = { is_significantly_stronger = no }
+                GLD = { is_isolated_target = yes }
+            }
         }
         name = goblintown.138.b
 	    hidden_effect = {
@@ -984,6 +1281,38 @@ country_event = {
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                factor = 0
+                surrender_progress > 0.05
+            }
+            modifier = {
+                factor = 0
+                alliance_strength_ratio < 0.8
+            }
+            modifier = {
+                factor = 0.5
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                factor = 2
+                RHD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 1.5
+                RHD = { is_weaker = yes }
+            }
+            modifier = {
+                factor = 1.5
+                RHD = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                GOB = { is_ai = no }
+            }
+            modifier = {
+                factor = 0.5
+                has_war = yes
+            }
         }
         name = goblintown.139.a
 		hidden_effect = {
@@ -998,6 +1327,18 @@ country_event = {
     option = {
         ai_chance = {
             base = 1
+            modifier = {
+                factor = 0
+                has_war = no
+                RHD = { is_weaker = yes }
+                RHD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 0
+                has_war = no
+                RHD = { is_significantly_stronger = no }
+                RHD = { is_isolated_target = yes }
+            }
         }
         name = goblintown.139.b
         hidden_effect = {
