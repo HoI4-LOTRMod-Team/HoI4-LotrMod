@@ -237,12 +237,13 @@ class FocusNode(BaseNode):
         # remove all empty prerequisites
         self.pObj.RemoveAllWhere(lambda p: p.id == "prerequisite" and len(p.value) < 1)
 
-
-    def post_init(self):
+    def init_rel_pos_id(self):
         # set realtive-position id
         if self.pObj.Has("relative_position_id"):
             self.parent_tree.get_focus_node_by_name(self.pObj.Get("id").value).relative_position_id = self.parent_tree.get_focus_node_by_name(self.pObj.Get("relative_position_id").value)
 
+
+    def post_init(self):
         # set the position of this node on the graph correctly
         (x, y) = self.hoi4_get_absolute_pos()
         (x, y) = focus_to_node_pos((x,y))

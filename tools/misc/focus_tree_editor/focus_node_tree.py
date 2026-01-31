@@ -39,6 +39,10 @@ class FocusNodeTree:
             focus_1 = graph.create_node('nodes.basic.FocusNode')
             focus_1.init(focus, self)
 
+        # set rel pos
+        for focus in self.focuses:
+            focus.init_rel_pos_id()
+
         # post-init function
         for focus in self.focuses:
             focus.post_init()
