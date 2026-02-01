@@ -8,10 +8,10 @@ import re
 ROOT_DIRECTORY = r"C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr"
 
 # 2. The ID you want to find
-SEARCH_STRING = "my_event.19"
+SEARCH_STRING = "bonus_event.100"
 
 # 3. The ID you want to replace it with
-REPLACE_STRING = "world_event.113"
+REPLACE_STRING = "rhudaur.6"
 
 # 4. SAFETY SWITCH
 # Set to False = Just print what would happen (Dry Run)
