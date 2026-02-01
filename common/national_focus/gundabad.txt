@@ -438,7 +438,7 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = GUN_the_reawakened_kingdom
 		icon = GFX_goal_ROH_wartime_centralization_crown_and_military
 		cost = 10
@@ -460,7 +460,7 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = GUN_exert_the_wrath_of_the_orcs
 		icon = GFX_goal_ELU_deal_with_goblin_raiders_orc
 		cost = 10
@@ -470,52 +470,15 @@ focus_tree = {
 		prerequisite = {
 			focus = GUN_the_reawakened_kingdom
 		}
-		completion_reward = {#GO SPAGHETTI CODE!
+		completion_reward = {
 			custom_effect_tooltip = GUN_exert_the_wrath_of_the_orcs_tt
-			if = { #THIS IS THE ABSOLUTE WORST WAY TO MAKE THIS WORK
-				limit = {has_war_support >0.999}
-				add_manpower = 2000
-			}
-			else_if = {
-				limit = { has_war_support > 0.90 }
-				add_manpower = 1800
-			}
-			else_if = {
-				limit = { has_war_support > 0.80 }
-				add_manpower = 1600
-			}
-			else_if = {
-				limit = { has_war_support > 0.70 }
-				add_manpower = 1400
-			}
-			else_if = {
-				limit = { has_war_support > 0.60 }
-				add_manpower = 1200
-			}
-			else_if = {
-				limit = { has_war_support > 0.50 }
-				add_manpower = 1000
-			}
-			else_if = {
-				limit = { has_war_support > 0.40 }
-				add_manpower = 800
-			}
-			else_if = {
-				limit = { has_war_support > 0.30 }
-				add_manpower = 600
-			}
-			else_if = {
-				limit = { has_war_support > 0.20 }
-				add_manpower = 400
-			}
-			else_if = {
-				limit = { has_war_support > 0.10 }
-				add_manpower = 200
-			}
+			set_temp_variable = { temp_ws = has_war_support }
+			multiply_temp_variable = { temp_ws = 2000 }
+			add_manpower = temp_ws
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = GUN_declare_a_new_king_of_orcs
 		icon = GFX_goal_ELU_old_kingdom_not_forgotten_durins_crown
 		cost = 10
@@ -530,7 +493,7 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = GUN_legacy_of_azog
 		icon = GFX_goal_support_the_left_right
 		cost = 10
@@ -548,7 +511,7 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = GUN_we_need_not_follow_others
 		prerequisite = { focus = GUN_political_alignment }
 		icon = GFX_goal_generic_strike_at_democracy1
@@ -560,14 +523,13 @@ focus_tree = {
 			focus = GUN_the_strength_of_others
 		}
 		completion_reward = {
-			create_faction_from_template = {
-				name = pact_of_the_north
-				template = faction_template_belligerent_expansionist
+			set_rule = {
+				can_create_factions = yes
 			}
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = GUN_the_strength_of_others
 		prerequisite = { focus = GUN_political_alignment }
 		icon = GFX_goal_union_of_working_orc_class
@@ -590,7 +552,7 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = GUN_follow_angmar
 		icon = GFX_goal_witch_king
 		cost = 10
@@ -617,12 +579,12 @@ focus_tree = {
 		}
 		completion_reward = {
 			ANG = {
-				country_event = lotr_generic.8
+				ask_to_join_faction = yes
 			}
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = GUN_bow_to_saruman
 		icon = GFX_goal_ROH_concessions_to_isengard_saruman
 		available = {
@@ -648,13 +610,12 @@ focus_tree = {
 		}
 		completion_reward = {
 			ISE = {
-				country_event = bonus_event.17
-				puppet = GUN
+				offer_to_become_puppet = yes
 			}
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = GUN_join_sauron
 		icon = GFX_goal_sauron_eye
 		cost = 10
@@ -681,7 +642,7 @@ focus_tree = {
 		}
 		completion_reward = {
 			MOR = {
-				country_event = mordor.52
+				ask_to_join_faction = yes
 			}
 		}
 	}
@@ -3232,7 +3193,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_secret_knowledge_acquisition
 		prerequisite = { focus = GUN_we_need_not_follow_others }
         
@@ -3248,7 +3209,10 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_to_tech_sharing_group = secret_society_group
+			
+		}
     }
 
     focus = { # TODO
@@ -3270,7 +3234,7 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_consolidate_leadership
 		prerequisite = { focus = GUN_strengthen_our_leadership }
         
@@ -3286,7 +3250,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			remove_ideas = GUN_power_vacuum_2
+		}
     }
 
     focus = { # TODO
@@ -3305,10 +3271,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_timed_idea = {
+				idea = generic_industry_boost
+				days = 220
+			}
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_speed_up_mobilization
 		prerequisite = { focus = GUN_reinvigorate_the_broken_realm }
         
@@ -3324,7 +3295,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_timed_idea = {
+				idea = generic_military_mobilization
+				days = 250
+			}
+		}
     }
 
     focus = { # TODO
@@ -3544,7 +3520,7 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_trolls_from_mordor
 		prerequisite = { focus = GUN_join_sauron }
         
@@ -3560,10 +3536,16 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			MOR = {
+                country_event = { id = mordor.50 }
+            }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = mordor.50.a
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_local_recruitment
 		prerequisite = { focus = GUN_follow_angmar }
         
@@ -3579,10 +3561,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_manpower = 2000
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_wizards_sorcery
 		prerequisite = { focus = GUN_bow_to_saruman }
         
@@ -3598,10 +3582,17 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_knowledge_magic
+				uses = 2
+				bonus = 1.0
+			}
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_self_sufficiency_focus
 		prerequisite = { focus = GUN_secret_knowledge_acquisition }
         
@@ -3617,10 +3608,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_ideas = GUN_self_sufficiency_focus
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_fellbeast_supremacy
 		prerequisite = { focus = GUN_exert_the_wrath_of_the_orcs }
         
@@ -3636,7 +3629,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_fellbeasts
+				uses = 1
+				bonus = 0.5
+			}
+			increase_eagles_cap_5 = yes
+		}
     }
 
     focus = { # TODO
