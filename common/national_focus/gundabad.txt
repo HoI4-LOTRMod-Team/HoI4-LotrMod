@@ -1157,6 +1157,7 @@ focus_tree = {
 			}
 			custom_effect_tooltip = if_they_accept_newline_tt
 			custom_effect_tooltip = GUN_a_message_to_angmar_tt
+			custom_effect_tooltip = committed_units_tt
 		}
 	}
 	
@@ -1186,6 +1187,7 @@ focus_tree = {
 			}
 			custom_effect_tooltip = if_they_accept_newline_tt
 			custom_effect_tooltip = GUN_a_message_to_beorn_tt
+			custom_effect_tooltip = committed_units_tt
 		}
 	}
 	
@@ -1214,6 +1216,7 @@ focus_tree = {
 			}
 			custom_effect_tooltip = if_they_accept_newline_tt
 			custom_effect_tooltip = GUN_a_message_to_erebor_tt
+			custom_effect_tooltip = committed_units_tt
 		}
 	}
 	
@@ -1304,79 +1307,395 @@ focus_tree = {
 			base = 100
 		}
 		available = {
-			NOT = {
-				has_power_balance = {
-					id = power_balance_gundabad
-				}
+			power_balance_value = {
+				id = power_balance_gundabad
+				value > 0.99
 			}
 		}
 		relative_position_id = GUN_a_message_to_beorn
 		x = 5
 		y = 1
 		completion_reward = {
-			# all existing army will be deleted. You gain all "committed divs"  
+			hidden_effect = {
+				country_event = gundabad.7
+			}
 
+			hidden_effect = {
+				GUN_yazneg = { lotr_retire_character = yes }
+				GUN_hrothhelm = { lotr_retire_character = yes }
+				GUN_ferdan = { lotr_retire_character = yes }
+				GUN_skalhar = { lotr_retire_character = yes }
+				GUN_raegveta = { lotr_retire_character = yes }
+				GUN_murag = { lotr_retire_character = yes }
+				GUN_jarnwar = { lotr_retire_character = yes }
+			}
 
 			# - delete all old units
+			hidden_effect = {
+				delete_unit = { disband = yes } # Delete all units
+			}
+			custom_effect_tooltip = GUN_the_new_inhabitants_disband_tt
+
 			# - delete our entire stockpile of equipment (or 50%)
+			if = {
+				limit = { has_completed_focus = GUN_prepare_to_seize_orc_armories }
+				set_equipment_fraction = 0.5
+				custom_effect_tooltip = GUN_the_new_inhabitants_stockpile_50p_tt
+			}
+			else = {
+				set_equipment_fraction = 0.1
+				custom_effect_tooltip = GUN_the_new_inhabitants_stockpile_90p_tt
+			}
+
 			# - change ruling party to cooperative
+			set_politics = {
+				ruling_party = cooperative
+				elections_allowed = no
+			}
+			hidden_effect = {
+				set_popularities = {
+					unaligned = 30
+					cooperative = 65
+					belligerent = 5
+					revolutionary = 0
+				}
+			}
+
 			# - change race into men (or dwarves)
-			# - spawn all units committed through previous focuses at 50% strength (or 80% strength)
-			# - remove power balance thing
+			if = {
+				limit = { has_completed_focus = GUN_gather_eotheod_descendants }
+				custom_effect_tooltip = GUN_the_new_inhabitants_race_men_tt
+				hidden_effect = {
+					lotr_switch_to_men = yes
+					set_cosmetic_tag = GUNMEN
+					set_party_name = {
+						ideology = unaligned
+						long_name = GUNMEN_unaligned_party
+						name = GUNMEN_unaligned_party 
+					}
+					set_party_name = {
+						ideology = cooperative
+						long_name = GUNMEN_cooperative_party
+						name = GUNMEN_cooperative_party 
+					}
+					set_party_name = {
+						ideology = revolutionary
+						long_name = GUNMEN_revolutionary_party
+						name = GUNMEN_revolutionary_party 
+					}
+					set_party_name = {
+						ideology = belligerent
+						long_name = GUNMEN_belligerent_party
+						name = GUNMEN_belligerent_party 
+					}
+
+					GUN_derstru = { add_country_leader_role = { country_leader = { ideology = federative } promote_leader = yes } }
+					GUN_derstru = { add_country_leader_role = { country_leader = { ideology = vigilant } promote_leader = yes } }
+					GUN_grathain = { add_country_leader_role = { country_leader = { ideology = expansionist } promote_leader = yes } }
+					GUN_grathain = { add_country_leader_role = { country_leader = { ideology = mutinous } promote_leader = yes } }
+				}
+			}
+			else = {
+				custom_effect_tooltip = GUN_the_new_inhabitants_race_dwarves_tt
+				hidden_effect = {
+					lotr_switch_to_dwarves = yes
+					set_cosmetic_tag = GUNDW
+					
+					set_party_name = {
+						ideology = unaligned
+						long_name = GUNDW_unaligned_party
+						name = GUNDW_unaligned_party 
+					}
+					set_party_name = {
+						ideology = cooperative
+						long_name = GUNDW_cooperative_party
+						name = GUNDW_cooperative_party 
+					}
+					set_party_name = {
+						ideology = revolutionary
+						long_name = GUNDW_revolutionary_party
+						name = GUNDW_revolutionary_party 
+					}
+					set_party_name = {
+						ideology = belligerent
+						long_name = GUNDW_belligerent_party
+						name = GUNDW_belligerent_party 
+					}
+
+					GUN_flafram = { add_country_leader_role = { country_leader = { ideology = federative } promote_leader = yes } }
+					GUN_flafram = { add_country_leader_role = { country_leader = { ideology = vigilant } promote_leader = yes } }
+					GUN_frirbok = { add_country_leader_role = { country_leader = { ideology = expansionist } promote_leader = yes } }
+					GUN_fradu = { add_country_leader_role = { country_leader = { ideology = mutinous } promote_leader = yes } }
+				}
+			}
+
 			# - all buildings in Gundabad get damaged
-
-		
-			add_political_power = 50
-			remove_ideas = GUN_wounded_pride_1
-			remove_ideas = GUN_power_vacuum_1
 			if = {
-				limit = {
-					has_idea = GUN_aid_recieved
-				}
-				remove_ideas = GUN_aid_recieved
-			}
-			if = {
-				limit = {
-					has_idea = GUN_impossible_task
-				}
-				remove_ideas = GUN_impossible_task
-			}
-
-
-			delete_unit = { disband = yes } # Delete all units
-			set_equipment_fraction = 0.5
-
-
-			if = {
-				limit = { has_country_flag = temp_flag }
-				division_template = {
-					name = "Dwarven Expeditioners"
-					regiments = {
-						mountaineers = { x = 0 y = 0 }
-						mountaineers = { x = 0 y = 1 }
-						mountaineers = { x = 0 y = 2 }
-						mountaineers = { x = 0 y = 3 }
-						mountaineers = { x = 1 y = 0 }
-						mountaineers = { x = 1 y = 1 }
-						mountaineers = { x = 1 y = 2 }
-						mountaineers = { x = 1 y = 3 }
-						mountaineers = { x = 2 y = 0 }
-						mountaineers = { x = 2 y = 1 }
-					}
-					support = {
-						artillery = { x = 0 y = 0 }
-						engineer = { x = 0 y = 0 }
-					}
-				}
+				limit = { has_completed_focus = GUN_plan_a_swift_assault }
 				61 = {
-					create_unit = {
-						division = "name = \"Dwarven Expeditioners\" division_template = \"Dwarven Expeditioners\" start_experience_factor = 1.0 start_equipment_factor = 0.5 start_manpower_factor = 0.5"
-						owner = GUN
-						prioritize_location = 4824
+					remove_building = {
+						type = castle
+						level = 1
+						province = 4824
 					}
 				}
-				
 			}
+
+			if = {
+				limit = { has_completed_focus = GUN_locate_weakspots }
+				custom_effect_tooltip = GUN_the_new_inhabitants_units_50p_tt
+			}
+			else = {
+				custom_effect_tooltip = GUN_the_new_inhabitants_units_80p_tt
+			}
+			# - spawn all units committed through previous focuses at 50% strength (or 80% strength)
+			if = {
+				limit = { has_country_flag = gun_expedition_support_ERE }
+				custom_effect_tooltip = GUN_the_new_inhabitants_units_ERE
+				hidden_effect = {
+					division_template = {
+						name = "Dwarven Expeditioners"
+						override_model = ERE_infantry_entity
+						regiments = {
+							mountaineers = { x = 0 y = 0 }
+							mountaineers = { x = 0 y = 1 }
+							mountaineers = { x = 0 y = 2 }
+							mountaineers = { x = 0 y = 3 }
+							mountaineers = { x = 1 y = 0 }
+							mountaineers = { x = 1 y = 1 }
+							mountaineers = { x = 1 y = 2 }
+							mountaineers = { x = 1 y = 3 }
+							mountaineers = { x = 2 y = 0 }
+							mountaineers = { x = 2 y = 1 }
+						}
+						support = {
+							artillery = { x = 0 y = 0 }
+							engineer = { x = 0 y = 0 }
+						}
+					}
+					if = {
+						limit = { has_completed_focus = GUN_locate_weakspots }
+						61 = {
+							create_unit = {
+								division = "name = \"Dwarven Expeditioners\" division_template = \"Dwarven Expeditioners\" start_experience_factor = 1.0 start_equipment_factor = 0.8 start_manpower_factor = 0.8"
+								owner = GUN
+								prioritize_location = 4824
+								count = 1
+							}
+						}
+					}
+					else = {
+						61 = {
+							create_unit = {
+								division = "name = \"Dwarven Expeditioners\" division_template = \"Dwarven Expeditioners\" start_experience_factor = 1.0 start_equipment_factor = 0.5 start_manpower_factor = 0.5"
+								owner = GUN
+								prioritize_location = 4824
+								count = 1
+							}
+						}
+					}
+				}
+			}
+
+
+			if = {
+				limit = { has_country_flag = gun_expedition_support_GLD }
+				custom_effect_tooltip = GUN_the_new_inhabitants_units_GLD
+				hidden_effect = {
+					division_template = {
+						name = "Gladden Expeditioners"
+						override_model = GLD_infantry_entity
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 0 y = 3 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+						}
+						support = {
+							artillery = { x = 0 y = 0 }
+							engineer = { x = 0 y = 0 }
+						}
+					}
+					if = {
+						limit = { has_completed_focus = GUN_locate_weakspots }
+						61 = {
+							create_unit = {
+								division = "name = \"Gladden Expeditioners\" division_template = \"Gladden Expeditioners\" start_experience_factor = 1.0 start_equipment_factor = 0.8 start_manpower_factor = 0.8"
+								owner = GUN
+								prioritize_location = 4824
+								count = 2
+							}
+						}
+					}
+					else = {
+						61 = {
+							create_unit = {
+								division = "name = \"Gladden Expeditioners\" division_template = \"Gladden Expeditioners\" start_experience_factor = 1.0 start_equipment_factor = 0.5 start_manpower_factor = 0.5"
+								owner = GUN
+								prioritize_location = 4824
+								count = 2
+							}
+						}
+					}
+				}
+			}
+
+			if = {
+				limit = { has_country_flag = gun_expedition_support_VAL }
+				custom_effect_tooltip = GUN_the_new_inhabitants_units_VAL
+				hidden_effect = {
+					division_template = {
+						name = "Beorning Expeditioners"
+						override_model = VAL_infantry_entity
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 0 y = 3 }
+						}
+					}
+					if = {
+						limit = { has_completed_focus = GUN_locate_weakspots }
+						61 = {
+							create_unit = {
+								division = "name = \"Beorning Expeditioners\" division_template = \"Beorning Expeditioners\" start_experience_factor = 0.5 start_equipment_factor = 0.8 start_manpower_factor = 0.8"
+								owner = GUN
+								prioritize_location = 4824
+								count = 1
+							}
+						}
+					}
+					else = {
+						61 = {
+							create_unit = {
+								division = "name = \"Beorning Expeditioners\" division_template = \"Beorning Expeditioners\" start_experience_factor = 0.5 start_equipment_factor = 0.5 start_manpower_factor = 0.5"
+								owner = GUN
+								prioritize_location = 4824
+								count = 1
+							}
+						}
+					}
+				}
+			}
+
+
+			if = {
+				limit = { has_country_flag = gun_expedition_support_ANG }
+				custom_effect_tooltip = GUN_the_new_inhabitants_units_ANG
+				hidden_effect = {
+					division_template = {
+						name = "Angmar Expeditioners"
+						override_model = ANG_infantry_entity
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 0 y = 3 }
+						}
+					}
+					if = {
+						limit = { has_completed_focus = GUN_locate_weakspots }
+						61 = {
+							create_unit = {
+								division = "name = \"Angmar Expeditioners\" division_template = \"Angmar Expeditioners\" start_experience_factor = 0.5 start_equipment_factor = 0.8 start_manpower_factor = 0.8"
+								owner = GUN
+								prioritize_location = 4824
+								count = 1
+							}
+						}
+					}
+					else = {
+						61 = {
+							create_unit = {
+								division = "name = \"Angmar Expeditioners\" division_template = \"Angmar Expeditioners\" start_experience_factor = 0.5 start_equipment_factor = 0.5 start_manpower_factor = 0.5"
+								owner = GUN
+								prioritize_location = 4824
+								count = 1
+							}
+						}
+					}
+				}
+			}
+
+
+			if = {
+				limit = { has_country_flag = gun_expedition_support_NEP }
+				custom_effect_tooltip = GUN_the_new_inhabitants_units_NEP
+				hidden_effect = {
+					division_template = {
+						name = "Forodwaith Expeditioners"
+						override_model = NEP_infantry_entity
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+						}
+					}
+					if = {
+						limit = { has_completed_focus = GUN_locate_weakspots }
+						61 = {
+							create_unit = {
+								division = "name = \"Forodwaith Expeditioners\" division_template = \"Forodwaith Expeditioners\" start_experience_factor = 0.5 start_equipment_factor = 0.8 start_manpower_factor = 0.8"
+								owner = GUN
+								prioritize_location = 4824
+								count = 1
+							}
+						}
+					}
+					else = {
+						61 = {
+							create_unit = {
+								division = "name = \"Forodwaith Expeditioners\" division_template = \"Forodwaith Expeditioners\" start_experience_factor = 0.5 start_equipment_factor = 0.5 start_manpower_factor = 0.5"
+								owner = GUN
+								prioritize_location = 4824
+								count = 1
+							}
+						}
+					}
+				}
+			}
+
+
+			if = {
+				limit = { has_country_flag = gun_expedition_support_SELF }
+				custom_effect_tooltip = GUN_the_new_inhabitants_units_SELF
+				hidden_effect = {
+					division_template = {
+						name = "Gundabad Expeditioners"
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+						}
+					}
+					if = {
+						limit = { has_completed_focus = GUN_locate_weakspots }
+						61 = {
+							create_unit = {
+								division = "name = \"Gundabad Expeditioners\" division_template = \"Gundabad Expeditioners\" start_experience_factor = 0.5 start_equipment_factor = 0.8 start_manpower_factor = 0.8"
+								owner = GUN
+								prioritize_location = 4824
+								count = 2
+							}
+						}
+					}
+					else = {
+						61 = {
+							create_unit = {
+								division = "name = \"Gundabad Expeditioners\" division_template = \"Gundabad Expeditioners\" start_experience_factor = 0.5 start_equipment_factor = 0.5 start_manpower_factor = 0.5"
+								owner = GUN
+								prioritize_location = 4824
+								count = 2
+							}
+						}
+					}
+				}
+			}
+
+
+
+
 		}
 	}
 	
@@ -1673,7 +1992,7 @@ focus_tree = {
 		}
 		#prerequisite = { focus = GUN_form_a_militia_battalion }
 		completion_reward = {
-			add_political_power = 150
+			remove_ideas = GUN_wounded_pride_1
 		}
 	}
 	
@@ -2557,7 +2876,8 @@ focus_tree = {
         }
         completion_reward = {
 			set_country_flag = gun_expedition_support_SELF
-			custom_effect_tooltip = "One §Y6 width infantry division§! will be §Ycommitted§! to our expedition."
+			custom_effect_tooltip = GUN_form_a_militia_battalion_tt
+			custom_effect_tooltip = committed_units_tt
 		}
     }
 
@@ -2729,7 +3049,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_establish_an_administration
 		prerequisite = { focus = GUN_the_new_inhabitants }
         
@@ -2745,7 +3065,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			remove_ideas = GUN_power_vacuum_1
+		}
     }
 
     focus = {
@@ -3965,6 +4287,7 @@ focus_tree = {
 			}
 			custom_effect_tooltip = if_they_accept_newline_tt
 			custom_effect_tooltip = GUN_secure_support_from_gladden_tt
+			custom_effect_tooltip = committed_units_tt
 		}
     }
 
@@ -3986,7 +4309,8 @@ focus_tree = {
         }
         completion_reward = {
 			set_country_flag = gun_expedition_support_NEP
-			custom_effect_tooltip = "§Y[NEP.GetName]§! will §Ycommit§! one §Y4 width infantry division§! to our expedition."
+			custom_effect_tooltip = GUN_forodwaithi_support_tt
+			custom_effect_tooltip = committed_units_tt
 		}
     }
 
