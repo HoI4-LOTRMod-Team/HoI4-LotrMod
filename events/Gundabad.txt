@@ -17,7 +17,7 @@ country_event = {
 		name = gundabad.1.a
 		GUN = {
 			add_timed_idea = {
-				idea =  generic_cooperative
+				idea = generic_cooperative
 				days = 365
 			}
 		}
@@ -93,7 +93,7 @@ country_event = {
 			base = 10
 		}
 		name = gundabad.3.a
-		add_ideas = GUN_troublesome_raiders
+		add_ideas = GUN_gundabad_expedition
 		set_power_balance = {
 			id = power_balance_gundabad 
 			set_default = yes
@@ -106,9 +106,13 @@ country_event = {
 	id = gundabad.4
 	title = gundabad.4.t
 	desc = gundabad.4.d
+
 	picture = GFX_report_event_orcs
+
 	is_triggered_only = yes
-	option = {#Send a force
+
+	# Send a force
+	option = {
 		ai_chance = {
 			base = 5
 			modifier = {
@@ -121,30 +125,26 @@ country_event = {
 			}
 		}
 		name = gundabad.4.a
-		add_manpower = -1250
+
+		if = {
+			limit = { tag = ERE }
+			add_manpower = -1250
+			add_equipment_to_stockpile = { type = infantry_equipment amount = -350 }
+		}
+
 		GUN = {
 			add_opinion_modifier = {
 				target = ROOT
 				modifier = large_increase
 			}
 			hidden_effect = {
-				if = {
-					limit = {
-						ROOT = {
-							tag = ERE
-						}
-					}
-					set_country_flag = dwarves_aid_recieved
-				}
-				else = {
-					set_country_flag = men_aid_recieved
-				}
+				country_event = gundabad.5
 			}
-			country_event = gundabad.5
-			add_ideas = GUN_aid_recieved
 		}
 	}
-	option = {#We don't need to interfere
+
+	# We don't need to interfere
+	option = {
 		ai_chance = {
 			base = 1
 			modifier = {
@@ -165,18 +165,21 @@ country_event = {
 			}
 		}
 		name = gundabad.4.b
-		hidden_effect = {#Gundabad will remember this
-			set_country_flag = gundabad_aid_denied
-		}
+
+		set_country_flag = gundabad_aid_denied # Gundabad will remember this
+
+		custom_effect_tooltip = gundabad.4.b_tt
+
+		add_political_power = -75
+
 		GUN = {
-			hidden_effect = {
-			clr_country_flag = force_request_pending
-			}
 			add_opinion_modifier = {
 				target = THIS
 				modifier = small_decrease
 			}
-			country_event = gundabad.6
+			hidden_effect = {
+				country_event = gundabad.6
+			}
 		}
 	}
 }
@@ -193,6 +196,27 @@ country_event = {
 			base = 10
 		}
 		name = gundabad.5.a
+
+		if = {
+			limit = { FROM = { tag = ERE } }
+			set_country_flag = gun_expedition_support_ERE
+			custom_effect_tooltip = GUN_a_message_to_erebor_tt
+		}
+		else_if = {
+			limit = { FROM = { tag = GLD } }
+			set_country_flag = gun_expedition_support_GLD
+			custom_effect_tooltip = GUN_secure_support_from_gladden_tt
+		}
+		else_if = {
+			limit = { FROM = { tag = VAL } }
+			set_country_flag = gun_expedition_support_VAL
+			custom_effect_tooltip = GUN_a_message_to_beorn_tt
+		}
+		else_if = {
+			limit = { FROM = { tag = ANG } }
+			set_country_flag = gun_expedition_support_ANG
+			custom_effect_tooltip = GUN_a_message_to_angmar_tt
+		}
 	}
 }
 
@@ -426,7 +450,7 @@ country_event = {
 			}
 			remove_new_trait = yes
 			swap_ideas = {
-				remove_idea = GUN_troublesome_raiders
+				remove_idea = GUN_gundabad_expedition
 				add_idea = GUN_remaining_orcs
 			}
 			remove_power_balance = { #What do you think this does
@@ -435,4 +459,29 @@ country_event = {
 			mark_technology_tree_layout_dirty = yes
 		}
 	}
+}
+
+# choice of lineage
+country_event = {
+    id = gundabad.100
+    title = gundabad.100.t
+    desc = gundabad.100.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = gundabad.100.a
+		complete_national_focus = GUN_rally_the_scattered_longbeards
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = gundabad.100.b
+		complete_national_focus = GUN_gather_eotheod_descendants
+    }
 }
