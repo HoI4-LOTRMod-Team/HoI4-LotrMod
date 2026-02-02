@@ -66,7 +66,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            threat > 0.07
         }
         completion_reward = {
 			# add trait to leader:
@@ -138,7 +138,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_in_faction = no
+            is_subject = no
+        }
+        bypass = {
+            any_country = {
+                has_guaranteed = ROOT
+            }
         }
         completion_reward = {
 			# change effects of next focus  
@@ -166,7 +172,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_in_faction = no
+            is_subject = no
+        }
+        bypass = {
+            is_in_faction = yes
         }
         completion_reward = {
 			# change effects of next focus  
@@ -194,7 +204,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_in_faction = no
+            is_subject = no
+        }
+        bypass = {
+            is_subject = yes
         }
         completion_reward = {
 			# change effects of next focus  
@@ -236,7 +250,20 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            DGU = { can_engage_in_diplo_with = yes is_subject = no }
+            is_subject = no
+            is_in_faction = no
+            NOT = {
+                any_country = {
+                    has_guaranteed = ROOT
+                }
+            }
+        }
+        bypass = {
+            OR = {
+                is_ally_with = DGU
+                is_guaranteed_by = DGU
+            }
         }
         completion_reward = {
             set_country_flag = RGL_the_shroud_of_dol_guldur_taken
@@ -298,7 +325,20 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            LTH = { can_engage_in_diplo_with = yes is_subject = no }
+            is_subject = no
+            is_in_faction = no
+            NOT = {
+                any_country = {
+                    has_guaranteed = ROOT
+                }
+            }
+        }
+        bypass = {
+            OR = {
+                is_ally_with = LTH
+                is_guaranteed_by = LTH
+            }
         }
         completion_reward = {
             set_country_flag = RGL_protection_of_the_golden_wood_taken
@@ -361,7 +401,20 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            MIR = { can_engage_in_diplo_with = yes is_subject = no }
+            is_subject = no
+            is_in_faction = no
+            NOT = {
+                any_country = {
+                    has_guaranteed = ROOT
+                }
+            }
+        }
+        bypass = {
+            OR = {
+                is_ally_with = MIR
+                is_guaranteed_by = MIR
+            }
         }
         completion_reward = {
             set_country_flag = RGL_the_elven_kings_shield_taken
@@ -423,7 +476,20 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            GLD = { can_engage_in_diplo_with = yes is_subject = no }
+            is_subject = no
+            is_in_faction = no
+            NOT = {
+                any_country = {
+                    has_guaranteed = ROOT
+                }
+            }
+        }
+        bypass = {
+            OR = {
+                is_ally_with = GLD
+                is_guaranteed_by = GLD
+            }
         }
         completion_reward = {
             set_country_flag = RGL_the_gladden_chiefs_taken
@@ -454,8 +520,7 @@ focus_tree = {
 
     focus = {
         id = RGL_emergency_defense
-		prerequisite = { focus = RGL_build_a_forge }
-		prerequisite = { focus = RGL_military_production }
+		prerequisite = { focus = RGL_build_a_forge focus = RGL_military_production }
         
         icon = GFX_unknown_focus
         
@@ -484,11 +549,15 @@ focus_tree = {
         search_filters = { }
         available = {
             controls_state = 199
-            has_defensive_war = yes
-            alliance_strength_ratio < 1.0
+            OR = {
+                has_defensive_war = yes
+                alliance_strength_ratio < 1.0
+                surrender_progress > 0.25
+            }
         }
         completion_reward = {
 			# load an oob  
+            add_stability = -0.03
             division_template = {
                 name = "Emergency Levies"
                 priority = 0
@@ -531,11 +600,15 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            OR = {
+                has_defensive_war = yes
+                alliance_strength_ratio < 1.0
+                surrender_progress > 0.25
+            }
         }
         completion_reward = {
 			# gain manpower  
-            add_manpower = 10000
+            add_manpower = 6500
 		}
     }
 
@@ -550,10 +623,21 @@ focus_tree = {
 
         cost = 5
         ai_will_do = { factor = 50 }
+
+        mutually_exclusive = {
+            focus = RGL_orcish_lieutenants
+            focus = RGL_invite_radagast
+            focus = RGL_shared_army_exercises
+        }
         
         search_filters = { }
         available = {
             controls_state = 199
+            LTH = { can_engage_in_diplo_with = yes }
+            OR = {
+                is_guaranteed_by = LTH
+                is_ally_with = LTH
+            }
         }
         completion_reward = {
 			# get marchwarden divisions  
@@ -602,10 +686,20 @@ focus_tree = {
 
         cost = 5
         ai_will_do = { factor = 25 }
+
+        mutually_exclusive = {
+            focus = RGL_orcish_lieutenants
+            focus = RGL_galadhrim_marchwardens
+            focus = RGL_shared_army_exercises
+        }
         
         search_filters = { }
         available = {
-            always = yes
+            MIR = { can_engage_in_diplo_with = yes }
+            OR = {
+                is_guaranteed_by = MIR
+                is_ally_with = MIR
+            }
         }
         completion_reward = {
 			# event to ask for radagast as advisor  
@@ -628,10 +722,20 @@ focus_tree = {
 
         cost = 5
         ai_will_do = { factor = 25 }
+
+        mutually_exclusive = {
+            focus = RGL_invite_radagast
+            focus = RGL_galadhrim_marchwardens
+            focus = RGL_shared_army_exercises
+        }
         
         search_filters = { }
         available = {
-            always = yes
+            DGU = { can_engage_in_diplo_with = yes }
+            OR = {
+                is_guaranteed_by = DGU
+                is_ally_with = DGU
+            }
         }
         completion_reward = {
 			# get some generals  
@@ -673,10 +777,20 @@ focus_tree = {
 
         cost = 5
         ai_will_do = { factor = 25 }
+
+        mutually_exclusive = {
+            focus = RGL_orcish_lieutenants
+            focus = RGL_galadhrim_marchwardens
+            focus = RGL_invite_radagast
+        }
         
         search_filters = { }
         available = {
-            always = yes
+            GLD = { can_engage_in_diplo_with = yes }
+            OR = {
+                is_guaranteed_by = GLD
+                is_ally_with = GLD
+            }
         }
         completion_reward = {
 			# army xp and mastery  
@@ -709,7 +823,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            RGL_radagast = {
+                is_hired_as_advisor = yes
+            }
         }
         completion_reward = {
 			# gain Radast as leader  
@@ -1039,7 +1155,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            capital_scope = {
+                is_controlled_by = ROOT
+            }
         }
         completion_reward = {
 			# get forge  
@@ -1070,7 +1188,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            OR = {
+                is_in_faction = yes
+                is_subject = yes
+                any_country = {
+                    has_guaranteed = ROOT
+                }
+            }
         }
         completion_reward = {
             if = {
@@ -1215,7 +1339,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            num_of_controlled_states > 0
         }
         completion_reward = {
 			# mils  
@@ -1239,7 +1363,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            num_of_controlled_states > 0
         }
         completion_reward = {
 			# civs  
@@ -1330,7 +1454,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 199
+            controls_state = 261
+            controls_state = 198
         }
         completion_reward = {
 			# add pop to some states  
@@ -1373,7 +1499,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            any_controlled_state = {
+                is_core_of = ROOT
+                chromium > 5
+            }
         }
         completion_reward = {
 			# convert wood into coal  
@@ -1411,7 +1540,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 199
         }
         completion_reward = {
 			# add wood  
@@ -1615,7 +1744,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            OR = {
+                has_defensive_war = yes
+                alliance_strength_ratio < 1.0
+                surrender_progress > 0.25
+            }
         }
         completion_reward = {
 			# temporarily lower food output, but gain factory output (and maybe some equipment)  
@@ -1660,7 +1793,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            OR = {
+                has_defensive_war = yes
+                alliance_strength_ratio < 1.0
+                surrender_progress > 0.25
+            }
         }
         completion_reward = {
 			# add temp idea  
@@ -1685,7 +1822,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            threat > 0.2
         }
         completion_reward = {
 			# increase taxes  
@@ -1707,7 +1844,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            threat > 0.12
         }
         completion_reward = {
             # gain decision to gain a bunch of stuff when at war
@@ -1746,7 +1883,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            SPI = { can_reach = yes can_engage_in_diplo_with = yes }
         }
         completion_reward = {
 			# send event to spiders asking for string or NA pact  
