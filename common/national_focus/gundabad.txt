@@ -1720,7 +1720,7 @@ focus_tree = {
 		}
 	}
 	
-	focus = { # TODO
+	focus = {
 		id = GUN_home_of_the_dwarves
 		icon = GFX_goal_dwarves_soldiers_army
 		cost = 10
@@ -1730,13 +1730,16 @@ focus_tree = {
 		prerequisite = {
 			focus = GUN_the_dwarves_of_gundabad
 		}
-		completion_reward = { add_ideas = ERE_home_of_the_dwarves }
+		completion_reward = { add_ideas = GUN_home_of_the_dwarves }
 	}
 	
 	focus = {
 		id = GUN_mine_for_mithril
 		prerequisite = { focus = GUN_request_mithril_mining_experts }
 		icon = GFX_goal_generic_diamond_mine_mithril
+		available = {
+			has_country_flag = gundabad_mithril_miners_sent
+		}
 		cost = 10
 		relative_position_id = GUN_home_of_the_dwarves
 		x = -1
@@ -1931,7 +1934,7 @@ focus_tree = {
 		}
 	}
 	
-	focus = { # TODO
+	focus = {
 		id = GUN_human_lead_industry
 		icon = GFX_goal_generic_fishermen
 		cost = 10
@@ -1942,11 +1945,11 @@ focus_tree = {
 			focus = GUN_the_men_of_gundabad
 		}
 		completion_reward = { 
-			add_ideas = ANG_human_lead_industry
+			add_ideas = GUN_hopes_of_a_new_kingdom
 		}
 	}
 	
-	focus = { # TODO
+	focus = {
 		id = GUN_welcome_more_people
 		icon = GFX_goal_generic_common_people_peasantry
 		cost = 10
@@ -1957,7 +1960,10 @@ focus_tree = {
 			focus = GUN_human_lead_industry
 		}
 		completion_reward = {
-			add_manpower = 1000
+			add_timed_idea = {
+				idea = generic_immigration_pull
+				days = 720
+			}
 		}
 	}
 	
@@ -2124,22 +2130,12 @@ focus_tree = {
 		completion_reward = { GON = { ask_to_join_faction = yes } }
 	}
 	
-	focus = { # TODO
-		id = GUN_lead_the_way
+	focus = {
+		id = GUN_restore_gundabad_industry
 		icon = GFX_goal_lth_safe_haven_defense
 		cost = 10
 		available = {
-			OR = {
-				AND = {
-					has_completed_focus = GUN_a_message_to_beorn
-					VAL = {
-						NOT = {
-							has_country_flag = gundabad_aid_denied
-						}
-					}
-				}
-				has_completed_focus = GUN_a_hardy_people
-			}
+			always = yes
 		}
 		relative_position_id = GUN_a_hardy_people
 		x = -2
@@ -2149,36 +2145,58 @@ focus_tree = {
 			focus = GUN_human_lead_industry
 		}
 		completion_reward = {
-			create_faction_from_template = {
-				name = new_mountain_pact
-				template = faction_template_defensive_cooperative
+			61 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
 			}
 		}
 	}
 	
-	focus = { # TODO
-		id = GUN_another_message_to_beorn
+	focus = {
+		id = GUN_repay_our_supporters
 		icon = GFX_goal_lth_anduin_flag
 		available = {
-			AND = {
-				has_completed_focus = GUN_a_message_to_beorn
-				VAL = {
-					NOT = {
-						has_country_flag = gundabad_aid_denied
-					}
-					is_in_faction = no
-				}
-			}
+			always = yes
 		}
 		cost = 10
-		relative_position_id = GUN_lead_the_way
+		relative_position_id = GUN_restore_gundabad_industry
 		x = 0
 		y = 1
 		prerequisite = {
-			focus = GUN_lead_the_way
+			focus = GUN_restore_gundabad_industry
 		}
 		completion_reward = {
-			VAL = {country_event = bonus_event.18}
+			# send an event to all non-hostile countries that supported the expedition. Gain +50pp and +0.025stab for each of them
+			custom_effect_tooltip = GUN_repay_our_supporters_tt
+			if = {
+				limit = { has_country_flag = gun_expedition_support_ERE ERE = { exists = yes NOT = { has_war_with = GUN } } }
+				ERE = { country_event = gundabad.104 }
+			}
+			if = {
+				limit = { has_country_flag = gun_expedition_support_GLD GLD = { exists = yes NOT = { has_war_with = GUN } } }
+				GLD = { country_event = gundabad.104 }
+			}
+			if = {
+				limit = { has_country_flag = gun_expedition_support_VAL VAL = { exists = yes NOT = { has_war_with = GUN } } }
+				VAL = { country_event = gundabad.104 }
+			}
+			if = {
+				limit = { has_country_flag = gun_expedition_support_ANG ANG = { exists = yes NOT = { has_war_with = GUN } } }
+				ANG = { country_event = gundabad.104 }
+			}
+			if = {
+				limit = { has_country_flag = gun_expedition_support_NEP NEP = { exists = yes NOT = { has_war_with = GUN } } }
+				NEP = { country_event = gundabad.104 }
+			}
 		}
 	}
 	
@@ -2206,8 +2224,8 @@ focus_tree = {
 	
 	focus = {
 		id = GUN_products_of_research
-		prerequisite = { focus = VAL_new_focus_BrAZcJ }
-		prerequisite = { focus = VAL_new_focus_k8K4oo }
+		prerequisite = { focus = GUN_civilian_research_focus }
+		prerequisite = { focus = GUN_military_research_focus }
 		icon = GFX_goal_focus_research
 		cost = 10
 		relative_position_id = GUN_the_mountain_research_institute
@@ -2282,7 +2300,7 @@ focus_tree = {
 		}
 	}
 	
-	focus = { # TODO
+	focus = {
 		id = GUN_get_rid_of_all_the_orcs
 		icon = GFX_goal_ANG_orc_fight_skirmish
 		cost = 10
@@ -2293,9 +2311,12 @@ focus_tree = {
 			focus = GUN_build_a_new_army
 		}
 		completion_reward = {
+			custom_effect_tooltip = GUN_get_rid_of_all_the_orcs_tt
 			every_country = {
 				limit = {
 					is_orcs = yes
+					war_with_is_possible = yes
+					can_reach = yes
 				}
 				GUN = {
 					create_wargoal = {
@@ -2307,7 +2328,7 @@ focus_tree = {
 		}
 	}
 	
-	focus = { # TODO
+	focus = {
 		id = GUN_train_mountaineers
 		icon = GFX_goal_ELU_mountain_warfare_dwarf
 		cost = 5
@@ -2320,7 +2341,7 @@ focus_tree = {
 		completion_reward = {
 			add_tech_bonus = {
 				name = special_bonus
-				bonus = 0.75
+				bonus = 1.0
 				uses = 1
 				category = lotr_infantry_specialforces_mountaineers 
 			}
@@ -2462,7 +2483,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_restore_diplomatic_efforts
 		prerequisite = { focus = GUN_establish_an_administration }
         
@@ -2478,7 +2499,40 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			ERE = {
+				remove_opinion_modifier = {
+					target = THIS
+					modifier = past_quarrels
+				}
+			}
+			MIR = {
+				remove_opinion_modifier = {
+					target = THIS
+					modifier = past_quarrels
+				}
+			}
+			DAL = {
+				remove_opinion_modifier = {
+					target = THIS
+					modifier = past_quarrels
+				}
+			}
+			hidden_effect = {
+				remove_opinion_modifier = {
+					target = ERE
+					modifier = past_quarrels
+				}
+				remove_opinion_modifier = {
+					target = MIR
+					modifier = past_quarrels
+				}
+				remove_opinion_modifier = {
+					target = DAL
+					modifier = past_quarrels
+				}
+			}
+		}
     }
 
     focus = {
@@ -2520,7 +2574,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			
+		}
     }
 
     focus = {
@@ -4067,6 +4123,7 @@ focus_tree = {
         }
         completion_reward = {
 			# send event to ELU asking for mithril miners
+			ELU = { country_event = gundabad.101 }
 		}
     }
 
@@ -4099,8 +4156,8 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
-        id = GUN_trade_with_the_realms_of_men
+    focus = {
+        id = GUN_countryside_markets
 		prerequisite = { focus = GUN_the_men_of_gundabad }
         
         icon = GFX_unknown_focus
@@ -4115,7 +4172,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			random_core_state = {
+				add_building_construction = {
+					type = markets
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
     }
 
     focus = {
@@ -4301,7 +4366,7 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = GUN_expand_recruitment
 		prerequisite = { focus = GUN_build_a_new_army }
         
@@ -4317,14 +4382,23 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			swap_ideas = {
+				remove_idea = GUN_new_army_of_the_mountain
+				add_idea = GUN_new_army_of_the_mountain_2
+			}
+		}
     }
 
-    focus = { # TODO
-        id = VAL_new_focus_k8K4oo
+    focus = {
+        id = GUN_military_research_focus
 		prerequisite = { focus = GUN_the_mountain_research_institute }
         
         icon = GFX_unknown_focus
+
+		mutually_exclusive = {
+			focus = GUN_civilian_research_focus
+		}
         
         x = 33
         y = 15
@@ -4336,14 +4410,27 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_infantry
+				category = lotr_cavalry
+				category = lotr_machines
+				uses = 3
+				bonus = 0.25
+			}
+		}
     }
 
-    focus = { # TODO
-        id = VAL_new_focus_BrAZcJ
+    focus = {
+        id = GUN_civilian_research_focus
 		prerequisite = { focus = GUN_the_mountain_research_institute }
         
         icon = GFX_unknown_focus
+
+		mutually_exclusive = {
+			focus = GUN_military_research_focus
+		}
         
         x = 35
         y = 15
@@ -4355,6 +4442,14 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_labour
+				category = lotr_knowledge
+				uses = 3
+				bonus = 0.25
+			}
+		}
     }
 }
