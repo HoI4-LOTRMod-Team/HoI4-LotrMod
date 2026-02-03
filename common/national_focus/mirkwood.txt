@@ -2288,7 +2288,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            ERE = { can_engage_in_diplo_with = yes }
         }
         
         completion_reward = {
@@ -2318,7 +2318,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            NOT = { is_ally_with = ERE }
         }
         completion_reward = {
             # less relations with dwarves, more relations with others
@@ -2376,6 +2376,7 @@ focus_tree = {
         search_filters = { }
         available = {
             NOT = { has_completed_focus = MIR_drive_back_the_great_spiders }
+            SPI = { can_reach = yes can_engage_in_diplo_with = yes }
         }
         completion_reward = {
             # send event to spiders asking for alliance or NA pact or something
@@ -2422,7 +2423,14 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            ERE = { can_ask_to_join_faction = yes }
+            OR = {
+                threat > 0.3
+                ERE = { has_common_enemy_with = yes }
+            }
+        }
+        bypass = {
+            is_ally_with = ERE
         }
         completion_reward = {
             # ask dwarves to create a faction together
@@ -2464,7 +2472,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_in_faction = no
+            is_subject = no
+            threat > 0.3
         }
         completion_reward = {
             # get event allows us to select a new ally from neighbors
@@ -2540,7 +2550,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            GON = { can_ask_to_join_faction = yes }
+            OR = {
+                threat > 0.5
+                GON = { has_common_enemy_with = yes }
+            }
         }
         
         completion_reward = {
@@ -2590,7 +2604,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            ROH = { can_ask_to_join_faction = yes }
+            OR = {
+                threat > 0.5
+                ROH = { has_common_enemy_with = yes }
+            }
         }
         
         completion_reward = {
@@ -4321,7 +4339,17 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_war_with = DGU
+            OR = {
+                alliance_strength_ratio < 1.65
+                surrender_progress > 0.2
+            }
+        }
+        bypass = {
+            OR = {
+                DGU = { exists = no }
+                DGU = { is_subject_of = MIR }
+            }
         }
         
         completion_reward = {
@@ -4377,7 +4405,17 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_war_with = SPI
+            OR = {
+                alliance_strength_ratio < 1.65
+                surrender_progress > 0.2
+            }
+        }
+        bypass = {
+            OR = {
+                SPI = { exists = no }
+                SPI = { is_subject_of = MIR }
+            }
         }
         
         completion_reward = {
@@ -4430,7 +4468,16 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_subject = no
+            is_in_faction = no
+            OR = {
+                LTH = { can_invite_to_faction = yes }
+                MIR = { can_invite_to_faction = yes }
+            }
+            threat > 0.5
+        }
+        bypass = {
+            is_in_faction = yes
         }
         
         completion_reward = {
@@ -4441,11 +4488,11 @@ focus_tree = {
             }
             set_faction_rule = joining_rule_elves_only
             if = {
-                limit = { LTH = { is_elves = yes NOT = { has_war_with = ROOT } is_in_faction = no } }
+                limit = { LTH = { is_elves = yes can_invite_to_faction = yes } }
                 LTH = { invite_to_faction = yes }
             }
             if = {
-                limit = { RIV = { is_elves = yes NOT = { has_war_with = ROOT } is_in_faction = no } }
+                limit = { RIV = { is_elves = yes can_invite_to_faction = yes } }
                 RIV = { invite_to_faction = yes }
             }
         }
@@ -4467,7 +4514,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_in_faction = yes
+            any_allied_country = {
+                is_elves = yes
+            }
         }
         
         completion_reward = {
@@ -4524,7 +4574,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_in_faction = yes
+            any_allied_country = {
+                is_elves = yes
+            }
         }
         
         completion_reward = {
@@ -4556,6 +4609,8 @@ focus_tree = {
 		prerequisite = { focus = MIR_elven_shared_army_training }
         
         icon = GFX_goal_lth_contain_mordor
+
+        will_lead_to_war_with = MOR
         
         x = -3
         y = 11
@@ -4596,7 +4651,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            MOR = { can_reach = yes war_with_is_possible = yes has_government = belligerent is_subject = no }
+            is_subject = no
+        }
+        bypass = {
+            has_war_with = MOR
         }
         
         completion_reward = {
@@ -4658,6 +4717,9 @@ focus_tree = {
         search_filters = { }
         available = {
             always = yes
+        }
+        bypass = {
+            has_war = yes
         }
         
         completion_reward = {
@@ -4724,7 +4786,8 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            num_of_controlled_states > 0
+            threat > 0.35
         }
         
         completion_reward = {
@@ -4760,7 +4823,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            threat > 0.45
         }
         completion_reward = {
             add_ideas = MIR_aegis_of_light
@@ -4788,7 +4851,8 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            num_of_controlled_states > 0
+            threat > 0.35
         }
         
         completion_reward = {
@@ -4820,7 +4884,18 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_war = yes
+            if = {
+                limit = {
+                    is_ai = yes
+                    any_enemy_country = {
+                        is_ai = no
+                    }
+                }
+            }
+            else = {
+                alliance_strength_ratio < 1.0
+            }
         }
         
         completion_reward = {
@@ -4848,7 +4923,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_ally_with = ERE
         }
         
         completion_reward = {
@@ -4875,7 +4950,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_ally_with = ERE
         }
         completion_reward = {
             ERE = {
@@ -4926,7 +5001,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            OR = {
+                is_ally_with = GON
+                is_ally_with = ROH
+            }
         }
         completion_reward = {
             # friendship gets better
@@ -5122,7 +5200,8 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_ally_with = MOR
+            has_war = yes
         }
         
         completion_reward = {
@@ -5159,7 +5238,16 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            OR = {
+                has_war = yes
+                threat > 0.3
+            }
+        }   
+        bypass = {
+            OR = {
+                is_in_faction = yes
+                is_subject = yes
+            }
         }
         completion_reward = {
             # event to choose next focus
@@ -5188,7 +5276,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_in_faction = no
+            is_subject = no
+        }
+        bypass = {
+            is_faction_leader = yes
         }
         completion_reward = {
             MOR = {
@@ -5219,7 +5311,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            MOR = { can_ask_to_join_faction = yes }
         }
         completion_reward = {
             # get cucked by MOR
@@ -5255,7 +5347,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_ally_with = MOR
         }
         completion_reward = {
             # get cool stuff from MOR
@@ -5295,7 +5387,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_faction_leader = yes
         }
         completion_reward = {
             # invite or try to create faction with DGU, GUN or GOB
@@ -5341,6 +5433,9 @@ focus_tree = {
         search_filters = { }
         available = {
             always = yes
+        }
+        bypass = {
+            has_war = yes
         }
         completion_reward = {
             add_timed_idea = {
@@ -5412,7 +5507,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            VAL = { war_with_is_possible = yes }
+            is_subject = no
+        }
+        bypass = {
+            has_war_with = VAL
         }
         
         completion_reward = {
@@ -5486,7 +5585,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            ERE = { war_with_is_possible = yes }
+            is_subject = no
+        }
+        bypass = {
+            has_war_with = ERE
         }
         
         completion_reward = {
@@ -5612,7 +5715,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            SPI = { can_reach = yes war_with_is_possible = yes }
+            threat > 0.3
+        }
+        bypass = {
+            has_war_with = SPI
         }
         completion_reward = {
             create_wargoal = {
@@ -5636,7 +5743,12 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            SPI = {
+                all_core_state = {
+                    resistance < 0.75
+                    is_controlled_by = ROOT
+                }
+            }
         }
         completion_reward = {
             effect_tooltip = {
@@ -5948,7 +6060,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_war_with = GUN
         }
         completion_reward = {
             MIR = {
@@ -6029,11 +6141,15 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            DAL = { can_engage_in_diplo_with = yes can_reach = yes }
+            OR = {
+                threat > 0.5
+                DAL = { has_common_enemy_with = yes }
+            }
         }
         completion_reward = {
             # ask dale to join
-            DAL = { invite_to_faction = yes }
+            DAL = { suggest_faction_leader_to_invite = yes }
         }
     }
 
@@ -6051,7 +6167,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_ally_with = DAL
         }
         completion_reward = {
             DAL = { create_free_trade_with = yes }
@@ -6280,11 +6396,21 @@ focus_tree = {
                 factor = 0.5
                 LTH = { has_government = belligerent }
             }
+            modifier = {
+                factor = 0
+                has_country_flag = rng_30p_flag_2
+            }
         }
         
         search_filters = { }
         available = {
-            always = yes
+            is_subject = no
+            if = {
+                limit = { is_in_faction = yes }
+                var:faction_leader = {
+                    is_elves = no
+                }
+            }
         }
         completion_reward = {
             every_country = {
@@ -6373,11 +6499,19 @@ focus_tree = {
                 factor = 0.25
                 LTH = { exists = yes }
             }
+            modifier = {
+                factor = 0
+                has_country_flag = rng_30p_flag_2
+            }
         }
         
         search_filters = { }
         available = {
-            always = yes
+            RIV = { war_with_is_possible = yes }
+            is_subject = no
+        }
+        bypass = {
+            has_war_with = RIV
         }
         completion_reward = {
             create_wargoal = {
@@ -6446,11 +6580,19 @@ focus_tree = {
                 factor = 0.5
                 LTH = { has_government = belligerent }
             }
+            modifier = {
+                factor = 0
+                has_country_flag = rng_30p_flag_2
+            }
         }
         
         search_filters = { }
         available = {
-            always = yes
+            LTH = { war_with_is_possible = yes }
+            is_subject = no
+        }
+        bypass = {
+            has_war_with = LTH
         }
         completion_reward = {
             create_wargoal = {
@@ -6486,7 +6628,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            any_controlled_state = {
+                arms_factory > 1
+            }
         }
         completion_reward = {
             custom_effect_tooltip = MIR_concealed_smithing_shops_tt
@@ -6541,7 +6685,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            any_controlled_state = {
+                industrial_complex > 1
+            }
         }
         completion_reward = {
             custom_effect_tooltip = MIR_concealed_workshops_tt
@@ -7009,7 +7155,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            SPI = { can_reach = yes war_with_is_possible = yes }
+            threat > 0.3
+        }
+        bypass = {
+            has_war_with = SPI
         }
         completion_reward = {
             create_wargoal = {
@@ -7076,7 +7226,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            DGU = { can_reach = yes war_with_is_possible = yes }
+            threat > 0.3
+        }
+        bypass = {
+            has_war_with = DGU  
         }
         completion_reward = {
             create_wargoal = {
@@ -7110,7 +7264,14 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            OR = {
+                DGU = { exists = no }
+                DGU = { is_subject_of = MIR }
+            }
+            OR = {
+                SPI = { exists = no }
+                SPI = { is_subject_of = MIR }
+            }
         }
         completion_reward = {
             add_stability = 0.1
