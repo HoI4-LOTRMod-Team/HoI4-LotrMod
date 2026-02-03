@@ -1845,6 +1845,9 @@ focus_tree = {
 		prerequisite = {
 			focus = GUN_reopen_the_old_mines
 		}
+		available = {
+			controls_state = 62
+		}
 		completion_reward = {
 			# add a civ for every excavation tech we have
 			custom_effect_tooltip = GUN_mine_for_gold_tt
@@ -1882,6 +1885,9 @@ focus_tree = {
 		prerequisite = {
 			focus = GUN_reopen_the_old_mines
 		}
+		available = {
+			controls_state = 61
+		}
 		completion_reward = {
 			add_resource = {
 				type = steel
@@ -1897,8 +1903,10 @@ focus_tree = {
 		icon = GFX_goal_mor_erebor_flag
 		available = {
 			ERE = {
-				is_faction_leader = yes
+				NOT = { has_country_flag = gundabad_aid_denied }
+				can_ask_to_join_faction = yes
 			}
+			threat > 0.5
 		}
 		cost = 10
 		ai_will_do = {
@@ -1924,6 +1932,7 @@ focus_tree = {
 			ELU = {
 				has_completed_focus = ELU_durins_coronation
 				has_government = unaligned
+				can_engage_in_diplo_with = yes
 			}
 		}
 		cost = 5
@@ -1949,17 +1958,19 @@ focus_tree = {
 		prerequisite = { focus = GUN_befriend_durin }
 		icon = GFX_goal_ELU_lead_the_army_durin
 		available = {
-			is_in_faction = yes
+			is_faction_leader = yes
 			ELU = {
 				has_government = unaligned
+				can_engage_in_diplo_with = yes
 			}
+			threat > 0.5
 		}
 		cost = 10
 		relative_position_id = GUN_befriend_durin
 		x = -1
 		y = 2
 		completion_reward = {
-			ELU = { invite_to_faction = yes }
+			ELU = { suggest_faction_leader_to_invite = yes }
 		}
 	}
 	
@@ -1969,7 +1980,6 @@ focus_tree = {
 		icon = GFX_goal_ANG_rally_people_peasant_militia
 		available = {
 			is_men = yes
-			has_country_flag = force_request_pending
 		}
 		cost = 5
 		relative_position_id = GUN_the_new_inhabitants
@@ -1990,6 +2000,9 @@ focus_tree = {
 		relative_position_id = GUN_the_men_of_gundabad
 		x = 0
 		y = 1
+		available = {
+			is_men = yes
+		}
 		prerequisite = {
 			focus = GUN_the_men_of_gundabad
 		}
@@ -2022,11 +2035,10 @@ focus_tree = {
 		icon = GFX_goal_angmar_unaligned
 		available = {
 			ANG = {
-				is_faction_leader = yes
-				NOT = {
-					has_country_flag = gundabad_aid_denied
-				}
+				NOT = { has_country_flag = gundabad_aid_denied }
+				can_ask_to_join_faction = yes
 			}
+			threat > 0.5
 		}
 		cost = 10
 		ai_will_do = {
@@ -2163,8 +2175,10 @@ focus_tree = {
 		icon = GFX_goal_gondor
 		available = {
 			GON = {
-				is_faction_leader = yes
+				NOT = { has_country_flag = gundabad_aid_denied }
+				can_ask_to_join_faction = yes
 			}
+			threat > 0.5
 		}
 		cost = 10
 		relative_position_id = GUN_hunt_down_the_orcs
@@ -2192,6 +2206,9 @@ focus_tree = {
 		prerequisite = {
 			focus = GUN_a_hardy_people
 			focus = GUN_human_lead_industry
+		}
+		available = {
+			controls_state = 61
 		}
 		completion_reward = {
 			61 = {
@@ -2222,6 +2239,15 @@ focus_tree = {
 		y = 1
 		prerequisite = {
 			focus = GUN_restore_gundabad_industry
+		}
+		available = {
+			OR = {
+				has_country_flag = gun_expedition_support_ERE
+				has_country_flag = gun_expedition_support_GLD
+				has_country_flag = gun_expedition_support_VAL
+				has_country_flag = gun_expedition_support_ANG
+				has_country_flag = gun_expedition_support_NEP
+			}
 		}
 		completion_reward = {
 			# send an event to all non-hostile countries that supported the expedition. Gain a civ +50pp and +0.02stab for each of them
@@ -2285,6 +2311,9 @@ focus_tree = {
 		relative_position_id = GUN_the_mountain_research_institute
 		x = 0
 		y = 2
+		available = {
+			num_of_factories > 50
+		}
 		completion_reward = {
 			add_research_slot = 1
 		}
@@ -2319,9 +2348,6 @@ focus_tree = {
 	focus = {
 		id = GUN_leather_tanneries
 		icon = GFX_goal_generic_population_growth
-		available = {
-			controls_state = 61
-		}
 		cost = 5
 		relative_position_id = GUN_farming_efforts
 		x = -1
@@ -2338,7 +2364,7 @@ focus_tree = {
 		}
 	}
 	
-	focus = { # TODO
+	focus = {
 		id = GUN_build_a_new_army
 		icon = GFX_goal_ELU_unity_through_war_dwarf_warriors
 		cost = 10
@@ -2363,6 +2389,14 @@ focus_tree = {
 		y = 2
 		prerequisite = {
 			focus = GUN_build_a_new_army
+		}
+		available = {
+			any_country = {
+				is_orcs = yes
+				war_with_is_possible = yes
+				can_reach = yes
+			}
+			threat > 0.3
 		}
 		completion_reward = {
 			custom_effect_tooltip = GUN_get_rid_of_all_the_orcs_tt
@@ -2492,6 +2526,7 @@ focus_tree = {
 				NOT = {
 					has_country_flag = gundabad_aid_denied
 				}
+				can_engage_in_diplo_with = yes
 			}
 		}
 		cost = 10
@@ -2623,7 +2658,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_dwarves = yes
         }
         completion_reward = {
 			if = {
@@ -4265,7 +4300,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            ELU = {
+				can_engage_in_diplo_with = yes
+				OR = {
+					has_government = unaligned
+					has_government = cooperative
+				}
+			}
         }
         completion_reward = {
 			# send event to ELU asking for mithril miners
@@ -4287,7 +4328,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_tech = mithril_armour
         }
         completion_reward = {
 			add_tech_bonus = {
@@ -4316,7 +4357,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            any_core_state = {
+				is_controlled_by = ROOT
+			}
         }
         completion_reward = {
 			random_core_state = {
@@ -4485,7 +4528,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            controls_state = 61
         }
         completion_reward = {
 			random_core_state = {
@@ -4512,8 +4555,14 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
-        }
+			controls_state = 61
+			VAL = {
+				NOT = {
+					has_country_flag = gundabad_aid_denied
+				}
+				can_engage_in_diplo_with = yes
+			}
+		}
         completion_reward = {
 			add_stability = 0.05
             add_unit_bonus = {
