@@ -113,6 +113,6 @@ def reformat_braces(file_path):
 
 # Replace 'your_code_file.txt' with the path to your actual code file
 #input_file = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\events\Anduin.txt'
-input_file = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\rhun.txt'
+input_file = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\free rhun.txt'
 reformat_code(input_file)
 reformat_braces(input_file)
