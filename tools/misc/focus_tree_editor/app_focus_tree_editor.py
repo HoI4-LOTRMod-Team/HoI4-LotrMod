@@ -55,7 +55,7 @@ def main():
     # create graph controller.
     graph = create_node_graph()
 
-    focus_node_tree = FocusNodeTree(graph, BASE_PATH / "common/national_focus/gundabad.txt")
+    focus_node_tree = FocusNodeTree(graph, BASE_PATH / "common/national_focus/rhun.txt")
     graph.focus_tree = focus_node_tree
 
     context_menu = graph.get_context_menu('graph')
