@@ -65,11 +65,11 @@ state = {
 	}
 
 	history={
-		owner = MOR
+		owner = $TOKEN_OWNER$
 		buildings = {
 			infrastructure = 1
 		}
-		add_core_of = MOR
+		add_core_of = $TOKEN_OWNER$
 	}
 
 	provinces = {
@@ -83,7 +83,7 @@ state = {
 """
 
 
-def create_new_state(provinces, state_name):
+def create_new_state(provinces, state_name, state_owner_tag):
     all_states = get_all_states()
 
     # sort provinces array
@@ -96,7 +96,7 @@ def create_new_state(provinces, state_name):
     new_state_id += 1
 
     # create empty template
-    state_text = STATE_TEMPLATE.replace("$TOKEN_ID$", str(new_state_id))
+    state_text = STATE_TEMPLATE.replace("$TOKEN_ID$", str(new_state_id)).replace("$TOKEN_OWNER$", state_owner_tag)
 
     # save to file
     dir = STATES_DIR / (str(new_state_id) + "-" + state_name + ".txt")

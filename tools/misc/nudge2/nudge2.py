@@ -233,6 +233,9 @@ class CreateStateDialog(QDialog):
         self.name_input = QLineEdit()
         self.name_input.setPlaceholderText("Minas Tirith")
         form_layout.addRow("State Name:", self.name_input)
+        self.owner_input = QLineEdit()
+        self.owner_input.setPlaceholderText("MOR")
+        form_layout.addRow("State Owner:", self.owner_input)
         layout.addLayout(form_layout)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         self.buttons.accepted.connect(self.accept) 
@@ -240,7 +243,7 @@ class CreateStateDialog(QDialog):
         layout.addWidget(self.buttons)
 
     def get_data(self):
-        return {"state_name": self.name_input.text()}
+        return {"state_name": self.name_input.text(), "state_owner": self.owner_input.text()}
     
 class TransferProvsDialog(QDialog):
     def __init__(self, parent=None, ToStratRegion=False):
@@ -1524,8 +1527,9 @@ class MainWindow(QMainWindow):
             data = dialog.get_data()
             print(f"User confirmed! Running Fill with: {data}")
             state_name = data['state_name']
+            state_owner = data['state_owner']
             provs = selected_colors_to_provinces()
-            create_new_state(provs, state_name)
+            create_new_state(provs, state_name, state_owner)
             selected_colors.clear()
             self.trigger_lut_update()
 
