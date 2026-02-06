@@ -4,9 +4,9 @@
 
 
 ## PARAMETERS:
-tag = "GOB"
-color = "110 102 61"
-loc_name = "Goblin Town"
+tag = "AVA"
+color = "129 25 82 "
+loc_name = "Avari Tribes"
 
 
 def replace_in_file(filepath, search, replace):
