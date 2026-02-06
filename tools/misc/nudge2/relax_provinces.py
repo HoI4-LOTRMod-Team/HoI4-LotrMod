@@ -1,17 +1,17 @@
 import cv2
 import numpy as np
 from scipy.spatial import cKDTree
+from scipy.ndimage import distance_transform_edt
 
 def relax_layer(image_rgb, mask=None, iterations=15, 
                 distortion_scale=40, distortion_magnitude=6,
-                smoothness=3): # <--- New Parameter
+                smoothness=3):
     
     output_rgb = image_rgb.copy()
     h, w = output_rgb.shape[:2]
 
     # --- 1. Mask Logic ---
     if mask is None:
-        # If no mask, assume whole image
         valid_mask = np.ones((h, w), dtype=bool)
     else:
         valid_mask = mask > 0
@@ -23,8 +23,6 @@ def relax_layer(image_rgb, mask=None, iterations=15,
     
     # --- 2. Extract Centroids ---
     pixel_colors = output_rgb[y_coords, x_coords]
-    
-    # We need to map colors to unique IDs to filter them later
     unique_colors, inverse_indices = np.unique(pixel_colors, axis=0, return_inverse=True)
     num_provinces = len(unique_colors)
     
@@ -72,7 +70,6 @@ def relax_layer(image_rgb, mask=None, iterations=15,
     dist_y = grid_y.astype(np.float32) + off_y
 
     # --- 5. Reconstruction ---
-    # Get the raw province indices for every pixel in the mask
     query_points = np.column_stack((
         dist_x[y_coords, x_coords], 
         dist_y[y_coords, x_coords]
@@ -81,33 +78,103 @@ def relax_layer(image_rgb, mask=None, iterations=15,
     tree = cKDTree(centroids)
     _, raw_indices = tree.query(query_points)
 
-    # --- 6. Coherence / Denoising Pass (New Step) ---
+    # --- 6a. Smoothing Pass ---
+    # We construct the map to apply median blur
+    id_map = np.full((h, w), -1, dtype=np.int32)
+    id_map[y_coords, x_coords] = raw_indices.astype(np.int32)
+    
     if smoothness > 0:
-        # We must reconstruct the full 2D map of IDs to check neighbors
-        # Use -1 for "out of bounds/mask"
-        id_map = np.full((h, w), -1, dtype=np.float32)
-        
-        # Place our calculated province IDs onto the map
-        id_map[y_coords, x_coords] = raw_indices.astype(np.float32)
-        
-        # Apply Median Blur to IDs
-        # The median of integers is always an integer from the set.
-        # It removes outliers (stray pixels) effectively.
-        # Kernel size must be odd (3, 5, 7...)
         ksize = smoothness if smoothness % 2 == 1 else smoothness + 1
-        cleaned_map = cv2.medianBlur(id_map, ksize)
+        # Convert to float32 for medianBlur (or cast back and forth with uint8/int16 if needed)
+        # OpenCV medianBlur works on uint8, float32, or int16. 
+        # Using float32 to stay safe with negative IDs (-1)
+        cleaned_map = cv2.medianBlur(id_map.astype(np.float32), ksize).astype(np.int32)
         
-        # Read the cleaned IDs back out
-        final_indices = cleaned_map[y_coords, x_coords].astype(int)
+        # Restore boundary errors caused by blur
+        mask_errors = cleaned_map == -1
+        # Only fix errors where we actually have a valid mask
+        valid_mask_flat = np.zeros_like(cleaned_map, dtype=bool)
+        valid_mask_flat[y_coords, x_coords] = True
         
-        # Edge case: If the blur pulled in a -1 (background), revert to raw
-        # This prevents black artifacts at the very edge of the mask
-        mask_errors = final_indices == -1
-        final_indices[mask_errors] = raw_indices[mask_errors]
+        to_fix = mask_errors & valid_mask_flat
+        cleaned_map[to_fix] = id_map[to_fix]
+        final_indices_map = cleaned_map
     else:
-        final_indices = raw_indices
+        final_indices_map = id_map
 
-    # Map indices back to RGB colors
+    # --- 6b. Enforce Connectivity (The Fix) ---
+    # We create a map of "Pruned" IDs, where islands are removed (set to -1)
+    pruned_map = np.full((h, w), -1, dtype=np.int32)
+    
+    # We process each province to find its "Main Body"
+    # (Iterating 50-100 provinces is very fast. 
+    # If you have 5000+, this might take a second)
+    for i in range(num_provinces):
+        # Create binary mask for this province
+        # Using uint8 for connectedComponents
+        p_mask = (final_indices_map == i).astype(np.uint8)
+        
+        # Fast check: skip if province empty
+        if not np.any(p_mask): continue
+
+        # Find all blobs of this province
+        num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(p_mask, connectivity=8)
+        
+        if num_labels <= 2: 
+            # 1 background + 1 component = Perfect. Keep as is.
+            pruned_map[p_mask == 1] = i
+        else:
+            # Multiple blobs found. We need to keep the "correct" one.
+            # Strategy: Keep the component closest to the province's centroid.
+            cx, cy = centroids[i]
+            cx, cy = int(cx), int(cy)
+            
+            # Clamp coordinates to image bounds just in case
+            cx = np.clip(cx, 0, w - 1)
+            cy = np.clip(cy, 0, h - 1)
+            
+            # Check which label is at the centroid
+            target_label = labels[cy, cx]
+            
+            # If centroid landed on background (0) or another province (due to distortion),
+            # fall back to the largest component by area.
+            if target_label == 0:
+                # stats shape: [label, x, y, w, h, area]
+                # stats[1:, 4] extracts areas of all foreground components
+                # +1 because argmax gives index relative to the slice, and we skipped bg (0)
+                target_label = np.argmax(stats[1:, 4]) + 1
+            
+            # Write only the chosen component to the pruned map
+            pruned_map[labels == target_label] = i
+
+    # Now 'pruned_map' has -1 holes where the stray islands used to be.
+    # We fill these holes using nearest-neighbor based on Euclidean distance.
+    
+    # invalid_mask is True where we need to fill holes (inside the valid area)
+    # We must ensure we only fill holes that are inside our original Valid Mask
+    global_valid_mask = np.zeros((h, w), dtype=bool)
+    global_valid_mask[y_coords, x_coords] = True
+    
+    holes_mask = (pruned_map == -1) & global_valid_mask
+    
+    if np.any(holes_mask):
+        # distance_transform_edt computes distance to the nearest ZERO pixel.
+        # So we invert: 0 = Valid Province, 1 = Hole.
+        # return_indices=True gives us the index of the nearest Valid Province pixel.
+        _, indices = distance_transform_edt(holes_mask, return_distances=True, return_indices=True)
+        
+        # 'indices' is a tuple of arrays (y_indices, x_indices) pointing to nearest valid pixel
+        # We use these to sample from pruned_map
+        fill_values = pruned_map[tuple(indices)]
+        
+        # Apply the fill
+        pruned_map[holes_mask] = fill_values[holes_mask]
+
+    # --- 7. Final Assignment ---
+    # Extract the final IDs only for the valid pixels
+    final_indices = pruned_map[y_coords, x_coords]
+    
+    # Map back to colors
     final_colors = unique_colors[final_indices]
     output_rgb[y_coords, x_coords] = final_colors
     
