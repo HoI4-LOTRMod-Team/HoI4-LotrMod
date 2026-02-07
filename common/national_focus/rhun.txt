@@ -1441,7 +1441,7 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = RHUN_contact_the_variags
 		icon = GFX_goal_rhu_khandian_lord
 		ai_will_do = { 
@@ -1460,23 +1460,27 @@ focus_tree = {
 		cost = 5
 		
 		completion_reward = {
-			ROOT = {
-				add_opinion_modifier = {
-					target = KND
-					modifier = medium_increase
+			# add infra structure in far east
+			287 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
 				}
 			}
-			KND = {
-				add_opinion_modifier = {
-					target = RHU
-					modifier = medium_increase
+			272 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
 				}
 			}
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = RHUN_khandian_buffer_zone
+		prerequisite = { focus = RHUN_contact_the_variags }
 		icon = GFX_goal_rhu_harad_grab
 		ai_will_do = { }
 		x = 1
@@ -1493,91 +1497,27 @@ focus_tree = {
 				has_government = unaligned 
 			}
 		}
-		mutually_exclusive = { focus = RHUN_rhunian_khand}
-		prerequisite = { focus = RHUN_contact_the_variags }
+		mutually_exclusive = { focus = RHUN_request_khand_autonomy }
 		cost = 10
 		
 		completion_reward = {
-			123 = {
-				transfer_state_to = KND
-			}
-			ROOT = {
-				puppet = KND
-			}
-		}
-
-	}
-
-	focus = { # TODO
-		id = RHUN_skirmishes_west
-		icon = GFX_goal_rhu_harad_war
-		ai_will_do = { }
-		x = 2
-		y = 2
-		relative_position_id = RHUN_contact_the_variags
-		available = {
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-		}
-		mutually_exclusive = { }
-		prerequisite = { focus = RHUN_khandian_buffer_zone }
-		cost = 10
-		
-		completion_reward = {
-			custom_effect_tooltip = RHUN_28_tt
 			hidden_effect = {
-				KND = {
-					division_template = {
-						name = "Khandian Rabble"
-						is_locked = yes
-						division_cap = 4
-						priority = 1
-						regiments = {
-							infantry = { x = 0 y = 0 }
-							infantry = { x = 0 y = 1 }
-							infantry = { x = 0 y = 2 }
-							infantry = { x = 0 y = 3 }
-						}
-					}
-					division_template = {
-						name = "Variag Mûmakil"
-						is_locked = yes
-						division_cap = 2
-						priority = 1
-						regiments = {
-							mumakil_units = { x = 0 y = 0 }
-							mumakil_units = { x = 0 y = 1 }
-							mumakil_units = { x = 0 y = 2 }
-							mumakil_units = { x = 0 y = 3 }
-							infantry = { x = 1 y = 0 }
-							infantry = { x = 1 y = 1 }
-						}
-					}
-					123 = {
-						create_unit = {
-							division = "name = \"Khandian Rabble\" division_template = \"Khandian Rabble\" start_experience_factor = 0.3"
-							owner = KND
-							count = 10
-						}
-						create_unit = {
-							division = "name = \"Mûmakil Skirmishers\" division_template = \"Variag Mûmakil\" start_experience_factor = 0.6"
-							owner = KND
-							count = 2
-						}
-					}
+				HAR = {
+					country_event = { id = rhunexpanded.103 days = 3 }
 				}
 			}
+			custom_effect_tooltip = RHUN_khandian_buffer_zone
 		}
+
 	}
 
-	focus = { # TODO
+	focus = {
 		id = RHUN_rhunian_khand
+		prerequisite = { focus = RHUN_build_up_khand }
 		icon = GFX_goal_rhu_rhunian_khand
 		ai_will_do = { }
-		x = -1
-		y = 1
+		x = 0
+		y = 5
 		relative_position_id = RHUN_contact_the_variags
 		available = {
 			HAR = {
@@ -1592,21 +1532,13 @@ focus_tree = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
+			# TODO: This should only be possible after significant and long-term investment from Rhuns side
+			# It should also not be doable if Khand is independent or something
 		}
-		mutually_exclusive = { focus = RHUN_khandian_buffer_zone }
-		prerequisite = { focus = RHUN_contact_the_variags }
 		cost = 10
 		
 		completion_reward = {
-			123 = {
-				transfer_state_to = KND
-			}
-			115 = {
-				transfer_state_to = KND
-			}
-			117 = {
-				transfer_state_to = KND
-			}
+			# TODO: maybe this could be an event to HAR if they are a puppet or something idk
 			ROOT = {
 				puppet = KND
 			}
@@ -1617,36 +1549,42 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
-		id = RHUN_ultimatum_of_sturlusta
-		icon = GFX_goal_generic_treaty
+	focus = {
+		id = RHUN_build_up_khand
+		prerequisite = { focus = RHUN_trade_with_the_variags }
+		prerequisite = { focus = RHUN_learn_from_the_variags }
+		icon = GFX_goal_generic_currency_reforms_money_panning
 		ai_will_do = { }
-		x = -1
-		y = 2
+		x = 0
+		y = 4
 		relative_position_id = RHUN_contact_the_variags
-		available = { 
-			KND = { is_puppet_of = ROOT}
+		available = {
+			KND = {
+				is_in_faction_with = ROOT
+			}
 			OR = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
 		}
 		mutually_exclusive = { }
-		prerequisite = { focus = RHUN_rhunian_khand }
 		cost = 10
 		
-		completion_reward = {
-			HAR = { 
-				country_event = rhunexpanded.18
+		completion_reward = { 
+			KND = {
+				random_state_add_building_slot_and_civ_x2 = yes
+				random_state_add_building_slot_and_mil = yes
 			}
 		}
+
 	}
 
-	focus = { # TODO
-		id = RHUN_build_up_khand
-		icon = GFX_goal_generic_currency_reforms_money_panning
+	focus = {
+		id = RHUN_learn_from_the_variags
+		prerequisite = { focus = RHUN_request_khand_autonomy }
+		icon = GFX_goal_rhu_mumakil
 		ai_will_do = { }
-		x = 0
+		x = -1
 		y = 3
 		relative_position_id = RHUN_contact_the_variags
 		available = {
@@ -1659,166 +1597,6 @@ focus_tree = {
 			}
 		}
 		mutually_exclusive = { }
-		prerequisite = { focus = RHUN_ultimatum_of_sturlusta focus = RHUN_khandian_buffer_zone }
-		cost = 10
-		
-		completion_reward = { 
-			custom_effect_tooltip = MOR_changing_focus
-			if = {
-				limit = {
-					KND = {
-						controls_state = 123
-						controls_state = 115
-						controls_state = 117
-					}
-				}
-				123 = {
-					add_extra_state_shared_building_slots = 4
-					add_building_construction = {
-						type = arms_factory
-						level = 2
-						instant_build = yes
-					}
-					add_building_construction = {
-						type = industrial_complex
-						level = 2
-						instant_build = yes
-					}
-				}
-				115 = {
-					add_extra_state_shared_building_slots = 4
-					add_building_construction = {
-						type = arms_factory
-						level = 2
-						instant_build = yes
-					}
-					add_building_construction = {
-						type = industrial_complex
-						level = 2
-						instant_build = yes
-					}
-				}
-				117 = {
-					add_extra_state_shared_building_slots = 4
-					add_building_construction = {
-						type = arms_factory
-						level = 2
-						instant_build = yes
-					}
-					add_building_construction = {
-						type = industrial_complex
-						level = 2
-						instant_build = yes
-					}
-				}
-			}
-			else_if = {
-				limit = {
-					KND = {
-						controls_state = 123
-					}
-				}
-				123 = {
-					add_extra_state_shared_building_slots = 4
-					add_building_construction = {
-						type = arms_factory
-						level = 2
-						instant_build = yes
-					}
-					add_building_construction = {
-						type = industrial_complex
-						level = 2
-						instant_build = yes
-					}
-				}
-			}
-		}
-
-	}
-
-	focus = { # TODO
-		id = RHUN_integrate_khandian_forces
-		icon = GFX_goal_ANG_rally_people_peasant_militia
-		ai_will_do = { }
-		x = 1
-		y = 5
-		relative_position_id = RHUN_contact_the_variags
-		available = {
-			KND = {
-				is_in_faction_with = ROOT
-			}
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-		}
-		mutually_exclusive = { }
-		prerequisite = { focus = RHUN_build_up_khand }
-		cost = 10
-		
-		completion_reward = {
-			custom_effect_tooltip = RHUN_26_tt
-			hidden_effect = {
-				division_template = {
-					name = "Khandian Rabble"
-					is_locked = yes
-					division_cap = 4
-					priority = 1
-					regiments = {
-						infantry = { x = 0 y = 0 }
-						infantry = { x = 0 y = 1 }
-						infantry = { x = 0 y = 2 }
-						infantry = { x = 0 y = 3 }
-					}
-				}
-				division_template = {
-					name = "Variag Mûmakil"
-					is_locked = yes
-					division_cap = 2
-					priority = 1
-					regiments = {
-						mumakil_units = { x = 0 y = 0 }
-						mumakil_units = { x = 0 y = 1 }
-						mumakil_units = { x = 0 y = 2 }
-						mumakil_units = { x = 0 y = 3 }
-						infantry = { x = 1 y = 0 }
-						infantry = { x = 1 y = 1 }
-					}
-				}
-				132 = {
-					create_unit = {
-						division = "name = \"Khandian Rabble\" division_template = \"Khandian Rabble\" start_experience_factor = 0.3"
-						owner = RHU
-						count = 4
-					}
-					create_unit = {
-						division = "name = \"Mûmakil Skirmishers\" division_template = \"Variag Mûmakil\" start_experience_factor = 0.6"
-						owner = RHU
-						count = 2
-					}
-				}
-			}
-		}
-	}
-
-	focus = { # TODO
-		id = RHUN_learn_from_the_variags ##mumakil technology + division template
-		icon = GFX_goal_rhu_mumakil
-		ai_will_do = { }
-		x = -1
-		y = 5
-		relative_position_id = RHUN_contact_the_variags
-		available = {
-			KND = {
-				is_in_faction_with = ROOT
-			}
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-		}
-		mutually_exclusive = { }
-		prerequisite = { focus = RHUN_build_up_khand }
 		cost = 10
 		
 		completion_reward = {
@@ -1917,7 +1695,7 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = RHUN_nurukhizdin_or_war
 		icon = GFX_goal_rhu_dorwinion_demand
 		ai_will_do = { }
@@ -2256,7 +2034,7 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = RHUN_land_reclamation_order
 		icon = GFX_goal_generic_farmland
 		x = 3
@@ -2294,11 +2072,6 @@ focus_tree = {
 				type = oil
 				amount = 5
 				state = 96 
-			}
-			add_resource = {
-				type = oil
-				amount = 2
-				state = 99 
 			}
 		}
 	}
@@ -5054,6 +4827,82 @@ focus_tree = {
 		}
         completion_reward = {
 			DOR = { demand_subjugation = yes }
+		}
+    }
+
+    focus = {
+        id = RHUN_request_khand_autonomy
+		prerequisite = { focus = RHUN_contact_the_variags }
+
+		mutually_exclusive = { focus = RHUN_khandian_buffer_zone }
+        
+        icon = GFX_unknown_focus
+        
+        x = 19
+        y = 7
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# send event to HAR asking for KND to be independent
+			hidden_effect = {
+				HAR = {
+					country_event = { id = rhunexpanded.100 days = 3 }
+				}
+			}
+			custom_effect_tooltip = RHUN_request_khand_autonomy_tt
+		}
+    }
+
+    focus = { # TODO
+        id = RHUN_trade_with_the_variags
+		prerequisite = { focus = RHUN_khandian_buffer_zone }
+        
+        icon = GFX_unknown_focus
+        
+        x = 21
+        y = 9
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# TODO
+		}
+    }
+
+    focus = {
+        id = RHUN_negotiate_resource_rights
+		prerequisite = { focus = RHUN_request_khand_autonomy }
+		prerequisite = { focus = RHUN_khandian_buffer_zone }
+        
+        icon = GFX_unknown_focus
+        
+        x = 20
+        y = 8
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# send event that gives us resource rights on all khand states
+			hidden_effect = {
+				KND = { country_event = rhunexpanded.106 }
+			}
+			custom_effect_tooltip = RHUN_negotiate_resource_rights_tt
 		}
     }
 }
