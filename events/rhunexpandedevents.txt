@@ -307,7 +307,7 @@ country_event = {
 				}
 			}
 			##transfering units
-			transfer_units_fraction= {
+			transfer_units_fraction = {
 				target = DRH
 				size = 0.5
 				stockpile_ratio = 0.5
@@ -515,8 +515,6 @@ country_event = {
 	desc = rhunexpanded.9.d
 	picture = GFX_report_event_army_camp
 
-	fire_only_once = no
-
 	is_triggered_only = yes
 
 	option = { # Accept
@@ -526,28 +524,34 @@ country_event = {
 			modifier = {
 				add = 1
 				strength_ratio = {
-					tag = RHU
+					tag = FROM
 					ratio < 1 
 				} 
 			}
-		}
-		208 = { transfer_state_to = RHU }
-		add_war_support = -0.1
-		RHU = {
-			set_truce = {
-				target = DOR
-				days = 365 
+			modifier = {
+				factor = 0
+				FROM = { is_weaker = yes }
 			}
-			create_wargoal = {
-				type = take_state_focus
-				target = DOR
-				generator = { 103 137 } 
-			} 
-			country_event = {
-				id = rhunexpanded.10
-				days = 5
-				random_hours = 12
-				random_days = 2 
+			modifier = {
+				factor = 0.3
+				is_isolated_target = no
+			}
+		}
+		208 = { transfer_state_to = FROM }
+		custom_effect_tooltip = rhunexpanded.9.a_tt
+		hidden_effect = {
+			FROM = {
+				set_country_flag = {
+					flag = RHUN_nurkhizdin_or_war_accepted
+					value = 1
+					days = 365
+				}
+				country_event = {
+					id = rhunexpanded.10
+					days = 5
+					random_hours = 12
+					random_days = 2 
+				}
 			}
 		}
 	}
@@ -557,18 +561,21 @@ country_event = {
 		ai_chance = {
 			base = 1 
 		}
-		add_stability = -0.1
-		RHU = {
-			create_wargoal = {
-				type = take_state_focus
-				target = DOR
-				generator = { 208 103 137 } 
-			} 
-			country_event = {
-				id = rhunexpanded.11
-				days = 5
-				random_hours = 12
-				random_days = 2 
+		FROM = {
+			effect_tooltip = {
+				create_wargoal = {
+					type = take_state_focus
+					target = DOR
+					generator = { 208 } 
+				} 
+			}
+			hidden_effect = {
+				country_event = {
+					id = rhunexpanded.11
+					days = 5
+					random_hours = 12
+					random_days = 2 
+				}
 			}
 		}
 	}
@@ -607,6 +614,12 @@ country_event = {
 		ai_chance = { 
 			base = 100 
 		}
+
+		create_wargoal = {
+			type = take_state_focus
+			target = DOR
+			generator = { 208 } 
+		} 
 	}
 }
 
@@ -719,24 +732,30 @@ country_event = {
 		ai_chance = {
 			base = 1
 			modifier = {
-				add = 2
+				add = 1
 				strength_ratio = {
 					tag = RHU
 					ratio < 1 
 				} 
 			}
 			modifier = {
-				add = 1000
+				add = 15
 				is_historical_focus_on = yes 
+				FROM = { is_weaker = no }
+				is_isolated_target = yes
 			}
 		}
-		RHU = {
-			puppet = RHO
-			country_event = {
-				id = rhunexpanded.16
-				days = 5
-				random_hours = 12
-				random_days = 2 
+		effect_tooltip = {
+			RHU = { puppet = RHO }
+		}
+		hidden_effect = {
+			RHU = {
+				country_event = {
+					id = rhunexpanded.16
+					days = 5
+					random_hours = 12
+					random_days = 2 
+				}
 			}
 		}
 	}
@@ -752,15 +771,26 @@ country_event = {
 					ratio > 1 
 				} 
 			}
+			modifier = {
+				add = 1
+				FROM = { is_ai = no }
+			}
+			modifier = {
+				factor = 2
+				is_isolated_target = no
+			}
 		}
 		add_stability = -0.1
 		add_war_support = 0.05
-		RHU = {
-			country_event = {
-				id = rhunexpanded.17
-				days = 5
-				random_hours = 12
-				random_days = 2 
+		event_option_tooltip = rhunexpanded.17.a
+		hidden_effect = {
+			RHU = {
+				country_event = {
+					id = rhunexpanded.17
+					days = 5
+					random_hours = 12
+					random_days = 2 
+				}
 			}
 		}
 	}
@@ -781,6 +811,7 @@ country_event = {
 		ai_chance = { 
 			base = 100 
 		}
+		RHU = { puppet = RHO }
 	}
 }
 
@@ -801,9 +832,8 @@ country_event = {
 		}
 		RHU = {
 			create_wargoal = {
-				type = take_state_focus
 				target = RHO
-				generator = { 208 103 137 }
+				type = puppet_wargoal_focus
 			}
 		}
 	}
