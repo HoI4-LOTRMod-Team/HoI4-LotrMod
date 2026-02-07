@@ -1100,13 +1100,14 @@ focus_tree = {
 		icon = GFX_goal_ELU_aid_supply_crate_equipment
 		ai_will_do = { }
 		available = { }
-		x = -4
+		x = -3
 		y = 2
 		mutually_exclusive = { }
 		relative_position_id = RHUN_orders_from_lord_sauron
 		cost = 10
 		
 		completion_reward = { 
+			add_manpower = 10000
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
 				amount = 5000
@@ -1116,26 +1117,6 @@ focus_tree = {
 				type = chariot_chassis
 				amount = 1000
 				producer = RHU
-			}
-		}
-	}
-
-	focus = { # TODO
-		id = RHUN_aid_from_mordor
-		prerequisite = { focus = RHUN_prepare_for_the_conflict }
-		icon = GFX_goal_lth_orc_warrior
-		ai_will_do = { }
-		available = { }
-		x = -4
-		y = 3
-		mutually_exclusive = { }
-		relative_position_id = RHUN_orders_from_lord_sauron
-		cost = 10
-		
-		completion_reward = { 
-			add_manpower = 10000
-			MOR = {
-				add_manpower = -10000
 			}
 		}
 	}
@@ -1351,22 +1332,7 @@ focus_tree = {
 		will_lead_to_war_with = MIR
 		
 		completion_reward = {
-			add_threat = 2
-
-			RHO = {
-				add_ideas = GEN_faction_restriction_2
-				declare_war_on = {
-					target = MIR
-					type = annex_everything
-				}
-			}
-			DOR = {
-				add_ideas = GEN_faction_restriction_2
-				declare_war_on = {
-					target = MIR
-					type = annex_everything
-				}
-			}
+			# help GUN and DGU
 		}
 	}
 
@@ -1413,7 +1379,7 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = RHUN_raid_into_mirkian_territory
 		prerequisite = { focus = RHUN_territorial_expansion }
 		icon = GFX_goal_mir_thranduil
@@ -1538,7 +1504,7 @@ focus_tree = {
 		cost = 10
 		
 		completion_reward = {
-			# TODO: maybe this could be an event to HAR if they are a puppet or something idk
+			# if KHD independent and we are stronger than Harad -> puppet Khand (and if KHD is not a player)
 			ROOT = {
 				puppet = KND
 			}
@@ -3799,44 +3765,6 @@ focus_tree = {
     }
 
     focus = { # TODO
-        id = RHUN_assault_the_elven_kings_halls
-		prerequisite = { focus = RHUN_take_matters_into_our_own_hands }
-        
-        icon = GFX_unknown_focus
-        
-        x = 8
-        y = 12
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = { }
-    }
-
-    focus = { # TODO
-        id = RHUN_stir_opposition
-		prerequisite = { focus = RHUN_support_orc_efforts }
-        
-        icon = GFX_unknown_focus
-        
-        x = 6
-        y = 12
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = { }
-    }
-
-    focus = { # TODO
         id = RHUN_construct_supplylines
 		prerequisite = { focus = RHUN_the_path_to_mirkwood }
         
@@ -3898,7 +3826,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_focus_on_dale
 		prerequisite = { focus = RHUN_territorial_expansion }
         
@@ -3916,6 +3844,10 @@ focus_tree = {
         }
         completion_reward = {
 			# war against DAL
+			create_wargoal = {
+				target = DAL
+				type = annex_everything
+			}
 		}
     }
 
@@ -4317,7 +4249,7 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = DRH_ally_with_logath
 		prerequisite = { focus = DRH_seek_protection_from_dale }
         
@@ -4333,10 +4265,22 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			if = {
+				limit = { is_faction_leader = yes }
+				LGT = { invite_to_faction = yes }
+			}
+			else_if = {
+				limit = { LGT = { is_faction_leader = yes } }
+				LGT = { ask_to_join_faction = yes }
+			}
+			else = {
+				LGT = { ask_to_form_faction = yes }
+			}
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = DRH_break_the_treaty
 		prerequisite = { focus = DRH_rebuild_forces }
         
@@ -4352,10 +4296,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			create_wargoal = {
+				target = RHU
+				type = independence_wargoal
+			}
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = DRH_resume_research_efforts
 		prerequisite = { focus = DRH_ally_with_logath }
 		prerequisite = { focus = DRH_break_the_treaty }
@@ -4372,10 +4321,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_research_slot = 1
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = DRH_join_the_dwarves
 		prerequisite = { focus = DRH_resume_research_efforts }
         
@@ -4391,7 +4342,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			ERE = { ask_to_join_faction = yes }
+		}
     }
 
     focus = { # TODO
@@ -4489,7 +4442,7 @@ focus_tree = {
         completion_reward = { }
     }
 
-    focus = { # TODO
+    focus = {
         id = DRH_scholarly_endeavours
 		prerequisite = { focus = DRH_beacon_of_freedom }
 		prerequisite = { focus = DRH_set_up_southern_supplylines }
@@ -4506,7 +4459,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_research_slot = 1
+		}
     }
 
     focus = {
@@ -4657,7 +4612,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_logathin_scholars
 		prerequisite = { focus = RHUN_integrate_the_logath }
         
@@ -4673,7 +4628,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_research_slot = 1
+		}
     }
 
     focus = {
@@ -4743,7 +4700,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = DRH_integrate_the_eastern_tribes
 		prerequisite = { focus = DRH_restore_a_stable_admin }
 		prerequisite = { focus = DRH_maintain_military_formations }
@@ -4758,10 +4715,18 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            AVA = {
+				all_core_state = {
+					is_controlled_by = ROOT
+				}
+			}
         }
         completion_reward = {
 			# gain cores on AVA territory  
+			every_state = {
+				limit = { is_core_of = AVA }
+				add_core_of = ROOT
+			}
 		}
     }
 
@@ -4859,7 +4824,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_trade_with_the_variags
 		prerequisite = { focus = RHUN_khandian_buffer_zone }
         
@@ -4876,7 +4841,12 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# TODO
+			288 = {
+				add_building_slot_and_civ_x2 = yes
+			}
+			271 = {
+				add_building_slot_and_civ = yes
+			}
 		}
     }
 
@@ -4904,5 +4874,24 @@ focus_tree = {
 			}
 			custom_effect_tooltip = RHUN_negotiate_resource_rights_tt
 		}
+    }
+
+    focus = {
+        id = RHUN_reward_from_mordor
+		prerequisite = { focus = RHUN_siege_of_the_lonely_mountain }
+        
+        icon = GFX_unknown_focus
+        
+        x = 9
+        y = 12
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = { }
     }
 }
