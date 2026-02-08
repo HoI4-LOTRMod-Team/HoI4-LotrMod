@@ -72,7 +72,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			add_ideas = ISE_ways_of_the_dark
+			swap_ideas = { remove_idea = ISE_ways_of_the_dark_0 add_idea = ISE_ways_of_the_dark_1 }
 		}
 	}
 
@@ -205,6 +205,7 @@ focus_tree = {
 		available_if_capitulated = yes
 		completion_reward = {
 			add_stability = 0.1
+			add_political_power = 100
 			add_ideas = ISE_the_white_hand_0
 		}
 	}
@@ -245,7 +246,7 @@ focus_tree = {
 		ai_will_do = { base = 100 }
 		cost = 5
 		relative_position_id = ISE_warg_knowledge
-		x = 0
+		x = -1
 		y = 1
 		prerequisite = { focus = ISE_warg_knowledge}
 		available_if_capitulated = yes
@@ -266,11 +267,36 @@ focus_tree = {
 					show_modifiers = yes
 				}
 			}
-			mio:ISE_wargs_riders_guild = {
-				complete_mio_trait = 
-				{
-					trait = generic_mio_trait_destriers
-					show_modifiers = yes
+		}
+	}
+
+	focus = {
+		id = ISE_warg_pits
+		icon = GFX_goal_generic_unknown
+		ai_will_do = { base = 100 }
+		cost = 5
+		relative_position_id = ISE_warg_knowledge
+		x = 1
+		y = 1
+		prerequisite = { focus = ISE_warg_knowledge}
+		available_if_capitulated = yes
+		offset = {
+			x = -1
+			y = 0
+			trigger = { NOT = { has_dlc = "No Step Back" } }
+		}
+		completion_reward = {
+			add_building_slot_and_civ = yes
+			random_owned_state = {
+				add_resource = {
+					type = rubber
+					amount = 2
+				}
+			}
+			random_owned_state = {
+				add_resource = {
+					type = rubber
+					amount = 3
 				}
 			}
 		}
@@ -291,6 +317,9 @@ focus_tree = {
 			add_manpower = 10000
 			add_ideas = ISE_orc_breeding_0
 			set_country_flag = ISE_breeding_grounds_established
+			31 = { add_dynamic_modifier = { modifier = ise_orc_breeding_grounds } }
+			158 = { add_dynamic_modifier = { modifier = ise_orc_breeding_grounds } }
+			159 = { add_dynamic_modifier = { modifier = ise_orc_breeding_grounds } }
 		}
 	}
 
@@ -435,6 +464,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
+			add_manpower = 10000
 			set_country_flag = ISE_breeding_grounds_expanded
 			swap_ideas = { remove_idea = ISE_orc_breeding_0 add_idea = ISE_orc_breeding_1 }
 		}
@@ -2825,7 +2855,6 @@ focus_tree = {
 		}
 		relative_position_id = ISE_expand_the_relations
 		prerequisite = { focus = ISE_expand_the_relations }
-		mutually_exclusive = { focus = ISE_protecting_nature }
 		x = -1
 		y = 1
 		cost = 5
@@ -2836,8 +2865,38 @@ focus_tree = {
 					is_in_faction = no
 				}
 				create_faction = "Protective alliance of Nature"
+			} else = {
+				add_political_power = 100
 			}
 			ENT = { country_event = { id = entwood.11 } }
+		}
+	}
+
+	focus = {
+		id = ISE_sharing_is_caring
+		icon = GFX_goal_generic_resource_wood
+		ai_will_do = { base = 25 }
+		available = {
+			is_puppet = no
+			ENT = {
+				OR = {
+					is_in_faction_with = ISE
+					has_non_aggression_pact_with = ISE
+				}
+			}
+		}
+		relative_position_id = ISE_expand_the_relations
+		prerequisite = { focus = ISE_expand_the_relations }
+		x = 0
+		y = 2
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			ENT = { country_event = { id = entwood.12 } }
+			custom_effect_tooltip = GENERIC_custom_tooltip_if_they_accept
+			ENT = {
+				event_option_tooltip = entwood.12.a
+			}
 		}
 	}
 
@@ -2852,7 +2911,6 @@ focus_tree = {
 		}
 		relative_position_id = ISE_expand_the_relations
 		prerequisite = { focus = ISE_expand_the_relations }
-		mutually_exclusive = { focus = ISE_against_all_evil }
 		x = 1
 		y = 1
 		cost = 10
@@ -3790,7 +3848,7 @@ focus_tree = {
 		ai_will_do = { factor = 10 }
 		bypass = { has_war_with = ROH }
 		relative_position_id = ISE_pillage_the_towns_of_rohan
-		x = -2
+		x = -1
 		y = 1
 		prerequisite = { focus = ISE_pillage_the_towns_of_rohan }
 		cost = 5
