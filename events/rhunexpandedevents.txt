@@ -205,308 +205,16 @@ country_event = {
 
 	is_triggered_only = yes
 
-	option = { #yes
+	option = {
 		name = rhunexpanded.8.a
 		ai_chance = {
 			base = 50
 		}
 		hidden_effect = {
-			news_event = {
-				id = my_event.1
-				days = 3
-				random_hours = 12
-				random_days = 1
-			}
-			RHU = {
-				set_politics = {
-					ruling_party = belligerent
-					elections_allowed = no
-				}
-
-				set_popularities = {
-					cooperative = 0
-					unaligned = 0
-					belligerent = 100
-					revolutionary = 0
-				}
-			}
-
-			RHU = {
-				add_equipment_to_stockpile = {
-					type = infantry_equipment_0
-					amount = 3000
-				}
-				add_timed_idea = {
-					idea = RHUN_civil_war
-					days = 365
-				}
-				uncomplete_national_focus = {
-					focus = RHUN_break_free_from_mordor
-					uncomplete_children = yes
-					refund_political_power = no
-				}
-			}
-			##Load templates
-			RHU = {
-				load_oob = "rhun/CV_templates" 
-			}
-			## If land is controlled
-			if = {
-				limit = {
-					controls_state = 132 #rhudel steppe
-				}
-				load_oob = "rhun/CV_rhudel_steppe"
-			}
-			if = {
-				limit = {
-					controls_state = 124 #mountains of ash
-				}
-				load_oob = "rhun/CV_mountains_of_ash"
-			}
-			if = {
-				limit = {
-					controls_state = 131 #rhudel
-				}
-				load_oob = "rhun/CV_rhudel"
-			}
-			if = {
-				limit = {
-					controls_state = 104 #south rhun
-				}
-				load_oob = "rhun/CV_south_rhun"
-			}
+			do_rhun_civil_war = yes
 		}
-		##transfering civil war states
-		hidden_effect = {
-			for_each_loop = {
-				array = RHU_list_states_civil_war
-				DRH = {
-					transfer_state = v
-				}
-			}
 
-
-			DRH = {
-				transfer_state = 130
-				inherit_technology = RHU
-
-				declare_war_on = { target = RHU type = civil_war }
-				add_civil_war_target = RHU
-				add_ideas = limited_levy
-				set_capital = { state = 130 }
-
-				set_politics = {
-					ruling_party = cooperative
-				}
-
-				set_popularities = {
-					cooperative = 60
-					unaligned = 40
-					belligerent = 0
-					revolutionary = 0
-				}
-			}
-			##transfering units
-			transfer_units_fraction = {
-				target = DRH
-				size = 0.5
-				stockpile_ratio = 0.5
-				army_ratio = 0.5
-				navy_ratio = 0.5
-				air_ratio = 0.5
-				keep_unit_leaders_trigger = {
-					always = yes
-				}
-			}
-			130 = {
-				teleport_armies = {
-					limit = {
-						tag = RHU
-					}
-					to_state_array = owned_controlled_states
-				}
-			}
-
-			DRH = {
-				change_tag_from = RHU
-			}
-			set_nationality = {
-				target_country = DRH
-				character = RHU_nezarg
-			}
-			set_nationality = {
-				target_country = DRH
-				character = RHU_wizards
-			}
-			set_nationality = {
-				target_country = DRH
-				character = RHU_alatar
-			}
-			set_nationality = {
-				target_country = DRH
-				character = RHU_pallando
-			}
-			DRH = {
-				promote_character = RHU_nezarg
-			}
-			##Rhun focus branch flag checks 
-			RHU = {
-				if = {
-					limit = {
-						has_global_flag = RHU_sabotaged_military
-					}
-					add_timed_idea = {
-						idea = RHUN_sabotaged_military
-						days = 365
-					}
-				}
-			}
-			##Free Rhun focus branch flag checks
-			DRH = {
-				##Army defection
-				if = {
-					limit = {
-						has_global_flag = RHU_army_defection
-					}
-					set_nationality = {
-						target_country = DRH
-						character = RHU_tazurak
-					}
-				}
-				##Fierce resistance
-				if = {
-					limit = {
-						has_global_flag = RHU_fierce_resistance
-					}
-					add_timed_idea = {
-						idea = RHUN_fierce_resistance
-						days = 365
-					}
-				}
-				##Chariots stockpiled
-				if = {
-					limit = {
-						has_global_flag = RHU_chariots_stockpiled
-					}
-					add_equipment_to_stockpile = {
-						type = chariot_chassis
-						amount = 500
-					}
-				}
-				##spears stockpiled
-				if = {
-					limit = {
-						has_global_flag = RHU_spears_stockpiled
-					}
-					add_equipment_to_stockpile = {
-						type = infantry_equipment_0
-						amount = 5000
-					}
-				}
-				##Hidden supplies
-				if = {
-					limit = {
-						has_global_flag = RHU_hidden_supplies
-					}
-					add_timed_idea = {
-						idea = RHUN_hidden_supplies
-						days = 365 
-					}
-				}
-				##Offshore industry
-				if = {
-					limit = {
-						has_global_flag = RHU_offshore_industry_cv
-					}
-					add_offsite_building = { type = arms_factory level = 2 }
-					add_offsite_building = { type = industrial_complex level = 2 }
-				}
-				##Secret mines
-				if = {
-					limit = {
-						has_global_flag = RHU_offshore_industry_cv
-					}
-					129 = {
-						add_resource = {
-							type = steel
-							amount = 15
-						}
-					}
-				}
-				##Secret militias
-				if = {
-					limit = {
-						has_completed_focus = RHUN_secret_militias
-					}
-					130 = {
-						add_extra_state_shared_building_slots = 1
-						add_building_construction = {
-							type = barracks
-							level = 1
-							instant_build = yes
-						}
-					}
-				}
-				##flags 
-				set_global_flag = DRH_civil_war_flag
-			}
-		}##end hidden stuff pt1
-
-		##Load templates
-		hidden_effect = {
-			DRH = {
-				load_oob = "rhun/CV_templates"
-				## If troops are rallied
-				if = {
-					limit = {
-						has_global_flag = easterlings_agasha_rallied
-					}
-					load_oob = "rhun/CV_rally_troops_agasha_dag"
-				}
-				if = {
-					limit = {
-						has_global_flag = easterlings_east_rhun_rallied
-					}
-					load_oob = "rhun/CV_rally_troops_east_rhun"
-				}
-				if = {
-					limit = {
-						has_global_flag = easterlings_central_rhun_rallied
-					}
-					load_oob = "rhun/CV_rally_troops_central_rhun"
-				}
-				division_template = {
-					name = "Wainriders"			# Represents three-division infantry corps (generally poorly-equipped militias)
-
-					regiments = {
-						chariot = { x = 0 y = 0 }
-						chariot = { x = 0 y = 1 }
-						chariot = { x = 1 y = 0 }
-						chariot = { x = 1 y = 1 }
-						chariot = { x = 2 y = 0 }
-						chariot = { x = 2 y = 1 }
-						chariot = { x = 3 y = 0 }
-						chariot = { x = 3 y = 1 }
-					}
-				}
-			}
-		}
-		##uncomplete focus
-		RHU = {
-			uncomplete_national_focus = {
-				focus = RHUN_break_free_from_mordor
-				uncomplete_children = yes
-				refund_political_power = no
-			}
-		}
-		##refresh focus tree
-		mark_focus_tree_layout_dirty = yes
-		##automatic focuses done
-		RHU = { complete_national_focus = RHUN_teachings_of_morgoth }
-		RHU = { complete_national_focus = RHUN_guide_the_tribes }
-		RHU = { complete_national_focus = RHUN_one_tribe_supremacy }
-
-	}#end option
+	}
 }
 
 country_event = {
@@ -1254,5 +962,24 @@ country_event = {
             base = 1
         }
         name = rhunexpanded.106.b
+    }
+}
+
+
+# blue wizards in Dorwinion
+country_event = {
+    id = rhunexpanded.107
+    title = rhunexpanded.107.t
+    desc = rhunexpanded.107.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhunexpanded.107.a
+
+		custom_effect_tooltip = rhunexpanded.107.a_tt
     }
 }
