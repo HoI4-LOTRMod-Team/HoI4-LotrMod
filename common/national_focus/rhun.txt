@@ -1156,8 +1156,7 @@ focus_tree = {
 
 	focus = {
 		id = RHUN_integrate_the_logath
-		prerequisite = { focus = RHUN_merge_administrations }
-		prerequisite = { focus = RHUN_crack_down_on_resistance }
+		prerequisite = { focus = RHUN_merge_administrations focus = RHUN_crack_down_on_resistance }
 		icon = GFX_goal_lth_territorial_integration
 		ai_will_do = { }
 		available = { 
@@ -1251,7 +1250,7 @@ focus_tree = {
 		}
 	}
 
-	focus = { # TODO
+	focus = {
 		id = RHUN_support_orc_efforts
 		prerequisite = { focus = RHUN_the_path_to_mirkwood }
 		icon = GFX_goal_lth_target_mirkwood_thranduil
@@ -1294,6 +1293,78 @@ focus_tree = {
 		
 		completion_reward = {
 			# help GUN and DGU
+			if = { # only for tooltip
+				limit = {
+					NOT = { GUN = { has_war_with = MIR } }
+					NOT = { DGU = { has_war_with = MIR } }
+				}
+				GUN = {
+					add_manpower = 2000
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 1000
+					}
+					add_equipment_to_stockpile = {
+						type = support_equipment
+						amount = 200
+					}
+					add_equipment_to_stockpile = {
+						type = artillery_equipment
+						amount = 200
+					}
+				}
+				DGU = {
+					add_manpower = 2000
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 1000
+					}
+					add_equipment_to_stockpile = {
+						type = support_equipment
+						amount = 200
+					}
+					add_equipment_to_stockpile = {
+						type = artillery_equipment
+						amount = 200
+					}
+				}
+			}
+			if = {
+				limit = { GUN = { has_war_with = MIR } }
+				GUN = {
+					add_manpower = 2000
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 1000
+					}
+					add_equipment_to_stockpile = {
+						type = support_equipment
+						amount = 200
+					}
+					add_equipment_to_stockpile = {
+						type = artillery_equipment
+						amount = 200
+					}
+				}
+			}
+			if = {
+				limit = { DGU = { has_war_with = MIR } }
+				DGU = {
+					add_manpower = 2000
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 1000
+					}
+					add_equipment_to_stockpile = {
+						type = support_equipment
+						amount = 200
+					}
+					add_equipment_to_stockpile = {
+						type = artillery_equipment
+						amount = 200
+					}
+				}
+			}
 		}
 	}
 
@@ -3520,7 +3591,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_strongarm_diplomacy
 		prerequisite = { focus = RHUN_handle_logathvuld }
         
@@ -3540,10 +3611,15 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			custom_effect_tooltip = RHUN_strongarm_diplomacy_tt
+			custom_effect_tooltip = generic_current_effects
+			set_temp_variable = { temp_pp_bonus = num_divisions }
+			multiply_temp_variable = { temp_pp_bonus = 2.0 }
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_demand_a_settlement
 		prerequisite = { focus = RHUN_strongarm_diplomacy }
         
@@ -3565,10 +3641,20 @@ focus_tree = {
         }
         completion_reward = {
 			# event that carves out a "Rhunian Logath", leaving the original in the corner  
+			hidden_effect = {
+				LGT = {
+					country_event = { id = rhunexpanded.109 days = 3 }
+				}
+			}
+			custom_effect_tooltip = RHUN_propose_treaty_tt
+			custom_effect_tooltip = if_they_accept_newline_tt
+			event_option_tooltip = rhunexpanded.110.a
+			custom_effect_tooltip = if_they_refuse_newline_tt
+			event_option_tooltip = rhunexpanded.111.a
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_align_logathvuld
 		prerequisite = { focus = RHUN_strongarm_diplomacy }
 		prerequisite = { focus = RHUN_economy_of_conquest }
@@ -3591,10 +3677,20 @@ focus_tree = {
         }
         completion_reward = {
 			# event to puppet/ally logath  
+			hidden_effect = {
+				LGT = {
+					country_event = { id = rhunexpanded.112 days = 3 }
+				}
+			}
+			custom_effect_tooltip = RHUN_propose_treaty_tt
+			custom_effect_tooltip = if_they_accept_newline_tt
+			event_option_tooltip = rhunexpanded.113.a
+			custom_effect_tooltip = if_they_refuse_newline_tt
+			event_option_tooltip = rhunexpanded.114.a
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_merge_administrations
 		prerequisite = { focus = RHUN_align_logathvuld }
 		prerequisite = { focus = RHUN_demand_a_settlement }
@@ -3611,7 +3707,34 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			if = {
+				limit = {
+					NOT = {
+						any_country = {
+							is_puppet_of = ROOT
+							original_tag = LGT
+						}
+					}
+				}
+				LGT = { # tooltip
+					add_political_power = 150
+					add_stability = 0.1
+					add_war_support = 0.1
+				}
+			}
+			else = {
+				random_country = {
+					limit = {
+						original_tag = LGT
+						is_puppet_of = ROOT
+					}
+					increase_centralization = yes
+					add_stability = 0.05
+					add_war_support = 0.05
+				}
+			}
+		}
     }
 
     focus = {
@@ -3657,7 +3780,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_the_western_thrust
 		prerequisite = { focus = RHUN_an_army_worthy_of_mordor }
         
@@ -3673,10 +3796,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			# TODO: idk what to do here
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_antagonize_dale_and_erebor
 		prerequisite = { focus = RHUN_the_western_thrust }
         
@@ -3692,10 +3817,13 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			DAL = { antagonize_country = yes }
+			ERE = { antagonize_country = yes }
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_the_path_to_mirkwood
 		prerequisite = { focus = RHUN_the_western_thrust }
         
@@ -3711,10 +3839,12 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			# TODO: add supply line rails to MIRKWOOD
+		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_take_matters_into_our_own_hands
 		prerequisite = { focus = RHUN_the_path_to_mirkwood }
 
@@ -3734,11 +3864,16 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			create_wargoal = {
+				target = MIR
+				type = annex_everything
+			}
+		}
     }
 
-    focus = { # TODO
-        id = RHUN_construct_supplylines
+    focus = {
+        id = RHUN_wood_skirmishing_tactics
 		prerequisite = { focus = RHUN_the_path_to_mirkwood }
         
         icon = GFX_unknown_focus
@@ -3753,7 +3888,20 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			add_unit_bonus = {
+				category_light_infantry = {
+					forest = {
+						movement = 0.1
+						attack = 0.05
+					}
+					jungle = {
+						movement = 0.1
+						attack = 0.05
+					}
+				}
+			}
+		}
     }
 
     focus = {
@@ -3859,7 +4007,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_army_of_conquest
 		prerequisite = { focus = RHUN_economy_of_conquest }
         
@@ -3877,10 +4025,14 @@ focus_tree = {
         }
         completion_reward = {
 			# same as the idea from economy of conquest, but add army modifiers
+			add_timed_idea = {
+				idea = generic_military_buildup
+				days = 365
+			}
 		}
     }
 
-    focus = { # TODO
+    focus = {
         id = RHUN_settle_the_land
 		prerequisite = { focus = RHUN_seize_the_marshes }
         
@@ -3898,6 +4050,14 @@ focus_tree = {
         }
         completion_reward = {
 			# at certain compliance, add some population and get cores
+			203 = {
+				add_manpower = 1200
+				add_core_of = ROOT
+			}
+			100 = {
+				add_manpower = 1200
+				add_core_of = ROOT
+			}
 		}
     }
 
@@ -5008,7 +5168,9 @@ focus_tree = {
         available = {
             always = yes
         }
-        completion_reward = { }
+        completion_reward = {
+			random_state_add_building_slot_and_civ_x4 = yes
+		}
     }
 
     focus = {
