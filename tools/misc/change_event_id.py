@@ -8,10 +8,10 @@ import re
 ROOT_DIRECTORY = r"C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr"
 
 # 2. The ID you want to find
-SEARCH_STRING = "rhunexpanded.116"
+SEARCH_STRING = "rhunexpanded.25"
 
 # 3. The ID you want to replace it with
-REPLACE_STRING = "rhun.116"
+REPLACE_STRING = "rhun.29"
 
 # 4. SAFETY SWITCH
 # Set to False = Just print what would happen (Dry Run)

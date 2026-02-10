@@ -2711,7 +2711,7 @@ focus_tree = {
 		icon = GFX_goal_generic_dangerous_deal
 		ai_will_do = { factor = 20 }
 		bypass = { has_government = revolutionary }
-		x = 2
+		x = 3
 		y = 1
 		relative_position_id = conquestofmiddleearth
 		prerequisite = { focus = conquestofmiddleearth}
@@ -2739,39 +2739,44 @@ focus_tree = {
 			}
 		}
 		available = { has_civil_war = no }
-		bypass = {
-			RHU = {
-				is_in_faction_with = MOR
-			}
-		}
-		x = 0
+		x = -1
 		y = 1
 		relative_position_id = seekalliesintheeast
-		will_lead_to_war_with = RHU
 		prerequisite = { focus = seekalliesintheeast}
 		cost = 10
 		available_if_capitulated = yes
 		search_filters = { FOCUS_FILTER_ANNEXATION }
 		completion_reward = {
+			custom_effect_tooltip = MOR_changing_focus
 			if = {
 				limit = {
+					RHU = { 
+						is_in_faction_with = MOR 
+						has_completed_focus = RHUN_recognize_sauron
+					}
+				}
+				custom_effect_tooltip = RHUN_23_tt
+				hidden_effect = {
 					RHU = {
-						has_civil_war = yes
+						complete_national_focus = RHUN_orders_from_lord_sauron
+						country_event = {
+							id = rhun.29
+							days = 2
+							random_hours = 12
+							random_days = 1
+						}
 					}
-				}
-				every_country = {
-					limit = {
-						has_government = belligerent
-						original_tag = RHU
-					}
-					country_event = mordor.4
-				}
-			} else = {
-				RHU = {
-					country_event = mordor.4
 				}
 			}
-
+			else = {
+				RHU = {
+					add_manpower = -1000
+					add_ideas = RHU_shadow_of_mordor
+				}
+				MOR = {
+					add_manpower = 1000
+				}
+			}
 		}
 	}
 
@@ -2841,40 +2846,6 @@ focus_tree = {
 		}
 	}
 
-	focus = {
-		id = war_with_dorwinion
-		icon = GFX_goal_mor_wargoal_dorwinion
-		ai_will_do = { factor = 10 }
-		x = 0
-		y = 1
-		search_filters = { FOCUS_FILTER_ANNEXATION }
-		available = {
-			OR = {
-				RHU = {
-					OR = {
-						is_puppet_of = MOR
-						is_in_faction_with = MOR
-						exists = no
-					}
-				}
-				DAG = {
-					OR = {
-						is_puppet_of = MOR
-						is_in_faction_with = MOR
-						exists = no
-					}
-				}
-			}
-		}
-		will_lead_to_war_with = DOR
-		relative_position_id = establishcontrolovertheeast
-		prerequisite = { focus = establishcontrolovertheeast }
-		cost = 10
-		completion_reward = {
-			create_wargoal = { type = annex_everything target = DOR }
-		}
-	}
-
 	#Focus for Enslave the South
 	focus = {
 		id = enslavethesouth
@@ -2894,7 +2865,7 @@ focus_tree = {
 				is_in_faction_with = MOR
 			}
 		}
-		x = 2
+		x = 1
 		y = 1
 		relative_position_id = seekalliesintheeast
 		will_lead_to_war_with = HAR
