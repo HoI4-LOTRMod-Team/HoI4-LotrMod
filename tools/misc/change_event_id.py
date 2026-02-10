@@ -5,13 +5,13 @@ import re
 
 # 1. The folder you want to search (use r"" to handle Windows backslashes correctly)
 # Example: r"C:\Users\Name\Documents\MyGame"
-ROOT_DIRECTORY = r"C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr"
+ROOT_DIRECTORY = r"C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr"
 
 # 2. The ID you want to find
-SEARCH_STRING = "bonus_event.15"
+SEARCH_STRING = "rhunexpanded.116"
 
 # 3. The ID you want to replace it with
-REPLACE_STRING = "gundabad.7"
+REPLACE_STRING = "rhun.116"
 
 # 4. SAFETY SWITCH
 # Set to False = Just print what would happen (Dry Run)
