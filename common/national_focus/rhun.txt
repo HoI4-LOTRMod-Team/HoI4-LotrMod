@@ -841,7 +841,7 @@ focus_tree = {
 		x = 11
 		y = 0
 		mutually_exclusive = { focus = RHUN_break_free_from_mordor }
-		prerequisite = { }
+		
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = { 
@@ -858,6 +858,9 @@ focus_tree = {
 		}
 		x = 13
 		y = 1
+		available = {
+			is_subject = no
+		}
 		mutually_exclusive = { focus = RHUN_recognize_sauron }
 		prerequisite = { focus = RHUN_teachings_of_morgoth }
 		cost = 10
@@ -939,6 +942,9 @@ focus_tree = {
 		prerequisite = { focus = RHUN_mend_the_conflict }
 		cost = 10
 		available_if_capitulated = yes
+		bypass = {
+			NOT = { has_idea = RHUN_khamul_expanded }
+		}
 		completion_reward = {
 			remove_ideas = RHUN_khamul_expanded
 			retire_character = RHU_khamul
@@ -952,7 +958,10 @@ focus_tree = {
 		ai_will_do = { 
 			factor = 35
 		}
-		available = { }
+		available = {
+			MOR = { can_engage_in_diplo_with = yes }
+			MOR = { has_completed_focus = submittosauron }
+		}
 		x = 9
 		y = 1
 		mutually_exclusive = { focus = RHUN_guide_the_tribes }
@@ -1006,6 +1015,7 @@ focus_tree = {
 		}
 		available = {
 			has_government = belligerent 
+			is_ally_with = MOR
 		}
 		x = 8
 		y = 5
@@ -1028,7 +1038,7 @@ focus_tree = {
 		prerequisite = { focus = RHUN_join_forces_with_mordor }
 		icon = GFX_goal_mor_troll_warriors
 		available = {
-			has_government = belligerent 
+			is_ally_with = MOR
 		}
 		x = 7
 		y = 4
@@ -1119,8 +1129,7 @@ focus_tree = {
 
 	focus = {
 		id = RHUN_eastern_campaign
-		prerequisite = { focus = RHUN_Mordor_doctrine }
-		prerequisite = { focus = RHUN_Rhun_Doctrine }
+		prerequisite = { focus = RHUN_Mordor_doctrine focus = RHUN_Rhun_Doctrine }
 		icon = GFX_goal_rhu_eastern_campaign
 		ai_will_do = { factor = 35 }
 		available = { }
@@ -1144,7 +1153,6 @@ focus_tree = {
 		x = 9
 		y = 7
 		available = {
-			has_completed_focus = RHUN_recognize_sauron
 			custom_trigger_tooltip = {
 				tooltip = RHUN_22_tt
 				MOR = {
@@ -1159,7 +1167,7 @@ focus_tree = {
 		#	} 
 		#}
 		mutually_exclusive = { focus = RHUN_northern_ambitions }
-		prerequisite = { }
+		
 		prerequisite = { focus = RHUN_eastern_campaign }
 		prerequisite = { focus = RHUN_nation_driven_by_fear }
 		
@@ -1173,7 +1181,9 @@ focus_tree = {
 		prerequisite = { focus = RHUN_an_army_worthy_of_mordor }
 		icon = GFX_goal_ELU_aid_supply_crate_equipment
 		ai_will_do = { factor = 25 }
-		available = { }
+		available = {
+			MOR = { exists = yes NOT = { has_war_with = ROOT } }
+		}
 		x = -3
 		y = 2
 		mutually_exclusive = { }
@@ -1200,21 +1210,7 @@ focus_tree = {
 		icon = GFX_goal_mordor_deal
 		ai_will_do = { factor = 25 }
 		available = { 
-			ROOT = {
-				num_divisions > 40
-				has_army_manpower = {
-					size > 30000
-				}
-				has_template_containing_unit = chariot
-			}
-			OR = {
-				has_completed_focus = RHUN_tackle_dorwinion
-				has_completed_focus = RHUN_nurukhizdin_or_war
-			}
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
+			MOR = { exists = yes NOT = { has_war_with = ROOT } }
 		}
 		x = -1
 		y = 1
@@ -1264,15 +1260,17 @@ focus_tree = {
 			focus = RHUN_strongarm_diplomacy
 		}
 		available = {
-			country_exists = LGT 
-			ROOT = {
-				any_neighbor_country = {
-					tag = LGT
-				}
-			}
 			OR = {
 				has_government = belligerent 
 				has_government = unaligned
+			}
+			LGT = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			ROOT = {
+				num_divisions > 24
+				has_army_manpower = {
+					size > 17000
+				}
 			}
 		}
 		x = 1
@@ -1297,19 +1295,23 @@ focus_tree = {
 		icon = GFX_goal_lth_territorial_integration
 		ai_will_do = { factor = 25 }
 		available = { 
-			OR = {
-				ROOT = {
-					controls_state = 127
-					controls_state = 207
-					controls_state = 209
-					controls_state = 126
-					controls_state = 102
-				}
-				LGT = {
-					is_puppet_of = RHU
-					controls_state = 127
-					controls_state = 207
-					controls_state = 209 
+			LGT = {
+				all_core_state = {
+					compliance > 0.3
+					resistance < 0.3
+					OR = {
+						is_controlled_by = ROOT
+						controller = { is_subject_of = ROOT }
+						AND = {
+							ROOT = { has_completed_focus = RHUN_demand_a_settlement }
+							OR = {
+								state = 292
+								state = 274
+								state = 125
+								state = 294
+							}
+						}
+					}
 				}
 			}
 			OR = {
@@ -1388,33 +1390,15 @@ focus_tree = {
 			}
         }
 		available = {
-			country_exists = ERE
-			MOR = {
-				has_war_with = GON
-			}
-			OR = {
-				ROOT = {
-					any_neighbor_country = {
-						tag = DAL
-					}
-				}
-				ROOT = {
-					any_neighbor_country = {
-						tag = ERE
-					}
-				}
-				LGT = {
-					is_puppet_of = RHU
-					any_neighbor_country = {
-						tag = DAL
-					}
-				}
-			}
+            ERE = { war_with_is_possible = yes can_reach = yes }
+			DAL = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
 			OR = {
 				has_government = belligerent 
 				has_government = unaligned
 			}
-		}
+			threat > 0.2
+        }
 		x = 0
 		y = 5
 		mutually_exclusive = { }
@@ -1449,31 +1433,26 @@ focus_tree = {
 			focus = RHUN_take_matters_into_our_own_hands
 		}
 		available = {
-			country_exists = MIR
-			OR = {
-				RHO = {
-					any_neighbor_country = {
-						tag = MIR
+			MIR = {
+				war_with_is_possible = yes
+				OR = {
+					AND = {
+						has_war_with = GUN
+						ROOT = { NOT = { has_war_with = GUN } }
 					}
-				}
-				DOR = {
-					any_neighbor_country = {
-						tag = ERE
-					}
-				}
-				MIR = {
-					NOT = {
-						has_war = yes
+					AND = {
+						has_war_with = DGU
+						ROOT = { NOT = { has_war_with = DGU } }
 					}
 				}
 			}
+			is_subject = no
 			OR = {
 				has_government = belligerent 
 				has_government = unaligned
 			}
-			DOR = { is_puppet_of = ROOT}
-			RHO = { is_puppet_of = ROOT}
-		}
+			threat > 0.2
+        }
 		x = -3
 		y = 4
 		mutually_exclusive = { }
@@ -1565,12 +1544,10 @@ focus_tree = {
 		x = 13
 		y = 7
 		available = {
-			NOT = { 
-				has_completed_focus = RHUN_recognize_sauron
-			}
+			is_subject = no
 			OR = {
-				has_completed_focus = RHUN_tackle_dorwinion
-				has_completed_focus = RHUN_nurukhizdin_or_war
+				has_government = belligerent 
+				has_government = unaligned
 			}
 		}
 		mutually_exclusive = { focus = RHUN_orders_from_lord_sauron }
@@ -1681,15 +1658,15 @@ focus_tree = {
         }
 		x = 5
 		y = 4
-		available = { 
-			any_neighbor_country = {
-				tag = MIR
-			}
+		available = {
+            MIR = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
 			OR = {
 				has_government = belligerent 
 				has_government = unaligned
 			}
-		}
+			threat > 0.2
+        }
 		relative_position_id = RHUN_northern_ambitions
 		mutually_exclusive = { }
 		cost = 10
@@ -1727,6 +1704,8 @@ focus_tree = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
+			controls_state = 287
+			controls_state = 272
 		}
 		mutually_exclusive = { }
 		prerequisite = { focus = RHUN_eastern_campaign }
@@ -1775,14 +1754,11 @@ focus_tree = {
 		y = 1
 		relative_position_id = RHUN_contact_the_variags
 		available = {
-			NOT = {
-				ROOT = {
-					is_in_faction_with = HAR 
-				}
-			}
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
+            HAR = { can_engage_in_diplo_with = yes can_reach = yes }
+        }
+		bypass = {
+			KND = {
+				exists = yes
 			}
 		}
 		mutually_exclusive = { focus = RHUN_request_khand_autonomy }
@@ -1808,25 +1784,28 @@ focus_tree = {
 		y = 5
 		relative_position_id = RHUN_contact_the_variags
 		available = {
-			HAR = {
-				is_in_faction_with = RHU
-			}
-			NOT = {
-				HAR = {
-					has_completed_focus = autonomouscommunities
-				}
+			OR = {
+				KND = { is_subject = no }
+				KND = { is_subject_of = HAR }
 			}
 			OR = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
-			# TODO: This should only be possible after significant and long-term investment from Rhuns side
-			# It should also not be doable if Khand is independent or something
+			KND = { can_engage_in_diplo_with = yes can_reach = yes has_opinion = { target = ROOT value > 35 } }
+			is_subject = no
+			HAR = { is_significantly_weaker = yes }
+			hidden_trigger = { KND = { is_ai = yes } }
+			NOT = { has_war_with = HAR }
 		}
 		cost = 10
 		
 		completion_reward = {
 			# if KHD independent and we are stronger than Harad -> puppet Khand (and if KHD is not a player)
+			if = {
+				limit = { KND = { is_subject_of = HAR } }
+				HAR = { country_event = rhunexpanded.115 }
+			}
 			ROOT = {
 				puppet = KND
 			}
@@ -1839,8 +1818,7 @@ focus_tree = {
 
 	focus = {
 		id = RHUN_build_up_khand
-		prerequisite = { focus = RHUN_trade_with_the_variags }
-		prerequisite = { focus = RHUN_learn_from_the_variags }
+		prerequisite = { focus = RHUN_trade_with_the_variags focus = RHUN_learn_from_the_variags }
 		icon = GFX_goal_generic_currency_reforms_money_panning
 		ai_will_do = { factor = 20 }
 		x = 0
@@ -1848,7 +1826,7 @@ focus_tree = {
 		relative_position_id = RHUN_contact_the_variags
 		available = {
 			KND = {
-				is_in_faction_with = ROOT
+				is_ally_with = ROOT
 			}
 			OR = {
 				has_government = belligerent
@@ -1877,7 +1855,14 @@ focus_tree = {
 		relative_position_id = RHUN_contact_the_variags
 		available = {
 			KND = {
-				is_in_faction_with = ROOT
+				can_engage_in_diplo_with = yes
+				OR = {
+					is_ally_with = ROOT
+					has_opinion = {
+						target = RHU
+						value > 35
+					}
+				}
 			}
 			OR = {
 				has_government = belligerent
@@ -1953,6 +1938,11 @@ focus_tree = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
+			is_subject = no
+			OR = {
+				RHO = { war_with_is_possible = yes }
+				DOR = { war_with_is_possible = yes }
+			}
 		}
 		mutually_exclusive = { }
 		prerequisite = { focus = RHUN_eastern_campaign }
@@ -2001,11 +1991,12 @@ focus_tree = {
 		x = -3
 		y = 7
 		available = {
-			country_exists = DOR 
 			OR = {
-				has_government = belligerent
-				has_government = unaligned 
+				has_government = belligerent 
+				has_government = unaligned
 			}
+			DOR = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
 		}
 
 		mutually_exclusive = { focus = RHUN_nurukhizdin_or_war }
@@ -2065,9 +2056,11 @@ focus_tree = {
 		y = 7
 		available = {
 			OR = {
-				has_government = belligerent
-				has_government = unaligned 
+				has_government = belligerent 
+				has_government = unaligned
 			}
+			DOR = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
 		}
 		mutually_exclusive = { focus = RHUN_tackle_dorwinion }
 		prerequisite = { focus = RHUN_strike_rhovania }
@@ -2096,17 +2089,8 @@ focus_tree = {
 		icon = GFX_goal_rhu_dorwinion_factories
 		ai_will_do = { factor = 25 }
 		available = {
-			OR = {
-				ROOT = {
-					controls_state = 137
-					controls_state = 103
-				}
-				DOR = {
-					is_puppet_of = RHU
-					controls_state = 137
-					controls_state = 103
-				}
-			}
+			137 = { is_controlled_by_ROOT_or_subject = yes }
+			103 = { is_controlled_by_ROOT_or_subject = yes }
 			OR = {
 				has_government = belligerent
 				has_government = unaligned 
@@ -2154,6 +2138,16 @@ focus_tree = {
 			OR = {
 				has_government = belligerent
 				has_government = unaligned 
+			}
+			137 = {
+				controller = {
+					NOT = { has_war_with = ROOT }
+				}
+			}
+			103 = {
+				controller = {
+					NOT = { has_war_with = ROOT }
+				}
 			}
 		}
 		cost = 10
@@ -2231,27 +2225,57 @@ focus_tree = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
+			OR = {
+				controls_state = 208
+				controls_state = 282
+				controls_state = 103
+				controls_state = 137
+			}
 		}
-		mutually_exclusive = { focus = RHUN_establish_colonial_garrisons }
 		cost = 10
 		
 		completion_reward = {
-			208 = {
-				add_compliance = 20
-				add_resistance_target = -20 
+			if = {
+				limit = { controls_state = 208 }
+				208 = {
+					add_compliance = 20
+					add_resistance_target = -20 
+				}
 			}
-			282 = {
-				add_compliance = 20
-				add_resistance_target = -20 
+			if = {
+				limit = { controls_state = 282 }
+				282 = {
+					add_compliance = 20
+					add_resistance_target = -20 
+				}
 			}
-			103 = {
-				add_compliance = 20
-				add_resistance_target = -20 
+			if = {
+				limit = { controls_state = 103 }
+				103 = {
+					add_compliance = 20
+					add_resistance_target = -20 
+				}
 			}
-			137 = {
-				add_compliance = 20
-				add_resistance_target = -20 
-			} 
+			if = {
+				limit = { controls_state = 137 }
+				137 = {
+					add_compliance = 20
+					add_resistance_target = -20 
+				} 
+			}
+			# only for tooltip
+			if = {
+				limit = {
+					NOT = { controls_state = 208 }
+					NOT = { controls_state = 282 }
+					NOT = { controls_state = 103 }
+					NOT = { controls_state = 137 }
+				}
+				208 = { add_resistance_target = -20 add_compliance = 20 }
+				282 = { add_resistance_target = -20 add_compliance = 20 }
+				103 = { add_resistance_target = -20 add_compliance = 20 }
+				137 = { add_resistance_target = -20 add_compliance = 20 }
+			}
 		}
 	}
 
@@ -2269,17 +2293,14 @@ focus_tree = {
 		x = -2
 		y = 10
 		available = {
-			OR = {
-				ROOT = {
-					controls_state = 137
-					controls_state = 103
-				}
-				DOR = {
-					is_puppet_of = RHU
-					controls_state = 137
-					controls_state = 103
+			DOR = { all_core_states_controlled_or_puppeted = yes }
+			DOR = {
+				OR = {
+					is_subject_of = ROOT
+					exists = no
 				}
 			}
+			is_subject = no
 			OR = {
 				has_government = belligerent
 				has_government = unaligned 
@@ -2345,13 +2366,13 @@ focus_tree = {
 				RHO = { is_ai = no is_weaker = yes is_isolated_target = yes }
 			}
 		}
-		available = { 
-			country_exists = RHO
-			any_neighbor_country = { original_tag = RHO }
+		available = {
 			OR = {
-				has_government = belligerent
-				has_government = unaligned 
+				has_government = belligerent 
+				has_government = unaligned
 			}
+			RHO = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
 		}
 		cost = 10
 		completion_reward = {
@@ -2376,12 +2397,12 @@ focus_tree = {
 		x = 3
 		y = 7
 		available = {
-			country_exists = RHO
-			any_neighbor_country = { original_tag = RHO }
 			OR = {
-				has_government = belligerent
-				has_government = unaligned 
+				has_government = belligerent 
+				has_government = unaligned
 			}
+			RHO = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
 		}
 		mutually_exclusive = { focus = RHUN_demand_rhovanion_submission }
 		prerequisite = { focus = RHUN_strike_rhovania }
@@ -2428,7 +2449,7 @@ focus_tree = {
 		prerequisite = { focus = RHUN_demand_rhovanion_submission }
 		ai_will_do = { factor = 25 }
 		available = { 
-			RHO = { is_puppet_of = ROOT}
+			RHO = { is_subject_of = ROOT}
 			OR = {
 				has_government = belligerent
 				has_government = unaligned 
@@ -2461,19 +2482,8 @@ focus_tree = {
 		prerequisite = { focus = RHUN_demand_rhovanion_submission focus = RHUN_tackle_rhovanion }
 		ai_will_do = { factor = 25 }
 		available = { 
-			OR = {
-				RHO = {
-					is_puppet_of = RHU
-					controls_state = 97
-					controls_state = 96
-					controls_state = 99
-				}
-				ROOT = {
-					controls_state = 97
-					controls_state = 96
-					controls_state = 99
-				}
-			}
+			97 = { is_controlled_by_ROOT_or_subject = yes }
+			96 = { is_controlled_by_ROOT_or_subject = yes }
 			OR = {
 				has_government = belligerent
 				has_government = unaligned 
@@ -2507,7 +2517,7 @@ focus_tree = {
 				controls_state = 97 
 				controls_state = 96 
 			}
-			RHO = { is_puppet_of = ROOT} 
+			RHO = { is_subject_of = ROOT} 
 		}
 		cost = 10
 		completion_reward = { 
@@ -2545,21 +2555,8 @@ focus_tree = {
 		prerequisite = { focus = RHUN_land_reclamation_order}
 		ai_will_do = { factor = 15 }
 		available = {
-			OR = {
-				ROOT = {
-					controls_state = 97
-					controls_state = 99
-				}
-				RHO = {
-					controls_state = 97
-					is_puppet_of = RHU
-				}
-				AND = {
-					ROOT = {
-						controls_state = 99
-					}
-				}
-			}
+			# TODO
+			always = yes
 		}
 		cost = 10
 		completion_reward = { 
@@ -2600,21 +2597,7 @@ focus_tree = {
 		prerequisite = { focus = RHUN_pathfinding_companies }
 		ai_will_do = { factor = 10 }
 		available = {
-			OR = {
-				ROOT = {
-					controls_state = 97
-					controls_state = 99
-				}
-				RHO = {
-					controls_state = 97
-					is_puppet_of = RHU
-				}
-				AND = {
-					ROOT = {
-						controls_state = 99
-					}
-				}
-			}
+			97 = { is_controlled_by_ROOT_or_subject = yes }
 		}
 		cost = 10
 		completion_reward = {
@@ -2638,15 +2621,14 @@ focus_tree = {
 		prerequisite = { focus = RHUN_establish_rhunian_dorwinion }
 		ai_will_do = { factor = 20 }
 		available = {
-			country_exists = RHO
-			OR = {
-				country_exists = DOR
-				ROOT = {
-					controls_state = 137
-					controls_state = 103
-					controls_state = 208 
-				} 
-			} 
+			RHO = {
+				num_of_controlled_states > 0
+				is_subject_of = ROOT
+			}
+			DOR = {
+				num_of_controlled_states > 0
+				is_subject_of = ROOT
+			}
 		}
 		cost = 10
 		completion_reward = { 
@@ -2677,6 +2659,9 @@ focus_tree = {
 		#	} 
 		#}
 		#allow_branch = { has_civil_war = no }
+		available = {
+			is_subject = no
+		}
 		ai_will_do = {
 			factor = 35
 			modifier = {
@@ -2715,7 +2700,10 @@ focus_tree = {
 		x = 2
 		y = 1
 		relative_position_id = RHUN_break_free_from_mordor
-		mutually_exclusive = { }
+		available = {
+			NOT = { is_ally_with = MOR }
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+		}
 		cost = 2
 		
 		completion_reward = {
@@ -2749,7 +2737,9 @@ focus_tree = {
 		x = 2
 		y = 2
 		relative_position_id = RHUN_break_free_from_mordor
-		mutually_exclusive = { }
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+		}
 		cost = 2
 		
 		completion_reward = {
@@ -2778,7 +2768,9 @@ focus_tree = {
 		x = 3
 		y = 3
 		relative_position_id = RHUN_break_free_from_mordor
-		mutually_exclusive = { }
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+		}
 		cost = 2
 		
 		completion_reward = { 
@@ -2805,7 +2797,8 @@ focus_tree = {
 		x = -2
 		y = 1
 		available = {
-			controls_state = 130 
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+			controls_state = 283
 		}
 		relative_position_id = RHUN_break_free_from_mordor
 		mutually_exclusive = { }
@@ -2839,6 +2832,10 @@ focus_tree = {
 		mutually_exclusive = { }
 		prerequisite = { focus = RHUN_rally_support }
 		cost = 5
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+			controls_state = 130
+		}
 		
 		completion_reward = {
 			130 = {
@@ -2867,6 +2864,10 @@ focus_tree = {
 		mutually_exclusive = { }
 		prerequisite = { focus = RHUN_rally_support }
 		cost = 5
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+			controls_state = 284
+		}
 		
 		completion_reward = {
 			284 = {
@@ -2891,6 +2892,9 @@ focus_tree = {
 		mutually_exclusive = { }
 		prerequisite = { focus = RHUN_agasha_dag_secession focus = RHUN_east_rhunian_secession }
 		cost = 5
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+		}
 		
 		completion_reward = {
 			custom_effect_tooltip = RHUN_6_tt
@@ -2913,6 +2917,9 @@ focus_tree = {
 		mutually_exclusive = { }
 		prerequisite = { focus = RHUN_break_free_from_mordor }
 		cost = 5
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+		}
 		
 		completion_reward = { 
 			custom_effect_tooltip = RHUN_7_tt
@@ -2931,6 +2938,7 @@ focus_tree = {
 			has_equipment = {
 				infantry_equipment > 750
 			}
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
 		}
 		relative_position_id = RHUN_break_free_from_mordor
 		mutually_exclusive = { }
@@ -2955,6 +2963,12 @@ focus_tree = {
 		mutually_exclusive = { }
 		prerequisite = { focus = RHUN_resistance_preparation }
 		cost = 5
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+			any_controlled_state = {
+				industrial_complex > 0
+			}
+		}
 		
 		completion_reward = {
 			custom_effect_tooltip = RHUN_9_tt
@@ -2982,6 +2996,10 @@ focus_tree = {
 		mutually_exclusive = { }
 		prerequisite = { focus = RHUN_offshore_industry focus = RHUN_hide_supplies }
 		cost = 5
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+			controls_state = 128
+		}
 		
 		completion_reward = {
 			custom_effect_tooltip = RHUN_10_tt
@@ -3000,6 +3018,9 @@ focus_tree = {
 		mutually_exclusive = { }
 		prerequisite = { focus = RHUN_turn_the_military focus = RHUN_secret_mines }
 		cost = 5
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+		}
 		
 		completion_reward = {
 			custom_effect_tooltip = RHUN_11_tt
@@ -3016,6 +3037,9 @@ focus_tree = {
 		y = 1
 		relative_position_id = RHUN_break_free_from_mordor
 		mutually_exclusive = { }
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+		}
 		prerequisite = { focus = RHUN_break_free_from_mordor }
 		cost = 5
 		
@@ -3038,6 +3062,10 @@ focus_tree = {
 		y = 2
 		relative_position_id = RHUN_break_free_from_mordor
 		mutually_exclusive = { }
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+			controls_state = 130
+		}
 		prerequisite = { focus = RHUN_secret_militias }
 		cost = 5
 		
@@ -3062,6 +3090,10 @@ focus_tree = {
 		y = 2
 		relative_position_id = RHUN_break_free_from_mordor
 		mutually_exclusive = { }
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+			controls_state = 284
+		}
 		prerequisite = { focus = RHUN_secret_militias }
 		cost = 5
 		
@@ -3086,6 +3118,10 @@ focus_tree = {
 		y = 2
 		relative_position_id = RHUN_break_free_from_mordor
 		mutually_exclusive = { }
+		available = {
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+			controls_state = 283
+		}
 		prerequisite = { focus = RHUN_secret_militias }
 		cost = 5
 		
@@ -3108,6 +3144,7 @@ focus_tree = {
 			has_equipment = {
 				infantry_equipment > 5000
 			}
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
 		}
 		relative_position_id = RHUN_break_free_from_mordor
 		mutually_exclusive = { focus = RHUN_stockpile_chariots }
@@ -3132,6 +3169,7 @@ focus_tree = {
 			has_equipment = {
 				chariot_chassis > 500
 			}
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
 		}
 		relative_position_id = RHUN_break_free_from_mordor
 		mutually_exclusive = { focus = RHUN_stockpile_spears }
@@ -3608,10 +3646,10 @@ focus_tree = {
 		# 	} 
 		# }
 		available = { 
-			has_completed_focus = RHUN_teachings_of_morgoth
-			NOT = {
-				has_civil_war = yes
-			}
+			always = yes
+		}
+		bypass = {
+			NOT = { has_idea = RHUN_mission_of_the_blue_wizards }
 		}
 		cost = 5
 		
@@ -3641,9 +3679,9 @@ focus_tree = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
-			NOT = {
-				has_civil_war = yes
-			}
+		}
+		bypass = {
+			NOT = { has_idea = RHUN_mission_of_the_blue_wizards_1 }
 		}
 		prerequisite = { focus = RHUN_crackdown_on_the_blue_wizards }
 		cost = 5
@@ -3675,9 +3713,9 @@ focus_tree = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
-			NOT = {
-				has_civil_war = yes
-			}
+		}
+		bypass = {
+			NOT = { has_idea = RHUN_mission_of_the_blue_wizards_2 }
 		}
 		cost = 5
 		
@@ -3702,21 +3740,26 @@ focus_tree = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
-			NOT = {
-				has_civil_war = yes
+			OR = {
+				controls_state = 130
+				controls_state = 128
 			}
-			controls_state = 130
 		}
 		cost = 5
 		
 		completion_reward = {
-			130 = {
-				add_resistance_target = -25
+			if = {
+				limit = { controls_state = 130 }
+				130 = {
+					add_resistance_target = -25
+				}
 			}
-			128 = {
-				add_resistance_target = -25
+			if = {
+				limit = { controls_state = 128 }
+				128 = {
+					add_resistance_target = -25
+				}
 			}
-			
 		}
 	}
 
@@ -3733,19 +3776,29 @@ focus_tree = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
-			NOT = {
-				has_civil_war = yes
+			OR = {
+				controls_state = 283
+				controls_state = 284
 			}
-			controls_state = 128
 		}
 		cost = 5
 		
 		completion_reward = {
-			283 = {
-				add_resistance_target = -25
+			if = {
+				limit = {
+					controls_state = 283
+				}
+				283 = {
+					add_resistance_target = -25
+				}
 			}
-			284 = {
-				add_resistance_target = -25
+			if = {
+				limit = {
+					controls_state = 284
+				}
+				284 = {
+					add_resistance_target = -25
+				}
 			}
 		}
 	}
@@ -3763,25 +3816,39 @@ focus_tree = {
 				has_government = belligerent
 				has_government = unaligned 
 			}
-			NOT = {
-				has_civil_war = yes
+			OR = {
+				controls_state = 273
+				controls_state = 289
+				controls_state = 271
+				controls_state = 272
 			}
-			controls_state = 129
 		}
 		cost = 5
 		
 		completion_reward = {
-			273 = {
-				add_compliance = 0.1
+			if = {
+				limit = { controls_state = 273 }
+				273 = {
+					add_compliance = 10
+				}
 			}
-			289 = {
-				add_compliance = 0.1
+			if = {
+				limit = { controls_state = 289 }
+				289 = {
+					add_compliance = 10
+				}
 			}
-			271 = {
-				add_compliance = 0.1
+			if = {
+				limit = { controls_state = 271 }
+				271 = {
+					add_compliance = 10
+				}
 			}
-			272 = {
-				add_compliance = 0.1
+			if = {
+				limit = { controls_state = 272 }
+				272 = {
+					add_compliance = 10
+				}
 			}
 		}
 	}
@@ -3796,22 +3863,28 @@ focus_tree = {
 		prerequisite = { focus = RHUN_crackdown_in_agasha_dag }
 		prerequisite = { focus = RHUN_crackdown_in_central_rhun }
 		available = {
-			128 = { resistance < 20 }
-			129 = { resistance < 20 }
-			130 = { resistance < 20 }
+			273 = { resistance < 0.3 compliance > 0.4 is_controlled_by = ROOT }
+			289 = { resistance < 0.3 compliance > 0.4 is_controlled_by = ROOT }
+			271 = { resistance < 0.3 compliance > 0.4 is_controlled_by = ROOT }
+			272 = { resistance < 0.3 compliance > 0.4 is_controlled_by = ROOT }
+			130 = { resistance < 0.3 compliance > 0.4 is_controlled_by = ROOT }
+			128 = { resistance < 0.3 compliance > 0.4 is_controlled_by = ROOT }
+			283 = { resistance < 0.3 compliance > 0.4 is_controlled_by = ROOT }
+			284 = { resistance < 0.3 compliance > 0.4 is_controlled_by = ROOT }
 			OR = {
 				has_government = belligerent
 				has_government = unaligned 
-			}
-			NOT = {
-				has_civil_war = yes
 			}
 		}
 		cost = 5
 		
 		completion_reward = {
-			add_state_core = 128
+			add_state_core = 273
+			add_state_core = 289
+			add_state_core = 271
+			add_state_core = 272
 			add_state_core = 130
+			add_state_core = 128
 			add_state_core = 283
 			add_state_core = 284
 		}
@@ -3824,12 +3897,16 @@ focus_tree = {
 			factor = 50
 		}
 		available = {
-			has_civil_war = yes
+			has_country_flag = DRH_civil_war_has_happened
+		}
+		bypass = {
+			has_country_flag = DRH_civil_war_has_happened
+			has_civil_war = no
 		}
 		x = 28
 		y = 5
 		mutually_exclusive = { focus = DRH_call_upon_dorwinion }
-		prerequisite = { }
+		
 		prerequisite = { focus = DRH_civil_war }
 		
 		cost = 5
@@ -3850,7 +3927,15 @@ focus_tree = {
 			}
 		}
 		available = {
+			has_country_flag = DRH_civil_war_has_happened
+			DOR = { can_engage_in_diplo_with = yes }
+		}
+		bypass = {
 			has_civil_war = yes
+			OR = {
+				is_ally_with = DOR
+				DOR = { has_war_with = RHU }
+			}
 		}
 		x = 30
 		y = 5
@@ -3880,8 +3965,11 @@ focus_tree = {
 		icon = GFX_goal_ROH_forge_construction
 		ai_will_do = { factor = 25 }
 		available = {
-			has_civil_war = yes
-		}
+            has_civil_war = yes
+			any_state = {
+				is_fully_controlled_by = ROOT
+			}
+        }
 		x = 0
 		y = 2
 		relative_position_id = DRH_call_upon_dorwinion
@@ -3899,8 +3987,11 @@ focus_tree = {
 		icon = GFX_goal_ROH_restore_dunharrow_forges_anvil_mils_hammer
 		ai_will_do = { factor = 25 }
 		available = {
-			has_civil_war = yes
-		}
+            has_civil_war = yes
+			any_state = {
+				is_fully_controlled_by = ROOT
+			}
+        }
 		x = -2
 		y = 2
 		relative_position_id = DRH_call_upon_dorwinion
@@ -3960,24 +4051,15 @@ focus_tree = {
 	}
 	focus = {
 		id = DRH_treaty_of_the_steppe
-		prerequisite = { focus = DRH_face_the_threat_alone }
-		prerequisite = { focus = DRH_call_upon_dorwinion }
+		prerequisite = { focus = DRH_face_the_threat_alone focus = DRH_call_upon_dorwinion }
 		icon = GFX_goal_lth_borders_migration_treaty
 		ai_will_do = { 
 			factor = 100
 		}
 		available = {
-			has_civil_war = yes
-			controls_state = 128
-			controls_state = 129
-			controls_state = 130
-			OR = {
-				ROOT = {
-					casualties > 10000
-				}
-				DRH = {
-					controls_state = 132
-				}
+			custom_trigger_tooltip = {
+				tooltip = DRH_treaty_of_the_steppe_cond_tt
+				always = no
 			}
 		}
 		x = -3
@@ -4027,24 +4109,17 @@ focus_tree = {
 			factor = 100
 		}
 		available = {
-			has_civil_war = yes
 			custom_trigger_tooltip = {
-				tooltip = DRH_2_tt
-				NOT = {
-					OR = {
-						has_global_flag = DRH_civil_war_flag
-						has_global_flag = DOR_DRH_civil_war_flag
-					}
-				}
+				tooltip = DRH_treaty_of_mistrand_cond_tt
+				always = no
 			}
 		}
 		x = 1
 		y = 1
 		relative_position_id = DRH_call_upon_dorwinion
 		mutually_exclusive = { focus = DRH_treaty_of_the_steppe }
-		prerequisite = { }
-		prerequisite = { focus = DRH_call_upon_dorwinion }
-		prerequisite = { focus = DRH_face_the_threat_alone }
+		
+		prerequisite = { focus = DRH_call_upon_dorwinion focus = DRH_face_the_threat_alone }
 		
 		cost = 5
 		
@@ -4089,9 +4164,12 @@ focus_tree = {
             }
         }
 		available = { 
-			NOT = {
-				has_civil_war = yes
-			}
+			has_civil_war = no
+			MOR = { war_with_is_possible = yes }
+			MOR = { can_reach = yes }
+		}
+		bypass = {
+			has_war_with = MOR
 		}
 		x = 2
 		y = 7
@@ -4122,8 +4200,14 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            custom_trigger_tooltip = {
+				tooltip = autocompleted_on_event_tt
+				always = no
+			}
         }
+		bypass = {
+			has_country_flag = DRH_civil_war_has_happened
+		}
         completion_reward = {
 			custom_effect_tooltip = autocompleted_on_event_tt
 		}
@@ -4153,8 +4237,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
-        }
+			NOT = { has_country_flag = DRH_civil_war_has_happened }
+			DOR = { can_engage_in_diplo_with = yes }
+		}
         completion_reward = {
 			DOR = {
 				country_event = { id = rhunexpanded.107 days = 3 }
@@ -4181,7 +4266,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_civil_war = yes
+			any_state = {
+				is_fully_controlled_by = ROOT
+			}
         }
         completion_reward = {
 			random_state_add_building_slot_and_mil_x2 = yes
@@ -4202,7 +4290,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_civil_war = yes
+			any_state = {
+				is_fully_controlled_by = ROOT
+			}
         }
         completion_reward = {
 			random_state_add_building_slot_and_civ_x2 = yes
@@ -4211,8 +4302,7 @@ focus_tree = {
 
     focus = {
         id = DRH_wartime_endeavours
-		prerequisite = { focus = DRH_call_upon_dorwinion }
-		prerequisite = { focus = DRH_face_the_threat_alone }
+		prerequisite = { focus = DRH_call_upon_dorwinion focus = DRH_face_the_threat_alone }
         
         icon = GFX_unknown_focus
         
@@ -4224,7 +4314,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_civil_war = yes
         }
         completion_reward = {
 			add_command_power = 100
@@ -4257,7 +4347,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            LGT = { war_with_is_possible = yes can_reach = yes }
         }
         completion_reward = {
 			add_collaboration = {
@@ -4304,8 +4394,19 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
-        }
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			LGT = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			ROOT = {
+				num_divisions > 20
+				has_army_manpower = {
+					size > 15000
+				}
+			}
+		}
         completion_reward = {
 			custom_effect_tooltip = RHUN_strongarm_diplomacy_tt
 			custom_effect_tooltip = generic_current_effects
@@ -4355,8 +4456,19 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
-        }
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			LGT = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			ROOT = {
+				num_divisions > 20
+				has_army_manpower = {
+					size > 15000
+				}
+			}
+		}
         completion_reward = {
 			# event that carves out a "Rhunian Logath", leaving the original in the corner  
 			hidden_effect = {
@@ -4405,8 +4517,19 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
-        }
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			LGT = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			ROOT = {
+				num_divisions > 20
+				has_army_manpower = {
+					size > 15000
+				}
+			}
+		}
         completion_reward = {
 			# event to puppet/ally logath  
 			hidden_effect = {
@@ -4437,7 +4560,10 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            any_country = {
+				is_puppet_of = ROOT
+				original_tag = LGT
+			}
         }
         completion_reward = {
 			if = {
@@ -4483,7 +4609,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            any_controlled_state = {
+				is_core_of = LGT
+			}
         }
         completion_reward = {
 			# event to reduce resistance in logath
@@ -4497,7 +4625,7 @@ focus_tree = {
 						is_core_of = LGT
 					}
 					add_resistance_target = -0.1
-					add_compliance = 0.15
+					add_compliance = 15
 				}
 			}
 			else = {
@@ -4506,7 +4634,7 @@ focus_tree = {
 						is_core_of = LGT
 					}
 					add_resistance_target = -0.1
-					add_compliance = 0.15
+					add_compliance = 15
 				}
 			}
 		}
@@ -4525,9 +4653,19 @@ focus_tree = {
         ai_will_do = { factor = 25 }
         
         search_filters = { }
-        available = {
-            always = yes
-        }
+        available = { 
+			ROOT = {
+				num_divisions > 35
+				has_army_manpower = {
+					size > 25000
+				}
+			}
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			is_subject = no
+		}
         completion_reward = {
 			# TODO: idk what to do here
 		}
@@ -4554,7 +4692,14 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            ERE = { war_with_is_possible = yes }
+			DAL = { war_with_is_possible = yes }
+			is_subject = no
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			threat > 0.2
         }
         completion_reward = {
 			DAL = { antagonize_country = yes }
@@ -4576,7 +4721,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+			MIR = { war_with_is_possible = yes }
+			is_subject = no
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			threat > 0.2
         }
         completion_reward = {
 			# TODO: add supply line rails to MIRKWOOD
@@ -4653,7 +4804,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+			MIR = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			threat > 0.2
         }
         completion_reward = {
 			create_wargoal = {
@@ -4677,13 +4834,13 @@ focus_tree = {
 			factor = 5
 			modifier = {
 				factor = 5
-				has_war_with = MIR
+				MIR = { surrender_progress > 0.05 }
 			}
 		}
         
         search_filters = { }
         available = {
-            always = yes
+            has_war_with = MIR
         }
         completion_reward = {
 			add_unit_bonus = {
@@ -4733,7 +4890,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_subject = no
         }
         completion_reward = {
 			# add idea that gives boost, but ticks up over time.
@@ -4777,7 +4934,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            DAG = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			threat > 0.15
         }
         completion_reward = {
 			# war against DAG
@@ -4854,7 +5017,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            DAL = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			threat > 0.2
         }
         completion_reward = {
 			# war against DAL
@@ -4891,16 +5060,16 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            is_subject = no
         }
         completion_reward = {
 			# add claims
-			208 = { add_claim_by = ROOT }
-			282 = { add_claim_by = ROOT }
-			281 = { add_claim_by = ROOT }
-			213 = { add_claim_by = ROOT }
-			95 = { add_claim_by = ROOT }
-			91 = { add_claim_by = ROOT }
+			if = { limit = { 208 = { controller = { NOT = { is_ally_with = ROOT } } } } 208 = { add_claim_by = ROOT } }
+			if = { limit = { 282 = { controller = { NOT = { is_ally_with = ROOT } } } } 282 = { add_claim_by = ROOT } }
+			if = { limit = { 281 = { controller = { NOT = { is_ally_with = ROOT } } } } 281 = { add_claim_by = ROOT } }
+			if = { limit = { 213 = { controller = { NOT = { is_ally_with = ROOT } } } } 213 = { add_claim_by = ROOT } }
+			if = { limit = { 95  = { controller = { NOT = { is_ally_with = ROOT } } } } 95 = { add_claim_by = ROOT } }
+			if = { limit = { 91  = { controller = { NOT = { is_ally_with = ROOT } } } } 91 = { add_claim_by = ROOT } }
 		}
     }
 
@@ -4957,7 +5126,16 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            203 = {
+				is_controlled_by = ROOT
+				compliance > 0.4
+				resistance < 0.3
+			}
+			100 = {
+				is_controlled_by = ROOT
+				compliance > 0.4
+				resistance < 0.3
+			}
         }
         completion_reward = {
 			# at certain compliance, add some population and get cores
@@ -5018,7 +5196,14 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            NOT = { is_ally_with = MOR }
+			NOT = { has_war_with = MOR }
+			OR = {
+				controls_state = 124
+				controls_state = 104
+				controls_state = 288
+				controls_state = 287
+			}
         }
         completion_reward = {
 			# fortify MOR border
@@ -5124,7 +5309,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            NOT = { is_ally_with = MOR }
+			NOT = { has_war_with = MOR }
+			country_exists = MOR
         }
         completion_reward = {
 			# make it so that MOR needs more tension for war, maybe a debuff to their army if they do
@@ -5220,6 +5407,9 @@ focus_tree = {
         available = {
             always = yes
         }
+		bypass = {
+			NOT = { has_idea = nepotistic_favoritism_spirit }
+		}
         completion_reward = {
 			# get rid nepotistic favoritism army spirit  
 			remove_ideas = nepotistic_favoritism_spirit
@@ -5278,6 +5468,9 @@ focus_tree = {
         available = {
             always = yes
         }
+		bypass = {
+			NOT = { has_idea = RHUN_internal_corruption }
+		}
         completion_reward = {
 			# get rid of idea  
 			remove_ideas = RHUN_internal_corruption
@@ -5298,7 +5491,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            DAL = { can_engage_in_diplo_with = yes }
         }
         completion_reward = {
 			# less trade cost with DAL, random chance at a civ
@@ -5328,7 +5521,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            ERE = { can_engage_in_diplo_with = yes }
         }
         completion_reward = {
 			# less trade cost with ERE, random chance at a civ
@@ -5358,7 +5551,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_civil_war = no
         }
         completion_reward = {
 			add_stability = 0.15
@@ -5379,7 +5572,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            has_civil_war = no
         }
         completion_reward = {
 			every_neighbor_country = {
@@ -5416,6 +5609,9 @@ focus_tree = {
         available = {
             always = yes
         }
+		bypass = {
+			has_war_with = RHU
+		}
         completion_reward = {
 			add_ideas = targeted_modifier
 			RHU = {
@@ -5441,8 +5637,14 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            DAL = { can_engage_in_diplo_with = yes }
         }
+		bypass = {
+			OR = {
+				is_ally_with = DAL
+				is_guaranteed_by = DAL
+			}
+		}
         completion_reward = {
 			DAL = { ask_for_guarantee_of_independence = yes }
 		}
@@ -5462,7 +5664,7 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            num_of_controlled_states > 0
         }
         completion_reward = {
 			# TODO: this is a fairly powerful focus. Reason for this is that I assume after the treaty of the steppe, DRH is significvantly weakened.
@@ -5489,8 +5691,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            LGT = { can_engage_in_diplo_with = yes can_reach = yes }
         }
+		bypass = {
+			is_ally_with = LGT
+		}
         completion_reward = {
 			if = {
 				limit = { is_faction_leader = yes }
@@ -5547,8 +5752,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            RHU = {
+				war_with_is_possible = yes
+			}
         }
+		bypass = {
+			has_war_with = RHU
+		}
         completion_reward = {
 			create_wargoal = {
 				target = RHU
@@ -5559,8 +5769,7 @@ focus_tree = {
 
     focus = {
         id = DRH_resume_research_efforts
-		prerequisite = { focus = DRH_break_the_treaty }
-		prerequisite = { focus = DRH_seek_protection_from_dale }
+		prerequisite = { focus = DRH_break_the_treaty focus = DRH_seek_protection_from_dale }
         
         icon = GFX_unknown_focus
         
@@ -5606,12 +5815,19 @@ focus_tree = {
                     MIR = { is_ai = no }
                 }
             }
+			modifier = {
+				factor = 0.25
+				ERE = { can_reach = no }
+			}
         }
         
         search_filters = { }
         available = {
-            always = yes
+            ERE = { can_engage_in_diplo_with = yes }
         }
+		bypass = {
+			is_ally_with = ERE
+		}
         completion_reward = {
 			ERE = { ask_to_join_faction = yes }
 		}
@@ -5727,8 +5943,7 @@ focus_tree = {
 
     focus = {
         id = DRH_scholarly_endeavours
-		prerequisite = { focus = DRH_beacon_of_freedom }
-		prerequisite = { focus = DRH_set_up_southern_supplylines }
+		prerequisite = { focus = DRH_beacon_of_freedom focus = DRH_set_up_southern_supplylines }
         
         icon = GFX_unknown_focus
         
@@ -5998,7 +6213,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes # only possible if allied with mordor after civil war and without having a truce/NA pact
+			is_ally_with = MOR
+			DRH = {
+				war_with_is_possible = yes
+				can_reach = yes
+			}
         }
         completion_reward = {
 			# wargoal against DRH  
@@ -6029,7 +6248,8 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            NOT = { has_country_flag = DRH_civil_war_has_happened }
+			controls_state = 273
         }
         completion_reward = {
 			# some avari states align with you, gain compliance on change  
@@ -6057,7 +6277,8 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            NOT = { has_country_flag = DRH_civil_war_has_happened }
+			controls_state = 289
         }
         completion_reward = {
 			# gain mountain with divs  
@@ -6083,9 +6304,9 @@ focus_tree = {
             AVA = {
 				all_core_state = {
 					is_controlled_by = ROOT
+					compliance > 0.7
 				}
 			}
-			# require certain compliance
         }
         completion_reward = {
 			# gain cores on AVA territory  
@@ -6162,6 +6383,12 @@ focus_tree = {
         search_filters = { }
         available = {
             NOT = { has_country_flag = RHUN_nurkhizdin_or_war_accepted }
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			DOR = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
         }
 		bypass = {
 			has_war_with = DOR
@@ -6202,8 +6429,13 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            HAR = { can_engage_in_diplo_with = yes can_reach = yes }
         }
+		bypass = {
+			KND = {
+				exists = yes
+			}
+		}
         completion_reward = {
 			# send event to HAR asking for KND to be independent
 			hidden_effect = {
@@ -6229,7 +6461,16 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            KND = {
+				can_engage_in_diplo_with = yes
+				OR = {
+					is_ally_with = ROOT
+					has_opinion = {
+						target = RHU
+						value > 35
+					}
+				}
+			}
         }
         completion_reward = {
 			288 = {
@@ -6243,8 +6484,7 @@ focus_tree = {
 
     focus = {
         id = RHUN_negotiate_resource_rights
-		prerequisite = { focus = RHUN_request_khand_autonomy }
-		prerequisite = { focus = RHUN_khandian_buffer_zone }
+		prerequisite = { focus = RHUN_request_khand_autonomy focus = RHUN_khandian_buffer_zone }
         
         icon = GFX_unknown_focus
         
@@ -6256,7 +6496,9 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            KND = {
+				can_engage_in_diplo_with = yes
+			}
         }
         completion_reward = {
 			# send event that gives us resource rights on all khand states
@@ -6281,7 +6523,14 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            90 = {
+				controller = {
+					OR = {
+						tag = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
         }
         completion_reward = {
 			random_state_add_building_slot_and_civ_x4 = yes
@@ -6311,7 +6560,11 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            always = yes
+            MOR = { can_engage_in_diplo_with = yes can_reach = yes }
+			OR = {
+				MOR = { has_common_enemy_with = yes }
+				threat > 0.25
+			}
         }
         completion_reward = {
 			MOR = { ask_to_join_faction = yes }
