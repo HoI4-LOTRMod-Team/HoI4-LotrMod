@@ -19,6 +19,7 @@ MODE_ARMS = "Arms Factory"
 MODE_INDUSTRY = "Industrial Complex"
 MODE_CATEGORY = "State Category"
 MODE_RESOURCES = "Resources"
+MODE_PROSPECTIVE = "Prospective Resources"
 
 CATEGORIES = [
     "wasteland", "enclave", "tiny_island", "pastoral", "rural", 
@@ -108,6 +109,30 @@ class ImageAnalyzer:
                 except:
                     for r_type in RESOURCE_TYPES: res_dict[r_type] = 0
 
+                # 5. Prospective Resources (NEW)
+                prosp_dict = {}
+                prosp_total = 0
+                try:
+                    history = state_obj.pObj.Get("history")
+                    if history:
+                        for r_type in RESOURCE_TYPES:
+                            dep_val = 0
+                            var_name = f"{r_type}_deposit"
+                            # Using user logic to check existence
+                            vars_found = history.GetAll("set_variable").WithField(var_name)
+                            if len(vars_found.value) > 0:
+                                try:
+                                    # Using user logic to get value
+                                    dep_val = int(vars_found.value[0].Get(var_name).value)
+                                except:
+                                    dep_val = 0
+                            
+                            prosp_dict[r_type] = dep_val
+                            prosp_total += dep_val
+                except Exception as e:
+                    print(f"Error parsing prospective: {e}")
+                    for r_type in RESOURCE_TYPES: prosp_dict[r_type] = 0
+
                 results.append({
                     "state": state_obj,
                     "color": color,
@@ -122,6 +147,8 @@ class ImageAnalyzer:
                     "state_category": cat_val,
                     "resources": res_dict,
                     "resources_total": res_total,
+                    "prospective_resources": prosp_dict, # <--- NEW DATA
+                    "prospective_total": prosp_total,    # <--- NEW DATA
                     
                     "percentage_share": 0.0 
                 })
@@ -189,9 +216,12 @@ class OverlayMarker(QPushButton):
             self.adjustSize()
             return
         
-        elif mode == MODE_RESOURCES:
+        elif mode == MODE_RESOURCES or mode == MODE_PROSPECTIVE:
             parts = []
-            res_data = self.data.get('resources', {})
+            # Determine which dict to look at
+            dict_key = 'resources' if mode == MODE_RESOURCES else 'prospective_resources'
+            res_data = self.data.get(dict_key, {})
+            
             for r_type in RESOURCE_TYPES:
                 val = res_data.get(r_type, 0)
                 if val > 0:
@@ -201,6 +231,10 @@ class OverlayMarker(QPushButton):
             if not parts: val_str = "-"
             else:
                 val_str = ", ".join(parts)
+                # Add prefix for prospective to distinguish visually
+                if mode == MODE_PROSPECTIVE:
+                    val_str = "Dep: " + val_str
+                
                 if len(val_str) > 15:
                     val_str = val_str.replace(", ", "\n")
             show_share = False 
@@ -282,7 +316,7 @@ class PropertiesPanel(QFrame):
         self.combo_mode = QComboBox()
         self.combo_mode.addItems([
             MODE_MANPOWER, MODE_INFRASTRUCTURE, MODE_ARMS,
-            MODE_INDUSTRY, MODE_CATEGORY, MODE_RESOURCES
+            MODE_INDUSTRY, MODE_CATEGORY, MODE_RESOURCES, MODE_PROSPECTIVE
         ])
         self.combo_mode.currentTextChanged.connect(self.on_mode_changed_internal)
         layout.addWidget(self.combo_mode)
@@ -359,7 +393,7 @@ class PropertiesPanel(QFrame):
             self.input_stack.setCurrentWidget(self.combo_category)
             self.lbl_total_global.setVisible(False)
             self.lbl_share_stats.setVisible(False)
-        elif self.current_mode == MODE_RESOURCES:
+        elif self.current_mode == MODE_RESOURCES or self.current_mode == MODE_PROSPECTIVE:
             self.input_stack.setCurrentWidget(self.res_editor)
             self.lbl_total_global.setVisible(True) 
             self.lbl_share_stats.setVisible(False) 
@@ -386,31 +420,26 @@ class PropertiesPanel(QFrame):
         self.on_mode_change(text)
 
     def update_global_total(self, total_val):
-        # Enable word wrap so the list of resources doesn't get cut off
         self.lbl_total_global.setWordWrap(True)
         
         if self.current_mode == MODE_CATEGORY: 
             return 
             
-        if self.current_mode == MODE_RESOURCES and isinstance(total_val, dict):
-            # --- NEW LOGIC FOR RESOURCES ---
+        if (self.current_mode == MODE_RESOURCES or self.current_mode == MODE_PROSPECTIVE) and isinstance(total_val, dict):
             parts = []
             for r_type in RESOURCE_TYPES:
                 val = total_val.get(r_type, 0)
-                # Only show resources that actually exist (value > 0)
                 if val > 0:
-                    # Get short name (e.g., "oil" -> "Oil", "aluminium" -> "Alu")
                     short_name = RESOURCE_SHORTS.get(r_type, r_type[:3]).title()
                     val_str = format_k(val)
                     parts.append(f"{short_name}: {val_str}")
             
+            label_prefix = "Total Res" if self.current_mode == MODE_RESOURCES else "Total Dep"
             if not parts:
-                self.lbl_total_global.setText("Total Resources: 0")
+                self.lbl_total_global.setText(f"{label_prefix}: 0")
             else:
-                # Join with commas
-                self.lbl_total_global.setText("Totals: " + ", ".join(parts))
+                self.lbl_total_global.setText(f"{label_prefix}: " + ", ".join(parts))
         else:
-            # --- EXISTING LOGIC FOR OTHER MODES ---
             formatted = format_k(total_val) if self.current_mode == MODE_MANPOWER else str(total_val)
             label_txt = f"Total {self.current_mode}:"
             self.lbl_total_global.setText(f"{label_txt} {formatted}")
@@ -435,6 +464,9 @@ class PropertiesPanel(QFrame):
             
         elif self.current_mode == MODE_RESOURCES:
             self.res_editor.load_values(data.get('resources', {}))
+        
+        elif self.current_mode == MODE_PROSPECTIVE:
+            self.res_editor.load_values(data.get('prospective_resources', {}))
             
         else:
             key_map = {
@@ -484,24 +516,54 @@ class PropertiesPanel(QFrame):
     def on_resource_changed(self, r_type, value):
         if self.is_updating_ui or self.current_data is None: return
         
+        st_obj = self.current_data['state']
+        
         try:
-            st_obj = self.current_data['state']
-            res_obj = st_obj.pObj.Get("resources") 
+            if self.current_mode == MODE_RESOURCES:
+                # --- STANDARD RESOURCES LOGIC ---
+                res_obj = st_obj.pObj.Get("resources") 
+                if res_obj is None:
+                    res_obj = st_obj.pObj.Insert("\n\tresources = { }").Get("resources")
+                
+                self.current_data['resources'][r_type] = value
+                
+                if value > 0:
+                    if res_obj.Has(r_type): res_obj.Get(r_type).value = str(value)
+                    else: res_obj.Insert(f"\n\t\t{r_type} = {value}")
+                else:
+                    if res_obj.Has(r_type): res_obj.Remove(r_type)
+                
+                self.current_data['resources_total'] = sum(self.current_data['resources'].values())
             
-            if res_obj is None:
-                res_obj = st_obj.pObj.Insert("\n\tresources = { }").Get("resources")
-            
-            self.current_data['resources'][r_type] = value
-            
-            if value > 0:
-                if res_obj.Has(r_type): res_obj.Get(r_type).value = str(value)
-                else: res_obj.Insert(f"\n\t\t{r_type} = {value}")
-            else:
-                if res_obj.Has(r_type): res_obj.Remove(r_type)
-            
-            self.current_data['resources_total'] = sum(self.current_data['resources'].values())
+            elif self.current_mode == MODE_PROSPECTIVE:
+                # --- PROSPECTIVE RESOURCES LOGIC (NEW) ---
+                var_name = f"{r_type}_deposit"
+                history = st_obj.pObj.Get("history")
+                
+                # Check for existing variables using the user's syntax
+                existing_vars = history.GetAll("set_variable").WithField(var_name)
+                
+                self.current_data['prospective_resources'][r_type] = value
+                
+                if value > 0:
+                    if len(existing_vars.value) > 0:
+                        # UPDATE: st.pObj.Get("history").GetAll("set_variable").WithField("oil_deposit").value[0].value = 5
+                        existing_vars.value[0].Get(var_name).value = str(value)
+                    else:
+                        # INSERT: st.pObj.Get("history").Insert(f"\n\t\tset_variable = { oil_deposit = 5 }")
+                        history.Insert(f"\n\t\tset_variable = {{ {var_name} = {value} }}")
+                        print(f"Inserted new prospective resource variable: {var_name} = {value}")
+                else:
+                    # DELETE: If value is 0, we should remove it.
+                    # Since we don't have a specific remove syntax from the user, 
+                    # we attempt to find the specific item and remove it from history if possible.
+                    if len(existing_vars.value) > 0:
+                        history.RemoveAllWhere(lambda item: item.id == "set_variable" and item.Has(var_name))
+
+                self.current_data['prospective_total'] = sum(self.current_data['prospective_resources'].values())
+
             self.on_value_change()
-        except Exception as e: print(f"Resource update failed: {e}")
+        except Exception as e: print(f"Resource/Prospective update failed: {e}")
 
 class MainWindow(QMainWindow):
     def __init__(self, image_path, target_data):
@@ -572,14 +634,16 @@ class MainWindow(QMainWindow):
     def recalculate_stats(self):
         if self.current_mode == MODE_CATEGORY: return 0 
         
-        if self.current_mode == MODE_RESOURCES:
+        if self.current_mode == MODE_RESOURCES or self.current_mode == MODE_PROSPECTIVE:
             # --- NEW LOGIC: Sum each resource type individually ---
             totals = {r: 0 for r in RESOURCE_TYPES}
+            dict_key = 'resources' if self.current_mode == MODE_RESOURCES else 'prospective_resources'
+            
             for item in self.markers_data:
-                res_dict = item.get('resources', {})
+                res_dict = item.get(dict_key, {})
                 for r in RESOURCE_TYPES:
                     totals[r] += res_dict.get(r, 0)
-            return totals # Returns a dictionary like {'oil': 10, 'steel': 50...}
+            return totals 
             
         else:
             # --- EXISTING LOGIC FOR OTHER MODES ---
@@ -624,8 +688,6 @@ class MainWindow(QMainWindow):
             marker = OverlayMarker(data, self.on_marker_clicked)
             proxy = self.scene.addWidget(marker)
             
-            # --- CRITICAL CHANGE FOR FIXED SIZE ---
-            # This flag makes the item ignore the view's scaling
             proxy.setFlag(QGraphicsItem.ItemIgnoresTransformations)
             proxy.setZValue(10) 
             
