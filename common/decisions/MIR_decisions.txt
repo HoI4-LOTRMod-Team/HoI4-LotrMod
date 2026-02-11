@@ -443,77 +443,54 @@ political_actions = {
             clr_country_flag = MIR_ideology_decision_active
 		}
 	}
-}
 
 
+	# This decision allows mirkwood to teleport their armies home if DGU cuts them off by taking the Narrows.
+	MIR_withdraw_southern_troops = {
+		icon = generic_research
 
-MIR_dealing_with_dol_guldur = {
-	MIR_hunt_down_orcs = {
-        icon = GFX_decision_revolt
-		cost = 100
-
-        available = {
-            divisions_in_state = {
-                type = infantry
-                state = 87
-                size > 3
-            }
-            87 = {
-                compliance < 80
-            }
-        }
-        days_remove = 25
-        days_re_enable = 50
-		fire_only_once = no
-        fixed_random_seed = no
-		remove_effect = {
-            if = {
-                limit = {
-                    divisions_in_state = {
-                        type = infantry
-                        state = 87
-                        size > 6
-                    }
-                }
-                add_stability = -0.03
-                add_manpower = -500
-                87 = {
-                    add_compliance = 5
-                }
-            } else = {
-                add_manpower = -100
-                87 = {
-                    add_compliance = 2.5
-                }
-            }
-            army_experience = 1
-		}
-		ai_will_do = {
-			factor = 5
-		}
-	}
-	MIR_setup_militair_camps_nearby = {
-        icon = GFX_decision_revolt
-		cost = 125
-
-        available = {
-            87 = {
-                compliance < 80
-            }
-        }
 		fire_only_once = yes
-        fixed_random_seed = no
-		complete_effect = {
-            add_war_support = 0.01
-            add_stability = -0.01
-            army_experience = 5
-            87 = {
-                add_compliance = 5
-            }
+		cost = 0
+
+		allowed = {
+			tag = MIR
 		}
+
+		visible = {
+			83 = { is_fully_controlled_by = MIR }
+			OR = {
+				190 = {
+					NOT = { is_controlled_by = MIR }
+					controller = { NOT = { is_ally_with = MIR } NOT = { has_war_with = MIR } }
+				}
+				262 = {
+					NOT = { is_controlled_by = MIR }
+					controller = { NOT = { is_ally_with = MIR } NOT = { has_war_with = MIR } }
+				}
+			}
+		}
+
+		available = {
+			always = yes
+		}
+
 		ai_will_do = {
-			factor = 5
+			factor = 100
+		}
+		
+		complete_effect = {
+			every_state = {
+				limit = {
+					is_fully_controlled_by = MIR
+					has_state_flag = cfm_south_of_narrows
+				}
+				teleport_armies = {
+					limit = { tag = MIR }
+					to_state = 83
+				}
+			}
 		}
 	}
 }
+
 
