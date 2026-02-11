@@ -184,3 +184,7 @@ NDefines.NNavy.OUT_OF_FUEL_RANGE_FACTOR = 0.3
 NDefines.NNavy.OUT_OF_FUEL_ATTACK_FACTOR = -0.5
 NDefines.NNavy.OUT_OF_FUEL_TORPEDO_FACTOR = -0.5
 
+
+-- Disabling Fighter Aces
+NDefines.NAir.ACE_EARN_CHANCE_BASE = 0.0						-- Base chance % for ace pilot creation roll to happen. Happens only when successfully kill airplane/ship or damage the buildings.
+NDefines.NAir.ACE_EARN_CHANCE_PLANES_MULT = 0.0				-- Ace generation chance per aircraft. Chance is rolled twice because decimal numbers can't be small enough
