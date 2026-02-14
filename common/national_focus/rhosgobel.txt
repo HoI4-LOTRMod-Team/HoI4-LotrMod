@@ -548,7 +548,6 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            controls_state = 199
             OR = {
                 has_defensive_war = yes
                 alliance_strength_ratio < 1.0
@@ -566,11 +565,17 @@ focus_tree = {
                     infantry = { x = 0 y = 1 }
                     infantry = { x = 0 y = 2 }
                     infantry = { x = 0 y = 3 }
+                    infantry = { x = 1 y = 0 }
+                    infantry = { x = 1 y = 1 }
                 }
                 support = {
+                    engineer = {
+                        x = 0
+                        y = 0
+                    }
                 }
             }
-            199 = {
+            random_controlled_state = {
                 create_unit = { 
                     division = "name = \"Emergency Levies\" division_template = \"Emergency Levies\"" 
                     owner = RGL
@@ -1386,7 +1391,7 @@ focus_tree = {
 
         cost = 5
         ai_will_do = {
-            factor = 5
+            factor = 9
             modifier = {
                 factor = 2
                 date > 3020.1.1
@@ -1400,8 +1405,8 @@ focus_tree = {
                 date > 3021.1.1
             }
             modifier = {
-                factor = 1.3
-                has_war = no
+                factor = 1.5
+                has_war = yes
             }
             modifier = {
                 factor = 1.5
@@ -1417,17 +1422,23 @@ focus_tree = {
         }
         completion_reward = {
 			# gain unit bonus in forests and jungles  
-            add_unit_bonus = {
-                category_all_infantry = {
-                    forest = {
-                        attack = 0.1
-                        defence = 0.1
-                        movement = 0.1
+            if = {
+                limit = { is_ai = yes }
+                add_unit_bonus = {
+                    category_all_infantry = {
+                        default_morale = 0.1
+                        max_organisation = 0.1
+                        max_strength = 0.1
                     }
-                    jungle = {
-                        attack = 0.1
-                        defence = 0.1
-                        movement = 0.1
+                }
+            }
+            else = {
+                limit = { is_ai = yes }
+                add_unit_bonus = {
+                    category_all_infantry = {
+                        default_morale = 0.05
+                        max_organisation = 0.05
+                        max_strength = 0.05
                     }
                 }
             }
@@ -1584,8 +1595,7 @@ focus_tree = {
 
     focus = {
         id = RGL_refugee_levies
-		prerequisite = { focus = RGL_armed_resistance_focus }
-		prerequisite = { focus = RGL_fortification_focus }
+		prerequisite = { focus = RGL_armed_resistance_focus focus = RGL_fortification_focus }
         
         icon = GFX_unknown_focus
         
