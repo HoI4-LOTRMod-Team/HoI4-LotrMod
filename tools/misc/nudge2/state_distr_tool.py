@@ -269,11 +269,15 @@ class ResourceEditorWidget(QWidget):
         for idx, r_type in enumerate(RESOURCE_TYPES):
             lbl = QLabel(r_type.title() + ":")
             lbl.setFont(QFont("Arial", 9))
+            # FIX: Ensure label text is dark
+            lbl.setStyleSheet("color: #333333;")
             
             sb = QSpinBox()
             sb.setRange(0, 9999)
             sb.setSingleStep(1)
             sb.setProperty("resource_type", r_type)
+            # FIX: Ensure spinbox background is white and text is black
+            sb.setStyleSheet("QSpinBox { color: #000000; background-color: #ffffff; }")
             sb.valueChanged.connect(self.on_val_changed)
             
             self.spinboxes[r_type] = sb
@@ -304,7 +308,28 @@ class PropertiesPanel(QFrame):
 
         self.setFrameShape(QFrame.StyledPanel)
         self.setFixedWidth(250)
-        self.setStyleSheet("background-color: #f0f0f0; border-left: 1px solid #ccc;")
+        
+        # --- FIX: Main styling for the panel to enforce light theme look ---
+        self.setStyleSheet("""
+            QFrame {
+                background-color: #f0f0f0;
+                border-left: 1px solid #ccc;
+                color: #000000; /* Default text color for the frame */
+            }
+            QLabel {
+                color: #000000;
+            }
+            QComboBox {
+                color: #000000;
+                background-color: #ffffff;
+                selection-background-color: #0078d7;
+                selection-color: #ffffff;
+            }
+            QSpinBox {
+                color: #000000;
+                background-color: #ffffff;
+            }
+        """)
         
         layout = QVBoxLayout(self)
         layout.setAlignment(Qt.AlignTop)
