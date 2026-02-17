@@ -498,10 +498,14 @@ focus_tree = {
         
         completion_reward = {
 			# allow mercenary recruiotment (change existing idea)
-            swap_ideas = {
-                remove_idea = MIR_elven_arrogance
-                add_idea = MIR_elven_arrogance_2
+            hidden_effect = {
+                swap_ideas = {
+                    remove_idea = MIR_elven_arrogance
+                    add_idea = MIR_elven_arrogance_2
+                }
             }
+            custom_effect_tooltip = MIR_lift_the_mercenary_rule_tt
+            
 
             add_popularity = {
                 ideology = unaligned
@@ -1860,7 +1864,18 @@ focus_tree = {
                 DOR = { country_event = { id = mirkwood.137 days = 1 } }
             }
             custom_effect_tooltip = if_they_accept_newline_tt
-            event_option_tooltip = mirkwood.138.a
+            effect_tooltip = {
+                MIR = {
+                    random_controlled_state = {
+                        limit = { chromium > 8 }
+                        add_resource = {
+                            type = chromium
+                            amount = -8
+                        }
+                        add_building_slot_and_civ_x2 = yes
+                    }
+                }
+            }
         }
     }
 
@@ -2519,7 +2534,7 @@ focus_tree = {
             hidden_effect = {
                 country_event = mirkwood.152
             }
-            custom_effect_tooltip = MIR_seek_a_worthy_ally
+            custom_effect_tooltip = MIR_seek_a_worthy_ally_tt
         }
     }
 
@@ -5419,19 +5434,19 @@ focus_tree = {
             # invite or try to create faction with DGU, GUN or GOB
             custom_effect_tooltip = MIR_pick_up_the_leftovers_tt
             if = {
-                limit = { GUN = { can_invite_to_faction = yes } } # TODO: has completed anti-sauron focus
+                limit = { GUN = { OR = { can_invite_to_faction = yes MIR = { is_faction_leader = no } } } } # TODO: has completed anti-sauron focus
                 GUN = { invite_to_faction = yes }
             }
             if = {
-                limit = { GOB = { can_invite_to_faction = yes NOT = { has_completed_focus = GOB_pro_sauron } } }
+                limit = { GOB = { OR = { can_invite_to_faction = yes MIR = { is_faction_leader = no } } NOT = { has_completed_focus = GOB_pro_sauron } } }
                 GOB = { invite_to_faction = yes }
             }
             if = {
-                limit = { DGU = { can_invite_to_faction = yes NOT = { has_completed_focus = DGU_the_armies_of_the_necromancer } } }
+                limit = { DGU = { OR = { can_invite_to_faction = yes MIR = { is_faction_leader = no } } NOT = { has_completed_focus = DGU_the_armies_of_the_necromancer } } }
                 DGU = { invite_to_faction = yes }
             }
             if = {
-                limit = { LTH = { can_invite_to_faction = yes NOT = { has_completed_focus = lth_beaconofhope } NOT = { has_completed_focus = lth_theunholyalliance } } }
+                limit = { LTH = { OR = { can_invite_to_faction = yes MIR = { is_faction_leader = no } } NOT = { has_completed_focus = lth_beaconofhope } NOT = { has_completed_focus = lth_theunholyalliance } } }
                 LTH = { invite_to_faction = yes }
             }
 
@@ -8108,19 +8123,25 @@ focus_tree = {
         }
         completion_reward = {
 			# gain PP equal to the sum of all (positive) opinion on us  
+            # Why is this in an all_country and an if block? Well, because if I use every_country and an effect block, the live tooltip doesnt work.
             custom_effect_tooltip = MIR_soft_power_tt
             set_temp_variable = { temp_pp_gain = 0 }
-            every_country = {
+            if = {
                 limit = {
-                    NOT = { tag = ROOT }
-                    NOT = { has_war_with = ROOT }
-                    has_opinion = { target = MIR value > 0 }
+                    all_country = {
+                        OR = {
+                            tag = ROOT
+                            AND = {
+                                add_to_temp_variable = {
+                                    MIR.temp_pp_gain = opinion@MIR
+                                }
+                                always = yes
+                            }
+                        }
+                    }
                 }
-                add_to_variable = {
-                    temp_pp_gain = opinion@MIR
-                }
+                add_political_power = temp_pp_gain
             }
-            add_political_power = temp_pp_gain
 		}
     }
 }
