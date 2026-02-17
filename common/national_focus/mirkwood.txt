@@ -1536,7 +1536,7 @@ focus_tree = {
         
         completion_reward = {
             # if loth gets attacked by DGU, we join in
-            custom_effect_tooltip = MIR_promise_support_against_dol_guldur
+            custom_effect_tooltip = MIR_promise_support_against_dol_guldur_tt
             hidden_effect = {
                 LTH = { country_event = { id = mirkwood.130 days = 1 } }
             }
@@ -2108,7 +2108,7 @@ focus_tree = {
 
             add_popularity = {
                 ideology = belligerent
-                popularity = 0.3
+                popularity = 0.05
             }
         }
     }
@@ -4188,13 +4188,17 @@ focus_tree = {
         
         completion_reward = {
             # guarantees to elves
-            every_country = {
-                limit = {
-                    is_elves = yes
-                    NOT = { has_war_with = ROOT }
+            custom_effect_tooltip = MIR_safeguard_elvendom_tt
+            hidden_effect = {
+                every_country = {
+                    limit = {
+                        is_elves = yes
+                        NOT = { tag = ROOT }
+                        NOT = { has_war_with = ROOT }
+                    }
+                    ROOT = { give_guarantee = PREV }
+                    hidden_effect = { country_event = mirkwood.100 }
                 }
-                ROOT = { give_guarantee = PREV }
-                hidden_effect = { country_event = mirkwood.100 }
             }
         }
     }
@@ -4549,6 +4553,7 @@ focus_tree = {
                     cost_reduction = 0.5
                     uses = 1
                     name = doctrine_effort
+                    category = land_doctrine
                 }
             }
             hidden_effect = {
@@ -4565,6 +4570,7 @@ focus_tree = {
                         cost_reduction = 0.5
                         uses = 1
                         name = doctrine_effort
+                        category = land_doctrine
                     }
                 }
             }
@@ -5765,7 +5771,7 @@ focus_tree = {
         available = {
             SPI = {
                 all_core_state = {
-                    resistance < 0.75
+                    resistance < 50
                     is_controlled_by = ROOT
                 }
             }
@@ -5949,8 +5955,8 @@ focus_tree = {
         search_filters = { }
         available = {
             OR = {
-                MOA = { can_engage_in_diplo_with = yes can_reach = yes }
-                MOC = { can_engage_in_diplo_with = yes can_reach = yes }
+                MOA = { war_with_is_possible = yes can_reach = yes }
+                MOC = { war_with_is_possible = yes can_reach = yes }
             }
             is_subject = no
         }
@@ -5958,11 +5964,17 @@ focus_tree = {
 			# demand MOA submission  
             if = {
                 limit = { country_exists = MOA }
-                MOA = { demand_subjugation = yes }
+                create_wargoal = {
+                    target = MOA
+                    type = annex_everything
+                }
             }
             if = {
                 limit = { country_exists = MOC }
-                MOC = { demand_subjugation = yes }
+                create_wargoal = {
+                    target = MOC
+                    type = annex_everything
+                }
             }
 		}
     }
