@@ -6,7 +6,7 @@ from pathlib import Path
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
                                QHBoxLayout, QLineEdit, QPushButton, QLabel, 
                                QScrollArea, QFileDialog, QComboBox, QMessageBox, 
-                               QProgressBar)
+                               QProgressBar, QGroupBox, QCheckBox, QSlider)
 from PySide6.QtCore import Qt, QSize, QThread, Signal
 from PySide6.QtGui import QPixmap, QImage
 
@@ -30,6 +30,12 @@ THUMB_SIZE = QSize(250, 250)
 MODELS = ['u2net', 'isnet-general-use', 'isnet-anime', 'u2net_human_seg', 'Cloud API']
 OUTPUT_DIR_NAME = "processed_outputs"
 
+# --- Default Parameters ---
+DEFAULT_AM_ENABLED = True
+DEFAULT_AM_BG_THRESH = 10
+DEFAULT_AM_FG_THRESH = 240
+DEFAULT_AM_ERODE = 10
+
 class WorkerThread(QThread):
     """
     Background worker with Pause and Stop capabilities.
@@ -38,10 +44,11 @@ class WorkerThread(QThread):
     finished_signal = Signal()
     error_signal = Signal(str)
 
-    def __init__(self, tasks, model_name):
+    def __init__(self, tasks, model_name, am_params):
         super().__init__()
         self.tasks = tasks 
         self.model_name = model_name
+        self.am_params = am_params # Dictionary of alpha matting params
         self.is_running = True
         self.is_paused = False
 
@@ -72,13 +79,14 @@ class WorkerThread(QThread):
                 if self.model_name == 'Cloud API':
                     output_data = process_image(input_data, use_preview=True)
                 else:
+                    # Pass dynamic parameters here
                     output_data = remove(
                         input_data,
                         session=session,
-                        alpha_matting=True,
-                        alpha_matting_background_threshold=10,
-                        alpha_matting_foreground_threshold=240,
-                        alpha_matting_erode_size=10
+                        alpha_matting=self.am_params['enabled'],
+                        alpha_matting_background_threshold=self.am_params['bg_thresh'],
+                        alpha_matting_foreground_threshold=self.am_params['fg_thresh'],
+                        alpha_matting_erode_size=self.am_params['erode']
                     )
 
                 self.update_signal.emit(file_path, output_data)
@@ -203,7 +211,6 @@ class ImageRow(QWidget):
         self.lbl_proc_img.setStyleSheet("background-color: #333; border: 1px solid #555;")
         
         self.btn_save.setEnabled(True)
-        # ENABLED to allow re-runs
         self.btn_process.setEnabled(True) 
 
     def reset_state(self):
@@ -212,13 +219,13 @@ class ImageRow(QWidget):
         self.lbl_proc_img.setText("Processing...")
         self.lbl_proc_img.setStyleSheet("background-color: #222; border: 1px dashed #666; color: #888;")
         self.btn_save.setEnabled(False)
-        self.btn_process.setEnabled(False) # Disable while processing
+        self.btn_process.setEnabled(False) 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Batch Background Remover")
-        self.resize(1100, 800)
+        self.resize(1100, 850)
         self.worker = None
         self.row_map = {} 
 
@@ -227,6 +234,7 @@ class MainWindow(QMainWindow):
         self.main_layout = QVBoxLayout(main_widget)
 
         self.setup_ui()
+        self.setup_alpha_matting_ui() # Initialize the new UI section
 
     def setup_ui(self):
         top_bar = QHBoxLayout()
@@ -269,6 +277,76 @@ class MainWindow(QMainWindow):
         
         self.main_layout.addLayout(top_bar)
 
+    def setup_alpha_matting_ui(self):
+        """Creates the controls for Alpha Matting parameters."""
+        group = QGroupBox("Alpha Matting Settings")
+        group_layout = QHBoxLayout(group)
+        group_layout.setContentsMargins(10, 10, 10, 10)
+
+        # 1. Main Checkbox
+        self.chk_alpha = QCheckBox("Enable Alpha Matting")
+        self.chk_alpha.setChecked(DEFAULT_AM_ENABLED)
+        self.chk_alpha.toggled.connect(self.toggle_sliders)
+
+        # 2. Background Threshold Slider (0-50)
+        lbl_bg = QLabel("BG Thresh:")
+        self.slider_bg = QSlider(Qt.Horizontal)
+        self.slider_bg.setRange(0, 50)
+        self.slider_bg.setValue(DEFAULT_AM_BG_THRESH)
+        self.lbl_bg_val = QLabel(str(DEFAULT_AM_BG_THRESH))
+        self.lbl_bg_val.setFixedWidth(25)
+        self.slider_bg.valueChanged.connect(lambda v: self.lbl_bg_val.setText(str(v)))
+
+        # 3. Foreground Threshold Slider (220-255)
+        lbl_fg = QLabel("FG Thresh:")
+        self.slider_fg = QSlider(Qt.Horizontal)
+        self.slider_fg.setRange(220, 255) # Range as requested
+        self.slider_fg.setValue(DEFAULT_AM_FG_THRESH)
+        self.lbl_fg_val = QLabel(str(DEFAULT_AM_FG_THRESH))
+        self.lbl_fg_val.setFixedWidth(25)
+        self.slider_fg.valueChanged.connect(lambda v: self.lbl_fg_val.setText(str(v)))
+
+        # 4. Erode Size Slider (0-50)
+        lbl_erode = QLabel("Erode Size:")
+        self.slider_erode = QSlider(Qt.Horizontal)
+        self.slider_erode.setRange(0, 50)
+        self.slider_erode.setValue(DEFAULT_AM_ERODE)
+        self.lbl_erode_val = QLabel(str(DEFAULT_AM_ERODE))
+        self.lbl_erode_val.setFixedWidth(25)
+        self.slider_erode.valueChanged.connect(lambda v: self.lbl_erode_val.setText(str(v)))
+
+        # 5. Reset Button
+        btn_reset = QPushButton("Reset Defaults")
+        btn_reset.setFixedWidth(100)
+        btn_reset.clicked.connect(self.reset_alpha_params)
+
+        # Add to Layout
+        group_layout.addWidget(self.chk_alpha)
+        
+        # Add a vertical separator line
+        line = QWidget()
+        line.setFixedWidth(1)
+        line.setStyleSheet("background-color: #666;")
+        group_layout.addWidget(line)
+
+        group_layout.addWidget(lbl_bg)
+        group_layout.addWidget(self.slider_bg)
+        group_layout.addWidget(self.lbl_bg_val)
+        
+        group_layout.addWidget(lbl_fg)
+        group_layout.addWidget(self.slider_fg)
+        group_layout.addWidget(self.lbl_fg_val)
+        
+        group_layout.addWidget(lbl_erode)
+        group_layout.addWidget(self.slider_erode)
+        group_layout.addWidget(self.lbl_erode_val)
+
+        group_layout.addStretch()
+        group_layout.addWidget(btn_reset)
+
+        self.main_layout.addWidget(group)
+
+        # Add Progress Bar and Scroll Area (moved here to keep layout order)
         self.progress_bar = QProgressBar()
         self.progress_bar.setValue(0)
         self.progress_bar.setAlignment(Qt.AlignCenter)
@@ -282,6 +360,25 @@ class MainWindow(QMainWindow):
         self.scroll_layout.setAlignment(Qt.AlignTop)
         self.scroll_area.setWidget(self.scroll_content)
         self.main_layout.addWidget(self.scroll_area)
+
+    def toggle_sliders(self, checked):
+        self.slider_bg.setEnabled(checked)
+        self.slider_fg.setEnabled(checked)
+        self.slider_erode.setEnabled(checked)
+
+    def reset_alpha_params(self):
+        self.chk_alpha.setChecked(DEFAULT_AM_ENABLED)
+        self.slider_bg.setValue(DEFAULT_AM_BG_THRESH)
+        self.slider_fg.setValue(DEFAULT_AM_FG_THRESH)
+        self.slider_erode.setValue(DEFAULT_AM_ERODE)
+
+    def get_alpha_params(self):
+        return {
+            'enabled': self.chk_alpha.isChecked(),
+            'bg_thresh': self.slider_bg.value(),
+            'fg_thresh': self.slider_fg.value(),
+            'erode': self.slider_erode.value()
+        }
 
     def browse_folder(self):
         folder = QFileDialog.getExistingDirectory(self, "Select Image Folder")
@@ -361,7 +458,11 @@ class MainWindow(QMainWindow):
         self.progress_bar.setValue(0)
 
         model_name = self.combo_model.currentText()
-        self.worker = WorkerThread(tasks, model_name)
+        
+        # Capture current slider values
+        params = self.get_alpha_params()
+        
+        self.worker = WorkerThread(tasks, model_name, params)
         self.worker.update_signal.connect(self.on_worker_update)
         self.worker.finished_signal.connect(self.on_worker_finished)
         self.worker.error_signal.connect(self.on_worker_error)
@@ -370,7 +471,6 @@ class MainWindow(QMainWindow):
     def set_all_process_buttons_enabled(self, enabled):
         """Helper to lock/unlock all individual process buttons."""
         for row in self.row_map.values():
-            # CHANGE: Unconditionally set enabled state
             row.btn_process.setEnabled(enabled)
 
     def cancel_processing(self):
