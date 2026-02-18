@@ -110,10 +110,10 @@ def main():
     graph = create_node_graph()
 
     focus_node_tree = FocusNodeTree(graph,
-        #BASE_PATH / r'events\Gundabad.txt',
-        #BASE_PATH / r'localisation\english\bonus_events_l_english.yml'
-        BASE_PATH / r'events\rhunexpandedevents.txt',
-        BASE_PATH / r'localisation\english\rhun\rhun_country_events_l_english.yml'
+        BASE_PATH / r'events\MirkwoodStory.txt',
+        BASE_PATH / r'localisation\english\mirkwood\mirkwood_story_l_english.yml'
+        #BASE_PATH / r'events\rhunexpandedevents.txt',
+        #BASE_PATH / r'localisation\english\rhun\rhun_country_events_l_english.yml'
     )
     graph.focus_tree = focus_node_tree
 
@@ -137,6 +137,8 @@ def main():
     graph.fit_to_selection()
     #graph.set_layout_direction(LayoutDirectionEnum.VERTICAL.value)
     #graph.set_pipe_style(PipeLayoutEnum.ANGLE.value)
+
+    focus_node_tree.load_positions() # Load positions after nodes are created and initialized
 
 
     # This code-block enables showing a properties widget on double clicking a node
