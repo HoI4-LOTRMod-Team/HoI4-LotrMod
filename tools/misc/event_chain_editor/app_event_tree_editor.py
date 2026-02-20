@@ -110,8 +110,10 @@ def main():
     graph = create_node_graph()
 
     focus_node_tree = FocusNodeTree(graph,
-        BASE_PATH / r'events\MirkwoodStory.txt',
-        BASE_PATH / r'localisation\english\mirkwood\mirkwood_story_l_english.yml'
+        #BASE_PATH / r'events\MirkwoodStory.txt',
+        #BASE_PATH / r'localisation\english\mirkwood\mirkwood_story_l_english.yml'
+        BASE_PATH / r'events\MorMenace.txt',
+        BASE_PATH / r'localisation\english\mordor\morm_events_l_english.yml'
         #BASE_PATH / r'events\rhunexpandedevents.txt',
         #BASE_PATH / r'localisation\english\rhun\rhun_country_events_l_english.yml'
     )
