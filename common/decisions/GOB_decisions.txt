@@ -218,7 +218,7 @@ political_actions = {
 
 		fire_only_once = no
 		days_re_enable = 100 # To avoid spamming # TODO: if FROM is a player, make sure to not spam
-		cost = 25
+		cost = 50
 
 		#on_map_mode = map_and_decisions_view | map_only | decision_view_only 
 
@@ -230,12 +230,11 @@ political_actions = {
 			has_completed_focus = GOB_send_out_the_boys
 			has_war = no
 			has_country_flag = gob_country_has_mercenaries
-
-			NOT = { has_idea = no_mercenaries } # Needs to have mercs allowed by law
-			NOT = { has_idea = slave_soldiers }
+			NOT = { has_country_flag = merc_offer_pending }
 		}
 
 		available = {
+			always = yes
 			custom_trigger_tooltip = {
 				tooltip = gob_mercs_equipped_tt
 				NOT = {
@@ -247,15 +246,16 @@ political_actions = {
 			}
 		}
 
-		target_array = countries
+		target_array = global.countries
 		#targets_dynamic = yes # Allows you to target civil war dynamic tags by their original_tag
 		
 		target_trigger = {
 			FROM = {
 				NOT = { has_war_with = GOB }
 				has_war = yes
-				alliance_strength_ratio < 1.5
-				#has_country_flag = rng_80p_flag_1 # not all countries available # TODO: idk if I want this
+				alliance_strength_ratio < 2
+				NOT = { has_idea = no_mercenaries } # Needs to have mercs allowed by law
+				NOT = { has_idea = slave_soldiers }
 			}
 		}
 		
@@ -264,6 +264,12 @@ political_actions = {
 			custom_effect_tooltip = if_they_accept_newline_tt
 			custom_effect_tooltip = offer_merc_contract_tt
 			custom_effect_tooltip = offer_merc_contract_tt_2
+
+			set_country_flag = {
+				flag = merc_offer_pending
+				days = 100
+				value = 1
+			}
 		}
 	}
 
@@ -308,24 +314,21 @@ political_actions = {
 		icon = generic_research
 
 		fire_only_once = no
-		days_re_enable = 10
-		days_mission_timeout = 180
-		selectable_mission = no
-		is_good = yes
+		days_remove = 180
 
 		allowed = {
-			always = no
+			always = yes
 		}
 
-		activation = {
-			always = no
+		visible = {
+			has_country_flag = gob_country_has_mercenaries
 		}
 
 		available = {
-			NOT = { has_country_flag = gob_country_has_mercenaries }
+			always = yes
 		}
 
-		timeout_effect = {
+		remove_effect = {
 			# Get event to decide if to extend contract or no
 			hidden_effect = {
 				country_event = goblintown.109
