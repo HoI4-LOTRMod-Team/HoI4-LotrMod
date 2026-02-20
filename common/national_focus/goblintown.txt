@@ -546,6 +546,12 @@ focus_tree = {
         completion_reward = {
 			# remove overthrow timer  
             custom_effect_tooltip = GOB_crack_down_on_the_clans_tt
+            hidden_effect = {
+                swap_ideas = {
+                    remove_idea = GOB_tunnel_lord_division_2
+                    add_idea = GOB_tunnel_lord_division_3
+                }
+            }
 		}
     }
 
@@ -583,10 +589,7 @@ focus_tree = {
         }
         completion_reward = {
 			# remove debuff/unlock higher centralization  
-            swap_ideas = {
-                remove_idea = GOB_tunnel_lord_division_2
-                add_idea = GOB_tunnel_lord_division_3
-            }
+            remove_ideas = GOB_tunnel_lord_division_3
 		}
     }
 
@@ -3600,7 +3603,7 @@ focus_tree = {
 				NOT = {
 					any_country_division = {
 						division_has_majority_template = goblin_mercenary_infantry
-						unit_strength < 0.95 # TODO: This does NOT work
+						unit_strength < 0.95 # TODO: This does NOT work. The same check exists elsewhere. Atm this is always false
 					}
 				}
 			}
@@ -3647,14 +3650,15 @@ focus_tree = {
         
         search_filters = { }
         available = {
-            num_of_available_civilian_factories > 0
+            num_of_civilian_factories_available_for_projects > 0
         }
         completion_reward = {
             custom_effect_tooltip = GOB_fear_before_gold_tt
-			set_temp_variable = { temp_add = num_of_available_civilian_factories }
+            custom_effect_tooltip = generic_current_effects_new_lines
+			set_temp_variable = { temp_add = num_of_civilian_factories_available_for_projects }
             multiply_temp_variable = { temp_add = 10 }
             add_political_power = temp_add
-            multiply_temp_variable = { temp_add = 0.01 }
+            multiply_temp_variable = { temp_add = 0.001 }
             add_stability = temp_add
 		}
     }
@@ -3688,7 +3692,7 @@ focus_tree = {
             num_of_civilian_factories > 15
         }
         completion_reward = {
-			custom_effect_tooltip = GOB_fear_before_gold_tt
+			
             if = {
                 limit = {
                     has_idea = high_taxes
@@ -3697,6 +3701,9 @@ focus_tree = {
                     remove_idea = high_taxes
                     add_idea = high_taxes_gob
                 }
+            }
+            else = {
+                add_ideas = high_taxes_gob
             }
 		}
     }
@@ -3989,6 +3996,9 @@ focus_tree = {
         completion_reward = {
 			# needs explosive tech and gives resource gain  
             every_core_state = {
+                limit = {
+                    impassable = no
+                }
                 increase_resources_in_state_10p = yes
             }
 		}
@@ -4098,7 +4108,7 @@ focus_tree = {
         }
         completion_reward = {
 			# gain bonus on tunnel terrain  
-            # TODO: needs custom terrain type
+            # TODO: needs custom terrain type (note that tooltip doesnt work for terrain unit buffs)
             # NOTE: also add some decrease combat width!
 		}
     }
