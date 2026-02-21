@@ -12,11 +12,6 @@ spiders_country_setup = {
 		set_variable = { mp_gained_from_own_casualties = 0 } # in thousands
 		set_variable = { mp_gained_total = 0 } # in thousands
 
-		set_variable = {
-			hunger_org_penalty = -0.05
-			hunger_strength_penalty = -0.05
-		}
-
 		set_variable = { mp_unit_stats_bonus = 0 }
 
 		set_variable = { taken_casualties_prev = 0 }
@@ -95,17 +90,9 @@ spiders_weekly_tick = {
 }
 
 
-# For debugging. TODO: remove later
-debug_log_spi = {
-	log = "[?var:mp_gained_from_enemy_casualties] from enemy"
-	log = "[?var:mp_gained_from_own_casualties] from own"
-}
-
-
-
 increase_mp_from_self_casualties = {
 	custom_effect_tooltip = unceasing_hunger_change_tt
-	custom_effect_tooltip = "Increase §Ymanpower§! gained from §Oour own§! casualties by §G+500§!."
+	custom_effect_tooltip = increase_mp_from_self_casualties_tt
 	
 	add_to_variable = {
 		casualties_taken_to_mp_factor = 0.5
@@ -115,7 +102,7 @@ increase_mp_from_self_casualties = {
 
 increase_mp_from_enemy_casualties = {
 	custom_effect_tooltip = unceasing_hunger_change_tt
-	custom_effect_tooltip = "Increase §Ymanpower§! gained from §Oenemy§! casualties by §G+500§!."
+	custom_effect_tooltip = increase_mp_from_enemy_casualties_tt
 
 	add_to_variable = {
 		casualties_inflicted_to_mp_factor = 0.5
@@ -133,7 +120,7 @@ late_game_hunger_upgrade = {
 }
 
 add_vs_orcs_bonus = {
-	custom_effect_tooltip = "§YManpower§! gained from §OOrc§! enemies is §G+50%§! higher."
+	custom_effect_tooltip = add_vs_orcs_bonus_tt
 	hidden_effect = {
 		remove_dynamic_modifier = { modifier = unceasing_hunger }
 		add_dynamic_modifier = { modifier = unceasing_hunger_vs_orcs }
@@ -141,7 +128,7 @@ add_vs_orcs_bonus = {
 }
 
 add_vs_elves_bonus = {
-	custom_effect_tooltip = "§YManpower§! gained from §OElven§! enemies is §G+50%§! higher."
+	custom_effect_tooltip = add_vs_elves_bonus_tt
 	hidden_effect = {
 		remove_dynamic_modifier = { modifier = unceasing_hunger }
 		add_dynamic_modifier = { modifier = unceasing_hunger_vs_elves }
@@ -207,12 +194,12 @@ spiders_daily_tick = {
 	if = {
 		limit = {
 			has_completed_focus = SPI_the_mothers_guard
-			NOT = { has_completed_focus = SPI_extend_the_perimeter }
 		}
 
 
 		if = {
 			limit = {
+				NOT = { has_completed_focus = SPI_extend_the_perimeter }
 				num_battalions_in_states = {
 					count > 0
 					states = { 229 71 260 193 226 83 80 } # states bordering Spider's nest state
@@ -222,14 +209,8 @@ spiders_daily_tick = {
 
 			country_event = spiders.105
 		}
-	}
-	else_if = {
-		limit = {
-			has_completed_focus = SPI_the_mothers_guard
-			has_completed_focus = SPI_extend_the_perimeter
-		}
 
-		if = {
+		else_if = {
 			limit = {
 				num_battalions_in_states = {
 					count > 0
@@ -273,13 +254,13 @@ create_nest_guardians = {
 		}
 	}
 
-	custom_effect_tooltip = "TODO: say in this tooltip that if they leave the Spiders Nest state, they instantly die"
+	custom_effect_tooltip = nest_guardians_restriction_tt
 }
 
 empower_nest_guardians = {
 	# TODO: improve the division
 
-	custom_effect_tooltip = "TODO: say in this tooltip that if they leave the Mirkwood forest state, they instantly die"
+	custom_effect_tooltip = nest_guardians_restriction_empowered_tt
 }
 
 
@@ -345,13 +326,12 @@ empower_shelob = {
 
 
 spider_incident_effect = {
-	# TODO: tooltip. A random of our states looses 10% of it's population
 	random_controlled_state = {
 		limit = {
 			any_neighbor_state = { is_controlled_by = SPI }
 		}
 		set_temp_variable = { temp_population = state_population }
-		multiply_temp_variable = { var:temp_population = -0.05 }
+		multiply_temp_variable = { var:temp_population = -0.03 }
 		add_manpower = temp_population
 	}
 }
@@ -362,7 +342,8 @@ spider_disable_incidents = {
 }
 
 spider_increase_incident_frequency = {
-	# TODO
+	custom_effect_tooltip = spider_increase_incident_frequency_tt
+	set_country_flag = spider_incidents_higher_frequency
 }
 
 
