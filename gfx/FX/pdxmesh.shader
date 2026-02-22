@@ -773,6 +773,19 @@ Effect PdxMeshStandardSnowShadow
 	PixelShader = "PixelPdxMeshStandardShadow"
 }
 
+Effect PdxMeshStandardLotr
+{
+	VertexShader = "VertexPdxMeshStandard"
+	PixelShader = "PixelPdxMeshStandard"
+	Defines = { "PDX_GRADIENT_BORDERS" }
+}
+
+Effect PdxMeshStandardLotrShadow
+{
+	VertexShader = "VertexPdxMeshStandard"
+	PixelShader = "PixelPdxMeshStandard"
+}
+
 
 Effect PdxMeshAdvanced
 {
