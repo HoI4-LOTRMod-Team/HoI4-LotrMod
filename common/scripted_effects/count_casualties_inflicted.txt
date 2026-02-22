@@ -37,11 +37,15 @@ count_casualties_inflicted = {
 						thousands > temp_cas_counter
 					}
 				}
-				add_to_variable = { temp_cas_counter = 1 }
+				add_to_temp_variable = { temp_cas_counter = 1 }
+			}
+			else = {
+				set_temp_variable = { break = 1 }
 			}
 		}
-		subtract_from_temp_variable = { temp_cas_counter = 1 }
-		clamp_temp_variable = { var = temp_cas_counter min = 0 }
+		#subtract_from_temp_variable = { temp_cas_counter = 1 } # This used to be here to avoid over-counting, but some testing seems to imply it's not necessary?
+
+		clamp_temp_variable = { var = temp_cas_counter min = 0 } # paranoid safety check
 
 		set_temp_variable = { this_week_diff = temp_cas_counter }
 		subtract_from_temp_variable = { this_week_diff = PREV.inflicted_casualties_on_@THIS }
@@ -55,8 +59,8 @@ count_casualties_inflicted = {
 		}
 		else_if = {
 			limit = { is_orcs = yes }
-			add_to_variable = { PREV.casualties_on_elves_this_week = this_week_diff }
-			add_to_variable = { PREV.casualties_on_elves_total = this_week_diff }
+			add_to_variable = { PREV.casualties_on_orcs_this_week = this_week_diff }
+			add_to_variable = { PREV.casualties_on_orcs_total = this_week_diff }
 		}
 
 		set_variable = { PREV.inflicted_casualties_on_@THIS = temp_cas_counter }

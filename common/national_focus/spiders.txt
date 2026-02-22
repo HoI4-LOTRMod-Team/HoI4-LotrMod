@@ -985,6 +985,7 @@ focus_tree = {
         
         completion_reward = {
 			# send event to get shelob as leader
+            # TODO: Shelob doesnt have any traits at all by default. I know another gets added in the next focus, but there should still be one
             if = {
                 limit = { 5 = { is_controlled_by = ROOT } }
                 empower_shelob = yes
@@ -3749,11 +3750,15 @@ focus_tree = {
                 add = 15
                 num_occupied_states > 5
             }
+            modifier = {
+                factor = 0.1
+                has_war_with = ERE
+                country_exists = ERE
+            }
         }
         
         search_filters = { }
         available = {
-            ERE = { has_capitulated = yes }
             any_controlled_state = {
                 is_core_of = ERE
             }
@@ -3772,9 +3777,14 @@ focus_tree = {
             hidden_effect = {
                 every_controlled_state = {
                     limit = { any_country_with_core = { is_dwarves = yes } }
-                    set_temp_variable = { temp_pop_remove = state_population }
-                    multiply_temp_variable = { temp_pop_remove = 0.001 }
-                    add_to_variable = { spider_bonus_from_dwarves = temp_pop_remove }
+                    # set bonus
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
+                    add_to_variable = { SPI.spider_bonus_from_dwarves = temp_pop_remove }
+                    # remove pop
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = -50 }
+                    add_manpower = temp_pop_remove
                 }
             }
         }
@@ -3808,11 +3818,15 @@ focus_tree = {
                 add = 15
                 num_occupied_states > 5
             }
+            modifier = {
+                factor = 0.1
+                has_war_with = MIR
+                country_exists = MIR
+            }
         }
         
         search_filters = { }
         available = {
-            MIR = { has_capitulated = yes }
             any_controlled_state = {
                 is_core_of = MIR
             }
@@ -3828,9 +3842,14 @@ focus_tree = {
     
                 every_controlled_state = {
                     limit = { any_country_with_core = { is_elves = yes } }
-                    set_temp_variable = { temp_pop_remove = state_population }
-                    multiply_temp_variable = { temp_pop_remove = 0.001 }
-                    add_to_variable = { spider_bonus_from_elves = temp_pop_remove }
+                    # set bonus
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
+                    add_to_variable = { SPI.spider_bonus_from_elves = temp_pop_remove }
+                    # remove pop
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = -50 }
+                    add_manpower = temp_pop_remove
                 }
             }
         }
@@ -3864,11 +3883,15 @@ focus_tree = {
                 add = 15
                 num_occupied_states > 5
             }
+            modifier = {
+                factor = 0.1
+                has_war_with = DGU
+                country_exists = DGU
+            }
         }
         
         search_filters = { }
         available = {
-            DGU = { has_capitulated = yes }
             any_controlled_state = {
                 is_core_of = DGU
             }
@@ -3881,12 +3904,17 @@ focus_tree = {
 
             hidden_effect = {
                 spiders_init_devour_modifiers = yes
-    
+
                 every_controlled_state = {
                     limit = { any_country_with_core = { is_orcs = yes } }
-                    set_temp_variable = { temp_pop_remove = state_population }
-                    multiply_temp_variable = { temp_pop_remove = 0.001 }
-                    add_to_variable = { spider_bonus_from_orcs = temp_pop_remove }
+                    # set bonus
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
+                    add_to_variable = { SPI.spider_bonus_from_orcs = temp_pop_remove }
+                    # remove pop
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = -50 }
+                    add_manpower = temp_pop_remove
                 }
             }
         }
@@ -3920,15 +3948,22 @@ focus_tree = {
                 add = 15
                 num_occupied_states > 5
             }
+            modifier = {
+                factor = 0.1
+                has_war_with = VAL
+                country_exists = VAL
+            }
         }
         
         search_filters = { }
         available = {
-            VAL = { has_capitulated = yes }
             any_controlled_state = {
-                is_core_of = VAL
+                OR = {
+                    is_core_of = VAL
+                    is_core_of = RGL
+                    is_core_of = GLD
+                }
             }
-            NOT = { is_ally_with = VAL }
         }
         
         completion_reward = {
@@ -3936,12 +3971,17 @@ focus_tree = {
             custom_effect_tooltip = SPI_delicous_warm_blood_tt
             hidden_effect = {
                 spiders_init_devour_modifiers = yes
-    
+
                 every_controlled_state = {
                     limit = { any_country_with_core = { is_men = yes } }
-                    set_temp_variable = { temp_pop_remove = state_population }
-                    multiply_temp_variable = { temp_pop_remove = 0.001 }
-                    add_to_variable = { spider_bonus_from_men = temp_pop_remove }
+                    # set bonus
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
+                    add_to_variable = { SPI.spider_bonus_from_men = temp_pop_remove }
+                    # remove pop
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = -50 }
+                    add_manpower = temp_pop_remove
                 }
             }
 		}
@@ -4162,13 +4202,15 @@ focus_tree = {
         
         completion_reward = {
 			# add spider infestation to all neighbour mirkwood states. Gain 25 pp per state affected.
-            # TODO: possibly unlock some CFM related decisions
+            # TODO: possibly unlock some CFM related 
+            # TODO: maybe this should have an event notifying MIR that there are spider infestations to clear
+            # TODO: Can I think of a better reward than 25 pp?
             custom_effect_tooltip = SPI_endless_sprawl_tt
             hidden_effect = {
                 every_controlled_state = {
                     every_neighbor_state = {
                         limit = {
-                            is_on_continent = MIR
+                            is_on_continent = mirkwood
                             NOT = { is_controlled_by = SPI }
                             controller = { NOT = { is_ally_with = SPI } }
                             impassable = no
