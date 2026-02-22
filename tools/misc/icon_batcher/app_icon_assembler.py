@@ -6,6 +6,8 @@ import pytoshop
 from pytoshop.user import nested_layers
 from pytoshop.enums import ColorMode, Compression
 
+from psd_tools import PSDImage
+
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QHBoxLayout,
                                QVBoxLayout, QScrollArea, QGridLayout,
                                QToolButton, QGraphicsView, QGraphicsScene, QPushButton,
@@ -17,7 +19,7 @@ from PySide6.QtGui import QPixmap, QIcon, QPainter, QPen, QBrush, QImage
 from PySide6.QtCore import Qt, QSize
 
 # --- CONFIGURATION ---
-HARDCODED_PATH = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\retrievals\new-tool-test'
+HARDCODED_PATH = r'E:\PROJECTS\HOI4_LOTR\hoi4_lotr_gfx_resources\focuses_and_ideas'
 THUMBNAIL_SIZE = QSize(80, 80)
 
 class DraggableLayerItem(QGraphicsPixmapItem):
@@ -101,6 +103,9 @@ class SimplePhotoshop(QMainWindow):
         self.active_layers = {}      
         self.thumbnail_buttons = {}  
         self._updating_ui = False 
+
+        self.current_template_path = None
+        self.template_bg_item = None
         
         self.canvas_w = 110
         self.canvas_h = 100
@@ -222,6 +227,58 @@ class SimplePhotoshop(QMainWindow):
         self.scene.setSceneRect(-buffer, -buffer, self.canvas_w + (buffer*2), self.canvas_h + (buffer*2))
         self.view.centerOn(self.canvas_rect_item)
 
+    def load_template(self, psd_path):
+        from psd_tools import PSDImage
+        
+        # 1. Clear existing PNG layers
+        for img_path, item in list(self.active_layers.items()):
+            self.scene.removeItem(item)
+            if img_path in self.thumbnail_buttons:
+                self.thumbnail_buttons[img_path].setChecked(False)
+        self.active_layers.clear()
+        self.layer_list.clear()
+
+        try:
+            psd = PSDImage.open(psd_path)
+            self.current_template_path = psd_path
+            
+            # --- NEW: Add the Template to the Layer List ---
+            list_item = QListWidgetItem(f"[Base PSD] {os.path.basename(psd_path)}")
+            # We use a special string "TEMPLATE_ITEM" to identify it later
+            list_item.setData(Qt.UserRole, "TEMPLATE_ITEM") 
+            # Give it a slightly different background color so it stands out
+            list_item.setBackground(QBrush(Qt.lightGray))
+            self.layer_list.addItem(list_item)
+            # -----------------------------------------------
+            
+            # 3. Update Canvas Size
+            self.spin_w.setValue(psd.width)
+            self.spin_h.setValue(psd.height)
+            self.update_canvas_size()
+
+            # 4. Generate the flat preview image
+            pil_preview = psd.composite()
+            if pil_preview.mode != "RGBA":
+                pil_preview = pil_preview.convert("RGBA")
+                
+            img_data = pil_preview.tobytes("raw", "RGBA")
+            qimg = QImage(img_data, pil_preview.width, pil_preview.height, QImage.Format_RGBA8888)
+            pixmap = QPixmap.fromImage(qimg)
+
+            # 5. Apply the background to the scene
+            if self.template_bg_item:
+                self.scene.removeItem(self.template_bg_item)
+                
+            self.template_bg_item = QGraphicsPixmapItem(pixmap)
+            self.template_bg_item.setPos(0, 0)
+            self.scene.addItem(self.template_bg_item)
+            
+            # Sync Z-values right away so the template gets its correct depth
+            self.sync_z_values()
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Template Error", f"Failed to load PSD template:\n{str(e)}")
+
     def load_elements(self):
         if not os.path.exists(HARDCODED_PATH):
             QMessageBox.warning(self, "Error", f"Path not found: {HARDCODED_PATH}")
@@ -244,19 +301,44 @@ class SimplePhotoshop(QMainWindow):
             
             toggle_btn.clicked.connect(lambda checked=False, cw=content_widget, btn=toggle_btn, name=folder: self.toggle_category(cw, btn, name))
             
-            images = [img for img in os.listdir(folder_path) if img.lower().endswith('.png')]
+            # Look for both PNGs and PSDs
+            images = [img for img in os.listdir(folder_path) if img.lower().endswith(('.png', '.psd'))]
             
             row, col = 0, 0
             for img_name in images:
                 img_path = os.path.join(folder_path, img_name)
                 btn = QToolButton()
-                btn.setCheckable(True)
-                btn.setIcon(QIcon(img_path))
+                is_template = img_name.lower().endswith('.psd')
+                btn.setCheckable(not is_template) 
+                
+                if is_template:
+                    # --- Generate PSD Thumbnail ---
+                    try:
+                        from psd_tools import PSDImage
+                        psd = PSDImage.open(img_path)
+                        preview = psd.composite()
+                        if preview.mode != "RGBA":
+                            preview = preview.convert("RGBA")
+                        
+                        # Shrink it down before converting to Qt to save memory
+                        preview.thumbnail((THUMBNAIL_SIZE.width(), THUMBNAIL_SIZE.height()))
+                        
+                        img_data = preview.tobytes("raw", "RGBA")
+                        qimg = QImage(img_data, preview.width, preview.height, QImage.Format_RGBA8888)
+                        btn.setIcon(QIcon(QPixmap.fromImage(qimg)))
+                    except Exception as e:
+                        print(f"Could not generate thumbnail for {img_name}: {e}")
+                        btn.setIcon(QIcon()) # Empty fallback icon
+                        
+                    btn.clicked.connect(lambda checked, p=img_path: self.load_template(p))
+                else:
+                    # --- Standard PNG Thumbnail ---
+                    btn.setIcon(QIcon(img_path))
+                    btn.toggled.connect(lambda checked, p=img_path, z=z_index: self.toggle_layer(checked, p, z))
+
                 btn.setIconSize(THUMBNAIL_SIZE)
                 btn.setToolTip(img_name)
-                
                 self.thumbnail_buttons[img_path] = btn
-                btn.toggled.connect(lambda checked, p=img_path, z=z_index: self.toggle_layer(checked, p, z))
                 
                 grid_layout.addWidget(btn, row, col)
                 col += 1
@@ -315,9 +397,15 @@ class SimplePhotoshop(QMainWindow):
         count = self.layer_list.count()
         for i in range(count):
             list_item = self.layer_list.item(i)
-            img_path = list_item.data(Qt.UserRole)
-            if img_path in self.active_layers:
-                self.active_layers[img_path].setZValue(count - i)
+            item_data = list_item.data(Qt.UserRole)
+            
+            # The top item in the UI list gets the highest Z-value
+            z_val = count - i 
+            
+            if item_data == "TEMPLATE_ITEM" and self.template_bg_item:
+                self.template_bg_item.setZValue(z_val)
+            elif item_data in self.active_layers:
+                self.active_layers[item_data].setZValue(z_val)
 
     def on_selection_changed(self):
         selected_items = self.scene.selectedItems()
@@ -371,57 +459,58 @@ class SimplePhotoshop(QMainWindow):
         super().keyPressEvent(event)
 
     def export_psd(self):
-        if not self.active_layers:
-            QMessageBox.information(self, "Export", "No layers selected.")
+        if not hasattr(self, 'current_template_path') or not self.current_template_path:
+            QMessageBox.warning(self, "Export", "Please click a Base PSD template from the menu first.")
             return
 
-        save_path, _ = QFileDialog.getSaveFileName(self, "Save PSD", "", "Photoshop Document (*.psd)")
+        save_path, _ = QFileDialog.getSaveFileName(self, "Save Assembled PSD", "", "Photoshop Document (*.psd)")
         if not save_path: return
 
         try:
-            psd_layers = []
-            sorted_items = sorted(self.active_layers.values(), key=lambda item: item.zValue(), reverse=True)
+            from psd_tools import PSDImage
+            psd_doc = PSDImage.open(self.current_template_path)
 
-            for item in sorted_items:
-                filepath = item.img_path
-                
-                # --- MASSIVE EXPORT SIMPLIFICATION ---
-                # We no longer need to resize or rotate! The item already holds the perfectly processed Image.
-                img = item.transformed_pil_img 
-                
-                # Because the bounding box matches exactly, the item's raw position IS the offset.
-                left_offset = int(item.scenePos().x())
-                top_offset = int(item.scenePos().y())
-                # -------------------------------------
-                
-                r, g, b, a = img.split()
-                channels = {-1: np.array(a), 0: np.array(r), 1: np.array(g), 2: np.array(b)}
-                
-                layer = nested_layers.Image(
-                    name=os.path.basename(filepath),
-                    visible=True,
-                    top=top_offset,
-                    left=left_offset,
-                    bottom=top_offset + img.height,
-                    right=left_offset + img.width,
-                    channels=channels
-                )
-                psd_layers.append(layer)
-
-            psd_document = nested_layers.nested_layers_to_psd(
-                psd_layers, 
-                color_mode=ColorMode.rgb, 
-                compression=Compression.raw,
-                size=(self.canvas_h, self.canvas_w) 
-            )
+            # We will iterate through the UI list from bottom to top.
+            # Bottom of the list = highest index (count - 1). Top of list = index 0.
+            count = self.layer_list.count()
             
-            with open(save_path, 'wb') as fd:
-                psd_document.write(fd)
+            is_above_template = False
+            bottom_insert_index = 0 # Keeps track of where to push background layers
 
-            QMessageBox.information(self, "Success", "PSD successfully exported!")
+            for i in range(count - 1, -1, -1):
+                list_item = self.layer_list.item(i)
+                item_data = list_item.data(Qt.UserRole)
+                
+                if item_data == "TEMPLATE_ITEM":
+                    # We crossed the threshold! Everything after this goes on top.
+                    is_above_template = True
+                    continue
+                    
+                if item_data in self.active_layers:
+                    item = self.active_layers[item_data]
+                    pil_img = item.transformed_pil_img 
+                    
+                    new_layer = psd_doc.create_pixel_layer(
+                        pil_img, 
+                        name=os.path.basename(item.img_path), 
+                        top=int(item.scenePos().y()), 
+                        left=int(item.scenePos().x())
+                    )
+                    
+                    if is_above_template:
+                        # Add to the very top of the PSD
+                        psd_doc.append(new_layer)
+                    else:
+                        # Insert at the very bottom of the PSD
+                        psd_doc.insert(bottom_insert_index, new_layer)
+                        bottom_insert_index += 1
+
+            psd_doc.save(save_path)
+            QMessageBox.information(self, "Success", "Assembled PSD successfully saved!")
+            
         except Exception as e:
-            QMessageBox.critical(self, "Export Error", str(e))
-
+            QMessageBox.critical(self, "Export Error", f"Failed to export PSD:\n{str(e)}")
+            
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
