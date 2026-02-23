@@ -9,7 +9,7 @@ class LocCollection:
         """
         self._data = {}
         # The exact regex pattern requested
-        self._pattern = re.compile(r'^(\s*)([\w\.\-]+):(\d+)\s*"(.*)"')
+        self._pattern = re.compile(r'^(\s*)([\w\.\-]+):(\d*)\s*"(.*)"')
         
         self._scan_directory(root_directory)
 
