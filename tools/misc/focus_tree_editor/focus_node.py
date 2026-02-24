@@ -395,6 +395,11 @@ class FocusNode(BaseNode):
             BoolProperty("FOCUS_FILTER_NECROMANTIC_FORGE",  attr_name="FOCUS_FILTER_NECROMANTIC_FORGE", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_NECROMANTIC_FORGE"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_NECROMANTIC_FORGE")),
             BoolProperty("FOCUS_FILTER_SAURONS_SCHEDULE",  attr_name="FOCUS_FILTER_SAURONS_SCHEDULE", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_SAURONS_SCHEDULE"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_SAURONS_SCHEDULE")),
             BoolProperty("FOCUS_FILTER_CONTEST_FOR_MIRKWOOD",  attr_name="FOCUS_FILTER_CONTEST_FOR_MIRKWOOD", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_CONTEST_FOR_MIRKWOOD"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_CONTEST_FOR_MIRKWOOD")),
+            BoolProperty("FOCUS_FILTER_VALES_CONFEDERATION",  attr_name="FOCUS_FILTER_VALES_CONFEDERATION", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_VALES_CONFEDERATION"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_VALES_CONFEDERATION")),
+            BoolProperty("FOCUS_FILTER_LIFE_ALONG_THE_ANDUIN",  attr_name="FOCUS_FILTER_LIFE_ALONG_THE_ANDUIN", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_LIFE_ALONG_THE_ANDUIN"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_LIFE_ALONG_THE_ANDUIN")),
+            BoolProperty("FOCUS_FILTER_RESTLESS_HUNGER",  attr_name="FOCUS_FILTER_RESTLESS_HUNGER", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_RESTLESS_HUNGER"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_RESTLESS_HUNGER")),
+            BoolProperty("FOCUS_FILTER_GUNDABAD_EXPEDITION",  attr_name="FOCUS_FILTER_GUNDABAD_EXPEDITION", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_GUNDABAD_EXPEDITION"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_GUNDABAD_EXPEDITION")),
+            BoolProperty("FOCUS_FILTER_RHUN_CIVIL_WAR",  attr_name="FOCUS_FILTER_RHUN_CIVIL_WAR", value_getter=lambda x:filter_getter(x, "FOCUS_FILTER_RHUN_CIVIL_WAR"),   value_setter=lambda x, v:filter_setter(x, v, "FOCUS_FILTER_RHUN_CIVIL_WAR")),
         ]
 
         
