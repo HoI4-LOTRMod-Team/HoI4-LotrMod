@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QHBoxLayout,
                                QFileDialog, QMessageBox, QListWidget, QListWidgetItem,
                                QAbstractItemView, QGraphicsPixmapItem, QGraphicsItem,
                                QSlider, QLabel, QFormLayout, QSpinBox, QGraphicsRectItem,
-                               QGroupBox)
+                               QGroupBox, QSplitter, QStackedWidget)
 from PySide6.QtGui import QPixmap, QIcon, QPainter, QPen, QBrush, QImage
 from PySide6.QtCore import Qt, QSize
 
@@ -28,17 +28,14 @@ class DraggableLayerItem(QGraphicsPixmapItem):
         self.img_path = img_path
         self.pil_img = Image.open(img_path).convert("RGBA")
         
-        # We track our own scale and rotation now, instead of using Qt's hardware transforms
         self.current_scale = 1.0
         self.current_rot = 0.0
         self.transformed_pil_img = self.pil_img
-        self._img_data = None # Holds raw bytes in memory so QImage doesn't crash
+        self._img_data = None 
         
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsMovable)
 
     def update_transform(self, scale, rot):
-        """Uses Pillow to mathematically resample the image live."""
-        # Save old center in scene coordinates to prevent the item from jumping when resized
         old_scene_center = self.scenePos() + self.boundingRect().center() if self.scene() else None
         
         self.current_scale = scale
@@ -56,12 +53,10 @@ class DraggableLayerItem(QGraphicsPixmapItem):
         
         self.transformed_pil_img = img
         
-        # Convert raw Pillow bytes into a QPixmap
         self._img_data = img.tobytes("raw", "RGBA")
         qimg = QImage(self._img_data, img.width, img.height, QImage.Format_RGBA8888)
         self.setPixmap(QPixmap.fromImage(qimg))
         
-        # Shift position so the visual center remains exactly where it was
         if old_scene_center:
             new_center_local = self.boundingRect().center()
             self.setPos(old_scene_center.x() - new_center_local.x(), old_scene_center.y() - new_center_local.y())
@@ -70,15 +65,13 @@ class DraggableLayerItem(QGraphicsPixmapItem):
         super().paint(painter, option, widget)
         if self.isSelected():
             pen = QPen(Qt.white, 1, Qt.DashLine)
-            pen.setCosmetic(True) # Ensures the dashed line stays 1px thick even when zoomed in 1000%
+            pen.setCosmetic(True) 
             painter.setPen(pen)
             painter.drawRect(self.boundingRect())
 
 class ZoomGraphicsView(QGraphicsView):
     def __init__(self, scene):
         super().__init__(scene)
-        # We purposely REMOVED the SmoothPixmapTransform here! 
-        # Now, when you zoom in, Qt uses 'Nearest Neighbor' to show you the raw, chunky pixels.
         self.setBackgroundBrush(Qt.darkGray)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setDragMode(QGraphicsView.ScrollHandDrag) 
@@ -98,7 +91,7 @@ class SimplePhotoshop(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Simple Element Compositor")
-        self.resize(1200, 750)
+        self.resize(2100, 1150)
 
         self.active_layers = {}      
         self.thumbnail_buttons = {}  
@@ -117,26 +110,37 @@ class SimplePhotoshop(QMainWindow):
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
         main_layout = QHBoxLayout(main_widget)
+        
+        # 1. Use QSplitter to allow the user to resize panels
+        self.main_splitter = QSplitter(Qt.Horizontal)
+        main_layout.addWidget(self.main_splitter)
 
+        # --- LEFT PANEL (Assets) ---
         left_panel = QWidget()
         left_layout = QVBoxLayout(left_panel)
         left_layout.setContentsMargins(0, 0, 0, 0)
 
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        self.scroll_content = QWidget()
-        self.scroll_layout = QVBoxLayout(self.scroll_content)
-        self.scroll_layout.setAlignment(Qt.AlignTop)
-        scroll_area.setWidget(self.scroll_content)
+        # Top Section: Grid for Folder Buttons
+        self.folder_btn_container = QWidget()
+        self.folder_btn_layout = QGridLayout(self.folder_btn_container)
+        self.folder_btn_layout.setAlignment(Qt.AlignTop)
+
+        # Middle Section: Stacked widget to switch between icon grids
+        self.icon_stacked_widget = QStackedWidget()
+        self.empty_page = QWidget() # Page 0: Represents "All Folders Collapsed"
+        self.icon_stacked_widget.addWidget(self.empty_page)
 
         export_btn = QPushButton("Export to PSD")
         export_btn.setMinimumHeight(40)
         export_btn.setStyleSheet("font-weight: bold; background-color: #2d89ef; color: white;")
         export_btn.clicked.connect(self.export_psd)
 
-        left_layout.addWidget(scroll_area)
+        # Add the container directly instead of the scroll area
+        left_layout.addWidget(self.folder_btn_container)
+        left_layout.addWidget(self.icon_stacked_widget)
         left_layout.addWidget(export_btn)
         
+        # --- RIGHT PANEL (Workspace) ---
         right_side_container = QWidget()
         right_side_layout = QVBoxLayout(right_side_container)
         right_side_layout.setContentsMargins(0, 0, 0, 0)
@@ -156,9 +160,9 @@ class SimplePhotoshop(QMainWindow):
         
         self.view = ZoomGraphicsView(self.scene)
 
-        right_panel = QWidget()
-        right_layout = QVBoxLayout(right_panel)
-        right_layout.setContentsMargins(0, 0, 0, 0)
+        sidebar_panel = QWidget()
+        sidebar_layout = QVBoxLayout(sidebar_panel)
+        sidebar_layout.setContentsMargins(0, 0, 0, 0)
         
         canvas_group = QGroupBox("Document Canvas")
         canvas_layout = QHBoxLayout(canvas_group)
@@ -182,17 +186,17 @@ class SimplePhotoshop(QMainWindow):
         self.layer_list.setDragDropMode(QAbstractItemView.InternalMove)
         self.layer_list.model().rowsMoved.connect(self.sync_z_values)
 
-        right_layout.addWidget(canvas_group, 0)
-        right_layout.addWidget(self.layer_list, 1)
+        sidebar_layout.addWidget(canvas_group, 0)
+        sidebar_layout.addWidget(self.layer_list, 1)
 
         workspace_layout.addWidget(self.view, 3)
-        workspace_layout.addWidget(right_panel, 1)
+        workspace_layout.addWidget(sidebar_panel, 1)
 
         props_group = QGroupBox("Transform Properties")
         props_layout = QFormLayout(props_group)
         
         self.scale_slider = QSlider(Qt.Horizontal)
-        self.scale_slider.setRange(1, 200) 
+        self.scale_slider.setRange(1, 150) 
         self.scale_slider.setValue(100)
         self.scale_slider.valueChanged.connect(self.apply_transform)
         
@@ -214,8 +218,10 @@ class SimplePhotoshop(QMainWindow):
         right_side_layout.addWidget(workspace_widget, 1)
         right_side_layout.addWidget(props_group, 0)
 
-        main_layout.addWidget(left_panel, 1)
-        main_layout.addWidget(right_side_container, 4)
+        # Assemble Splitter and apply new default ratios
+        self.main_splitter.addWidget(left_panel)
+        self.main_splitter.addWidget(right_side_container)
+        self.main_splitter.setSizes([450, 850])
         
         self.update_canvas_size()
 
@@ -230,7 +236,6 @@ class SimplePhotoshop(QMainWindow):
     def load_template(self, psd_path):
         from psd_tools import PSDImage
         
-        # 1. Clear existing PNG layers
         for img_path, item in list(self.active_layers.items()):
             self.scene.removeItem(item)
             if img_path in self.thumbnail_buttons:
@@ -242,21 +247,15 @@ class SimplePhotoshop(QMainWindow):
             psd = PSDImage.open(psd_path)
             self.current_template_path = psd_path
             
-            # --- NEW: Add the Template to the Layer List ---
             list_item = QListWidgetItem(f"[Base PSD] {os.path.basename(psd_path)}")
-            # We use a special string "TEMPLATE_ITEM" to identify it later
             list_item.setData(Qt.UserRole, "TEMPLATE_ITEM") 
-            # Give it a slightly different background color so it stands out
             list_item.setBackground(QBrush(Qt.lightGray))
             self.layer_list.addItem(list_item)
-            # -----------------------------------------------
             
-            # 3. Update Canvas Size
             self.spin_w.setValue(psd.width)
             self.spin_h.setValue(psd.height)
             self.update_canvas_size()
 
-            # 4. Generate the flat preview image
             pil_preview = psd.composite()
             if pil_preview.mode != "RGBA":
                 pil_preview = pil_preview.convert("RGBA")
@@ -265,7 +264,6 @@ class SimplePhotoshop(QMainWindow):
             qimg = QImage(img_data, pil_preview.width, pil_preview.height, QImage.Format_RGBA8888)
             pixmap = QPixmap.fromImage(qimg)
 
-            # 5. Apply the background to the scene
             if self.template_bg_item:
                 self.scene.removeItem(self.template_bg_item)
                 
@@ -273,7 +271,6 @@ class SimplePhotoshop(QMainWindow):
             self.template_bg_item.setPos(0, 0)
             self.scene.addItem(self.template_bg_item)
             
-            # Sync Z-values right away so the template gets its correct depth
             self.sync_z_values()
             
         except Exception as e:
@@ -286,33 +283,58 @@ class SimplePhotoshop(QMainWindow):
 
         folders = [f for f in os.listdir(HARDCODED_PATH) if os.path.isdir(os.path.join(HARDCODED_PATH, f))]
         
+        self.folder_buttons = [] # Store reference to our top buttons for toggling
+
+        # Track grid positions for the top folder buttons
+        folder_row, folder_col = 0, 0
+        max_folder_cols = 3 # You can change this to 4 or 5 if you want wider rows
+
         for z_index, folder in enumerate(sorted(folders)):
             folder_path = os.path.join(HARDCODED_PATH, folder)
             
-            category_widget = QWidget()
-            category_layout = QVBoxLayout(category_widget)
-            category_layout.setContentsMargins(0, 0, 0, 0)
+            # --- 1. Create Top Folder Button ---
+            folder_btn = QPushButton(folder)
+            folder_btn.setCheckable(True)
+            folder_btn.setStyleSheet("""
+                QPushButton { font-weight: bold; padding: 8px 15px; background-color: #ddd; border-radius: 4px; }
+                QPushButton:checked { background-color: #2d89ef; color: white; }
+            """)
             
-            toggle_btn = QPushButton(f"v {folder}")
-            toggle_btn.setStyleSheet("text-align: left; font-weight: bold; padding: 5px; background-color: #ddd;")
+            # Add to the new grid layout
+            self.folder_btn_layout.addWidget(folder_btn, folder_row, folder_col)
+            self.folder_buttons.append(folder_btn)
             
+            # Increment columns, wrap to next row if needed
+            folder_col += 1
+            if folder_col >= max_folder_cols:
+                folder_col = 0
+                folder_row += 1
+            
+            # --- 2. Create the Scrollable Grid for this Folder ---
+            scroll_area = QScrollArea()
+            scroll_area.setWidgetResizable(True)
             content_widget = QWidget()
             grid_layout = QGridLayout(content_widget)
+            grid_layout.setAlignment(Qt.AlignTop)
+            scroll_area.setWidget(content_widget)
             
-            toggle_btn.clicked.connect(lambda checked=False, cw=content_widget, btn=toggle_btn, name=folder: self.toggle_category(cw, btn, name))
+            # Add to Stacked Widget (Page Index will be z_index + 1)
+            page_index = self.icon_stacked_widget.addWidget(scroll_area)
             
-            # Look for both PNGs and PSDs
+            # Connect the button click to our toggle logic
+            folder_btn.clicked.connect(lambda checked, b=folder_btn, idx=page_index: self.on_folder_btn_clicked(checked, b, idx))
+            
+            # --- 3. Populate Grid ---
             images = [img for img in os.listdir(folder_path) if img.lower().endswith(('.png', '.psd'))]
             
             row, col = 0, 0
             for img_name in images:
                 img_path = os.path.join(folder_path, img_name)
-                btn = QToolButton()
+                tool_btn = QToolButton()
                 is_template = img_name.lower().endswith('.psd')
-                btn.setCheckable(not is_template) 
+                tool_btn.setCheckable(not is_template) 
                 
                 if is_template:
-                    # --- Generate PSD Thumbnail ---
                     try:
                         from psd_tools import PSDImage
                         psd = PSDImage.open(img_path)
@@ -320,53 +342,51 @@ class SimplePhotoshop(QMainWindow):
                         if preview.mode != "RGBA":
                             preview = preview.convert("RGBA")
                         
-                        # Shrink it down before converting to Qt to save memory
                         preview.thumbnail((THUMBNAIL_SIZE.width(), THUMBNAIL_SIZE.height()))
                         
                         img_data = preview.tobytes("raw", "RGBA")
                         qimg = QImage(img_data, preview.width, preview.height, QImage.Format_RGBA8888)
-                        btn.setIcon(QIcon(QPixmap.fromImage(qimg)))
+                        tool_btn.setIcon(QIcon(QPixmap.fromImage(qimg)))
                     except Exception as e:
                         print(f"Could not generate thumbnail for {img_name}: {e}")
-                        btn.setIcon(QIcon()) # Empty fallback icon
+                        tool_btn.setIcon(QIcon()) 
                         
-                    btn.clicked.connect(lambda checked, p=img_path: self.load_template(p))
+                    tool_btn.clicked.connect(lambda checked, p=img_path: self.load_template(p))
                 else:
-                    # --- Standard PNG Thumbnail ---
-                    btn.setIcon(QIcon(img_path))
-                    btn.toggled.connect(lambda checked, p=img_path, z=z_index: self.toggle_layer(checked, p, z))
+                    tool_btn.setIcon(QIcon(img_path))
+                    tool_btn.toggled.connect(lambda checked, p=img_path, z=z_index: self.toggle_layer(checked, p, z))
 
-                btn.setIconSize(THUMBNAIL_SIZE)
-                btn.setToolTip(img_name)
-                self.thumbnail_buttons[img_path] = btn
+                tool_btn.setIconSize(THUMBNAIL_SIZE)
+                tool_btn.setToolTip(img_name)
+                self.thumbnail_buttons[img_path] = tool_btn
                 
-                grid_layout.addWidget(btn, row, col)
+                grid_layout.addWidget(tool_btn, row, col)
                 col += 1
-                if col >= 3:
+                if col >= 7: # 7 columns max
                     col = 0; row += 1
                     
-            category_layout.addWidget(toggle_btn)
-            category_layout.addWidget(content_widget)
-            self.scroll_layout.addWidget(category_widget)
-
-    def toggle_category(self, content_widget, btn, folder_name):
-        is_visible = content_widget.isVisible()
-        content_widget.setVisible(not is_visible)
-        btn.setText(f"v {folder_name}" if not is_visible else f"> {folder_name}")
+    def on_folder_btn_clicked(self, checked, clicked_btn, page_index):
+        if checked:
+            # Enforce radio-button like exclusivity
+            for btn in self.folder_buttons:
+                if btn != clicked_btn:
+                    btn.setChecked(False)
+            # Switch to this folder's page
+            self.icon_stacked_widget.setCurrentIndex(page_index)
+        else:
+            # If user unclicks the currently active button, return to the empty page
+            self.icon_stacked_widget.setCurrentIndex(0)
 
     def toggle_layer(self, checked, img_path, default_z_index):
         if checked:
             item = DraggableLayerItem(img_path)
             
-            # Auto-Fit logic mapped to our new Pillow update function
             img_w = item.pil_img.width
             img_h = item.pil_img.height
             scale = min(self.canvas_w / img_w, self.canvas_h / img_h)
             
-            # Initial generation of the downsampled image
             item.update_transform(scale, 0.0) 
             
-            # Center it on the canvas
             center = item.boundingRect().center()
             target_x = (self.canvas_w / 2) - center.x()
             target_y = (self.canvas_h / 2) - center.y()
@@ -399,7 +419,6 @@ class SimplePhotoshop(QMainWindow):
             list_item = self.layer_list.item(i)
             item_data = list_item.data(Qt.UserRole)
             
-            # The top item in the UI list gets the highest Z-value
             z_val = count - i 
             
             if item_data == "TEMPLATE_ITEM" and self.template_bg_item:
@@ -413,7 +432,6 @@ class SimplePhotoshop(QMainWindow):
             self._updating_ui = True
             item = selected_items[0]
             
-            # Read our custom stored variables instead of Qt's hardware variables
             current_scale = int(item.current_scale * 100)
             current_rot = int(item.current_rot)
             
@@ -438,7 +456,6 @@ class SimplePhotoshop(QMainWindow):
         scale_val = self.scale_slider.value()
         rot_val = self.rot_slider.value()
         
-        # Trigger the live Pillow generation
         item.update_transform(scale_val / 100.0, rot_val)
         
         self.scale_label.setText(f"{scale_val}%")
@@ -470,19 +487,15 @@ class SimplePhotoshop(QMainWindow):
             from psd_tools import PSDImage
             psd_doc = PSDImage.open(self.current_template_path)
 
-            # We will iterate through the UI list from bottom to top.
-            # Bottom of the list = highest index (count - 1). Top of list = index 0.
             count = self.layer_list.count()
-            
             is_above_template = False
-            bottom_insert_index = 0 # Keeps track of where to push background layers
+            bottom_insert_index = 0 
 
             for i in range(count - 1, -1, -1):
                 list_item = self.layer_list.item(i)
                 item_data = list_item.data(Qt.UserRole)
                 
                 if item_data == "TEMPLATE_ITEM":
-                    # We crossed the threshold! Everything after this goes on top.
                     is_above_template = True
                     continue
                     
@@ -498,10 +511,8 @@ class SimplePhotoshop(QMainWindow):
                     )
                     
                     if is_above_template:
-                        # Add to the very top of the PSD
                         psd_doc.append(new_layer)
                     else:
-                        # Insert at the very bottom of the PSD
                         psd_doc.insert(bottom_insert_index, new_layer)
                         bottom_insert_index += 1
 
