@@ -203,7 +203,7 @@ political_actions = {
 		}
 	}
 
-	emergency_weapons_stockpile = {
+	emergency_weapons_stockpile = { # TODO: locs
 		icon = GFX_decision_civilian_life_peasants
 
 		fire_only_once = yes
@@ -236,7 +236,7 @@ political_actions = {
 		}
 	}
 
-	emergency_musters = {
+	emergency_musters = { # TODO: locs	
 		icon = GFX_decision_generic_army_1
 
 		fire_only_once = yes
@@ -262,7 +262,7 @@ political_actions = {
 		}
 	}
 
-	delayed_war_declaration = {
+	delayed_war_declaration = { # TODO: locs
 		icon = generic_research
 
 		fire_only_once = no
@@ -338,6 +338,7 @@ economy_decisions = {
 			 check_variable = { node_goal < num_of_supply_nodes } #if the number of supply nodes exceeds the old number by +3, immediately cancel
 		}
 	}
+	
 	seize_some_trains_woo = { #repeating train seize
 
 		icon = generic_4	
@@ -368,7 +369,201 @@ economy_decisions = {
 			}
 			add_stability = -0.05
 		}
-	}			
+	}	
+	
+	infrastructure_building_slot = {
+
+		icon = generic_construction
+
+        allowed = {
+            always = yes
+        }
+
+        cost = 100
+        fire_only_once = no
+
+        days_re_enable = 30
+
+		available = {
+			any_owned_state = {
+				NOT = { has_state_flag = infrastructure_building_slot_flag }
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = infrastructure
+					size < 1
+				}
+			}
+		}
+
+		visible = {
+			any_owned_state = {
+				NOT = { has_state_flag = infrastructure_building_slot_flag }
+				is_fully_controlled_by = ROOT
+				free_building_slots = {
+					building = infrastructure
+					size < 1
+				}
+			}
+		}
+
+        complete_effect = {
+			random_owned_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+            		free_building_slots = {
+						building = industrial_complex
+						size > 1
+						include_locked = yes
+					}
+					free_building_slots = {
+						building = infrastructure
+						size < 1
+					}
+					NOT = { has_state_flag = infrastructure_building_slot_flag }
+				}
+				add_extra_state_shared_building_slots = 1
+				set_state_flag = infrastructure_building_slot_flag
+			}
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				factor = 10
+				has_political_power > 175 #Spend on other things first
+				any_owned_state = { free_building_slots = { building = industrial_complex size < 1 include_locked = no } }
+			}
+		}
+    }
+
+    war_building_slot = {
+
+    	icon = generic_construction
+
+        allowed = {
+            always = yes
+        }
+
+        cost = 50
+        fire_only_once = no
+
+        available = {
+			IF = { 
+				limit = { 
+					OR = { 
+						has_dlc = "Man the Guns" 	
+						has_dlc = "By Blood Alone" 
+					}
+				}
+				has_war_with_non_exiled_country = yes   
+			}
+			ELSE = {
+				has_war = yes
+			}
+			any_owned_state = {
+				NOT = { has_state_flag = war_building_slot_flag }
+				is_fully_controlled_by = ROOT
+			}
+		}
+
+        visible = {
+			has_war = yes
+			any_owned_state = {
+				NOT = { has_state_flag = war_building_slot_flag }
+				is_fully_controlled_by = ROOT
+			}
+		}
+
+        complete_effect = {
+        	add_war_support = -0.025
+			add_stability = -0.025
+			if = {
+				limit = {
+					any_owned_state = {
+						is_fully_controlled_by = ROOT
+            			free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+						NOT = { has_state_flag = war_building_slot_flag }
+						infrastructure > 4
+					}
+				}
+				random_owned_state = {
+					limit = {
+						is_fully_controlled_by = ROOT
+            			free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+						NOT = { has_state_flag = war_building_slot_flag }
+						infrastructure > 4
+					}
+					add_extra_state_shared_building_slots = 1
+					set_state_flag = war_building_slot_flag
+				}
+			}
+			else_if = {
+				limit = {
+					any_owned_state = {
+						is_fully_controlled_by = ROOT
+            			free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+						NOT = { has_state_flag = war_building_slot_flag }
+						infrastructure > 2
+					}
+				}
+				random_owned_state = {
+					limit = {
+						is_fully_controlled_by = ROOT
+            			free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+						NOT = { has_state_flag = war_building_slot_flag }
+						infrastructure > 2
+					}
+					add_extra_state_shared_building_slots = 1
+					set_state_flag = war_building_slot_flag
+				}
+			}
+			else = {
+				random_owned_state = {
+					limit = {
+						is_fully_controlled_by = ROOT
+            			free_building_slots = {
+							building = industrial_complex
+							size > 1
+							include_locked = yes
+						}
+						NOT = { has_state_flag = war_building_slot_flag }
+						infrastructure > 4
+					}
+					add_extra_state_shared_building_slots = 1
+					set_state_flag = war_building_slot_flag
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 10
+				all_owned_state = { free_building_slots = { building = industrial_complex size < 1 include_locked = no } }
+			}
+			modifier = {
+				any_owned_state = {
+					infrastructure > 3
+					free_building_slots = { building = industrial_complex size > 0 include_locked = no }
+				}
+				factor = 0
+			}
+		}
+    }
 }
 
 propaganda_efforts = {
@@ -533,10 +728,6 @@ propaganda_efforts = {
 
 }
 
-operations = {
-	
-}
-
 special_projects = {
 	focus_explosives_production_on = {
 		icon = GFX_decision_evil_web
@@ -699,7 +890,7 @@ foreign_politics = {
 	object_to_attaches = {
 
 		allowed = {
-            has_dlc = "Waking the Tiger"
+            always = no # NOTE: I've disabled this decision because it seems to not be used a lot and be mostly clutter. - H
         }
 
         cost = 50
@@ -749,204 +940,11 @@ foreign_politics = {
 	}
 }
 
-economy_decisions = {
-	infrastructure_building_slot = {
-
-		icon = generic_construction
-
-        allowed = {
-            always = yes
-        }
-
-        cost = 100
-        fire_only_once = no
-
-        days_re_enable = 30
-
-	available = {
-		any_owned_state = {
-			NOT = { has_state_flag = infrastructure_building_slot_flag }
-			is_fully_controlled_by = ROOT
-			free_building_slots = {
-				building = infrastructure
-				size < 1
-			}
-		}
-	}
-
-	visible = {
-		any_owned_state = {
-			NOT = { has_state_flag = infrastructure_building_slot_flag }
-			is_fully_controlled_by = ROOT
-			free_building_slots = {
-				building = infrastructure
-				size < 1
-			}
-		}
-	}
-
-        complete_effect = {
-			random_owned_state = {
-				limit = {
-					is_fully_controlled_by = ROOT
-            		free_building_slots = {
-						building = industrial_complex
-						size > 1
-						include_locked = yes
-					}
-					free_building_slots = {
-						building = infrastructure
-						size < 1
-					}
-					NOT = { has_state_flag = infrastructure_building_slot_flag }
-				}
-				add_extra_state_shared_building_slots = 1
-				set_state_flag = infrastructure_building_slot_flag
-			}
-		}
-		ai_will_do = {
-			base = 0
-			modifier = {
-				factor = 10
-				has_political_power > 175 #Spend on other things first
-				any_owned_state = { free_building_slots = { building = industrial_complex size < 1 include_locked = no } }
-			}
-		}
-    }
-
-    war_building_slot = {
-
-    	icon = generic_construction
-
-        allowed = {
-            always = yes
-        }
-
-        cost = 50
-        fire_only_once = no
-
-        available = {
-			IF = { 
-				limit = { 
-					OR = { 
-						has_dlc = "Man the Guns" 	
-						has_dlc = "By Blood Alone" 
-					}
-				}
-				has_war_with_non_exiled_country = yes   
-			}
-			ELSE = {
-				has_war = yes
-			}
-			any_owned_state = {
-				NOT = { has_state_flag = war_building_slot_flag }
-				is_fully_controlled_by = ROOT
-			}
-		}
-
-        visible = {
-			has_war = yes
-			any_owned_state = {
-				NOT = { has_state_flag = war_building_slot_flag }
-				is_fully_controlled_by = ROOT
-			}
-		}
-
-        complete_effect = {
-        	add_war_support = -0.025
-			add_stability = -0.025
-			if = {
-				limit = {
-					any_owned_state = {
-						is_fully_controlled_by = ROOT
-            			free_building_slots = {
-							building = industrial_complex
-							size > 1
-							include_locked = yes
-						}
-						NOT = { has_state_flag = war_building_slot_flag }
-						infrastructure > 4
-					}
-				}
-				random_owned_state = {
-					limit = {
-						is_fully_controlled_by = ROOT
-            			free_building_slots = {
-							building = industrial_complex
-							size > 1
-							include_locked = yes
-						}
-						NOT = { has_state_flag = war_building_slot_flag }
-						infrastructure > 4
-					}
-					add_extra_state_shared_building_slots = 1
-					set_state_flag = war_building_slot_flag
-				}
-			}
-			else_if = {
-				limit = {
-					any_owned_state = {
-						is_fully_controlled_by = ROOT
-            			free_building_slots = {
-							building = industrial_complex
-							size > 1
-							include_locked = yes
-						}
-						NOT = { has_state_flag = war_building_slot_flag }
-						infrastructure > 2
-					}
-				}
-				random_owned_state = {
-					limit = {
-						is_fully_controlled_by = ROOT
-            			free_building_slots = {
-							building = industrial_complex
-							size > 1
-							include_locked = yes
-						}
-						NOT = { has_state_flag = war_building_slot_flag }
-						infrastructure > 2
-					}
-					add_extra_state_shared_building_slots = 1
-					set_state_flag = war_building_slot_flag
-				}
-			}
-			else = {
-				random_owned_state = {
-					limit = {
-						is_fully_controlled_by = ROOT
-            			free_building_slots = {
-							building = industrial_complex
-							size > 1
-							include_locked = yes
-						}
-						NOT = { has_state_flag = war_building_slot_flag }
-						infrastructure > 4
-					}
-					add_extra_state_shared_building_slots = 1
-					set_state_flag = war_building_slot_flag
-				}
-			}
-		}
-		ai_will_do = {
-			factor = 1
-			modifier = {
-				factor = 10
-				all_owned_state = { free_building_slots = { building = industrial_complex size < 1 include_locked = no } }
-			}
-			modifier = {
-				any_owned_state = {
-					infrastructure > 3
-					free_building_slots = { building = industrial_complex size > 0 include_locked = no }
-				}
-				factor = 0
-			}
-		}
-    }
-}
-
 foreign_support = {
 
 }
 
+operations = {
+	
+}
 
