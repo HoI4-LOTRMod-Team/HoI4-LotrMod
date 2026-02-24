@@ -31,28 +31,28 @@ request_template = {
                 # }
                 {
                     "file_data": {
-                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/bmwno9zm6jhj", 
+                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/lratca3ktf8s", 
                         "mime_type": "image/png"
                     }
                 },
                 {
                     "file_data": {
-                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/tv80v7vhy9rl", 
+                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/e2vqaxlxnpy6", 
                         "mime_type": "image/png"
                     }
                 },
                 {
                     "file_data": {
-                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/s6863omf5d5y", 
+                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/q0uidxakun2p", 
                         "mime_type": "image/png"
                     }
                 },
-                {
-                    "file_data": {
-                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/q8qtp0mm1ra9", 
-                        "mime_type": "image/png"
-                    }
-                },
+                # {
+                #     "file_data": {
+                #         "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/q8qtp0mm1ra9", 
+                #         "mime_type": "image/png"
+                #     }
+                # },
             ]
         }],
         "generationConfig": {
@@ -73,6 +73,7 @@ random_insert = ""
 
 random_chance = 0.5
 
+# FOCUS ICONS
 # prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. 
 # I've attached some example images as a style guide, which would correspond to the following prompts:
 # "A trio of medieval soldiers with leather armor and swords",
@@ -96,7 +97,21 @@ random_chance = 0.5
 # **Subject to generate:** PROMPT
 # """
 
-prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. You will be generating images of laurels, decorations and frames for various icons and UI components.
+
+# LAURELS
+# prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. You will be generating images of laurels, decorations and frames for various icons and UI components.
+# I've attached some example images of such elements as a style guide.
+
+# The final icon will be displayed at a small size. To ensure clarity at this scale: Focus on a **strong, recognizable silhouette**.
+
+# **Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
+
+# **Prompt to generate:** PROMPT
+# """
+
+
+# GENERIC DECORATIVE
+prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. You will be generating generic decorative assets for various icons and UI components, such as ribbons, dividers, decorations etc.
 I've attached some example images of such elements as a style guide.
 
 The final icon will be displayed at a small size. To ensure clarity at this scale: Focus on a **strong, recognizable silhouette**.
@@ -107,107 +122,119 @@ The final icon will be displayed at a small size. To ensure clarity at this scal
 """
 
 
+# # GENERIC ASSETS
+# prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. You will be generating generic assets for various icons and UI components.
+# I've attached some example images of such elements as a style guide.
+
+# The final icon will be displayed at a small size. To ensure clarity at this scale: Focus on a **strong, recognizable silhouette**.
+
+# **Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
+
+# **Prompt to generate:** PROMPT
+# """
+
+
 prompt_list = [
-"Golden laurel wreath with glowing white tree blossoms, dark background, UI icon asset",
-"Circular frame made of braided silver and starlight, elegant elven UI element, dark background",
-"Jagged black iron ring glowing with intense red heat, dark background, Mordor UI frame",
-"Heavy bronze octagonal frame with carved dwarven geometric runes, dark background, UI asset",
-"Circular frame made of interlaced golden horsehair and green leather, Rohan UI element",
-"Industrial iron gear forming a circular frame, oily and dark, Isengard UI asset",
-"Wreath made of blackened, charred branches with glowing embers, dark background, UI element",
-"Elegant silver mithril vine forming a circular border with small blue gems, elven UI frame",
-"Wreath of golden autumn leaves, Lothlorien style, dark background, UI icon asset",
-"Gondorian white marble archway frame with silver trim, symmetrical, UI element",
-"Ring of heavy, rusty spiked chains, dark fantasy UI frame, dark background",
-"Golden sunburst frame with a flowing green banner at the bottom, UI asset",
-"Wreath of pale, glowing white flowers and silver leaves, dark background, UI element",
-"Dark obsidian jagged ring frame emitting faint white smoke, dark background, UI asset",
-"Frame made of dwarven gold coins and geometric stone blocks, UI element",
-"Winged silver swan motif forming a circular border, dark background, UI frame",
-"Rusty iron banner ribbon with sharp, jagged edges, dark fantasy UI element",
-"Golden victory ribbon with a tattered, ancient appearance, vintage fantasy UI",
-"Circular frame of intertwined thorny black vines, dark background, UI asset",
-"Bronze laurel wreath crossed with miniature dwarven axes at the base, UI element",
-"Frame made of thick, knotted hemp rope and weathered wood, Hobbit style UI",
-"Wreath of golden wheat and green vines, Shire agricultural UI frame, dark background",
-"Silver ribbon scrolling horizontally, elegant elvish script faintly visible, UI asset",
-"Parchment scroll banner with scorched edges and a red wax seal, UI element",
-"Circular border of glowing red volcanic rock and magma, dark background, UI frame",
-"Iron ring surrounded by green, poisonous-looking mist, dark background, UI asset",
-"Wreath made of shattered weapons and broken arrows, dark fantasy UI frame",
-"Gleaming silver shield border with a gold star at the crest, UI element",
-"Circular frame made of tightly woven chainmail, dark background, UI asset",
-"Banner made of stretched, dark leather with crude iron rivets, Orcish UI element",
-"Wreath of pale moonlight and mist, ethereal UI frame, dark background",
-"Heavy stone circular frame with glowing blue dwarven runes, dark background",
-"Frame of overlapping iron plates, like heavy armor, dark background, UI asset",
-"Golden ribbon banner folded symmetrically, royal Gondor style UI element",
-"Circular border made of intertwined snake skeletons, dark background, UI frame",
-"Wreath of pristine white swan feathers, dark background, UI icon asset",
-"Bronze circular frame with a hammered, imperfect texture, UI element",
-"Ribbon made of flowing, ethereal blue water, magical UI banner asset",
-"Jagged crown of black iron spikes forming a circular frame, dark background",
-"Frame made of polished wooden branches with green budding leaves, UI asset",
-"Circular border of crushed ice and frost, dark background, UI frame",
-"Wreath of dark, withered, twisted roots, dark fantasy UI element",
-"Banner made of fine, shimmering elven silk, silver and blue, UI asset",
-"Circular frame made of stacked, crude Orcish scimitars, dark background",
-"Golden frame resembling a massive ring with faint fiery script, UI element",
-"Wreath of bright, blooming athelas flowers and green leaves, dark background",
-"Thick iron chain frame broken at the top, dark fantasy UI asset",
-"Circular border of polished copper with geometric dwarven cuts, dark background",
-"Banner of dark crimson cloth with a jagged black border, UI element",
-"Frame made of pale, smooth bone and dark leather bindings, UI asset",
-"Wreath of glowing golden embers and ash, dark background, UI element",
-"Circular border of intricately carved white ivory, dark background, UI frame",
-"Ribbon banner made of woven gold threads, luxurious UI asset",
-"Frame made of ancient, moss-covered stone blocks, dark background",
-"Wreath of sharp, metallic bladed leaves, dark fantasy UI element",
-"Circular frame of swirling, dark shadow magic, UI asset, dark background",
-"Banner made of crisp, white linen with a silver trim, UI element",
-"Frame of interlocking bronze rings, dwarven chainmail style, UI asset",
-"Wreath of bright yellow sunflowers and green grass, Hobbit UI frame",
-"Circular border of dark, oily water and rusted metal, dark background",
-"Jagged piece of dark iron bent into a crude banner shape, UI element",
-"Frame made of polished green jade with silver accents, UI asset",
-"Wreath of red maple leaves and golden acorns, dark background, UI frame",
-"Circular border of glowing yellow eyes peering from dark shadows, UI asset",
-"Banner of tattered, mud-stained green cloth, ranger style UI element",
-"Frame made of intricately folded origami-like metal plates, UI asset",
-"Wreath of glowing blue mushrooms and dark cave crystals, dark background",
-"Circular border of burning coal and twisted iron wire, UI frame",
-"Ribbon banner made of pale, translucent parchment, ethereal UI asset",
-"Frame of large, rough-hewn diamonds and dark stone, Dwarven UI element",
-"Wreath of black feathers and silver talons, dark background, UI frame",
-"Circular border of swirling golden sand, dark background, UI asset",
-"Banner made of overlapping brown dragon scales, dark fantasy UI element",
-"Frame made of petrified wood and amber, dark background, UI asset",
-"Wreath of blooming red roses and sharp thorns, UI frame",
-"Circular border of ancient, cracked pottery shards, dark background",
-"Ribbon banner made of glowing white light, ethereal UI element",
-"Frame of rusted iron gears and snapping springs, goblin UI asset",
-"Wreath of dark purple thistles and silver wire, dark background, UI frame",
-"Circular border of floating, glowing runestones, dark background",
-"Banner of dark velvet with gold fringe tassels, regal UI element",
-"Frame made of massive, curved mammoth tusks, dark background, UI asset",
-"Wreath of sea-green kelp and pale seashells, nautical UI frame",
-"Circular border of dripping, glowing green venom, dark background, UI asset",
-"Ribbon banner made of woven spider silk, dark fantasy UI element",
-"Frame of highly polished obsidian mirrors, dark background, UI asset",
-"Wreath of vibrant green ferns and moss, dark background, UI frame",
-"Circular border of burning white holy fire, UI asset, dark background",
-"Banner of stiff, painted canvas with faded geometric patterns, UI element",
-"Frame made of interlocking golden keys, dark background, UI asset",
-"Wreath of pale, glowing crystals and silver dust, dark background, UI frame",
-"Circular border of thick, bubbling black tar, dark background, UI asset",
-"Ribbon banner made of hammered silver foil, UI element",
-"Frame of ancient, weather-beaten bronze shields, dark background, UI asset",
-"Wreath of bright orange autumn leaves and twigs, UI frame",
-"Circular border of swirling, dark storm clouds and lightning, UI asset",
-"Banner made of animal fur and leather straps, wildmen UI element",
-"Frame made of overlapping, razor-sharp flint stones, dark background, UI asset",
-"Wreath of golden apple blossoms and green leaves, UI frame",
-"Circular border of intricately carved red mahogany wood, UI asset"
+    "A tattered parchment ribbon banner, fantasy UI element, worn edges, dark shading, HOI4 focus icon style",
+    "An ornate golden metallic banner with elven filigree, fantasy UI asset, embossed",
+    "A heavy iron ribbon banner with dwarven geometric patterns, dark metal UI element",
+    "A torn red cloth pennant hanging from a dark steel rod, orcish UI asset",
+    "A smooth silver scroll unrolling, elegant fantasy UI background element",
+    "A bronze scroll piece with jagged edges, worn texture, UI element",
+    "A dark leather banner stretched between two bone spikes, fantasy UI",
+    "A silken green ribbon with a golden leaf motif, elven UI element",
+    "A stone carved ribbon banner, dwarven UI asset, heavy shadows",
+    "A rusted iron chain linking two metallic plates, UI background element",
+    "A glowing ethereal blue ribbon, magic fantasy UI asset",
+    "A burned parchment scrap, dark fantasy UI background, ashen edges",
+    "A pristine white marble banner with gold trim, Gondor style UI element",
+    "A weathered wood plank sign with iron rivets, Rohan style UI element",
+    "A braided gold and silver wire banner, elegant UI asset, metallic shine",
+    "Stylized bronze eagle wings spread open, metallic UI icon, HOI4 style",
+    "Dark jagged metallic bat wings, Mordor style UI asset, rusted iron",
+    "Elegant sweeping silver swan wings, elven UI element, polished",
+    "Stone carved raven wings, heavy and weathered UI asset",
+    "Golden interlocking geometric wings, dwarven UI motif, embossed",
+    "White feathered angelic wings with a soft glow, fantasy UI",
+    "Iron mechanical looking wings, dark fantasy UI element",
+    "A single stylized golden feather, embossed UI asset",
+    "A pair of ashen gray moth wings, dark fantasy UI icon",
+    "Sweeping copper falcon wings, worn metallic UI asset, verdigris",
+    "A stylized cluster of dark iron flames, Mordor style UI element",
+    "A burst of golden ethereal light rays, fantasy UI background",
+    "A silver multi-pointed star, elven style UI icon, glowing center",
+    "A jagged crack glowing with red magma, dark fantasy UI asset",
+    "A stylized swirling water drop in blue glass, fantasy UI element",
+    "A cluster of glowing green magic sparks, UI background element",
+    "A stylized heavy stone anvil, dwarven UI icon, carved details",
+    "A swirling vortex of shadows and smoke, dark magic UI asset",
+    "A brilliant white sunburst, Rohan style UI background, metallic gold",
+    "A stylized frozen ice crystal, fantasy UI element, sharp edges",
+    "A blank round wooden shield with an iron rim, fantasy UI background",
+    "An ornate silver kite shield with blank center, elven UI asset",
+    "A heavy octagonal bronze shield with runes, dwarven UI element",
+    "A jagged rusted iron shield with spikes, orcish UI background",
+    "A blank white marble crest with gold trim, Gondor style UI element",
+    "A dark steel triangular crest with a red glowing center, UI asset",
+    "A polished gold circular emblem with a floral border, UI background",
+    "A weathered leather buckler shield, fantasy UI element",
+    "A blank obsidian shield with silver veins, dark fantasy UI",
+    "A tall slender elven shield, silver and blue, UI background",
+    "Two crossed silver elven swords, decorative UI background, metallic",
+    "Two crossed heavy iron axes, dwarven UI background element",
+    "A broken steel longsword, worn fantasy UI icon",
+    "A jagged rusted scimitar, dark fantasy UI element, bloodstained iron",
+    "A cluster of bronze spear tips pointing upwards, UI asset",
+    "Two crossed wooden longbows, elven UI background",
+    "A glowing magical dagger, fantasy UI element",
+    "A spiked iron mace head, dark fantasy UI asset",
+    "Two crossed golden tridents, UI background element",
+    "A stylized bundle of silver arrows, UI icon, embossed",
+    "A stylized silver tree with curved branches, Gondor style UI element",
+    "A golden stylized oak leaf, elven UI asset, filigree",
+    "A tangled border of dark thorny vines, Mordor style UI frame",
+    "A border of elegant silver ivy leaves, elven UI frame",
+    "A cluster of golden wheat, Rohan style UI element",
+    "A twisted dead tree branch, dark fantasy UI background",
+    "A blooming white flower with a glowing center, magic UI asset",
+    "A stylized pinecone in bronze, UI element, metallic",
+    "Deep stone roots twisting together, dwarven UI background",
+    "A single glowing silver fern leaf, fantasy UI icon",
+    "A jagged iron crown with a red jewel, dark fantasy UI element",
+    "An elegant silver circlet with a clear gem, elven UI asset",
+    "A heavy blocky gold crown, dwarven UI icon, carved",
+    "A plain glowing golden ring, fantasy UI element, smooth gold",
+    "A winged silver helmet crest, Gondor style UI asset",
+    "A horse-head shaped bronze helm crest, Rohan style UI element",
+    "A twisted ring of dark magic, Mordor style UI asset, jagged metal",
+    "A laurel wreath of golden leaves, UI background element",
+    "A stylized crown of white tree branches, UI icon",
+    "A spiked iron collar, dark fantasy UI element",
+    "A carved stone tablet with glowing blue runes, dwarven UI asset",
+    "A circular border of interlocking elven knots, silver UI frame",
+    "A jagged black iron circular border, dark fantasy UI frame",
+    "A square frame made of heavily riveted bronze, dwarven UI element",
+    "A stylized golden archway, fantasy UI background",
+    "A dark stone pedestal with glowing red cracks, UI base element",
+    "A polished white marble column base, UI pedestal",
+    "A complex geometric gold and iron gear, dwarven UI asset",
+    "A swirling silver galaxy motif, magic UI background",
+    "A border of stylized bronze scales, dragon UI element",
+    "A carved wooden plaque with knotwork, Rohan UI base",
+    "A glowing ethereal magic circle, fantasy UI background",
+    "A rusted iron cage grating, dark fantasy UI background",
+    "A silver moon crescent, elven UI icon",
+    "A stylized golden sunburst medallion, UI asset",
+    "A pair of bronze lion heads, decorative UI flourish",
+    "A dark iron skull motif, dark fantasy UI element",
+    "A cascading waterfall of silver light, UI background",
+    "A pile of gold coins and gems, dwarven UI asset",
+    "A scattering of black ash and embers, Mordor UI background",
+    "A stylized glowing blue eye, magic UI element",
+    "A red glowing molten metal puddle, UI base element",
+    "A silver hourglass with glowing sand, fantasy UI icon",
+    "A bronze compass rose, fantasy UI element, worn",
+    "A pair of silver clasps with elven script, UI flourish"
 ]
 
 requests_list = [
