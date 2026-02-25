@@ -1331,3 +1331,36 @@ mir_evacuate_state_population = {
         add_manpower = temp_population_amount
     }
 }
+
+
+building_modifiers_init = {
+    set_variable = {
+        current_military_factory_mod = modifier@extra_military_factories
+    }
+
+    set_variable = {
+        current_civilian_factory_mod = modifier@extra_civilian_factories
+    }
+}
+
+building_modifiers_apply = {
+    if = {
+        limit = {
+            NOT = { check_variable = { modifier@extra_military_factories = current_military_factory_mod } }
+        }
+        multiply_variable = { current_military_factory_mod = -1 }
+        add_offsite_building = { type = arms_factory level = current_military_factory_mod }
+        set_variable = { current_military_factory_mod = modifier@extra_military_factories }
+        add_offsite_building = { type = arms_factory level = current_military_factory_mod }
+    }
+
+    if = {
+        limit = {
+            NOT = { check_variable = { modifier@extra_civilian_factories = current_civilian_factory_mod } }
+        }
+        multiply_variable = { current_civilian_factory_mod = -1 }
+        add_offsite_building = { type = industrial_complex level = current_civilian_factory_mod }
+        set_variable = { current_military_factory_mod = modifier@extra_civilian_factories }
+        add_offsite_building = { type = industrial_complex level = current_civilian_factory_mod }
+    }
+}
