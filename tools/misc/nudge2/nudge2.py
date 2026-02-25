@@ -296,7 +296,8 @@ class ProvincePropertiesDialog(QDialog):
         "terrain":   [
             "unknown", "ocean", "lakes", "forest", "hills", "mountain", 
             "plains", "dark_grounds", "urban", "jungle", "marsh", 
-            "desert", "water_fjords", "water_shallow_sea", "water_deep_ocean"
+            "desert", "water_fjords", "water_shallow_sea", "water_deep_ocean",
+            "tunnels", "moria", "khazaddum"
         ],
         "continent": [str(i) for i in range(16)] # 0-15
     }
