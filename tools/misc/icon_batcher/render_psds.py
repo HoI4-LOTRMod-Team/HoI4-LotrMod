@@ -4,7 +4,7 @@ from psd_tools import PSDImage
 # --- SETUP ---
 # Replace this string with the actual path to your folder.
 # The 'r' before the string handles Windows backslashes automatically.
-DIRECTORY_PATH = r"E:\PROJECTS\HOI4_LOTR\pds_pending" 
+DIRECTORY_PATH = r"E:\PROJECTS\HOI4_LOTR\psds_pending_2" 
 
 def batch_convert_psds(folder_path):
     target_dir = Path(folder_path)
