@@ -21,7 +21,7 @@ def proc_image_category(cat_str, cat, settings):
     img_size_x = cat["img_size_x"]
     img_size_y = cat["img_size_y"]
 
-    # Create list of categoy button-links
+    # Create list of category button-links
     nav_bar = ""
     for c in cat_list:
         if c == cat_str:
@@ -32,16 +32,27 @@ def proc_image_category(cat_str, cat, settings):
     # Parse GFX file, get list of GFX_entries and filepaths
     gfx_entries = gfxparser.parse_gfx_file(gfx_file)
 
-    # For each entry, convert to PNG and generate a <div>
     # Ensure the output directory exists
-    output_directory = "tools/gfx_search/images/"+cat_str
+    output_directory = "tools/gfx_search/images/" + cat_str
     os.makedirs(output_directory, exist_ok=True)
     image_divs = ""
+    
     for (gfx, file) in gfx_entries:
-        converted = imageconverter.convert_to_png(file, output_directory+"/"+gfx+".png")
+        # 1. Check if the image is already a PNG
+        if file.lower().endswith('.png'):
+            # Link directly: compute the relative path from the HTML file to the image
+            # replace('\\', '/') ensures the path is web-safe regardless of the OS it's built on
+            img_src = os.path.relpath(file, "tools/gfx_search").replace('\\', '/')
+        else:
+            # 2. Convert non-PNG files
+            out_path = output_directory + "/" + gfx + ".png"
+            imageconverter.convert_to_png(file, out_path)
+            img_src = "images/" + cat_str + "/" + gfx + ".png"
+            
+            # 3. Bug Fix: Use .append() instead of += for lists
+            all_images_list.append(out_path)
 
-        image_divs += "\n<div class=\"image-item img-thumbnail search-list-entry\" copy-to-clipboard-data=\""+gfx+"\" search-list-data=\""+gfx+"\"><img src=\"images/"+cat_str+"/"+gfx+".png"+"\"  loading=\"lazy\" alt=\""+gfx+"\"></div>"
-        all_images_list += output_directory+"/"+gfx+".png"
+        image_divs += "\n<div class=\"image-item img-thumbnail search-list-entry\" copy-to-clipboard-data=\""+gfx+"\" search-list-data=\""+gfx+"\"><img src=\""+img_src+"\"  loading=\"lazy\" alt=\""+gfx+"\"></div>"
 
     # Insert all elements into a template
     templatebuilder.write_template("tools/gfx_search/templates/gfx_search_category_template.html", "tools/gfx_search/"+cat_str+".html",
@@ -60,7 +71,7 @@ def proc_docs_category(cat_str, cat, settings):
     img_size_x = cat["img_size_x"]
     img_size_y = cat["img_size_y"]
 
-    # Create list of categoy button-links
+    # Create list of category button-links
     nav_bar = ""
     for c in cat_list:
         if c == cat_str:
@@ -89,7 +100,7 @@ def proc_docs_category(cat_str, cat, settings):
     )
 
 
-# Process eahc category individually
+# Process each category individually
 for cat_str in settings["categories"]:
     print("Processing: "+cat_str)
 
@@ -100,7 +111,6 @@ for cat_str in settings["categories"]:
         proc_image_category(cat_str, cat, settings)
 
 # Clean up all the images that we don't use
-directory_path = 'relative/path/to/your/directory'
 full_directory_path = os.path.join(os.getcwd(), "tools/gfx_search/images/")
 unusued_images_count = 0
 
@@ -108,8 +118,11 @@ unusued_images_count = 0
 png_files = [os.path.join(full_directory_path, file) for file in os.listdir(full_directory_path) if file.lower().endswith('.png') and os.path.isfile(os.path.join(full_directory_path, file))]
 
 # Iterate over the PNG files and remove those that are not in images_list
+# Converting paths to absolute to ensure reliable matching during cleanup
+absolute_images_list = [os.path.abspath(p) for p in all_images_list]
+
 for file_path in png_files:
-    if file_path not in all_images_list:
+    if file_path not in absolute_images_list:
         os.remove(file_path)
         unusued_images_count += 1
         #print(f"PNG file '{file_path}' removed.")
