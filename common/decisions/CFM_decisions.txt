@@ -1,9 +1,11 @@
 ################
-##### MIR ######
+##### CFM ######
 ################
 
 
 cfm_contest_for_mirkwood = {
+
+	# General
 
     cfm_attack_state_decision = {
 		icon = generic_research # TODO
@@ -136,6 +138,118 @@ cfm_contest_for_mirkwood = {
 		}
 	}
 
+	cfm_ambush_the_garrison_decision = {
+		icon = generic_research # TODO
+
+		fire_only_once = no
+		days_re_enable = 365 # only once a year
+		cost = 0
+		
+		custom_cost_trigger = {
+            command_power > 14
+        }
+		custom_cost_text = decision_cost_CP_15
+
+		allowed = {
+            OR = {
+			    tag = DGU
+                tag = SPI
+            }
+		}
+
+		target_root_trigger = {
+			has_cfm_active = yes
+            has_100_presence = yes
+			NOT = { has_non_aggression_pact_with = MIR }
+			OR = {
+				has_completed_focus = DGU_territorial_incursions
+				has_completed_focus = SPI_aggresive_stance
+			}
+		}
+
+		available = {
+			always = yes
+		}
+
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				divisions_in_state = {
+					size < 8
+					state = FROM
+				}
+			}
+			modifier = {
+				factor = 2
+				divisions_in_state = {
+					size > 12
+					state = FROM
+				}
+			}
+			modifier = {
+				factor = 2
+				divisions_in_state = {
+					size > 20
+					state = FROM
+				}
+			}
+			modifier = {
+				factor = 0
+				tag = DGU
+				check_variable = {
+					cfm_num_states_seized < 3
+				}
+			}
+			modifier = {
+				factor = 0
+				tag = SPI
+				check_variable = {
+					cfm_num_states_seized < 2
+				}
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = rng_50p_flag_6
+			}
+			modifier = {
+				factor = 1.5
+				has_country_flag = rng_30p_flag_2
+			}
+			modifier = {
+				factor = 0.25
+				has_country_flag = has_made_ambush
+			}
+		}
+
+		state_target = yes
+		targets = {
+            191 227 231 233 232 86 228 262 190 85 230 84 80 226 229
+        }
+		target_trigger = {
+			FROM = {
+                state_is_valid_cfm_target = yes
+            }
+            ROOT = {
+                has_cfm_active = yes
+                has_100_presence = yes
+            }
+		}
+		
+		complete_effect = {
+			hidden_effect = {
+                add_command_power = -15
+            }
+			set_country_flag = has_made_ambush
+			cfm_reset_presence = yes
+			damage_units = {
+				state = FROM
+				damage = 0.12
+				ratio = yes
+			}
+		}
+	}
+
 	cfm_lock_state_decision = {
 		icon = generic_research
 
@@ -163,6 +277,43 @@ cfm_contest_for_mirkwood = {
 		target_trigger = {
 			FROM = { has_state_flag = cfm_allowed }
 		}
+
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 2
+				OR = {
+					DGU = { has_over_50_presence = yes }
+					SPI = { has_over_50_presence = yes }
+				}
+			}
+			modifier = {
+				factor = 2
+				FROM = {
+					any_neighbor_state = {
+						is_controlled_by = DGU
+					}
+				}
+			}
+			modifier = {
+				factor = 1.5
+				FROM = {
+					any_neighbor_state = {
+						is_controlled_by = SPI
+					}
+				}
+			}
+			modifier = {
+				factor = 1.65
+				FROM = {
+					any_neighbor_state = {
+						controller = {
+							is_ai = no
+						}
+					}
+				}
+			}
+		}
 		
 		complete_effect = {
 			FROM = {
@@ -179,7 +330,10 @@ cfm_contest_for_mirkwood = {
 	}
 
 
-    cfm_dgu_sudden_assaults = {
+
+	# Dol Guldur Specific
+
+    cfm_dgu_sudden_assault = {
 		icon = generic_prepare_border_war
 		allowed = { original_tag = DGU }
 		
@@ -188,10 +342,13 @@ cfm_contest_for_mirkwood = {
 			
 			# Prevent using this to insta-win at the very end
 			has_under_70_presence = yes
+
+			NOT = { has_country_flag = has_cfm_decision_active }
 		}
 
 		visible = {
 			has_cfm_active = yes
+			has_completed_focus = DGU_territorial_incursions
 		}
 
 		cost = 25
@@ -207,10 +364,9 @@ cfm_contest_for_mirkwood = {
 		}
 
 		ai_will_do = {
-			factor = 0 # TODO
+			factor = 5
 		}
 	}
-
 
     cfm_dgu_dark_rituals = {
 		icon = generic_construction
@@ -218,20 +374,31 @@ cfm_contest_for_mirkwood = {
 
         visible = {
 			has_cfm_active = yes
+			has_completed_focus = DGU_territorial_incursions
 		}
 
 		available = {
 			# Requires at least some industrial base
 			num_of_civilian_factories > 0 
+
+			NOT = { has_country_flag = has_cfm_decision_active }
 		}
 
-		cost = 10
+		cost = 20
 		
 		# Duration of the modifier (180 days / 6 months)
 		days_remove = 180
 		
 		# Cooldown after it finishes before it can be taken again
 		days_re_enable = 180
+
+		complete_effect = {
+			set_country_flag = has_cfm_decision_active
+		}
+
+		remove_effect = {
+			clr_country_flag = has_cfm_decision_active
+		}
 
 		modifier = {
 			# Increase all presence gain by 15%
@@ -242,12 +409,201 @@ cfm_contest_for_mirkwood = {
 		}
 
 		ai_will_do = {
-			factor = 0 # TODO
+			factor = 3
+			modifier = {
+				factor = 2.5
+				MIR = { is_ai = no }
+				has_country_flag = rng_50p_flag_3
+			}
+		}
+	}
+
+	cfm_convert_presence_into_industry = {
+		icon = generic_research
+
+		fire_only_once = no
+		days_re_enable = 120
+		cost = 50
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 5
+				check_variable = { cfm_num_states_seized > 2 }
+			}
+			modifier = {
+				add = 5
+				check_variable = { cfm_num_states_seized > 3 }
+			}
+			modifier = {
+				add = 5
+				check_variable = { cfm_num_states_seized > 4 }
+			}
+			modifier = {
+				factor = 0.35
+				tag = DGU
+			}
+		}
+
+		allowed = {
+			OR = {
+				tag = DGU
+				tag = SPI
+			}
+		}
+
+		visible = {
+			has_cfm_active = yes
+		}
+
+		available = {
+			has_100_presence = yes
+		}
+		
+		complete_effect = {
+			cfm_reset_presence = yes
+			random_state = {
+				50 = {
+					random_state_add_building_slot_and_civ = yes
+				}
+				50 = {
+					random_state_add_building_slot_and_mil = yes
+				}
+			}
+			
+		}
+	}
+
+	cfm_convert_presence_into_pp = {
+		icon = generic_research
+
+		fire_only_once = no
+		days_re_enable = 120
+		cost = 50
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 5
+				check_variable = { cfm_num_states_seized > 2 }
+			}
+			modifier = {
+				add = 5
+				check_variable = { cfm_num_states_seized > 3 }
+			}
+			modifier = {
+				add = 5
+				check_variable = { cfm_num_states_seized > 4 }
+			}
+			modifier = {
+				factor = 0.35
+				tag = DGU
+			}
+		}
+
+		allowed = {
+			OR = {
+				tag = DGU
+				tag = SPI
+			}
+		}
+
+		visible = {
+			has_cfm_active = yes
+		}
+
+		available = {
+			has_100_presence = yes
+		}
+		
+		complete_effect = {
+			cfm_reset_presence = yes
+			add_political_power = 100
+		}
+	}
+
+	cfm_convert_presence_into_manpower = {
+		icon = generic_research
+
+		fire_only_once = no
+		days_re_enable = 120
+		cost = 50
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		allowed = {
+			OR = {
+				tag = DGU
+				tag = SPI
+			}
+		}
+
+		visible = {
+			has_cfm_active = yes
+		}
+
+		available = {
+			has_100_presence = yes
+		}
+		
+		complete_effect = {
+			cfm_reset_presence = yes
+			add_manpower = 500
 		}
 	}
 
 
+	# Spider Specific
 
+    cfm_spi_stoke_the_brood = {
+		icon = generic_construction
+		allowed = { original_tag = SPI }
+
+        visible = {
+			has_cfm_active = yes
+			has_completed_focus = SPI_aggresive_stance
+		}
+
+		available = {
+			NOT = { has_country_flag = has_cfm_decision_active }
+		}
+
+		cost = 25
+		
+		days_remove = 90
+		
+		days_re_enable = 120
+
+		complete_effect = {
+			set_country_flag = has_cfm_decision_active
+		}
+
+		remove_effect = {
+			clr_country_flag = has_cfm_decision_active
+		}
+
+		modifier = {
+			cfm_presence_gain = 0.035
+			
+			# Simulates diverting a factory by increasing consumer goods demand
+			civilian_factory_use = 1
+		}
+
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 2.5
+				MIR = { is_ai = no }
+				has_country_flag = rng_50p_flag_3
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = rng_30p_flag_3
+			}
+		}
+	}
 
 
 	# Mirkwood-specific
@@ -256,7 +612,7 @@ cfm_contest_for_mirkwood = {
 		icon = generic_research
 
 		fire_only_once = yes
-		cost = 50
+		cost = 20
 		custom_cost_trigger = {
 			command_power > 25
 		}
@@ -268,7 +624,23 @@ cfm_contest_for_mirkwood = {
 			tag = MIR
 		}
 
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 3
+				has_country_flag = rng_50p_flag_3
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					DGU = { is_ai = no }
+					SPI = { is_ai = no }
+				}
+			}
+		}
+
 		visible = {
+			has_cfm_active = yes
 			has_country_leader = {
 				character = MIR_thranduil
 				ruling_only = yes
@@ -276,10 +648,14 @@ cfm_contest_for_mirkwood = {
 		}
 
 		available = {
-			always = yes
+			NOT = { has_country_flag = has_cfm_decision_active }
 		}
 
 		complete_effect = {
+			hidden_effect = {
+                add_command_power = -25
+            }
+			set_country_flag = has_cfm_decision_active
 			DGU = {
 				add_ideas = CFM_the_kings_hunt
 			}
@@ -289,11 +665,12 @@ cfm_contest_for_mirkwood = {
 		}
 
 		remove_effect = {
+			clr_country_flag = has_cfm_decision_active
 			add_political_power = 50
 			add_war_support = 0.05
 
 			MIR_thranduil = {
-				gain_xp = 50
+				gain_xp = 75
 			}
 
 			DGU = {
@@ -309,7 +686,7 @@ cfm_contest_for_mirkwood = {
 		icon = generic_research
 
 		fire_only_once = yes
-		cost = 35
+		cost = 20
 		custom_cost_trigger = {
 			command_power > 25
 		}
@@ -321,7 +698,23 @@ cfm_contest_for_mirkwood = {
 			tag = MIR
 		}
 
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 3
+				has_country_flag = rng_50p_flag_3
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					DGU = { is_ai = no }
+					SPI = { is_ai = no }
+				}
+			}
+		}
+
 		visible = {
+			has_cfm_active = yes
 			has_country_leader = {
 				character = MIR_thranduil
 				ruling_only = yes
@@ -330,13 +723,18 @@ cfm_contest_for_mirkwood = {
 				is_unit_leader = yes
 			}
 			has_global_flag = fs_fellowship_departed
+			has_completed_focus = MIR_adaptive_presence_strategy
 		}
 
 		available = {
-			always = yes
+			NOT = { has_country_flag = has_cfm_decision_active }
 		}
 
 		complete_effect = {
+			hidden_effect = {
+                add_command_power = -25
+            }
+			set_country_flag = has_cfm_decision_active
 			DGU = {
 				add_ideas = CFM_legolas_hunt
 			}
@@ -346,8 +744,9 @@ cfm_contest_for_mirkwood = {
 		}
 
 		remove_effect = {
+			clr_country_flag = has_cfm_decision_active
 			MIR_legolas = {
-				gain_xp = 75
+				gain_xp = 100
 			}
 
 			DGU = {
@@ -363,7 +762,7 @@ cfm_contest_for_mirkwood = {
 		icon = generic_research
 
 		fire_only_once = yes
-		cost = 35
+		cost = 20
 		custom_cost_trigger = {
 			command_power > 25
 		}
@@ -375,7 +774,23 @@ cfm_contest_for_mirkwood = {
 			tag = MIR
 		}
 
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				factor = 3
+				has_country_flag = rng_50p_flag_3
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					DGU = { is_ai = no }
+					SPI = { is_ai = no }
+				}
+			}
+		}
+
 		visible = {
+			has_cfm_active = yes
 			has_country_leader = {
 				character = MIR_thranduil
 				ruling_only = yes
@@ -384,13 +799,18 @@ cfm_contest_for_mirkwood = {
 				is_unit_leader = yes
 			}
 			has_global_flag = fs_fellowship_departed
+			has_completed_focus = MIR_adaptive_presence_strategy
 		}
 
 		available = {
-			always = yes
+			NOT = { has_country_flag = has_cfm_decision_active }
 		}
 
 		complete_effect = {
+			hidden_effect = {
+                add_command_power = -25
+            }
+			set_country_flag = has_cfm_decision_active
 			DGU = {
 				add_ideas = CFM_tauriel_hunt
 			}
@@ -400,8 +820,9 @@ cfm_contest_for_mirkwood = {
 		}
 
 		remove_effect = {
+			clr_country_flag = has_cfm_decision_active
 			MIR_tauriel = {
-				gain_xp = 75
+				gain_xp = 100
 			}
 
 			DGU = {
@@ -414,71 +835,305 @@ cfm_contest_for_mirkwood = {
 	}
 
 
-	
+	cfm_secure_the_forest_narrows = {
+		icon = generic_research
+
+		fire_only_once = yes
+		cost = 15
+
+		allowed = {
+			tag = MIR
+		}
+
+		target_root_trigger = {
+			has_cfm_active = yes
+			controls_state = 190
+		}
+
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 3
+				has_country_flag = rng_50p_flag_3
+			}
+			modifier = {
+				factor = 2
+				OR = {
+					DGU = { is_ai = no }
+					SPI = { is_ai = no }
+				}
+			}
+		}
+
+		available = {
+			NOT = { has_country_flag = has_cfm_decision_active }
+			262 = { is_controlled_by = DGU }
+			divisions_in_state = {
+				size > 12
+				state = 190
+			}
+			DGU = {
+				has_under_70_presence = yes
+				has_over_50_presence = yes
+			}
+		}
+
+		state_target = yes
+		targets = { 190 }
+
+		target_trigger = {
+			always = yes
+		}
+		
+		complete_effect = {
+			# destroy infra in forest narrows, strongly reduce DGU presence
+			190 = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+					repair_speed_modifier = 0.35
+				}
+			}
+			DGU = {
+				add_ideas = CFM_secured_narrows
+			}
+		}
+	}
+
+	cfm_bolster_defenses_against = {
+		icon = generic_research
+
+		fire_only_once = yes
+		cost = 50
+
+		allowed = {
+			tag = MIR
+		}
+
+		target_root_trigger = {
+			has_cfm_active = yes
+			NOT = { has_country_flag = cfm_defenses_bolstered }
+			has_completed_focus = MIR_adaptive_presence_strategy
+		}
+
+		ai_will_do = {
+			factor = 2
+			modifier = {
+				factor = 3
+				has_country_flag = rng_50p_flag_5
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { is_ai = no }
+			}
+		}
+
+		available = {
+			NOT = { has_country_flag = has_cfm_decision_active }
+			custom_trigger_tooltip = {
+				tooltip = cfm_bolster_defenses_against_tt
+				MIR = {
+					any_controlled_state = {
+						any_neighbor_state = {
+							is_controlled_by = FROM
+						}
+						MIR = {
+							divisions_in_state = {
+								size = 24
+								state = PREV
+							}
+						}
+					}
+				}
+			}
+		}
+
+		targets = { MIR SPI }
+
+		target_trigger = {
+			FROM = {
+				has_cfm_active = yes
+			}
+		}
+		
+		complete_effect = {
+			set_country_flag = cfm_defenses_bolstered
+			FROM = {
+				add_ideas = CFM_defenses_bolstered
+			}
+		}
+	}
+
+	cfm_lay_trap_against = {
+		icon = generic_research
+
+		fire_only_once = yes
+		cost = 35
+
+		allowed = {
+			tag = MIR
+		}
+
+		target_root_trigger = {
+			has_cfm_active = yes
+			has_completed_focus = MIR_adaptive_presence_strategy
+		}
+
+		ai_will_do = {
+			factor = 1.5
+			modifier = {
+				factor = 3
+				has_country_flag = rng_50p_flag_4
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { is_ai = no }
+				has_country_flag = rng_50p_flag_1
+			}
+		}
+
+		available = {
+			NOT = { has_country_flag = has_cfm_decision_active }
+			intel_level_over = { 
+				target = FROM
+				army_intel > 0.5
+			}
+			FROM = {
+				has_under_70_presence = yes
+				has_over_50_presence = yes
+			}
+		}
+
+		targets = { MIR SPI }
+
+		target_trigger = {
+			FROM = {
+				has_cfm_active = yes
+			}
+		}
+		
+		complete_effect = {
+			FROM = {
+				add_manpower = -200
+				cfm_reset_presence = yes
+			}
+		}
+	}
+
+	cfm_increase_patrols = {
+		icon = generic_research
+
+		fire_only_once = no
+		cost = 10
+		custom_cost_trigger = {
+			command_power > 25
+		}
+		custom_cost_text = decision_cost_CP_25
+
+		days_remove = 70
+
+		allowed = {
+			tag = MIR
+		}
+
+		visible = {
+			has_cfm_active = yes
+		}
+
+		ai_will_do = {
+			factor = 4
+		}
+
+		available = {
+			NOT = { has_country_flag = has_cfm_decision_active }
+		}
+
+		modifier = {
+			weekly_manpower = -12
+			unit_upkeep_attrition_factor = 0.15
+		}
+
+		complete_effect = {
+			hidden_effect = {
+                add_command_power = -25
+            }
+			set_country_flag = has_cfm_decision_active
+			DGU = {
+				add_ideas = CFM_increased_patrols
+			}
+			SPI = {
+				add_ideas = CFM_increased_patrols
+			}
+		}
+
+		remove_effect = {
+			clr_country_flag = has_cfm_decision_active
+
+			DGU = {
+				remove_ideas = CFM_increased_patrols
+			}
+			SPI = {
+				remove_ideas = CFM_increased_patrols
+			}
+		}
+	}
+
+	cfm_airborne_patrols = {
+		icon = generic_research
+
+		fire_only_once = yes
+		cost = 10
+		custom_cost_trigger = {
+			command_power > 25
+		}
+		custom_cost_text = decision_cost_CP_25
+
+		days_remove = 70
+
+		allowed = {
+			tag = MIR
+		}
+
+		visible = {
+			has_cfm_active = yes
+			has_completed_focus = MIR_adaptive_presence_strategy
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+
+		available = {
+			NOT = { has_country_flag = has_cfm_decision_active }
+			has_equipment = {
+				archetype_generic_airframe > 5
+			}
+		}
+
+		complete_effect = {
+			hidden_effect = {
+                add_command_power = -25
+            }
+			set_country_flag = has_cfm_decision_active
+			DGU = {
+				add_ideas = CFM_air_patrols
+			}
+			SPI = {
+				add_ideas = CFM_air_patrols
+			}
+		}
+
+		remove_effect = {
+			air_experience = 15
+			clr_country_flag = has_cfm_decision_active
+
+			DGU = {
+				remove_ideas = CFM_air_patrols
+			}
+			SPI = {
+				remove_ideas = CFM_air_patrols
+			}
+		}
+	}
 
 }
-
-
-# TODO: add more decisions:
-
-# NOTE: make at least some of decisions dependnt on the "MIR_adaptive_presence" focus
-
-# ELVES:
-# 
-# 
-# Location-based:
-# burn the infected groves in X
-# 	one time decisions available as targeted to specific states. Destroys infrastructure/buildings in your own state, but lowers enemy presence gain for a time
-# 
-# Other:
-# Bolster defenses against X
-# 	lower presence gain by X if you have enough battalions in states. Is cancelled if no longer fulfilled
-# 
-# increase patrols
-# 	lower presence gain, but loose weekly manpower and some equipment
-# 
-# eagle patrols
-# 	lower presence, but require eagles in a certain area
-# 	
-# lay a trap
-# 	single use, subtract presence, but require a certain amount of intel over the enemy
-# 
-# political condemnation
-# 	lower presence gain, but cost pp
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# SPI / DGU:
-# 
-# Convert presence into factories
-# 
-# convert presence into manpower
-# 
-# convert presence into pp
-# 
-# convert presence into equipment
-# 
-# convert into compliance
-# 
-# assault a state: spend presence, dont take a state, but cause damage to all enemy divisions in it
-# 
-# 
-# 
-# SPI:
-# 
-# stoke_the_brood
-# 
-# slow_and_gradual_growth
-# 
-# 
-# 
-# DGU:
-# 
-# - Spreading miasma
-# 
-# - 
