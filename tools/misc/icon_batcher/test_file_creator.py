@@ -31,19 +31,19 @@ request_template = {
                 # }
                 {
                     "file_data": {
-                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/gvlhow10pktc", 
+                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/7ilqxjs69z2f", 
                         "mime_type": "image/png"
                     }
                 },
                 {
                     "file_data": {
-                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/iocmrhca9hs7", 
+                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/fnxfos8tvdec", 
                         "mime_type": "image/png"
                     }
                 },
                 {
                     "file_data": {
-                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/5f7woi7rb935", 
+                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/ypth16rmwf4b", 
                         "mime_type": "image/png"
                     }
                 },
@@ -74,28 +74,28 @@ random_insert = ""
 random_chance = 0.5
 
 # FOCUS ICONS
-prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. 
-I've attached some example images as a style guide, which would correspond to the following prompts:
-"A trio of medieval soldiers with leather armor and swords",
-"A red medieval flag waving in the wind",
-"Faramir and Eowyn from LOTR holding hands while getting wed".
+# prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. 
+# I've attached some example images as a style guide, which would correspond to the following prompts:
+# "A trio of medieval soldiers with leather armor and swords",
+# "A red medieval flag waving in the wind",
+# "Faramir and Eowyn from LOTR holding hands while getting wed".
 
-**Artistic Style (Reference Examples):**
-Follow the hand-illustrated, realistic style of these examples. Avoid flat colors, black outlines, and cartoon aesthetics.
-$RANDOM$
+# **Artistic Style (Reference Examples):**
+# Follow the hand-illustrated, realistic style of these examples. Avoid flat colors, black outlines, and cartoon aesthetics.
+# $RANDOM$
 
-**Readability & Scale:**
-The final icon will be displayed at a small size (200x200). To ensure clarity at this scale:
-- Focus on a **strong, recognizable silhouette**.
-- Don't use black outlines, use an oil/acryl painting aesthetic.
-- Prioritize the "feel" of the texture over microscopic details that would disappear when shrunk.
-- Avoid excessive detail that would clutter the small icon.
-- Use a realistic style that matches the medieval Lord of the Rings movie aesthetic.
+# **Readability & Scale:**
+# The final icon will be displayed at a small size (200x200). To ensure clarity at this scale:
+# - Focus on a **strong, recognizable silhouette**.
+# - Don't use black outlines, use an oil/acryl painting aesthetic.
+# - Prioritize the "feel" of the texture over microscopic details that would disappear when shrunk.
+# - Avoid excessive detail that would clutter the small icon.
+# - Use a realistic style that matches the medieval Lord of the Rings movie aesthetic.
 
-**Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
+# **Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
 
-**Subject to generate:** PROMPT
-"""
+# **Subject to generate:** PROMPT
+# """
 
 
 # LAURELS
@@ -123,198 +123,119 @@ The final icon will be displayed at a small size (200x200). To ensure clarity at
 
 
 # # GENERIC ASSETS
-# prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. You will be generating generic assets for various icons and UI components.
-# I've attached some example images of such elements as a style guide.
+prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. You will be generating generic assets for various icons and UI components.
+I've attached some example images of such elements as a style guide.
 
-# The final icon will be displayed at a small size. To ensure clarity at this scale: Focus on a **strong, recognizable silhouette**.
+The final icon will be displayed at a small size. To ensure clarity at this scale: Focus on a **strong, recognizable silhouette**.
 
-# **Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
+**Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
 
-# **Prompt to generate:** PROMPT
-# """
+**Prompt to generate:** PROMPT
+"""
 
 
 prompt_list = [
-"A compass resting on a worn map of eastern lands",
-"A vast formation of Easterling spearmen marching in unison",
-"Gold coins being poured into a large wooden chariot wheel",
-"A swift, lightly armored horseman riding across the plains",
-"A heavily armored warhorse covered in scale mail",
-"A large, menacing wooden ballista loaded with a heavy bolt",
-"A recurve bow crossing a quiver full of arrows",
-"A heavy iron-reinforced crossbow",
-"A miner's pickaxe striking rich iron ore in a dark cave",
-"A sturdy logging axe embedded in a thick mountain pine tree",
-"A glowing hot anvil struck by a heavy blacksmith's hammer",
-"Hands exchanging a large purse of golden coins",
-"Brick factory chimneys rising against a cold northern sky",
-"Paved stone roads and industrial gears",
-"Heavy construction tools crossed over a stone blueprint",
-"A bustling eastern market stall filled with exotic spices and fabrics",
-"Bundles of golden wheat next to grazing livestock",
-"Neatly organized rows of military tents and wooden training dummies",
-"Tall bookshelves filled with ancient scrolls and thick leather tomes",
-"A winding dirt road cutting through mountainous terrain towards the south",
-"Brass merchant scales balancing gold and goods",
-"A large fishing net overflowing with silver fish",
-"A massive stone silo filled to the brim with grain",
-"A grand dome of a scholarly institution surrounded by star charts",
-"A lantern illuminating a snowy mountain pass",
-"A sinister black iron crown glowing with a dark aura",
-"An open book of laws next to a united tribal banner",
-"A heavy iron boot crushing a rival clan's shield",
-"Two Easterling warriors shaking hands beneath a golden light",
-"A shadowy, hooded figure being banished by a bright light",
-"The dark tower of Barad-dûr looming over a kneeling Easterling",
-"A cruel whip raised over cowering citizens in the shadows",
-"A fierce ringwraith wearing an Easterling helm, commanding an army",
-"A massive, heavily armored troll roaring in battle",
-"A torn banner depicting Easterlings fighting each other in a civil war",
-"The Flaming Eye of Sauron gazing over a scroll of war",
-"A magnificent golden crown symbolizing a newly forged empire",
-"A map with aggressive red arrows pointing eastward",
-"A dark missive sealed with the fiery eye of Sauron",
-"Wooden crates overflowing with freshly forged weapons and armor",
-"Endless ranks of heavily armored soldiers under a dark sky",
-"A Rhunian sword piercing through a tribal map",
-"Rhunian and tribal shields overlapping in unity",
-"Massive siege engines firing upon dwarven stone gates",
-"Crates of supplies being handed over to an orcish warlord",
-"An Easterling helmet looking resolutely towards snowy mountains",
-"A gauntleted hand snatching gold and grapes",
-"Elven woodland burning under the march of an invading army",
-"An emissary presenting a chest of gold to a desert warlord",
-"A fortified wall of stakes overlooking a vast desert",
-"The banners of Rhun planted firmly in the sand dunes of Khand",
-"Gold coins being panned and invested in a desert settlement",
-"A colossal Mûmakil war elephant towering over the battlefield",
-"An Easterling scimitar slashing through a horse-lord's shield",
-"A beautiful chalice of wine being shattered by an iron mace",
-"A harsh treaty document nailed to a wall with a dagger",
-"Industrial smokestacks replacing rolling vineyards",
-"Lush, fruitful grapevines growing on trellises in the sun",
-"An iron boot stepping heavily on a smoldering torch",
-"A puppet ruler manipulated by shadowy strings from above",
-"A Rhunian diplomat handing a treaty to a defiant horse-lord",
-"Easterling halberds clashing violently with cavalry spears",
-"A hollow-eyed king wearing a tarnished crown, controlled by shadowy strings",
-"Plows and shovels turning wild plains into organized farmland",
-"An imposing coastal bastion built of dark stone",
-"Scouts unfurling a map over a newly constructed road",
-"A tall wooden watchtower scanning the plains",
-"Merchant carts laden with wine and grain traversing a road",
-"A dark iron chain breaking off a golden Easterling bracer",
-"A torn parchment bearing the mark of Sauron",
-"Shadowy whispers surrounding a confused Easterling helm",
-"Two figures in deep blue robes wielding glowing magical staffs",
-"A passionate speaker rallying a crowd of Easterling peasants",
-"A localized map region glowing with rebellious fire",
-"Eastern banners raising in defiance of their dark lords",
-"An Easterling officer turning his blade away from his commander",
-"Pitchforks and torches gathered in a secretive revolt",
-"Wooden crates being covered by a large tarp in a hidden cave",
-"A secret forge operating under the cover of night",
-"Miners working quietly with muffled pickaxes in the dark",
-"A chariot wheel with its spokes being sawed halfway through",
-"Civilians putting on hidden armor in the shadows",
-"Fierce desert warriors wielding curved swords in secret",
-"Eastern militiamen holding crude spears and shields",
-"Steppe fighters practicing with bows and light armor",
-"A massive rack overflowing with sharp spears",
-"Rows of war chariots hidden in a large barn",
-"A classic Easterling Wainrider driving a fierce chariot",
-"A blueprint of an upgraded, lethal chariot chassis",
-"An archer firing a bow precisely from a speeding chariot",
-"A master artisan carving intricate designs into a war wagon",
-"Gold coins falling onto a pile of raw iron and wood",
-"An experienced warlord pointing at a tactical war map",
-"A tribal Balchoth warrior painted fiercely for war",
-"Lightly armored runners with javelins moving swiftly",
-"A dense formation of archers drawing their bows in unison",
-"Elite chariot riders wearing heavy scale armor",
-"Scales balancing a chariot wheel and an infantry shield",
-"A massive heavy chariot reinforced with thick iron plates",
-"Guards aggressively arresting a figure in blue robes",
-"A majestic leader addressing a crowd of loyal charioteers",
-"A glowing magical amulet being crushed to dust",
-"Soldiers marching through a desert town imposing strict order",
-"Guards patrolling the streets of a major Easterling city",
-"Military checkpoints established in a frontier settlement",
-"An Easterling banner being raised over snowy northern lands",
-"A lone warrior standing defiantly against a dark storm",
-"An emissary requesting aid from Dorwinion guards",
-"Factories producing weapons at a frantic pace for the rebellion",
-"Heavy anvils and hammers working continuously to build industry",
-"Rebellious soldiers rallying behind two blue-clad wizards",
-"A mystical blue light illuminating a strategic military map",
-"A peace treaty being signed on a nomadic saddle",
-"A formal tripartite pact signed in a grand Rhunian hall",
-"A rebellious army marching towards the dark clouds of Mordor",
-"A torn Easterling flag, split in two by a sword",
-"A firm handshake between an Easterling and a Dorwinion merchant",
-"Massive stockpiles of newly forged rebel weapons",
-"Expansion of massive industrial complexes across the plains",
-"A rebel general inspecting troops preparing for imminent battle",
-"A diplomat observing a tribal Logath camp from a distance",
-"A gauntleted fist slamming aggressively onto a negotiation table",
-"A map being carved up with an Easterling dagger",
-"Tribal Logath chiefs bowing to a powerful Rhunian envoy",
-"Two different administrative seals melting into one unified crest",
-"Heavily armored guards forcefully subduing a rioter",
-"Three large red arrows pointing west on a parchment map",
-"A Rhunian soldier throwing an insult at dwarven and human shields",
-"A dark, overgrown road leading into a foreboding elven forest",
-"An Easterling general drawing his own sword in frustration",
-"Soldiers blending into the foliage, holding throwing axes",
-"Looted treasure chests piling up in a victorious war camp",
-"Soldiers wading through murky, fog-covered swampland",
-"A spyglass focusing intently on the spires of the city of Dale",
-"Border stakes being aggressively moved forward into new lands",
-"An endless horde of Easterlings marching under a conquering banner",
-"Settlers building wooden houses in a newly conquered territory",
-"An Easterling looking down at a sturdy dwarven emissary",
-"Heavy stone barricades facing the ash wastes of Mordor",
-"A massive shield wall standing firm against a red shadow",
-"Silhouetted nobles whispering treason behind grand palace pillars",
-"A poisoned dagger hidden behind a nobleman's back",
-"A pompous commander being stripped of his medals",
-"Sand rapidly falling through a golden hourglass",
-"Guards dragging a screaming bureaucrat out of a throne room",
-"A pouch of coins being slipped to a merchant from Esgaroth",
-"Rare gemstones offered on a velvet pillow to a dwarf",
-"Scales of justice balancing perfectly over a peaceful city",
-"Doves flying outward carrying diplomatic messages",
-"A scarred warrior sharpening a blade with a hateful glare",
-"A Rhunian envoy bowing before the King of Dale",
-"New recruits training rigorously in a courtyard",
-"The banners of the rebellion and the Logath tribes flying together",
-"A peace treaty being thrown into a blazing fire",
-"Scholars blowing dust off old blueprints and books",
-"An Easterling rebel standing shoulder to shoulder with dwarven warriors",
-"A fearsome spiked barricade meant to ward off invaders",
-"Disciplined spearmen holding a tight, unbreakable phalanx",
-"Neatly organized scrolls and an inkwell on a desk",
-"A bright flame burning atop a high tower, cutting through the dark",
-"A convoy of supply wagons rolling down a secured road",
-"A glowing magnifying glass over ancient texts",
-"A galloping Easterling horse with elaborate barding",
-"A military manual opened to a page showing flanking maneuvers",
-"An advanced military textbook with glowing tactical lines",
-"A masterfully forged new scimitar next to an old, rusted one",
-"A warrior wearing a dust-veil, adapted for desert combat",
-"Tribal wise men sharing knowledge around a fire",
-"A loyalist sword striking down a rebel banner",
-"A secretive meeting with dark-haired elves in a twilight forest",
-"A towering red mountain range secured by a fortress",
-"Eastern nomads seamlessly joining a rebel army",
-"Grain being seized and replaced with iron ore",
-"An intimidating envoy holding an ultimatum scroll",
-"A Khandish leader demanding freedom from a Haradrim master",
-"Exchanging Rhunian steel for Variag horses",
-"A contract stamped over a map of Khand's resources",
-"A heavy chest of Mordor gold given as payment",
-"The banner of Rhun flying alongside the flaming eye of Sauron",
-"A grand table where eastern warlords unite under one symbol"
+"A small, hidden forge in a cave, crafting black iron nails.",
+"A silhouette of an Orc supervisor overlooking a shallow pit mine.",
+"An Orc messenger stealthily handing a sealed scroll to a human in the shadows.",
+"A stack of new, crudely made wooden shields bearing a faint, painted eye.",
+"A single Orc worker clumsily hammering on a section of a siege tower.",
+"A map of a single border region with small, red pinpricks.",
+"A pair of Orcs attempting to train a wild warg with meat.",
+"A clandestine gathering of men in a back alley, receiving gold.",
+"A small pile of collected wood near a freshly dug foundation.",
+"A single Orc scout observing a human village from a distant ridge.",
+"A row of five identical siege ladders being constructed simultaneously.",
+"An Orc overseer lashing a human slave in a larger quarry.",
+"A group of Orcs marching with purpose under a larger, clearly visible banner of the Eye.",
+"A stack of iron ore and charcoal at the base of a roaring furnace.",
+"A black-feathered crebain carrying a small, coded message.",
+"A section of the Black Gate being reinforced with new iron plates.",
+"A supply caravan of massive wagons moving along a dusty road.",
+"An Orc Shaman performing a ritual over a pile of crude weapons.",
+"A group of Haradrim warriors, identifiable by their colorful clothing, setting up a small camp.",
+"A large, circular pit containing dozens of actively training wargs.",
+"A massive, intricate wooden frame of a siege tower under construction.",
+"A powerful Orc captain with scars and a prominent helmet, reviewing a large battle plan.",
+"A great beast of burden, an Oliphaunt, partially armored and pulling a heavy load.",
+"Dozens of furnaces belching black smoke into the air.",
+"A great forge crafting a single, large iron battering ram head.",
+"A long line of Orcs in uniform, marching past a reviewing stand.",
+"A prominent, well-guarded black stone tower, fully built, overlooking a region.",
+"An emissary of Sauron, cloaked, speaking openly to a group of Easterlings.",
+"A large, clear map showing multiple arrows pointing toward Free Peoples' borders.",
+"A collection of varied siege engines—catapults, ballistae, and towers—assembled in a field.",
+"A huge battering ram, 'Grond', its wolf-head front clearly defined, being pushed.",
+"A Nazgûl on a fell beast, its wings wide, high above a marching army.",
+"A deep chasm filled with industrial machinery and thousands of working slaves.",
+"The ground cracking and molten lava flowing out near a fortress foundation.",
+"A large, well-stocked armory, row upon row of spears, shields, and armor.",
+"A grand, imposing black stone palace with many banners of the Eye flying.",
+"A great pit containing a captive troll being prodded by multiple Orcs.",
+"A vast assembly of ships with black sails, a black fleet, at a crude dock.",
+"A large-scale production line of a single type of weapon, like black bows.",
+"A group of Orcs and Men in black uniform, training together with a common purpose.",
+"A tidal wave of Orcs, Trolls, and Easterlings rushing forward.",
+"A group of Nazgûl, all nine, standing in a circle, their cloaks billowing.",
+"A great ash cloud from Mount Doom totally obscuring the sun over a battlefield.",
+"The Flaming Eye of Sauron, massive and overwhelming, gazing directly from Barad-dûr.",
+"A single Orc hand, covered in blood, holding a broken white tree crown.",
+"A pile of thousands of Free Peoples' helmets, a mountain of defeat.",
+"A map of Middle-earth completely covered by red shade.",
+"A grand victory arch in Mordor, adorned with the banners of defeated nations.",
+"A vast, empty plain with only a few standing ruins of a human city.",
+"The One Ring on Sauron's armored finger, glowing with power over a defeated army.",
+"A Hobbit tending to a garden, oblivious to a dark, distant cloud.",
+"A Palantir showing only a faint, flickering red light.",
+"A single, unlit beacon on a grassy hill.",
+"A group of Gondorian soldiers casually drinking in a tavern.",
+"A human child playing with a wooden sword, pretending to fight Orcs.",
+"A farmer discovering a crudely made Orc arrow in his field.",
+"A small group of refugees with few belongings, walking along a road.",
+"A few nervous-looking guards at a border post.",
+"A single, tattered banner of Gondor, waving in the wind.",
+"A map of a region with one small Orc raid marked in red.",
+"A group of soldiers actively reinforcing a city wall with stone and wood.",
+"Multiple beacons on different hills, all actively on fire.",
+"Refugees crowding into a fortified city gate.",
+"A blacksmith's forge, working to repair existing weapons.",
+"A line of soldiers in formation, swords and spears held ready.",
+"A group of leaders from different regions gathered around a war table.",
+"A prominent, well-manned watchtower on a border, looking out.",
+"A stack of new, clearly made weapons like long spears.",
+"A group of horsemen, Riders of Rohan, preparing to set out on patrol.",
+"A map of multiple regions with several overlapping battle lines.",
+"A large, fortified city with its gates closed, surrounded by a moat.",
+"Massive trebuchets and catapults positioned on city walls.",
+"Rows of soldiers in heavy armor, shields interlocked in a 'testudo' formation.",
+"A group of civilians, including women and children, receiving basic weapon training.",
+"A prominent leader, perhaps a king, addressing an assembled army.",
+"Multiple large banners of different Free Peoples flying from a single high tower.",
+"Wounded soldiers being tended to in a crowded field hospital.",
+"A large-scale production line of uniform armor and shields.",
+"A vast assembly of soldiers, horses, and wagons in a massive encampment.",
+"A map of all Middle-earth with multiple large red 'X's marking active fronts.",
+"A soldier making a last stand against multiple Orcs, his sword broken.",
+"A great, imposing white stone fortress with its walls crumbling under attack.",
+"The Flaming Eye of Sauron gazing over a burning human city.",
+"A group of civilians and soldiers huddling in terror in a dark cellar.",
+"A broken banner of the White Tree, trampled in the mud.",
+"A group of women and children crying over dead soldiers.",
+"A final defense line of old men and young boys holding spears.",
+"A map of Middle-earth, almost entirely shaded in red, with only one small pocket of white.",
+"A group of soldiers making a final, desperate charge at the Black Gate.",
+"A single, beautiful white tree, with all its leaves gone, under a dark cloud.",
+"An Orc worker clumsily hammering on a section of a siege tower.",
+"A stack of new, crudely made wooden shields bearing a faint, painted eye.",
+"An Orc supervisor overlooking a shallow pit mine.",
+"A silent Orc spy peering out from between thick bushes.",
+"A map of a single border region with small, red pinpricks.",
+"A small pile of collected wood near a freshly dug foundation.",
+"A few Orc scouts observing a human village from a distant ridge.",
+"A small, hidden forge in a cave, crafting black iron nails.",
+"A row of five identical siege ladders being constructed simultaneously.",
+"An Orc messenger stealthily handing a sealed scroll to a human in the shadows.",
+"A pair of Orcs attempting to train a wild warg with meat."
 ]
 
 requests_list = [
