@@ -14,9 +14,9 @@ from pdx_parser import *
 from locfile import LocFile
 
 # --- Hard-Coded Paths ---
-MD_PATH = r"C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\retrievals\2026-03-03_14-51-21"
-FOCUS_FILE = r"C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\mirkwood.txt"
-LOC_FILE = r"C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\mirkwood\mirkwood_focuses_l_english.yml"
+MD_PATH = r"C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\retrievals\2026-03-03_16-51-56"
+FOCUS_FILE = r"C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\vales_shared.txt"
+LOC_FILE = r"C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\vales\vales_shared_focuses_l_english.yml"
 
 class FocusDescEditor(QWidget):
     def __init__(self):
@@ -31,6 +31,7 @@ class FocusDescEditor(QWidget):
     def init_data(self):
         self.loc_file = LocFile(LOC_FILE)
         self.focus_list = ParseListFromFile_asPObj(FOCUS_FILE).Get("focus_tree").GetAll("focus").value
+        #self.focus_list = ParseListFromFile_asPObj(FOCUS_FILE).GetAll("shared_focus").value
         self.current_index = 0
         self.M = defaultdict(list)
         
