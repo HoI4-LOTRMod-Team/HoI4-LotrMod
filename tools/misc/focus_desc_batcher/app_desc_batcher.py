@@ -14,9 +14,9 @@ from pdx_parser import *
 from locfile import LocFile
 
 # --- Hard-Coded Paths ---
-MD_PATH = r"C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\retrievals\2026-03-03_19-49-27"
-FOCUS_FILE = r"C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\vales.txt"
-LOC_FILE = r"C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\vales\vales_focuses_l_english.yml"
+MD_PATH = r"C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\retrievals\2026-03-03_20-15-24"
+FOCUS_FILE = r"C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\spiders.txt"
+LOC_FILE = r"C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\spiders\spiders_focuses_l_english.yml"
 
 class FocusDescEditor(QWidget):
     def __init__(self):
