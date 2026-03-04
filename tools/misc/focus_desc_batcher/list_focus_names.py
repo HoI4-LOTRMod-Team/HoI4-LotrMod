@@ -11,4 +11,7 @@ loc_file = LocFile(r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of I
 
 for f in ParseListFromFile_asPObj(FOCUS_FILE).Get("focus_tree").GetAll("focus").value:
 #for f in ParseListFromFile_asPObj(FOCUS_FILE).GetAll("joint_focus").value:
-    print('("' + f.Get("id").value + '", ' + '"' + loc_file.get(f.Get("id").value) + '"),')
+    if loc_file.contains(f.Get("id").value):
+        print('("' + f.Get("id").value + '", ' + '"' + loc_file.get(f.Get("id").value) + '"),')
+    else:
+        print('("' + f.Get("id").value + '", "")')
