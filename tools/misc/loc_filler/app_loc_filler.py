@@ -32,6 +32,8 @@ from pdx_parser import *
 # --- 1. SETUP PATHS ---
 BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve()
 
+VANILLA_PATH = Path(r'C:\Program Files (x86)\Steam\steamapps\common\Hearts of Iron IV\localisation\english')
+
 # --- 2. CUSTOM EXTRACTION FUNCTIONS ---
 # (Keeping these exactly as they were in your original file)
 def get_names_focuses(file_path: Path):
@@ -81,7 +83,7 @@ def get_names_ideas(file_path: Path):
     iobj = fobj.Get("ideas")
     for cat in iobj.value:
         for idea in cat.value:
-            if idea.ValueIsList():
+            if idea.ValueIsList() and idea.HasNot("name") and cat.HasNot("designer"):
                 ret.append(idea.id)
                 if cat.id == "country":
                     ret.append(idea.id + "_desc")
@@ -284,6 +286,8 @@ class MainWindow(QMainWindow):
         # 1. Re-initialize the collection to read latest files from disk
         loc_path = str(BASE_PATH / "localisation")
         self.collection = LocCollection(loc_path)
+
+        self.collection._scan_directory(VANILLA_PATH)
         
         # 2. Clear visual tree
         self.tree.clear()
