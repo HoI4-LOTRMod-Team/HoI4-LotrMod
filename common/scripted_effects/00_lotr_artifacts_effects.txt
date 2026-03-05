@@ -106,6 +106,12 @@ assign_starting_artifacts = {
 	MIR = { add_ideas = artifact_necklace_of_girion }
 	ROH = { add_ideas = artifact_herugrim }
 	RIV = { add_ideas = artifact_shards_of_narsil }
+	LTH = { add_ideas = artifact_galadriels_mirror }
+	ISE = { add_ideas = artifact_sarumans_staff }
+	RHU = { add_ideas = artifact_scepter_of_mistrand }
+	GON = { add_ideas = artifact_palantir }
+	MOR = { add_ideas = artifact_palantir }
+	ISE = { add_ideas = artifact_palantir }
 }
 
 
@@ -147,26 +153,27 @@ lotr_artifacts_toggle_details_view = {
 	}
 }
 
-add_artifact_test = {
-	add_ideas = artifact_saurons_mace
-}
-
 lotr_transfer_all_artifacts = {
-	for_each_loop = {
-		array = country_artifacts
-		value = v
+	# use special code to transfer ring
+	if = {
+		limit = {
+			ring_has_the_ring = yes
+		}
+		PREV = { ring_seize_ring = yes }
+	}
 
-		# I have no idea if this works. may require a meta_effect
-		remove_ideas = v
-		PREV = {
-			add_ideas = v
+	while_loop_effect = {
+		limit = {
+			check_variable = { country_artifacts^num > 0 }
+		}
+		meta_effect = {
+			text = {
+				remove_ideas = [ARTIFACT_ID]
+				PREV = {
+					add_ideas = [ARTIFACT_ID]
+				}
+			}
+			ARTIFACT_ID = "[?country_artifacts^0.GetTokenKey]"
 		}
 	}
-}
-
-
-
-example_usage = {
-	set_temp_variable = { temp_selected_artifact = token:artifact_saurons_mace }
-	lotr_artifacts_active_effects = yes
 }
