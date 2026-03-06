@@ -63,6 +63,7 @@ def get_names_decisions(file_path: Path):
         ret.append(cat.id)
         for dec in cat.value:
             ret.append(dec.id)
+            ret.append(dec.id + "_desc")
     return ret
 
 def get_names_raids(file_path: Path):
