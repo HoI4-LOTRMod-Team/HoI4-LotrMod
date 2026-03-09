@@ -572,19 +572,6 @@ ring_ai_commence_interception_attempt = {
 	    }
 	}
 
-	# set acceptable casualty rate
-	if = {
-		limit = { OR = { tag = ISE tag = MOR } }
-		set_variable = { ROOT.fs_max_casualty_rate = 1.0 }
-	}
-	else_if = {
-		limit = { OR = { tag = MOC } }
-		set_variable = { ROOT.fs_max_casualty_rate = 0.3 } # MOC has few generals + cave troll. This is lower in order to try to keep Gulthurg alive lol
-	}
-	else = {
-		set_variable = { ROOT.fs_max_casualty_rate = 0.5 }
-	}
-
 	# launch
 	ring_execute_interception_attempt = yes
 }
@@ -617,14 +604,6 @@ ring_execute_interception_attempt = {
 	set_country_flag = fs_has_attacked_fellowship
 
 	set_temp_variable = { fs_interception_cancelled = 0 }
-
-	# Maximum amount of casualties before disengaging
-	set_temp_variable = { fs_interception_max_casualties = ROOT.fs_hunting_party^num }
-	multiply_temp_variable = { fs_interception_max_casualties = ROOT.fs_max_casualty_rate }
-
-	# Because its easier to calculate: Min. number of party members to keep fighting
-	set_temp_variable = { fs_interception_min_members = ROOT.fs_hunting_party^num }
-	subtract_from_temp_variable = { fs_interception_min_members = fs_interception_max_casualties }
 
 	add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
 	add_to_array = { global.fs_eventlog_suffix_targets = ROOT.fs_hunting_party^0 }
@@ -1183,15 +1162,18 @@ ring_interception_disengage_check = {
 
 	if = {
 		# Check if we WANT to disengage in the first place
-		limit = { 
-			NOT = { check_variable = { ROOT.fs_hunting_party^num > fs_interception_min_members } }
+		# If we are hopelessly outnumbered 2 to 1 or worse, try to disengage at 50%
+		limit = {
+			set_temp_variable = { hunting_party_times_2 = ROOT.fs_hunting_party^num }
+			multiply_temp_variable = { hunting_party_times_2 = 2 }
+			check_variable = { var = global.fs_members^num value = hunting_party_times_2 compare = greater_than_or_equals }
 		}
 
 		random_list = {
-			1 = {
+			2 = {
 				# Disengage fails
 			}
-			4 = {
+			2 = {
 				# disengage
 				set_temp_variable = { fs_interception_cancelled = 1 }
 
