@@ -817,6 +817,30 @@ ring_MOR_set_hunting_party_to_nazgul = {
 	}
 }
 
+# Calculate stealth stat for fellowship
+ring_interception_detection_check__calc_fs = {
+	# Calculate average fellowship stealth skill (planning_skill)
+	set_temp_variable = { temp_avg_fs_stealth = 0 }
+	for_each_scope_loop = {
+		array = global.fs_members
+		
+		add_to_temp_variable = { temp_avg_fs_stealth = planning_level }
+	}
+	divide_temp_variable = { temp_avg_fs_stealth = global.fs_members^num }
+}
+
+# Calculate stealth stat for hunting party
+ring_interception_detection_check__calc_hunting_party = {
+	# Calculate average fellowship stealth skill (planning_skill)
+	set_temp_variable = { temp_avg_hp_stealth = 0 }
+	for_each_scope_loop = {
+		array = ROOT.fs_hunting_party
+		
+		add_to_temp_variable = { temp_avg_hp_stealth = planning_level }
+	}
+	divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
+}
+
 # Runs a detection check if ROOT can detect the fellowship
 # ARGS: ROOT.fs_hunting_party, global.fs_members
 # RETURN: If the check fails, it sets fs_interception_cancelled to 1
@@ -824,45 +848,35 @@ ring_interception_detection_check = {
 	if = {
 		# Argonath raid does not require stealth-check
 		limit = {
-			NOT = { has_country_flag = is_argonath_raid }
-
-			# Some countries can disable the stealth check
-			NOT = { has_country_flag = ring_no_stealth_check }
-
-			# neither does Lothlorien
-			ROOT = { NOT = { tag = LTH } }
+			NOT = { ring_interceptions_are_disabled = yes }
 		}
 
-		# Calculate average fellowship stealth skill (planning_skill)
+		# Calculate average stealth skills (planning_skill)
 		set_temp_variable = { temp_avg_fs_stealth = 0 }
-		for_each_scope_loop = {
-		    array = global.fs_members
-		    
-		    add_to_temp_variable = { temp_avg_fs_stealth = planning_level }
-		}
-		divide_temp_variable = { temp_avg_fs_stealth = global.fs_members^num }
-
-		# Calculate the average stealth skill of the hunting party
 		set_temp_variable = { temp_avg_hp_stealth = 0 }
-		for_each_scope_loop = {
-		    array = ROOT.fs_hunting_party
-		    
-		    add_to_temp_variable = { temp_avg_hp_stealth = planning_level }
-		}
-		divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
-		# Hunting party gets 200% bonus because this is their home turf
-		multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
+		ring_interception_detection_check__calc_fs = yes
+		ring_interception_detection_check__calc_hunting_party = yes
 
-		# these countries get an additional detection bonus
-		if = {
-			limit = { ROOT = { OR = { tag = MOC tag = ISE } } }
-			multiply_temp_variable  = { temp_avg_hp_stealth = 3 }
+		# Extra bonus from watchtowers!
+		add_to_temp_variable = {
+			temp_avg_hp_stealth = global.fs_currentstate.building_level@radar_station
 		}
 
-		# ring-catcher bonus
+		set_temp_variable = { temp_detection_bonus = ROOT.modifier@fellowship_detection_factor }
+		
+		# Home turf + core advantage, 200%
 		if = {
-			limit = { has_idea_with_trait = ring_catcher }
-			multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
+			limit = { global.fs_currentstate = { is_core_of = ROOT is_controlled_by = ROOT } }
+			add_to_temp_variable = { temp_detection_bonus = 1.8 }
+		}
+		# Home turf advantage, 150%
+		else_if = {
+			limit = { global.fs_currentstate = { is_controlled_by = ROOT } }
+			add_to_temp_variable = { temp_detection_bonus = 1.5 }
+		}
+
+		multiply_temp_variable = {
+			temp_avg_hp_stealth = temp_detection_bonus
 		}
 
 		# Check which side wins:
