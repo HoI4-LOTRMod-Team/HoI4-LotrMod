@@ -824,7 +824,7 @@ ring_interception_detection_check__calc_fs = {
 	for_each_scope_loop = {
 		array = global.fs_members
 		
-		add_to_temp_variable = { temp_avg_fs_stealth = planning_level }
+		add_to_temp_variable = { PREV.temp_avg_fs_stealth = planning_level }
 	}
 	divide_temp_variable = { temp_avg_fs_stealth = global.fs_members^num }
 }
@@ -836,7 +836,7 @@ ring_interception_detection_check__calc_hunting_party = {
 	for_each_scope_loop = {
 		array = ROOT.fs_hunting_party
 		
-		add_to_temp_variable = { temp_avg_hp_stealth = planning_level }
+		add_to_temp_variable = { PREV.temp_avg_hp_stealth = planning_level }
 	}
 	divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
 }
@@ -852,32 +852,32 @@ ring_interception_detection_check = {
 		}
 
 		# Calculate average stealth skills (planning_skill)
-		set_temp_variable = { temp_avg_fs_stealth = 0 }
-		set_temp_variable = { temp_avg_hp_stealth = 0 }
 		ring_interception_detection_check__calc_fs = yes
 		ring_interception_detection_check__calc_hunting_party = yes
 
 		# Extra bonus from watchtowers!
-		add_to_temp_variable = {
-			temp_avg_hp_stealth = global.fs_currentstate.building_level@radar_station
+		var:global.fs_currentstate = {
+			add_to_temp_variable = {
+				PREV.temp_avg_hp_stealth = building_level@radar_station
+			}
 		}
-
-		set_temp_variable = { temp_detection_bonus = ROOT.modifier@fellowship_detection_factor }
 		
 		# Home turf + core advantage, 200%
 		if = {
-			limit = { global.fs_currentstate = { is_core_of = ROOT is_controlled_by = ROOT } }
-			add_to_temp_variable = { temp_detection_bonus = 1.8 }
+			limit = { var:global.fs_currentstate = { is_core_of = ROOT is_controlled_by = ROOT } }
+			set_temp_variable = { temp_detection_bonus = 1.8 }
 		}
 		# Home turf advantage, 150%
 		else_if = {
-			limit = { global.fs_currentstate = { is_controlled_by = ROOT } }
-			add_to_temp_variable = { temp_detection_bonus = 1.5 }
+			limit = { var:global.fs_currentstate = { is_controlled_by = ROOT } }
+			set_temp_variable = { temp_detection_bonus = 1.5 }
 		}
-
-		multiply_temp_variable = {
-			temp_avg_hp_stealth = temp_detection_bonus
+		# Exceptional base, 100%
+		else = {
+			set_temp_variable = { temp_detection_bonus = 1.0 }
 		}
+		add_to_temp_variable = { temp_detection_bonus = ROOT.modifier@fellowship_detection_factor }
+		multiply_temp_variable = { temp_avg_hp_stealth = temp_detection_bonus }
 
 		# Check which side wins:
 		random_list = {
