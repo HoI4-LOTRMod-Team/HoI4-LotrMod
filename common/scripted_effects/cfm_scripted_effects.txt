@@ -38,6 +38,9 @@ contest_for_mirkwood_setup = {
 		add_ideas = CFM_base_gain_DGU
 		set_country_flag = cfm_allowed
 	}
+	MIR = {
+		set_country_flag = cfm_allowed
+	}
 
 	191 = {
 		set_state_flag = cfm_allowed
@@ -101,7 +104,11 @@ contest_for_mirkwood_setup = {
 # disable the cfm mechanic
 cfm_deactivate = {
 	clr_global_flag = cfm_active
-	# TODO: events and such
+	every_state = {
+		limit = { has_state_flag = cfm_allowed }
+		clr_state_flag = cfm_allowed
+	}
+	# TODO: events and tooltip
 }
 
 
@@ -124,8 +131,14 @@ cfm_increase_5p = {
 }
 
 cfm_weekly_update = {
-	DGU = { cfm_update_presence_weekly = yes }
-	SPI = { cfm_update_presence_weekly = yes }
+	if = {
+		limit = { has_global_flag = cfm_active DGU = { has_country_flag = cfm_allowed } }
+		DGU = { cfm_update_presence_weekly = yes }
+	}
+	if = {
+		limit = { has_global_flag = cfm_active SPI = { has_country_flag = cfm_allowed } }
+		SPI = { cfm_update_presence_weekly = yes }
+	}
 }
 
 cfm_update_presence_weekly = {

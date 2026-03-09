@@ -321,11 +321,49 @@ cfm_contest_for_mirkwood = {
 				custom_effect_tooltip = cfm_lock_state_decision_tt
 			}
 
+			add_to_variable = {
+				cfm_num_states_locked = 1
+			}
+
 			set_country_flag = {
 				flag = cfm_used_locked_decision
 				value = 1
 				days = 14
 			}
+		}
+	}
+
+	cfm_reassert_control = {
+		icon = generic_research
+
+		fire_only_once = yes
+		cost = 50
+
+		allowed = {
+			tag = MIR
+		}
+
+		visible = {
+			has_completed_focus = MIR_reassert_control
+		}
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = cfm_reassert_control_cond_tt
+				OR = {
+					NOT = {
+						any_controlled_state = {
+							has_state_flag = cfm_allowed
+						}
+					}
+					check_variable = { cfm_num_states_locked > 2 }
+				}
+			}
+		}
+		
+		complete_effect = {
+			# disable cfm mechanic entirely
+			cfm_deactivate = yes
 		}
 	}
 
