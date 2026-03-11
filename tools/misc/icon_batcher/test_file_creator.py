@@ -11,42 +11,42 @@ request_template = {
         "contents": [{
             "parts": [
                 {"text": "PROMPT"},
-                # {
-                #     "file_data": {
-                #         "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/j0kl7qzfax5x", 
-                #         "mime_type": "image/png"
-                #     }
-                # },
-                # {
-                #     "file_data": {
-                #         "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/u6sf98te3f9r", 
-                #         "mime_type": "image/png"
-                #     }
-                # },
-                # {
-                #     "file_data": {
-                #         "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/edi9b55ah14s", 
-                #         "mime_type": "image/png"
-                #     }
-                # }
                 {
                     "file_data": {
-                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/7ilqxjs69z2f", 
-                        "mime_type": "image/jpeg" # !!!
-                    }
-                },
-                {
-                    "file_data": {
-                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/fnxfos8tvdec", 
+                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/bnl9jn2d0h3w", 
                         "mime_type": "image/png"
                     }
                 },
                 {
                     "file_data": {
-                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/ypth16rmwf4b", 
+                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/n3r7wtsmouj4", 
                         "mime_type": "image/png"
                     }
                 },
+                {
+                    "file_data": {
+                        "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/tmzzezngsupa", 
+                        "mime_type": "image/png"
+                    }
+                }
+                # {
+                #     "file_data": {
+                #         "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/7ilqxjs69z2f", 
+                #         "mime_type": "image/jpeg" # !!!
+                #     }
+                # },
+                # {
+                #     "file_data": {
+                #         "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/fnxfos8tvdec", 
+                #         "mime_type": "image/png"
+                #     }
+                # },
+                # {
+                #     "file_data": {
+                #         "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/ypth16rmwf4b", 
+                #         "mime_type": "image/png"
+                #     }
+                # },
                 # {
                 #     "file_data": {
                 #         "file_uri": "https://generativelanguage.googleapis.com/v1beta/files/q8qtp0mm1ra9", 
@@ -74,28 +74,28 @@ random_insert = ""
 random_chance = 0.5
 
 # FOCUS ICONS
-# prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. 
-# I've attached some example images as a style guide, which would correspond to the following prompts:
-# "A trio of medieval soldiers with leather armor and swords",
-# "A red medieval flag waving in the wind",
-# "Faramir and Eowyn from LOTR holding hands while getting wed".
+prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. 
+I've attached some example images as a style guide, which would correspond to the following prompts:
+"A trio of medieval soldiers with leather armor and swords",
+"A red medieval flag waving in the wind",
+"Faramir and Eowyn from LOTR holding hands while getting wed".
 
-# **Artistic Style (Reference Examples):**
-# Follow the hand-illustrated, realistic style of these examples. Avoid flat colors, black outlines, and cartoon aesthetics.
-# $RANDOM$
+**Artistic Style (Reference Examples):**
+Follow the hand-illustrated, realistic style of these examples. Avoid flat colors, black outlines, and cartoon aesthetics.
+$RANDOM$
 
-# **Readability & Scale:**
-# The final icon will be displayed at a small size (200x200). To ensure clarity at this scale:
-# - Focus on a **strong, recognizable silhouette**.
-# - Don't use black outlines, use an oil/acryl painting aesthetic.
-# - Prioritize the "feel" of the texture over microscopic details that would disappear when shrunk.
-# - Avoid excessive detail that would clutter the small icon.
-# - Use a realistic style that matches the medieval Lord of the Rings movie aesthetic.
+**Readability & Scale:**
+The final icon will be displayed at a small size (200x200). To ensure clarity at this scale:
+- Focus on a **strong, recognizable silhouette**.
+- Don't use black outlines, use an oil/acryl painting aesthetic.
+- Prioritize the "feel" of the texture over microscopic details that would disappear when shrunk.
+- Avoid excessive detail that would clutter the small icon.
+- Use a realistic style that matches the medieval Lord of the Rings movie aesthetic.
 
-# **Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
+**Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
 
-# **Subject to generate:** PROMPT
-# """
+**Subject to generate:** PROMPT
+"""
 
 
 # LAURELS
@@ -123,118 +123,158 @@ random_chance = 0.5
 
 
 # # GENERIC ASSETS
-prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. You will be generating generic assets for various icons and UI components.
-I've attached some example images of such elements as a style guide.
+# prompt_template = """Act as a professional concept artist creating elements for icons for a LOTR-style strategy game. You will be generating generic assets for various icons and UI components.
+# I've attached some example images of such elements as a style guide.
 
-The final icon will be displayed at a small size. To ensure clarity at this scale: Focus on a **strong, recognizable silhouette**.
+# The final icon will be displayed at a small size. To ensure clarity at this scale: Focus on a **strong, recognizable silhouette**.
 
-**Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
+# **Background:** Render the object on a neutral, solid, flat background, as they are only elements/components.
 
-**Prompt to generate:** PROMPT
-"""
+# **Prompt to generate:** PROMPT
+# """
 
 
 prompt_list = [
-"A Gondorian guard peering East towards a hazy sky",
-"A hooded Ranger marking an 'X' on a weathered map",
-"Two Elves speaking in hushed tones over a glowing Palantir",
-"A Dwarf reinforcing the iron bands of an outpost door",
-"A Hobbit listening intently to a troubling rumor in a tavern",
-"A lit beacon fire beginning to smoke atop a mountain",
-"The Red Arrow of Gondor being handed to a Rohan rider",
-"A lineup of volunteers receiving basic spears and shields",
-"Workers reinforcing the lower walls of Minas Tirith",
-"An Elf archer nocking an arrow on a wooden wall",
-"A hand clenching a fist over the White Tree emblem",
-"A blacksmith frantically hammering an unfinished longsword",
-"A line of soldiers locking shields into a defensive wall",
-"A commander shouting orders over a sea of helmets",
-"A defiant standard-bearer raising the banner of Rohan",
-"A burning village seen through the eyes of a refugee",
-"A broken siege engine being used as a crude barricade",
-"A group of civilians huddled around a single, dim candle",
-"A bloody sword resting beside a cracked helmet on the ground",
-"A line of archers firing a volley with gritted teeth",
-"A city gate being smashed by a massive battering ram",
-"A king leading a desperate, suicidal cavalry charge",
-"A wizard's staff clashing against a dark, shadowy mace",
-"A lone soldier surrounded by many dark, shadowed figures",
-"A commoner wielding a broken table leg as a weapon",
-"The White Tree of Gondor wilting and losing leaves",
-"The golden hall of Meduseld shadowed by a dark cloud",
-"The entrance to Erebor being sealed by massive stones",
-"The borders of Lothlórien protected by shimmering, faint magic",
-"The Shire's peaceful rolling hills under a grey, unnatural sky",
-"The Horn of Gondor being blown with desperate force",
-"The Swan Ships of the Grey Havens preparing for departure",
-"The Argonath statues seen from below, shadowed and imposing",
-"The bridge of Khazad-dûm crumbling into the abyss",
-"The Dead Marshes glowing with faint, eerie lights",
-"A scroll with a broken wax seal of the White Hand",
-"A quiver of arrows being split evenly among three soldiers",
-"A hand sharpening a rusted Orc-slaying axe",
-"A lone, hooded Ranger tracking prints in the mud",
-"A shield painted with a simple, defiant White Tree",
-"A messenger bag dropped on a muddy road",
-"A pair of binoculars observing a distant, moving dust cloud",
-"A group of figures huddled under cloaks in a stone ruin",
-"A sword hilt being tightly wrapped with new leather",
-"A crude wooden watchtower looking East",
-"A pile of weapons and shields collected from the fallen",
-"A field hospital tent illuminated from within at night",
-"A hand gripping a blood-stained, ornate dagger",
-"A line of soldiers marching in silent, grim determination",
-"A horse and rider silhouetted against a setting sun",
-"A group of children playing soldiers with wooden swords",
-"A mother clutching her child tightly in a cellar",
-"An old man trying on his rusted, too-small armor",
-"A farmer picking up a pitchfork with a grim look",
-"A row of empty helmets lined up on a wall",
-"A map of Middle-earth with the East covered in shadow",
-"A hand dropping a single tear onto a strategy map",
-"A glowing blue sword reflecting in a soldier's eye",
-"A lone watchman on a high wall looking over a dark plain",
-"A cracked and splintered shield resting against a wall",
-"A line of torches marching through a dark mountain pass",
-"A fortified bridge over a rushing, dark river",
-"A small campfire on a high, exposed ridge",
-"A group of refugees huddled together for warmth",
-"A stone statue of a king, now chipped and broken",
-"A group of soldiers sharing a final, meager meal",
-"A shield wall locking together under a shower of arrows",
-"A line of archers on a wall, arrows nocked and ready",
-"A group of knights with lances leveled, ready to charge",
-"A commander pointing dramatically to a weak point in the defense",
-"A soldier barricading a door with wooden planks",
-"A hand holding a simple, small leather pouch",
-"A group of figures around a map illuminated by a lantern",
-"A stack of new, long spears leaning against a wall",
-"A hand clenching a few simple iron coins",
-"A blacksmith forging a heavy iron gate",
-"A long line of wagons loaded with supplies",
-"A hand gripping a blood-stained axe handle",
-"A line of soldiers standing watch on a rain-slicked wall",
-"A small, hidden encampment in a dense forest",
-"A shield painted with the seven stars of Gondor",
-"A hand holding a lit torch in a dark cave",
-"A line of watchmen on a high wall, peering into the distance",
-"A group of soldiers practicing with swords",
-"A commander pointing dramatically over a terrain map",
-"A burning watchtower silhouetted against the night sky",
-"A field covered in the aftermath of a great battle",
-"A hand gripping a broken sword hilt tightly",
-"A lone soldier standing before a massive, dark army",
-"A group of civilians huddled around a wizard's staff",
-"A map of Middle-earth with Gondor and Rohan highlighted",
-"A hand sharpening a wicked-looking Elf-made dagger",
-"A lone hooded Ranger watching from a high cliff",
-"A pair of hands gripping a heavy, ornate warhammer",
-"A shield painted with a simple, white horse of Rohan",
-"A pile of new shields and spears, ready for war",
-"A line of arches on a wall, firing downward",
-"A group of knights on horseback, charging forward",
-"A commander standing defiantly on a broken wall",
-"A commoner picking up a sword from a fallen soldier"
+"A rustic spear and a wooden shield crossed together, with a rallying horn in the foreground",
+"A strategy map with wooden markers being moved by a commanding hand",
+"A commanding officer in rugged armor addressing a disciplined row of Hill-men soldiers",
+"A dusty, ancient scroll unfurled next to a candle, showing old battle formations",
+"A rugged tent interior with a tactical map and a sword resting on the table",
+"A gleaming sword striking an anvil with sparks flying, symbolizing refined warfare",
+"A shiny new steel broadsword layered over a cracked, older iron blade",
+"A wild Hill-man warrior shaking hands with a polished Dunedain ranger",
+"A cloaked Dunedain ranger aiming a longbow from the shadows of a forest",
+"Dozens of crude spears raised high against a misty mountain backdrop",
+"A majestic eagle soaring high above the Misty Mountains",
+"A giant eagle's talons gripping the craggy peak of a mountain",
+"The silhouette of a great eagle dropping a payload over a battlefield",
+"A broken troll's club lying in a sunlit forest clearing",
+"A wooden surveying tripod and a coiled rope resting on cleared earth",
+"A stone workshop with a large waterwheel and smoke rising from a chimney",
+"A sturdy stone bridge crossing a wild, rushing river",
+"A stack of freshly cut timber next to a large forester's axe",
+"A dirt road winding up a steep, rocky hillside",
+"A weaver's loom and a blacksmith's anvil side by side",
+"A glowing forge with multiple iron swords heating in the coals",
+"A large wooden windmill on a grassy hill",
+"A bustling quarry with carts full of mined stone and ores",
+"A heavy iron anvil with a massive forging hammer resting on top",
+"Rows of newly forged shields and spears emerging from a dark factory",
+"An astrolabe, a magnifying glass, and an open book on a wooden desk",
+"A ranger's arrow piercing a troll's skull in a marshy moor",
+"A Rhudaur banner planted firmly in the rocky soil of the moors",
+"A deep mine entrance with a cart full of dark iron ore",
+"A stone pathway being laid down through a treacherous swamp",
+"A rustic village transforming into a bustling trade hub with carts and workers",
+"A crossroads signpost with three arrows pointing in different directions, shrouded in mist",
+"A dark, iron-wrought crown glowing with an eerie green light",
+"A silver star emblem representing Arnor, shining over a diplomatic scroll",
+"A large wooden table surrounded by empty, rustic chieftain chairs",
+"The white tree of Arnor intertwined with the rugged symbols of Rhudaur",
+"A pair of hands holding up a neutral, blank grey shield",
+"A shadowy figure with red eyes looming over the hills of Rhudaur",
+"A thick stone wall with wooden palisades blocking a mountain pass",
+"Two hands exchanging a loaf of bread and a silver coin",
+"A spyglass resting on a map of Eriador",
+"A parchment letter sealed with wax being carried by a messenger bird",
+"A heavily fortified wooden keep atop a steep, defensible hill",
+"A line of spiked barricades facing towards a dark, frozen wasteland",
+"A watchtower overlooking a river delta and forest",
+"Elven arrows stuck into the outer side of a wooden shield",
+"A lone scholar reading a glowing tome in a dark, quiet room",
+"A group of Dunedain rangers standing together in a tight, disciplined formation",
+"A bloody dagger struck through a treaty parchment",
+"A shadowy hand sweeping miniature wooden figures off a map",
+"A wild chieftain blowing a large animal horn on a mountaintop",
+"A wanted poster showing a Dunedain ranger with a dagger through it",
+"A bag of gold coins and a dark amulet offered to a shadowy ranger",
+"The flaming Eye of Sauron reflected in a dark pool of water",
+"The spiked iron mask of the Witch-king looming in a blizzard",
+"A single, bright torch burning proudly against a backdrop of encroaching shadows",
+"A ruined stone watchtower on a hill, with a red banner being raised",
+"A gauntleted hand slamming down onto a map of Amon Sul",
+"A newly fortified Weathertop, bustling with Hill-men guards",
+"A dark palantir glowing with residual, cracking magical energy",
+"An orcish scimitar crossed with a Hill-man's spear",
+"A broken iron crown tossed into the mud",
+"Dark storm clouds gathering over the jagged fortress of Carn Dum",
+"A Hill-man chieftain sitting upon a throne of dark iron",
+"Propaganda leaflets scattered across a medieval street",
+"A Dunedain knight and a Hill-man warrior sparring together",
+"A puppet on strings shaped like a Rhudaur warrior, manipulated by a spectral hand",
+"A broken elven spear and an Arnorian shield burning in a bonfire",
+"An emissary presenting a heavy iron chain to a defeated noble",
+"A shattered silver star emblem under a heavy leather boot",
+"A pair of crude iron shackles linked together",
+"A hobbit's round door being smashed open by a heavy mace",
+"A grand, dark-stone monument of a Numenorean king overlooking Eriador",
+"The white tree of Gondor wilting under a dark, suffocating mist",
+"A golden chalice and a silver sword resting on a pure white cloth",
+"Two angry men being separated by a wise leader holding a staff",
+"A silver star beacon lit upon a high hill, summoning the Dunedain",
+"A Dunedain ranger receiving a masterfully crafted new sword",
+"A Hill-man being handed a proper steel sword to replace his club",
+"The White Tower of Ecthelion shining in the distance",
+"A crown of Gondor and a silver star of Arnor side by side",
+"A vast hall filled with ancient books and glowing parchment",
+"Two armored hands clasping in a strong, brotherly handshake",
+"A spectral figure pointing a skeletal finger forward, leading the way",
+"A rusted, dark weapon being reforged into a shining, noble blade",
+"An elegant elven ring sitting next to a diplomatic scroll",
+"An elven gateway opening, with light spilling out into the dark hills",
+"A ruler wearing a simple circlet, reading from a book of laws",
+"A massive shield sheltering a group of frightened peasants",
+"A sharp dagger cutting away the blackened, diseased part of an apple",
+"A white dove landing on a rusted, abandoned sword",
+"A collection of beautiful pottery, scrolls, and agricultural tools",
+"A sun rising over a peaceful, green valley filled with crops",
+"Two rangers whispering over an ancient map lit by a lantern",
+"A recruitment poster featuring both a Rhudaur warrior and an Arthedain soldier",
+"A soldier studying a series of muddy footprints in a marsh",
+"A pickaxe clearing away thorny, twisted briars from a hillside",
+"A troll turned to stone by the morning sun, covered in moss",
+"A heavily armed rider on a sturdy mountain horse",
+"A small, sturdy fishing boat moored in a marshy wetland",
+"A well-paved stone road leading straight towards a grand city on a hill",
+"A merchant's cart loaded with barrels and crates, traveling on a safe road",
+"A group of recruits practicing archery in a dense, hilly woodland",
+"A ranger's cloak blending perfectly into the bark of a thick tree",
+"A long line of pack mules and wagons laden with goods",
+"Cozy, fortified cabins built into the side of a snowy mountain",
+"A golden chest left on a high, precarious mountain ledge",
+"A heavy iron grate barricading a dark cave entrance",
+"A solitary traveler climbing a snowy pass, looking towards a green valley",
+"An ancient stone pillar carved with the history of Numenor",
+"A messenger arriving at a peaceful riverside settlement",
+"A lone watchman standing on a high crag, overlooking misty valleys",
+"A heavy castle door securely bolted shut from the inside",
+"A scale weighing a small portion of grain against a stone weight",
+"An hourglass with sand slowly falling, sitting next to a growing sapling",
+"A dagger pinning a strategic map, with only a small area circled",
+"A compass and a worn map of far-off lands",
+"Open wooden gates welcoming a line of weary travelers carrying bundles",
+"A bustling crowd of workers with pickaxes and hammers heading to a site",
+"A dark eclipse covering the sun over the hills of Rhudaur",
+"A warrior kneeling and offering his sword to a dark, cloaked figure",
+"The banners of Rhudaur and Angmar flying side by side in a storm",
+"A burned grievance treaty blowing away in the wind",
+"An army of Hill-men charging across a river towards Arnorian shields",
+"A spear shattering the silver star shield of Arthedain",
+"A Rhudaur official stamping a document over an old Arnorian crest",
+"Replacing the banners on a Cardolan keep with the colors of Rhudaur",
+"A flaming arrow striking a Cardolan watchtower",
+"A hidden mountain pass in the snow, with an army silently marching through",
+"A hunter skinning a beast in the wild, totally self-reliant",
+"A burning village with warriors carrying away chests of loot",
+"A human hand and a clawed goblin hand exchanging gold for a map",
+"A horde of warriors rushing down a steep, rocky slope into a valley",
+"A beautiful elven statue being toppled by a thick rope",
+"The elegant waterfalls and bridges of Rivendell burning and ruined",
+"An elven forge now churning out crude, dark iron weapons",
+"A crude wooden watchtower built right in the middle of elven ruins",
+"Three dark rings interlocked in a symbol of malevolent alliance",
+"Crates of black iron weapons bearing the mark of the Red Eye",
+"A chest overflowing with dark jewels and a sinister glowing weapon",
 ]
 
 requests_list = [
