@@ -340,6 +340,29 @@ focus = {
 }
 
 focus = {
+	id = SHI_make_contact_with_saruman
+	icon = GFX_goal_ROH_concessions_to_isengard_saruman
+	ai_will_do = { factor = 5 }
+	available = { 
+		ISE = { 
+			has_country_leader = { ruling_only = yes name = "Saruman" } 
+			has_government = belligerent
+		} 
+	}
+	relative_position_id = SHI_different_approach
+	x = -6
+	y = 1
+	prerequisite = { focus = SHI_different_approach }
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		add_popularity = { ideology = belligerent popularity = 0.1}
+		add_opinion_modifier = { target = ISE modifier = small_increase }
+		ISE = { add_opinion_modifier = { target = SHI modifier = small_increase } }
+	}
+}
+
+focus = {
 	id = SHI_empower_the_shirriffs
 	icon = GFX_goal_support_belligerent
 	ai_will_do = {
@@ -530,7 +553,7 @@ focus = {
 	cost = 10
 	available_if_capitulated = yes
 	completion_reward = { 
-		add_ideas = SHI_unquestioned_authority 
+		add_ideas = SHI_unquestioned_authority_0 
 	}
 }
 
@@ -550,7 +573,7 @@ focus = {
 			name = first_hobbit_empire
 			template = faction_template_belligerent_expansionist
 		}
-		add_political_power = 100
+		swap_ideas = { remove_idea = SHI_unquestioned_authority_0 add_idea = SHI_unquestioned_authority_1 }
 		news_event = { hours = 48 id = news.356 }
 	}
 }
@@ -880,34 +903,6 @@ focus = {
 }
 
 focus = {
-	id = SHI_conspire_with_saruman
-	icon = GFX_goal_ROH_concessions_to_isengard_saruman
-	ai_will_do = { factor = 5 }
-	available = { 
-		is_puppet = no
-		ISE = { 
-			has_country_leader = { ruling_only = yes name = "Saruman" } 
-			has_government = belligerent
-		} 
-		has_government = belligerent
-	}
-	relative_position_id = SHI_empower_the_shirriffs
-	x = -4
-	y = 1
-	prerequisite = { focus = SHI_empower_the_shirriffs}
-	cost = 5
-	available_if_capitulated = yes
-	completion_reward = {
-		set_country_flag = SHI_conspired_with_saruman
-		custom_effect_tooltip = SHI_conspired_with_saruman_tooltip
-		add_opinion_modifier = { target = ISE modifier = medium_increase }
-		ISE = {
-			add_opinion_modifier = { target = SHI modifier = medium_increase }
-		}
-	}
-}
-
-focus = {
 	id = SHI_welcome_isengard_business
 	icon = GFX_goal_isengard_deal
 	ai_will_do = { factor = 5 }
@@ -918,10 +913,10 @@ focus = {
 			has_government = belligerent
 		} 
 	}
-	relative_position_id = SHI_conspire_with_saruman
-	x = 0
+	relative_position_id = SHI_empower_the_shirriffs
+	x = -4
 	y = 1
-	prerequisite = { focus = SHI_conspire_with_saruman }
+	prerequisite = { focus = SHI_empower_the_shirriffs }
 	cost = 5
 	available_if_capitulated = yes
 	completion_reward = {
@@ -945,7 +940,7 @@ focus = {
 	ai_will_do = { factor = 3 }
 	relative_position_id = SHI_welcome_isengard_business
 	x = 0
-	y = 1
+	y = 2
 	mutually_exclusive = { focus = SHI_seek_our_own_destiny }
 	prerequisite = { focus = SHI_welcome_isengard_business}
 	cost = 10
@@ -959,11 +954,55 @@ focus = {
 }
 
 focus = {
+	id = SHI_conspire_with_saruman
+	icon = GFX_goal_ROH_concessions_to_isengard_saruman
+	ai_will_do = { factor = 5 }
+	available = { 
+		is_puppet = no
+		ISE = { 
+			has_country_leader = { ruling_only = yes name = "Saruman" } 
+			has_government = belligerent
+		} 
+		has_government = belligerent
+	}
+	relative_position_id = SHI_unite_with_isengard
+	x = -2
+	y = 1
+	prerequisite = { focus = SHI_unite_with_isengard}
+	cost = 5
+	available_if_capitulated = yes
+	completion_reward = {
+		set_country_flag = SHI_conspired_with_saruman
+		custom_effect_tooltip = SHI_conspired_with_saruman_tooltip
+		add_opinion_modifier = { target = ISE modifier = medium_increase }
+		ISE = { add_opinion_modifier = { target = SHI modifier = medium_increase } }
+	}
+}
+
+focus = {
+	id = SHI_encourage_isengard_sovereignity
+	icon = GFX_goal_army_uruk_hai
+	ai_will_do = { factor = 0 }
+	relative_position_id = SHI_conspire_with_saruman
+	x = 0
+	y = 1
+	prerequisite = { focus = SHI_conspire_with_saruman}
+	cost = 3
+	available_if_capitulated = yes
+	completion_reward = { 
+		set_global_flag = isengard_sovereignity_encouraged
+		add_opinion_modifier = { target = ISE modifier = medium_increase }
+		ISE = { add_opinion_modifier = { target = SHI modifier = medium_increase } }
+		add_war_support = 0.1
+	}
+}
+
+focus = {
 	id = SHI_sharing_militair_achievements
 	icon = GFX_goal_lth_weapons_research
 	ai_will_do = { factor = 3 }
 	relative_position_id = SHI_unite_with_isengard
-	x = 2
+	x = 0
 	y = 1
 	mutually_exclusive = { focus = SHI_unite_with_isengard }
 	prerequisite = { focus = SHI_unite_with_isengard }
@@ -986,30 +1025,16 @@ focus = {
 	id = SHI_a_worthy_army
 	icon = GFX_goal_ROH_military_vigilance_soldier_shield
 	ai_will_do = { factor = 3 }
-	relative_position_id = SHI_unite_with_isengard
-	x = -2
+	relative_position_id = SHI_sharing_militair_achievements
+	x = 0
 	y = 1
-	prerequisite = { focus = SHI_unite_with_isengard}
+	prerequisite = { focus = SHI_sharing_militair_achievements}
 	cost = 5
 	available_if_capitulated = yes
 	available = { is_in_faction_with = ISE }
 	completion_reward = { 
 		increase_levies = yes
 	}
-}
-
-focus = {
-	id = SHI_encourageisengardsovereignity
-	icon = GFX_goal_army_uruk_hai
-	ai_will_do = { factor = 0 }
-	relative_position_id = SHI_conspire_with_saruman
-	x =0
-	y =3
-	mutually_exclusive = { }
-	prerequisite = { focus = SHI_unite_with_isengard}
-	cost = 10
-	available_if_capitulated = yes
-	completion_reward = { set_global_flag = isengard_sovereignity_encouraged }
 }
 
 focus = {
