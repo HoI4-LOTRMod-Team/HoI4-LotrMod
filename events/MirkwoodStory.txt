@@ -805,7 +805,9 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3000.a
-		country_event = { id = mirkwoodstory.3001 days = 3 }
+
+		set_country_flag = mir_forest_anomaly_ignored
+		add_political_power = 50
 	}
 
 	option = {
@@ -813,7 +815,7 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3000.b
-		country_event = { id = mirkwoodstory.3002 days = 3 }
+		country_event = { id = mirkwoodstory.3002 days = 70 }
 	}
 }
 
@@ -824,13 +826,52 @@ country_event = {
 	title = mirkwoodstory.3001.t
 	desc = mirkwoodstory.3001.desc
 
-	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		OR = {
+			AND = {
+				tag = MIR
+				has_country_flag = mir_forest_anomaly_ignored
+				divisions_in_state = {
+					size > 0
+					state = 230
+				}
+			}
+			AND = {
+				NOT = { tag = MIR }
+				MIR = { has_country_flag = mir_forest_anomaly_set_up }
+				divisions_in_state = {
+					size > 0
+					state = 230
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 120
+	}
 
 	option = {
 		ai_chance = {
 			base = 1
 		}
 		name = mirkwoodstory.3001.a
+
+		damage_units = {
+			state = 230
+			ratio = yes
+			org_damage = 0.3
+			str_damage = 0.15
+		}
+
+		230 = {
+			damage_building = {
+				type = infrastructure
+				damage = 1
+			}
+		}
 	}
 }
 
@@ -848,7 +889,9 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3002.a
-		country_event = { id = mirkwoodstory.3004 days = 3 }
+		
+		set_country_flag = mir_investigate_the_anomaly_unlocked
+		unlock_decision_tooltip = mir_investigate_the_anomaly
 	}
 
 	option = {
@@ -856,7 +899,9 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3002.b
-		country_event = { id = mirkwoodstory.3003 days = 3 }
+		add_manpower = -300
+		add_political_power = -35
+		country_event = { id = mirkwoodstory.3003 days = 35 }
 	}
 }
 
@@ -874,7 +919,9 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3003.a
-		country_event = { id = mirkwoodstory.3004 days = 3 }
+		
+		set_country_flag = mir_investigate_the_anomaly_2_unlocked
+		unlock_decision_tooltip = mir_investigate_the_anomaly_2
 	}
 }
 
@@ -892,6 +939,8 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3004.a
+
+		# TODO: Either add an artifact, or simply give civs or something, or just megic research boost
 	}
 
 	option = {
@@ -899,6 +948,14 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3004.b
+
+		230 = {
+			add_building_construction = {
+				type = library
+				level = 1
+				instant_build = yes
+			}
+		}
 	}
 
 	option = {
@@ -906,7 +963,9 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3004.c
-		country_event = { id = mirkwoodstory.3005 days = 3 }
+
+		set_country_flag = mir_excavate_the_anomaly_unlocked
+		unlock_decision_tooltip = mir_excavate_the_anomaly
 	}
 }
 
@@ -923,8 +982,13 @@ country_event = {
 		ai_chance = {
 			base = 1
 		}
+		trigger = {
+			ENT = { can_engage_in_diplo_with = yes }
+		}
 		name = mirkwoodstory.3005.a
-		country_event = { id = mirkwoodstory.3006 days = 3 }
+
+		set_country_flag = mir_consult_the_ents_unlocked
+		unlock_decision_tooltip = mir_consult_the_ents
 	}
 
 	option = {
@@ -932,14 +996,25 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3005.b
+
+		set_country_flag = mir_forest_anomaly_set_up
+		custom_effect_tooltip = mirkwoodstory.3005.b_tt
 	}
 
 	option = {
 		ai_chance = {
 			base = 1
 		}
+		trigger = {
+			OR = {
+				ELU = { can_engage_in_diplo_with = yes }
+				ERE = { can_engage_in_diplo_with = yes }
+				MOA = { can_engage_in_diplo_with = yes }
+			}
+		}
 		name = mirkwoodstory.3005.c
-		country_event = { id = mirkwoodstory.3007 days = 3 }
+
+		country_event = { id = mirkwoodstory.3007 days = 90 }
 	}
 }
 
@@ -957,6 +1032,8 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3006.a
+
+		# TODO: effect?
 	}
 
 	option = {
@@ -964,6 +1041,8 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3006.b
+
+		# TODO: create event division
 	}
 }
 
@@ -976,28 +1055,45 @@ country_event = {
 
 	is_triggered_only = yes
 
+	trigger = {
+		OR = {
+			ELU = { can_engage_in_diplo_with = yes }
+			ERE = { can_engage_in_diplo_with = yes }
+			MOA = { can_engage_in_diplo_with = yes }
+		}
+	}
+
 	option = {
+		trigger = {
+			ELU = { can_engage_in_diplo_with = yes }
+		}
 		ai_chance = {
 			base = 1
 		}
 		name = mirkwoodstory.3007.a
-		country_event = { id = mirkwoodstory.3008 days = 3 }
+		ELU = { country_event = { id = mirkwoodstory.3008 days = 7 } }
 	}
 
 	option = {
+		trigger = {
+			MOA = { can_engage_in_diplo_with = yes }
+		}
 		ai_chance = {
 			base = 1
 		}
 		name = mirkwoodstory.3007.b
-		country_event = { id = mirkwoodstory.3008 days = 3 }
+		MOA = { country_event = { id = mirkwoodstory.3008 days = 7 } }
 	}
 
 	option = {
+		trigger = {
+			ERE = { can_engage_in_diplo_with = yes }
+		}
 		ai_chance = {
 			base = 1
 		}
 		name = mirkwoodstory.3007.c
-		country_event = { id = mirkwoodstory.3008 days = 3 }
+		ERE = { country_event = { id = mirkwoodstory.3008 days = 7 } }
 	}
 }
 
@@ -1012,7 +1108,10 @@ country_event = {
 
 	option = {
 		ai_chance = {
-			base = 1
+			base = 65
+			modifier = {
+				add = opinion@MIR
+			}
 		}
 		name = mirkwoodstory.3008.a
 		country_event = { id = mirkwoodstory.3009 days = 3 }
@@ -1020,7 +1119,7 @@ country_event = {
 
 	option = {
 		ai_chance = {
-			base = 1
+			base = 35
 		}
 		name = mirkwoodstory.3008.b
 		country_event = { id = mirkwoodstory.3010 days = 3 }
@@ -1041,8 +1140,10 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3009.a
-		country_event = { id = mirkwoodstory.3011 days = 3 }
-		country_event = { id = mirkwoodstory.3012 days = 3 }
+
+		set_country_flag = mir_wake_the_giant_unlocked
+		unlock_decision_tooltip = mir_wake_the_giant
+		
 	}
 
 	option = {
@@ -1050,6 +1151,8 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3009.b
+
+		add_political_power = 75
 	}
 }
 
@@ -1084,6 +1187,15 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3011.a
+
+		add_manpower = -750
+
+		230 = {
+			damage_building = {
+				type = infrastructure
+				damage = 1
+			}
+		}
 	}
 }
 
@@ -1101,6 +1213,8 @@ country_event = {
 			base = 1
 		}
 		name = mirkwoodstory.3012.a
+
+		# TODO: Get giant division
 	}
 }
 
@@ -1256,6 +1370,7 @@ country_event = {
 	is_triggered_only = yes
 
     trigger = {
+		tag = MIR
         has_idea = artifact_blade_of_oropher
     }
 
