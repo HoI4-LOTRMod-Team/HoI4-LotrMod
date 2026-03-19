@@ -1450,7 +1450,6 @@ focus_tree = {
         search_filters = { }
         completion_reward = {
 			# lower stability in all neighbors that arent orcs  
-            # TODO_r: Not sure about this one tbh
             every_country = {
                 limit = { 
                     OR = {
@@ -2079,7 +2078,13 @@ focus_tree = {
         }
         # Gain 2k manpower per state with necro forge
         completion_reward = {
-            # TODO_r: This shouldd be something else
+            custom_effect_tooltip = DGU_flesh_sculpting_pits_tt
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = { necromantic_forge > 0 }
+                    ROOT = { add_manpower = 2000 }
+                }
+            }
 		}
     }
 
@@ -2273,7 +2278,10 @@ focus_tree = {
         cost = 7
         ai_will_do = {
             factor = 35
-            # TODO_r: increase prio if at threat of CFM getting locked
+            modifier = {
+                factor = 3
+                cfm_states_locked_imminent = yes
+            }
         }
         
         search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
@@ -2304,7 +2312,10 @@ focus_tree = {
         cost = 10
         ai_will_do = {
             factor = 17
-            # TODO_r: increase prio if at threat of CFM getting locked
+            modifier = {
+                factor = 3
+                cfm_states_locked_imminent = yes
+            }
         }
         
         search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
@@ -2950,8 +2961,8 @@ focus_tree = {
             ISE = {
                 exists = yes
                 is_subject = no
-                has_completed_focus = rebrandisengard # TODO_r: change when Isengard rework
-                NOT = { has_completed_focus = warwithrohan } # TODO_r: change after Isengard rework
+                has_completed_focus = rebrandisengard # TODO: change when Isengard rework
+                NOT = { has_completed_focus = warwithrohan } # TODO: change after Isengard rework
             }
             NOT = { has_war_with = ISE }
         }
@@ -2977,7 +2988,10 @@ focus_tree = {
         cost = 5
         ai_will_do = {
             factor = 35
-            # TODO_r: increase prio if at threat of CFM getting locked
+            modifier = {
+                factor = 3
+                cfm_states_locked_imminent = yes
+            }
         }
         
         search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
@@ -3053,7 +3067,7 @@ focus_tree = {
             ISE = {
                 exists = yes
                 is_subject = no
-                has_completed_focus = rebrandisengard # TODO_r: change when Isengard rework
+                has_completed_focus = rebrandisengard # TODO: change when Isengard rework
             }
             NOT = { has_war_with = ISE }
         }
@@ -3133,7 +3147,11 @@ focus_tree = {
                 factor = 2
                 date > "3019.1.1"
             }
-            # TODO_r: increase prio based on schedule and/or MIR locking down CFM
+            modifier = {
+                factor = 2
+                cfm_states_locked_imminent = yes
+            }
+            # TODO_r: increase prio based on schedule
         }
         
         search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
@@ -3174,7 +3192,11 @@ focus_tree = {
                 factor = 2
                 date > "3019.1.1"
             }
-            # TODO_r: increase prio based on schedule and/or MIR locking down CFM
+            modifier = {
+                factor = 2
+                cfm_states_locked_imminent = yes
+            }
+            # TODO_r: increase prio based on schedule
         }
         
         search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
@@ -4773,7 +4795,7 @@ focus_tree = {
     }
 
     focus = {
-        id = MIR_new_focus_0XDUyf
+        id = DGU_wartime_endeavors
 		prerequisite = { focus = DGU_reasearch_and_misc }
         
         icon = GFX_unknown_focus
@@ -4789,20 +4811,20 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# TODO_r: These focuses are "placeholders" Addd some late game shit, long focuses and stuff for whatrever is missing here
+            add_ideas = DGU_wartime_endeavors
 		}
     }
 
     focus = {
-        id = MIR_new_focus_sDAGcc
-		prerequisite = { focus = MIR_new_focus_0XDUyf }
+        id = DGU_forging_methods
+		prerequisite = { focus = DGU_wartime_endeavors }
         
         icon = GFX_unknown_focus
         
         x = -6
         y = 9
 
-        cost = 5
+        cost = 7
         ai_will_do = { factor = 1 }
         
         search_filters = { FOCUS_FILTER_RESEARCH }
@@ -4810,20 +4832,26 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# TODO_r  
+			add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour_metalworking
+                ahead_reduction = 1
+                bonus = 0.5
+                uses = 1
+            }
 		}
     }
 
     focus = {
-        id = MIR_new_focus_EtaBBN
-		prerequisite = { focus = MIR_new_focus_0XDUyf }
+        id = DGU_crafting_methods
+		prerequisite = { focus = DGU_wartime_endeavors }
         
         icon = GFX_unknown_focus
         
         x = -4
         y = 9
 
-        cost = 5
+        cost = 7
         ai_will_do = { factor = 1 }
         
         search_filters = { FOCUS_FILTER_RESEARCH }
@@ -4831,14 +4859,20 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# TODO_r  
+			add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour_construction_industry
+                ahead_reduction = 1
+                bonus = 0.5
+                uses = 1
+            }
 		}
     }
 
     focus = {
-        id = MIR_new_focus_DxFRWy
-		prerequisite = { focus = MIR_new_focus_EtaBBN }
-		prerequisite = { focus = MIR_new_focus_sDAGcc }
+        id = DGU_orc_secrets
+		prerequisite = { focus = DGU_crafting_methods }
+		prerequisite = { focus = DGU_forging_methods }
         
         icon = GFX_unknown_focus
         
@@ -4853,20 +4887,26 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# TODO_r  
+			add_tech_bonus = {
+                name = special_bonus
+                category = lotr_orcs_secrets
+                ahead_reduction = 1
+                bonus = 0.5
+                uses = 1
+            }
 		}
     }
 
     focus = {
-        id = MIR_new_focus_8QEGaV
-		prerequisite = { focus = MIR_new_focus_sDAGcc }
+        id = DGU_support_gear
+		prerequisite = { focus = DGU_forging_methods }
         
         icon = GFX_unknown_focus
         
         x = -6
         y = 11
 
-        cost = 5
+        cost = 7
         ai_will_do = { factor = 1 }
         
         search_filters = { FOCUS_FILTER_RESEARCH }
@@ -4874,20 +4914,27 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# TODO_r  
+            add_equipment_bonus = {
+                bonus = {
+                    support_equipment = {
+                        build_cost_ic = -0.1
+                        reliability = 0.03
+                    }
+                }
+            }
 		}
     }
 
     focus = {
-        id = MIR_new_focus_fgdz38
-		prerequisite = { focus = MIR_new_focus_EtaBBN }
+        id = DGU_bow_crafting
+		prerequisite = { focus = DGU_crafting_methods }
         
         icon = GFX_unknown_focus
         
         x = -4
         y = 11
 
-        cost = 5
+        cost = 7
         ai_will_do = { factor = 1 }
         
         search_filters = { FOCUS_FILTER_RESEARCH }
@@ -4895,7 +4942,18 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# TODO_r  
+			add_equipment_bonus = {
+                bonus = {
+                    artillery_equipment = {
+                        build_cost_ic = -0.1
+                        reliability = 0.03
+                    }
+                    rocket_artillery_equipment = {
+                        build_cost_ic = -0.1
+                        reliability = 0.03
+                    }
+                }
+            }
 		}
     }
 

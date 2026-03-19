@@ -258,7 +258,12 @@ focus_tree = {
             GOB = { can_reach = yes }
             GOB = { war_with_is_possible = yes }
             is_subject = no
-            # TODO_r: The goblins have raided us or done something else bad
+
+            OR = {
+                has_government = belligerent
+                GOB = { has_added_tension_amount > 0 }
+                has_country_flag = gob_has_raided
+            }
         }
         bypass = {
             has_war_with = GOB
@@ -360,7 +365,19 @@ focus_tree = {
         }
         completion_reward = {
 			# send event to GOB to pay them off for no raids  
-            # TODO_r: requires GOB raids to be implemented
+
+            add_timed_idea = {
+                idea = minor_expense
+                days = 35
+            }
+            custom_effect_tooltip = GLD_parley_with_the_goblins_tt
+
+            set_country_flag = gob_raids_disabled
+            hidden_effect = {
+                GOB = {
+                    country_event = goblintown.146
+                }
+            }
 		}
     }
 
@@ -474,8 +491,20 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# make it less likely for goblin raids to succeed (+ something else?)  
-            # TODO_r: requires GOB raids to be implemented
+			add_intel = {
+                target = GOB
+                army_intel = 50
+            }
+
+            add_intel = {
+                target = RGL
+                army_intel = 50
+            }
+
+            add_intel = {
+                target = VAL
+                army_intel = 50
+            }
 		}
     }
 
@@ -1477,7 +1506,7 @@ focus_tree = {
     }
 
     focus = {
-        id = GLD_the_council_of_the_vales # TODO_r/NOTE: If VAL already creates a faction, maybe this should work differently (merging or similar)
+        id = GLD_the_council_of_the_vales
 		prerequisite = { focus = GLD_honor_old_friendships }
         
         icon = GFX_unknown_focus
@@ -1507,8 +1536,9 @@ focus_tree = {
             set_politics = {
                 ruling_party = cooperative
             }
+            # Create faction ONLY if VAL is not already on it
             if = {
-                limit = { NOT = { is_in_faction = yes } }
+                limit = { NOT = { is_in_faction = yes } NOT = { VAL = { is_faction_leader = yes } } NOT = { is_ai = yes VAL = { has_completed_focus = VAL_unify_the_clans } } }
                 create_faction_from_template = {
                     template = faction_template_generic
                     name = "Anduin Alliance"
