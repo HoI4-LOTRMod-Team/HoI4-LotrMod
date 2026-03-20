@@ -4031,7 +4031,8 @@ focus_tree = {
         completion_reward = {
             # change name and flag
             set_cosmetic_tag = MIRDORIATH
-            # TODO_r2: add idea?
+            
+            add_political_power = 150
         }
     }
 
@@ -5471,7 +5472,7 @@ focus_tree = {
             # invite or try to create faction with DGU, GUN or GOB
             custom_effect_tooltip = MIR_pick_up_the_leftovers_tt
             if = {
-                limit = { GUN = { OR = { can_invite_to_faction = yes MIR = { is_faction_leader = no } } } } # TODO_r: has completed anti-sauron focus
+                limit = { GUN = { OR = { can_invite_to_faction = yes MIR = { is_faction_leader = no } } NOT = { has_completed_focus = GUN_join_sauron } } }
                 GUN = { invite_to_faction = yes }
             }
             if = {
@@ -6836,9 +6837,20 @@ focus_tree = {
         search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
         available = {
             has_cfm_active = yes
-            # TODO_r: This should have a condition, like at least X states lost or threat
+            OR = {
+                date > 3020.6.1
+                threat > 0.5
+                custom_trigger_tooltip = {
+                    tooltip = MIR_stop_the_spread_cond_tt
+                    check_variable = {
+                        cfm_states_seized > 2
+                    }   
+                }
+            }
         }
-        bypass_if_unavailable = yes
+        bypass = {
+            has_cfm_active = no
+        }
         completion_reward = {
 			# decrease presence gain on everyone for a limited time
             DGU = {

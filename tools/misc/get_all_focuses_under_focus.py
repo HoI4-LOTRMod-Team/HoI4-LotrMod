@@ -7,7 +7,7 @@ from pdx_parser import *
 
 focus_path = r'common\national_focus\rhun.txt'
 
-root_focus_name = "RHUN_break_free_from_mordor"
+root_focus_name = "RHUN_teachings_of_morgoth"
 
 focus_tree = ParseObjFromFile(focus_path)
 
