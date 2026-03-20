@@ -24,7 +24,7 @@ focus_tree = {
         id = GLD_ascend_the_carrock
 		prerequisite = { focus = GLD_the_west_bank }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_lonely_mountain_ere
         
         x = -19
         y = 2
@@ -73,7 +73,7 @@ focus_tree = {
         id = GLD_tame_the_eagles_of_the_eyrie
 		prerequisite = { focus = GLD_ascend_the_carrock }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_eagle_rider
         
         x = -19
         y = 3
@@ -114,7 +114,7 @@ focus_tree = {
         id = GLD_eyes_of_the_mountain
 		prerequisite = { focus = GLD_tame_the_eagles_of_the_eyrie }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_MIR_scout_eagle_focus
         
         x = -18
         y = 4
@@ -185,7 +185,7 @@ focus_tree = {
         id = GLD_the_mountain_problem
 		prerequisite = { focus = GLD_the_west_bank }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_DGU_mountains_misty_thunderstorm
         
         x = -14
         y = 2
@@ -216,7 +216,7 @@ focus_tree = {
         id = GLD_purge_the_undercity
 		prerequisite = { focus = GLD_the_mountain_problem }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_goal_generic_major_war
 
         will_lead_to_war_with = GOB
 
@@ -258,7 +258,12 @@ focus_tree = {
             GOB = { can_reach = yes }
             GOB = { war_with_is_possible = yes }
             is_subject = no
-            # TODO: The goblins have raided us or done something else bad
+
+            OR = {
+                has_government = belligerent
+                GOB = { has_added_tension_amount > 0 }
+                has_country_flag = gob_has_raided
+            }
         }
         bypass = {
             has_war_with = GOB
@@ -276,7 +281,7 @@ focus_tree = {
         id = GLD_fortify_the_mountain_passes
 		prerequisite = { focus = GLD_the_mountain_problem }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_GOB_outpost_wall_checkpoint
 
         mutually_exclusive = {
             focus = GLD_parley_with_the_goblins
@@ -315,7 +320,7 @@ focus_tree = {
         id = GLD_parley_with_the_goblins
 		prerequisite = { focus = GLD_the_mountain_problem }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_VAL_pay_off_goblins
 
         mutually_exclusive = {
             focus = GLD_purge_the_undercity
@@ -360,7 +365,19 @@ focus_tree = {
         }
         completion_reward = {
 			# send event to GOB to pay them off for no raids  
-            # TODO: requires GOB raids to be implemented
+
+            add_timed_idea = {
+                idea = minor_expense
+                days = 35
+            }
+            custom_effect_tooltip = GLD_parley_with_the_goblins_tt
+
+            set_country_flag = gob_raids_disabled
+            hidden_effect = {
+                GOB = {
+                    country_event = goblintown.146
+                }
+            }
 		}
     }
 
@@ -446,13 +463,22 @@ focus_tree = {
         search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
         available = {
             GOB = { can_engage_in_diplo_with = yes }
+
+            gob_can_borrow_high_pass = yes
         }
         bypass = {
             has_idea = GOB_high_pass_contract
         }
         completion_reward = {
 			# borrow high pass from GOB  
-            # TODO: requires GOB lend out mechanic to be implemented.
+            hidden_effect = {
+				GOB = { country_event = { id = goblintown.129 days = 1 } }
+			}
+			custom_effect_tooltip = request_high_pass_deal_tt
+			custom_effect_tooltip = if_they_accept_newline_tt
+			effect_tooltip = {
+				gob_borrow_high_pass = yes
+			}
 		}
     }
 
@@ -461,7 +487,7 @@ focus_tree = {
 		prerequisite = { focus = GLD_fortify_the_mountain_passes }
 		prerequisite = { focus = GLD_eyes_of_the_mountain }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_MIR_scout_eagle_focus
         
         x = -17
         y = 5
@@ -474,8 +500,20 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# make it less likely for goblin raids to succeed (+ something else?)  
-            # TODO: requires GOB raids to be implemented
+			add_intel = {
+                target = GOB
+                army_intel = 50
+            }
+
+            add_intel = {
+                target = RGL
+                army_intel = 50
+            }
+
+            add_intel = {
+                target = VAL
+                army_intel = 50
+            }
 		}
     }
 
@@ -505,7 +543,7 @@ focus_tree = {
         id = GLD_war_councils_of_gladden
 		prerequisite = { focus = GLD_the_strong_lead_the_weak }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_battle_war_planning
         
         x = -8
         y = 3
@@ -538,7 +576,7 @@ focus_tree = {
         id = GLD_arms_before_comfort
 		prerequisite = { focus = GLD_middle_of_the_road focus = GLD_the_strong_lead_the_weak }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_ELU_dagger_sword_hammer
         
         x = -4
         y = 3
@@ -567,7 +605,7 @@ focus_tree = {
         id = GLD_the_strong_lead_the_weak
 		prerequisite = { focus = GLD_assert_the_high_chief }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_crossed_spears
 
         mutually_exclusive = {
             focus = GLD_middle_of_the_road
@@ -613,7 +651,7 @@ focus_tree = {
     }
 
     focus = {
-        id = GLD_test_the_borders
+        id = GLD_rally_the_banners
 		prerequisite = { focus = GLD_unify_the_vales }
         
         icon = GFX_unknown_focus
@@ -631,13 +669,17 @@ focus_tree = {
             is_puppet = no
         }
         completion_reward = {
-            # TODO
+            
+            add_timed_idea = {
+                idea = generic_military_mobilization_2
+                days = 175
+            }
         }
     }
 
     focus = {
         id = GLD_lords_of_the_gladden_fields
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_helment_with_swords
         
         x = -2
         y = 0
@@ -824,7 +866,7 @@ focus_tree = {
         id = GLD_legacy_of_the_eotheod
 		prerequisite = { focus = GLD_the_east_bank }
         
-        icon = GFX_goal_ROH_horselords_of_rohan
+        icon = GFX_goal_generic_rohirrim_helmet_r
         
         x = 10
         y = 2
@@ -1085,7 +1127,7 @@ focus_tree = {
         id = GLD_riders_of_the_gladden
 		prerequisite = { focus = GLD_legacy_of_the_eotheod }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_lone_rider_light_cav
         
         x = 11
         y = 3
@@ -1152,7 +1194,7 @@ focus_tree = {
         id = GLD_thunder_on_the_plains
 		prerequisite = { focus = GLD_skirmish_doctrine }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_kings_cav_charge
         
         x = 10
         y = 5
@@ -1185,7 +1227,7 @@ focus_tree = {
         id = GLD_skirmish_doctrine
 		prerequisite = { focus = GLD_riders_of_the_gladden focus = GLD_horse_breeding_clans }
         
-        icon = GFX_goal_goal_generic_cavalry
+        icon = GFX_goal_generic_lancer_cav_charge
         
         x = 10
         y = 4
@@ -1220,7 +1262,7 @@ focus_tree = {
         id = GLD_horse_breeding_clans
 		prerequisite = { focus = GLD_legacy_of_the_eotheod }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_horse_breeding_animal_husb_2
         
         x = 9
         y = 3
@@ -1261,7 +1303,7 @@ focus_tree = {
         id = GLD_among_the_free_peoples
 		prerequisite = { focus = GLD_assert_the_high_chief }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_unity
 
         mutually_exclusive = {
             focus = GLD_middle_of_the_road
@@ -1298,7 +1340,7 @@ focus_tree = {
         id = GLD_middle_of_the_road
 		prerequisite = { focus = GLD_assert_the_high_chief }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_stab_scale_balance
 
         mutually_exclusive = {
             focus = GLD_the_strong_lead_the_weak
@@ -1337,7 +1379,7 @@ focus_tree = {
         id = GLD_honor_old_friendships
 		prerequisite = { focus = GLD_among_the_free_peoples }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_cooperation_handshake
         
         x = 4
         y = 3
@@ -1395,7 +1437,7 @@ focus_tree = {
 		prerequisite = { focus = GLD_honor_old_friendships }
 		prerequisite = { focus = GLD_legacy_of_the_eotheod }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_ROH_rohan_messenger_herald
         
         x = 7
         y = 4
@@ -1427,7 +1469,7 @@ focus_tree = {
         id = GLD_send_riders_to_rohan
 		prerequisite = { focus = GLD_reach_out_to_rohan }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_lancer_cav_charge
         
         x = 7
         y = 6
@@ -1477,7 +1519,7 @@ focus_tree = {
     }
 
     focus = {
-        id = GLD_the_council_of_the_vales # TODO/NOTE: If VAL already creates a faction, maybe this should work differently (merging or similar)
+        id = GLD_the_council_of_the_vales
 		prerequisite = { focus = GLD_honor_old_friendships }
         
         icon = GFX_unknown_focus
@@ -1507,8 +1549,9 @@ focus_tree = {
             set_politics = {
                 ruling_party = cooperative
             }
+            # Create faction ONLY if VAL is not already on it
             if = {
-                limit = { NOT = { is_in_faction = yes } }
+                limit = { NOT = { is_in_faction = yes } NOT = { VAL = { is_faction_leader = yes } } NOT = { is_ai = yes VAL = { has_completed_focus = VAL_unify_the_clans } } }
                 create_faction_from_template = {
                     template = faction_template_generic
                     name = "Anduin Alliance"
@@ -1632,7 +1675,7 @@ focus_tree = {
         id = GLD_in_pursuit_of_a_throne
 		prerequisite = { focus = GLD_the_council_of_the_vales }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_VAL_seek_heir_king
         
         x = 4
         y = 6
@@ -1707,7 +1750,7 @@ focus_tree = {
         id = GLD_watch_the_borders
 		prerequisite = { focus = GLD_middle_of_the_road }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_watchtower
         
         x = -2
         y = 3
@@ -1752,7 +1795,7 @@ focus_tree = {
         id = GLD_armed_neutrality
 		prerequisite = { focus = GLD_watch_the_borders }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_goal_generic_neutrality_focus
         
         x = -2
         y = 4
@@ -1822,7 +1865,7 @@ focus_tree = {
         id = GLD_long_term_growth
 		prerequisite = { focus = GLD_middle_of_the_road focus = GLD_among_the_free_peoples }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_hourglass_time
         
         x = 0
         y = 3
@@ -1855,7 +1898,7 @@ focus_tree = {
         id = GLD_cultivate_the_foodplains
 		prerequisite = { focus = GLD_long_term_growth }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_plow_farming_equip
         
         x = 0
         y = 4
@@ -1896,7 +1939,7 @@ focus_tree = {
         id = GLD_expand_the_rivermarkets
 		prerequisite = { focus = GLD_cultivate_the_foodplains }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_VAL_river_markets_2
         
         x = 0
         y = 5
@@ -1971,7 +2014,7 @@ focus_tree = {
         id = GLD_eastside_forges
 		prerequisite = { focus = GLD_war_camp_economy }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_ROH_forge_construction
         
         x = -4
         y = 5
@@ -2012,7 +2055,7 @@ focus_tree = {
         id = GLD_unify_the_vales
 		prerequisite = { focus = GLD_war_councils_of_gladden }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_dagger_through_map_war_dec
         
         mutually_exclusive = {
             focus = GLD_bolder_not_safer
@@ -2053,15 +2096,15 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-            # TODO
+            # TODO_r
         }
     }
 
     focus = {
         id = GLD_attack_the_beornings
-		prerequisite = { focus = GLD_test_the_borders }
+		prerequisite = { focus = GLD_rally_the_banners }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_goal_generic_major_war
 
         will_lead_to_war_with = VAL
         
@@ -2115,9 +2158,9 @@ focus_tree = {
 
     focus = {
         id = GLD_attack_rhosgobel
-		prerequisite = { focus = GLD_test_the_borders }
+		prerequisite = { focus = GLD_rally_the_banners }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_goal_generic_major_war
 
         will_lead_to_war_with = RGL
         
@@ -2213,7 +2256,7 @@ focus_tree = {
         id = GLD_emergency_levies
 		prerequisite = { focus = GLD_choose_our_moment }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_poor_mans_army_resistance
         
         x = -3
         y = 6
@@ -2300,7 +2343,7 @@ focus_tree = {
         id = GLD_expand_the_nest
 		prerequisite = { focus = GLD_tame_the_eagles_of_the_eyrie }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_eagle_nest
         
         x = -19
         y = 5
@@ -2419,7 +2462,7 @@ focus_tree = {
         id = GLD_form_the_kingdom_of_gladden
 		prerequisite = { focus = GLD_request_an_heir }
         
-        icon = GFX_unknown_focus
+        icon = GFX_goal_generic_golden_crown_kingdom
         
         x = 5
         y = 8

@@ -274,8 +274,9 @@ political_actions = {
 				war_with_is_possible = yes # no NA pacts/allies etc.
 				strength_ratio = {
 					tag = ROOT
-					ratio < 2.0
+					ratio < 2.5
 				}
+				NOT = { has_country_flag = gob_raids_disabled }
 			}
 		}
 		
@@ -304,7 +305,7 @@ political_actions = {
 		icon = generic_research
 
 		fire_only_once = no
-		days_re_enable = 100 # To avoid spamming # TODO: if FROM is a player, make sure to not spam
+		days_re_enable = 100 # To avoid spamming
 		cost = 50
 
 		#on_map_mode = map_and_decisions_view | map_only | decision_view_only 
@@ -336,6 +337,10 @@ political_actions = {
 			}
 			modifier = {
 				factor = enemies_strength_ratio
+			}
+			modifier = {
+				factor = 0
+				FROM = { has_country_flag = sent_merc_offer }
 			}
 		}
 
@@ -382,6 +387,14 @@ political_actions = {
 				flag = merc_offer_pending
 				days = 100
 				value = 1
+			}
+
+			FROM = {
+				set_country_flag = {
+					flag = sent_merc_offer
+					days = 365
+					value = 1
+				}
 			}
 		}
 	}
@@ -808,7 +821,7 @@ GOB_scrap_collection = {
 		}
 	}
 
-	convert_scrap_into_steel_equipment = { # TODO: This should have a limit on how much steel this state can have
+	convert_scrap_into_steel_equipment = {
 		icon = generic_research
 
 		fire_only_once = no # allow decision to reappear
@@ -821,6 +834,7 @@ GOB_scrap_collection = {
 
 		visible = {
 			check_variable = { scrap > 0 }
+			check_variable = { scrap_converted_to_steel < 50 }
 		}
 
 		ai_will_do = {
@@ -841,6 +855,8 @@ GOB_scrap_collection = {
 		}
 		
 		complete_effect = {
+			add_to_variable = { scrap_converted_to_steel = 1 }
+
 			# when decision is taken
 			subtract_from_variable = {
 				var = scrap
