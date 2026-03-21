@@ -19,7 +19,7 @@ from PySide6.QtGui import QPixmap, QIcon, QPainter, QPen, QBrush, QImage
 from PySide6.QtCore import Qt, QSize
 
 # --- CONFIGURATION ---
-HARDCODED_PATH = r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\focuses_and_ideas'
+HARDCODED_PATH = r'E:\PROJECTS\HOI4_LOTR\focuses_and_ideas'
 THUMBNAIL_SIZE = QSize(80, 80)
 
 class DraggableLayerItem(QGraphicsPixmapItem):
