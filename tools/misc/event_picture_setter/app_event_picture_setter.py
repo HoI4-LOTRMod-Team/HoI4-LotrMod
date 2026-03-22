@@ -17,7 +17,7 @@ from PIL import ImageOps
 
 # --- Hard-coded Paths ---
 LOCS_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation'
-EVENTS_FILE = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\events\Anduin.txt'
+EVENTS_FILE = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\events\Rhun.txt'
 IMAGES_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\gfx\event_pictures\report_events\unmasked'
 
 
@@ -33,12 +33,11 @@ events_list = events_obj.GetAll("country_event").value
 
 
 def load_dds_pixmap(filepath, max_size=None):
-    """Helper function to load a DDS file via Pillow and convert to QPixmap."""
     if not os.path.exists(filepath):
         return QPixmap()
     try:
         with Image.open(filepath) as img:
-            img = img.convert("RGBA") # Ensure compatibility
+            img = img.convert("RGBA")
             qim = ImageQt(img)
             pixmap = QPixmap.fromImage(qim)
             if max_size:
@@ -48,34 +47,31 @@ def load_dds_pixmap(filepath, max_size=None):
         print(f"Error loading {filepath}: {e}")
         return QPixmap()
 
+
 class AddImageDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Add New Event Image")
         self.resize(400, 350)
         
-        self.pil_image = None # Stores the image data
+        self.pil_image = None
+        self.new_gfx_id = None # We will store the generated ID here
         
         layout = QVBoxLayout(self)
         
-        # Name Input
         self.name_input = QLineEdit("report_event_new_image")
         layout.addWidget(QLabel("Image Name (without .dds):"))
         layout.addWidget(self.name_input)
         
-        # Preview Area
         self.preview_label = QLabel("Paste (Ctrl+V) or Browse for an image")
         self.preview_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.preview_label.setMinimumSize(210, 176)
         self.preview_label.setStyleSheet("border: 2px dashed #aaa; background-color: #222;")
         layout.addWidget(self.preview_label, stretch=1)
         
-        # Buttons
         button_layout = QHBoxLayout()
-        
         self.browse_btn = QPushButton("Browse File")
         self.browse_btn.clicked.connect(self.browse_image)
-        
         self.paste_btn = QPushButton("Paste from Clipboard")
         self.paste_btn.clicked.connect(self.paste_image)
         
@@ -86,18 +82,14 @@ class AddImageDialog(QDialog):
         self.save_btn = QPushButton("Process and Save")
         self.save_btn.setStyleSheet("background-color: #1976d2; color: white; font-weight: bold;")
         self.save_btn.clicked.connect(self.process_and_accept)
-        self.save_btn.setEnabled(False) # Disabled until an image is loaded
+        self.save_btn.setEnabled(False)
         layout.addWidget(self.save_btn)
 
-        # Setup Ctrl+V Shortcut
         shortcut = QShortcut(QKeySequence("Ctrl+V"), self)
         shortcut.activated.connect(self.paste_image)
 
     def load_from_pil(self, img):
-        """Loads a PIL image into the UI preview."""
         self.pil_image = img.convert("RGBA")
-        
-        # Convert PIL to QPixmap for preview
         qim = ImageQt(self.pil_image)
         pixmap = QPixmap.fromImage(qim).scaled(
             210, 176, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation
@@ -120,12 +112,9 @@ class AddImageDialog(QDialog):
         
         if mime_data.hasImage():
             qimage = clipboard.image()
-            
-            # Convert QImage to PIL via a byte buffer
             buffer = QBuffer()
             buffer.open(QIODevice.OpenModeFlag.ReadWrite)
             qimage.save(buffer, "PNG")
-            
             img = Image.open(io.BytesIO(buffer.data().data()))
             self.load_from_pil(img)
         else:
@@ -140,44 +129,40 @@ class AddImageDialog(QDialog):
             QMessageBox.warning(self, "Error", "Please provide a name for the image.")
             return
             
-        # Ensure it ends with .dds
         if not filename.endswith(".dds"):
             filename += ".dds"
             
         save_path = os.path.join(IMAGES_PATH, filename)
         
         try:
-            # Resize and crop without warping
             processed_img = ImageOps.fit(self.pil_image, (210, 176), method=Image.Resampling.LANCZOS)
-            
-            # DDS files usually prefer RGB or RGBA. 
-            # If the image has transparency, keep RGBA, otherwise RGB.
             if processed_img.mode != "RGBA":
                 processed_img = processed_img.convert("RGB")
                 
             processed_img.save(save_path, format="DDS")
-            self.accept() # Closes dialog and returns success
             
+            # Save the GFX ID so the main window can use it!
+            self.new_gfx_id = "GFX_" + filename.replace(".dds", "")
+            
+            self.accept()
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to save DDS:\n{e}")
+
 
 class EventImageTool(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Event Image Assignment Tool")
-        # Increased window width to give the gallery more room
-        self.resize(1200, 600) 
+        self.resize(1200, 600)
         
         self.current_index = 0
         
-        # --- UI Setup ---
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         main_layout = QHBoxLayout(central_widget)
         
-        # -- Left Panel (Event Info & Current Image) --
+        # -- Left Panel --
         left_panel = QVBoxLayout()
-        
         self.title_label = QLabel()
         self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title_label.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 5px;")
@@ -207,7 +192,7 @@ class EventImageTool(QMainWindow):
         left_panel.addWidget(self.next_button)
         left_panel.addWidget(self.save_button)
         
-        # -- Right Panel (Image Gallery) --
+        # -- Right Panel --
         right_panel = QVBoxLayout()
         
         self.add_image_btn = QPushButton("+ Add New Image")
@@ -215,40 +200,24 @@ class EventImageTool(QMainWindow):
         self.add_image_btn.setStyleSheet("background-color: #5e35b1; color: white; font-weight: bold;")
         self.add_image_btn.clicked.connect(self.open_add_image_dialog)
         
-        right_panel.addWidget(self.add_image_btn)
-
         self.image_gallery = QListWidget()
         self.image_gallery.setViewMode(QListWidget.ViewMode.IconMode)
-        self.image_gallery.setIconSize(QSize(100, 100)) # Slightly smaller icons
-        
-        # Enforce a strict grid so long text doesn't ruin the columns
-        self.image_gallery.setGridSize(QSize(130, 140)) 
-        
+        self.image_gallery.setIconSize(QSize(100, 100))
+        self.image_gallery.setGridSize(QSize(130, 140))
         self.image_gallery.setResizeMode(QListWidget.ResizeMode.Adjust)
-        self.image_gallery.setMovement(QListWidget.Movement.Static) # Prevents dragging items
+        self.image_gallery.setMovement(QListWidget.Movement.Static)
         self.image_gallery.setSpacing(5)
+        self.image_gallery.setMinimumWidth(550)
+        self.image_gallery.itemDoubleClicked.connect(self.on_gallery_double_click)
         
-        # Give the gallery enough minimum width to fit 4 columns of 130px (520px + scrollbar)
-        self.image_gallery.setMinimumWidth(550) 
-        
-        self.image_gallery.itemDoubleClicked.connect(self.assign_image)
-        
+        right_panel.addWidget(self.add_image_btn)
         right_panel.addWidget(self.image_gallery)
         
         main_layout.addLayout(left_panel, stretch=1)
-        main_layout.addLayout(right_panel) # Changed from adding widget to adding layout
+        main_layout.addLayout(right_panel)
         
-        # Initialize
         self.populate_gallery()
         self.update_ui()
-
-    def open_add_image_dialog(self):
-        dialog = AddImageDialog(self)
-        if dialog.exec(): # If the user successfully saved an image
-            # Clear and reload the gallery to show the new image
-            self.image_gallery.clear()
-            self.populate_gallery()
-            QMessageBox.information(self, "Success", "New image added and gallery refreshed!")
 
     def populate_gallery(self):
         none_item = QListWidgetItem("None")
@@ -267,9 +236,7 @@ class EventImageTool(QMainWindow):
             if not pixmap.isNull():
                 item = QListWidgetItem(QIcon(pixmap), gfx_id)
                 item.setData(Qt.ItemDataRole.UserRole, gfx_id)
-                
-                # Set tooltips so the user can see the full ID if it gets truncated by the grid
-                item.setToolTip(gfx_id) 
+                item.setToolTip(gfx_id)
                 self.image_gallery.addItem(item)
 
     def get_localized_string(self, event, key):
@@ -284,13 +251,10 @@ class EventImageTool(QMainWindow):
             return
             
         current_event = events_list[self.current_index]
-        
-        # Text
         self.title_label.setText(self.get_localized_string(current_event, "title"))
         self.desc_label.setText(self.get_localized_string(current_event, "desc"))
         self.next_button.setText(f"Next Event ({self.current_index + 1} / {len(events_list)})")
         
-        # Picture
         self.current_image_label.clear()
         self.current_image_label.setText("No Image")
         
@@ -305,11 +269,10 @@ class EventImageTool(QMainWindow):
             else:
                 self.current_image_label.setText(f"Image not found:\n{filename}")
 
-    def assign_image(self, item):
-        if not events_list:
-            return
-            
-        new_gfx_id = item.data(Qt.ItemDataRole.UserRole)
+    def set_event_image(self, new_gfx_id):
+        """Helper method to apply an image ID to the current event."""
+        if not events_list: return
+        
         current_event = events_list[self.current_index]
         has_picture = current_event.Has("picture")
         
@@ -320,10 +283,24 @@ class EventImageTool(QMainWindow):
             if has_picture:
                 current_event.Get("picture").value = new_gfx_id
             else:
-                # Updated insertion index from 4 to 1
-                current_event.InsertAt(f"picture = {new_gfx_id}", 1) 
-                
+                current_event.InsertAt(f"picture = {new_gfx_id}", 1)
+
+    def on_gallery_double_click(self, item):
+        new_gfx_id = item.data(Qt.ItemDataRole.UserRole)
+        self.set_event_image(new_gfx_id)
         self.update_ui()
+
+    def open_add_image_dialog(self):
+        dialog = AddImageDialog(self)
+        if dialog.exec():
+            # Apply the newly generated image to the current event
+            if dialog.new_gfx_id:
+                self.set_event_image(dialog.new_gfx_id)
+            
+            # Refresh gallery and UI
+            self.image_gallery.clear()
+            self.populate_gallery()
+            self.update_ui()
 
     def next_event(self):
         if events_list:
