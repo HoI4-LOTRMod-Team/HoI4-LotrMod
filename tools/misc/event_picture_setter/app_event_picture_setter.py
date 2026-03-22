@@ -17,7 +17,7 @@ from PIL import ImageOps
 
 # --- Hard-coded Paths ---
 LOCS_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation'
-EVENTS_FILE = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\events\DolGuldur.txt'
+EVENTS_FILE = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\events\Anduin.txt'
 IMAGES_PATH = r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\gfx\event_pictures\report_events\unmasked'
 
 
