@@ -747,13 +747,12 @@ swear_secret_fealty = {
         }
     }
 
-    # TODO_r: tooltip. The effect itself *should* work, but it's mostly untested. ESPECIALLY this one (there's a lot of ways to join a war)
+    # NOTE: tooltip. The effect itself *should* work, but it's mostly untested. ESPECIALLY this one (there's a lot of ways to join a war)
     custom_effect_tooltip = swear_secret_fealty_tt
 }
 
 
 # @docs(Generic): Will prevent ROOT from ever joining a faction with or allying in any way THIS (like oath of feanor)
-# TODO_r: create a trigger if this is possible and add it to all instances of this effect
 swear_eternal_animosity = {
     hidden_effect = {
         PREV = {
@@ -984,3 +983,467 @@ increase_resources_in_state_10p = {
 }
 
 
+# @docs(Generic): Unlock decision to gain inf  and supp equip when in a defensive war or at > 50% surrender limit
+create_defensive_weapons_stockpile = {
+    set_country_flag = defensive_weapons_stockpile
+    custom_effect_tooltip = create_defensive_weapons_stockpile_tt
+}
+
+# @docs(Generic): Unlock decision to gain 1000 manpower when in a defensive war or at > 50% surrender limit
+create_defensive_musters = {
+    set_country_flag = defensive_musters
+    custom_effect_tooltip = create_defensive_musters_tt
+}
+
+
+
+# @docs(Generic): ROOT asks THIS for guarantee of independence
+ask_for_guarantee_of_independence = {
+    country_event = lotr_generic.100
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        give_guarantee = ROOT
+    }
+}
+
+
+# @docs(Generic): ROOT asks THIS to become tributary
+ask_to_become_tributary = {
+    country_event = lotr_generic.103
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        set_autonomy = {
+            target = ROOT
+            autonomy_state = autonomy_autonomous_tributary
+        }
+    }
+}
+
+# @docs(Generic): ROOT asks THIS to form faction
+ask_to_form_faction = {
+    country_event = lotr_generic.106
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        create_faction_from_template = faction_template_generic
+        add_to_faction = ROOT
+    }
+}
+
+
+# @docs(Generic): THIS declares on PREV
+declare_war_after_delay = {
+    hidden_effect = {
+        set_variable = { delayed_war_declaration_target = PREV }
+        activate_mission = delayed_war_declaration
+    }
+    custom_effect_tooltip = declare_war_after_delay_tt
+}
+
+
+# @docs(Generic): THIS signs NA pact with PREV
+sign_non_aggression_pact = {
+    diplomatic_relation = {
+        country = PREV
+        relation = non_aggression_pact
+        active = yes
+    }
+}
+
+
+# @docs(Generic): ROOT asks THIS for mutual guarantee
+ask_for_mutual_guarantee = {
+    hidden_effect = {
+        country_event = lotr_generic.109
+    }
+    custom_effect_tooltip = ask_for_mutual_guarantee_tt
+}
+
+
+
+# @docs(Generic): ROOT claims state from THIS
+claim_random_border_state = {
+    custom_effect_tooltip = ambitous_expansionist_send_demand_tooltip
+    hidden_effect = {
+        random_owned_state = {
+            limit = {
+                any_neighbor_state = { is_owned_by = ROOT }
+            }
+
+            save_event_target_as = target_claimed_state
+        }
+        country_event = { id = lotr_generic.1 days = 7 random_days = 7 }
+    }
+}
+
+# @docs(Generic): ROOT claims state from THIS
+claim_state = {
+    save_event_target_as = target_claimed_state
+    country_event = { id = lotr_generic.1 days = 7 random_days = 7 }
+}
+
+# @docs(Generic): ROOT offers THIS to become ROOT's puppet
+offer_to_become_puppet = {
+    country_event = { id = lotr_generic.112 days = 1 }
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        ROOT = {
+            puppet = PREV
+        }
+    }
+}
+
+
+# @docs(Generic): Remove a civilian factory from a random core state
+remove_civ_from_core_state = {
+    custom_effect_tooltip = remove_civ_from_core_state_tt
+    hidden_effect = {
+        random_core_state = {
+            limit = { industrial_complex > 0 }
+            remove_building = {
+                type = industrial_complex
+                level = 1
+            }
+        }
+    }
+}
+
+# @docs(Generic): Remove 2 civilian factories from random core states
+remove_civ_from_core_state_x2 = {
+    custom_effect_tooltip = remove_civ_from_core_state_x2_tt
+    hidden_effect = {
+        random_core_state = {
+            limit = { industrial_complex > 0 }
+            remove_building = {
+                type = industrial_complex
+                level = 1
+            }
+        }
+        random_core_state = {
+            limit = { industrial_complex > 0 }
+            remove_building = {
+                type = industrial_complex
+                level = 1
+            }
+        }
+    }
+}
+
+
+# @docs(Generic): ROOT demands THIS become their puppet. ROOT gets wargoal if refused.
+demand_subjugation = {
+    country_event = { id = lotr_generic.115 days = 1 }
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        ROOT = {
+            puppet = PREV
+        }
+    }
+    custom_effect_tooltip = if_they_refuse_newline_tt
+    effect_tooltip = {
+        ROOT = {
+            create_wargoal = {
+                target = PREV
+                type = puppet_wargoal_focus
+            }
+        }
+    }
+}
+
+
+
+# @docs(Generic): ROOT demands THIS become their puppet without wargoal on refusal.
+demand_subjugation_nowargoal = {
+    country_event = { id = lotr_generic.118 days = 1 }
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        ROOT = {
+            puppet = PREV
+        }
+    }
+}
+
+# @docs(Generic): ROOT antagonizes THIS, decreasing relations
+antagonize_country = {
+    # TODO_r: Maybe this should be an event with some choices and flavour, like embargoing or something?
+    # nOTE: if I go with the latter, make sure the embargo option is only avaialble if not already embargoed.
+    add_opinion_modifier = {
+        target = ROOT
+        modifier = large_decrease
+    }
+}
+
+# @docs(Generic): ROOT demands THIS. Gets wargoal of refused
+demand_state = {
+    hidden_effect = {
+        save_event_target_as = target_state
+        controller = {
+            country_event = lotr_generic.120
+        }
+    }
+    custom_effect_tooltip = demand_state_tt
+}
+
+# @docs(Generic): ROOT demands THIS. No wargoal on refusal
+demand_state_nowargoal = {
+    hidden_effect = {
+        save_event_target_as = target_state
+        controller = {
+            country_event = lotr_generic.123
+        }
+    }
+    custom_effect_tooltip = demand_state_nowargoal_tt
+}
+
+
+# @docs(Generic): trade between THIS and PREV costs nothing
+create_free_trade_with = {
+    custom_effect_tooltip = create_free_trade_with_tt
+    hidden_effect = {
+        if = {
+            limit = { NOT = { has_relation_modifier = { target = PREV modifier =  free_trade_with } } }
+            add_relation_modifier = {
+                target = PREV
+                modifier = free_trade_with
+            }
+        }
+        
+        PREV = {
+            if = {
+                limit = { NOT = { has_relation_modifier = { target = PREV modifier =  free_trade_with } } }
+                add_relation_modifier = {
+                    target = PREV
+                    modifier = free_trade_with
+                }
+            }
+        }
+    }
+}
+
+
+# @docs(Generic): Fortify the borders of all core states of ROOT bordering PREV with level 1 encampments
+fortify_border_core = {
+    custom_effect_tooltip = fortify_border_core_tt
+    hidden_effect = {
+        ROOT = {
+            every_core_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 1
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): Fortify the borders of all core states of ROOT bordering PREV with level 2 encampments
+fortify_border_core_x2 = {
+    custom_effect_tooltip = fortify_border_core_x2_tt
+    hidden_effect = {
+        ROOT = {
+            every_core_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): Fortify the borders of all core states of ROOT bordering PREV with level 3 encampments
+fortify_border_core_x3 = {
+    custom_effect_tooltip = fortify_border_core_x3_tt
+    hidden_effect = {
+        ROOT = {
+            every_core_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 3
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): Fortify the borders of all states of ROOT bordering PREV with level 1 encampments
+fortify_border = {
+    custom_effect_tooltip = fortify_border_tt
+    hidden_effect = {
+        ROOT = {
+            every_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 1
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): Fortify the borders of all states of ROOT bordering PREV with level 2 encampments
+fortify_border_x2 = {
+    custom_effect_tooltip = fortify_border_x2_tt
+    hidden_effect = {
+        ROOT = {
+            every_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): Fortify the borders of all states of ROOT bordering PREV with level 3 encampments
+fortify_border_x3 = {
+    custom_effect_tooltip = fortify_border_x3_tt
+    hidden_effect = {
+        ROOT = {
+            every_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 3
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): ROOT requests THIS for aid. THIS can either send gear, army exp or nothing
+request_aid = {
+    country_event = lotr_generic.125
+    custom_effect_tooltip = request_aid_tt
+}
+
+
+# @docs(Generic): THIS improves trade relations with PREV
+improve_trade_relations = {
+    add_opinion_modifier = {
+        target = PREV
+        modifier = improved_trade_relations
+    }
+    PREV = {
+        add_opinion_modifier = {
+            target = PREV
+            modifier = improved_trade_relations
+        }
+    }
+}
+
+
+# @docs(Generic): Suggest the faction leader of PREV to invite THIS to the faction. (Invites if PREV is faction leader)
+suggest_faction_leader_to_invite = {
+    if = {
+        limit = { PREV = { is_faction_leader = yes } }
+        invite_to_faction = yes
+    }
+    else_if = {
+        limit = { PREV = { is_in_faction = yes } }
+        custom_effect_tooltip = suggest_faction_leader_to_invite_tt
+        hidden_effect = {
+            save_event_target_as = invite_target
+            PREV = {
+                var:faction_leader = {
+                    country_event = lotr_generic.131
+                }
+            }
+        }
+    }
+    else = {
+        effect_tooltip = {
+            invite_to_faction = yes # purely for tooltip purposes
+        }
+    }
+}
+
+
+# @docs(Generic): THIS unlocks decisions to prospect untapped resources in states.
+unlock_resource_prospecting = {
+    set_country_flag = resource_prospecting_unlocked
+    custom_effect_tooltip = unlock_resource_prospecting_tt
+}
+
+
+# @docs(Generic): THIS unlocks decisions to prospect untapped mithril in states.
+unlock_mithril_prospecting = {
+    set_country_flag = mithril_prospecting_unlocked
+    custom_effect_tooltip = unlock_mithril_prospecting_tt
+}
+
+
+# @docs(Generic): THIS unlocks decisions to launch offensives in winter.
+unlock_winter_offensives = {
+    set_country_flag = winter_offensives_unlocked
+    custom_effect_tooltip = unlock_winter_offensives_tt
+}
+
+# @docs(Generic): THIS unlocks decisions to launch offensives in summer.
+unlock_summer_offensives = {
+    set_country_flag = summer_offensives_unlocked
+    custom_effect_tooltip = unlock_summer_offensives_tt
+}
+
+
+
+
+# @docs(Generic): Make a character unavailable. (NOTE: requires the unavailable character flag to be set up)
+make_unavailable = {
+    set_character_flag = unavailable
+    custom_effect_tooltip = make_unavailable_tt
+}
+
+
+# @docs(Generic): Make a character available. (NOTE: requires the unavailable character flag to be set up)
+make_available = {
+    clr_character_flag = unavailable
+    custom_effect_tooltip = make_available_tt
+}

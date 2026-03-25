@@ -299,8 +299,42 @@ country_event = {
 				autonomy_state = autonomy_puppet
 			}
 		}
-		# TODO_r: event to notify DGU of their failure and assertion of direct control
-		# TODO_r: add second option to decline puppeting, but make AI never choose it (for player only)
+		hidden_effect = {
+			DGU = { country_event = dolguldur.10 }
+		}
+	}
+
+	option = {
+		name = dolguldur.9.b
+		ai_chance = {
+			base = 0
+		}
+		add_political_power = -100
+	}
+}
+
+# Mordor assumes control
+country_event = {
+	id = dolguldur.10
+	title = dolguldur.10.t
+	desc = dolguldur.10.d
+	picture = GFX_report_event_barad_dur_2
+
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.10.a
+		ai_chance = {
+			base = 1
+		}
+		effect_tooltip = {
+			MOR = {
+				set_autonomy = {
+					target = DGU
+					autonomy_state = autonomy_puppet
+				}
+			}
+		}
 	}
 }
 
@@ -2194,7 +2228,7 @@ country_event = {
 		}
 		add_political_power = -150
 		add_stability = -0.05
-		event_option_tooltip = dolguldur.148.a
+		custom_effect_tooltip = dolguldur.148.a_tt
 	}
 
 	# send supplies
@@ -2206,7 +2240,7 @@ country_event = {
 		hidden_effect = {
 			DGU = { country_event = { id = dolguldur.149 days = 3 } }
 		}
-		event_option_tooltip = dolguldur.148.b
+		event_option_tooltip = dolguldur.149.a
 	}
 
 	# nothing
@@ -2222,7 +2256,6 @@ country_event = {
 		hidden_effect = {
 			DGU = { country_event = { id = dolguldur.150 days = 3 } }
 		}
-		event_option_tooltip = dolguldur.148.c
 	}
 }
 
@@ -2241,17 +2274,68 @@ country_event = {
         }
         name = dolguldur.148.a
 
-		# TODO_r: This is currently localized as RHU joning the war, but that's too much. 
-		# Change this to something like: When we declare war, spawn some divisions near RHO borders.
-		# This needs all RHU map changes to be done before that.
+		custom_effect_tooltip = dolguldur.148.a_tt
 
 		DGU = {
+			set_country_flag = DGU_RHU_cooperation_accepted
 			add_opinion_modifier = {
 				target = RHU
 				modifier = large_increase
 			}
 		}
     }
+}
+
+# spawn troops in RHO
+country_event = {
+	id = dolguldur.10148
+	hidden = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = DGU
+		has_country_flag = DGU_RHU_cooperation_accepted
+		has_war_with = RHO
+	}
+
+	immediate = {
+		DGU = {
+			division_template = {
+				name = "Rhunic Volunteers"
+				priority = 0
+				regiments = {
+					infantry = { x = 0 y = 0 }
+					infantry = { x = 0 y = 1 }
+					infantry = { x = 0 y = 2 }
+					infantry = { x = 0 y = 3 }
+				}
+			}
+		}
+		RHO = {
+			random_controlled_state = {
+				create_unit = {
+					division = "name = \"Rhunic Volunteers\" division_template = \"Rhunic Volunteers\" start_manpower_factor = 0.85"
+					owner = DGU
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+			random_controlled_state = {
+				create_unit = {
+					division = "name = \"Rhunic Volunteers\" division_template = \"Rhunic Volunteers\" start_manpower_factor = 0.85"
+					owner = DGU
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+			random_controlled_state = {
+				create_unit = {
+					division = "name = \"Rhunic Volunteers\" division_template = \"Rhunic Volunteers\" start_manpower_factor = 0.85"
+					owner = DGU
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+	}
 }
 
 
