@@ -2,72 +2,9 @@
 
 
 
-# Either one of the other states is an ally, or we control all their core states
-is_vales_confederation_member = {
-    if = {
-        limit = { tag = VAL }
-        OR = {
-            is_ally_with = RGL
-            is_ally_with = GLD
-            RGL = { all_core_state = { is_controlled_by = VAL } }
-            GLD = { all_core_state = { is_controlled_by = VAL } }
-        }
-    }
-    else_if = {
-        limit = { tag = GLD }
-        OR = {
-            is_ally_with = RGL
-            is_ally_with = VAL
-            RGL = { all_core_state = { is_controlled_by = GLD } }
-            VAL = { all_core_state = { is_controlled_by = GLD } }
-        }
-    }
-    else_if = {
-        limit = { tag = RGL }
-        OR = {
-            is_ally_with = GLD
-            is_ally_with = VAL
-            GLD = { all_core_state = { is_controlled_by = RGL } }
-            VAL = { all_core_state = { is_controlled_by = RGL } }
-        }
-    }
-    else = {
-        always = no
-    }
-}
 
 
-
-gob_has_overthrow_timer = {
-    hidden_trigger = {
-        NOT = { has_completed_focus = GOB_crack_down_on_the_clans }   
-    }
-    has_defensive_war = no
-    check_variable = {
-        var = num_of_civilian_factories
-        value = factories_demand
-        compare = less_than
-        tooltip = gob_satisfy_clans_tt
-    }
-}
-
-gob_has_not_overthrow_timer = {
-    OR = {
-        check_variable = {
-            var = num_of_civilian_factories
-            value = factories_demand
-            compare = greater_than_or_equals
-            tooltip = gob_satisfy_clans_tt
-        }
-        has_defensive_war = yes
-        has_completed_focus = GOB_crack_down_on_the_clans
-    }
-}
-
-
-
-
-# Starting a war between PREV and THIS is possible (no NA pacts, allies or existing wars)
+# @docs(Generic): Starting a war between PREV and THIS is possible (no NA pacts, allies or existing wars)
 war_with_is_possible = {
     custom_trigger_tooltip = {
         tooltip = war_with_is_possible_tt
@@ -79,26 +16,7 @@ war_with_is_possible = {
     }
 }
 
-
-
-gob_can_borrow_high_pass = {
-    OR = {
-        197 = { is_fully_controlled_by = ROOT }
-        151 = { is_fully_controlled_by = ROOT }
-        63 = { is_fully_controlled_by = ROOT }
-    }
-    GOB = {
-        exists = yes
-        has_war = no
-        controls_state = 263
-        controls_state = 245 # make sure they have their capital too
-        has_completed_focus = GOB_open_for_business
-        NOT = { has_country_flag = gob_high_pass_loaned_out }
-    }
-}
-
-
-
+# @docs(Generic): ROOT can invite THIS to a faction
 can_invite_to_faction = {
     custom_trigger_tooltip = {
         tooltip = can_invite_to_faction_tt
@@ -114,7 +32,7 @@ can_invite_to_faction = {
     }
 }
 
-
+# @docs(Generic): ROOT can ask THIS to join their faction
 can_ask_to_join_faction = {
     custom_trigger_tooltip = {
         tooltip = can_ask_to_join_faction_tt
@@ -132,26 +50,14 @@ can_ask_to_join_faction = {
 }
 
 
-# Will declaring war cause trouble with other countries?
+# @docs(Generic): Will declaring war cause trouble with other countries?
 is_isolated_target = {
     is_in_faction = no
     NOT = { any_country = { has_guaranteed = PREV } }
     is_subject = no
 }
 
-
-mir_comitted_to_path = {
-    OR = {
-        has_completed_focus = MIR_ancient_glory
-        has_completed_focus = MIR_bulwark_against_the_dark
-        has_completed_focus = MIR_by_our_own_light
-        has_completed_focus = MIR_the_northern_accord
-        has_completed_focus = MIR_accept_the_new_order
-    }
-}
-
-
-# ROOT or one of their allies is a neighbor of THIS
+# @docs(Generic): ROOT or one of their allies is a neighbor of THIS
 can_reach = {
     custom_trigger_tooltip = {
         tooltip = can_reach_tt
@@ -166,7 +72,7 @@ can_reach = {
 }
 
 
-
+# @docs(Generic): ROOT can engage in diplomacy with THIS (not at war, exists, etc)
 can_engage_in_diplo_with = {
     custom_trigger_tooltip = {
         tooltip = can_engage_in_diplo_with_tt
@@ -178,7 +84,7 @@ can_engage_in_diplo_with = {
 }
 
 
-
+# @docs(Generic): ROOT and THIS have a common enemy
 has_common_enemy_with = {
     custom_trigger_tooltip = {
         tooltip = has_common_enemy_with_tt
@@ -189,7 +95,7 @@ has_common_enemy_with = {
 }
 
 
-
+# @docs(Generic): THIS is behind on infantry equipment research
 is_behind_on_inf_equipment = {
     OR = {
         AND = {
@@ -215,7 +121,7 @@ is_behind_on_inf_equipment = {
 }
 
 
-# all of THIS core states are controlled by ROOT or their subjects
+# @docs(Generic): all of THIS' core states are controlled by ROOT or their subjects
 all_core_states_controlled_or_puppeted = {
     custom_trigger_tooltip = {
         tooltip = all_core_states_controlled_or_puppeted_tt
@@ -229,7 +135,7 @@ all_core_states_controlled_or_puppeted = {
 }
 
 
-
+# @docs(Generic): THIS is consuming more steel that producing
 needs_steel = {
     OR = {
         check_variable = { resource_imported@steel > 1 }
@@ -237,6 +143,7 @@ needs_steel = {
     }
 }
 
+# @docs(Generic): THIS is consuming more wood that producing
 needs_chromium = {
     OR = {
         check_variable = { resource_imported@chromium > 1 }
@@ -244,6 +151,7 @@ needs_chromium = {
     }
 }
 
+# @docs(Generic): THIS is consuming more leather that producing
 needs_rubber = {
     OR = {
         check_variable = { resource_imported@rubber > 1 }
@@ -251,6 +159,7 @@ needs_rubber = {
     }
 }
 
+# @docs(Generic): THIS is consuming more string that producing
 needs_tungsten = {
     OR = {
         check_variable = { resource_imported@tungsten > 1 }
@@ -258,6 +167,7 @@ needs_tungsten = {
     }
 }
 
+# @docs(Generic): THIS is consuming more mithril that producing
 needs_aluminium = {
     OR = {
         check_variable = { resource_imported@aluminium > 1 }
@@ -265,29 +175,16 @@ needs_aluminium = {
     }
 }
 
-
+# @docs(Generic): THIS is producing more food than consuming
 is_gaining_fuel = {
     check_variable = {
         modifier@fuel_cost < modifier@fuel_gain
     }
 }
 
+# @docs(Generic): THIS is losing more fuel than gaining
 is_loosing_fuel = {
     check_variable = {
         modifier@fuel_cost > modifier@fuel_gain
-    }
-}
-
-
-
-cfm_states_locked_imminent = {
-    OR = {
-        date > 3020.1.1
-        threat > 0.4
-        MIR = {
-            check_variable = {
-                cfm_states_seized > 3
-            }   
-        }
     }
 }

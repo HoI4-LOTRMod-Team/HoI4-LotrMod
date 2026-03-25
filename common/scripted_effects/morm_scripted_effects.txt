@@ -20,13 +20,17 @@ morm_initialize = {
 	set_variable = { morm_time_prev = global.days_since_start }
 	set_variable = { morm_industry_prev = num_of_factories }
 	set_variable = { morm_battalions_prev = num_battalions }
-	set_variable = { morm_casualties_prev = casualties_inflicted_k } # TODO_r: This variable doesnt do anything it's not implemented
+	set_variable = { morm_casualties_prev = 0 }
 	set_variable = { morm_territory_prev = num_controlled_states }
 
 	morm_recalculate_menace = yes
+
+	init_casualties_counts = yes # init casualty counting
 }
 
-
+morm_weekly = {
+	count_casualties_inflicted = yes
+}
 
 @menace_per_tension = 0.1
 @menace_per_time = 0.01
@@ -78,14 +82,14 @@ morm_recalculate_menace = {
 	}
 	# menace from casualties
 	if = {
-		limit = { check_variable = { casualties_inflicted_k > morm_casualties_prev } }
-		set_temp_variable = { temp_diff = casualties_inflicted_k }
+		limit = { check_variable = { casualties_total > morm_casualties_prev } }
+		set_temp_variable = { temp_diff = casualties_total }
 		subtract_from_temp_variable = { temp_diff = morm_casualties_prev }
 		multiply_temp_variable = { temp_diff = @menace_per_casualties }
 		add_to_variable = { morm_menace_from_casualties_inflicted = temp_diff }
-		set_variable = { morm_casualties_prev = casualties_inflicted_k }
+		set_variable = { morm_casualties_prev = casualties_total }
 	}
-	# menace from casualties
+	# menace from states sized
 	if = {
 		limit = { check_variable = { num_controlled_states > morm_territory_prev } }
 		set_temp_variable = { temp_diff = num_controlled_states }
