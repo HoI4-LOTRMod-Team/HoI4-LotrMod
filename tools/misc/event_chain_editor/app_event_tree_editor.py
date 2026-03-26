@@ -110,9 +110,9 @@ def main():
     graph = create_node_graph()
 
     focus_node_tree = FocusNodeTree(graph,
-        BASE_PATH / r'events\DolGuldur.txt',
+        BASE_PATH / r'events\Spiders.txt',
         #BASE_PATH / r'localisation\english\0_lotr_core\lotr_generic_events_l_english.yml'
-        BASE_PATH / r'localisation\english\dolguldur\dolguldur_events_l_english.yml'
+        BASE_PATH / r'localisation\english\spiders\spiders_events_l_english.yml'
         #BASE_PATH / r'events\MorMenace.txt',
         #BASE_PATH / r'localisation\english\mordor\morm_events_l_english.yml'
         #BASE_PATH / r'events\rhunexpandedevents.txt',
