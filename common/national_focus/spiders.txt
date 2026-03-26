@@ -332,7 +332,23 @@ focus_tree = {
         y = 11
 
         cost = 5
-        ai_will_do = { factor = 1 } # TODO_r: I need to figure out if I can tell the AI to only keep this division in Mirk. If I can't, no point in the AI doing this focus unless they're on a desperate defense
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 2
+                has_war_with = MIR
+            }
+            modifier = {
+                factor = 2
+                has_war_with = DGU
+            }
+            modifier = {
+                factor = 0.5
+                any_controlled_state = {
+                    NOT = { is_on_continent = mirkwood }
+                }
+            }
+        }
         
         search_filters = { FOCUS_FILTER_INDUSTRY }
         available = {
@@ -412,15 +428,29 @@ focus_tree = {
         x = 13
         y = 6
 
-        cost = 5
-        ai_will_do = { factor = 1 } # TODO_r
+        cost = 10
+        ai_will_do = {
+            factor = 20
+            modifier = {
+                factor = 2
+                is_historical_focus_on = yes
+                MIR = { is_ai = yes }
+            }
+            modifier = {
+                factor = 0.75
+                MIR = { is_ai = no }
+            }
+        }
         
         search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
         available = {
-            always = yes # TODO_r
+            always = yes
         }
         completion_reward = {
-			# TODO_r
+			add_timed_idea = {
+                idea = SPI_defensive_stance
+                days = 720
+            }
 		}
     }
 
@@ -441,7 +471,7 @@ focus_tree = {
         ai_will_do = {
             factor = 15
             modifier = {
-                factor = 1.5
+                factor = 1.25
                 MIR = { is_ai = no }
             }
         }
@@ -983,14 +1013,16 @@ focus_tree = {
             OR = {
                 5 = { controller = { is_ally_with = SPI } }
                 5 = { is_controlled_by = SPI }
-                # TODO_r: Only if Shelob got the ring, or if the controller of state 5 is friendly
             }
             NOT = { has_global_flag = MOR_shelob_driven_off }
+        }
+
+        bypass = {
+            has_country_leader = SPI_shelob
         }
         
         completion_reward = {
 			# send event to get shelob as leader
-            # TODO_r: Shelob doesnt have any traits at all by default. I know another gets added in the next focus, but there should still be one
             if = {
                 limit = { 5 = { is_controlled_by = ROOT } }
                 empower_shelob = yes
@@ -2136,9 +2168,8 @@ focus_tree = {
         
         completion_reward = {
 			# late game manifest  
-            # change name/flag and maybe something else that's cool (formable nation effectively)
+            # change name/flag (formable nation effectively)
             set_cosmetic_tag = SPIEMPIRE
-            # TODO_r: this cosmetic tag hasn't been implemented yet
             custom_effect_tooltip = SPI_world_wide_web_tt
             hidden_effect = {
                 every_controlled_state = {
@@ -2861,7 +2892,7 @@ focus_tree = {
         completion_reward = {
 			# own faction
             create_faction_from_template = {
-                template = faction_template_generic # TODO_r: make a custom template for spiders?
+                template = faction_template_generic
                 name = "Arachnid Alliance"
             }
 		}
@@ -3287,7 +3318,7 @@ focus_tree = {
         }
         # TODO_r
         completion_reward = {
-			# gain cool stuff from Mordor  
+			
 		}
     }
 
@@ -3596,7 +3627,7 @@ focus_tree = {
         
         icon = GFX_unknown_focus
         
-        x = 36
+        x = 37
         y = 13
 
         cost = 5
@@ -3616,7 +3647,7 @@ focus_tree = {
         }
         
         completion_reward = {
-			# No idea what this does lol. If I can be arsed: Add a faction goal here (TODO_r5)
+			# No idea what this does lol
             if = {
                 limit = { has_dlc = "No Compromise, No Surrender" }
                 add_faction_initiative = 100
@@ -3630,22 +3661,32 @@ focus_tree = {
 
     focus = {
         id = SPI_restrain_the_hunger
-		prerequisite = { focus = SPI_the_great_weave }
+		prerequisite = { focus = SPI_look_west_for_aid focus = SPI_pact_of_shadows focus = SPI_alliance_of_the_deep_woods }
         
         icon = GFX_unknown_focus
         
         x = 35
-        y = 14
+        y = 13
 
         cost = 5
-        ai_will_do = { factor = 1 } # TODO_r
+        ai_will_do = {
+            factor = 15
+        }
+
         
         search_filters = { FOCUS_FILTER_POLITICAL }
         available = {
             is_in_faction = yes
         }
-        # TODO_r: disable incidents
-        completion_reward = { }
+        completion_reward = {
+            if = {
+                limit = { is_in_faction = no }
+                custom_effect_tooltip = SPI_restrain_the_hunger_tt
+            }
+            every_allied_country = {
+                spider_disable_incidents = yes   
+            }
+        }
     }
 
     focus = {
@@ -4107,15 +4148,19 @@ focus_tree = {
         y = 7
 
         cost = 5
-        ai_will_do = { factor = 1 } # TODO_r
+        ai_will_do = { factor = 20 }
         
         search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
         available = {
-            always = yes # TODO_r
+            always = yes
         }
         
         completion_reward = {
-			# TODO_r
+			remove_ideas = SPI_defensive_stance
+            add_timed_idea = {
+                idea = SPI_defensive_stance_2
+                days = 720
+            }
 		}
     }
 
@@ -4220,9 +4265,6 @@ focus_tree = {
         
         completion_reward = {
 			# add spider infestation to all neighbour mirkwood states. Gain 25 pp per state affected.
-            # TODO_r: possibly unlock some CFM related 
-            # TODO_r: maybe this should have an event notifying MIR that there are spider infestations to clear
-            # TODO_r: Can I think of a better reward than 25 pp?
             custom_effect_tooltip = SPI_endless_sprawl_tt
             hidden_effect = {
                 every_controlled_state = {
@@ -4342,15 +4384,30 @@ focus_tree = {
         y = 9
 
         cost = 10
-        ai_will_do = { factor = 1 } # TODO_r
+        ai_will_do = { factor = 25 }
         
         search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
         available = {
-            always = yes # TODO_r
+            control_all_mirkwood_states = yes
         }
-        # TODO_r
         completion_reward = {
-			# the great web  
+			hidden_effect = {
+                every_controlled_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        NOT = { is_core_of = DGU }
+                        impassable = no
+                    }
+                    add_compliance = 35
+                }
+            }
+            custom_effect_tooltip = DGU_masters_of_the_mirkwood_tt
+
+            set_country_flag = {
+                flag = SPI_completed_purge_the_two_leggeds
+                value = 1
+                days = 365
+            }
 		}
     }
 
@@ -4364,15 +4421,35 @@ focus_tree = {
         y = 10
 
         cost = 10
-        ai_will_do = { factor = 1 } # TODO_r
+        ai_will_do = { factor = 100 }
         
         search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
         available = {
-            always = yes # TODO_r
+            control_all_mirkwood_states = yes
+            has_stability > 0.5
+            has_war_support > 0.5
         }
-        # TODO_r
         completion_reward = {
 			# build up all mirkwood  
+            custom_effect_tooltip = SPI_the_great_nest_tt
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        impassable = no
+                    }
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+            }
 		}
     }
 
@@ -4386,15 +4463,28 @@ focus_tree = {
         y = 10
 
         cost = 10
-        ai_will_do = { factor = 1 } # TODO_r
+        ai_will_do = { factor = 100 }
         
         search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
         available = {
-            always = yes # TODO_r
+            custom_trigger_tooltip = {
+                tooltip = SPI_purge_the_two_leggeds_condition_tt
+                control_all_mirkwood_states = yes
+                NOT = { has_country_flag = SPI_completed_purge_the_two_leggeds }
+                NOT = { has_country_flag = dgu_lost_mirkwood_control }   
+            }
         }
-        # TODO_r
         completion_reward = {
-			# build up all mirkwood  
+			hidden_effect = {
+                every_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        NOT = { is_core_of = DGU }
+                    }
+                    add_core_of = DGU
+                }
+            }
+            custom_effect_tooltip = DGU_forest_of_shadows_tt
 		}
     }
 
@@ -4407,7 +4497,7 @@ focus_tree = {
         x = 33
         y = 13
 
-        cost = 5
+        cost = 10
         ai_will_do = {
             factor = 6
             modifier = {
@@ -4427,30 +4517,11 @@ focus_tree = {
             NOT = { has_country_flag = fs_interceptions_disabled }
             has_global_flag = MOR_allow_shelob
         }
-        # TODO_r
         completion_reward = {
 			# make it so that shelob can bring us the ring  
+            # chances are 10%, or 5% if samwise is still alive.
+            custom_effect_tooltip = SPI_the_one_ring_gambit_tt
 		}
-    }
-
-    focus = {
-        id = SPI_put_our_differences_aside
-		prerequisite = { focus = SPI_the_great_weave }
-        
-        icon = GFX_unknown_focus
-        
-        x = 37
-        y = 14
-
-        cost = 5
-        ai_will_do = { factor = 1 } # TODO_r
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            is_in_faction = yes
-        }
-        # TODO_r
-        completion_reward = { }
     }
 
     focus = {
@@ -4463,15 +4534,27 @@ focus_tree = {
         y = 12
 
         cost = 10
-        ai_will_do = { factor = 1 } # TODO_r
+        ai_will_do = { factor = 100 }
         
         search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
         available = {
             spiders_has_inflicted_casualties_stage3 = yes
         }
-        # TODO_r
         completion_reward = {
-			# Maybe some kind of decision that lets us "zap" out manpower from conquered states?
+            add_political_power = 150
+            add_stability = 0.1
+            add_war_support = 0.1
+
+            add_unit_bonus = {
+                category_special_spiders = {
+                    supply_consumption_factor = -0.1
+                    hardness = 0.15
+                    armor_value = 0.15
+                    hard_attack = 0.15
+                }
+            }
+
+			do_ungoliants_appetite = yes
 		}
     }
 
