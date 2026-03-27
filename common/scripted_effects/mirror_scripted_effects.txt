@@ -1,65 +1,6 @@
 
 
 
-mirror_randomize_targets = {
-
-	if = {
-		limit = { has_completed_focus = lth_galadrielsmirror }
-
-		clear_array = mirror_targets_future
-
-		every_other_country = {
-			limit = {
-				NOT = { has_country_flag = mirror_targets_used }
-				NOT = { tag = MOR }
-				NOT = { tag = GON }
-				NOT = { tag = ERE }
-				NOT = { tag = ANG }
-				NOT = { tag = NEP }
-				NOT = { tag = DAG }
-				is_ai = yes
-				OR = {
-					is_going_belligerent = yes
-					is_going_revolutionary = yes
-					is_going_unaligned = yes
-					is_going_cooperative = yes
-				}
-				NOT = { is_in_array = { mirror_targets_future = THIS } }
-			}
-			random_select_amount = 2
-
-			LTH = { add_to_array = { mirror_targets_future = PREV } }
-		}
-
-		if = {
-			limit = { has_completed_focus = lth_mirrorupgrade }
-
-			every_other_country = {
-				limit = {
-					NOT = { has_country_flag = mirror_targets_used }
-					NOT = { tag = MOR }
-					NOT = { tag = GON }
-					NOT = { tag = ERE }
-					NOT = { tag = ANG }
-					NOT = { tag = NEP }
-					NOT = { tag = DAG }
-					is_ai = yes
-					OR = {
-						is_going_belligerent = yes
-						is_going_revolutionary = yes
-						is_going_unaligned = yes
-						is_going_cooperative = yes
-					}
-					NOT = { is_in_array = { mirror_targets_future = THIS } }
-				}
-				random_select_amount = 1
-
-				LTH = { add_to_array = { mirror_targets_future = PREV } }
-			}
-		}
-	}
-}
-
 
 mirror_look_into_mirror = {
 	random_list = {
@@ -186,6 +127,140 @@ mirror_look_into_mirror = {
 			random_country = {
 				limit = { has_capitulated = yes }
 				LTH = { country_event = mirror.19 }
+			}
+		}
+
+		# Predict fellowship path (TODO: just added/moved from decisions)
+		10 = {
+			modifier = {
+				factor = 0
+				has_global_flag = fs_mirkwood_responded
+			}
+			modifier = {
+				factor = 0
+				has_global_flag = mirror_predicted_fellowship_path
+			}
+			set_global_flag = mirror_predicted_fellowship_path
+			random_list = {
+				# redhorn pass
+				2 = {
+					set_global_flag = mirror_predicted_redhorn
+					country_event = mirror.61
+				}
+				# isengard
+				1 = {
+					modifier = {
+						factor = 3
+						has_global_flag = gandalf_saruman_united
+					}
+					modifier = {
+						factor = 0
+						is_historical_focus_on = yes
+					}
+					set_global_flag = mirror_predicted_isengard
+					country_event = mirror.60
+				}
+				# gundabad
+				1 = {
+					modifier = {
+						factor = 2
+						ANG = { has_completed_focus = ANG_join_gondor }
+					}
+					modifier = {
+						factor = 2
+						ANG = { is_ai = no }
+					}
+					modifier = {
+						factor = 0
+						is_historical_focus_on = yes
+					}
+					set_global_flag = mirror_predicted_gundabad
+					country_event = mirror.84
+				}
+				# no clue
+				1 = {
+					# The more non-ai players there are, the less we know
+					modifier = {
+						factor = 2
+						ERE = { is_ai = no }
+					}
+					modifier = {
+						factor = 2
+						MIR = { is_ai = no }
+					}
+					modifier = {
+						factor = 2
+						RIV = { is_ai = no }
+					}
+					modifier = {
+						factor = 2
+						GON = { is_ai = no }
+					}
+					country_event = mirror.62
+				}
+			}
+		}
+
+		# Predict path of country (TODO: just added/moved from decisions)
+		10 = {
+			modifier = {
+				factor = 0.2
+				is_historical_focus_on = yes
+			}
+			random_other_country = {
+				limit = {
+					is_ai = yes
+					NOT = { has_country_flag = mirror_targets_used }
+				}
+
+				set_country_flag = mirror_targets_used
+
+				save_event_target_as = mirror_future_target
+
+				if = {
+					limit = { is_going_belligerent = yes }
+					random_list = {
+						10 = { LTH = { country_event = mirror.67 } }
+						10 = { LTH = { country_event = mirror.68 } }
+						10 = { LTH = { country_event = mirror.69 } }
+					}
+				}
+
+
+				else_if = {
+					limit = { is_going_revolutionary = yes }
+					random_list = {
+						10 = { LTH = { country_event = mirror.70 } }
+						10 = { LTH = { country_event = mirror.71 } }
+						10 = { LTH = { country_event = mirror.72 } }
+					}
+				}
+
+				else_if = {
+					limit = { is_going_cooperative = yes }
+					random_list = {
+						10 = { LTH = { country_event = mirror.73 } }
+						10 = { LTH = { country_event = mirror.74 } }
+						10 = { LTH = { country_event = mirror.75 } }
+					}
+				}
+
+				else_if = {
+					limit = { is_going_unaligned = yes }
+					random_list = {
+						10 = { LTH = { country_event = mirror.76 } }
+						10 = { LTH = { country_event = mirror.77 } }
+						10 = { LTH = { country_event = mirror.78 } }
+					}
+				}
+
+				else = {
+					random_list = {
+						10 = { LTH = { country_event = mirror.79 } }
+						10 = { LTH = { country_event = mirror.80 } }
+						10 = { LTH = { country_event = mirror.81 } }
+					}
+				}
 			}
 		}
 
