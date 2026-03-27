@@ -5,9 +5,9 @@
 from pdx_parser import *
 
 
-focus_path = r'common\national_focus\rhun.txt'
+focus_path = r'common\national_focus\spiders.txt'
 
-root_focus_name = "RHUN_teachings_of_morgoth"
+root_focus_name = "SPI_ascension_of_a_brood_leader"
 
 focus_tree = ParseObjFromFile(focus_path)
 
