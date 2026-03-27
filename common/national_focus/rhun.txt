@@ -985,7 +985,6 @@ focus_tree = {
 		completion_reward = {
 			remove_ideas = RHUN_khamul_expanded
 			retire_character = RHU_khamul
-			# TODO_r: news event (newsexpanded.2)
 		}
 	}
 
@@ -2596,13 +2595,13 @@ focus_tree = {
 		cost = 10
 		completion_reward = { 
 			build_railway = {
-				start_province = 127 # TODO: This is in empty. Something's not right...
-				target_province = 6132
+				start_province = 6512
+				target_province = 6521
 				build_only_on_allied = yes
 			}
 			build_railway = {
-				start_province = 675
-				target_province = 97
+				start_province = 6521
+				target_province = 498
 				build_only_on_allied = yes
 			}
 		}
@@ -4638,7 +4637,8 @@ focus_tree = {
 			is_subject = no
 		}
         completion_reward = {
-			# TODO_r: idk what to do here
+			add_war_support = 0.05
+			add_manpower = 500
 		}
     }
 
@@ -5180,24 +5180,80 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO_r
+    focus = {
         id = RHUN_deal_with_the_dwarves
 		prerequisite = { focus = RHUN_focus_on_dale }
         
         icon = GFX_goal_RHU_dwarf_diplomacy
+
+		will_lead_to_war_with = ERE
         
         x = 16
         y = 12
 
         cost = 10
-        ai_will_do = { factor = 1 } # TODO_r
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 0.1
+                has_war = yes
+            }
+			modifier = {
+				factor = 0.5
+				ERE = { is_stronger = yes }
+			}
+            modifier = {
+                factor = 0.1
+                date < "3022.1.1"
+            }
+			modifier = {
+				factor = 2
+				ERE = { is_isolated_target = yes }
+			}
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = ERE
+                    ratio > 1
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = ERE
+                    ratio > 1.5
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = ERE
+                    ratio > 2
+                }
+            }
+			modifier = {
+				factor = 0.5
+				ERE = { is_in_faction = yes }
+			}
+			modifier = {
+				factor = 2
+				ERE = { has_war = yes }
+				has_war = no
+			}
+			modifier = {
+				factor = 2
+				ERE = { surrender_progress > 0.15 }
+			}
+        }
         
         search_filters = { }
         available = {
-            always = yes
+			DAL = { has_ever_capitulated = yes }
+			ERE = { war_with_is_possible = yes can_reach = yes }
         }
         completion_reward = {
 			# Get event on how to deal with dwarves
+			country_event = rhun.117
 		}
     }
 
