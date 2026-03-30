@@ -2105,9 +2105,19 @@ focus_tree = {
 	#Focus for Orc Strategists
 	focus = {
 		id = orcstrategists
-		icon = GFX_goal_generic_army_doctrines
-		ai_will_do = { factor = 3 }
-		x = 0
+		icon = GFX_goal_generic_middle_earth_map_warplan
+		ai_will_do = {
+			factor = 8
+			modifier = {
+				factor = 0.5
+				date > 3021.1.1
+			}
+			modifier = {
+				factor = 1.5
+				date < 3019.1.1
+			}
+		}
+		x = 11
 		y = 1
 		relative_position_id = conquestofmiddleearth
 		prerequisite = { focus = conquestofmiddleearth}
@@ -2186,8 +2196,8 @@ focus_tree = {
 				}
 			}
 		}
-		x = 2
-		y = 1
+		x = 1
+		y = 2
 		relative_position_id = reach_out_to_isengard
 		prerequisite = { focus = reach_out_to_isengard }
 		mutually_exclusive = { focus = invite_isengard_to_faction }
@@ -2443,7 +2453,7 @@ focus_tree = {
 		id = MOR_together_we_attack_mirkwood
 		icon = GFX_goal_mir_thranduil
 		ai_will_do = { factor = 3 }
-		x = -2
+		x = -1
 		y = 1
 		relative_position_id = MOR_anti_elves_pact_invite
 		will_lead_to_war_with = MIR
@@ -2499,7 +2509,7 @@ focus_tree = {
 		id = MOR_together_we_attack_lothlorien
 		icon = GFX_goal_lth_galadriel
 		ai_will_do = { factor = 3 }
-		x = 0
+		x = 1
 		y = 1
 		relative_position_id = MOR_anti_elves_pact_invite
 		will_lead_to_war_with = LTH
@@ -2599,7 +2609,7 @@ focus_tree = {
 		icon = GFX_goal_burn_fangorn_forest
 		ai_will_do = { factor = 15 }
 		
-		x = 32
+		x = 30
 		y = 8
 		prerequisite = { focus = take_down_the_swamp }
 		prerequisite = { focus = rallythetroops }
@@ -2627,7 +2637,7 @@ focus_tree = {
 			factor = 15
 		}
 		relative_position_id = submittosauron
-		x = 15
+		x = 13
 		y = 2
 		mutually_exclusive = { }
 		available = {
@@ -2653,7 +2663,7 @@ focus_tree = {
 		icon = GFX_goal_generic_dangerous_deal
 		ai_will_do = { factor = 20 }
 		bypass = { has_government = revolutionary }
-		x = 3
+		x = 1
 		y = 1
 		relative_position_id = conquestofmiddleearth
 		prerequisite = { focus = conquestofmiddleearth}
@@ -3030,7 +3040,7 @@ focus_tree = {
 			}
 		}
 		available = { num_divisions > 40 has_government = belligerent }
-		x = 6
+		x = 4
 		y = 4
 		relative_position_id = conquestofmiddleearth
 		prerequisite = { focus = establishcontroloverthesouth focus = establishcontrolovertheeast }
@@ -3410,7 +3420,7 @@ focus_tree = {
 		id = core_gondor
 		icon = GFX_goal_gondor
 		ai_will_do = { factor = 25 }
-		x = -3
+		x = -2
 		y = 1
 		relative_position_id = war_with_gondor
 		search_filters = { FOCUS_FILTER_MANPOWER }
@@ -3510,7 +3520,7 @@ focus_tree = {
 		id = encroach_on_ithilien
 		icon = GFX_goal_mor_encroach_on_ithilien
 		ai_will_do = { factor = 1 }
-		x = 6
+		x = 4
 		y = 1
 		relative_position_id = conquestofmiddleearth
 		prerequisite = { focus = conquestofmiddleearth }
@@ -3570,9 +3580,9 @@ focus_tree = {
 	focus = {
 		id = take_down_the_swamp
 		prerequisite = { focus = demand_restore_dol_guldur }
-		icon = GFX_goal_generic_more_territorial_claims
+		icon = GFX_goal_goal_generic_major_war
 		ai_will_do = { factor = 15 }
-		x = 32
+		x = 30
 		y = 6
 		available = {
 			OR = {
@@ -3612,4 +3622,232 @@ focus_tree = {
 		}
 	}
 
+
+    focus = {
+        id = MOR_send_aid_to_dol_guldur
+		prerequisite = { focus = demand_restore_dol_guldur }
+        
+        icon = GFX_goal_DGU_dark_fortress_2
+        
+        x = 29
+        y = 5
+
+        cost = 10
+        ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 2
+				has_country_flag = rng_30p_flag_3
+			}
+			modifier = {
+				factor = 0.2
+				has_country_flag = rng_30p_flag_4
+			}
+		}
+        
+        search_filters = { }
+        available = {
+            DGU = {
+				has_cfm_active = yes
+			}
+			MIR = { 
+				exists = yes
+				NOT = { is_ally_with = ROOT }
+			}
+        }
+        completion_reward = {
+			event_option_tooltip = dolguldur.12.a
+			hidden_effect = {
+				DGU = {
+					country_event = { id = dolguldur.12 }
+				}
+			}
+		}
+    }
+
+    focus = {
+        id = MOR_appoint_ringwraith_leader
+		prerequisite = { focus = demand_restore_dol_guldur }
+        
+        icon = GFX_goal_generic_nazgul_ringwraith
+        
+        x = 31
+        y = 5
+
+        cost = 10
+        ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				has_country_flag = rng_80p_flag_5
+			}
+		}
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			MOR_Adunaphel = {
+				lotr_retire_character = yes
+			}
+			effect_tooltip = {
+				DGU = {
+					event_option_tooltip = dolguldur.11.a
+				}
+			}
+			hidden_effect = {
+				DGU = {
+					country_event = { id = dolguldur.11 }
+				}
+			}
+		}
+    }
+
+    focus = {
+        id = MOR_secret_rearmament
+		prerequisite = { focus = orcstrategists }
+        
+        icon = GFX_goal_generic_eye_sauron_palantir
+
+		mutually_exclusive = {
+			focus = MOR_rapid_buildup
+		}
+        
+        x = 33
+        y = 5
+
+        cost = 10
+        ai_will_do = {
+			factor = 8
+			modifier = {
+				factor = 0.5
+				date > 3021.1.1
+			}
+			modifier = {
+				factor = 1.5
+				date < 3019.1.1
+			}
+		}
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			add_ideas = MOR_secret_rearmament
+		}
+    }
+
+    focus = {
+        id = MOR_rapid_buildup
+		prerequisite = { focus = orcstrategists }
+        
+        icon = GFX_goal_generic_sauron_palantir_eye
+
+		mutually_exclusive = {
+			focus = MOR_secret_rearmament
+		}
+        
+        x = 35
+        y = 5
+
+        cost = 10
+        ai_will_do = { factor = 8 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			add_ideas = MOR_rapid_buildup
+		}
+    }
+
+    focus = {
+        id = MOR_elite_formations
+		prerequisite = { focus = MOR_secret_rearmament }
+		prerequisite = { focus = MOR_rapid_buildup }
+        
+        icon = GFX_goal_generic_armed_orc_warrior
+
+		mutually_exclusive = {
+			 focus = MOR_wave_attack_tactics
+		}
+        
+        x = 33
+        y = 6
+
+        cost = 10
+        ai_will_do = { factor = 12 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			army_experience = 25
+			add_daily_mastery = {
+				name = MOR_elite_formations
+				amount = 0.5
+				days = 120
+				grand_doctrine = masterful_warfare_doctrine
+			}
+		}
+    }
+
+    focus = {
+        id = MOR_wave_attack_tactics
+		prerequisite = { focus = MOR_rapid_buildup }
+		prerequisite = { focus = MOR_secret_rearmament }
+        
+        icon = GFX_goal_generic_mass_assault_human_wave_offensive
+
+		mutually_exclusive = {
+			 focus = MOR_elite_formations
+		}
+        
+        x = 35
+        y = 6
+
+        cost = 10
+        ai_will_do = { factor = 12 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			army_experience = 25
+			add_daily_mastery = {
+				name = MOR_wave_attack_tactics
+				amount = 0.5
+				days = 120
+				grand_doctrine = horde_tactics_doctrine
+			}
+		}
+    }
+
+    focus = {
+        id = MOR_triumph_over_men
+		prerequisite = { focus = MOR_wave_attack_tactics }
+		prerequisite = { focus = MOR_elite_formations }
+        
+        icon = GFX_goal_DGU_army_of_mordor_flag
+        
+        x = 34
+        y = 7
+
+        cost = 10
+        ai_will_do = { factor = 12 }
+        
+        search_filters = { }
+        available = {
+            GON = { has_ever_capitulated = yes }
+			ROH = { has_ever_capitulated = yes }
+        }
+        completion_reward = {
+			add_ideas = MOR_triumph_over_men
+		}
+    }
 }
