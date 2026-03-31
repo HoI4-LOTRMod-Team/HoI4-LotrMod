@@ -195,3 +195,26 @@ dgu_schedule_urgent = {
     # TODO
     always = no
 }
+
+
+
+# Note: This is a rough approximate to calculate how many civs we get from trade by taking the total, any additionals or offmaps as well as factories in states
+# There is a lot of stuff where this approximation could be wrong (non-core, other offmap sources etc.)
+gob_factories_from_trade_limit = {
+    
+    set_temp_variable = { temp_civs = num_of_civilian_factories }
+
+    subtract_from_temp_variable = { temp_civs = modifier@extra_civilian_factories }
+    
+    all_controlled_state = {
+        subtract_from_temp_variable = { PREV.temp_civs = building_level@industrial_complex }
+        always = yes
+    }
+
+    subtract_from_temp_variable = { temp_civs = interest_factories }
+
+    check_variable = {
+        temp_civs > 2
+    }
+
+}

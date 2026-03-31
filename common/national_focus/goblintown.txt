@@ -503,7 +503,39 @@ focus_tree = {
         y = 12
 
         cost = 5
-        ai_will_do = { factor = 15 }
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                add = 5
+                threat > 0.3
+            }
+            modifier = {
+                add = 5
+                threat > 0.6
+            }
+            modifier = {
+                factor = 2
+                date > 3019.1.1
+            }
+            modifier = {
+                factor = 2
+                any_neighbor_country = {
+                    is_ai = no
+                }
+            }
+            modifier = {
+                factor = 2
+                any_neighbor_country = {
+                    has_government = belligerent
+                    NOT = { is_ally_with = GOB }
+                }
+            }
+            modifier = {
+                factor = 2
+                GLD = { has_completed_focus = GLD_the_west_bank }
+                NOT = { GLD = { has_completed_focus = GLD_parley_with_the_goblins } }
+            }
+        }
         
         search_filters = { }
         available = {
@@ -640,7 +672,7 @@ focus_tree = {
             has_war = no
         }
         completion_reward = {
-			# generic idea or building?  
+			# generic idea
             add_ideas = GOB_defensive_measures
 		}
     }
@@ -688,9 +720,41 @@ focus_tree = {
         search_filters = { FOCUS_FILTER_DEFENSE }
         available = {
             has_war = no
+            controls_state = 245
+            controls_state = 267
         }
         completion_reward = {
-			# TODO_r: add forts or something in key provinces. Need to change the map first for this.
+			custom_effect_tooltip = GOB_prepare_the_choke_points_tt
+            hidden_effect = {
+                245 = {
+                    add_building_construction = {
+                        type = castle
+                        level = 1
+                        province = 9357
+                        instant_build = yes
+                    }
+                }
+                267 = {
+                    add_building_construction = {
+                        type = castle
+                        level = 1
+                        province = 9271
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = castle
+                        level = 1
+                        province = 9355
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = castle
+                        level = 1
+                        province = 9359
+                        instant_build = yes
+                    }
+                }
+            }
 		}
     }
 
@@ -982,6 +1046,7 @@ focus_tree = {
         }
         completion_reward = {
 			# gain stab and warsupp  
+            add_political_power = 100
             add_command_power = 100
             add_stability = 0.05
             add_war_support = 0.1
@@ -999,7 +1064,7 @@ focus_tree = {
 
         cost = 5
         ai_will_do = {
-            factor = 15
+            factor = 12
             modifier = {
                 factor = 4
                 surrender_progress > 0.01
@@ -1024,9 +1089,8 @@ focus_tree = {
         }
         completion_reward = {
 			# leader gains cool defense trait  
-            add_timed_idea = {
-                idea = GOB_the_last_stand
-                days = 365
+            random_unit_leader = {
+                add_unit_leader_trait = unyielding_defender
             }
 		}
     }
@@ -1262,7 +1326,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO_r
+    focus = {
         id = GOB_bar_the_gate_tunnels
 		prerequisite = { focus = GOB_fortress_under_the_mountains }
         
@@ -1275,7 +1339,7 @@ focus_tree = {
         x = 23
         y = 7
 
-        cost = 5
+        cost = 10
         ai_will_do = {
             factor = 8
             modifier = {
@@ -1303,11 +1367,11 @@ focus_tree = {
             }
         }
         completion_reward = {
-			# add modifier that improves our troops and worsens theirs  
+			add_manpower = 1500
 		}
     }
 
-    focus = { # TODO_r
+    focus = {
         id = GOB_tunnel_ambushes
 		prerequisite = { focus = GOB_fortress_under_the_mountains }
         
@@ -1320,7 +1384,7 @@ focus_tree = {
         x = 25
         y = 7
 
-        cost = 5
+        cost = 10
         ai_will_do = {
             factor = 8
             modifier = {
@@ -1348,21 +1412,23 @@ focus_tree = {
             }
         }
         completion_reward = {
-			# add modifier that adds attiriton and shit  
+            every_core_state = {
+                add_resistance_target = 0.15
+            }
             
 		}
     }
 
-    focus = { # TODO_r
+    focus = {
         id = GOB_let_them_starve
 		prerequisite = { focus = GOB_tunnel_ambushes }
         
-        icon = GFX_goal_DGU_burning_supply_wagon
+        icon = GFX_goal_GOB_weapon_maker_sharp_smith
         
         x = 25
         y = 8
 
-        cost = 5
+        cost = 10
         ai_will_do = {
             factor = 9
             modifier = {
@@ -1390,11 +1456,14 @@ focus_tree = {
             }
         }
         completion_reward = {
-			# add modifier that adds attiriton and shit  
+			add_offsite_building = {
+                type = arms_factory
+                level = 2
+            }
 		}
     }
 
-    focus = { # TODO_r
+    focus = {
         id = GOB_strike_from_the_dark
 		prerequisite = { focus = GOB_bar_the_gate_tunnels }
         
@@ -1403,7 +1472,7 @@ focus_tree = {
         x = 23
         y = 8
 
-        cost = 5
+        cost = 10
         ai_will_do = {
             factor = 9
             modifier = {
@@ -1429,9 +1498,17 @@ focus_tree = {
                     alliance_strength_ratio < 1.15
                 }
             }
+            any_core_state = {
+                NOT = { is_controlled_by = ROOT }
+            }
         }
         completion_reward = {
 			# add modifier that improves our troops and worsens theirs  (resistance)
+            every_core_state = {
+                add_dynamic_modifier = {
+                    modifier = lotr_goblin_resistance
+                }
+            }
 		}
     }
 
@@ -1561,7 +1638,7 @@ focus_tree = {
 
         cost = 5
         ai_will_do = {
-            factor = 12
+            factor = 18
             modifier = {
                 factor = 2
                 has_completed_focus = GOB_sound_the_horns_wake_the_guards
@@ -1592,20 +1669,11 @@ focus_tree = {
             }
         }
         completion_reward = {
-			# add forts and castles to VPs
-            custom_effect_tooltip = GOB_fortress_under_the_mountains_tt
-            hidden_effect = {
-                every_core_state = {
-                    add_building_construction = {
-                        type = castle
-                        level = 1
-                        province = {
-                            all_provinces = yes
-                            limit_to_victory_point = yes
-                        }
-                    }
-                }
+			add_timed_idea = {
+                idea = GOB_the_last_stand
+                days = 300
             }
+            
 		}
     }
 
@@ -2584,7 +2652,22 @@ focus_tree = {
                     level = 3
                     instant_build = yes
                 }
-                # TODO_r_RAIL: supply nodes and railway
+                add_building_construction = {
+                    type = supply_node
+                    level = 1
+                    instant_build = yes
+                    province = 9261
+                }
+                add_building_construction = {
+                    type = supply_node
+                    level = 1
+                    instant_build = yes
+                    province = 9258
+                }
+            }
+            build_railway = {
+                path = { 9258 9262 9260 9261 }
+                level = 2
             }
 		}
     }
@@ -2896,7 +2979,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO_r
+    focus = {
         id = GOB_send_out_the_clans
 		prerequisite = { focus = GOB_raid_and_pillage }
         
@@ -2913,8 +2996,14 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# attack isolated mountain villages
-            # randomly either get scrap or
+			add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 500
+            }
+            add_equipment_to_stockpile = {
+                type = support_equipment
+                amount = 150
+            }
 		}
     }
 
@@ -3048,7 +3137,7 @@ focus_tree = {
 		}
     }
 
-    focus = { # TODO_r
+    focus = {
         id = GOB_hostage_taking
 		prerequisite = { focus = GOB_send_out_the_clans }
         
@@ -3058,14 +3147,18 @@ focus_tree = {
         y = 8
 
         cost = 5
-        ai_will_do = { factor = 1 } # TODO_r
+        ai_will_do = { factor = 18 }
         
         search_filters = { }
         available = {
-            always = yes
+            custom_trigger_tooltip = {
+                tooltip = GOB_hostage_taking_cond_tt
+                check_variable = { successful_raids > 2 }
+            }
+            num_of_controlled_states > 0
         }
         completion_reward = {
-			# makes every raid take hostages  
+			random_state_add_building_slot_and_civ_x2 = yes
 		}
     }
 
@@ -3607,17 +3700,19 @@ focus_tree = {
         search_filters = { }
         available = {
             has_war = no
-            check_variable = {
-                num_armies_with_type@goblin_mercenary_infantry > 4 # still has all of the mercs
-            }
             custom_trigger_tooltip = {
 				tooltip = gob_mercs_equipped_tt
-				NOT = {
-					any_country_division = {
-						division_has_majority_template = goblin_mercenary_infantry
-						unit_strength < 0.95 # TODO_r: This does NOT work. The same check exists elsewhere. Atm this is always false
-					}
-				}
+                OR = {
+                    is_ai = yes
+                    AND = {
+                        check_variable = {
+                            num_armies_with_type@goblin_mercenary_infantry > 4 # still has all of the mercs
+                        }
+                        has_equipment = {
+                            infantry_equipment > 100
+                        }
+                    }
+                }
 			}
         }
         completion_reward = {
@@ -3771,6 +3866,8 @@ focus_tree = {
             set_temp_variable = { temp_factories = total_constructed_civilian_factory }
             multiply_temp_variable = { temp_factories = 0.25 }
             add_offsite_building = { type = industrial_complex level = temp_factories }
+
+            set_variable = { interest_factories = temp_factories }
 		}
     }
 
@@ -3808,7 +3905,26 @@ focus_tree = {
         y = 15
 
         cost = 10
-        ai_will_do = { factor = 1 } # TODO_r
+        ai_will_do = {
+            factor = 8
+            modifier = {
+                factor = 2
+                has_country_flag = rng_30p_flag_5
+            }
+            modifier = {
+                factor = 0.5
+                has_country_flag = rng_30p_flag_6
+            }
+            modifier = {
+                factor = 2
+                date > 3023.1.1
+            }
+            modifier = {
+                factor = 0.5
+                date < 3021.1.1
+            }
+        }
+
         
         search_filters = { FOCUS_FILTER_POLITICAL }
         available = {
@@ -4123,7 +4239,39 @@ focus_tree = {
         y = 14
 
         cost = 5
-        ai_will_do = { factor = 15 }
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                add = 5
+                threat > 0.3
+            }
+            modifier = {
+                add = 5
+                threat > 0.6
+            }
+            modifier = {
+                factor = 2
+                date > 3019.1.1
+            }
+            modifier = {
+                factor = 2
+                any_neighbor_country = {
+                    is_ai = no
+                }
+            }
+            modifier = {
+                factor = 2
+                any_neighbor_country = {
+                    has_government = belligerent
+                    NOT = { is_ally_with = GOB }
+                }
+            }
+            modifier = {
+                factor = 2
+                GLD = { has_completed_focus = GLD_the_west_bank }
+                NOT = { GLD = { has_completed_focus = GLD_parley_with_the_goblins } }
+            }
+        }
         
         search_filters = { }
         available = {
@@ -4131,8 +4279,18 @@ focus_tree = {
         }
         completion_reward = {
 			# gain bonus on tunnel terrain  
-            # TODO_r: needs custom terrain type (note that tooltip doesnt work for terrain unit buffs)
-            # NOTE: also add some decrease combat width!
+            add_unit_bonus = {
+                category_all_infantry = {
+                    combat_width = -0.2
+
+                    tunnels = {
+                        defense = 0.1
+                        attack = 0.1
+                        movement = 0.1
+                    }
+                }
+            }
+            custom_effect_tooltip = GOB_tunnel_warfare_bonus_tt
 		}
     }
 
@@ -4550,5 +4708,58 @@ focus_tree = {
             202 = { add_claim_by = GOB }
             66 = { add_claim_by = GOB }
 		}
+    }
+
+    focus = {
+        id = GOB_trade_capstone
+		prerequisite = { focus = GOB_secure_high_demand_goods }
+        
+        icon = GFX_goal_GOB_gold_coins_money
+        
+        x = 14
+        y = 9
+
+        cost = 5
+        ai_will_do = { factor = 15 }
+        
+        search_filters = { }
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = GOB_trade_capstone_cond_tt
+                gob_factories_from_trade_limit = yes
+            }
+            num_of_controlled_states > 0
+        }
+        completion_reward = {
+            random_state_add_building_slot_and_civ_x2 = yes
+        }
+    }
+
+    focus = {
+        id = GOB_mercs_capstone
+		prerequisite = { focus = GOB_war_loot }
+        
+        icon = GFX_goal_GOB_gold_coins_money
+        
+        x = 18
+        y = 10
+
+        cost = 5
+        ai_will_do = { factor = 15 }
+        
+        search_filters = { }
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = GOB_mercs_capstone_cond_tt
+                check_variable = {
+                    war_loot_secured > 2
+                }
+            }
+            num_of_controlled_states > 0
+        }
+        completion_reward = {
+            random_state_add_building_slot_and_civ_x2 = yes
+            
+        }
     }
 }
