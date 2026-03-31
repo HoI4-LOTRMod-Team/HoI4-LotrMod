@@ -1073,7 +1073,7 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
-			
+			custom_effect_tooltip = "WIP"
 		}
 	}
 
@@ -3741,20 +3741,45 @@ focus_tree = {
 	}
 
 	focus = {
+		id = ISE_shared_goal
+		icon = GFX_goal_roh_rohan_flag
+		ai_will_do = { base = 0 }
+		mutually_exclusive = { focus = ISE_quarrel_with_rohan }
+		relative_position_id = ISE_firm_hand
+		prerequisite = { focus = ISE_firm_hand }
+		x = 6
+		y = 2
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			ROH = { 
+				add_opinion_modifier = { target = ISE modifier = medium_increase }
+			}
+			add_opinion_modifier = { target = ROH modifier = medium_increase }
+			add_political_power = 100
+		}
+	}
+
+	focus = {
 		id = ISE_quarrel_with_rohan
 		icon = GFX_goal_roh_rohan_flag
 		ai_will_do = { base = 0 }
 		relative_position_id = ISE_firm_hand
+		mutually_exclusive = { focus = ISE_shared_goal }
 		prerequisite = { focus = ISE_firm_hand }
-		x = 5
-		y = 1
+		x = 3
+		y = 2
 		cost = 5
 		available_if_capitulated = yes
 		completion_reward = {
-			ROH = { add_opinion_modifier = { target = ISE modifier = isr_quarrel } }
-			ISE = { add_opinion_modifier = { target = ROH modifier = isr_quarrel } }
+			ROH = { 
+				add_opinion_modifier = { target = ISE modifier = isr_quarrel } 
+				add_opinion_modifier = { target = ISE modifier = medium_decrease }
+				add_stability = -0.025
+			}
+			add_opinion_modifier = { target = ROH modifier = isr_quarrel } 
+			add_opinion_modifier = { target = ROH modifier = medium_decrease }
 			add_war_support = 0.05
-			add_political_power = 100
 			if = {
 				limit = { has_dlc = "No Compromise, No Surrender"  }
 				add_faction_goal_slot = { category = long_term value = 1}
@@ -3770,24 +3795,124 @@ focus_tree = {
 	}
 
 	focus = {
+		id = ISE_support_wormtongues_goals
+		icon = GFX_goal_roh_rohan_flag
+		ai_will_do = { base = 0 }
+		relative_position_id = ISE_quarrel_with_rohan
+		prerequisite = { focus = ISE_quarrel_with_rohan focus = ISE_shared_goal }
+		x = 1
+		y = 1
+		cost = 5
+		available_if_capitulated = yes
+		completion_reward = {
+			if = {
+				limit = {
+					ROH = {
+						OR = {
+							has_completed_focus = ROH_isolate_the_king
+							has_completed_focus = ROH_corrupt_the_court
+						}
+					}
+				}
+			} else = {
+				add_timed_idea = { idea = ISE_political_scheming_ROH days = 250 }
+				ROH = {
+					add_timed_idea = { idea = ISE_political_scheming_ROH days = 250 }
+				}
+			}
+
+		}
+	}
+
+	focus = {
 		id = ISE_pillage_the_towns_of_rohan
 		icon = GFX_goal_mor_azog_orc_revolt
 		ai_will_do = { factor = 10 }
 		bypass = { has_war_with = ROH }
 		relative_position_id = ISE_quarrel_with_rohan
 		x = 0
-		y = 1
+		y = 2
 		prerequisite = { focus = ISE_quarrel_with_rohan }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
 			add_named_threat = { threat = 1 name = "Orcs pillaging Rohan villages" }
 			increase_orc_pillaging = yes
-			unlock_decision_category_tooltip = ISE_pillage_rohan
+			#unlock_decision_category_tooltip = ISE_pillage_rohan
 		}
 	}
 
-	
+	#focus = {
+	#	id = ISE_setup_ambushes
+	#	icon = GFX_goal_mor_azog_orc_revolt
+	#	ai_will_do = { factor = 10 }
+	#	bypass = { has_war_with = ROH }
+	#	x = 2
+	#	y = 1
+	#	prerequisite = { focus = ISE_pillage_the_towns_of_rohan }
+	#	cost = 5
+	#	available_if_capitulated = yes
+	#	completion_reward = {
+	#		increase_orc_pillaging = yes
+	#		ROH = {
+	#			add_stability = -0.05
+	#			add_war_support = 0.05
+	#		}
+	#	}
+	#}
+
+	focus = {
+		id = ISE_invade_the_westmarch
+		icon = GFX_goal_mor_azog_orc_revolt
+		ai_will_do = { factor = 10 }
+		bypass = { has_war_with = ROH }
+		relative_position_id = ISE_pillage_the_towns_of_rohan
+		x = -1
+		y = 1
+		prerequisite = { focus = ISE_pillage_the_towns_of_rohan }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			6767 = {
+
+			}
+		}
+	}
+
+	focus = {
+		id = ISE_prepare_the_invasion
+		icon = GFX_goal_mor_azog_orc_revolt
+		ai_will_do = { factor = 10 }
+		bypass = { has_war_with = ROH }
+		relative_position_id = ISE_pillage_the_towns_of_rohan
+		x = 1
+		y = 1
+		prerequisite = { focus = ISE_pillage_the_towns_of_rohan }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			
+		}
+	}
+
+	focus = {
+		id = ISE_all_out_war
+		icon = GFX_goal_mor_azog_orc_revolt
+		ai_will_do = { factor = 10 }
+		bypass = { has_war_with = ROH }
+		relative_position_id = ISE_invade_the_westmarch
+		x = 0
+		y = 1
+		prerequisite = { focus = ISE_invade_the_westmarch }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			6767 = {
+				
+			}
+		}
+	}
+
 
 	#Focus for Slave Soldiers of Rohan
 	focus = {
@@ -3801,9 +3926,10 @@ focus_tree = {
 			}
 		}
 		available = { 184 = { is_controlled_by = ISE } 183 = { is_controlled_by = ISE } }
-		relative_position_id = ISE_pillage_the_towns_of_rohan
-		x = 0
-		y = 2
+		relative_position_id = ISE_all_out_war
+		x = -1
+		y = 1
+		prerequisite = { focus = ISE_all_out_war }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = { add_ideas = ISE_slave_soldiers }
@@ -3822,10 +3948,10 @@ focus_tree = {
 				has_war_with = ROOT
 			}
 		}
-		relative_position_id = ISE_pillage_the_towns_of_rohan
-		x = 2
-		y = 2
-		#prerequisite = { focus = demandthewestmarch}
+		relative_position_id = ISE_all_out_war
+		x = 1
+		y = 1
+		prerequisite = { focus = ISE_all_out_war }
 		cost = 2
 		available_if_capitulated = yes
 		completion_reward = {
@@ -3844,40 +3970,5 @@ focus_tree = {
 			}
 		}
 	}
-
-	focus = {
-		id = ISE_establish_camps_in_the_area
-		icon = GFX_goal_mor_azog_orc_revolt
-		ai_will_do = { factor = 10 }
-		bypass = { has_war_with = ROH }
-		relative_position_id = ISE_pillage_the_towns_of_rohan
-		x = -1
-		y = 1
-		prerequisite = { focus = ISE_pillage_the_towns_of_rohan }
-		cost = 5
-		available_if_capitulated = yes
-		completion_reward = {
-			#Unlocks decisions to establish camps in the two states
-		}
-	}
-
-	focus = {
-		id = ISE_setup_ambushes
-		icon = GFX_goal_mor_azog_orc_revolt
-		ai_will_do = { factor = 10 }
-		bypass = { has_war_with = ROH }
-		relative_position_id = ISE_pillage_the_towns_of_rohan
-		x = 2
-		y = 1
-		prerequisite = { focus = ISE_pillage_the_towns_of_rohan }
-		cost = 5
-		available_if_capitulated = yes
-		completion_reward = {
-			increase_orc_pillaging = yes
-			ROH = {
-				add_stability = -0.05
-				add_war_support = 0.05
-			}
-		}
-	}
+	
 }
