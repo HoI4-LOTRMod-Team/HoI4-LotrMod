@@ -576,14 +576,7 @@ focus_tree = {
             has_stability > 0.4
         }
         completion_reward = {
-			# remove overthrow timer  
-            custom_effect_tooltip = GOB_crack_down_on_the_clans_tt
-            hidden_effect = {
-                swap_ideas = {
-                    remove_idea = GOB_tunnel_lord_division_2
-                    add_idea = GOB_tunnel_lord_division_3
-                }
-            }
+			add_political_power = 150
 		}
     }
 
@@ -598,7 +591,7 @@ focus_tree = {
 
         cost = 10
         ai_will_do = {
-            factor = 15
+            factor = 35
             modifier = {
                 factor = 0.25
                 has_defensive_war = yes
@@ -620,8 +613,99 @@ focus_tree = {
             always = yes
         }
         completion_reward = {
-			# remove debuff/unlock higher centralization  
-            remove_ideas = GOB_tunnel_lord_division_3
+			custom_effect_tooltip = GOB_silence_the_tunnel_lords_ch_tt
+            hidden_effect = {
+                swap_ideas = {
+                    remove_idea = GOB_tunnel_lord_division_2
+                    add_idea = GOB_tunnel_lord_division_3
+                }
+
+                set_temp_variable = {
+                    prev_chief_adv = 0
+                }
+                if = {
+                    limit = { GOB_fubs = { is_advisor = yes } }
+                    set_temp_variable = { prev_chief_adv = 0 }
+                }
+                if = {
+                    limit = { GOB_gnynk = { is_advisor = yes } }
+                    set_temp_variable = { prev_chief_adv = 1 }
+                }
+                if = {
+                    limit = { GOB_troizz = { is_advisor = yes } }
+                    set_temp_variable = { prev_chief_adv = 2 }
+                }
+                if = {
+                    limit = { GOB_gloilk = { is_advisor = yes } }
+                    set_temp_variable = { prev_chief_adv = 3 }
+                }
+
+                GOB_fubs = { remove_advisor_role = { slot = chief_advisor } }
+                GOB_gnynk = { remove_advisor_role = { slot = chief_advisor } }
+                GOB_troizz = { remove_advisor_role = { slot = chief_advisor } }
+                GOB_gloilk = { remove_advisor_role = { slot = chief_advisor } }
+
+                GOB_fubs = {
+                    add_advisor_role = {
+                        advisor = {
+                            idea_token = GOB_fubs
+                            slot = chief_advisor
+                            traits = { forge_overseer }
+                            can_be_fired = no
+                        }
+                    }
+                }
+
+                GOB_gnynk = {
+                    add_advisor_role = {
+                        advisor = {
+                            idea_token = GOB_gnynk
+                            slot = chief_advisor
+                            traits = { financial_manager }
+                            can_be_fired = no
+                        }
+                    }
+                }
+
+                GOB_troizz = {
+                    add_advisor_role = {
+                        advisor = {
+                            idea_token = GOB_troizz
+                            slot = chief_advisor
+                            traits = { tough_guy }
+                            can_be_fired = no
+                        }
+                    }
+                }
+
+                GOB_gloilk = {
+                    add_advisor_role = {
+                        advisor = {
+                            idea_token = GOB_gloilk
+                            slot = chief_advisor
+                            traits = { moderately_competent_bafoon }
+                            can_be_fired = no
+                        }
+                    }
+                }
+
+                if = {
+                    limit = { check_variable = { prev_chief_adv = 0 } }
+                    activate_advisor = GOB_fubs
+                }
+                if = {
+                    limit = { check_variable = { prev_chief_adv = 1 } }
+                    activate_advisor = GOB_gnynk
+                }
+                if = {
+                    limit = { check_variable = { prev_chief_adv = 2 } }
+                    activate_advisor = GOB_troizz
+                }
+                if = {
+                    limit = { check_variable = { prev_chief_adv = 3 } }
+                    activate_advisor = GOB_gloilk
+                }
+            }
 		}
     }
 
