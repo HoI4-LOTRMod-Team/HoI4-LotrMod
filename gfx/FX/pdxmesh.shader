@@ -641,32 +641,30 @@ PixelShader =
 			// --- 11. Final Alpha & Fades ---
 			float final_alpha = 1.0f;
 
-			#ifdef LOTR_UNDERGROUND_MOUNTAIN
-				// 1. Long Distance Fade (Paper Map Transition)
-				// 1.0 when below 500, fades to 0.0 as it reaches 750
-				float far_fade = 1.0f - smoothstep(500.0f, 750.0f, vCamPos.y);
+			// 1. Long Distance Fade (Paper Map Transition)
+			// Applies to ALL mountains using this shader so they don't obstruct the paper map
+			float far_fade = 1.0f - smoothstep(500.0f, 750.0f, vCamPos.y);
+			final_alpha *= far_fade;
 
+			#ifdef LOTR_UNDERGROUND_MOUNTAIN
 				// 2. Close Distance Fade (Underground Reveal)
-				// Get Normalized Device Coordinates (-1.0 to 1.0, where 0.0 is center of screen)
+				// Applies ONLY to Moria/Goblin Town etc.
 				float2 ndc_pos = clipSpacePos.xy / clipSpacePos.w;
 				
 				// Calculate distance from screen center. 
-				// (Optional: multiply ndc_pos.x by your screen aspect ratio if you want a perfect circle instead of an oval)
 				float dist_from_center = length(ndc_pos);
 
-				// Creates a mask: 0.0 at the center, smoothly transitioning to 1.0 at the edges of the screen.
-				// Tweak 0.2 and 0.8 to change how big and soft the "hole" is.
+				// Creates a mask: 0.0 at the center, smoothly transitioning to 1.0 at the edges.
 				float radial_mask = smoothstep(0.2f, 0.8f, dist_from_center);
 
 				// Camera height factor: 0.0 when zoomed in (<150), 1.0 when zoomed out (>300)
 				float height_factor = smoothstep(150.0f, 300.0f, vCamPos.y);
 
-				// When high up (height_factor=1), this outputs 1.0 (opaque). 
-				// When zoomed in (height_factor=0), it outputs the radial_mask, carving a hole in the screen!
+				// Carve a hole in the screen when zoomed in!
 				float close_fade = lerp(radial_mask, 1.0f, height_factor);
 
-				// Combine both fades
-				final_alpha = far_fade * close_fade;
+				// Multiply the underground fade into the final alpha
+				final_alpha *= close_fade;
 			#endif
 
 			return float4(vOut, final_alpha);
