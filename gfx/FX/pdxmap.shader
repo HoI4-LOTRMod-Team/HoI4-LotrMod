@@ -226,6 +226,49 @@ PixelShader =
 {
 	MainCode PixelShaderTerrain
 	[[
+		float3 ApplySnowCustom( float3 vColor, float3 vPos, inout float3 vNormal, float4 vMudSnowColor, in sampler2D SnowTextureSampler,
+                     in sampler2D SnowNoise, inout float vGlossiness, inout float vSnowAlphaOut )
+		{
+			float vIsSnow = GetSnow( vMudSnowColor );
+			float4 vSnowTexture = tex2D( SnowTextureSampler, vPos.xz * SNOW_TILING );
+			float vNoise = tex2D( SnowNoise, vPos.xz * SNOW_NOISE_TILING * 0.5f ).a;
+			
+			// --- UNIFIED LOTR SNOW LOGIC ---
+			// 1. Elevation
+			float elevation_factor = smoothstep( 15.0f, 20.0f, vPos.y ); 
+			
+			// 2. Incline: Snow settles on flat ground 
+			float incline_factor = vNoise * smoothstep( 0.85f, 0.98f, vNormal.y );
+			
+			// 3. Base Winter Presence: 20% opacity frost everywhere it is winter
+			float base_frost = vIsSnow * 0.2f; 
+			
+			// 4. Thick Snow: Only applied where elevation and incline allow it. 
+			float thick_snow = vIsSnow * max(elevation_factor, incline_factor);
+			
+			// Combine factors
+			float total_snow = saturate( base_frost + thick_snow );
+			
+			// Camera distance fade
+			float vOpacity = cam_distance( SNOW_CAM_MIN, SNOW_CAM_MAX );
+			vOpacity = SNOW_OPACITY_MIN + vOpacity * ( SNOW_OPACITY_MAX - SNOW_OPACITY_MIN );
+			
+			float vSnowAlpha = total_snow * vOpacity;
+			
+			// Apply Color (We use vSnowAlphaOut from the function parameters here to match vanilla behavior)
+			vColor = lerp( vColor, vSnowTexture.a * SNOW_COLOR, vSnowAlphaOut * vSnowAlpha );    
+
+			// Apply Physical Snow Bumpiness/Glossiness
+			float3 vSnowNormal = normalize( vSnowTexture.rbg - 0.5f );
+			vSnowNormal = normalize( RotateVectorByVector( vSnowNormal, vNormal ) );
+			vNormal = normalize(lerp( vNormal, vSnowNormal, vSnowAlpha ));
+
+			vSnowAlphaOut = vSnowAlpha;
+			vGlossiness += vSnowTexture.a * vSnowAlpha * SNOW_SPEC_GLOSS_MULT;
+
+			return vColor;
+		}
+
 		float4 main( VS_OUTPUT_TERRAIN Input ) : PDX_COLOR
 		{
 			//return float4( 0, 1.0f, 0, 1.0f );
@@ -318,7 +361,7 @@ PixelShader =
 			diffuse.rgb = GetOverlay( diffuse.rgb, TerrainColor.rgb, COLORMAP_OVERLAY_STRENGTH );
 
 			float4 vMudSnow = GetMudSnowColor( Input.prepos, SnowMudData );
-			diffuse.rgb = ApplySnow( diffuse.rgb, Input.prepos, normal, vMudSnow, SnowTexture, CityLightsAndSnowNoise, vGlossiness, vSnowAlpha );
+			diffuse.rgb = ApplySnowCustom( diffuse.rgb, Input.prepos, normal, vMudSnow, SnowTexture, CityLightsAndSnowNoise, vGlossiness, vSnowAlpha );
 			diffuse.rgb = GetMudColor( diffuse.rgb, vMudSnow, Input.prepos, normal, vGlossiness, vSpec, MudDiffuseGloss, MudNormalSpec, TerrainColor.rgb, CityLightsAndSnowNoise );
 
 			// LOTR STUFF
@@ -420,7 +463,6 @@ PixelShader =
 
 			vOut = DayNightWithBlend( vOut, vGlobeNormal, lerp(BORDER_NIGHT_DESATURATION_MAX, 1.0f, vBloomAlpha) );
 
-
 		// LOTR STUFF:
 
 		// Summary: There are now three different colors/values:
@@ -437,7 +479,8 @@ PixelShader =
 		// Return
 		DebugReturn(vOut, lightingProperties, fShadowTerm);
 		
-		return float4(vOut, max(0.5f, vNightFactor));
+		//return float4(vOut, max(0.65f, vNightFactor));
+		return float4(vOut, 0.65f);
 
 		// LOTR STUFF END
 
