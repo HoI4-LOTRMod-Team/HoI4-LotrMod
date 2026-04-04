@@ -654,11 +654,11 @@ PixelShader =
 				// Calculate distance from screen center. 
 				float dist_from_center = length(ndc_pos);
 
-				// Creates a mask: 0.0 at the center, smoothly transitioning to 1.0 at the edges.
-				float radial_mask = smoothstep(0.2f, 0.8f, dist_from_center);
-
 				// Camera height factor: 0.0 when zoomed in (<150), 1.0 when zoomed out (>300)
-				float height_factor = smoothstep(150.0f, 300.0f, vCamPos.y);
+				float height_factor = smoothstep(100.0f, 200.0f, vCamPos.y);
+
+				// Creates a mask: 0.0 at the center, smoothly transitioning to 1.0 at the edges.
+				float radial_mask = smoothstep(0.5f, 0.75f, dist_from_center);
 
 				// Carve a hole in the screen when zoomed in!
 				float close_fade = lerp(radial_mask, 1.0f, height_factor);
