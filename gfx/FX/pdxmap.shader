@@ -369,11 +369,16 @@ PixelShader =
 			float papermap_fac = smoothstep(500, 750, vCamPos.y);	// Factor of papermap vs terrainmap
 			float borders_fac = smoothstep(1800, 2600, vCamPos.y);  // Factor of displaying country colors / borders or not
 
+			// We do some cheeky stuff to get *both* the papermap color on zoom out to look right, but also the darker environment color in underground areas (Goblin Town and Moria)
+			// We mark underground areas with TerrainColor.rgb as black. This code essentially brightens it up to (0.09f, 0.1f, 0.06f) when the papermap fades in.
+			float underground_fac = min(length(TerrainColor.rgb) / 0.005f, 1);
+			float3 papermap_rgb = lerp(float3(0.09f, 0.1f, 0.06f), TerrainColor.rgb, underground_fac);
+
 			// Papermap color
 			float3 papermap = 0.8f * float3(0.66, 0.435, 0.196) * TerrainColor.a * 
 				lerp(
 					float3(1.0f, 1.0f, 1.0f),
-					min(TerrainColor.rgb*10.0f, 1.0f),
+					min(papermap_rgb*10.0f, 1.0f),
 					0.63f // This value effectively controls the saturation
 					)
 			;
