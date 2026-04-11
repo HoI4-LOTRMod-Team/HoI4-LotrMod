@@ -855,6 +855,10 @@ PixelShader =
 			alpha *= clipalpha * smoothalpha;
 
 			return float4(vColor, alpha);
+
+		#elif defined(TRANSLUCENT)
+			return lerp(vDiffuse, float4(vColor, vDiffuse.a), 0.7f);
+
 		#else
 			return float4(vColor, max(alpha, MinMeshAlpha));
 		#endif
@@ -986,6 +990,13 @@ BlendState BlendStateAlphaTestTrain
 	SourceBlend = "SRC_ALPHA"
 	DestBlend = "INV_SRC_ALPHA"
 	WriteMask = "RED|GREEN|BLUE"
+}
+
+BlendState BlendStateTranslucent
+{
+	BlendEnable = yes
+	SourceBlend = "SRC_ALPHA"
+	DestBlend = "INV_SRC_ALPHA"
 }
 
 Effect PdxMeshStandard
@@ -1123,6 +1134,19 @@ Effect PdxMeshAdvancedAnimSkinnedShadow
 	PixelShader = "PixelPdxMeshStandardShadow"
 }
 
+Effect PdxMeshTranslucent
+{
+	VertexShader = "VertexPdxMeshStandard"
+	PixelShader = "PixelPdxMeshStandard"
+	BlendState = "BlendStateTranslucent"
+	Defines = { "TRANSLUCENT" }
+}
+
+Effect PdxMeshTranslucentShadow
+{
+	VertexShader = "VertexPdxMeshStandardShadow"
+	PixelShader = "PixelPdxMeshAlphaBlendShadow"
+}
 
 Effect PdxMeshAlphaBlend
 {
