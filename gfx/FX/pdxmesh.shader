@@ -647,24 +647,41 @@ PixelShader =
 			final_alpha *= far_fade;
 
 			#ifdef LOTR_UNDERGROUND_MOUNTAIN
-				// 2. Close Distance Fade (Underground Reveal)
-				// Applies ONLY to Moria/Goblin Town etc.
 				float2 ndc_pos = clipSpacePos.xy / clipSpacePos.w;
-				
+				ndc_pos.y *= 0.6f;
+                
 				// Calculate distance from screen center. 
 				float dist_from_center = length(ndc_pos);
 
-				// Camera height factor: 0.0 when zoomed in (<150), 1.0 when zoomed out (>300)
-				float height_factor = smoothstep(100.0f, 200.0f, vCamPos.y);
+				// Camera height factor: 0.0 when zoomed in (<100), 1.0 when zoomed out (>200)
+				float height_factor = smoothstep(65.0f, 200.0f, vCamPos.y);
+				height_factor = sqrt(height_factor);
 
-				// Creates a mask: 0.0 at the center, smoothly transitioning to 1.0 at the edges.
-				float radial_mask = smoothstep(0.5f, 0.75f, dist_from_center);
+				// --- 1. CONTROL THE SIZE OF THE HOLE ---
+				// Map the height factor to the radius of the hole.
+				// When zoomed in (0.0), the hole is large (1.5 covers most/all of the screen).
+				// When zoomed out (1.0), the hole radius is 0.0 (no hole).
+				float max_hole_radius = 1.5f; 
+				float hole_radius = lerp(max_hole_radius, 0.0f, height_factor);
 
-				// Carve a hole in the screen when zoomed in!
-				float close_fade = lerp(radial_mask, 1.0f, height_factor);
+				// --- 2. HARD CUT FOR ALPHA ---
+				// step(a, b) returns 1.0 if b >= a, otherwise 0.0.
+				// This means alpha is 0.0 inside the hole, and 1.0 outside.
+				float is_outside_hole = step(hole_radius, dist_from_center);
+				final_alpha *= is_outside_hole;
 
-				// Multiply the underground fade into the final alpha
-				final_alpha *= close_fade;
+				// --- 3. CREATE THE BLACK OUTLINE ---
+				float outline_thickness = 0.02f; // Adjust to make the border thicker/thinner
+
+				// The outline exists where the distance is between the hole_radius and the hole_radius + thickness.
+				// Subtracting the two steps gives us a mask that is exactly 1.0 in that narrow band, and 0.0 everywhere else.
+				float outline_mask = step(hole_radius, dist_from_center) - step(hole_radius + outline_thickness, dist_from_center);
+
+				// Prevent a stray black dot from rendering in the center of the screen when fully zoomed out.
+				outline_mask *= step(0.05f, hole_radius);
+
+				// Apply the black outline to your color output.
+				vOut.rgb = lerp(vOut.rgb, vOut.rgb*0.5f, outline_mask);
 			#endif
 
 			return float4(vOut, final_alpha);
@@ -1042,10 +1059,24 @@ Effect PdxMeshStandardLotr
 	VertexShader = "VertexPdxMeshStandard"
 	PixelShader = "PixelPdxMeshStandardLotr"
 	BlendState = "BlendStateAlphaTestTrain"
-	Defines = { "PDX_IMPROVED_BLINN_PHONG" "LOTR_UNDERGROUND_MOUNTAIN" }
+	Defines = { "PDX_IMPROVED_BLINN_PHONG" }
 }
 
 Effect PdxMeshStandardLotrShadow
+{
+	VertexShader = "VertexPdxMeshStandardShadow"
+	PixelShader = "PixelPdxMeshStandardShadow"
+}
+
+Effect PdxMeshStandardLotrFade
+{
+	VertexShader = "VertexPdxMeshStandard"
+	PixelShader = "PixelPdxMeshStandardLotr"
+	BlendState = "BlendStateAlphaTestTrain"
+	Defines = { "PDX_IMPROVED_BLINN_PHONG" "LOTR_UNDERGROUND_MOUNTAIN" }
+}
+
+Effect PdxMeshStandardLotrFadeShadow
 {
 	VertexShader = "VertexPdxMeshStandardShadow"
 	PixelShader = "PixelPdxMeshStandardShadow"
