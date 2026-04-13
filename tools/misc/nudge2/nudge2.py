@@ -245,6 +245,27 @@ class CreateStateDialog(QDialog):
     def get_data(self):
         return {"state_name": self.name_input.text(), "state_owner": self.owner_input.text()}
     
+class CreateRegionDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Create Strategic Region")
+        self.setModal(True)
+        self.setMinimumWidth(300)
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        form_layout = QFormLayout()
+        self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText("Minas Tirith")
+        form_layout.addRow("Region Name:", self.name_input)
+        layout.addLayout(form_layout)
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept) 
+        self.buttons.rejected.connect(self.reject) 
+        layout.addWidget(self.buttons)
+
+    def get_data(self):
+        return {"region_name": self.name_input.text()}
+    
 class TransferProvsDialog(QDialog):
     def __init__(self, parent=None, ToStratRegion=False):
         super().__init__(parent)
@@ -1367,6 +1388,10 @@ class MainWindow(QMainWindow):
         self.btn_action2.clicked.connect(self.transfer_to_state_func)
         self.select_ui_actions.append(toolbar.addWidget(self.btn_action2))
 
+        self.btn_action1_r = QPushButton("Create StratReg")
+        self.btn_action1_r.clicked.connect(self.create_strategic_region_func)
+        self.select_ui_actions.append(toolbar.addWidget(self.btn_action1_r))
+
         self.btn_action3 = QPushButton("Transfer to StratReg")
         self.btn_action3.clicked.connect(self.transfer_to_stratregion_func)
         self.select_ui_actions.append(toolbar.addWidget(self.btn_action3))
@@ -1531,6 +1556,17 @@ class MainWindow(QMainWindow):
             state_owner = data['state_owner']
             provs = selected_colors_to_provinces()
             create_new_state(provs, state_name, state_owner)
+            selected_colors.clear()
+            self.trigger_lut_update()
+
+    def create_strategic_region_func(self):
+        dialog = CreateRegionDialog(self)
+        if dialog.exec():
+            data = dialog.get_data()
+            print(f"User confirmed! Running Fill with: {data}")
+            region_name = data['region_name']
+            provs = selected_colors_to_provinces()
+            create_new_strategicregion(provs, region_name)
             selected_colors.clear()
             self.trigger_lut_update()
 

@@ -264,14 +264,18 @@ def create_new_province_from(old_rgb_tuple, new_prov_color=None):
             # fix state/stratregion by adding this province to the same as the OG
             old_prov_id = row[0]
             print(old_prov_id)
-            states = get_all_states()
-            for st in states:
-                if old_prov_id in st.province_list:
-                    st.province_list.append(new_prov_id)
-                    st.province_list.sort()
-                    st.apply_province_changes()
-                    st.save_to_file()
-                    break
+
+            # Only add to state if not a sea province
+            if(cached_prov_type != "sea"):
+                states = get_all_states()
+                for st in states:
+                    if old_prov_id in st.province_list:
+                        st.province_list.append(new_prov_id)
+                        st.province_list.sort()
+                        st.apply_province_changes()
+                        st.save_to_file()
+                        break
+
             regions = get_all_stratregion()
             for st in regions:
                 if old_prov_id in st.province_list:

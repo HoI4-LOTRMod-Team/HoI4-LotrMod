@@ -5,6 +5,7 @@ from locfile import *
 BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() # Points at the lotr/ directory
 STATES_DIR = BASE_PATH / "history/states"
 STATES_LOC_DIR = BASE_PATH / "localisation/english/state_names_l_english.yml"
+REGIONS_LOC_DIR = BASE_PATH / "localisation/english/strategic_region_names_l_english.yml"
 STRAT_REGIONS_DIR = BASE_PATH / "map/strategicregions"
 
 
@@ -82,6 +83,17 @@ state = {
 }
 """
 
+REGION_TEMPLATE = """
+strategic_region = {
+	id=$TOKEN_ID$
+	name="STRATEGICREGION_$TOKEN_ID$"
+
+	provinces = {
+		
+	}
+}
+"""
+
 
 def create_new_state(provinces, state_name, state_owner_tag):
     all_states = get_all_states()
@@ -111,6 +123,36 @@ def create_new_state(provinces, state_name, state_owner_tag):
     loc = LocFile(STATES_LOC_DIR)
     loc.add("STATE_"+str(new_state_id), state_name)
     loc.save(STATES_LOC_DIR)
+
+
+def create_new_strategicregion(provinces, region_name):
+    all_regions = get_all_stratregion()
+
+    # sort provinces array
+    provinces.sort()
+
+    # figure out what the highest region id is to get new id
+    new_region_id = -999
+    for st in all_regions:
+        if st.region_id > new_region_id: new_region_id = st.region_id
+    new_region_id += 1
+
+    # create empty template
+    state_text = REGION_TEMPLATE.replace("$TOKEN_ID$", str(new_region_id))
+
+    # save to file
+    dir = STRAT_REGIONS_DIR / (str(new_region_id) + "-" + region_name + ".txt")
+    with open(dir, "w") as f:
+        f.write(state_text)
+
+    # transfer provinces to new strategic region
+    new_region = StratRegion(dir)
+    transfer_provinces_to_strategicregion(provinces, new_region.region_id)
+
+    # Add localization entry
+    loc = LocFile(REGIONS_LOC_DIR)
+    loc.add("STRATEGICREGION_"+str(new_region_id), region_name)
+    loc.save(REGIONS_LOC_DIR)
 
 
 def transfer_provinces_to_state(provinces, destination_state_id):
