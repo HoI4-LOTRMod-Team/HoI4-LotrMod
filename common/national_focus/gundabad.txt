@@ -5169,19 +5169,26 @@ focus_tree = {
 				}
 				every_controlled_state = {
 					every_neighbor_state = {
-						limit = { NOT = { is_controlled_by = GUN } }
+						limit = {
+							NOT = { is_controlled_by = GUN }
+							NOT = { has_state_flag = gun_raided }
+						}
 	
 						if = {
 							limit = { NOT = { has_state_flag = gun_raided } }
 							set_state_flag = gun_raided
 
+							set_temp_variable = {
+								temp_inf_level = building_level@infrastructure
+							}
+
 							add_to_temp_variable = {
-								ROOT.temp_num_stolen_civs = building_level@infrastructure
+								ROOT.temp_num_stolen_civs = temp_inf_level
 							}
 	
 							damage_building = {
 								type = infrastructure
-								damage = building_level@infrastructure
+								damage = var:temp_inf_level
 							}
 						}
 					}
