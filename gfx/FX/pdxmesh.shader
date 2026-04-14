@@ -649,7 +649,7 @@ PixelShader =
 			#ifdef LOTR_UNDERGROUND_MOUNTAIN
 				float2 ndc_pos = clipSpacePos.xy / clipSpacePos.w;
 				ndc_pos.y *= 0.6f;
-                
+
 				// Calculate distance from screen center. 
 				float dist_from_center = length(ndc_pos);
 
@@ -658,30 +658,31 @@ PixelShader =
 				height_factor = sqrt(height_factor);
 
 				// --- 1. CONTROL THE SIZE OF THE HOLE ---
-				// Map the height factor to the radius of the hole.
-				// When zoomed in (0.0), the hole is large (1.5 covers most/all of the screen).
-				// When zoomed out (1.0), the hole radius is 0.0 (no hole).
 				float max_hole_radius = 1.5f; 
 				float hole_radius = lerp(max_hole_radius, 0.0f, height_factor);
 
-				// --- 2. HARD CUT FOR ALPHA ---
-				// step(a, b) returns 1.0 if b >= a, otherwise 0.0.
-				// This means alpha is 0.0 inside the hole, and 1.0 outside.
-				float is_outside_hole = step(hole_radius, dist_from_center);
-				final_alpha *= is_outside_hole;
+				// --- 2. SMOOTH TRANSITION FOR ALPHA AND COLOR ---
+				// You might want to slightly increase thickness since a gradient 
+				// takes up more visual space than a hard line to be noticeable.
+				float outline_thickness = 0.1f; 
 
-				// --- 3. CREATE THE BLACK OUTLINE ---
-				float outline_thickness = 0.02f; // Adjust to make the border thicker/thinner
+				// smoothstep returns 0.0 when dist <= hole_radius (completely inside the hole)
+				// returns 1.0 when dist >= hole_radius + thickness (completely outside)
+				// interpolates smoothly between 0.0 and 1.0 across the outline thickness.
+				float transition_factor = smoothstep(hole_radius, hole_radius + outline_thickness, dist_from_center);
 
-				// The outline exists where the distance is between the hole_radius and the hole_radius + thickness.
-				// Subtracting the two steps gives us a mask that is exactly 1.0 in that narrow band, and 0.0 everywhere else.
-				float outline_mask = step(hole_radius, dist_from_center) - step(hole_radius + outline_thickness, dist_from_center);
+				// Prevent a blurry dark dot from rendering in the center when fully zoomed out.
+				// As the hole_radius approaches 0, we force the transition_factor to 1.0 (normal color/alpha).
+				float hole_visibility = smoothstep(0.0f, 0.05f, hole_radius);
+				transition_factor = lerp(1.0f, transition_factor, hole_visibility);
 
-				// Prevent a stray black dot from rendering in the center of the screen when fully zoomed out.
-				outline_mask *= step(0.05f, hole_radius);
+				// --- 3. APPLY TO OUTPUT ---
+				// Fade alpha to 0.0 (transparent) as it approaches the hole edge.
+				final_alpha *= transition_factor;
 
-				// Apply the black outline to your color output.
-				vOut.rgb = lerp(vOut.rgb, vOut.rgb*0.5f, outline_mask);
+				// Fade color to 0.0 (black) as it approaches the hole edge.
+				// Multiplying by transition_factor is mathematically equivalent to lerp(float3(0,0,0), vOut.rgb, transition_factor).
+				vOut.rgb *= transition_factor;
 			#endif
 
 			return float4(vOut, final_alpha);
