@@ -873,8 +873,14 @@ PixelShader =
 
 			return float4(vColor, alpha);
 
+		// TRANSLUCENT effect contains FADE_AT_DISTANCE by default, because I say so
 		#elif defined(TRANSLUCENT)
-			return lerp(vDiffuse, float4(vColor, vDiffuse.a), 0.7f);
+			float4 ret = lerp(vDiffuse, float4(vColor, vDiffuse.a), 0.7f);
+			ret.a *= 1.0f-smoothstep(200, 400, vCamPos.y);
+			return ret;
+
+		#elif defined(FADE_AT_DISTANCE)
+			return float4(vColor, 1.0f-smoothstep(200, 400, vCamPos.y));
 
 		#else
 			return float4(vColor, max(alpha, MinMeshAlpha));
@@ -1082,6 +1088,20 @@ Effect PdxMeshStandardLotrFadeShadow
 	PixelShader = "PixelPdxMeshStandardShadow"
 }
 
+Effect PdxMeshStandardLotrFadeAmbientObject
+{
+	VertexShader = "VertexPdxMeshStandard"
+	PixelShader = "PixelPdxMeshStandard"
+	BlendState = "BlendStateTranslucent"
+	Defines = { "EMISSIVE" "PDX_IMPROVED_BLINN_PHONG" "RIM_LIGHT" "PDX_SNOW" "PDX_GRADIENT_BORDERS" "FADE_AT_DISTANCE" }
+}
+
+Effect PdxMeshStandardLotrFadeAmbientObjectShadow
+{
+	VertexShader = "VertexPdxMeshStandardShadow"
+	PixelShader = "PixelPdxMeshStandardShadow"
+}
+
 
 Effect PdxMeshAdvanced
 {
@@ -1176,7 +1196,7 @@ Effect PdxMeshTranslucent
 Effect PdxMeshTranslucentShadow
 {
 	VertexShader = "VertexPdxMeshStandardShadow"
-	PixelShader = "PixelPdxMeshAlphaBlendShadow"
+	PixelShader = "PixelPdxMeshNoShadow"
 }
 
 Effect PdxMeshAlphaBlend
