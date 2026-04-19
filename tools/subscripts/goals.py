@@ -5,9 +5,9 @@ import os
 
 
 
-str = """    spriteType = {
-        name = GFX_goal_FILE_ID
-        texturefile = FILE_PATH
+str = """    SpriteType = {
+        name = "GFX_goal_FILE_ID"
+        texturefile = "FILE_PATH"
     }
 """
 
