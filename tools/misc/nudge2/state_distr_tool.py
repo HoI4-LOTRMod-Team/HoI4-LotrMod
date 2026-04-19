@@ -748,7 +748,7 @@ if __name__ == "__main__":
     try:
         states = get_all_states() 
         for st in states:
-            if st.owner != "ERE": continue
+            if st.owner != "GLD" and st.owner != "RGL" and st.owner != "VAL": continue
             col = get_color_from_seed(str(st.state_id))
             target_data.append({ "state": st, "color": col })
     except Exception as e: print(f"Error initializing data: {e}")
