@@ -374,8 +374,6 @@ PixelShader =
 			float underground_fac = min(length(TerrainColor.rgb) / 0.005f, 1);
 			float3 papermap_rgb = lerp(float3(0.09f, 0.1f, 0.06f), TerrainColor.rgb, underground_fac);
 
-			if(length(TerrainColor.rgb)<0.005f) diffuse.rgb *= 0.85f; // TODO: Is this really necessary?
-
 			// Papermap color
 			float3 papermap = 0.8f * float3(0.66, 0.435, 0.196) * TerrainColor.a * 
 				lerp(
