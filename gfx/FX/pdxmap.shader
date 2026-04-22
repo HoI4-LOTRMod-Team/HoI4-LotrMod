@@ -475,6 +475,9 @@ PixelShader =
 		//  - map_color: papermap but WITH borders if the camera is zoomed in enough, otherwise its a *flat* TerrainColor with borders
 		//  - vOut: TerrainColor with borders, lighting and everything else. This is what vanilla always returns
 
+		//borders_fac = 1.0f;
+		//papermap_fac = 1.0f;
+
 		// Apply papermap. Both these values have borders
 		vOut = lerp(vOut, map_color, papermap_fac);
 
