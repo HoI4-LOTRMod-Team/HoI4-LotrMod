@@ -484,6 +484,8 @@ PixelShader =
 		// Get rid of borders at a certain distance
 		vOut = lerp(vOut, papermap, borders_fac);
 
+		//if(underground_fac < 0.1) vOut *= 0.5f;
+
 		// Return
 		DebugReturn(vOut, lightingProperties, fShadowTerm);
 		
