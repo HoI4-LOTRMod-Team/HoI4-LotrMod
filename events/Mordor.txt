@@ -1464,8 +1464,22 @@ country_event = {
 
 	option = {
 		name = mordor.65.a
-		army_experience = 10
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 15
+				is_in_faction_with = ISE
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = ISE
+					value > 75
+				}
+			}
+		}
 		ISE = {
+			army_experience = 10
 			add_tech_bonus = {
 				bonus = 1
 				uses = 1
@@ -1480,6 +1494,13 @@ country_event = {
 			}
 		}
 		MOR = {
+			army_experience = 10
+			add_tech_bonus = {
+				bonus = 0.5
+				uses = 1
+				name = "Weapons Bonus"
+				category = lotr_labour_metalworking
+			}
 			add_tech_bonus = {
 				bonus = 0.5
 				uses = 2
@@ -1490,5 +1511,207 @@ country_event = {
 	}
 	option = {
 		name = mordor.65.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = ISE
+					value < 0
+				}
+			}
+		}
+		ISE = { add_opinion_modifier = { target = MOR modifier = small_decrease }  }
 	}
 }
+
+#Isengard wants to join our faction
+country_event = {
+	id = mordor.66
+	title = mordor.66.t
+	desc = mordor.66.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.66.a #yes
+		ISE = { 
+			add_opinion_modifier = { target = MOR modifier = medium_increase }
+			country_event = { id = isengard.27 days = 5 }
+		}
+		add_opinion_modifier = { target = ISE modifier = medium_increase }
+		add_to_faction = ISE
+	}
+	option = {
+		name = mordor.66.b #no
+		ISE = { 
+			add_opinion_modifier = { target = MOR modifier = medium_decrease } 
+			country_event = { id = isengard.28 days = 5 }
+		}
+	}
+}
+
+
+#Isengard requests Mordor support
+country_event = {
+	id = mordor.67
+	title = mordor.67.t
+	desc = mordor.67.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.67.a #yes ofcourse
+		ai_chance = {
+			base = 15
+			modifier = {
+				add = 10
+				has_opinion = { target = ISE value > 15 }
+			}
+			modifier = {
+				add = 10
+				is_in_faction_with = ISE
+			}
+			modifier = {
+				add = -999
+				ISE = { has_completed_focus = ISE_betray_sauron }
+			}
+		}
+		ISE = { 
+			add_opinion_modifier = { target = MOR modifier = small_increase } 
+			country_event = { id = isengard.17 }
+		}
+		set_country_flag = MOR_will_help_Sharkey
+		add_opinion_modifier = { target = ISE modifier = small_increase }
+	}
+	#TODO add option for Mordor to demand a payment in goods or ISE becoming puppet
+	option = {
+		name = mordor.67.b #no why would we
+		ai_chance = {
+			base = 10
+			modifier = {
+				add = 15
+				has_opinion = { target = ISE value < 0 }
+			}
+			
+		}
+		ISE = {
+			add_opinion_modifier = { target = MOR modifier = small_decrease }
+			country_event = { id = isengard.18 }
+		}
+	}
+}
+
+#Isengard started war within the Shire
+country_event = {
+	id = mordor.68
+	title = mordor.68.t
+	desc = mordor.68.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.68.a
+		add_ideas = MOR_helping_sharkey
+		send_equipment = {
+			equipment = infantry_equipment
+			amount = 25000
+			target = ISE
+		}
+	}
+}
+
+#Isengard accepts proposed faction/non-aggression pact
+country_event = {
+	id = mordor.69 #69 Noice
+	title = mordor.69.t
+	desc = mordor.69.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.69.a
+		add_opinion_modifier = { target = ISE modifier = small_increase }
+	}
+}
+
+#Isengard declines proposed faction/non-aggression pact
+country_event = {
+	id = mordor.70
+	title = mordor.70.t
+	desc = mordor.70.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.70.a
+		add_opinion_modifier = { target = ISE modifier = small_decrease }
+	}
+}
+
+#Isengard accepts plan for joined war against Gondor
+country_event = {
+	id = mordor.71
+	title = mordor.71.t
+	desc = mordor.71.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.71.a
+		add_opinion_modifier = { target = ISE modifier = small_decrease }
+	}
+}
+
+#Isengard declines plan for joined war against Gondor
+country_event = {
+	id = mordor.72
+	title = mordor.72.t
+	desc = mordor.72.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.72.a
+		add_opinion_modifier = { target = ISE modifier = small_decrease }
+	}
+}
+
+#Isengard betrayes us and refuses to join war against Gondor
+country_event = {
+	id = mordor.73
+	title = mordor.73.t
+	desc = mordor.73.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.73.a
+		add_opinion_modifier = { target = ISE modifier = small_decrease }
+	}
+}
+
+
+#FROM joined Isengard in its betrayal
+country_event = {
+	id = mordor.74
+	title = mordor.74.t
+	desc = mordor.74.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = mordor.74.a
+		add_opinion_modifier = { target = FROM modifier = medium_decrease }
+	}
+}
+

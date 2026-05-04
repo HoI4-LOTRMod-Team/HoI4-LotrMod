@@ -2872,3 +2872,227 @@ country_event = {
 		}
 	}
 }
+
+# Isengards request to sharing knowledge
+country_event = {
+	id = rohan.118
+	title = rohan.118.t
+	desc = rohan.118.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = {
+		name = rohan.118.a
+		ai_chance = {
+			base = 20
+			modifier = {
+				add = 25
+				is_in_faction_with = ISE
+			}
+			modifier = {
+				add = 10
+				has_government = cooperative
+				ISE = { has_government = cooperative }
+			}
+			modifier = {
+				add = 10
+				has_government = belligerent
+				ISE = { has_government = belligerent }
+			}
+			modifier = {
+				add = 10
+				has_war = yes
+				NOT = { has_war_with = ISE }
+			}
+			modifier = {
+				has_opinion = { target = ISE value > 25 }
+				add = 5
+			}
+			modifier = {
+				has_opinion = { target = ISE value > 90 }
+				add = 10
+			}
+		}
+		add_ideas = ROH_isengard_knowledge
+		ISE = { country_event = { id = isengard.20 } }
+	}
+	option = {
+		name = rohan.118.b
+		ai_chance = {
+			base = 20
+			modifier = {
+				add = 999
+				has_war_with = ISE
+			}
+			modifier = {
+				add = 10
+				has_government = cooperative
+				ISE = { has_government = belligerent }
+			}
+			modifier = {
+				has_opinion = { target = ISE value < 0 }
+				add = 5
+			}
+		}
+		ISE = { country_event = { id = isengard.21 } }
+	}
+}
+
+# Isengard invading the Westmarch
+country_event = {
+	id = rohan.119
+	title = rohan.119.t
+	desc = rohan.119.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = { #Give in
+		name = rohan.119.a
+		ISE = { transfer_state = 23 }
+		add_stability = -0.1
+	}
+	option = { #Fight back
+		name = rohan.119.b
+		ISE = { 
+			country_event = { id = isengard.36 } 
+			event_option_tooltip = isengard.36.a
+		}
+		
+	}
+}
+
+# Isengard requests increasing relations
+country_event = {
+	id = rohan.120
+	title = rohan.120.t
+	desc = rohan.120.d
+	picture = GFX_report_event_paper
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = rohan.120.a
+		ai_chance = {
+			base = 30
+			modifier = {
+				has_opinion = { target = ROH value > 0 }
+				add = 15
+			}
+			modifier = {
+				has_opinion = { target = ROH value > 50 }
+				add = 30
+			}
+			modifier = {
+				FROM = { has_same_ideology = yes }
+				add = 15
+			}
+		}
+		add_opinion_modifier = { target = ISE modifier = small_increase }
+		add_political_power = 25
+		event_option_tooltip = isengard.37.a
+		hidden_effect = { ISE = { country_event = { id = isengard.37 } } }
+	}
+	option = { #Refuse
+		name = rohan.120.b
+		ai_chance = {
+			base = 30
+			modifier = {
+				has_opinion = { target = ROH value < 0 }
+				add = 15
+			}
+			modifier = {
+				add = 999
+				has_war_with = ISE
+			}
+		}
+		ISE = {
+			country_event = { id = isengard.16 }
+			event_option_tooltip = isengard.16.a
+		}
+	}
+}
+
+# Saruman supporting Wormtongue efforts
+country_event = {
+	id = rohan.121
+	title = rohan.121.t
+	desc = rohan.121.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = { #Give in
+		name = rohan.121.a
+		activate_decision = ROH_bop_ise_wormtongue_support
+	}
+}
+
+# Unholy Alliance Opposel
+country_event = {
+	id = rohan.122
+	title = rohan.122.t
+	desc = rohan.122.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = { #Agree
+		name = rohan.122.a
+		if = {
+			limit = { has_faction = yes }
+
+		} 
+		create_faction_from_template = {
+			name = "Horseman of the West"
+			template = faction_template_belligerent_expansionist
+		}
+		add_to_faction = ROH
+		ISE = { country_event = { id = isengard.37 } }
+	}
+
+	option = { #Denie
+		name = rohan.122.b
+		add_opinion_modifier = { target = ISE modifier = small_decrease }
+		ISE = { country_event = { id = isengard.38 } }
+	}
+}
+
+# Trade deal with Isengard
+country_event = {
+	id = rohan.123
+	title = rohan.123.t
+	desc = rohan.123.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = { #Agree
+		name = rohan.123.a
+		add_ideas = ISE_trade_deal_with_ROH
+		ROH = { add_ideas = ROH_trade_deal_with_ISE }
+		ISE = { country_event = { id = isengard.37 } }
+	}
+
+	option = { #Denie
+		name = rohan.123.b
+		add_opinion_modifier = { target = ISE modifier = small_decrease }
+		ISE = { country_event = { id = isengard.38 } }
+	}
+}

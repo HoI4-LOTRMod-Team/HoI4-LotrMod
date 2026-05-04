@@ -1,0 +1,761 @@
+################
+##### ISE ######
+################
+ISE_infiltrating_DUN_ENE = {
+    ISE_infiltrate_government = {
+        icon = GFX_decision_generic_4
+		cost = 50
+		fire_only_once = yes
+        fixed_random_seed = no
+        targets_dynamic = yes
+        target_trigger = {
+            FROM = {
+                OR = {
+                    tag = ENE
+                    tag = DUN
+                }
+            }
+        }
+        available = {
+            OR = {
+                is_debug = yes
+                NOT = { has_dlc = "La Resistance" }
+            }
+        }
+        complete_effect = {
+            FROM = {
+                add_popularity = { ideology = belligerent popularity = 0.05 }
+                add_stability = -0.025
+            }
+		}
+		ai_will_do = {
+			base = 5
+		}
+    }
+    ISE_send_diplomate = {
+        icon = GFX_decision_generic_4
+		cost = 75
+		fire_only_once = yes
+        fixed_random_seed = no
+        targets_dynamic = yes
+        target_trigger = {
+            FROM = {
+                OR = {
+                    tag = ENE
+                    tag = DUN
+                }
+            }
+        }
+        complete_effect = {
+            FROM = {
+                add_popularity = { ideology = belligerent popularity = 0.05 }
+                add_opinion_modifier = { target = ISE modifier = small_increase }
+            }
+		}
+		ai_will_do = {
+			base = 5
+		}
+    }
+	ISE_propaganda = {
+        icon = GFX_decision_generic_2
+		cost = 75
+
+        state_target = yes
+        targets = { 78 32 154 157 79 155 156 77 }
+        visible = {
+            OR = {
+                FROM = { 
+                    owner = { tag = DUN } 
+                    DUN = {
+                        NOT = { is_puppet_of = ISE }
+                        exists = yes
+                    }
+                }
+                FROM = { 
+                    owner = { tag = ENE }
+                    ENE = {
+                        NOT = { is_puppet_of = ISE }
+                        exists = yes
+                    }
+                }
+           }
+        }
+        available = {
+           OR = {
+                FROM = { 
+                    owner = { tag = DUN } 
+                    DUN = {
+                        NOT = { is_puppet_of = ISE }
+                        exists = yes
+                    }
+                }
+                FROM = { 
+                    owner = { tag = ENE }
+                    ENE = {
+                        NOT = { is_puppet_of = ISE }
+                        exists = yes
+                    }
+                }
+           }
+        }
+		days_remove = 25
+        days_re_enable = 25
+		fire_only_once = no
+        fixed_random_seed = no
+		remove_effect = {
+            FROM = {
+                owner = {
+                    add_popularity = {
+                        ideology = belligerent
+                        popularity = 0.025
+                    }
+                    add_stability = -0.005
+                }
+            }
+		}
+		ai_will_do = {
+			factor = 2
+		}
+	}
+}
+
+ISE_palantir_decisions = {
+    ISE_fight_against_sauron_influence = {
+        icon = GFX_decision_generic_civil_support
+		cost = 75
+        fixed_random_seed = no
+		days_remove = 50
+        available = {
+            OR = {
+                has_idea = ISE_palantir_1
+                has_idea = ISE_palantir_2
+                has_idea = ISE_palantir_3
+            }
+        }
+        visible = {
+            OR = {
+                has_idea = ISE_palantir_0
+                has_idea = ISE_palantir_1
+                has_idea = ISE_palantir_2
+                has_idea = ISE_palantir_3
+            }
+        }
+		remove_effect = {
+            random_list = {
+                50 = {
+                    add_popularity = { ideology = belligerent popularity = -0.05 }
+                    palantir_decrease = yes
+                }
+                25 = {
+                    palantir_decrease = yes
+                    add_stability = -0.05
+                }
+                25 = {
+                    add_stability = -0.05
+                }
+            }
+		}
+		ai_will_do = {
+			factor = 100
+		}
+    }
+    #Only with DLC
+    ISE_use_the_palantir = {
+        icon = GFX_decision_generic_civil_support
+		cost = 75
+        fixed_random_seed = no
+		days_remove = 100
+        visible = {
+            OR = {
+                is_debug = yes
+                has_dlc = "La Resistance"
+                has_normal_palantir_state = yes
+            }
+        }
+        modifier = {
+            intel_network_gain_factor = 0.15
+            decryption_factor = 0.5
+            recon_factor = 0.1
+            army_intel_factor = 0.1
+            coordination_bonus = 0.1
+            recon_factor_while_entrenched = 0.15
+        }
+		remove_effect = {
+            palantir_increase = yes
+		}
+		ai_will_do = {
+			factor = 100
+		}
+    }
+    ISE_use_the_palantir_without_dlc = {
+        icon = GFX_decision_generic_civil_support
+		cost = 75
+        fixed_random_seed = no
+		days_remove = 100
+        visible = {
+            OR = {
+                is_debug = yes
+                NOT = { has_dlc = "La Resistance" }
+                has_normal_palantir_state = yes
+            }
+        }
+        modifier = {
+            decryption_factor = 0.5
+            recon_factor = 0.1
+            coordination_bonus = 0.1
+            recon_factor_while_entrenched = 0.15
+        }
+		remove_effect = {
+            palantir_increase = yes
+		}
+		ai_will_do = {
+			factor = 100
+		}
+    }
+    ISE_give_in = {
+        icon = GFX_decision_generic_civil_support
+		cost = 150
+        fixed_random_seed = no
+		days_remove = 25
+        available = {
+            has_government = belligerent
+            has_normal_palantir_state = yes
+        }
+		remove_effect = {
+            palantir_give_in = yes
+		}
+		ai_will_do = {
+			factor = 100
+		}
+    }
+}
+
+ISE_shire_decisions = {
+    ISE_expand_business = {
+        icon = GFX_decision_generic_4
+		cost = 100
+		fire_only_once = yes
+        fixed_random_seed = no
+        available = {
+            SHI = { has_idea = SHI_pipe_weed_business_0 }  
+            has_completed_focus = ISE_pipe_weed_business
+        }
+        visible = {
+            SHI = { has_idea = SHI_pipe_weed_business_0 }
+            ISE = { 
+                NOT = { has_completed_focus = ISE_establish_base_of_operations } 
+            }
+        }
+        complete_effect = {
+			increase_shire_influence = yes
+            SHI = {
+                country_event = shire.6
+            }
+		}
+		ai_will_do = {
+			base = 5
+		}
+    }
+    ISE_ise_propagande = {
+        icon = GFX_decision_army_group_soldiers_shadows
+		cost = 75
+        fixed_random_seed = no
+		days_remove = 50
+        visible = {
+            ISE = { 
+                has_completed_focus = ISE_pipe_weed_business
+                NOT = { has_completed_focus = ISE_establish_base_of_operations } 
+            }
+        }
+        available = {
+           has_completed_focus = ISE_send_spies_to_the_shire
+        }
+		remove_effect = {
+            small_increase_shire_influence = yes
+            SHI = { add_stability = -0.015 }
+		}
+		ai_will_do = {
+			factor = 100
+		}
+    }
+    ISE_infiltrate_state = {
+        icon = GFX_decision_generic_2
+        cost = 50
+        fixed_random_seed = no
+        days_remove = 25
+		is_good = yes
+	    selectable_mission = yes
+		state_target = yes
+		targets = { 43 38 44 }
+        visible = {
+            ISE = { has_completed_focus = ISE_establish_base_of_operations }
+            NOT = { FROM = { has_state_flag = ISE_infiltrated_state } }
+        }
+        remove_effect = {
+            add_war_support = 0.005
+            FROM = {
+                set_state_flag = ISE_infiltrated_state
+                custom_effect_tooltip = ISE_effect_tooltip_infultrate_state
+            }
+        }
+    }
+    ISE_increase_control = {
+        icon = GFX_decision_generic_cooperation
+        cost = 75
+        fixed_random_seed = no
+        days_remove = 25
+		is_good = yes
+	    selectable_mission = yes
+		state_target = yes
+		targets = { 43 38 44 }
+        visible = {
+            ISE = { has_completed_focus = ISE_establish_base_of_operations }
+        }
+        available = {
+            FROM = {
+                has_state_flag = ISE_infiltrated_state
+                NOT = { has_dynamic_modifier = { modifier = ise_influence_modifier_3 } }
+            }
+        }
+        remove_effect = {
+            FROM = {
+                increase_ISE_influence_in_SHI_state = yes
+            }
+            SHI = { add_stability = -0.015 }
+        }
+    }
+    ISE_initiate_coop = {
+        icon = GFX_decision_generic_2
+        cost = 125
+        fixed_random_seed = no
+        days_remove = 100
+		is_good = yes
+	    selectable_mission = yes
+		state_target = yes
+		targets = { 43 }
+        visible = {
+            ISE = { has_completed_focus = ISE_establish_base_of_operations }
+            FROM = { has_state_flag = ISE_infiltrated_state }
+        }
+        available = {
+            43 = {
+                state_is_influenced = yes
+            }
+        }
+        complete_effect = {
+            #TODO
+            SHI = {
+                custom_effect_tooltip = "Send warning to Shire"
+            }
+        }
+        remove_effect = {
+            hidden_effect = {
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment_0
+                    amount = 3500
+                }
+                218 = {
+                    every_neighbor_state = {
+                        limit = {
+                            check_variable = { id = 31.id }
+                        }
+                        #Might not work?
+                        218 = { transfer_state_to = 31.owner }
+                        #31.owner = {
+                        #    transfer_state = 218
+                        #}
+                    }
+                }
+                SHI = {
+                    every_owned_state = {
+                        limit = {
+                            has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+                        }
+                        transfer_state_to = ISE
+                        if = {
+                            limit = {
+                                check_variable = { id = 38.id }
+                            }
+                            ISE = {
+                                load_oob = "ise/BOTS_shire"
+                            }
+                        }
+                        if = {
+                            limit = {
+                                check_variable = { id = 44.id }
+                            }
+                            ISE = {
+                                load_oob = "ise/BOTS_east_farthing"
+                            }
+                        }
+                    }
+                }
+                ISE = {
+                    load_oob = "ise/BOTS_south_farthing"
+                    #Spawn in more divisions if focus Improve Strength is done
+                    if = {
+                        limit = {
+                            has_completed_focus = ISE_improve_strength
+                        }
+                        load_oob = "ise/BOTS_south_farthing_extra"
+                    }
+                }
+                #Spawn in more divisions if any of the Tribe nations joined Isengard
+                if = {
+                    limit = {
+                        OR = {
+                            ENE = { has_completed_focus = tribes_saruman_did_nothing_wrong }
+                            DUN = { has_completed_focus = tribes_saruman_did_nothing_wrong }
+                        }
+                    }
+                    hidden_effect = { country_event = { id = sharkey.1 days = 15 } }
+                }
+                declare_war_on = {
+                    target = SHI
+                    type = annex_everything
+                }
+                set_capital = {
+                    state = 43
+                }
+                #Mordor helps if agreed on
+                if = {
+                    limit = {
+                        MOR = { has_country_flag = MOR_will_help_Sharkey }
+                    }
+                    MOR = {
+                        country_event = { id = mordor.68 }
+                    }
+                }
+                #Arthedain gets option to help the Shire if Cooperative/Unaligned
+                if = {
+                    limit = {
+                        ART = {
+                            OR = {
+                                has_government = unaligned
+                                has_government = cooperative
+                            }
+                        }
+                    }
+                    ART = { country_event = { id = arthedain.26 } }
+                }
+            }
+            custom_effect_tooltip = ISE_effect_tooltip_initiate_coop
+        }
+    }
+}
+
+ISE_pillage_rohan = {
+    ISE_establish_camps = {
+        icon = GFX_decision_generic_2
+		cost = 150
+        visible = {
+            has_completed_focus = ISE_establish_camps_in_the_area
+            FROM = {  owner = { tag = ROH } }
+        }
+        available = {
+            has_completed_focus = ISE_establish_camps_in_the_area
+            FROM = {  owner = { tag = ROH } }
+        }
+        state_target = yes
+        targets = { 23 }
+		days_remove = 50
+		fire_only_once = yes
+        fixed_random_seed = no
+		remove_effect = {
+            FROM = {
+                owner = { #owner is always ROH
+                    add_stability = -0.01
+                    add_manpower = -500
+                    random_list = {
+                        75 = {
+                            increase_orc_pillaging = yes
+                            add_stability = -0.015
+                        }
+                        25 = {
+                            add_war_support = 0.015
+                        }
+                    }
+                }
+            }
+		}
+		ai_will_do = {
+			factor = 2
+		}
+    }
+    ISE_pillage_villages = {
+        icon = GFX_decision_generic_2
+		cost = 150
+
+        state_target = yes
+        targets = { 23 24 }
+        visible = {
+           FROM = { 
+                owner = { tag = ROH } 
+           }
+        }
+        available = {
+           FROM = { 
+                owner = { tag = ROH } 
+           }
+        }
+		days_remove = 50
+        days_re_enable = 100
+		fire_only_once = no
+        fixed_random_seed = no
+		remove_effect = {
+            FROM = {
+                owner = {
+                    add_stability = -0.01
+                    if = {
+                        limit = { has_idea = ROH_orc_pillage_0 }
+                        add_manpower = -750
+                    }else = {
+                        add_manpower = -500
+                    }
+                    random_list = {
+                        50 = {
+                            increase_orc_pillaging = yes
+                            add_stability = -0.015
+                        }
+                        50 = {
+                            add_war_support = 0.015
+                        }
+                    }
+                }
+            }
+		}
+		ai_will_do = {
+			factor = 2
+		}
+	}
+    ISE_annex_state = {
+        icon = GFX_decision_generic_2
+		cost = 200
+        state_target = yes
+        targets = { 23 }
+        available = {
+            ROH = {
+                has_idea = ROH_orc_pillage_2
+                has_stability < 0.6
+            }
+        }
+		days_remove = 50
+        days_re_enable = 100
+		fire_only_once = no
+        fixed_random_seed = no
+		remove_effect = {
+            transfer_state = 23
+            #news event
+		}
+		ai_will_do = {
+			factor = 2
+		}
+    }
+}
+
+ISE_support_fight_against_evil = {
+    ISE_sending_weapons_support = {
+        icon = generic_prepare_civil_war
+        available = {
+            has_equipment = { infantry_equipment > 999 }
+        }
+        fire_only_once = no	
+		days_re_enable = 180
+        targets_dynamic = yes
+		target_trigger = {
+			FROM = {
+                OR = {
+                    has_government = cooperative
+                    has_government = unaligned
+                }
+				OR = {
+                    AND = {
+                        has_war_with = MOR
+                        NOT = { original_tag = MOR }
+                    }
+                    AND = {
+                        has_war_with = RHU
+                        NOT = { original_tag = RHU }
+                    }
+                    AND = {
+                        has_war_with = HAR
+                        NOT = { original_tag = HAR }
+                    }
+                    AND = {
+                        has_war_with = ANG
+                        NOT = { original_tag = ANG}
+                    }
+                }
+			}
+		}
+        cost = 50
+        ai_will_do = {
+            factor = 25
+            modifier = {
+				factor = 0.5
+				has_war_support < 0.6
+			}
+        }
+        complete_effect = {
+			ROOT = {
+				send_equipment = {
+					target = FROM
+					type = infantry_equipment
+					amount = 1000
+					old_prioritised = yes
+				}
+			}
+		}
+    }
+    ISE_sending_support_equipment_support = {
+        icon = generic_prepare_civil_war
+        available = {
+            has_equipment = { infantry_equipment > 999 }
+        }
+        fire_only_once = no	
+		days_re_enable = 180
+        targets_dynamic = yes
+		target_trigger = {
+			FROM = {
+                OR = {
+                    has_government = cooperative
+                    has_government = unaligned
+                }
+				OR = {
+                    AND = {
+                        has_war_with = MOR
+                        NOT = { original_tag = MOR }
+                    }
+                    AND = {
+                        has_war_with = RHU
+                        NOT = { original_tag = RHU }
+                    }
+                    AND = {
+                        has_war_with = HAR
+                        NOT = { original_tag = HAR }
+                    }
+                    AND = {
+                        has_war_with = ANG
+                        NOT = { original_tag = ANG}
+                    }
+                }
+			}
+		}
+        cost = 25
+        ai_will_do = {
+            factor = 25
+            modifier = {
+				factor = 0.5
+				has_war_support < 0.6
+			}
+        }
+        complete_effect = {
+			ROOT = {
+				send_equipment = {
+					target = FROM
+					type = support_equipment
+					amount = 1000
+					old_prioritised = yes
+				}
+			}
+		}
+    }
+}
+
+ISE_expand_misty_mountain_pact = {
+    ISE_allow_others_to_invite_people = {
+        icon = generic_prepare_civil_war
+        fire_only_once = yes
+        cost = 25
+        ai_will_do = { base = 5 }
+        visible = { tag = ISE }
+        available = { tag = ISE ISE = { has_completed_focus = ISE_expand_members }}
+        complete_effect = {
+            set_country_flag = ISE_misty_mountains_pact_allow_others_to_invite
+        }
+    }
+    ISE_send_invite_cop = {
+        icon = generic_prepare_civil_wa
+        fire_only_once = yes
+        targets_dynamic = yes
+		target_trigger = {
+			FROM = {
+               OR = {
+                    tag = ENT
+                    tag = LTH
+                    tag = MOA
+                    tag = VAL
+                    tag = RHD
+                    tag = RIV
+                    tag = ANG
+                    tag = GUN
+                    tag = DUN
+                    tag = ENE
+               }
+               NOT = { has_government = belligerent }
+               NOT = { has_country_flag = MISTY_MOUNTAIN_PACT }
+			}
+		}
+        cost = 50
+        visible = { 
+            has_government = cooperative
+            ISE = { has_completed_focus = ISE_expand_members }
+            OR = {
+                tag = ISE
+                ISE = { has_country_flag = ISE_misty_mountains_pact_allow_others_to_invite }
+            }    
+        }
+        available = { NOT = { has_war_with = FROM } }
+        ai_will_do = {
+            base = 5
+            modifier = {
+                add = 5
+                has_war = yes
+            }
+        }
+        complete_effect = {
+			FROM = { country_event = { id = misty_pact.7 days = 5 } }
+		}
+    }
+    ISE_send_invite_bel = {
+        icon = generic_prepare_civil_wa
+        fire_only_once = yes
+        targets_dynamic = yes
+		target_trigger = {
+			FROM = {
+               OR = {
+                    tag = ENT
+                    tag = LTH
+                    tag = MOA
+                    tag = VAL
+                    tag = RHD
+                    tag = RIV
+                    tag = ANG
+                    tag = GUN
+                    tag = DUN
+                    tag = ENE
+               }
+               NOT = { has_government = cooperative }
+			}
+		}
+        cost = 50
+        visible = { 
+            has_government = belligerent 
+            ISE = { has_completed_focus = ISE_expand_members }
+            OR = {
+                tag = ISE
+                ISE = { has_country_flag = ISE_misty_mountains_pact_allow_others_to_invite }
+            } 
+        }
+        ai_will_do = {
+            base = 5
+            modifier = {
+                add = 5
+                has_war = yes
+            }
+        }
+        complete_effect = {
+			FROM = { country_event = { id = misty_pact.7 days = 5 } }
+		}
+    }
+}

@@ -73,7 +73,7 @@ country_event = {
 	}
 }
 
-# Shire Demands Independence
+# Investment Project SHI-ART
 country_event = {
 	id = shire.3
 	title = shire.3.t
@@ -87,31 +87,49 @@ country_event = {
 		ai_chance = {
 			base = 50
 			modifier = {
-				has_opinion = { target = SHI value > 0 }
-				add = 20
+				add = 25
+				has_idea = ART_SHI_trading_deal
+			}
+			modifier = {
+				add = 15
+				is_in_faction_with = SHI
+			}
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = SHI
+					value > 74
+				}
 			}
 		}
-		ART = { end_puppet = SHI }
+		SHI = { country_event = { id = shire.11 } }
+		add_ideas = SHI_investment_project
+		custom_effect_tooltip = SHI_will_be_removed_when_art_and_shi_get_into_a_war
+		add_opinion_modifier = { target = SHI modifier = medium_increase }
+		add_stability = 0.1
 	}
 	option = { #Refuse
 		name = shire.3.b
 		ai_chance = {
-			base = 50
+			base = 25
 			modifier = {
-				add = 1000
-				has_government = belligerent
-			}
-			modifier = {
-				add = 100
-				strength_ratio = { tag = SHI ratio > 1.0 }
+				add = 10
+				has_opinion = {
+					target = SHI
+					value < 0
+				}
 			}
 		}
-		ART = { end_puppet = SHI }
-		ART = { declare_war_on = { target = SHI type = annex_everything } }
+		SHI = {
+			add_opinion_modifier = { target = ART modifier = small_decrease }
+			add_political_power = -25
+		}
+		add_opinion_modifier = { target = SHI modifier = small_decrease }
+		add_political_power = -25
 	}
 }
 
-# The Shire asks for help
+# Requesting to join Isengard
 country_event = {
 	id = shire.4
 	title = shire.4.t
@@ -124,29 +142,249 @@ country_event = {
 		name = shire.4.a
 		ai_chance = {
 			base = 50
-			modifier = {
-				has_opinion = { target = SHI value > 30 }
-				add = 30
-			}
-			modifier = {
-				has_opinion = { target = SHI value > 90 }
-				add = 30
-			}
-			modifier = {
-				has_opinion = { target = ART value < -50 }
-				add = 30
+		}
+		SHI = { add_ideas = SHI_saruman_help }
+		ISE = {
+			if = {
+				limit = {
+					is_in_faction = yes
+				}
+				add_to_faction = SHI
+			} else_if = {
+				create_faction_from_template = {
+					name = servants_of_saruman
+					template = faction_template_belligerent_expansionist
+				}
+				add_to_faction = SHI
 			}
 		}
-		add_to_war = { targeted_alliance = SHI enemy = ART } 
 	}
-	option = { #Refuse
+	option = { #Decline
 		name = shire.4.b
 		ai_chance = {
-			base = 100
-			modifier = {
-				add = 200
-				strength_ratio = { tag = ART ratio < 0.5 }
+			base = 50
+		}
+		SHI = {
+			add_opinion_modifier = { target = ISE modifier = small_decrease }
+			hidden_effect = {
+				complete_national_focus = SHI_seek_our_own_destiny
 			}
 		}
+	}
+}
+
+# Pipe weed business
+country_event = {
+	id = shire.5
+	title = shire.5.t
+	desc = shire.5.d
+	picture = GFX_report_event_elven_alliance
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = shire.5.a
+		ai_chance = {
+			base = 50
+		}
+		add_ideas = SHI_pipe_weed_business_0
+	}
+}
+
+# Intensified Pipe weed business
+country_event = {
+	id = shire.6
+	title = shire.6.t
+	desc = shire.6.d
+	picture = GFX_report_event_elven_alliance
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = shire.6.a
+		ai_chance = {
+			base = 50
+		}
+		swap_ideas = {
+			remove_idea = SHI_pipe_weed_business_0
+			add_idea = SHI_pipe_weed_business_1
+		}
+	}
+}
+
+# Isengard demands puppet for joining hands
+country_event = {
+	id = shire.7
+	title = shire.7.t
+	desc = shire.7.d
+	picture = GFX_report_event_elven_alliance
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = shire.7.a
+		ai_chance = {
+			base = 50
+		}
+		ISE = { country_event = isengard.4 }
+	}
+	option = { #Refuse
+		name = shire.7.a
+		ai_chance = {
+			base = 50
+		}
+		ISE = { country_event = isengard.3 }
+	}
+}
+
+# Arthedain asks for expanding trading agremeent with the Shire
+country_event = {
+	id = shire.8
+	title = shire.8.t
+	desc = shire.8.d
+	picture = GFX_report_event_paper
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = shire.8.a
+		ai_chance = {
+			base = 60
+		}
+		add_ideas = { ART_SHI_trading_deal }
+		custom_effect_tooltip = SHI_will_be_removed_when_art_and_shi_get_into_a_war
+		add_opinion_modifier = { target = ART modifier = medium_increase }
+		ART = { country_event = { id = shire.104 } }
+		
+	}
+	option = { #Refuse
+		name = shire.8.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 5000
+				has_war_with = ART
+			}
+		}
+		add_opinion_modifier = { target = ART modifier = small_decrease }
+		ART = { 
+			country_event = { id = shire.105 }
+		}
+	}
+}
+
+# Frodo returns
+country_event = {
+	id = shire.9
+	title = shire.9.t
+	desc = shire.9.d
+	picture = GFX_report_event_hobbit_party
+	
+	fire_only_once = yes
+	
+	trigger = {
+		tag = SHI
+		has_global_flag = fs_ring_destroyed
+		ring_frodo_is_dead = no
+	}
+
+	mean_time_to_happen = {
+		days = 10	
+	}
+	
+	option = { 
+		name = shire.9.a
+		set_country_flag = SHI_frodo_returned_to_shire
+	}
+}
+
+# Demand Arthedan for claimed land
+country_event = {
+	id = shire.10
+	title = shire.10.t
+	desc = shire.10.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = shire.10.a
+		ai_chance = {
+			base = 15
+			modifier = {
+				add = 10
+				THIS = { has_government = belligerent }
+			}
+			modifier = {
+				has_opinion = { target = ART value > 50 }
+				add = 30
+			}
+			modifier = {
+				add = 15
+				FROM = { has_idea_with_trait = arnor_unification_advocate }
+			}
+			modifier = {
+				add = -999
+				is_puppet = yes
+			}
+		}
+ 		SHI = {
+			transfer_state = 47
+			transfer_state = 48
+			transfer_state = 49
+			transfer_state = 39
+			add_opinion_modifier = { target = ART modifier = medium_increase }
+			diplomatic_relation = {
+				country = ART
+				relation = non_aggression_pact
+				active = yes
+			}
+		}
+	}
+	option = { # Refuse
+		name = shire.10.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				any_other_country = {
+					has_guaranteed = THIS
+				}
+				factor = 5
+			}
+			modifier = {
+				add = 30
+				strength_ratio = { tag = SHI ratio > 0.5 }
+			}
+			modifier = {
+				add = 100
+				is_in_faction = yes
+			}
+			modifier = {
+				add = 500
+				strength_ratio = { tag = SHI ratio > 1.0 }
+			}
+		}
+		SHI = { create_wargoal = { type = take_state_focus target = ART generator = { 47 48 49 39 } } }
+	}
+}
+
+#Accepted Investment Project
+country_event = {
+	id = shire.11
+	title = shire.11.t
+	desc = shire.11.d
+	picture = GFX_report_event_elven_alliance
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = shire.11.a
+		ai_chance = {
+			base = 50
+		}
+		add_ideas = SHI_investment_project
+		custom_effect_tooltip = SHI_will_be_removed_when_art_and_shi_get_into_a_war
+		add_opinion_modifier = { target = ART modifier = medium_increase }
+		add_stability = 0.1
 	}
 }

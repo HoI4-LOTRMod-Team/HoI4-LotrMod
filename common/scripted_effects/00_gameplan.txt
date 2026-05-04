@@ -281,7 +281,6 @@ set_gameplan_ART = {
     }
 }
 
-
 set_gameplan_ELU = {
     random_list = {
         25 = {
@@ -460,22 +459,38 @@ set_gameplan_HAR = {
     set_country_flag = gameplan_going_belligerent
 }
 
-
 set_gameplan_ISE = {
-    random_list = {
-        65 = {
-            set_country_flag = gameplan_going_belligerent
-        }
-        15 = {
-            modifier = {
-                is_historical_focus_on = yes
-                factor=0
+    if = {
+        limit = {
+            has_game_rule = {
+                rule = ISE_AI_BEHAVIOR
+                option = BELLIGERENT_HISTORICAL
             }
-            set_country_flag = gameplan_going_cooperative
+        }
+        set_country_flag = gameplan_going_belligerent
+    }else_if = {
+        limit = {
+            has_game_rule = {
+                rule = ISE_AI_BEHAVIOR
+                option = COOPERATIVE_PLAN
+            }
+        }
+        set_country_flag = gameplan_going_cooperative
+    }else = {
+        random_list = {
+            60 = {
+                set_country_flag = gameplan_going_belligerent
+            }
+            40 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor = 0
+                }
+                set_country_flag = gameplan_going_cooperative
+            }
         }
     }
 }
-
 
 set_gameplan_LTH = {
     if = {
@@ -803,23 +818,56 @@ set_gameplan_ROH = {
 
 
 set_gameplan_SHI = {
-    random_list = {
-        5 = {
-            modifier = {
-                is_historical_focus_on = yes
-                factor=0
+     if = {
+        limit = {
+            has_game_rule = {
+                rule = SHI_AI_BEHAVIOR
+                option = UNALIGNED_HISTORICAL
             }
-            set_country_flag = gameplan_going_belligerent
         }
-        15 = {
-            set_country_flag = gameplan_going_cooperative
-        }
-        5 = {
-            modifier = {
-                is_historical_focus_on = yes
-                factor=0
+        set_country_flag = gameplan_going_unaligned
+    }else_if = {
+        limit = {
+            has_game_rule = {
+                rule = SHI_AI_BEHAVIOR
+                option = BELLIGERENT_PLAN
             }
-            set_country_flag = gameplan_going_revolutionary
+        }
+        random_list = {
+            10 = {
+                set_country_flag = gameplan_going_belligerent_own_empire
+            }
+            5 = {
+                set_country_flag = gameplan_going_belligerent_saruman
+            }
+        }
+    }else_if = {
+        limit = {
+            has_game_rule = {
+                rule = SHI_AI_BEHAVIOR
+                option = REVOLUTIONARY_PLAN
+            }
+        }
+        set_country_flag = gameplan_going_revolutionary
+    }else = {
+        random_list = {
+            10 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor = 0
+                }
+                set_country_flag = gameplan_going_belligerent
+            }
+            5 = {
+                modifier = {
+                    is_historical_focus_on = yes
+                    factor = 0
+                }
+                set_country_flag = gameplan_going_revolutionary
+            }
+            5 = {
+                set_country_flag = gameplan_going_unaligned
+            }
         }
     }
 }
