@@ -41,6 +41,56 @@ focus_tree = {
     }
 
     focus = {
+        id = RGL_defensive_measures
+		prerequisite = { focus = RGL_a_people_under_threat }
+        
+        icon = GFX_goal_goal_generic_defence
+        
+        x = -1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                any_neighbor_country = {
+                    is_ai = no
+                }
+            }
+            modifier = {
+                factor = 2
+                threat > 0.3
+            }
+            modifier = {
+                factor = 1.5
+                threat > 0.5
+            }
+            modifier = {
+                factor = 2
+                DGU = { has_completed_focus = DGU_terror_of_the_anduin }
+            }
+            modifier = {
+                factor = 2
+                LTH = { has_completed_focus = lth_celebornsexile }
+            }
+            modifier = {
+                factor = 2
+                GLD = { has_completed_focus = GLD_the_strong_lead_the_weak }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_DEFENSE }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# increase levies  
+            increase_levies = yes
+		}
+    }
+
+    focus = {
         id = RGL_the_politics_of_survival
 		relative_position_id = RGL_a_people_under_threat
         
@@ -82,6 +132,428 @@ focus_tree = {
             set_country_leader_ideology = survivalist
 
             lotr_advisors_update_vars_weekly = yes
+		}
+    }
+
+    focus = {
+        id = RGL_emergency_defense
+		relative_position_id = RGL_defensive_measures
+        
+        prerequisite = { focus = RGL_build_a_forge focus = RGL_military_production }
+        
+        icon = GFX_goal_generic_shield_wall_phalanx
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 12
+            modifier = {
+                factor = 2
+                alliance_strength_ratio < 1.0
+            }
+            modifier = {
+                factor = 2
+                alliance_strength_ratio < 0.7
+            }
+            modifier = {
+                factor = 1.5
+                any_enemy_country = {
+                    is_ai = no
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_DEFENSE }
+        available = {
+            OR = {
+                has_defensive_war = yes
+                alliance_strength_ratio < 1.0
+                surrender_progress > 0.25
+            }
+        }
+        completion_reward = {
+			# load an oob  
+            add_stability = -0.03
+            division_template = {
+                name = "Emergency Levies"
+                priority = 0
+                regiments = {
+                    infantry = { x = 0 y = 0 }
+                    infantry = { x = 0 y = 1 }
+                    infantry = { x = 0 y = 2 }
+                    infantry = { x = 0 y = 3 }
+                    infantry = { x = 1 y = 0 }
+                    infantry = { x = 1 y = 1 }
+                }
+                support = {
+                    engineer = {
+                        x = 0
+                        y = 0
+                    }
+                }
+            }
+            random_controlled_state = {
+                create_unit = { 
+                    division = "name = \"Emergency Levies\" division_template = \"Emergency Levies\"" 
+                    owner = RGL
+                    count = 7
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = RGL_the_emergency_fyrd
+		relative_position_id = RGL_defensive_measures
+        
+        prerequisite = { focus = RGL_emergency_defense }
+        
+        icon = GFX_goal_generic_raise_levy_mass_mob_res
+        
+        x = 1
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+            factor = 3
+            modifier = {
+                factor = 10
+                has_manpower < 2000
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_DEFENSE }
+        available = {
+            OR = {
+                has_defensive_war = yes
+                alliance_strength_ratio < 1.0
+                surrender_progress > 0.25
+            }
+        }
+        completion_reward = {
+			# gain manpower  
+            add_manpower = 6500
+		}
+    }
+
+    focus = {
+        id = RGL_build_a_forge
+		relative_position_id = RGL_defensive_measures
+        
+        prerequisite = { focus = RGL_defensive_measures }
+        
+        icon = GFX_goal_generic_mass_forge_2
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                any_neighbor_country = {
+                    is_ai = no
+                }
+            }
+            modifier = {
+                factor = 2
+                threat > 0.3
+            }
+            modifier = {
+                factor = 1.5
+                threat > 0.5
+            }
+            modifier = {
+                factor = 2
+                DGU = { has_completed_focus = DGU_terror_of_the_anduin }
+            }
+            modifier = {
+                factor = 2
+                LTH = { has_completed_focus = lth_celebornsexile }
+            }
+            modifier = {
+                factor = 2
+                GLD = { has_completed_focus = GLD_the_strong_lead_the_weak }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_DEFENSE }
+        available = {
+            capital_scope = {
+                is_controlled_by = ROOT
+            }
+        }
+        completion_reward = {
+			# get forge  
+            capital_scope = {
+                add_building_construction = {
+                    type = foundry
+                    level = 1
+                    instant_build = yes
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = RGL_military_production
+		relative_position_id = RGL_defensive_measures
+        
+        prerequisite = { focus = RGL_defensive_measures }
+        
+        icon = GFX_goal_generic_mass_forge
+        
+        x = -1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                any_neighbor_country = {
+                    is_ai = no
+                }
+            }
+            modifier = {
+                factor = 2
+                threat > 0.3
+            }
+            modifier = {
+                factor = 1.5
+                threat > 0.5
+            }
+            modifier = {
+                factor = 2
+                DGU = { has_completed_focus = DGU_terror_of_the_anduin }
+            }
+            modifier = {
+                factor = 2
+                LTH = { has_completed_focus = lth_celebornsexile }
+            }
+            modifier = {
+                factor = 2
+                GLD = { has_completed_focus = GLD_the_strong_lead_the_weak }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_DEFENSE }
+        available = {
+            num_of_controlled_states > 0
+        }
+        completion_reward = {
+			# mils  
+            random_state_add_building_slot_and_mil_x2 = yes
+		}
+    }
+
+    focus = {
+        id = RGL_vigil_of_the_woods
+		relative_position_id = RGL_a_people_under_threat
+        
+        prerequisite = { focus = RGL_a_people_under_threat }
+        
+        icon = GFX_goal_generic_large_tree
+        
+        x = -4
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 9
+            modifier = {
+                factor = 2
+                date > 3020.1.1
+            }
+            modifier = {
+                factor = 1.3
+                has_country_flag = rng_30p_flag_5
+            }
+            modifier = {
+                factor = 2
+                date > 3021.1.1
+            }
+            modifier = {
+                factor = 1.5
+                has_war = yes
+            }
+            modifier = {
+                factor = 1.5
+                any_neighbor_country = {
+                    is_ai = no
+                }
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# gain unit bonus in forests and jungles  
+            if = {
+                limit = { is_ai = yes }
+                add_unit_bonus = {
+                    category_all_infantry = {
+                        default_morale = 0.1
+                        max_organisation = 10
+                        max_strength = 0.1
+                    }
+                }
+            }
+            else = {
+                add_unit_bonus = {
+                    category_all_infantry = {
+                        default_morale = 0.05
+                        max_organisation = 5
+                        max_strength = 0.05
+                    }
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = RGL_charcoal_production
+		relative_position_id = RGL_defensive_measures
+        
+        prerequisite = { focus = RGL_build_a_forge }
+        
+        icon = GFX_goal_generic_coal_resource
+        
+        x = 2
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 3
+            modifier = {
+                factor = 1.5
+                has_war = no
+            }
+            modifier = {
+                factor = 2
+                coal < 10
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_DEFENSE }
+        available = {
+            any_controlled_state = {
+                is_core_of = ROOT
+                chromium > 5
+            }
+        }
+        completion_reward = {
+			# convert wood into coal  
+            random_core_state = {
+                limit = { chromium > 5 }
+                add_resource = {
+                    type = chromium
+                    amount = -5
+                }
+                add_resource = {
+                    type = coal
+                    amount = 10
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = RGL_convert_farming_equipment
+		relative_position_id = RGL_defensive_measures
+        
+        prerequisite = { focus = RGL_emergency_defense }
+        
+        icon = GFX_goal_generic_farmer_at_work
+        
+        x = -1
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+            factor = 3
+            modifier = {
+                factor = 5
+                has_equipment = {
+                    infantry_equipment < 1000
+                }
+            }
+            modifier = {
+                factor = 2
+                ai_has_over_75p_wanted_divs = no
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_DEFENSE }
+        available = {
+            OR = {
+                has_defensive_war = yes
+                alliance_strength_ratio < 1.0
+                surrender_progress > 0.25
+            }
+        }
+        completion_reward = {
+			# temporarily lower food output, but gain factory output (and maybe some equipment)  
+            add_timed_idea = {
+                idea = RGL_converting_farming_equipment
+                days = 180
+            }
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 500
+            }
+		}
+    }
+
+    focus = {
+        id = RGL_desperate_defense
+		relative_position_id = RGL_defensive_measures
+        
+        prerequisite = { focus = RGL_emergency_defense }
+        
+        icon = GFX_goal_generic_child_soldier_desp_levy
+        
+        x = 0
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 12
+            modifier = {
+                factor = 2
+                alliance_strength_ratio < 1.0
+            }
+            modifier = {
+                factor = 2
+                alliance_strength_ratio < 0.7
+            }
+            modifier = {
+                factor = 1.5
+                any_enemy_country = {
+                    is_ai = no
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_DEFENSE }
+        available = {
+            OR = {
+                has_defensive_war = yes
+                alliance_strength_ratio < 0.75
+                surrender_progress > 0.25
+            }
+        }
+        completion_reward = {
+			# add temp idea  
+            add_timed_idea = {
+                idea = LTH_the_last_stand
+                days = 180
+            }
 		}
     }
 
@@ -129,6 +601,327 @@ focus_tree = {
         }
         completion_reward = {
             add_war_support = 0.1
+        }
+    }
+
+    focus = {
+        id = RGL_diplomatic_outreach
+		relative_position_id = RGL_the_politics_of_survival
+        
+        prerequisite = { focus = RGL_the_politics_of_survival }
+        
+        icon = GFX_goal_generic_peasant_knight_coop_handshake
+
+        mutually_exclusive = {
+            focus = RGL_defensive_paranoia
+        }
+        
+        x = -4
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 2
+                threat > 0.5
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            every_neighbor_country = {
+                add_opinion_modifier = {
+                    target = ROOT
+                    modifier = small_increase
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = RGL_defensive_paranoia
+		relative_position_id = RGL_the_politics_of_survival
+        
+        prerequisite = { focus = RGL_the_politics_of_survival }
+        
+        icon = GFX_goal_generic_fear_of_sauron_terror
+
+        mutually_exclusive = {
+            focus = RGL_diplomatic_outreach
+        }
+        
+        x = 3
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 30
+            modifier = {
+                factor = 2
+                threat > 0.5
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# add idea  
+            add_ideas = RGL_defensive_paranoia_idea
+		}
+    }
+
+    focus = {
+        id = RGL_expand_the_workshops
+		relative_position_id = RGL_vigil_of_the_woods
+        
+        prerequisite = { focus = RGL_vigil_of_the_woods }
+        
+        icon = GFX_goal_generic_windmill_workshop_2
+        
+        x = -1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 10
+        }
+        
+        search_filters = { }
+        available = {
+            num_of_controlled_states > 0
+        }
+        completion_reward = {
+			# civs  
+            random_state_add_building_slot_and_civ_x2 = yes
+		}
+    }
+
+    focus = {
+        id = RGL_expand_woodside_villages
+		relative_position_id = RGL_vigil_of_the_woods
+        
+        prerequisite = { focus = RGL_vigil_of_the_woods }
+        
+        icon = GFX_goal_generic_rural_village_settlement
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                has_manpower < 2000
+            }
+            modifier = {
+                factor = 3
+                has_country_flag = rng_30p_flag_5
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            controls_state = 199
+            controls_state = 261
+            controls_state = 198
+        }
+        completion_reward = {
+			# add pop to some states  
+            199 = {
+                add_extra_state_shared_building_slots = 2
+                add_manpower = 2000
+            }
+            261 = {
+                add_extra_state_shared_building_slots = 2
+                add_manpower = 1800
+            }
+            198 = {
+                add_extra_state_shared_building_slots = 2
+                add_manpower = 900
+            }
+		}
+    }
+
+    focus = {
+        id = RGL_set_up_additional_lumberyards
+		relative_position_id = RGL_vigil_of_the_woods
+        
+        prerequisite = { focus = RGL_expand_the_workshops }
+        
+        icon = GFX_goal_generic_wood_logging_axe
+        
+        x = -1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                chromium < 10
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            controls_state = 199
+        }
+        completion_reward = {
+			# add wood  
+            199 = {
+                add_resource = {
+                    type = chromium
+                    amount = 15
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = RGL_increase_taxes
+		relative_position_id = RGL_the_politics_of_survival
+        
+        prerequisite = { focus = RGL_emergency_powers }
+        
+        icon = GFX_goal_generic_tax_collection_treasure_gold_mon
+        
+        x = 0
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 7 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            threat > 0.2
+        }
+        completion_reward = {
+			# increase taxes  
+            increase_taxes = yes
+		}
+    }
+
+    focus = {
+        id = RGL_emergency_powers
+		relative_position_id = RGL_the_politics_of_survival
+        
+        prerequisite = { focus = RGL_the_politics_of_survival }
+        
+        icon = GFX_goal_ROH_curb_foreign_influence_protect_political_power
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 5 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            threat > 0.12
+            has_war = yes
+        }
+        completion_reward = {
+            # gain decision to gain a bunch of stuff when at war
+            custom_effect_tooltip = RGL_emergency_powers_tt
+            custom_effect_tooltip = generic_current_effects_new_lines
+            set_temp_variable = { temp_pp_gain = enemies_strength_ratio }
+            multiply_temp_variable = { temp_pp_gain = 100 }
+            add_political_power = temp_pp_gain
+
+            if = {
+                limit = { enemies_strength_ratio > 2.0 }
+                increase_centralization = yes
+            }
+        }
+    }
+
+    focus = {
+        id = RGL_try_to_barter_with_the_spiders
+		relative_position_id = RGL_vigil_of_the_woods
+        
+        prerequisite = { focus = RGL_expand_woodside_villages }
+        
+        icon = GFX_goal_DGU_offer_spider_meat
+        
+        x = 1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 4
+            modifier = {
+                factor = 2
+                has_country_flag = rng_30p_flag_5
+            }
+            modifier = {
+                factor = 1.5
+                SPI = { is_ai = no }
+            }
+            modifier = {
+                factor = 1.8
+                SPI = { has_completed_focus = SPI_let_roam_the_brood }
+            }
+            modifier = {
+                factor = 1.5
+                SPI = { is_significantly_stronger = yes }
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            SPI = { can_reach = yes can_engage_in_diplo_with = yes }
+        }
+        completion_reward = {
+			# send event to spiders asking for string or NA pact  
+            hidden_effect = {
+                country_event = { id = anduin.100 days = 1 }
+            }
+            custom_effect_tooltip = RGL_try_to_barter_with_the_spiders_tt
+		}
+    }
+
+    focus = {
+        id = RGL_tend_to_the_woods
+		relative_position_id = RGL_vigil_of_the_woods
+        
+        prerequisite = { focus = RGL_vigil_of_the_woods }
+        
+        icon = GFX_goal_generic_nature_herbs_spices
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 1.5
+                has_completed_focus = RGL_seek_a_protector
+                has_country_flag = rng_80p_flag_4
+            }
+            modifier = {
+                factor = 1.5
+                has_completed_focus = RGL_the_elven_kings_shield
+                has_country_flag = rng_80p_flag_4
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            custom_effect_tooltip = RGL_tend_to_the_woods_tt
+            hidden_effect = {
+                country_event = { id = anduin.151 days = 365 }
+            }
         }
     }
 
@@ -548,109 +1341,6 @@ focus_tree = {
     }
 
     focus = {
-        id = RGL_emergency_defense
-		relative_position_id = RGL_defensive_measures
-        
-        prerequisite = { focus = RGL_build_a_forge focus = RGL_military_production }
-        
-        icon = GFX_goal_generic_shield_wall_phalanx
-        
-        x = 0
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-            factor = 12
-            modifier = {
-                factor = 2
-                alliance_strength_ratio < 1.0
-            }
-            modifier = {
-                factor = 2
-                alliance_strength_ratio < 0.7
-            }
-            modifier = {
-                factor = 1.5
-                any_enemy_country = {
-                    is_ai = no
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_DEFENSE }
-        available = {
-            OR = {
-                has_defensive_war = yes
-                alliance_strength_ratio < 1.0
-                surrender_progress > 0.25
-            }
-        }
-        completion_reward = {
-			# load an oob  
-            add_stability = -0.03
-            division_template = {
-                name = "Emergency Levies"
-                priority = 0
-                regiments = {
-                    infantry = { x = 0 y = 0 }
-                    infantry = { x = 0 y = 1 }
-                    infantry = { x = 0 y = 2 }
-                    infantry = { x = 0 y = 3 }
-                    infantry = { x = 1 y = 0 }
-                    infantry = { x = 1 y = 1 }
-                }
-                support = {
-                    engineer = {
-                        x = 0
-                        y = 0
-                    }
-                }
-            }
-            random_controlled_state = {
-                create_unit = { 
-                    division = "name = \"Emergency Levies\" division_template = \"Emergency Levies\"" 
-                    owner = RGL
-                    count = 7
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = RGL_the_emergency_fyrd
-		relative_position_id = RGL_defensive_measures
-        
-        prerequisite = { focus = RGL_emergency_defense }
-        
-        icon = GFX_goal_generic_raise_levy_mass_mob_res
-        
-        x = 1
-        y = 4
-
-        cost = 5
-        ai_will_do = {
-            factor = 3
-            modifier = {
-                factor = 10
-                has_manpower < 2000
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_DEFENSE }
-        available = {
-            OR = {
-                has_defensive_war = yes
-                alliance_strength_ratio < 1.0
-                surrender_progress > 0.25
-            }
-        }
-        completion_reward = {
-			# gain manpower  
-            add_manpower = 6500
-		}
-    }
-
-    focus = {
         id = RGL_galadhrim_marchwardens
 		relative_position_id = RGL_seek_a_protector
         
@@ -894,199 +1584,6 @@ focus_tree = {
     }
 
     focus = {
-        id = RGL_stability_through_safety
-		relative_position_id = RGL_provide_tribute
-        
-        prerequisite = { focus = RGL_provide_tribute focus = RGL_brace_for_war }
-        
-        icon = GFX_goal_generic_stab_scale_balance_2
-        
-        x = 3
-        y = 1
-
-        cost = 10
-        ai_will_do = { factor = 100 }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# get rid of enemy on all sides idea  
-            remove_ideas = RGL_enemies_on_all_sides
-		}
-    }
-
-    focus = {
-        id = RGL_provoke_an_attack
-		relative_position_id = RGL_stability_through_safety
-        
-        prerequisite = { focus = RGL_stability_through_safety }
-        
-        icon = GFX_goal_generic_elven_swords_forge
-
-        mutually_exclusive = {
-            focus = RGL_economic_improvements
-            focus = RGL_grow_bolder
-        }
-        
-        x = -2
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 2
-            modifier = {
-                factor = 2
-                has_war = no
-            }
-            modifier = {
-                factor = 3
-                has_government = belligerent
-            }
-            modifier = {
-                factor = 1.5
-                is_in_faction = yes
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            has_war = no
-        }
-        completion_reward = {
-			# goad someone into going to war with you  
-            hidden_effect = {
-                country_event = anduin.2
-            }
-            custom_effect_tooltip = RGL_provoke_an_attack_tt
-		}
-    }
-
-    focus = {
-        id = RGL_economic_improvements
-		relative_position_id = RGL_stability_through_safety
-        
-        prerequisite = { focus = RGL_stability_through_safety }
-        
-        icon = GFX_goal_DGU_tools_and_gold
-
-        mutually_exclusive = {
-            focus = RGL_provoke_an_attack
-            focus = RGL_grow_bolder
-        }
-        
-        x = 0
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 7
-            modifier = {
-                factor = 2
-                all_core_state = {
-                    is_controlled_by = ROOT
-                }
-            }
-            modifier = {
-                factor = 2
-                has_war = no
-            }
-            modifier = {
-                factor = 2
-                is_subject = yes
-            }
-            modifier = {
-                factor = 0.5
-                has_government = belligerent
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            threat > 0.35
-            num_of_controlled_states > 0
-        }
-        completion_reward = {
-			# gain several factories  
-            random_state_add_building_slot_and_civ_x2 = yes
-            random_state_add_building_slot_and_mil_x2 = yes
-		}
-    }
-
-    focus = {
-        id = RGL_diplomatic_outreach
-		relative_position_id = RGL_the_politics_of_survival
-        
-        prerequisite = { focus = RGL_the_politics_of_survival }
-        
-        icon = GFX_goal_generic_peasant_knight_coop_handshake
-
-        mutually_exclusive = {
-            focus = RGL_defensive_paranoia
-        }
-        
-        x = -4
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 25
-            modifier = {
-                factor = 2
-                threat > 0.5
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-            every_neighbor_country = {
-                add_opinion_modifier = {
-                    target = ROOT
-                    modifier = small_increase
-                }
-            }
-        }
-    }
-
-    focus = {
-        id = RGL_defensive_paranoia
-		relative_position_id = RGL_the_politics_of_survival
-        
-        prerequisite = { focus = RGL_the_politics_of_survival }
-        
-        icon = GFX_goal_generic_fear_of_sauron_terror
-
-        mutually_exclusive = {
-            focus = RGL_diplomatic_outreach
-        }
-        
-        x = 3
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 30
-            modifier = {
-                factor = 2
-                threat > 0.5
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# add idea  
-            add_ideas = RGL_defensive_paranoia_idea
-		}
-    }
-
-    focus = {
         id = RGL_fortification_focus
 		relative_position_id = RGL_stand_alone
         
@@ -1181,66 +1678,6 @@ focus_tree = {
     }
 
     focus = {
-        id = RGL_build_a_forge
-		relative_position_id = RGL_defensive_measures
-        
-        prerequisite = { focus = RGL_defensive_measures }
-        
-        icon = GFX_goal_generic_mass_forge_2
-        
-        x = 1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 2
-                any_neighbor_country = {
-                    is_ai = no
-                }
-            }
-            modifier = {
-                factor = 2
-                threat > 0.3
-            }
-            modifier = {
-                factor = 1.5
-                threat > 0.5
-            }
-            modifier = {
-                factor = 2
-                DGU = { has_completed_focus = DGU_terror_of_the_anduin }
-            }
-            modifier = {
-                factor = 2
-                LTH = { has_completed_focus = lth_celebornsexile }
-            }
-            modifier = {
-                factor = 2
-                GLD = { has_completed_focus = GLD_the_strong_lead_the_weak }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_DEFENSE }
-        available = {
-            capital_scope = {
-                is_controlled_by = ROOT
-            }
-        }
-        completion_reward = {
-			# get forge  
-            capital_scope = {
-                add_building_construction = {
-                    type = foundry
-                    level = 1
-                    instant_build = yes
-                }
-            }
-		}
-    }
-
-    focus = {
         id = RGL_provide_tribute
 		relative_position_id = RGL_seek_a_protector
         
@@ -1317,329 +1754,6 @@ focus_tree = {
                 days = 365
             }
         }
-    }
-
-    focus = {
-        id = RGL_defensive_measures
-		prerequisite = { focus = RGL_a_people_under_threat }
-        
-        icon = GFX_goal_goal_generic_defence
-        
-        x = -1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 2
-                any_neighbor_country = {
-                    is_ai = no
-                }
-            }
-            modifier = {
-                factor = 2
-                threat > 0.3
-            }
-            modifier = {
-                factor = 1.5
-                threat > 0.5
-            }
-            modifier = {
-                factor = 2
-                DGU = { has_completed_focus = DGU_terror_of_the_anduin }
-            }
-            modifier = {
-                factor = 2
-                LTH = { has_completed_focus = lth_celebornsexile }
-            }
-            modifier = {
-                factor = 2
-                GLD = { has_completed_focus = GLD_the_strong_lead_the_weak }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_DEFENSE }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# increase levies  
-            increase_levies = yes
-		}
-    }
-
-    focus = {
-        id = RGL_military_production
-		relative_position_id = RGL_defensive_measures
-        
-        prerequisite = { focus = RGL_defensive_measures }
-        
-        icon = GFX_goal_generic_mass_forge
-        
-        x = -1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 2
-                any_neighbor_country = {
-                    is_ai = no
-                }
-            }
-            modifier = {
-                factor = 2
-                threat > 0.3
-            }
-            modifier = {
-                factor = 1.5
-                threat > 0.5
-            }
-            modifier = {
-                factor = 2
-                DGU = { has_completed_focus = DGU_terror_of_the_anduin }
-            }
-            modifier = {
-                factor = 2
-                LTH = { has_completed_focus = lth_celebornsexile }
-            }
-            modifier = {
-                factor = 2
-                GLD = { has_completed_focus = GLD_the_strong_lead_the_weak }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_DEFENSE }
-        available = {
-            num_of_controlled_states > 0
-        }
-        completion_reward = {
-			# mils  
-            random_state_add_building_slot_and_mil_x2 = yes
-		}
-    }
-
-    focus = {
-        id = RGL_expand_the_workshops
-		relative_position_id = RGL_vigil_of_the_woods
-        
-        prerequisite = { focus = RGL_vigil_of_the_woods }
-        
-        icon = GFX_goal_generic_windmill_workshop_2
-        
-        x = -1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 10
-        }
-        
-        search_filters = { }
-        available = {
-            num_of_controlled_states > 0
-        }
-        completion_reward = {
-			# civs  
-            random_state_add_building_slot_and_civ_x2 = yes
-		}
-    }
-
-    focus = {
-        id = RGL_vigil_of_the_woods
-		relative_position_id = RGL_a_people_under_threat
-        
-        prerequisite = { focus = RGL_a_people_under_threat }
-        
-        icon = GFX_goal_generic_large_tree
-        
-        x = -4
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 9
-            modifier = {
-                factor = 2
-                date > 3020.1.1
-            }
-            modifier = {
-                factor = 1.3
-                has_country_flag = rng_30p_flag_5
-            }
-            modifier = {
-                factor = 2
-                date > 3021.1.1
-            }
-            modifier = {
-                factor = 1.5
-                has_war = yes
-            }
-            modifier = {
-                factor = 1.5
-                any_neighbor_country = {
-                    is_ai = no
-                }
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# gain unit bonus in forests and jungles  
-            if = {
-                limit = { is_ai = yes }
-                add_unit_bonus = {
-                    category_all_infantry = {
-                        default_morale = 0.1
-                        max_organisation = 10
-                        max_strength = 0.1
-                    }
-                }
-            }
-            else = {
-                add_unit_bonus = {
-                    category_all_infantry = {
-                        default_morale = 0.05
-                        max_organisation = 5
-                        max_strength = 0.05
-                    }
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = RGL_expand_woodside_villages
-		relative_position_id = RGL_vigil_of_the_woods
-        
-        prerequisite = { focus = RGL_vigil_of_the_woods }
-        
-        icon = GFX_goal_generic_rural_village_settlement
-        
-        x = 1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 2
-                has_manpower < 2000
-            }
-            modifier = {
-                factor = 3
-                has_country_flag = rng_30p_flag_5
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            controls_state = 199
-            controls_state = 261
-            controls_state = 198
-        }
-        completion_reward = {
-			# add pop to some states  
-            199 = {
-                add_extra_state_shared_building_slots = 2
-                add_manpower = 2000
-            }
-            261 = {
-                add_extra_state_shared_building_slots = 2
-                add_manpower = 1800
-            }
-            198 = {
-                add_extra_state_shared_building_slots = 2
-                add_manpower = 900
-            }
-		}
-    }
-
-    focus = {
-        id = RGL_charcoal_production
-		relative_position_id = RGL_defensive_measures
-        
-        prerequisite = { focus = RGL_build_a_forge }
-        
-        icon = GFX_goal_generic_coal_resource
-        
-        x = 2
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-            factor = 3
-            modifier = {
-                factor = 1.5
-                has_war = no
-            }
-            modifier = {
-                factor = 2
-                coal < 10
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_DEFENSE }
-        available = {
-            any_controlled_state = {
-                is_core_of = ROOT
-                chromium > 5
-            }
-        }
-        completion_reward = {
-			# convert wood into coal  
-            random_core_state = {
-                limit = { chromium > 5 }
-                add_resource = {
-                    type = chromium
-                    amount = -5
-                }
-                add_resource = {
-                    type = coal
-                    amount = 10
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = RGL_set_up_additional_lumberyards
-		relative_position_id = RGL_vigil_of_the_woods
-        
-        prerequisite = { focus = RGL_expand_the_workshops }
-        
-        icon = GFX_goal_generic_wood_logging_axe
-        
-        x = -1
-        y = 3
-
-        cost = 5
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 2
-                chromium < 10
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            controls_state = 199
-        }
-        completion_reward = {
-			# add wood  
-            199 = {
-                add_resource = {
-                    type = chromium
-                    amount = 15
-                }
-            }
-		}
     }
 
     focus = {
@@ -1815,241 +1929,6 @@ focus_tree = {
     }
 
     focus = {
-        id = RGL_convert_farming_equipment
-		relative_position_id = RGL_defensive_measures
-        
-        prerequisite = { focus = RGL_emergency_defense }
-        
-        icon = GFX_goal_generic_farmer_at_work
-        
-        x = -1
-        y = 4
-
-        cost = 5
-        ai_will_do = {
-            factor = 3
-            modifier = {
-                factor = 5
-                has_equipment = {
-                    infantry_equipment < 1000
-                }
-            }
-            modifier = {
-                factor = 2
-                ai_has_over_75p_wanted_divs = no
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_DEFENSE }
-        available = {
-            OR = {
-                has_defensive_war = yes
-                alliance_strength_ratio < 1.0
-                surrender_progress > 0.25
-            }
-        }
-        completion_reward = {
-			# temporarily lower food output, but gain factory output (and maybe some equipment)  
-            add_timed_idea = {
-                idea = RGL_converting_farming_equipment
-                days = 180
-            }
-            add_equipment_to_stockpile = {
-                type = infantry_equipment
-                amount = 500
-            }
-		}
-    }
-
-    focus = {
-        id = RGL_desperate_defense
-		relative_position_id = RGL_defensive_measures
-        
-        prerequisite = { focus = RGL_emergency_defense }
-        
-        icon = GFX_goal_generic_child_soldier_desp_levy
-        
-        x = 0
-        y = 3
-
-        cost = 5
-        ai_will_do = {
-            factor = 12
-            modifier = {
-                factor = 2
-                alliance_strength_ratio < 1.0
-            }
-            modifier = {
-                factor = 2
-                alliance_strength_ratio < 0.7
-            }
-            modifier = {
-                factor = 1.5
-                any_enemy_country = {
-                    is_ai = no
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_DEFENSE }
-        available = {
-            OR = {
-                has_defensive_war = yes
-                alliance_strength_ratio < 0.75
-                surrender_progress > 0.25
-            }
-        }
-        completion_reward = {
-			# add temp idea  
-            add_timed_idea = {
-                idea = LTH_the_last_stand
-                days = 180
-            }
-		}
-    }
-
-    focus = {
-        id = RGL_increase_taxes
-		relative_position_id = RGL_the_politics_of_survival
-        
-        prerequisite = { focus = RGL_emergency_powers }
-        
-        icon = GFX_goal_generic_tax_collection_treasure_gold_mon
-        
-        x = 0
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 7 }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            threat > 0.2
-        }
-        completion_reward = {
-			# increase taxes  
-            increase_taxes = yes
-		}
-    }
-
-    focus = {
-        id = RGL_emergency_powers
-		relative_position_id = RGL_the_politics_of_survival
-        
-        prerequisite = { focus = RGL_the_politics_of_survival }
-        
-        icon = GFX_goal_ROH_curb_foreign_influence_protect_political_power
-        
-        x = 0
-        y = 2
-
-        cost = 5
-        ai_will_do = { factor = 5 }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            threat > 0.12
-            has_war = yes
-        }
-        completion_reward = {
-            # gain decision to gain a bunch of stuff when at war
-            custom_effect_tooltip = RGL_emergency_powers_tt
-            custom_effect_tooltip = generic_current_effects_new_lines
-            set_temp_variable = { temp_pp_gain = enemies_strength_ratio }
-            multiply_temp_variable = { temp_pp_gain = 100 }
-            add_political_power = temp_pp_gain
-
-            if = {
-                limit = { enemies_strength_ratio > 2.0 }
-                increase_centralization = yes
-            }
-        }
-    }
-
-    focus = {
-        id = RGL_try_to_barter_with_the_spiders
-		relative_position_id = RGL_vigil_of_the_woods
-        
-        prerequisite = { focus = RGL_expand_woodside_villages }
-        
-        icon = GFX_goal_DGU_offer_spider_meat
-        
-        x = 1
-        y = 3
-
-        cost = 5
-        ai_will_do = {
-            factor = 4
-            modifier = {
-                factor = 2
-                has_country_flag = rng_30p_flag_5
-            }
-            modifier = {
-                factor = 1.5
-                SPI = { is_ai = no }
-            }
-            modifier = {
-                factor = 1.8
-                SPI = { has_completed_focus = SPI_let_roam_the_brood }
-            }
-            modifier = {
-                factor = 1.5
-                SPI = { is_significantly_stronger = yes }
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            SPI = { can_reach = yes can_engage_in_diplo_with = yes }
-        }
-        completion_reward = {
-			# send event to spiders asking for string or NA pact  
-            hidden_effect = {
-                country_event = { id = anduin.100 days = 1 }
-            }
-            custom_effect_tooltip = RGL_try_to_barter_with_the_spiders_tt
-		}
-    }
-
-    focus = {
-        id = RGL_tend_to_the_woods
-		relative_position_id = RGL_vigil_of_the_woods
-        
-        prerequisite = { focus = RGL_vigil_of_the_woods }
-        
-        icon = GFX_goal_generic_nature_herbs_spices
-        
-        x = 0
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-            factor = 15
-            modifier = {
-                factor = 1.5
-                has_completed_focus = RGL_seek_a_protector
-                has_country_flag = rng_80p_flag_4
-            }
-            modifier = {
-                factor = 1.5
-                has_completed_focus = RGL_the_elven_kings_shield
-                has_country_flag = rng_80p_flag_4
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-            custom_effect_tooltip = RGL_tend_to_the_woods_tt
-            hidden_effect = {
-                country_event = { id = anduin.151 days = 365 }
-            }
-        }
-    }
-
-    focus = {
         id = RGL_study_mirkwood_fauna
 		relative_position_id = RGL_tend_to_the_woods
         
@@ -2129,6 +2008,127 @@ focus_tree = {
                     supply_consumption_factor = -0.15
                 }
             }
+		}
+    }
+
+    focus = {
+        id = RGL_stability_through_safety
+		relative_position_id = RGL_provide_tribute
+        
+        prerequisite = { focus = RGL_provide_tribute focus = RGL_brace_for_war }
+        
+        icon = GFX_goal_generic_stab_scale_balance_2
+        
+        x = 3
+        y = 1
+
+        cost = 10
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# get rid of enemy on all sides idea  
+            remove_ideas = RGL_enemies_on_all_sides
+		}
+    }
+
+    focus = {
+        id = RGL_provoke_an_attack
+		relative_position_id = RGL_stability_through_safety
+        
+        prerequisite = { focus = RGL_stability_through_safety }
+        
+        icon = GFX_goal_generic_elven_swords_forge
+
+        mutually_exclusive = {
+            focus = RGL_economic_improvements
+            focus = RGL_grow_bolder
+        }
+        
+        x = -2
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 2
+            modifier = {
+                factor = 2
+                has_war = no
+            }
+            modifier = {
+                factor = 3
+                has_government = belligerent
+            }
+            modifier = {
+                factor = 1.5
+                is_in_faction = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            has_war = no
+        }
+        completion_reward = {
+			# goad someone into going to war with you  
+            hidden_effect = {
+                country_event = anduin.2
+            }
+            custom_effect_tooltip = RGL_provoke_an_attack_tt
+		}
+    }
+
+    focus = {
+        id = RGL_economic_improvements
+		relative_position_id = RGL_stability_through_safety
+        
+        prerequisite = { focus = RGL_stability_through_safety }
+        
+        icon = GFX_goal_DGU_tools_and_gold
+
+        mutually_exclusive = {
+            focus = RGL_provoke_an_attack
+            focus = RGL_grow_bolder
+        }
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 7
+            modifier = {
+                factor = 2
+                all_core_state = {
+                    is_controlled_by = ROOT
+                }
+            }
+            modifier = {
+                factor = 2
+                has_war = no
+            }
+            modifier = {
+                factor = 2
+                is_subject = yes
+            }
+            modifier = {
+                factor = 0.5
+                has_government = belligerent
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            threat > 0.35
+            num_of_controlled_states > 0
+        }
+        completion_reward = {
+			# gain several factories  
+            random_state_add_building_slot_and_civ_x2 = yes
+            random_state_add_building_slot_and_mil_x2 = yes
 		}
     }
 

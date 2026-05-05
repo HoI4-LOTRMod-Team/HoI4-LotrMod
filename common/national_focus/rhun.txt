@@ -94,6 +94,268 @@ focus_tree = {
 	}
 
 	focus = {
+		id = RHUN_teachings_of_morgoth
+		icon = GFX_goal_RHU_melkor_morgoth
+		ai_will_do = {
+			factor = 35
+			modifier = {
+				factor = 0
+				is_going_belligerent = no
+				is_going_unaligned = no
+			}
+			modifier = {
+				factor = 2
+				date > 3019.6.1
+			}
+		}
+		allow_branch = {
+			NOT = { has_completed_focus = RHUN_break_free_from_mordor }
+		}
+		x = 11
+		y = 0
+		mutually_exclusive = { focus = RHUN_break_free_from_mordor }
+		
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = { 
+			add_ideas = RHU_melkorite_teachings
+			mark_focus_tree_layout_dirty = yes 
+		}
+	}
+
+	focus = {
+		id = RHUN_proclaim_empire_of_rhun
+		icon = GFX_goal_RHU_golden_crown
+		ai_will_do = {
+			factor = 50
+		}
+		available = {
+			RHU = { all_core_states_controlled_or_puppeted = yes }
+			LGT = { all_core_states_controlled_or_puppeted = yes }
+			AVA = { all_core_states_controlled_or_puppeted = yes }
+			DOR = { all_core_states_controlled_or_puppeted = yes }
+			DRH = { all_core_states_controlled_or_puppeted = yes }
+		}				
+		x = 11
+		y = 6
+		mutually_exclusive = { }
+		prerequisite = { focus = RHUN_eastern_campaign }
+		cost = 10
+		
+		completion_reward = {
+			if = {
+				limit = {
+					has_idea = RHUN_nation_driven_by_fear_expanded
+				}
+				remove_ideas = RHUN_nation_driven_by_fear_expanded
+				add_ideas = RHUN_empire_of_rhun
+			}
+			else = {
+				add_ideas = RHUN_empire_of_rhun
+			}
+			set_cosmetic_tag = RHN
+		}
+	}
+
+	focus = {
+		id = RHUN_eastern_campaign
+		prerequisite = { focus = RHUN_Mordor_doctrine focus = RHUN_Rhun_Doctrine }
+		icon = GFX_goal_RHU_army_leader_pointing_at_map_plan
+		ai_will_do = { factor = 35 }
+		available = { }
+		x = 11
+		y = 5
+		mutually_exclusive = { }
+		cost = 10
+		
+		completion_reward = {
+			add_timed_idea = {
+				idea = RHUN_eastern_campaign
+				days = 730 
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_contact_the_variags
+		icon = GFX_goal_rhu_rhunian_khand
+		ai_will_do = { 
+			factor = 4
+			modifier = {
+				factor = 0.1
+				has_country_flag = rng_30p_flag_3
+			}
+			modifier = {
+				factor = 2
+				has_country_flag = rng_30p_flag_4
+			}
+			modifier = {
+				factor = 2
+				HAR = { is_ai = no }
+			}
+		}
+		x = 20
+		y = 6
+		available = {
+			OR = {
+				has_government = belligerent
+				has_government = unaligned 
+			}
+			controls_state = 287
+			controls_state = 272
+		}
+		mutually_exclusive = { }
+		prerequisite = { focus = RHUN_eastern_campaign }
+		cost = 5
+		
+		completion_reward = {
+			# add infra structure in far east
+			287 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			272 = {
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_strike_rhovania
+		icon = GFX_goal_RHU_eastwards_expansion_plans
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				factor = 0.25
+				has_war = yes
+			}
+			modifier = {
+				factor = 0
+				has_war = yes
+				enemies_strength_ratio > 0.9
+			}
+			modifier = {
+				factor = 1.5
+				OR = {
+					DOR = { is_isolated_target = yes }
+					RHO = { is_isolated_target = yes }
+				}
+			}
+			modifier = {
+				factor = 0
+				DOR = { is_stronger = yes }
+				RHO = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 1.5
+				OR = {
+					DOR = { is_ai = no is_weaker = yes is_isolated_target = yes }
+					RHO = { is_ai = no is_weaker = yes is_isolated_target = yes }
+				}
+			}
+		}
+		x = 0
+		y = 6
+		available = {
+			OR = {
+				has_government = belligerent
+				has_government = unaligned 
+			}
+			is_subject = no
+			OR = {
+				RHO = { war_with_is_possible = yes }
+				DOR = { war_with_is_possible = yes }
+			}
+		}
+		mutually_exclusive = { }
+		prerequisite = { focus = RHUN_eastern_campaign }
+		cost = 5
+		
+		completion_reward = {
+			add_political_power = 50 
+		}
+	}
+
+	focus = {
+		id = RHUN_break_free_from_mordor
+		icon = GFX_goal_generic_dove_peace_liberation_free
+		mutually_exclusive = { focus = RHUN_teachings_of_morgoth }
+		x = 29
+		y = 0
+		cost = 10
+		allow_branch = {
+			NOT = { has_completed_focus = RHUN_teachings_of_morgoth }
+		}
+		offset = {
+			x = -18
+			trigger = {
+				has_completed_focus = RHUN_break_free_from_mordor
+			}
+		}
+		available = {
+			is_subject = no
+		}
+		ai_will_do = {
+			factor = 35
+			modifier = {
+				factor = 0
+				is_going_cooperative = no
+			}
+			modifier = {
+				factor = 2
+				date > 3019.6.1
+			}
+		}
+		completion_reward = {
+			custom_effect_tooltip = RHUN_1_tt
+			hidden_effect = {
+				activate_decision = RHU_impending_civil_war 
+			}
+			mark_focus_tree_layout_dirty = yes 
+		}
+	}
+
+	focus = {
+        id = RHUN_army_of_conquest
+		prerequisite = { focus = RHUN_economy_of_conquest }
+        
+        icon = GFX_goal_RHU_on_the_warmarch
+        
+        x = 16
+        y = 9
+
+        cost = 5
+        ai_will_do = {
+			factor = 25
+			modifier = {
+				factor = 2
+				check_variable = {
+					rhun_economy_of_conquest_bonus > 0
+				}
+			}
+		}
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# same as the idea from economy of conquest, but add army modifiers
+			add_timed_idea = {
+				idea = generic_military_buildup
+				days = 365
+			}
+		}
+    }
+
+    focus = {
 		id = RHUN_army_of_the_east
 		icon = GFX_goal_RHU_desert_warrior_nomad
 		x = 0
@@ -852,36 +1114,6 @@ focus_tree = {
 	}
 
 	focus = {
-		id = RHUN_teachings_of_morgoth
-		icon = GFX_goal_RHU_melkor_morgoth
-		ai_will_do = {
-			factor = 35
-			modifier = {
-				factor = 0
-				is_going_belligerent = no
-				is_going_unaligned = no
-			}
-			modifier = {
-				factor = 2
-				date > 3019.6.1
-			}
-		}
-		allow_branch = {
-			NOT = { has_completed_focus = RHUN_break_free_from_mordor }
-		}
-		x = 11
-		y = 0
-		mutually_exclusive = { focus = RHUN_break_free_from_mordor }
-		
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { 
-			add_ideas = RHU_melkorite_teachings
-			mark_focus_tree_layout_dirty = yes 
-		}
-	}
-
-	focus = {
 		id = RHUN_guide_the_tribes
 		relative_position_id = RHUN_teachings_of_morgoth
 		icon = GFX_goal_RHU_banners_asseble_flags
@@ -908,94 +1140,6 @@ focus_tree = {
 				idea = generic_unaligned
 				days = 180 
 			} 
-		}
-	}
-
-	focus = {
-		id = RHUN_one_tribe_supremacy
-		relative_position_id = RHUN_guide_the_tribes
-		icon = GFX_goal_RHU_subjugation_tribes
-		ai_will_do = {
-			factor = 35
-		}
-		x = -1
-		y = 1
-		mutually_exclusive = { focus = RHUN_mend_the_conflict }
-		prerequisite = { focus = RHUN_guide_the_tribes }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_stability = -0.1
-			add_popularity = {
-				ideology = cooperative
-				popularity = -0.1 
-			}
-			add_popularity = {
-				ideology = unaligned
-				popularity = -0.1 
-			}
-			add_popularity = {
-				ideology = belligerent
-				popularity = 0.2 
-			} 
-		}
-	}
-
-	focus = {
-		id = RHUN_mend_the_conflict
-		relative_position_id = RHUN_guide_the_tribes
-		icon = GFX_goal_RHU_united_tribes
-		ai_will_do = {
-			factor = 20
-		}
-		x = 1
-		y = 1
-		mutually_exclusive = { focus = RHUN_one_tribe_supremacy }
-		prerequisite = { focus = RHUN_guide_the_tribes }
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = { 
-			add_ideas = RHUN_sovereign_pride
-			add_popularity = {
-				ideology = cooperative
-				popularity = -0.1 
-			}
-			add_popularity = {
-				ideology = belligerent
-				popularity = -0.1 
-			}
-			add_popularity = {
-				ideology = unaligned
-				popularity = 0.2 
-			}
-			set_politics = { ruling_party = unaligned } 
-		}
-	}
-
-	focus = {
-		id = RHUN_expel_khamul
-		relative_position_id = RHUN_guide_the_tribes
-		icon = GFX_goal_RHU_burn_the_dark
-		ai_will_do = { factor = 30 }
-		x = 1
-		y = 2
-		mutually_exclusive = { }
-		prerequisite = { focus = RHUN_mend_the_conflict }
-		cost = 10
-		available_if_capitulated = yes
-		bypass = {
-			NOT = { has_idea = RHUN_khamul_expanded }
-		}
-		completion_reward = {
-			remove_ideas = RHUN_khamul_expanded
-			retire_character = RHU_khamul
-
-			if = {
-				limit = { has_country_flag = rng_50p_flag_6 }
-				hidden_effect = {
-					news_event = { id = news.417 days = 2 }
-				}
-			}
 		}
 	}
 
@@ -1038,173 +1182,6 @@ focus_tree = {
 	}
 
 	focus = {
-		id = RHUN_nation_driven_by_fear
-		relative_position_id = RHUN_recognize_sauron
-		icon = GFX_goal_ROH_propaganda_of_fear_sauron_eye_visions
-		ai_will_do = { factor = 25 }
-		available = {
-			has_government = belligerent 
-		}
-		x = 0
-		y = 1
-		mutually_exclusive = { }
-		prerequisite = { focus = RHUN_recognize_sauron }
-		cost = 10
-		
-		completion_reward = {
-			add_ideas = RHUN_nation_driven_by_fear_expanded 
-		}
-	}
-
-	focus = {
-		id = RHUN_warlord_of_the_east
-		relative_position_id = RHUN_recognize_sauron
-		prerequisite = { focus = RHUN_join_forces_with_mordor }
-		icon = GFX_goal_RHU_dark_easterlings
-		ai_will_do = { 
-			factor = 25
-			modifier = {
-				factor = 0.4
-				has_country_flag = rng_30p_flag_4
-			}
-		}
-		available = {
-			has_government = belligerent 
-			is_ally_with = MOR
-		}
-		x = -1
-		y = 4
-		cost = 10
-		available_if_capitulated = yes
-		completion_reward = {
-			add_country_leader_role = {
-				character = RHU_khamul
-				promote_leader = yes
-				country_leader = {
-					ideology = expansionist
-					traits = { experienced_general absolute_power }
-				} 
-			} 
-		}
-	}
-
-	focus = {
-		id = RHUN_ask_mordor_for_trolls
-		relative_position_id = RHUN_recognize_sauron
-		prerequisite = { focus = RHUN_join_forces_with_mordor }
-		icon = GFX_goal_generic_troll_with_hammer
-		available = {
-			is_ally_with = MOR
-		}
-		x = -2
-		y = 3
-		ai_will_do = { factor = 3 }
-		cost = 10
-		completion_reward = {
-			MOR = {
-                country_event = { id = mordor.50 }
-            }
-            custom_effect_tooltip = if_they_accept_newline_tt
-            event_option_tooltip = mordor.50.a
-		}
-	}
-
-	focus = {
-		id = RHUN_Rhun_Doctrine
-		relative_position_id = RHUN_guide_the_tribes
-		icon = GFX_goal_RHU_eastern_lore_flag_book
-		ai_will_do = { factor = 35 }
-		available = {
-			OR = { 
-				has_government = belligerent
-				has_government = unaligned
-			}
-		}
-		x = -1
-		y = 3
-		mutually_exclusive = { focus = RHUN_Mordor_doctrine }
-		prerequisite = {focus = RHUN_expel_khamul focus = RHUN_one_tribe_supremacy }
-		
-		cost = 5
-		
-		completion_reward = {
-			add_ideas = RHUN_rhun_doctrine_expanded
-		}
-	}
-
-	focus = {
-		id = RHUN_Mordor_doctrine
-		relative_position_id = RHUN_recognize_sauron
-		prerequisite = { focus = RHUN_nation_driven_by_fear }
-		icon = GFX_goal_RHU_sauron_mordor_message_doctrine
-		ai_will_do = { factor = 35 }
-		available = {
-			has_government = belligerent 
-		}
-		x = 1
-		y = 3
-		mutually_exclusive = { focus = RHUN_Rhun_Doctrine }
-		cost = 5
-		
-		completion_reward = {
-			add_ideas = RHUN_mordor_doctrine_expanded 
-		}
-	}
-
-	focus = {
-		id = RHUN_proclaim_empire_of_rhun
-		icon = GFX_goal_RHU_golden_crown
-		ai_will_do = {
-			factor = 50
-		}
-		available = {
-			RHU = { all_core_states_controlled_or_puppeted = yes }
-			LGT = { all_core_states_controlled_or_puppeted = yes }
-			AVA = { all_core_states_controlled_or_puppeted = yes }
-			DOR = { all_core_states_controlled_or_puppeted = yes }
-			DRH = { all_core_states_controlled_or_puppeted = yes }
-		}				
-		x = 11
-		y = 6
-		mutually_exclusive = { }
-		prerequisite = { focus = RHUN_eastern_campaign }
-		cost = 10
-		
-		completion_reward = {
-			if = {
-				limit = {
-					has_idea = RHUN_nation_driven_by_fear_expanded
-				}
-				remove_ideas = RHUN_nation_driven_by_fear_expanded
-				add_ideas = RHUN_empire_of_rhun
-			}
-			else = {
-				add_ideas = RHUN_empire_of_rhun
-			}
-			set_cosmetic_tag = RHN
-		}
-	}
-
-	focus = {
-		id = RHUN_eastern_campaign
-		prerequisite = { focus = RHUN_Mordor_doctrine focus = RHUN_Rhun_Doctrine }
-		icon = GFX_goal_RHU_army_leader_pointing_at_map_plan
-		ai_will_do = { factor = 35 }
-		available = { }
-		x = 11
-		y = 5
-		mutually_exclusive = { }
-		cost = 10
-		
-		completion_reward = {
-			add_timed_idea = {
-				idea = RHUN_eastern_campaign
-				days = 730 
-			}
-		}
-	}
-
-	focus = {
 		id = RHUN_orders_from_lord_sauron
 		relative_position_id = RHUN_eastern_campaign
 		icon = GFX_goal_DGU_nazgul_orders_message
@@ -1236,35 +1213,6 @@ focus_tree = {
 	}
 
 	focus = {
-		id = RHUN_prepare_for_the_conflict
-		prerequisite = { focus = RHUN_an_army_worthy_of_mordor }
-		icon = GFX_goal_RHU_blacksmith_forge
-		ai_will_do = { factor = 25 }
-		available = {
-			MOR = { exists = yes NOT = { has_war_with = ROOT } }
-		}
-		x = -2
-		y = 1
-		mutually_exclusive = { }
-		relative_position_id = RHUN_an_army_worthy_of_mordor
-		cost = 10
-		
-		completion_reward = {
-			# get event to choose between 3 options
-			hidden_effect = {
-				country_event = rhun.108
-			}
-			custom_effect_tooltip = choose_between_tt
-			event_option_tooltip = rhun.108.a
-			custom_effect_tooltip = choose_between_OR_tt
-			event_option_tooltip = rhun.108.b
-			custom_effect_tooltip = choose_between_OR_tt
-			event_option_tooltip = rhun.108.c
-			custom_effect_tooltip = choose_between_OR_tt
-		}
-	}
-
-	focus = {
 		id = RHUN_an_army_worthy_of_mordor
 		icon = GFX_goal_RHU_large_army_inf_banner
 		ai_will_do = { factor = 25 }
@@ -1282,315 +1230,6 @@ focus_tree = {
 			add_timed_idea = {
 				idea = generic_military_buildup
 				days = 365
-			}
-		}
-	}
-
-	focus = {
-		id = RHUN_conquest_of_the_logath
-		prerequisite = { focus = RHUN_handle_logathvuld }
-		prerequisite = { focus = RHUN_an_army_worthy_of_mordor }
-		icon = GFX_goal_RHU_army_leader_attack
-		ai_will_do = {
-			factor = 25
-			modifier = {
-				factor = 0.1
-				has_war = yes
-			}
-			modifier = {
-				factor = 0
-				LGT = { is_stronger = yes }
-			}
-			modifier = {
-				factor = 0.3
-				LGT = { is_isolated_target = no }
-			}
-			modifier = {
-				factor = 0.66
-				has_completed_focus = RHUN_economy_of_conquest
-			}
-			modifier = {
-				factor = 0.2
-				has_completed_focus = RHUN_northern_ambitions
-				NOT = { has_completed_focus = RHUN_economy_of_conquest }
-			}
-		}
-		mutually_exclusive = {
-			focus = RHUN_strongarm_diplomacy
-		}
-		available = {
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
-			LGT = { war_with_is_possible = yes can_reach = yes }
-			is_subject = no
-			ROOT = {
-				num_divisions > 24
-				has_army_manpower = {
-					size > 17000
-				}
-			}
-		}
-		x = 2
-		y = 1
-		mutually_exclusive = { }
-		relative_position_id = RHUN_an_army_worthy_of_mordor
-		cost = 10
-		
-		will_lead_to_war_with = LGT
-		completion_reward = { 
-			add_threat = 3 
-			create_wargoal = {
-				type = annex_everything
-				target = LGT
-			}
-		}
-	}
-
-	focus = {
-		id = RHUN_integrate_the_logath
-		prerequisite = { focus = RHUN_merge_administrations focus = RHUN_crack_down_on_resistance }
-		icon = GFX_goal_generic_claim_demand_ter_3
-		ai_will_do = { factor = 25 }
-		available = { 
-			LGT = {
-				all_core_state = {
-					compliance > 0.3
-					resistance < 0.3
-					OR = {
-						is_controlled_by = ROOT
-						controller = { is_subject_of = ROOT }
-						AND = {
-							ROOT = { has_completed_focus = RHUN_demand_a_settlement }
-							OR = {
-								state = 292
-								state = 274
-								state = 125
-								state = 294
-							}
-						}
-					}
-				}
-			}
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-		}
-		x = 0
-		y = 4
-		mutually_exclusive = { }
-		relative_position_id = RHUN_handle_logathvuld
-		cost = 10
-		
-		completion_reward = { 
-			every_state = {
-				limit = {
-					is_core_of = LGT
-				}
-				add_core_of = RHU
-			}
-		}
-	}
-
-	focus = {
-		id = RHUN_siege_of_the_lonely_mountain
-		prerequisite = { focus = RHUN_antagonize_dale_and_erebor }
-		icon = GFX_goal_goal_generic_major_war
-		ai_will_do = {
-            factor = 15
-            modifier = {
-                factor = 0.1
-                has_war = yes
-            }
-			modifier = {
-				factor = 0.5
-				ERE = { is_stronger = yes }
-			}
-            modifier = {
-                factor = 0.1
-                date < "3020.1.1"
-            }
-            modifier = {
-                factor = 2
-                strength_ratio = {
-                    tag = ERE
-                    ratio > 1
-                }
-            }
-            modifier = {
-                factor = 2
-                strength_ratio = {
-                    tag = ERE
-                    ratio > 1.5
-                }
-            }
-            modifier = {
-                factor = 2
-                strength_ratio = {
-                    tag = ERE
-                    ratio > 2
-                }
-            }
-			modifier = {
-				factor = 0.5
-				ERE = { is_in_faction = yes }
-				is_in_faction = no
-			}
-			modifier = {
-				factor = 2
-				ERE = { has_war = yes }
-				has_war = no
-			}
-			modifier = {
-				factor = 3
-				ERE = { surrender_progress > 0.1 }
-			}
-        }
-		available = {
-            ERE = { war_with_is_possible = yes can_reach = yes }
-			DAL = { war_with_is_possible = yes can_reach = yes }
-			is_subject = no
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
-			threat > 0.2
-        }
-		x = 1
-		y = 4
-		mutually_exclusive = { }
-		relative_position_id = RHUN_an_army_worthy_of_mordor
-		cost = 5
-		will_lead_to_war_with = ERE
-		will_lead_to_war_with = DAL
-		
-		completion_reward = {
-			add_threat = 5
-			create_wargoal = {
-				type = annex_everything
-				target = DAL
-			}
-			create_wargoal = {
-				type = annex_everything
-				target = ERE
-			}
-		}
-	}
-
-	focus = {
-		id = RHUN_support_orc_efforts
-		prerequisite = { focus = RHUN_the_path_to_mirkwood }
-		icon = GFX_goal_RHU_provide_supplies_man_orc
-
-		ai_will_do = {
-			factor = 25
-		}
-		
-		mutually_exclusive = {
-			focus = RHUN_take_matters_into_our_own_hands
-		}
-		available = {
-			MIR = {
-				war_with_is_possible = yes
-				OR = {
-					AND = {
-						has_war_with = GUN
-						ROOT = { NOT = { has_war_with = GUN } }
-					}
-					AND = {
-						has_war_with = DGU
-						ROOT = { NOT = { has_war_with = DGU } }
-					}
-				}
-			}
-			is_subject = no
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
-			threat > 0.2
-        }
-		x = -2
-		y = 3
-		mutually_exclusive = { }
-		relative_position_id = RHUN_an_army_worthy_of_mordor
-		cost = 5
-		
-		completion_reward = {
-			# help GUN and DGU
-			if = { # only for tooltip
-				limit = {
-					NOT = { GUN = { has_war_with = MIR } }
-					NOT = { DGU = { has_war_with = MIR } }
-				}
-				GUN = {
-					add_manpower = 2000
-					add_equipment_to_stockpile = {
-						type = infantry_equipment
-						amount = 1000
-					}
-					add_equipment_to_stockpile = {
-						type = support_equipment
-						amount = 200
-					}
-					add_equipment_to_stockpile = {
-						type = artillery_equipment
-						amount = 200
-					}
-				}
-				DGU = {
-					add_manpower = 2000
-					add_equipment_to_stockpile = {
-						type = infantry_equipment
-						amount = 1000
-					}
-					add_equipment_to_stockpile = {
-						type = support_equipment
-						amount = 200
-					}
-					add_equipment_to_stockpile = {
-						type = artillery_equipment
-						amount = 200
-					}
-				}
-			}
-			if = {
-				limit = { GUN = { has_war_with = MIR } }
-				GUN = {
-					add_manpower = 2000
-					add_equipment_to_stockpile = {
-						type = infantry_equipment
-						amount = 1000
-					}
-					add_equipment_to_stockpile = {
-						type = support_equipment
-						amount = 200
-					}
-					add_equipment_to_stockpile = {
-						type = artillery_equipment
-						amount = 200
-					}
-				}
-			}
-			if = {
-				limit = { DGU = { has_war_with = MIR } }
-				DGU = {
-					add_manpower = 2000
-					add_equipment_to_stockpile = {
-						type = infantry_equipment
-						amount = 1000
-					}
-					add_equipment_to_stockpile = {
-						type = support_equipment
-						amount = 200
-					}
-					add_equipment_to_stockpile = {
-						type = artillery_equipment
-						amount = 200
-					}
-				}
 			}
 		}
 	}
@@ -1622,44 +1261,6 @@ focus_tree = {
                 threat = 2
                 name = "Rhun Path to War"
             }
-		}
-	}
-
-	focus = {
-		id = RHUN_exploit_dorwinian_resources
-		prerequisite = { focus = RHUN_economy_of_conquest }
-		icon = GFX_goal_RHU_profit_from_wine
-		ai_will_do = {
-			factor = 5
-			modifier = {
-				factor = 5
-				check_variable = {
-					rhun_economy_of_conquest_bonus > 0
-				}
-			}
-			modifier = {
-				factor = 5
-				check_variable = {
-					rhun_economy_of_conquest_bonus > 0.35
-				}
-			}
-		}
-		x = 1
-		y = 2
-		available = {
-			has_dynamic_modifier = rhun_economy_of_conquest
-			DOR = {
-				all_core_states_controlled_or_puppeted = yes
-			}
-		}
-		relative_position_id = RHUN_northern_ambitions
-		mutually_exclusive = { }
-		cost = 10
-		
-		completion_reward = {
-			# improve/change economy of conquest status
-			set_variable = { rhun_economy_of_conquest_bonus = -0.35 }
-			custom_effect_tooltip = rhun_economy_of_conquest_reset_tt
 		}
 	}
 
@@ -1739,57 +1340,6 @@ focus_tree = {
 			create_wargoal = {
 				type = annex_everything
 				target = MIR
-			}
-		}
-	}
-
-	focus = {
-		id = RHUN_contact_the_variags
-		icon = GFX_goal_rhu_rhunian_khand
-		ai_will_do = { 
-			factor = 4
-			modifier = {
-				factor = 0.1
-				has_country_flag = rng_30p_flag_3
-			}
-			modifier = {
-				factor = 2
-				has_country_flag = rng_30p_flag_4
-			}
-			modifier = {
-				factor = 2
-				HAR = { is_ai = no }
-			}
-		}
-		x = 20
-		y = 6
-		available = {
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-			controls_state = 287
-			controls_state = 272
-		}
-		mutually_exclusive = { }
-		prerequisite = { focus = RHUN_eastern_campaign }
-		cost = 5
-		
-		completion_reward = {
-			# add infra structure in far east
-			287 = {
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
-				}
-			}
-			272 = {
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
-				}
 			}
 		}
 	}
@@ -1958,62 +1508,6 @@ focus_tree = {
 					}
 				}
 			}
-		}
-	}
-
-	focus = {
-		id = RHUN_strike_rhovania
-		icon = GFX_goal_RHU_eastwards_expansion_plans
-		ai_will_do = {
-			factor = 20
-			modifier = {
-				factor = 0.25
-				has_war = yes
-			}
-			modifier = {
-				factor = 0
-				has_war = yes
-				enemies_strength_ratio > 0.9
-			}
-			modifier = {
-				factor = 1.5
-				OR = {
-					DOR = { is_isolated_target = yes }
-					RHO = { is_isolated_target = yes }
-				}
-			}
-			modifier = {
-				factor = 0
-				DOR = { is_stronger = yes }
-				RHO = { is_stronger = yes }
-			}
-			modifier = {
-				factor = 1.5
-				OR = {
-					DOR = { is_ai = no is_weaker = yes is_isolated_target = yes }
-					RHO = { is_ai = no is_weaker = yes is_isolated_target = yes }
-				}
-			}
-		}
-		x = 0
-		y = 6
-		available = {
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-			is_subject = no
-			OR = {
-				RHO = { war_with_is_possible = yes }
-				DOR = { war_with_is_possible = yes }
-			}
-		}
-		mutually_exclusive = { }
-		prerequisite = { focus = RHUN_eastern_campaign }
-		cost = 5
-		
-		completion_reward = {
-			add_political_power = 50 
 		}
 	}
 
@@ -2704,45 +2198,6 @@ focus_tree = {
 		completion_reward = { 
 			RHO = { random_state_add_building_slot_and_civ_x2 = yes }
 			DOR = { random_state_add_building_slot_and_civ_x2 = yes }
-		}
-	}
-
-	focus = {
-		id = RHUN_break_free_from_mordor
-		icon = GFX_goal_generic_dove_peace_liberation_free
-		mutually_exclusive = { focus = RHUN_teachings_of_morgoth }
-		x = 29
-		y = 0
-		cost = 10
-		allow_branch = {
-			NOT = { has_completed_focus = RHUN_teachings_of_morgoth }
-		}
-		offset = {
-			x = -18
-			trigger = {
-				has_completed_focus = RHUN_break_free_from_mordor
-			}
-		}
-		available = {
-			is_subject = no
-		}
-		ai_will_do = {
-			factor = 35
-			modifier = {
-				factor = 0
-				is_going_cooperative = no
-			}
-			modifier = {
-				factor = 2
-				date > 3019.6.1
-			}
-		}
-		completion_reward = {
-			custom_effect_tooltip = RHUN_1_tt
-			hidden_effect = {
-				activate_decision = RHU_impending_civil_war 
-			}
-			mark_focus_tree_layout_dirty = yes 
 		}
 	}
 
@@ -3704,235 +3159,6 @@ focus_tree = {
 	}
 
 	focus = {
-		id = RHUN_inspire_loyalty_in_wainriders
-		icon = GFX_goal_RHU_spear_and_shield_soldier
-		ai_will_do = {
-			factor = 15
-			modifier = {
-				factor = 2
-				cooperative > 0.3
-			}
-		}
-		x = -2
-		y = 1
-		relative_position_id = RHUN_crackdown_on_the_blue_wizards
-		available = { 
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-		}
-		bypass = {
-			NOT = { has_idea = RHUN_mission_of_the_blue_wizards_1 }
-		}
-		prerequisite = { focus = RHUN_crackdown_on_the_blue_wizards }
-		cost = 5
-		
-		completion_reward = {
-			swap_ideas = {
-				remove_idea = RHUN_mission_of_the_blue_wizards_1
-				add_idea = RHUN_mission_of_the_blue_wizards_2
-			}
-		}
-	}
-
-	focus = {
-		id = RHUN_diminish_the_magic
-		icon = GFX_goal_generic_mace_vs_staff_magic
-		ai_will_do = {
-			factor = 15
-			modifier = {
-				factor = 2
-				cooperative > 0.3
-			}
-		}
-		x = -2
-		y = 3
-		relative_position_id = RHUN_crackdown_on_the_blue_wizards
-		prerequisite = { focus = RHUN_inspire_loyalty_in_wainriders }
-		available = { 
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-		}
-		bypass = {
-			NOT = { has_idea = RHUN_mission_of_the_blue_wizards_2 }
-		}
-		cost = 5
-		
-		completion_reward = {
-			swap_ideas = {
-				remove_idea = RHUN_mission_of_the_blue_wizards_2 
-				add_idea = RHUN_mission_of_the_blue_wizards_3
-			}
-		}
-	}
-
-	focus = {
-		id = RHUN_crackdown_in_agasha_dag
-		icon = GFX_goal_RHU_resistance_crackdown
-		ai_will_do = { factor = 20 }
-		x = -1
-		y = 2
-		relative_position_id = RHUN_crackdown_on_the_blue_wizards
-		prerequisite = { focus = RHUN_crackdown_on_the_blue_wizards }
-		available = { 
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-			OR = {
-				controls_state = 130
-				controls_state = 128
-			}
-		}
-		cost = 5
-		
-		completion_reward = {
-			if = {
-				limit = { controls_state = 130 }
-				130 = {
-					add_resistance_target = -25
-				}
-			}
-			if = {
-				limit = { controls_state = 128 }
-				128 = {
-					add_resistance_target = -25
-				}
-			}
-		}
-	}
-
-	focus = {
-		id = RHUN_crackdown_in_central_rhun
-		icon = GFX_goal_RHU_resistance_crackdown
-		ai_will_do = { factor = 20 }
-		x = 1
-		y = 2
-		relative_position_id = RHUN_crackdown_on_the_blue_wizards
-		prerequisite = { focus = RHUN_crackdown_on_the_blue_wizards }
-		available = { 
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-			OR = {
-				controls_state = 283
-				controls_state = 284
-			}
-		}
-		cost = 5
-		
-		completion_reward = {
-			if = {
-				limit = {
-					controls_state = 283
-				}
-				283 = {
-					add_resistance_target = -25
-				}
-			}
-			if = {
-				limit = {
-					controls_state = 284
-				}
-				284 = {
-					add_resistance_target = -25
-				}
-			}
-		}
-	}
-
-	focus = {
-		id = RHUN_crackdown_in_eastern_rhun
-		icon = GFX_goal_RHU_resistance_crackdown
-		ai_will_do = { factor = 20 }
-		x = 0
-		y = 1
-		relative_position_id = RHUN_crackdown_on_the_blue_wizards
-		prerequisite = { focus = RHUN_crackdown_on_the_blue_wizards }
-		available = { 
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-			OR = {
-				controls_state = 273
-				controls_state = 289
-				controls_state = 271
-				controls_state = 272
-			}
-		}
-		cost = 5
-		
-		completion_reward = {
-			if = {
-				limit = { controls_state = 273 }
-				273 = {
-					add_compliance = 10
-				}
-			}
-			if = {
-				limit = { controls_state = 289 }
-				289 = {
-					add_compliance = 10
-				}
-			}
-			if = {
-				limit = { controls_state = 271 }
-				271 = {
-					add_compliance = 10
-				}
-			}
-			if = {
-				limit = { controls_state = 272 }
-				272 = {
-					add_compliance = 10
-				}
-			}
-		}
-	}
-
-	focus = {
-		id = RHUN_reclaim_the_north
-		icon = GFX_goal_RHU_inspiring_speech
-		ai_will_do = { factor = 35 }
-		x = 0
-		y = 3
-		relative_position_id = RHUN_crackdown_on_the_blue_wizards
-		prerequisite = { focus = RHUN_crackdown_in_agasha_dag }
-		prerequisite = { focus = RHUN_crackdown_in_central_rhun }
-		available = {
-			273 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
-			289 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
-			271 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
-			272 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
-			130 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
-			128 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
-			283 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
-			284 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
-			OR = {
-				has_government = belligerent
-				has_government = unaligned 
-			}
-		}
-		cost = 10
-		
-		completion_reward = {
-			add_state_core = 273
-			add_state_core = 289
-			add_state_core = 271
-			add_state_core = 272
-			add_state_core = 130
-			add_state_core = 128
-			add_state_core = 283
-			add_state_core = 284
-		}
-	}
-	
-	focus = {
 		id = DRH_face_the_threat_alone
 		relative_position_id = RHUN_break_free_from_mordor
 		icon = GFX_goal_RHU_spear_and_shield_soldier
@@ -4397,584 +3623,6 @@ focus_tree = {
     }
 
     focus = {
-        id = RHUN_strongarm_diplomacy
-		relative_position_id = RHUN_handle_logathvuld
-        
-        prerequisite = { focus = RHUN_handle_logathvuld }
-        
-        icon = GFX_goal_RHU_army_leader_morale
-
-		mutually_exclusive = {
-			focus = RHUN_conquest_of_the_logath
-		}
-        
-        x = 1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-			factor = 25
-			modifier = {
-				factor = 0.1
-				has_war = yes
-			}
-			modifier = {
-				factor = 0
-				LGT = { is_stronger = yes }
-			}
-			modifier = {
-				factor = 0.3
-				LGT = { is_isolated_target = no }
-			}
-			modifier = {
-				factor = 0.2
-				has_completed_focus = RHUN_northern_ambitions
-				NOT = { has_completed_focus = RHUN_economy_of_conquest }
-			}
-		}
-        
-        search_filters = { }
-        available = {
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
-			LGT = { war_with_is_possible = yes can_reach = yes }
-			is_subject = no
-			ROOT = {
-				num_divisions > 20
-				has_army_manpower = {
-					size > 15000
-				}
-			}
-		}
-        completion_reward = {
-			custom_effect_tooltip = RHUN_strongarm_diplomacy_tt
-			custom_effect_tooltip = generic_current_effects
-			set_temp_variable = { temp_pp_bonus = num_divisions }
-			multiply_temp_variable = { temp_pp_bonus = 2.0 }
-			add_political_power = temp_pp_bonus
-		}
-    }
-
-    focus = {
-        id = RHUN_demand_a_settlement
-		relative_position_id = RHUN_handle_logathvuld
-        
-        prerequisite = { focus = RHUN_strongarm_diplomacy }
-        
-        icon = GFX_goal_RHU_law_dictate
-
-		mutually_exclusive = {
-			focus = RHUN_align_logathvuld
-		}
-        
-        x = 0
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-			factor = 35
-			modifier = {
-				factor = 0.1
-				has_war = yes
-			}
-			modifier = {
-				factor = 0
-				LGT = { is_stronger = yes }
-			}
-			modifier = {
-				factor = 0.3
-				LGT = { is_isolated_target = no }
-			}
-			modifier = {
-				factor = 0.66
-				has_completed_focus = RHUN_economy_of_conquest
-			}
-			modifier = {
-				factor = 0.2
-				has_completed_focus = RHUN_northern_ambitions
-				NOT = { has_completed_focus = RHUN_economy_of_conquest }
-			}
-		}
-        
-        search_filters = { }
-        available = {
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
-			LGT = { war_with_is_possible = yes can_reach = yes }
-			is_subject = no
-			ROOT = {
-				num_divisions > 20
-				has_army_manpower = {
-					size > 15000
-				}
-			}
-		}
-        completion_reward = {
-			# event that carves out a "Rhunian Logath", leaving the original in the corner  
-			hidden_effect = {
-				LGT = {
-					country_event = { id = rhun.109 days = 3 }
-				}
-			}
-			custom_effect_tooltip = RHUN_propose_treaty_tt
-			custom_effect_tooltip = if_they_accept_newline_tt
-			event_option_tooltip = rhun.110.a
-			custom_effect_tooltip = if_they_refuse_newline_tt
-			event_option_tooltip = rhun.111.a
-		}
-    }
-
-    focus = {
-        id = RHUN_align_logathvuld
-		relative_position_id = RHUN_handle_logathvuld
-		prerequisite = { focus = RHUN_strongarm_diplomacy }
-		prerequisite = { focus = RHUN_economy_of_conquest }
-        
-        icon = GFX_goal_RHU_law_dictate
-
-		mutually_exclusive = {
-			focus = RHUN_demand_a_settlement
-		}
-        
-        x = 2
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-			factor = 35
-			modifier = {
-				factor = 0.1
-				has_war = yes
-			}
-			modifier = {
-				factor = 0
-				LGT = { is_stronger = yes }
-			}
-			modifier = {
-				factor = 0.3
-				LGT = { is_isolated_target = no }
-			}
-		}
-        
-        search_filters = { }
-        available = {
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
-			LGT = { war_with_is_possible = yes can_reach = yes }
-			is_subject = no
-			ROOT = {
-				num_divisions > 20
-				has_army_manpower = {
-					size > 15000
-				}
-			}
-		}
-        completion_reward = {
-			# event to puppet/ally logath  
-			hidden_effect = {
-				LGT = {
-					country_event = { id = rhun.112 days = 3 }
-				}
-			}
-			custom_effect_tooltip = RHUN_propose_treaty_tt
-			custom_effect_tooltip = if_they_accept_newline_tt
-			event_option_tooltip = rhun.113.a
-			custom_effect_tooltip = if_they_refuse_newline_tt
-			event_option_tooltip = rhun.114.a
-		}
-    }
-
-    focus = {
-        id = RHUN_merge_administrations
-		relative_position_id = RHUN_handle_logathvuld
-        
-        prerequisite = { focus = RHUN_align_logathvuld focus = RHUN_demand_a_settlement }
-        
-        icon = GFX_goal_ROH_political_consolidation
-        
-        x = 1
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { }
-        available = {
-            any_country = {
-				is_puppet_of = ROOT
-				original_tag = LGT
-			}
-        }
-        completion_reward = {
-			if = {
-				limit = {
-					NOT = {
-						any_country = {
-							is_puppet_of = ROOT
-							original_tag = LGT
-						}
-					}
-				}
-				LGT = { # tooltip
-					add_political_power = 150
-					add_stability = 0.1
-					add_war_support = 0.1
-				}
-			}
-			else = {
-				random_country = {
-					limit = {
-						original_tag = LGT
-						is_puppet_of = ROOT
-					}
-					increase_centralization = yes
-					add_stability = 0.05
-					add_war_support = 0.05
-				}
-			}
-		}
-    }
-
-    focus = {
-        id = RHUN_crack_down_on_resistance
-		relative_position_id = RHUN_an_army_worthy_of_mordor
-        
-        prerequisite = { focus = RHUN_conquest_of_the_logath }
-        
-        icon = GFX_goal_RHU_resistance_crackdown
-        
-        x = 2
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { }
-        available = {
-            any_controlled_state = {
-				is_core_of = LGT
-			}
-        }
-        completion_reward = {
-			# event to reduce resistance in logath
-			if = {
-				limit = {
-					NOT = { any_state = { is_core_of = LGT is_controlled_by = ROOT } }
-				}
-				# only for tooltip
-				every_state = {
-					limit = {
-						is_core_of = LGT
-					}
-					add_resistance_target = -0.1
-					add_compliance = 15
-				}
-			}
-			else = {
-				every_controlled_state = {
-					limit = {
-						is_core_of = LGT
-					}
-					add_resistance_target = -0.1
-					add_compliance = 15
-				}
-			}
-		}
-    }
-
-    focus = {
-        id = RHUN_the_western_thrust
-		relative_position_id = RHUN_an_army_worthy_of_mordor
-        
-        prerequisite = { focus = RHUN_an_army_worthy_of_mordor }
-        
-        icon = GFX_goal_generic_plan_map_arrow_west
-        
-        x = 0
-        y = 1
-
-        cost = 5
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { }
-        available = { 
-			ROOT = {
-				num_divisions > 35
-				has_army_manpower = {
-					size > 25000
-				}
-			}
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
-			is_subject = no
-		}
-        completion_reward = {
-			add_war_support = 0.05
-			add_manpower = 500
-		}
-    }
-
-    focus = {
-        id = RHUN_antagonize_dale_and_erebor
-		relative_position_id = RHUN_an_army_worthy_of_mordor
-        
-        prerequisite = { focus = RHUN_the_western_thrust }
-        
-        icon = GFX_goal_VAL_antagonize_attack_dwarves
-        
-        x = 1
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-			factor = 25
-			modifier = {
-				factor = 0.1
-				has_war = yes
-				enemies_strength_ratio > 0.8
-			}
-		}
-        
-        search_filters = { }
-        available = {
-            ERE = { war_with_is_possible = yes }
-			DAL = { war_with_is_possible = yes }
-			is_subject = no
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
-			threat > 0.2
-        }
-        completion_reward = {
-			DAL = { antagonize_country = yes }
-			ERE = { antagonize_country = yes }
-		}
-    }
-
-    focus = {
-        id = RHUN_the_path_to_mirkwood
-		relative_position_id = RHUN_an_army_worthy_of_mordor
-        
-        prerequisite = { focus = RHUN_the_western_thrust }
-        
-        icon = GFX_goal_generic_road_through_forest
-        
-        x = -1
-        y = 2
-
-        cost = 5
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { }
-        available = {
-			MIR = { war_with_is_possible = yes }
-			is_subject = no
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
-			threat > 0.2
-        }
-        completion_reward = {
-			
-			if = {
-				limit = { 99 = { is_controlled_by_ROOT_or_ally = yes } }
-				99 = {
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-						instant_build = yes
-					}
-				}
-			}
-
-			if = {
-				limit = { 96 = { is_controlled_by_ROOT_or_ally = yes } }
-				96 = {
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-						instant_build = yes
-					}
-				}
-			}
-
-			if = {
-				limit = { 213 = { is_controlled_by_ROOT_or_ally = yes } }
-				213 = {
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-						instant_build = yes
-					}
-				}
-			}
-
-			if = {
-				limit = { 127 = { is_controlled_by_ROOT_or_ally = yes } }
-				127 = {
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-						instant_build = yes
-					}
-				}
-			}
-
-			if = {
-				limit = { 212 = { is_controlled_by_ROOT_or_ally = yes } }
-				212 = {
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-						instant_build = yes
-					}
-				}
-			}
-		}
-    }
-
-    focus = {
-        id = RHUN_take_matters_into_our_own_hands
-		relative_position_id = RHUN_an_army_worthy_of_mordor
-
-		prerequisite = { focus = RHUN_the_path_to_mirkwood }
-
-		mutually_exclusive = {
-			focus = RHUN_support_orc_efforts
-		}
-        
-        icon = GFX_goal_goal_generic_major_war
-
-		will_lead_to_war_with = MIR
-        
-        x = 0
-        y = 3
-
-        cost = 5
-        ai_will_do = {
-            factor = 15
-            modifier = {
-                factor = 0.1
-                has_war = yes
-            }
-			modifier = {
-				factor = 0.5
-				MIR = { is_stronger = yes }
-			}
-            modifier = {
-                factor = 0.2
-                date < "3021.6.1"
-            }
-			modifier = {
-				factor = 2
-				MIR = { is_isolated_target = yes }
-			}
-            modifier = {
-                factor = 2
-                strength_ratio = {
-                    tag = MIR
-                    ratio > 1
-                }
-            }
-            modifier = {
-                factor = 2
-                strength_ratio = {
-                    tag = MIR
-                    ratio > 1.5
-                }
-            }
-            modifier = {
-                factor = 2
-                strength_ratio = {
-                    tag = MIR
-                    ratio > 2
-                }
-            }
-			modifier = {
-				factor = 0.5
-				MIR = { is_in_faction = yes }
-			}
-			modifier = {
-				factor = 2
-				MIR = { has_war = yes }
-				has_war = no
-			}
-			modifier = {
-				factor = 2
-				MIR = { surrender_progress > 0.15 }
-			}
-        }
-        
-        search_filters = { }
-        available = {
-			MIR = { war_with_is_possible = yes can_reach = yes }
-			is_subject = no
-			OR = {
-				has_government = belligerent 
-				has_government = unaligned
-			}
-			threat > 0.2
-        }
-        completion_reward = {
-			create_wargoal = {
-				target = MIR
-				type = annex_everything
-			}
-		}
-    }
-
-    focus = {
-        id = RHUN_wood_skirmishing_tactics
-		relative_position_id = RHUN_an_army_worthy_of_mordor
-        
-        prerequisite = { focus = RHUN_the_path_to_mirkwood }
-        
-        icon = GFX_goal_RHU_army_inf_forest
-        
-        x = -1
-        y = 4
-
-        cost = 5
-        ai_will_do = {
-			factor = 5
-			modifier = {
-				factor = 5
-				MIR = { surrender_progress > 0.05 }
-			}
-		}
-        
-        search_filters = { }
-        available = {
-            has_war_with = MIR
-        }
-        completion_reward = {
-			add_unit_bonus = {
-				category_light_infantry = {
-					forest = {
-						movement = 0.1
-						attack = 0.05
-					}
-					jungle = {
-						movement = 0.1
-						attack = 0.05
-					}
-				}
-			}
-			custom_effect_tooltip = RHUN_wood_skirmishing_tactics_unit_tt
-		}
-    }
-
-    focus = {
         id = RHUN_economy_of_conquest
 		relative_position_id = RHUN_eastern_campaign
         
@@ -5198,39 +3846,6 @@ focus_tree = {
     }
 
     focus = {
-        id = RHUN_army_of_conquest
-		prerequisite = { focus = RHUN_economy_of_conquest }
-        
-        icon = GFX_goal_RHU_on_the_warmarch
-        
-        x = 16
-        y = 9
-
-        cost = 5
-        ai_will_do = {
-			factor = 25
-			modifier = {
-				factor = 2
-				check_variable = {
-					rhun_economy_of_conquest_bonus > 0
-				}
-			}
-		}
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# same as the idea from economy of conquest, but add army modifiers
-			add_timed_idea = {
-				idea = generic_military_buildup
-				days = 365
-			}
-		}
-    }
-
-    focus = {
         id = RHUN_settle_the_land
 		relative_position_id = RHUN_army_of_conquest
         
@@ -5356,160 +3971,6 @@ focus_tree = {
     }
 
     focus = {
-        id = RHUN_fortify_the_southern_border
-		relative_position_id = RHUN_guide_the_tribes
-        
-        prerequisite = { focus = RHUN_expel_khamul }
-        
-        icon = GFX_goal_RHU_desert_fortifications_wood
-        
-        x = 1
-        y = 3
-
-        cost = 5
-        ai_will_do = {
-			factor = 18
-			modifier = {
-				factor = 0.6
-				has_country_flag = rng_50p_flag_2
-				MOR = { is_ai = yes }
-			}
-			modifier = {
-				factor = 1.75
-				MOR = { is_ai = no }
-			}
-		}
-        
-        search_filters = { }
-        available = {
-            NOT = { is_ally_with = MOR }
-			NOT = { has_war_with = MOR }
-			OR = {
-				controls_state = 124
-				controls_state = 104
-				controls_state = 288
-				controls_state = 287
-			}
-        }
-        completion_reward = {
-			# fortify MOR border
-			if = {
-				limit = { controls_state = 124 }
-				124 = {
-					add_building_construction = {
-						type = bunker
-						level = 2
-						province = 6775
-						instant_build = yes
-					}
-				}
-			}
-			if = {
-				limit = { controls_state = 104 }
-				104 = {
-					add_building_construction = {
-						type = bunker
-						level = 2
-						province = 2711
-						instant_build = yes
-					}
-					add_building_construction = {
-						type = bunker
-						level = 2
-						province = 4797
-						instant_build = yes
-					}
-				}
-			}
-			if = {
-				limit = { controls_state = 288 }
-				288 = {
-					add_building_construction = {
-						type = bunker
-						level = 2
-						province = 252
-						instant_build = yes
-					}
-					add_building_construction = {
-						type = bunker
-						level = 2
-						province = 1374
-						instant_build = yes
-					}
-					add_building_construction = {
-						type = bunker
-						level = 2
-						province = 9347
-						instant_build = yes
-					}
-				}
-			}
-			if = {
-				limit = { controls_state = 287 }
-				287 = {
-					add_building_construction = {
-						type = bunker
-						level = 2
-						province = 6890
-						instant_build = yes
-					}
-					add_building_construction = {
-						type = bunker
-						level = 2
-						province = 9346
-						instant_build = yes
-					}
-					add_building_construction = {
-						type = bunker
-						level = 2
-						province = 9377
-						instant_build = yes
-					}
-				}
-			}
-		}
-    }
-
-    focus = {
-        id = RHUN_deter_the_lord_of_mordor
-		relative_position_id = RHUN_guide_the_tribes
-        
-        prerequisite = { focus = RHUN_fortify_the_southern_border }
-        
-        icon = GFX_goal_RHU_defend_against_mor_saur
-        
-        x = 1
-        y = 4
-
-        cost = 5
-        ai_will_do = {
-			factor = 18
-			modifier = {
-				factor = 0.6
-				has_country_flag = rng_50p_flag_2
-				MOR = { is_ai = yes }
-			}
-			modifier = {
-				factor = 1.75
-				MOR = { is_ai = no }
-			}
-		}
-        
-        search_filters = { }
-        available = {
-            NOT = { is_ally_with = MOR }
-			NOT = { has_war_with = MOR }
-			country_exists = MOR
-        }
-        completion_reward = {
-			# make it so that MOR needs more tension for war, maybe a debuff to their army if they do
-			MOR = {
-				add_ideas = RHUN_invasion_deterrence
-			}
-		}
-    }
-
-    focus = {
         id = RHUN_palace_politics
 		relative_position_id = RHUN_teachings_of_morgoth
         
@@ -5539,289 +4000,6 @@ focus_tree = {
         completion_reward = {
 			# give PP
 			add_political_power = 100
-		}
-    }
-
-    focus = {
-        id = RHUN_backstabbing_and_treachery
-		relative_position_id = RHUN_palace_politics
-        
-        prerequisite = { focus = RHUN_palace_politics }
-        
-        icon = GFX_goal_RHU_backstabbing_
-        
-        x = -1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-			factor = 15
-			modifier = {
-				factor = 2
-				has_country_flag = rng_30p_flag_3
-			}
-			modifier = {
-				factor = 0.5
-				date > 3020.1.1
-			}
-		}
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# intrigue research  
-			add_tech_bonus = {
-				name = special_bonus
-				category = lotr_knowledge_intrigue
-				bonus = 1.0
-				uses = 1
-			}
-		}
-    }
-
-    focus = {
-        id = RHUN_replace_nepotistic_army_leaders
-		relative_position_id = RHUN_palace_politics
-        
-        prerequisite = { focus = RHUN_palace_politics }
-        
-        icon = GFX_goal_RHU_expell_aristocrats
-        
-        x = 1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-			factor = 35
-		}
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-		bypass = {
-			NOT = { has_idea = nepotistic_favoritism_spirit }
-		}
-        completion_reward = {
-			# get rid nepotistic favoritism army spirit  
-			remove_ideas = nepotistic_favoritism_spirit
-		}
-    }
-
-    focus = {
-        id = RHUN_accelerate_decision_making
-		relative_position_id = RHUN_palace_politics
-        
-        prerequisite = { focus = RHUN_backstabbing_and_treachery }
-        
-        icon = GFX_goal_generic_law_and_order_book
-        
-        x = -1
-        y = 3
-
-        cost = 10
-        ai_will_do = {
-			factor = 35
-			modifier = {
-				factor = 0.25
-				date > 3019.1.1
-			}
-			modifier = {
-				factor = 0.1
-				date > 3020.1.1
-			}
-		}
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# lower all focus costs by 5 days
-			custom_effect_tooltip = RHUN_accelerate_decision_making_tt
-			hidden_effect = {
-				reduce_focus_completion_cost = { focus = RHUN_deter_the_lord_of_mordor cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_an_army_worthy_of_mordor cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_form_a_faction cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_focus_on_dale cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_proclaim_empire_of_rhun cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_prepare_for_the_conflict cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_take_matters_into_our_own_hands cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_crack_down_on_resistance cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_expel_khamul cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_backstabbing_and_treachery cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_handle_logathvuld cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_Rhun_Doctrine cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_reward_from_mordor cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_the_western_thrust cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_territorial_expansion cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_deal_with_the_dwarves cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_land_reclamation_order cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_fortress_of_the_east cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_build_vineyards cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_build_up_khand cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_request_khand_autonomy cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_northern_ambitions cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_rhunian_khand cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_guide_the_tribes cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_fortify_the_southern_border cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_contact_the_variags cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_seize_the_marshes cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_strongarm_diplomacy cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_conquest_of_the_logath cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_wipe_out_the_seccesionists cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_the_path_to_mirkwood cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_bribe_dwarven_envoys cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_demand_a_settlement cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_trade_with_the_variags cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_replace_nepotistic_army_leaders cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_orders_from_lord_sauron cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_warlord_of_the_east cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_Mordor_doctrine cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_palace_politics cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_siege_of_the_lonely_mountain cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_outpost_towers cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_teachings_of_morgoth cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_economy_of_conquest cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_militarize_dorwinion cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_antagonize_dale_and_erebor cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_diminish_the_magic cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_settle_the_land cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_negotiate_resource_rights cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_support_orc_efforts cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_clamp_down_on_resistance cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_integrate_the_logath cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_wood_skirmishing_tactics cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_demand_submission cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_bribe_laketown_delegates cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_establish_rhunian_dorwinion cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_tackle_rhovanion cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_align_logathvuld cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_inspire_loyalty_in_wainriders cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_pathfinding_companies cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_reclaim_the_north cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_crackdown_on_the_blue_wizards cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_merge_administrations cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_crackdown_in_eastern_rhun cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_army_of_conquest cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_crackdown_in_agasha_dag cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_dorwinion_rhovanion_trade cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_crackdown_in_central_rhun cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_khandian_buffer_zone cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_ask_mordor_for_trolls cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_raid_into_mirkian_territory cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_mend_the_conflict cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_nation_driven_by_fear cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_one_tribe_supremacy cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_strike_rhovania cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_logathin_scholars cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_join_forces_with_mordor cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_nurukhizdin_or_war cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_tackle_dorwinion cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_exploit_dorwinian_resources cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_eastern_campaign cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_accelerate_decision_making cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_learn_from_the_variags cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_recognize_sauron cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_purge_corrupt_officials cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_demand_rhovanion_submission cost = 5 }
-				reduce_focus_completion_cost = { focus = RHUN_puppet_king cost = 5 }
-			}
-		}
-    }
-
-    focus = {
-        id = RHUN_purge_corrupt_officials
-		relative_position_id = RHUN_palace_politics
-        
-        prerequisite = { focus = RHUN_replace_nepotistic_army_leaders }
-        
-        icon = GFX_goal_RHU_end_decadence_corruption
-        
-        x = 1
-        y = 3
-
-        cost = 5
-        ai_will_do = {
-			factor = 25
-		}
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-		bypass = {
-			NOT = { has_idea = RHUN_internal_corruption }
-		}
-        completion_reward = {
-			# get rid of idea  
-			remove_ideas = RHUN_internal_corruption
-		}
-    }
-
-    focus = {
-        id = RHUN_bribe_laketown_delegates
-		relative_position_id = RHUN_palace_politics
-        
-        prerequisite = { focus = RHUN_backstabbing_and_treachery }
-        
-        icon = GFX_goal_generic_money_offer
-        
-        x = -2
-        y = 2
-
-        cost = 5
-        ai_will_do = { factor = 10 }
-        
-        search_filters = { }
-        available = {
-            DAL = { can_engage_in_diplo_with = yes }
-        }
-        completion_reward = {
-			# less trade cost with DAL, random chance at a civ
-			custom_effect_tooltip = RHUN_bribe_laketown_delegates_tt
-			hidden_effect = {
-				DAL = {
-					add_relation_modifier = {
-						target = ROOT
-						modifier = generic_improved_trade_modifier
-					}
-				}
-			}
-		}
-    }
-
-    focus = {
-        id = RHUN_bribe_dwarven_envoys
-		relative_position_id = RHUN_palace_politics
-        
-        prerequisite = { focus = RHUN_backstabbing_and_treachery }
-        
-        icon = GFX_goal_generic_money_offer
-        
-        x = 0
-        y = 2
-
-        cost = 5
-        ai_will_do = { factor = 16 }
-        
-        search_filters = { }
-        available = {
-            ERE = { can_engage_in_diplo_with = yes }
-        }
-        completion_reward = {
-			# less trade cost with ERE, random chance at a civ
-			custom_effect_tooltip = RHUN_bribe_dwarven_envoys_tt
-			hidden_effect = {
-				ERE = {
-					add_relation_modifier = {
-						target = ROOT
-						modifier = generic_improved_trade_modifier
-					}
-				}
-			}
 		}
     }
 
@@ -6497,29 +4675,6 @@ focus_tree = {
     }
 
     focus = {
-        id = RHUN_logathin_scholars
-		relative_position_id = RHUN_handle_logathvuld
-        
-        prerequisite = { focus = RHUN_integrate_the_logath }
-        
-        icon = GFX_goal_ROH_attract_foreign_scholars_research
-        
-        x = 0
-        y = 5
-
-        cost = 10
-        ai_will_do = { factor = 50 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			add_research_slot = 1
-		}
-    }
-
-    focus = {
         id = RHUN_wipe_out_the_seccesionists
 		relative_position_id = RHUN_teachings_of_morgoth
         
@@ -6884,6 +5039,1851 @@ focus_tree = {
 				KND = { country_event = rhun.106 }
 			}
 			custom_effect_tooltip = RHUN_negotiate_resource_rights_tt
+		}
+    }
+
+    focus = {
+		id = RHUN_one_tribe_supremacy
+		relative_position_id = RHUN_guide_the_tribes
+		icon = GFX_goal_RHU_subjugation_tribes
+		ai_will_do = {
+			factor = 35
+		}
+		x = -1
+		y = 1
+		mutually_exclusive = { focus = RHUN_mend_the_conflict }
+		prerequisite = { focus = RHUN_guide_the_tribes }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_stability = -0.1
+			add_popularity = {
+				ideology = cooperative
+				popularity = -0.1 
+			}
+			add_popularity = {
+				ideology = unaligned
+				popularity = -0.1 
+			}
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.2 
+			} 
+		}
+	}
+
+	focus = {
+		id = RHUN_mend_the_conflict
+		relative_position_id = RHUN_guide_the_tribes
+		icon = GFX_goal_RHU_united_tribes
+		ai_will_do = {
+			factor = 20
+		}
+		x = 1
+		y = 1
+		mutually_exclusive = { focus = RHUN_one_tribe_supremacy }
+		prerequisite = { focus = RHUN_guide_the_tribes }
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = { 
+			add_ideas = RHUN_sovereign_pride
+			add_popularity = {
+				ideology = cooperative
+				popularity = -0.1 
+			}
+			add_popularity = {
+				ideology = belligerent
+				popularity = -0.1 
+			}
+			add_popularity = {
+				ideology = unaligned
+				popularity = 0.2 
+			}
+			set_politics = { ruling_party = unaligned } 
+		}
+	}
+
+	focus = {
+		id = RHUN_expel_khamul
+		relative_position_id = RHUN_guide_the_tribes
+		icon = GFX_goal_RHU_burn_the_dark
+		ai_will_do = { factor = 30 }
+		x = 1
+		y = 2
+		mutually_exclusive = { }
+		prerequisite = { focus = RHUN_mend_the_conflict }
+		cost = 10
+		available_if_capitulated = yes
+		bypass = {
+			NOT = { has_idea = RHUN_khamul_expanded }
+		}
+		completion_reward = {
+			remove_ideas = RHUN_khamul_expanded
+			retire_character = RHU_khamul
+
+			if = {
+				limit = { has_country_flag = rng_50p_flag_6 }
+				hidden_effect = {
+					news_event = { id = news.417 days = 2 }
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_nation_driven_by_fear
+		relative_position_id = RHUN_recognize_sauron
+		icon = GFX_goal_ROH_propaganda_of_fear_sauron_eye_visions
+		ai_will_do = { factor = 25 }
+		available = {
+			has_government = belligerent 
+		}
+		x = 0
+		y = 1
+		mutually_exclusive = { }
+		prerequisite = { focus = RHUN_recognize_sauron }
+		cost = 10
+		
+		completion_reward = {
+			add_ideas = RHUN_nation_driven_by_fear_expanded 
+		}
+	}
+
+	focus = {
+		id = RHUN_warlord_of_the_east
+		relative_position_id = RHUN_recognize_sauron
+		prerequisite = { focus = RHUN_join_forces_with_mordor }
+		icon = GFX_goal_RHU_dark_easterlings
+		ai_will_do = { 
+			factor = 25
+			modifier = {
+				factor = 0.4
+				has_country_flag = rng_30p_flag_4
+			}
+		}
+		available = {
+			has_government = belligerent 
+			is_ally_with = MOR
+		}
+		x = -1
+		y = 4
+		cost = 10
+		available_if_capitulated = yes
+		completion_reward = {
+			add_country_leader_role = {
+				character = RHU_khamul
+				promote_leader = yes
+				country_leader = {
+					ideology = expansionist
+					traits = { experienced_general absolute_power }
+				} 
+			} 
+		}
+	}
+
+	focus = {
+		id = RHUN_ask_mordor_for_trolls
+		relative_position_id = RHUN_recognize_sauron
+		prerequisite = { focus = RHUN_join_forces_with_mordor }
+		icon = GFX_goal_generic_troll_with_hammer
+		available = {
+			is_ally_with = MOR
+		}
+		x = -2
+		y = 3
+		ai_will_do = { factor = 3 }
+		cost = 10
+		completion_reward = {
+			MOR = {
+                country_event = { id = mordor.50 }
+            }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = mordor.50.a
+		}
+	}
+
+	focus = {
+		id = RHUN_Rhun_Doctrine
+		relative_position_id = RHUN_guide_the_tribes
+		icon = GFX_goal_RHU_eastern_lore_flag_book
+		ai_will_do = { factor = 35 }
+		available = {
+			OR = { 
+				has_government = belligerent
+				has_government = unaligned
+			}
+		}
+		x = -1
+		y = 3
+		mutually_exclusive = { focus = RHUN_Mordor_doctrine }
+		prerequisite = {focus = RHUN_expel_khamul focus = RHUN_one_tribe_supremacy }
+		
+		cost = 5
+		
+		completion_reward = {
+			add_ideas = RHUN_rhun_doctrine_expanded
+		}
+	}
+
+	focus = {
+		id = RHUN_Mordor_doctrine
+		relative_position_id = RHUN_recognize_sauron
+		prerequisite = { focus = RHUN_nation_driven_by_fear }
+		icon = GFX_goal_RHU_sauron_mordor_message_doctrine
+		ai_will_do = { factor = 35 }
+		available = {
+			has_government = belligerent 
+		}
+		x = 1
+		y = 3
+		mutually_exclusive = { focus = RHUN_Rhun_Doctrine }
+		cost = 5
+		
+		completion_reward = {
+			add_ideas = RHUN_mordor_doctrine_expanded 
+		}
+	}
+
+	focus = {
+		id = RHUN_prepare_for_the_conflict
+		prerequisite = { focus = RHUN_an_army_worthy_of_mordor }
+		icon = GFX_goal_RHU_blacksmith_forge
+		ai_will_do = { factor = 25 }
+		available = {
+			MOR = { exists = yes NOT = { has_war_with = ROOT } }
+		}
+		x = -2
+		y = 1
+		mutually_exclusive = { }
+		relative_position_id = RHUN_an_army_worthy_of_mordor
+		cost = 10
+		
+		completion_reward = {
+			# get event to choose between 3 options
+			hidden_effect = {
+				country_event = rhun.108
+			}
+			custom_effect_tooltip = choose_between_tt
+			event_option_tooltip = rhun.108.a
+			custom_effect_tooltip = choose_between_OR_tt
+			event_option_tooltip = rhun.108.b
+			custom_effect_tooltip = choose_between_OR_tt
+			event_option_tooltip = rhun.108.c
+			custom_effect_tooltip = choose_between_OR_tt
+		}
+	}
+
+	focus = {
+		id = RHUN_conquest_of_the_logath
+		prerequisite = { focus = RHUN_handle_logathvuld }
+		prerequisite = { focus = RHUN_an_army_worthy_of_mordor }
+		icon = GFX_goal_RHU_army_leader_attack
+		ai_will_do = {
+			factor = 25
+			modifier = {
+				factor = 0.1
+				has_war = yes
+			}
+			modifier = {
+				factor = 0
+				LGT = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 0.3
+				LGT = { is_isolated_target = no }
+			}
+			modifier = {
+				factor = 0.66
+				has_completed_focus = RHUN_economy_of_conquest
+			}
+			modifier = {
+				factor = 0.2
+				has_completed_focus = RHUN_northern_ambitions
+				NOT = { has_completed_focus = RHUN_economy_of_conquest }
+			}
+		}
+		mutually_exclusive = {
+			focus = RHUN_strongarm_diplomacy
+		}
+		available = {
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			LGT = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			ROOT = {
+				num_divisions > 24
+				has_army_manpower = {
+					size > 17000
+				}
+			}
+		}
+		x = 2
+		y = 1
+		mutually_exclusive = { }
+		relative_position_id = RHUN_an_army_worthy_of_mordor
+		cost = 10
+		
+		will_lead_to_war_with = LGT
+		completion_reward = { 
+			add_threat = 3 
+			create_wargoal = {
+				type = annex_everything
+				target = LGT
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_integrate_the_logath
+		prerequisite = { focus = RHUN_merge_administrations focus = RHUN_crack_down_on_resistance }
+		icon = GFX_goal_generic_claim_demand_ter_3
+		ai_will_do = { factor = 25 }
+		available = { 
+			LGT = {
+				all_core_state = {
+					compliance > 0.3
+					resistance < 0.3
+					OR = {
+						is_controlled_by = ROOT
+						controller = { is_subject_of = ROOT }
+						AND = {
+							ROOT = { has_completed_focus = RHUN_demand_a_settlement }
+							OR = {
+								state = 292
+								state = 274
+								state = 125
+								state = 294
+							}
+						}
+					}
+				}
+			}
+			OR = {
+				has_government = belligerent
+				has_government = unaligned 
+			}
+		}
+		x = 0
+		y = 4
+		mutually_exclusive = { }
+		relative_position_id = RHUN_handle_logathvuld
+		cost = 10
+		
+		completion_reward = { 
+			every_state = {
+				limit = {
+					is_core_of = LGT
+				}
+				add_core_of = RHU
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_siege_of_the_lonely_mountain
+		prerequisite = { focus = RHUN_antagonize_dale_and_erebor }
+		icon = GFX_goal_goal_generic_major_war
+		ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 0.1
+                has_war = yes
+            }
+			modifier = {
+				factor = 0.5
+				ERE = { is_stronger = yes }
+			}
+            modifier = {
+                factor = 0.1
+                date < "3020.1.1"
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = ERE
+                    ratio > 1
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = ERE
+                    ratio > 1.5
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = ERE
+                    ratio > 2
+                }
+            }
+			modifier = {
+				factor = 0.5
+				ERE = { is_in_faction = yes }
+				is_in_faction = no
+			}
+			modifier = {
+				factor = 2
+				ERE = { has_war = yes }
+				has_war = no
+			}
+			modifier = {
+				factor = 3
+				ERE = { surrender_progress > 0.1 }
+			}
+        }
+		available = {
+            ERE = { war_with_is_possible = yes can_reach = yes }
+			DAL = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			threat > 0.2
+        }
+		x = 1
+		y = 4
+		mutually_exclusive = { }
+		relative_position_id = RHUN_an_army_worthy_of_mordor
+		cost = 5
+		will_lead_to_war_with = ERE
+		will_lead_to_war_with = DAL
+		
+		completion_reward = {
+			add_threat = 5
+			create_wargoal = {
+				type = annex_everything
+				target = DAL
+			}
+			create_wargoal = {
+				type = annex_everything
+				target = ERE
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_support_orc_efforts
+		prerequisite = { focus = RHUN_the_path_to_mirkwood }
+		icon = GFX_goal_RHU_provide_supplies_man_orc
+
+		ai_will_do = {
+			factor = 25
+		}
+		
+		mutually_exclusive = {
+			focus = RHUN_take_matters_into_our_own_hands
+		}
+		available = {
+			MIR = {
+				war_with_is_possible = yes
+				OR = {
+					AND = {
+						has_war_with = GUN
+						ROOT = { NOT = { has_war_with = GUN } }
+					}
+					AND = {
+						has_war_with = DGU
+						ROOT = { NOT = { has_war_with = DGU } }
+					}
+				}
+			}
+			is_subject = no
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			threat > 0.2
+        }
+		x = -2
+		y = 3
+		mutually_exclusive = { }
+		relative_position_id = RHUN_an_army_worthy_of_mordor
+		cost = 5
+		
+		completion_reward = {
+			# help GUN and DGU
+			if = { # only for tooltip
+				limit = {
+					NOT = { GUN = { has_war_with = MIR } }
+					NOT = { DGU = { has_war_with = MIR } }
+				}
+				GUN = {
+					add_manpower = 2000
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 1000
+					}
+					add_equipment_to_stockpile = {
+						type = support_equipment
+						amount = 200
+					}
+					add_equipment_to_stockpile = {
+						type = artillery_equipment
+						amount = 200
+					}
+				}
+				DGU = {
+					add_manpower = 2000
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 1000
+					}
+					add_equipment_to_stockpile = {
+						type = support_equipment
+						amount = 200
+					}
+					add_equipment_to_stockpile = {
+						type = artillery_equipment
+						amount = 200
+					}
+				}
+			}
+			if = {
+				limit = { GUN = { has_war_with = MIR } }
+				GUN = {
+					add_manpower = 2000
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 1000
+					}
+					add_equipment_to_stockpile = {
+						type = support_equipment
+						amount = 200
+					}
+					add_equipment_to_stockpile = {
+						type = artillery_equipment
+						amount = 200
+					}
+				}
+			}
+			if = {
+				limit = { DGU = { has_war_with = MIR } }
+				DGU = {
+					add_manpower = 2000
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 1000
+					}
+					add_equipment_to_stockpile = {
+						type = support_equipment
+						amount = 200
+					}
+					add_equipment_to_stockpile = {
+						type = artillery_equipment
+						amount = 200
+					}
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_exploit_dorwinian_resources
+		prerequisite = { focus = RHUN_economy_of_conquest }
+		icon = GFX_goal_RHU_profit_from_wine
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 5
+				check_variable = {
+					rhun_economy_of_conquest_bonus > 0
+				}
+			}
+			modifier = {
+				factor = 5
+				check_variable = {
+					rhun_economy_of_conquest_bonus > 0.35
+				}
+			}
+		}
+		x = 1
+		y = 2
+		available = {
+			has_dynamic_modifier = rhun_economy_of_conquest
+			DOR = {
+				all_core_states_controlled_or_puppeted = yes
+			}
+		}
+		relative_position_id = RHUN_northern_ambitions
+		mutually_exclusive = { }
+		cost = 10
+		
+		completion_reward = {
+			# improve/change economy of conquest status
+			set_variable = { rhun_economy_of_conquest_bonus = -0.35 }
+			custom_effect_tooltip = rhun_economy_of_conquest_reset_tt
+		}
+	}
+
+	focus = {
+		id = RHUN_inspire_loyalty_in_wainriders
+		icon = GFX_goal_RHU_spear_and_shield_soldier
+		ai_will_do = {
+			factor = 15
+			modifier = {
+				factor = 2
+				cooperative > 0.3
+			}
+		}
+		x = -2
+		y = 1
+		relative_position_id = RHUN_crackdown_on_the_blue_wizards
+		available = { 
+			OR = {
+				has_government = belligerent
+				has_government = unaligned 
+			}
+		}
+		bypass = {
+			NOT = { has_idea = RHUN_mission_of_the_blue_wizards_1 }
+		}
+		prerequisite = { focus = RHUN_crackdown_on_the_blue_wizards }
+		cost = 5
+		
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = RHUN_mission_of_the_blue_wizards_1
+				add_idea = RHUN_mission_of_the_blue_wizards_2
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_diminish_the_magic
+		icon = GFX_goal_generic_mace_vs_staff_magic
+		ai_will_do = {
+			factor = 15
+			modifier = {
+				factor = 2
+				cooperative > 0.3
+			}
+		}
+		x = -2
+		y = 3
+		relative_position_id = RHUN_crackdown_on_the_blue_wizards
+		prerequisite = { focus = RHUN_inspire_loyalty_in_wainriders }
+		available = { 
+			OR = {
+				has_government = belligerent
+				has_government = unaligned 
+			}
+		}
+		bypass = {
+			NOT = { has_idea = RHUN_mission_of_the_blue_wizards_2 }
+		}
+		cost = 5
+		
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = RHUN_mission_of_the_blue_wizards_2 
+				add_idea = RHUN_mission_of_the_blue_wizards_3
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_crackdown_in_agasha_dag
+		icon = GFX_goal_RHU_resistance_crackdown
+		ai_will_do = { factor = 20 }
+		x = -1
+		y = 2
+		relative_position_id = RHUN_crackdown_on_the_blue_wizards
+		prerequisite = { focus = RHUN_crackdown_on_the_blue_wizards }
+		available = { 
+			OR = {
+				has_government = belligerent
+				has_government = unaligned 
+			}
+			OR = {
+				controls_state = 130
+				controls_state = 128
+			}
+		}
+		cost = 5
+		
+		completion_reward = {
+			if = {
+				limit = { controls_state = 130 }
+				130 = {
+					add_resistance_target = -25
+				}
+			}
+			if = {
+				limit = { controls_state = 128 }
+				128 = {
+					add_resistance_target = -25
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_crackdown_in_central_rhun
+		icon = GFX_goal_RHU_resistance_crackdown
+		ai_will_do = { factor = 20 }
+		x = 1
+		y = 2
+		relative_position_id = RHUN_crackdown_on_the_blue_wizards
+		prerequisite = { focus = RHUN_crackdown_on_the_blue_wizards }
+		available = { 
+			OR = {
+				has_government = belligerent
+				has_government = unaligned 
+			}
+			OR = {
+				controls_state = 283
+				controls_state = 284
+			}
+		}
+		cost = 5
+		
+		completion_reward = {
+			if = {
+				limit = {
+					controls_state = 283
+				}
+				283 = {
+					add_resistance_target = -25
+				}
+			}
+			if = {
+				limit = {
+					controls_state = 284
+				}
+				284 = {
+					add_resistance_target = -25
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_crackdown_in_eastern_rhun
+		icon = GFX_goal_RHU_resistance_crackdown
+		ai_will_do = { factor = 20 }
+		x = 0
+		y = 1
+		relative_position_id = RHUN_crackdown_on_the_blue_wizards
+		prerequisite = { focus = RHUN_crackdown_on_the_blue_wizards }
+		available = { 
+			OR = {
+				has_government = belligerent
+				has_government = unaligned 
+			}
+			OR = {
+				controls_state = 273
+				controls_state = 289
+				controls_state = 271
+				controls_state = 272
+			}
+		}
+		cost = 5
+		
+		completion_reward = {
+			if = {
+				limit = { controls_state = 273 }
+				273 = {
+					add_compliance = 10
+				}
+			}
+			if = {
+				limit = { controls_state = 289 }
+				289 = {
+					add_compliance = 10
+				}
+			}
+			if = {
+				limit = { controls_state = 271 }
+				271 = {
+					add_compliance = 10
+				}
+			}
+			if = {
+				limit = { controls_state = 272 }
+				272 = {
+					add_compliance = 10
+				}
+			}
+		}
+	}
+
+	focus = {
+		id = RHUN_reclaim_the_north
+		icon = GFX_goal_RHU_inspiring_speech
+		ai_will_do = { factor = 35 }
+		x = 0
+		y = 3
+		relative_position_id = RHUN_crackdown_on_the_blue_wizards
+		prerequisite = { focus = RHUN_crackdown_in_agasha_dag }
+		prerequisite = { focus = RHUN_crackdown_in_central_rhun }
+		available = {
+			273 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
+			289 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
+			271 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
+			272 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
+			130 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
+			128 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
+			283 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
+			284 = { resistance < 30 compliance > 30 is_controlled_by = ROOT }
+			OR = {
+				has_government = belligerent
+				has_government = unaligned 
+			}
+		}
+		cost = 10
+		
+		completion_reward = {
+			add_state_core = 273
+			add_state_core = 289
+			add_state_core = 271
+			add_state_core = 272
+			add_state_core = 130
+			add_state_core = 128
+			add_state_core = 283
+			add_state_core = 284
+		}
+	}
+	
+	focus = {
+        id = RHUN_strongarm_diplomacy
+		relative_position_id = RHUN_handle_logathvuld
+        
+        prerequisite = { focus = RHUN_handle_logathvuld }
+        
+        icon = GFX_goal_RHU_army_leader_morale
+
+		mutually_exclusive = {
+			focus = RHUN_conquest_of_the_logath
+		}
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+			factor = 25
+			modifier = {
+				factor = 0.1
+				has_war = yes
+			}
+			modifier = {
+				factor = 0
+				LGT = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 0.3
+				LGT = { is_isolated_target = no }
+			}
+			modifier = {
+				factor = 0.2
+				has_completed_focus = RHUN_northern_ambitions
+				NOT = { has_completed_focus = RHUN_economy_of_conquest }
+			}
+		}
+        
+        search_filters = { }
+        available = {
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			LGT = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			ROOT = {
+				num_divisions > 20
+				has_army_manpower = {
+					size > 15000
+				}
+			}
+		}
+        completion_reward = {
+			custom_effect_tooltip = RHUN_strongarm_diplomacy_tt
+			custom_effect_tooltip = generic_current_effects
+			set_temp_variable = { temp_pp_bonus = num_divisions }
+			multiply_temp_variable = { temp_pp_bonus = 2.0 }
+			add_political_power = temp_pp_bonus
+		}
+    }
+
+    focus = {
+        id = RHUN_demand_a_settlement
+		relative_position_id = RHUN_handle_logathvuld
+        
+        prerequisite = { focus = RHUN_strongarm_diplomacy }
+        
+        icon = GFX_goal_RHU_law_dictate
+
+		mutually_exclusive = {
+			focus = RHUN_align_logathvuld
+		}
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+			factor = 35
+			modifier = {
+				factor = 0.1
+				has_war = yes
+			}
+			modifier = {
+				factor = 0
+				LGT = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 0.3
+				LGT = { is_isolated_target = no }
+			}
+			modifier = {
+				factor = 0.66
+				has_completed_focus = RHUN_economy_of_conquest
+			}
+			modifier = {
+				factor = 0.2
+				has_completed_focus = RHUN_northern_ambitions
+				NOT = { has_completed_focus = RHUN_economy_of_conquest }
+			}
+		}
+        
+        search_filters = { }
+        available = {
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			LGT = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			ROOT = {
+				num_divisions > 20
+				has_army_manpower = {
+					size > 15000
+				}
+			}
+		}
+        completion_reward = {
+			# event that carves out a "Rhunian Logath", leaving the original in the corner  
+			hidden_effect = {
+				LGT = {
+					country_event = { id = rhun.109 days = 3 }
+				}
+			}
+			custom_effect_tooltip = RHUN_propose_treaty_tt
+			custom_effect_tooltip = if_they_accept_newline_tt
+			event_option_tooltip = rhun.110.a
+			custom_effect_tooltip = if_they_refuse_newline_tt
+			event_option_tooltip = rhun.111.a
+		}
+    }
+
+    focus = {
+        id = RHUN_align_logathvuld
+		relative_position_id = RHUN_handle_logathvuld
+		prerequisite = { focus = RHUN_strongarm_diplomacy }
+		prerequisite = { focus = RHUN_economy_of_conquest }
+        
+        icon = GFX_goal_RHU_law_dictate
+
+		mutually_exclusive = {
+			focus = RHUN_demand_a_settlement
+		}
+        
+        x = 2
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+			factor = 35
+			modifier = {
+				factor = 0.1
+				has_war = yes
+			}
+			modifier = {
+				factor = 0
+				LGT = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 0.3
+				LGT = { is_isolated_target = no }
+			}
+		}
+        
+        search_filters = { }
+        available = {
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			LGT = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			ROOT = {
+				num_divisions > 20
+				has_army_manpower = {
+					size > 15000
+				}
+			}
+		}
+        completion_reward = {
+			# event to puppet/ally logath  
+			hidden_effect = {
+				LGT = {
+					country_event = { id = rhun.112 days = 3 }
+				}
+			}
+			custom_effect_tooltip = RHUN_propose_treaty_tt
+			custom_effect_tooltip = if_they_accept_newline_tt
+			event_option_tooltip = rhun.113.a
+			custom_effect_tooltip = if_they_refuse_newline_tt
+			event_option_tooltip = rhun.114.a
+		}
+    }
+
+    focus = {
+        id = RHUN_merge_administrations
+		relative_position_id = RHUN_handle_logathvuld
+        
+        prerequisite = { focus = RHUN_align_logathvuld focus = RHUN_demand_a_settlement }
+        
+        icon = GFX_goal_ROH_political_consolidation
+        
+        x = 1
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { }
+        available = {
+            any_country = {
+				is_puppet_of = ROOT
+				original_tag = LGT
+			}
+        }
+        completion_reward = {
+			if = {
+				limit = {
+					NOT = {
+						any_country = {
+							is_puppet_of = ROOT
+							original_tag = LGT
+						}
+					}
+				}
+				LGT = { # tooltip
+					add_political_power = 150
+					add_stability = 0.1
+					add_war_support = 0.1
+				}
+			}
+			else = {
+				random_country = {
+					limit = {
+						original_tag = LGT
+						is_puppet_of = ROOT
+					}
+					increase_centralization = yes
+					add_stability = 0.05
+					add_war_support = 0.05
+				}
+			}
+		}
+    }
+
+    focus = {
+        id = RHUN_crack_down_on_resistance
+		relative_position_id = RHUN_an_army_worthy_of_mordor
+        
+        prerequisite = { focus = RHUN_conquest_of_the_logath }
+        
+        icon = GFX_goal_RHU_resistance_crackdown
+        
+        x = 2
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { }
+        available = {
+            any_controlled_state = {
+				is_core_of = LGT
+			}
+        }
+        completion_reward = {
+			# event to reduce resistance in logath
+			if = {
+				limit = {
+					NOT = { any_state = { is_core_of = LGT is_controlled_by = ROOT } }
+				}
+				# only for tooltip
+				every_state = {
+					limit = {
+						is_core_of = LGT
+					}
+					add_resistance_target = -0.1
+					add_compliance = 15
+				}
+			}
+			else = {
+				every_controlled_state = {
+					limit = {
+						is_core_of = LGT
+					}
+					add_resistance_target = -0.1
+					add_compliance = 15
+				}
+			}
+		}
+    }
+
+    focus = {
+        id = RHUN_the_western_thrust
+		relative_position_id = RHUN_an_army_worthy_of_mordor
+        
+        prerequisite = { focus = RHUN_an_army_worthy_of_mordor }
+        
+        icon = GFX_goal_generic_plan_map_arrow_west
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { }
+        available = { 
+			ROOT = {
+				num_divisions > 35
+				has_army_manpower = {
+					size > 25000
+				}
+			}
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			is_subject = no
+		}
+        completion_reward = {
+			add_war_support = 0.05
+			add_manpower = 500
+		}
+    }
+
+    focus = {
+        id = RHUN_antagonize_dale_and_erebor
+		relative_position_id = RHUN_an_army_worthy_of_mordor
+        
+        prerequisite = { focus = RHUN_the_western_thrust }
+        
+        icon = GFX_goal_VAL_antagonize_attack_dwarves
+        
+        x = 1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+			factor = 25
+			modifier = {
+				factor = 0.1
+				has_war = yes
+				enemies_strength_ratio > 0.8
+			}
+		}
+        
+        search_filters = { }
+        available = {
+            ERE = { war_with_is_possible = yes }
+			DAL = { war_with_is_possible = yes }
+			is_subject = no
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			threat > 0.2
+        }
+        completion_reward = {
+			DAL = { antagonize_country = yes }
+			ERE = { antagonize_country = yes }
+		}
+    }
+
+    focus = {
+        id = RHUN_the_path_to_mirkwood
+		relative_position_id = RHUN_an_army_worthy_of_mordor
+        
+        prerequisite = { focus = RHUN_the_western_thrust }
+        
+        icon = GFX_goal_generic_road_through_forest
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { }
+        available = {
+			MIR = { war_with_is_possible = yes }
+			is_subject = no
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			threat > 0.2
+        }
+        completion_reward = {
+			
+			if = {
+				limit = { 99 = { is_controlled_by_ROOT_or_ally = yes } }
+				99 = {
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+
+			if = {
+				limit = { 96 = { is_controlled_by_ROOT_or_ally = yes } }
+				96 = {
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+
+			if = {
+				limit = { 213 = { is_controlled_by_ROOT_or_ally = yes } }
+				213 = {
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+
+			if = {
+				limit = { 127 = { is_controlled_by_ROOT_or_ally = yes } }
+				127 = {
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+
+			if = {
+				limit = { 212 = { is_controlled_by_ROOT_or_ally = yes } }
+				212 = {
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+		}
+    }
+
+    focus = {
+        id = RHUN_take_matters_into_our_own_hands
+		relative_position_id = RHUN_an_army_worthy_of_mordor
+
+		prerequisite = { focus = RHUN_the_path_to_mirkwood }
+
+		mutually_exclusive = {
+			focus = RHUN_support_orc_efforts
+		}
+        
+        icon = GFX_goal_goal_generic_major_war
+
+		will_lead_to_war_with = MIR
+        
+        x = 0
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 0.1
+                has_war = yes
+            }
+			modifier = {
+				factor = 0.5
+				MIR = { is_stronger = yes }
+			}
+            modifier = {
+                factor = 0.2
+                date < "3021.6.1"
+            }
+			modifier = {
+				factor = 2
+				MIR = { is_isolated_target = yes }
+			}
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = MIR
+                    ratio > 1
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = MIR
+                    ratio > 1.5
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = MIR
+                    ratio > 2
+                }
+            }
+			modifier = {
+				factor = 0.5
+				MIR = { is_in_faction = yes }
+			}
+			modifier = {
+				factor = 2
+				MIR = { has_war = yes }
+				has_war = no
+			}
+			modifier = {
+				factor = 2
+				MIR = { surrender_progress > 0.15 }
+			}
+        }
+        
+        search_filters = { }
+        available = {
+			MIR = { war_with_is_possible = yes can_reach = yes }
+			is_subject = no
+			OR = {
+				has_government = belligerent 
+				has_government = unaligned
+			}
+			threat > 0.2
+        }
+        completion_reward = {
+			create_wargoal = {
+				target = MIR
+				type = annex_everything
+			}
+		}
+    }
+
+    focus = {
+        id = RHUN_wood_skirmishing_tactics
+		relative_position_id = RHUN_an_army_worthy_of_mordor
+        
+        prerequisite = { focus = RHUN_the_path_to_mirkwood }
+        
+        icon = GFX_goal_RHU_army_inf_forest
+        
+        x = -1
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 5
+				MIR = { surrender_progress > 0.05 }
+			}
+		}
+        
+        search_filters = { }
+        available = {
+            has_war_with = MIR
+        }
+        completion_reward = {
+			add_unit_bonus = {
+				category_light_infantry = {
+					forest = {
+						movement = 0.1
+						attack = 0.05
+					}
+					jungle = {
+						movement = 0.1
+						attack = 0.05
+					}
+				}
+			}
+			custom_effect_tooltip = RHUN_wood_skirmishing_tactics_unit_tt
+		}
+    }
+
+    focus = {
+        id = RHUN_fortify_the_southern_border
+		relative_position_id = RHUN_guide_the_tribes
+        
+        prerequisite = { focus = RHUN_expel_khamul }
+        
+        icon = GFX_goal_RHU_desert_fortifications_wood
+        
+        x = 1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+			factor = 18
+			modifier = {
+				factor = 0.6
+				has_country_flag = rng_50p_flag_2
+				MOR = { is_ai = yes }
+			}
+			modifier = {
+				factor = 1.75
+				MOR = { is_ai = no }
+			}
+		}
+        
+        search_filters = { }
+        available = {
+            NOT = { is_ally_with = MOR }
+			NOT = { has_war_with = MOR }
+			OR = {
+				controls_state = 124
+				controls_state = 104
+				controls_state = 288
+				controls_state = 287
+			}
+        }
+        completion_reward = {
+			# fortify MOR border
+			if = {
+				limit = { controls_state = 124 }
+				124 = {
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = 6775
+						instant_build = yes
+					}
+				}
+			}
+			if = {
+				limit = { controls_state = 104 }
+				104 = {
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = 2711
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = 4797
+						instant_build = yes
+					}
+				}
+			}
+			if = {
+				limit = { controls_state = 288 }
+				288 = {
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = 252
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = 1374
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = 9347
+						instant_build = yes
+					}
+				}
+			}
+			if = {
+				limit = { controls_state = 287 }
+				287 = {
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = 6890
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = 9346
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = 9377
+						instant_build = yes
+					}
+				}
+			}
+		}
+    }
+
+    focus = {
+        id = RHUN_deter_the_lord_of_mordor
+		relative_position_id = RHUN_guide_the_tribes
+        
+        prerequisite = { focus = RHUN_fortify_the_southern_border }
+        
+        icon = GFX_goal_RHU_defend_against_mor_saur
+        
+        x = 1
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+			factor = 18
+			modifier = {
+				factor = 0.6
+				has_country_flag = rng_50p_flag_2
+				MOR = { is_ai = yes }
+			}
+			modifier = {
+				factor = 1.75
+				MOR = { is_ai = no }
+			}
+		}
+        
+        search_filters = { }
+        available = {
+            NOT = { is_ally_with = MOR }
+			NOT = { has_war_with = MOR }
+			country_exists = MOR
+        }
+        completion_reward = {
+			# make it so that MOR needs more tension for war, maybe a debuff to their army if they do
+			MOR = {
+				add_ideas = RHUN_invasion_deterrence
+			}
+		}
+    }
+
+    focus = {
+        id = RHUN_backstabbing_and_treachery
+		relative_position_id = RHUN_palace_politics
+        
+        prerequisite = { focus = RHUN_palace_politics }
+        
+        icon = GFX_goal_RHU_backstabbing_
+        
+        x = -1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+			factor = 15
+			modifier = {
+				factor = 2
+				has_country_flag = rng_30p_flag_3
+			}
+			modifier = {
+				factor = 0.5
+				date > 3020.1.1
+			}
+		}
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# intrigue research  
+			add_tech_bonus = {
+				name = special_bonus
+				category = lotr_knowledge_intrigue
+				bonus = 1.0
+				uses = 1
+			}
+		}
+    }
+
+    focus = {
+        id = RHUN_replace_nepotistic_army_leaders
+		relative_position_id = RHUN_palace_politics
+        
+        prerequisite = { focus = RHUN_palace_politics }
+        
+        icon = GFX_goal_RHU_expell_aristocrats
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+			factor = 35
+		}
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+		bypass = {
+			NOT = { has_idea = nepotistic_favoritism_spirit }
+		}
+        completion_reward = {
+			# get rid nepotistic favoritism army spirit  
+			remove_ideas = nepotistic_favoritism_spirit
+		}
+    }
+
+    focus = {
+        id = RHUN_accelerate_decision_making
+		relative_position_id = RHUN_palace_politics
+        
+        prerequisite = { focus = RHUN_backstabbing_and_treachery }
+        
+        icon = GFX_goal_generic_law_and_order_book
+        
+        x = -1
+        y = 3
+
+        cost = 10
+        ai_will_do = {
+			factor = 35
+			modifier = {
+				factor = 0.25
+				date > 3019.1.1
+			}
+			modifier = {
+				factor = 0.1
+				date > 3020.1.1
+			}
+		}
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# lower all focus costs by 5 days
+			custom_effect_tooltip = RHUN_accelerate_decision_making_tt
+			hidden_effect = {
+				reduce_focus_completion_cost = { focus = RHUN_deter_the_lord_of_mordor cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_an_army_worthy_of_mordor cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_form_a_faction cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_focus_on_dale cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_proclaim_empire_of_rhun cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_prepare_for_the_conflict cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_take_matters_into_our_own_hands cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_crack_down_on_resistance cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_expel_khamul cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_backstabbing_and_treachery cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_handle_logathvuld cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_Rhun_Doctrine cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_reward_from_mordor cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_the_western_thrust cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_territorial_expansion cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_deal_with_the_dwarves cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_land_reclamation_order cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_fortress_of_the_east cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_build_vineyards cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_build_up_khand cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_request_khand_autonomy cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_northern_ambitions cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_rhunian_khand cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_guide_the_tribes cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_fortify_the_southern_border cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_contact_the_variags cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_seize_the_marshes cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_strongarm_diplomacy cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_conquest_of_the_logath cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_wipe_out_the_seccesionists cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_the_path_to_mirkwood cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_bribe_dwarven_envoys cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_demand_a_settlement cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_trade_with_the_variags cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_replace_nepotistic_army_leaders cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_orders_from_lord_sauron cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_warlord_of_the_east cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_Mordor_doctrine cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_palace_politics cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_siege_of_the_lonely_mountain cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_outpost_towers cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_teachings_of_morgoth cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_economy_of_conquest cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_militarize_dorwinion cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_antagonize_dale_and_erebor cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_diminish_the_magic cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_settle_the_land cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_negotiate_resource_rights cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_support_orc_efforts cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_clamp_down_on_resistance cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_integrate_the_logath cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_wood_skirmishing_tactics cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_demand_submission cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_bribe_laketown_delegates cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_establish_rhunian_dorwinion cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_tackle_rhovanion cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_align_logathvuld cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_inspire_loyalty_in_wainriders cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_pathfinding_companies cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_reclaim_the_north cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_crackdown_on_the_blue_wizards cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_merge_administrations cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_crackdown_in_eastern_rhun cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_army_of_conquest cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_crackdown_in_agasha_dag cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_dorwinion_rhovanion_trade cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_crackdown_in_central_rhun cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_khandian_buffer_zone cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_ask_mordor_for_trolls cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_raid_into_mirkian_territory cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_mend_the_conflict cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_nation_driven_by_fear cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_one_tribe_supremacy cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_strike_rhovania cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_logathin_scholars cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_join_forces_with_mordor cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_nurukhizdin_or_war cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_tackle_dorwinion cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_exploit_dorwinian_resources cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_eastern_campaign cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_accelerate_decision_making cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_learn_from_the_variags cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_recognize_sauron cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_purge_corrupt_officials cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_demand_rhovanion_submission cost = 5 }
+				reduce_focus_completion_cost = { focus = RHUN_puppet_king cost = 5 }
+			}
+		}
+    }
+
+    focus = {
+        id = RHUN_purge_corrupt_officials
+		relative_position_id = RHUN_palace_politics
+        
+        prerequisite = { focus = RHUN_replace_nepotistic_army_leaders }
+        
+        icon = GFX_goal_RHU_end_decadence_corruption
+        
+        x = 1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+			factor = 25
+		}
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+		bypass = {
+			NOT = { has_idea = RHUN_internal_corruption }
+		}
+        completion_reward = {
+			# get rid of idea  
+			remove_ideas = RHUN_internal_corruption
+		}
+    }
+
+    focus = {
+        id = RHUN_bribe_laketown_delegates
+		relative_position_id = RHUN_palace_politics
+        
+        prerequisite = { focus = RHUN_backstabbing_and_treachery }
+        
+        icon = GFX_goal_generic_money_offer
+        
+        x = -2
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 10 }
+        
+        search_filters = { }
+        available = {
+            DAL = { can_engage_in_diplo_with = yes }
+        }
+        completion_reward = {
+			# less trade cost with DAL, random chance at a civ
+			custom_effect_tooltip = RHUN_bribe_laketown_delegates_tt
+			hidden_effect = {
+				DAL = {
+					add_relation_modifier = {
+						target = ROOT
+						modifier = generic_improved_trade_modifier
+					}
+				}
+			}
+		}
+    }
+
+    focus = {
+        id = RHUN_bribe_dwarven_envoys
+		relative_position_id = RHUN_palace_politics
+        
+        prerequisite = { focus = RHUN_backstabbing_and_treachery }
+        
+        icon = GFX_goal_generic_money_offer
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 16 }
+        
+        search_filters = { }
+        available = {
+            ERE = { can_engage_in_diplo_with = yes }
+        }
+        completion_reward = {
+			# less trade cost with ERE, random chance at a civ
+			custom_effect_tooltip = RHUN_bribe_dwarven_envoys_tt
+			hidden_effect = {
+				ERE = {
+					add_relation_modifier = {
+						target = ROOT
+						modifier = generic_improved_trade_modifier
+					}
+				}
+			}
+		}
+    }
+
+    focus = {
+        id = RHUN_logathin_scholars
+		relative_position_id = RHUN_handle_logathvuld
+        
+        prerequisite = { focus = RHUN_integrate_the_logath }
+        
+        icon = GFX_goal_ROH_attract_foreign_scholars_research
+        
+        x = 0
+        y = 5
+
+        cost = 10
+        ai_will_do = { factor = 50 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			add_research_slot = 1
 		}
     }
 

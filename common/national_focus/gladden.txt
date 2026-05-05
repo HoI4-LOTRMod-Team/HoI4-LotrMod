@@ -21,6 +21,151 @@ focus_tree = {
 	
 
     focus = {
+        id = GLD_lords_of_the_gladden_fields
+        icon = GFX_goal_generic_helment_with_swords
+        
+        x = -2
+        y = 0
+
+        cost = 5
+        ai_will_do = { factor = 35 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# give PP, maybe smth with advisors  
+            add_political_power = 100
+		}
+    }
+
+    focus = {
+        id = GLD_assert_the_high_chief
+		relative_position_id = GLD_lords_of_the_gladden_fields
+        
+        prerequisite = { focus = GLD_lords_of_the_gladden_fields }
+        
+        icon = GFX_goal_GLD_assert_high_chief
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# give leader a trait  
+            add_country_leader_trait = high_chief
+		}
+    }
+
+    focus = {
+        id = GLD_the_west_bank
+		relative_position_id = GLD_lords_of_the_gladden_fields
+        
+        prerequisite = { focus = GLD_lords_of_the_gladden_fields }
+        
+        icon = GFX_goal_GLD_west_bank
+        
+        x = -14
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 3
+            modifier = {
+                factor = 2
+                has_tech = eagle_domestication_men
+            }
+            modifier = {
+                factor = 2
+                check_variable = { num_deployed_planes > 0 }
+            }
+            modifier = {
+                factor = 2
+                target_air_focus = yes
+            }
+            modifier = {
+                factor = 2
+                GOB = { has_completed_focus = GOB_raid_and_pillage }
+            }
+            modifier = {
+                factor = 1.5
+                GOB = { is_ai = no }
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            controls_state = 197
+            controls_state = 70
+        }
+        completion_reward = {
+			# add infra to west bank  
+            197 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+            70 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+            #195 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+		}
+    }
+
+    focus = {
+        id = GLD_the_east_bank
+		relative_position_id = GLD_lords_of_the_gladden_fields
+        
+        prerequisite = { focus = GLD_lords_of_the_gladden_fields }
+        
+        icon = GFX_goal_GLD_east_bank
+        
+        x = 14
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 4
+            modifier = {
+                factor = 2
+                is_going_cooperative = yes
+            }
+            modifier = {
+                factor = 2
+                has_completed_focus = GLD_honor_old_friendships
+            }
+            modifier = {
+                factor = 1.5
+                ROH = { is_ai = no }
+            }
+            modifier = {
+                factor = 1.5
+                SPI = { is_ai = no }
+            }
+            modifier = {
+                factor = 2
+                SPI = { has_completed_focus = SPI_let_roam_the_brood }
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            71 = { is_fully_controlled_by = ROOT }
+        }
+        completion_reward = {
+			# infra to east bank  
+            71 = {
+                add_building_construction = {
+                    type = infrastructure
+                    level = 2
+                    instant_build = yes
+                }
+            }
+		}
+    }
+
+    focus = {
         id = GLD_ascend_the_carrock
 		relative_position_id = GLD_the_west_bank
         
@@ -69,6 +214,254 @@ focus_tree = {
                 }
             }
 		}
+    }
+
+    focus = {
+        id = GLD_the_mountain_problem
+		relative_position_id = GLD_the_west_bank
+        
+        prerequisite = { focus = GLD_the_west_bank }
+        
+        icon = GFX_goal_DGU_mountains_misty_thunderstorm
+        
+        x = 2
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                GOB = { has_completed_focus = GOB_raid_and_pillage }
+            }
+            modifier = {
+                factor = 1.5
+                GOB = { is_ai = no }
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            add_political_power = 150
+        }
+    }
+
+    focus = {
+        id = GLD_the_strong_lead_the_weak
+		relative_position_id = GLD_assert_the_high_chief
+        
+        prerequisite = { focus = GLD_assert_the_high_chief }
+        
+        icon = GFX_goal_generic_crossed_spears
+
+        mutually_exclusive = {
+            focus = GLD_middle_of_the_road
+            focus = GLD_among_the_free_peoples
+        }
+        
+        x = -6
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 8
+            modifier = {
+                factor = 0
+                is_historical_focus_on = yes
+            }
+            modifier = {
+                factor = 0
+                is_going_belligerent = no
+            }
+            modifier = {
+                factor = 1.5
+                OR = {
+                    RHD = { is_ai = no }
+                    VAL = { is_ai = no }
+                    GOB = { is_ai = no }
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            
+
+			# belli support  
+            add_popularity = {
+                ideology = belligerent
+                popularity = 0.17
+            }
+            add_ideas = belligerent_influence
+		}
+    }
+
+    focus = {
+        id = GLD_deal_with_the_great_spiders
+		relative_position_id = GLD_the_east_bank
+        
+        prerequisite = { focus = GLD_the_east_bank }
+        
+        icon = GFX_goal_DGU_spider_descent
+        
+        x = 2
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                SPI = { has_completed_focus = SPI_let_roam_the_brood }
+            }
+            modifier = {
+                factor = 1.5
+                SPI = { is_ai = no }
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            SPI = {
+                can_reach = yes
+            }
+        }
+        completion_reward = {
+            add_intel = {
+                target = SPI
+                army_intel = 15
+                civilian_intel = 15
+            }
+        }
+    }
+
+    focus = {
+        id = GLD_legacy_of_the_eotheod
+		relative_position_id = GLD_the_east_bank
+        
+        prerequisite = { focus = GLD_the_east_bank }
+        
+        icon = GFX_goal_generic_rohirrim_helmet_r
+        
+        x = -2
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 2
+            modifier = {
+                factor = 4
+                target_any_cavalry_strat = yes
+            }
+            modifier = {
+                factor = 2
+                has_completed_focus = GLD_honor_old_friendships
+            }
+            modifier = {
+                factor = 2
+                has_completed_focus = GLD_honor_old_friendships
+                threat > 0.4
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            add_tech_bonus = {
+                name = special_bonus
+                uses = 2
+                bonus = 0.35
+                category = lotr_cavalry
+            }
+        }
+    }
+
+    focus = {
+        id = GLD_among_the_free_peoples
+		relative_position_id = GLD_assert_the_high_chief
+        
+        prerequisite = { focus = GLD_assert_the_high_chief }
+        
+        icon = GFX_goal_generic_unity
+
+        mutually_exclusive = {
+            focus = GLD_middle_of_the_road
+            focus = GLD_the_strong_lead_the_weak
+        }
+        
+        x = 6
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 6
+            modifier = {
+                factor = 0
+                is_going_cooperative = no
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_COOPERATIVE }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# coop support  
+            add_popularity = {
+                ideology = cooperative
+                popularity = 0.17
+            }
+            add_ideas = cooperative_influence
+		}
+    }
+
+    focus = {
+        id = GLD_middle_of_the_road
+		relative_position_id = GLD_assert_the_high_chief
+        
+        prerequisite = { focus = GLD_assert_the_high_chief }
+        
+        icon = GFX_goal_generic_stab_scale_balance
+
+        mutually_exclusive = {
+            focus = GLD_the_strong_lead_the_weak
+            focus = GLD_among_the_free_peoples
+        }
+        
+        x = 0
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 12
+            modifier = {
+                factor = 0
+                is_going_unaligned = no
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_UNALIGNED }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            add_popularity = {
+                ideology = unaligned
+                popularity = 0.17
+            }
+            add_timed_idea = {
+                idea = unaligned_influence
+                days = 270
+            }
+        }
     }
 
     focus = {
@@ -186,39 +579,6 @@ focus_tree = {
         completion_reward = {
             add_ideas = GLD_great_eagle_gwaihir
             increase_eagles_cap_5 = yes
-        }
-    }
-
-    focus = {
-        id = GLD_the_mountain_problem
-		relative_position_id = GLD_the_west_bank
-        
-        prerequisite = { focus = GLD_the_west_bank }
-        
-        icon = GFX_goal_DGU_mountains_misty_thunderstorm
-        
-        x = 2
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 2
-                GOB = { has_completed_focus = GOB_raid_and_pillage }
-            }
-            modifier = {
-                factor = 1.5
-                GOB = { is_ai = no }
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-            add_political_power = 150
         }
     }
 
@@ -538,30 +898,6 @@ focus_tree = {
     }
 
     focus = {
-        id = GLD_assert_the_high_chief
-		relative_position_id = GLD_lords_of_the_gladden_fields
-        
-        prerequisite = { focus = GLD_lords_of_the_gladden_fields }
-        
-        icon = GFX_goal_GLD_assert_high_chief
-        
-        x = 0
-        y = 1
-
-        cost = 5
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# give leader a trait  
-            add_country_leader_trait = high_chief
-		}
-    }
-
-    focus = {
         id = GLD_war_councils_of_gladden
 		relative_position_id = GLD_the_strong_lead_the_weak
         
@@ -633,59 +969,6 @@ focus_tree = {
     }
 
     focus = {
-        id = GLD_the_strong_lead_the_weak
-		relative_position_id = GLD_assert_the_high_chief
-        
-        prerequisite = { focus = GLD_assert_the_high_chief }
-        
-        icon = GFX_goal_generic_crossed_spears
-
-        mutually_exclusive = {
-            focus = GLD_middle_of_the_road
-            focus = GLD_among_the_free_peoples
-        }
-        
-        x = -6
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 8
-            modifier = {
-                factor = 0
-                is_historical_focus_on = yes
-            }
-            modifier = {
-                factor = 0
-                is_going_belligerent = no
-            }
-            modifier = {
-                factor = 1.5
-                OR = {
-                    RHD = { is_ai = no }
-                    VAL = { is_ai = no }
-                    GOB = { is_ai = no }
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-            
-
-			# belli support  
-            add_popularity = {
-                ideology = belligerent
-                popularity = 0.17
-            }
-            add_ideas = belligerent_influence
-		}
-    }
-
-    focus = {
         id = GLD_rally_the_banners
 		relative_position_id = GLD_the_strong_lead_the_weak
         
@@ -712,26 +995,6 @@ focus_tree = {
                 days = 175
             }
         }
-    }
-
-    focus = {
-        id = GLD_lords_of_the_gladden_fields
-        icon = GFX_goal_generic_helment_with_swords
-        
-        x = -2
-        y = 0
-
-        cost = 5
-        ai_will_do = { factor = 35 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# give PP, maybe smth with advisors  
-            add_political_power = 100
-		}
     }
 
     focus = {
@@ -764,189 +1027,6 @@ focus_tree = {
         }
         completion_reward = {
             add_ideas = GLD_crossing_of_the_misty_mountains
-        }
-    }
-
-    focus = {
-        id = GLD_the_west_bank
-		relative_position_id = GLD_lords_of_the_gladden_fields
-        
-        prerequisite = { focus = GLD_lords_of_the_gladden_fields }
-        
-        icon = GFX_goal_GLD_west_bank
-        
-        x = -14
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 3
-            modifier = {
-                factor = 2
-                has_tech = eagle_domestication_men
-            }
-            modifier = {
-                factor = 2
-                check_variable = { num_deployed_planes > 0 }
-            }
-            modifier = {
-                factor = 2
-                target_air_focus = yes
-            }
-            modifier = {
-                factor = 2
-                GOB = { has_completed_focus = GOB_raid_and_pillage }
-            }
-            modifier = {
-                factor = 1.5
-                GOB = { is_ai = no }
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            controls_state = 197
-            controls_state = 70
-        }
-        completion_reward = {
-			# add infra to west bank  
-            197 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
-            70 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
-            #195 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
-		}
-    }
-
-    focus = {
-        id = GLD_the_east_bank
-		relative_position_id = GLD_lords_of_the_gladden_fields
-        
-        prerequisite = { focus = GLD_lords_of_the_gladden_fields }
-        
-        icon = GFX_goal_GLD_east_bank
-        
-        x = 14
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 4
-            modifier = {
-                factor = 2
-                is_going_cooperative = yes
-            }
-            modifier = {
-                factor = 2
-                has_completed_focus = GLD_honor_old_friendships
-            }
-            modifier = {
-                factor = 1.5
-                ROH = { is_ai = no }
-            }
-            modifier = {
-                factor = 1.5
-                SPI = { is_ai = no }
-            }
-            modifier = {
-                factor = 2
-                SPI = { has_completed_focus = SPI_let_roam_the_brood }
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            71 = { is_fully_controlled_by = ROOT }
-        }
-        completion_reward = {
-			# infra to east bank  
-            71 = {
-                add_building_construction = {
-                    type = infrastructure
-                    level = 2
-                    instant_build = yes
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = GLD_deal_with_the_great_spiders
-		relative_position_id = GLD_the_east_bank
-        
-        prerequisite = { focus = GLD_the_east_bank }
-        
-        icon = GFX_goal_DGU_spider_descent
-        
-        x = 2
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 2
-                SPI = { has_completed_focus = SPI_let_roam_the_brood }
-            }
-            modifier = {
-                factor = 1.5
-                SPI = { is_ai = no }
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            SPI = {
-                can_reach = yes
-            }
-        }
-        completion_reward = {
-            add_intel = {
-                target = SPI
-                army_intel = 15
-                civilian_intel = 15
-            }
-        }
-    }
-
-    focus = {
-        id = GLD_legacy_of_the_eotheod
-		relative_position_id = GLD_the_east_bank
-        
-        prerequisite = { focus = GLD_the_east_bank }
-        
-        icon = GFX_goal_generic_rohirrim_helmet_r
-        
-        x = -2
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 2
-            modifier = {
-                factor = 4
-                target_any_cavalry_strat = yes
-            }
-            modifier = {
-                factor = 2
-                has_completed_focus = GLD_honor_old_friendships
-            }
-            modifier = {
-                factor = 2
-                has_completed_focus = GLD_honor_old_friendships
-                threat > 0.4
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-            add_tech_bonus = {
-                name = special_bonus
-                uses = 2
-                bonus = 0.35
-                category = lotr_cavalry
-            }
         }
     }
 
@@ -1362,86 +1442,6 @@ focus_tree = {
                 }
             }
 		}
-    }
-
-    focus = {
-        id = GLD_among_the_free_peoples
-		relative_position_id = GLD_assert_the_high_chief
-        
-        prerequisite = { focus = GLD_assert_the_high_chief }
-        
-        icon = GFX_goal_generic_unity
-
-        mutually_exclusive = {
-            focus = GLD_middle_of_the_road
-            focus = GLD_the_strong_lead_the_weak
-        }
-        
-        x = 6
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 6
-            modifier = {
-                factor = 0
-                is_going_cooperative = no
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_COOPERATIVE }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# coop support  
-            add_popularity = {
-                ideology = cooperative
-                popularity = 0.17
-            }
-            add_ideas = cooperative_influence
-		}
-    }
-
-    focus = {
-        id = GLD_middle_of_the_road
-		relative_position_id = GLD_assert_the_high_chief
-        
-        prerequisite = { focus = GLD_assert_the_high_chief }
-        
-        icon = GFX_goal_generic_stab_scale_balance
-
-        mutually_exclusive = {
-            focus = GLD_the_strong_lead_the_weak
-            focus = GLD_among_the_free_peoples
-        }
-        
-        x = 0
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 12
-            modifier = {
-                factor = 0
-                is_going_unaligned = no
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_UNALIGNED }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-            add_popularity = {
-                ideology = unaligned
-                popularity = 0.17
-            }
-            add_timed_idea = {
-                idea = unaligned_influence
-                days = 270
-            }
-        }
     }
 
     focus = {

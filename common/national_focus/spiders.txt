@@ -18,1107 +18,6 @@ focus_tree = {
 	
 
     focus = {
-        id = SPI_hunger
-		relative_position_id = SPI_arachnid_nature
-        
-        prerequisite = { focus = SPI_arachnid_nature }
-        
-        icon = GFX_goal_SPI_hunger_fangs_1
-        
-        x = 0
-        y = 2
-
-        cost = 10
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 2
-                threat > 0.1
-            }
-            modifier = {
-                factor = 2
-                threat > 0.15
-            }
-            modifier = {
-                factor = 4
-                has_war = yes
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-            # add scaling that for casualties inflicted, our units grow stronger (unlimited scaling)
-            increase_mp_from_enemy_casualties = yes
-        }
-    }
-
-    focus = {
-        id = SPI_cannibalistic_tendencies
-		relative_position_id = SPI_hunger
-        
-        prerequisite = { focus = SPI_matriphagy }
-        
-        icon = GFX_goal_SPI_cannibalistic_tendencies
-
-        mutually_exclusive = {
-            focus = SPI_feed_and_breed
-        }
-        
-        x = 1
-        y = 3
-
-        cost = 5
-        ai_will_do = {
-            factor = 50
-            modifier = {
-                factor = 2
-                OR = { # human player nearby detected! Prepare to get rekt
-                    MIR = { is_ai = no }
-                    DGU = { is_ai = no }
-                    VAL = { is_ai = no }
-                    ERE = { is_ai = no }
-                    LTH = { is_ai = no }
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
-        available = {
-            if = {
-                limit = { is_ai = no }
-                has_army_manpower = {
-                    size > 5000
-                }
-            }
-            else = {
-                has_army_manpower = {
-                    size > 4000
-                }
-            }
-        }
-        completion_reward = {
-			# increase mp from self-casualties  
-            increase_mp_from_self_casualties = yes
-		}
-    }
-
-    focus = {
-        id = SPI_feed_and_breed
-		relative_position_id = SPI_hunger
-        
-        prerequisite = { focus = SPI_matriphagy }
-        
-        icon = GFX_goal_SPI_matriphagy_2
-
-        mutually_exclusive = {
-            focus = SPI_cannibalistic_tendencies
-        }
-        
-        x = -1
-        y = 3
-
-        cost = 5
-        ai_will_do = {
-            factor = 50
-            modifier = {
-                factor = 0.5
-                OR = { # human player nearby detected! Prepare to get rekt
-                    MIR = { is_ai = no }
-                    DGU = { is_ai = no }
-                    VAL = { is_ai = no }
-                    ERE = { is_ai = no }
-                    LTH = { is_ai = no }
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# increase gain of mp from casualties inflicted  
-            increase_mp_from_enemy_casualties = yes
-		}
-    }
-
-    focus = {
-        id = SPI_call_up_the_hatchlings
-		relative_position_id = SPI_the_brood_lairs
-        
-        prerequisite = { focus = SPI_proliferation_of_the_swarm }
-        
-        icon = GFX_goal_SPI_eggs_on_branch
-
-        mutually_exclusive = {
-            focus = SPI_let_eggs_mature
-        }
-        
-        x = -1
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-            factor = 25
-            modifier = {
-                factor = 1.5
-                has_war = yes
-            }
-            modifier = {
-                factor = 1.5
-                threat > 0.1
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            controls_state = 82
-        }
-        completion_reward = {
-			# gain bad divs now  
-            hidden_effect = {
-                load_oob = SPI_hatchlings
-            }
-            custom_effect_tooltip = SPI_call_up_the_hatchlings_tt
-		}
-    }
-
-    focus = {
-        id = SPI_let_eggs_mature
-		relative_position_id = SPI_the_brood_lairs
-        
-        prerequisite = { focus = SPI_proliferation_of_the_swarm }
-        
-        icon = GFX_goal_SPI_egg_colonies
-
-        mutually_exclusive = {
-            focus = SPI_call_up_the_hatchlings
-        }
-        
-        x = 1
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-            factor = 25
-            modifier = {
-                factor = 0.1
-                has_war = yes
-            }
-            modifier = {
-                factor = 1.5
-                threat < 0.1
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            controls_state = 82
-        }
-        completion_reward = { 
-			# gain good divs later  
-            hidden_effect = {
-                activate_mission = SPI_maturing_eggs
-            }
-            custom_effect_tooltip = SPI_let_eggs_mature_tt
-		}
-    }
-
-    focus = {
-        id = SPI_the_great_feast
-		relative_position_id = SPI_hunger
-        
-        prerequisite = { focus = SPI_matriphagy }
-        
-        icon = GFX_goal_SPI_hunger_fangs_1
-        
-        x = 0
-        y = 4
-
-        cost = 10
-        ai_will_do = { factor = 100 }
-        
-        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
-        available = {
-            spiders_has_inflicted_casualties_stage2 = yes
-        }
-        
-        completion_reward = {
-			# upgrade spiders
-            add_unit_bonus = {
-                category_special_spiders = {
-                   soft_attack = 0.1
-                   hard_attack = 0.1
-                   defense = 0.1
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_the_brood_lairs
-		relative_position_id = SPI_the_colony_wakes
-        
-        prerequisite = { focus = SPI_the_colony_wakes }
-        
-        icon = GFX_goal_SPI_spider_with_eggs
-        
-        x = -3
-        y = 1
-
-        cost = 10
-        ai_will_do = { factor = 20 }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            controls_state = 82
-        }
-        completion_reward = {
-			# gain idea with a small amount of weekly mp  
-            add_ideas = SPI_the_brood_lairs
-		}
-    }
-
-    focus = {
-        id = SPI_the_colony_wakes
-		relative_position_id = SPI_control_over_mirkwood
-        
-        prerequisite = { focus = SPI_broodmothers_woodland }
-        
-        icon = GFX_goal_SPI_spiders_in_tree
-        
-        x = 8
-        y = 2
-
-        cost = 5
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            controls_state = 82
-        }
-        bypass_if_unavailable = yes
-        completion_reward = {
-			# gain lump of mp  
-            add_manpower = 3000
-		}
-    }
-
-    focus = {
-        id = SPI_the_spiders_nest
-		relative_position_id = SPI_the_colony_wakes
-		prerequisite = { focus = SPI_the_colony_wakes }
-		prerequisite = { focus = SPI_economy_of_hunger }
-        
-        icon = GFX_goal_SPI_burrow_holes_nest
-        
-        x = 4
-        y = 1
-
-        cost = 5
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            controls_state = 82
-        }
-        completion_reward = {
-			# add a landmark building doing cool stuff
-            82 = {
-                add_building_construction = {
-                    type = landmark_spiders_nest
-                    level = 1
-                    instant_build = yes
-                    province = 9131
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_the_mothers_guard
-		relative_position_id = SPI_the_brood_lairs
-        
-        prerequisite = { focus = SPI_proliferation_of_the_swarm }
-        
-        icon = GFX_goal_SPI_matriphagy_1
-        
-        x = 0
-        y = 3
-
-        cost = 5
-        ai_will_do = {
-            factor = 10
-            modifier = {
-                factor = 2
-                has_war_with = MIR
-            }
-            modifier = {
-                factor = 2
-                has_war_with = DGU
-            }
-            modifier = {
-                factor = 0.5
-                any_controlled_state = {
-                    NOT = { is_on_continent = mirkwood }
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            controls_state = 82
-            has_tech = great_webstalkers
-        }
-        
-        completion_reward = {
-			# gain a super strong div that can dies when exits nest
-            hidden_effect = {
-                country_event = spiders.103
-            }
-            custom_effect_tooltip = SPI_the_mothers_guard_tt
-
-            # AI cant control the nest guardians properly, so they get this one for free
-            hidden_effect = {
-                if = {
-                    limit = { is_ai = yes }
-                    complete_national_focus = SPI_extend_the_perimeter
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_control_over_mirkwood
-		relative_position_id = SPI_broodmothers_woodland
-        
-        prerequisite = { focus = SPI_broodmothers_woodland }
-        
-        icon = GFX_goal_MIR_creeping_presence_map_entangle
-        
-        x = 0
-        y = 1
-
-        cost = 5
-        ai_will_do = { 
-            factor = 10
-            modifier = {
-                factor = 1.5
-                date < "3018.6.1"
-            }
-            modifier = {
-                factor = 1.5
-                date < "3019.1.1"
-            }
-            modifier = {
-                factor = 1.5
-                MIR = { is_ai = no }
-            }
-            modifier = {
-                factor = 4
-                any_enemy_country = {
-                    capital_scope = { NOT = { is_on_continent = mirkwood } }
-                }
-            }
-            modifier = {
-                factor = 10
-                control_all_mirkwood_states = yes
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            has_cfm_active = yes
-        }
-        bypass_if_unavailable = yes
-        completion_reward = {
-			# gain +1 presence  
-            add_timed_idea = {
-                idea = CFM_creeping_gloom
-                days = 700
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_defensive_stance
-		relative_position_id = SPI_control_over_mirkwood
-        
-        prerequisite = { focus = SPI_control_over_mirkwood }
-        
-        icon = GFX_goal_SPI_spider_in_cave
-
-        mutually_exclusive = {
-            focus = SPI_aggresive_stance
-        }
-        
-        x = -2
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 20
-            modifier = {
-                factor = 2
-                is_historical_focus_on = yes
-                MIR = { is_ai = yes }
-            }
-            modifier = {
-                factor = 0.75
-                MIR = { is_ai = no }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			add_timed_idea = {
-                idea = SPI_defensive_stance
-                days = 720
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_aggresive_stance
-		relative_position_id = SPI_control_over_mirkwood
-        
-        prerequisite = { focus = SPI_control_over_mirkwood }
-        
-        icon = GFX_goal_SPI_spiders_in_tree
-
-        mutually_exclusive = {
-            focus = SPI_defensive_stance
-        }
-        
-        x = -5
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 15
-            modifier = {
-                factor = 1.25
-                MIR = { is_ai = no }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            has_cfm_active = yes
-        }
-        completion_reward = {
-			add_timed_idea = {
-                idea = SPI_aggresive_stance
-                days = 270
-            }
-            custom_effect_tooltip = SPI_aggresive_stance_tt
-		}
-    }
-
-    focus = {
-        id = SPI_step_out_of_the_shadows
-		relative_position_id = SPI_control_over_mirkwood
-        
-        prerequisite = { focus = SPI_control_over_mirkwood }
-        
-        icon = GFX_goal_LTH_golden_wood_shield_barrier_pres
-        
-        x = 2
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 35
-            modifier = {
-                factor = 1.3
-                any_enemy_country = {
-                    is_ai = no
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            if = {
-                limit = { is_ai = no }
-                custom_trigger_tooltip = {
-                    tooltip = SPI_step_out_of_the_shadows_condition_tt
-                    any_controlled_state = {
-                        NOT = { is_on_continent = mirkwood }
-                    }
-                }
-            }
-            else = {
-                any_enemy_country = {
-                    capital_scope = { NOT = { is_on_continent = mirkwood } }
-                }
-            }
-        }
-        
-        completion_reward = {
-			# remove debuff on non-jungle terrain  
-            custom_effect_tooltip = SPI_step_out_of_the_shadows_tt
-            hidden_effect = {
-                add_unit_bonus = {
-                    category_special_spiders = {
-                        hills = {
-                            movement = 0.2
-                            defence = 0.2
-                            attack = 0.2
-                        }
-                        mountain = {
-                            movement = 0.2
-                            defence = 0.2
-                            attack = 0.2
-                        }
-                        marsh = {
-                            movement = 0.2
-                            defence = 0.2
-                            attack = 0.2
-                        }
-                        plains = {
-                            movement = 0.2
-                            defence = 0.2
-                            attack = 0.2
-                        }
-                        desert = {
-                            movement = 0.2
-                            defence = 0.2
-                            attack = 0.2
-                        }
-                    }
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_hierarchy_order
-		relative_position_id = SPI_matriarchs_court
-        
-        prerequisite = { focus = SPI_subdue_the_lesser_broods }
-        
-        icon = GFX_goal_SPI_hierarchy
-        
-        x = 0
-        y = 4
-
-        cost = 10
-        ai_will_do = {
-            factor = 25
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			# add idea  
-            add_ideas = SPI_hierarchy_of_authority
-		}
-    }
-
-    focus = {
-        id = SPI_subdue_the_lesser_broods
-		relative_position_id = SPI_matriarchs_court
-        
-        prerequisite = { focus = SPI_the_queens_will }
-        
-        icon = GFX_goal_MIR_crush_spider_step_on_boot
-        
-        x = 0
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 1 }
-        
-        search_filters = { }
-        available = {
-            controls_state = 226
-            controls_state = 229
-        }
-        bypass_if_unavailable = yes
-        completion_reward = {
-			# get rid of resistance  
-            226 = {
-                cancel_resistance = yes
-            }
-            229 = {
-                cancel_resistance = yes
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_heed_the_necromancer
-		relative_position_id = SPI_alliance_building
-        
-        prerequisite = { focus = SPI_alliance_building }
-        
-        icon = GFX_goal_SPI_eye_of_sauron_submit
-
-        mutually_exclusive = {
-            focus = SPI_we_spin_our_own_threads
-            focus = SPI_light_and_shadow
-        }
-        
-        x = -5
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 100
-            modifier = {
-                add = 50
-                MOR = { is_significantly_stronger = yes }
-            }
-            modifier = {
-                factor = 0.25
-                OR = {
-                    MOR = { is_weaker = yes }
-                    MOR = { surrender_progress > 0.01 }
-                }
-            }
-            modifier = {
-                factor = 0
-                MOR = { is_significantly_weaker = yes }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        bypass = {
-            is_ally_with = MOR
-        }
-        available = {
-            NOT = { has_war_with = MOR }
-            NOT = { is_in_faction = yes }
-            country_exists = MOR
-            is_subject = no
-            MOR = {
-                is_subject = no
-                OR = {
-                    is_faction_leader = yes
-                    is_in_faction = no
-                }
-            }
-            MOR = { NOT = { eternal_animosity_exists_between = yes } }
-        }
-        
-        completion_reward = {
-			# send event to Mordor  
-            if = {
-                limit = { MOR = { is_faction_leader = yes } }
-                country_event = { id = spiders.106 days = 1 }
-            }
-            else = {
-                MOR = { country_event = { id = spiders.116 days = 1 } }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_hatred_of_the_bright_folk
-		relative_position_id = SPI_let_roam_the_brood
-        
-        prerequisite = { focus = SPI_direct_the_hunting_brood }
-        
-        icon = GFX_goal_SPI_target_attack_elves
-        
-        x = -1
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-            factor = 1
-            modifier = {
-                add = 5
-                threat > 0.2
-            }
-            modifier = {
-                add = 5
-                threat > 0.6
-            }
-            modifier = {
-                add = 5
-                has_opinion = {
-                    target = MIR
-                    value < -10
-                }
-            }
-            modifier = {
-                add = 5
-                has_opinion = {
-                    target = MIR
-                    value < -35
-                }
-            }
-            modifier = {
-                factor = 0
-                has_war = yes
-                alliance_strength_ratio < 1.5
-            }
-            modifier = {
-                factor = 0.5
-                has_war = yes
-            }
-            modifier = {
-                add = 10
-                MIR = { is_weaker = yes }
-            }
-            modifier = {
-                add = 15
-                MIR = { is_significantly_weaker = yes }
-            }
-            modifier = {
-                add = 10
-                MIR = { has_war = yes }
-                has_war = no
-            }
-            modifier = {
-                factor = 0.1
-                has_country_flag = has_likely_next_random_war_target
-            }
-            modifier = {
-                factor = 1.2
-                MIR = { is_ai = no }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_ANNEXATION }
-       available = {
-            MIR = {
-                war_with_is_possible = yes
-                is_neighbor_of = SPI
-            }
-            is_subject = no
-        }
-        bypass = {
-            has_war_with = MIR
-        }
-        completion_reward = {
-            MIR = {
-                set_as_likely_next_random_war_target = yes
-            }
-        }
-    }
-
-    focus = {
-        id = SPI_the_taste_of_stone_flesh
-		relative_position_id = SPI_let_roam_the_brood
-        
-        prerequisite = { focus = SPI_direct_the_hunting_brood }
-        
-        icon = GFX_goal_SPI_target_attack_dwarves
-        
-        x = -3
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-            factor = 1
-            modifier = {
-                add = 5
-                threat > 0.2
-            }
-            modifier = {
-                add = 5
-                threat > 0.6
-            }
-            modifier = {
-                add = 5
-                has_opinion = {
-                    target = ERE
-                    value < -10
-                }
-            }
-            modifier = {
-                add = 5
-                has_opinion = {
-                    target = ERE
-                    value < -35
-                }
-            }
-            modifier = {
-                factor = 0
-                has_war = yes
-                alliance_strength_ratio < 1.5
-            }
-            modifier = {
-                factor = 0.5
-                has_war = yes
-            }
-            modifier = {
-                add = 10
-                ERE = { is_weaker = yes }
-            }
-            modifier = {
-                add = 15
-                ERE = { is_significantly_weaker = yes }
-            }
-            modifier = {
-                add = 10
-                ERE = { has_war = yes }
-                has_war = no
-            }
-            modifier = {
-                factor = 0.1
-                has_country_flag = has_likely_next_random_war_target
-            }
-            modifier = {
-                factor = 1.2
-                ERE = { is_ai = no }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_ANNEXATION }
-        available = {
-            ERE = {
-                war_with_is_possible = yes
-                is_neighbor_of = SPI
-            }
-            is_subject = no
-        }
-        bypass = {
-            has_war_with = ERE
-        }
-        completion_reward = {
-            ERE = {
-                set_as_likely_next_random_war_target = yes
-            }
-        }
-    }
-
-    focus = {
-        id = SPI_stench_of_the_rotten
-		relative_position_id = SPI_let_roam_the_brood
-        
-        prerequisite = { focus = SPI_direct_the_hunting_brood }
-        
-        icon = GFX_goal_SPI_target_attack_orcs
-        
-        x = 1
-        y = 2
-
-        cost = 5
-
-        ai_will_do = {
-            factor = 1
-            modifier = {
-                add = 5
-                threat > 0.2
-            }
-            modifier = {
-                add = 5
-                threat > 0.6
-            }
-            modifier = {
-                add = 5
-                has_opinion = {
-                    target = DGU
-                    value < -10
-                }
-            }
-            modifier = {
-                add = 5
-                has_opinion = {
-                    target = DGU
-                    value < -35
-                }
-            }
-            modifier = {
-                factor = 0
-                has_war = yes
-                alliance_strength_ratio < 1.5
-            }
-            modifier = {
-                factor = 0.5
-                has_war = yes
-            }
-            modifier = {
-                add = 10
-                DGU = { is_weaker = yes }
-            }
-            modifier = {
-                add = 15
-                DGU = { is_significantly_weaker = yes }
-            }
-            modifier = {
-                add = 10
-                DGU = { has_war = yes }
-                has_war = no
-            }
-            modifier = {
-                factor = 0.1
-                has_country_flag = has_likely_next_random_war_target
-            }
-            modifier = {
-                factor = 1.2
-                DGU = { is_ai = no }
-            }
-        }
-        
-        
-        search_filters = { FOCUS_FILTER_ANNEXATION }
-        available = {
-            DGU = {
-                war_with_is_possible = yes
-                is_neighbor_of = SPI
-            }
-            is_subject = no
-        }
-        bypass = {
-            has_war_with = DGU
-        }
-        completion_reward = {
-            DGU = {
-                set_as_likely_next_random_war_target = yes
-            }
-        }
-    }
-
-    focus = {
-        id = SPI_light_and_shadow
-		relative_position_id = SPI_alliance_building
-        
-        prerequisite = { focus = SPI_alliance_building }
-        
-        icon = GFX_goal_SPI_alliance_with_elves_coop
-
-        mutually_exclusive = {
-            focus = SPI_we_spin_our_own_threads
-            focus = SPI_heed_the_necromancer
-        }
-        
-        x = 5
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 25
-            modifier = {
-                factor = 0.7
-                MIR = { is_ai = no }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        bypass = {
-            is_ally_with = MIR
-        }
-        available = {
-            NOT = { has_war_with = MIR }
-            NOT = { is_in_faction = yes }
-            country_exists = MIR
-            is_subject = no
-            MIR = {
-                is_subject = no
-                OR = {
-                    is_faction_leader = yes
-                    is_in_faction = no
-                }
-            }
-            MIR = { NOT = { eternal_animosity_exists_between = yes } }
-        }
-        completion_reward = {
-			# send event to elves  
-            if = {
-                limit = { MIR = { is_faction_leader = yes } }
-                MIR = { ask_to_join_faction = yes }
-            }
-            else = {
-                MIR = { country_event = { id = spiders.116 days = 1 } }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_return_of_night_mother_shelob
-		relative_position_id = SPI_heed_the_necromancer
-        
-        prerequisite = { focus = SPI_heed_the_necromancer focus = SPI_the_one_ring_gambit }
-        
-        icon = GFX_goal_SPI_shelob
-        
-        x = 0
-        y = 3
-
-        cost = 5
-        ai_will_do = {
-            factor = 15
-            modifier = {
-                factor = 0
-                has_completed_focus = SPI_heed_the_necromancer
-                has_country_flag = rng_30p_flag_1
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            OR = {
-                5 = { controller = { is_ally_with = SPI } }
-                5 = { is_controlled_by = SPI }
-            }
-            NOT = { has_global_flag = MOR_shelob_driven_off }
-        }
-
-        bypass = {
-            has_country_leader = { character = SPI_shelob ruling_only = yes }
-        }
-        
-        completion_reward = {
-			# send event to get shelob as leader
-            if = {
-                limit = { 5 = { is_controlled_by = ROOT } }
-                empower_shelob = yes
-            }
-            else = {
-                5 = { controller = { country_event = { id = spiders.100 days = 1 } } }
-                custom_effect_tooltip = if_they_accept_tt
-                effect_tooltip = {
-                    empower_shelob = yes
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_daughter_of_ungoliant
-		relative_position_id = SPI_heed_the_necromancer
-        
-        prerequisite = { focus = SPI_return_of_night_mother_shelob }
-        
-        icon = GFX_goal_SPI_subjugate_lesser_spiders_auth
-        
-        x = 0
-        y = 4
-
-        cost = 5
-        ai_will_do = {
-            factor = 15
-        }
-        
-        search_filters = { FOCUS_FILTER_POLITICAL }
-        available = {
-            has_country_leader = {
-	            character = SPI_shelob
-	            ruling_only = yes
-            }
-        }
-        
-        completion_reward = {
-			# give shelob special trait  
-            add_country_leader_trait = last_child_of_ungoliant
-		}
-    }
-
-    focus = {
         id = SPI_control_all_mirkwood
 		prerequisite = { focus = SPI_control_over_mirkwood }
         
@@ -1152,101 +51,6 @@ focus_tree = {
                     name = "Great Spiders Control All Mirkwood"
                 }
 			}
-		}
-    }
-
-    focus = {
-        id = SPI_ensnare_the_invaders
-		relative_position_id = SPI_build_up_defenses
-        
-        prerequisite = { focus = SPI_build_up_defenses }
-        
-        icon = GFX_goal_SPI_entrapped_soldier_web
-        
-        x = 1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 8
-            modifier = {
-                factor = 2
-                MIR = { is_ai = no }
-            }
-            modifier = {
-                factor = 2
-                has_war = yes
-            }
-            modifier = {
-                factor = 2
-                threat > 0.2
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			# debuff to enemies in mirkwood  
-            custom_effect_tooltip = for_every_core_state_tt
-            every_core_state = {
-                add_dynamic_modifier = {
-                    modifier = web_traps
-                    scope = SPI
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_aerial_webwalls
-		relative_position_id = SPI_build_up_defenses
-        
-        prerequisite = { focus = SPI_build_up_defenses }
-        
-        icon = GFX_goal_generic_anti_air_eagle
-        
-        x = -1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 1
-            modifier = {
-                add = 10
-                any_enemy_country = {
-                    has_deployed_air_force_size = { size > 10 }
-                }
-            }
-            modifier = {
-                add = 10
-                any_enemy_country = {
-                    has_deployed_air_force_size = { size > 20 }
-                }
-            }
-            modifier = {
-                add = 10
-                any_enemy_country = {
-                    has_deployed_air_force_size = { size > 30 }
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			# +AA  
-            hidden_effect = {
-                every_core_state = {
-                    add_building_construction = { type = anti_air_building level = 2 instant_build = yes }
-                }
-            }
-            custom_effect_tooltip = SPI_aerial_webwalls_tt
 		}
     }
 
@@ -1687,6 +491,126 @@ focus_tree = {
     }
 
     focus = {
+        id = SPI_purge_the_two_leggeds
+		relative_position_id = SPI_control_all_mirkwood
+        
+        prerequisite = { focus = SPI_control_all_mirkwood }
+        
+        icon = GFX_goal_SPI_human_skulls
+        
+        x = 0
+        y = 2
+
+        cost = 10
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            control_all_mirkwood_states = yes
+        }
+        completion_reward = {
+			hidden_effect = {
+                every_controlled_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        NOT = { is_core_of = DGU }
+                        impassable = no
+                    }
+                    add_compliance = 35
+                }
+            }
+            custom_effect_tooltip = DGU_masters_of_the_mirkwood_tt
+
+            set_country_flag = {
+                flag = SPI_completed_purge_the_two_leggeds
+                value = 1
+                days = 365
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_the_great_nest
+		relative_position_id = SPI_control_all_mirkwood
+        
+        prerequisite = { focus = SPI_purge_the_two_leggeds }
+        
+        icon = GFX_goal_SPI_ungoliant_large_spider_loom_shadow
+        
+        x = -1
+        y = 3
+
+        cost = 10
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            control_all_mirkwood_states = yes
+            has_stability > 0.5
+            has_war_support > 0.5
+        }
+        completion_reward = {
+			# build up all mirkwood  
+            custom_effect_tooltip = SPI_the_great_nest_tt
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        impassable = no
+                    }
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_assert_out_control
+		relative_position_id = SPI_control_all_mirkwood
+        
+        prerequisite = { focus = SPI_purge_the_two_leggeds }
+        
+        icon = GFX_goal_SPI_ungoliant_large_spider_loom
+        
+        x = 1
+        y = 3
+
+        cost = 10
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = SPI_purge_the_two_leggeds_condition_tt
+                control_all_mirkwood_states = yes
+                NOT = { has_country_flag = SPI_completed_purge_the_two_leggeds }
+                NOT = { has_country_flag = dgu_lost_mirkwood_control }   
+            }
+        }
+        completion_reward = {
+			hidden_effect = {
+                every_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        NOT = { is_core_of = DGU }
+                    }
+                    add_core_of = DGU
+                }
+            }
+            custom_effect_tooltip = DGU_forest_of_shadows_tt
+		}
+    }
+
+    focus = {
         id = SPI_broodmothers_woodland
 		relative_position_id = SPI_endless_struggle
         
@@ -1783,6 +707,154 @@ focus_tree = {
     }
 
     focus = {
+        id = SPI_hunger
+		relative_position_id = SPI_arachnid_nature
+        
+        prerequisite = { focus = SPI_arachnid_nature }
+        
+        icon = GFX_goal_SPI_hunger_fangs_1
+        
+        x = 0
+        y = 2
+
+        cost = 10
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                threat > 0.1
+            }
+            modifier = {
+                factor = 2
+                threat > 0.15
+            }
+            modifier = {
+                factor = 4
+                has_war = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+            # add scaling that for casualties inflicted, our units grow stronger (unlimited scaling)
+            increase_mp_from_enemy_casualties = yes
+        }
+    }
+
+    focus = {
+        id = SPI_control_over_mirkwood
+		relative_position_id = SPI_broodmothers_woodland
+        
+        prerequisite = { focus = SPI_broodmothers_woodland }
+        
+        icon = GFX_goal_MIR_creeping_presence_map_entangle
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = { 
+            factor = 10
+            modifier = {
+                factor = 1.5
+                date < "3018.6.1"
+            }
+            modifier = {
+                factor = 1.5
+                date < "3019.1.1"
+            }
+            modifier = {
+                factor = 1.5
+                MIR = { is_ai = no }
+            }
+            modifier = {
+                factor = 4
+                any_enemy_country = {
+                    capital_scope = { NOT = { is_on_continent = mirkwood } }
+                }
+            }
+            modifier = {
+                factor = 10
+                control_all_mirkwood_states = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        bypass_if_unavailable = yes
+        completion_reward = {
+			# gain +1 presence  
+            add_timed_idea = {
+                idea = CFM_creeping_gloom
+                days = 700
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_hierarchy_order
+		relative_position_id = SPI_matriarchs_court
+        
+        prerequisite = { focus = SPI_subdue_the_lesser_broods }
+        
+        icon = GFX_goal_SPI_hierarchy
+        
+        x = 0
+        y = 4
+
+        cost = 10
+        ai_will_do = {
+            factor = 25
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			# add idea  
+            add_ideas = SPI_hierarchy_of_authority
+		}
+    }
+
+    focus = {
+        id = SPI_subdue_the_lesser_broods
+		relative_position_id = SPI_matriarchs_court
+        
+        prerequisite = { focus = SPI_the_queens_will }
+        
+        icon = GFX_goal_MIR_crush_spider_step_on_boot
+        
+        x = 0
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        available = {
+            controls_state = 226
+            controls_state = 229
+        }
+        bypass_if_unavailable = yes
+        completion_reward = {
+			# get rid of resistance  
+            226 = {
+                cancel_resistance = yes
+            }
+            229 = {
+                cancel_resistance = yes
+            }
+		}
+    }
+
+    focus = {
         id = SPI_guidance_of_fury
 		relative_position_id = SPI_matriarchs_court
         
@@ -1866,52 +938,6 @@ focus_tree = {
                 remove_idea = swarm_centralization
                 add_idea = improved_swarm_centralization
             }
-		}
-    }
-
-    focus = {
-        id = SPI_exalt_the_brood_warriors
-		relative_position_id = SPI_hierarchy_order
-        
-        prerequisite = { focus = SPI_hierarchy_order }
-        
-        icon = GFX_goal_SPI_infighting_cann
-        
-        x = -3
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 2
-                has_war = yes
-            }
-            modifier = {
-                factor = 2
-                MIR = { is_ai = no }
-                NOT = { is_ally_with = MIR }
-            }
-            modifier = {
-                factor = 2
-                threat > 0.2
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			# something with military and traits  
-            hidden_effect = {
-                every_unit_leader = {
-                    remove_unit_leader_trait = instinct_driven
-                    add_unit_leader_trait = instinct_driven_improved
-                }
-            }
-            custom_effect_tooltip = SPI_exalt_the_brood_warriors_tt
 		}
     }
 
@@ -2016,197 +1042,819 @@ focus_tree = {
     }
 
     focus = {
-        id = SPI_consume_the_light
-		relative_position_id = SPI_step_out_of_the_shadows
+        id = SPI_seek_new_knowledge
+		relative_position_id = SPI_arachnid_nature
         
-        prerequisite = { focus = SPI_step_out_of_the_shadows }
+        prerequisite = { focus = SPI_arachnid_nature }
         
-        icon = GFX_goal_SPI_consume_the_light
+        icon = GFX_goal_SPI_hive_mind_knowledge_res_2
         
-        x = 1
+        x = -5
         y = 1
 
-        cost = 5
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 3
-                any_enemy_country = {
-                    is_ai = no
-                }
-            }
-            modifier = {
-                factor = 2
-                alliance_strength_ratio < 1.3
-            }
-            modifier = {
-                factor = 2
-                alliance_strength_ratio < 1.0
-            }
-            modifier = {
-                factor = 2
-                alliance_strength_ratio < 0.5
-            }
-            modifier = {
-                factor = 2
-                surrender_progress > 0.3
-            }
-        }
+        cost = 10
+        ai_will_do = { factor = 15 }
         
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            has_war = yes
-            any_enemy_country = {
-                is_neighbor_of = SPI
-            }
-        }
-        # all neighbouring countries currently at war with us receive a 100% penalty for night attack
-        # (removed once they are no longer at war with us)
-        completion_reward = {
-            custom_effect_tooltip = SPI_consume_the_light_tt
-            hidden_effect = {
-                every_enemy_country = {
-                    limit = {
-                        is_neighbor_of = SPI
-                    }
-                    add_ideas = SPI_consume_the_light
-                }
-            }
-        }
-    }
-
-    focus = {
-        id = SPI_build_up_defenses
-		relative_position_id = SPI_the_colony_wakes
-        
-        prerequisite = { focus = SPI_the_colony_wakes }
-        
-        icon = GFX_goal_DGU_dark_spires
-        
-        x = 0
-        y = 1
-
-        cost = 5
-        ai_will_do = { factor = 20 }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
+        search_filters = { FOCUS_FILTER_RESEARCH }
         available = {
             always = yes
         }
         
         completion_reward = {
-			# defense construction buff maybe something else  
-            add_timed_idea = {
-                idea = fortification_focus
-                days = 470
+			# generic research  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_spider_secrets
+                uses = 1
+                bonus = 0.5
             }
 		}
     }
 
     focus = {
-        id = SPI_silk_spun_workshops
-		relative_position_id = SPI_the_spiders_nest
+        id = SPI_boons_of_the_nest
+		relative_position_id = SPI_matriarchs_court
         
-        prerequisite = { focus = SPI_the_spiders_nest }
+        prerequisite = { focus = SPI_matriarchs_court }
         
-        icon = GFX_goal_SPI_hanging_egg
+        icon = GFX_goal_SPI_nest_entrance
         
-        x = 1
+        x = -5
         y = 1
 
-        cost = 5
-        ai_will_do = { factor = 30 }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            controls_state = 82
+        cost = 10
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                has_country_flag = rng_50p_flag_4
+            }
+
         }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        
         completion_reward = {
-			# civs  
-            82 = {
-                add_building_slot_and_civ_x2 = yes
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour_metalworking_mining
+                uses = 1
+                bonus = 0.6
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_economy_of_hunger
+		relative_position_id = SPI_matriarchs_court
+        
+        prerequisite = { focus = SPI_architects_of_silk }
+        
+        icon = GFX_goal_SPI_hunger_fangs_2
+        
+        x = -2
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# less consumers  
+            swap_ideas = {
+                remove_idea = economy_of_hunger
+                add_idea = economy_of_hunger_2
             }
 		}
     }
 
     focus = {
-        id = SPI_underground_colonies
-		relative_position_id = SPI_the_spiders_nest
-		prerequisite = { focus = SPI_deepening_the_nest }
-		prerequisite = { focus = SPI_protect_the_egg_chambers }
+        id = SPI_rouse_the_war_broods
+		relative_position_id = SPI_matriarchs_court
         
-        icon = GFX_goal_DGU_spiderweb_eggs
+        prerequisite = { focus = SPI_economy_of_hunger }
+        
+        icon = GFX_goal_SPI_long_legs_spider
+        
+        x = -2
+        y = 4
+
+        cost = 10
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 0.5
+                has_army_experience > 25
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# generic military mobilization
+            army_experience = 100
+		}
+    }
+
+    focus = {
+        id = SPI_ecdysis
+		relative_position_id = SPI_arachnid_nature
+        
+        prerequisite = { focus = SPI_arachnid_nature }
+        
+        icon = GFX_goal_SPI_ecdysis
+        
+        x = 2
+        y = 1
+
+        cost = 10
+        ai_will_do = { factor = 8 }
+        
+        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
+        available = {
+            casualties > 1500
+            check_variable = {
+				var = casrt
+				compare = greater_than_or_equals
+				value = 1500
+				tooltip = has_inflicted_casualties_1_5k_tt
+			}
+        }
+        completion_reward = {
+            add_unit_bonus = {
+                category_special_spiders = {
+                    armor_value = 0.25
+                    hardness = 0.15
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_boons_of_the_hunt
+		relative_position_id = SPI_arachnid_nature
+        
+        prerequisite = { focus = SPI_arachnid_nature }
+        
+        icon = GFX_goal_SPI_prey_webbing
+        
+        x = -2
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 7
+            modifier = {
+                factor = 2
+                has_country_flag = rng_30p_flag_3
+            }
+            modifier = {
+                factor = 0.6
+                has_country_flag = rng_30p_flag_1
+            }
+            modifier = {
+                factor = 1.8
+                has_war = yes
+                has_equipment = {
+                    infantry_equipment < 1000
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
+        available = {
+            spiders_has_inflicted_casualties_stage1 = yes
+        }
+        completion_reward = {
+            if = {
+                limit = {
+                    has_idea = SPI_arachnid_adaptations_res
+                }
+                swap_ideas = {
+                    remove_idea = SPI_arachnid_adaptations_res
+                    add_idea = SPI_arachnid_adaptations_res_eq
+                }
+            }
+            else = {
+                add_ideas = SPI_arachnid_adaptations_eq
+            }
+        }
+    }
+focus = {
+        id = SPI_cannibalistic_tendencies
+		relative_position_id = SPI_hunger
+        
+        prerequisite = { focus = SPI_matriphagy }
+        
+        icon = GFX_goal_SPI_cannibalistic_tendencies
+
+        mutually_exclusive = {
+            focus = SPI_feed_and_breed
+        }
+        
+        x = 1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 50
+            modifier = {
+                factor = 2
+                OR = { # human player nearby detected! Prepare to get rekt
+                    MIR = { is_ai = no }
+                    DGU = { is_ai = no }
+                    VAL = { is_ai = no }
+                    ERE = { is_ai = no }
+                    LTH = { is_ai = no }
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
+        available = {
+            if = {
+                limit = { is_ai = no }
+                has_army_manpower = {
+                    size > 5000
+                }
+            }
+            else = {
+                has_army_manpower = {
+                    size > 4000
+                }
+            }
+        }
+        completion_reward = {
+			# increase mp from self-casualties  
+            increase_mp_from_self_casualties = yes
+		}
+    }
+
+    focus = {
+        id = SPI_feed_and_breed
+		relative_position_id = SPI_hunger
+        
+        prerequisite = { focus = SPI_matriphagy }
+        
+        icon = GFX_goal_SPI_matriphagy_2
+
+        mutually_exclusive = {
+            focus = SPI_cannibalistic_tendencies
+        }
         
         x = -1
         y = 3
 
         cost = 5
-        ai_will_do = { factor = 40 }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            controls_state = 82
+        ai_will_do = {
+            factor = 50
+            modifier = {
+                factor = 0.5
+                OR = { # human player nearby detected! Prepare to get rekt
+                    MIR = { is_ai = no }
+                    DGU = { is_ai = no }
+                    VAL = { is_ai = no }
+                    ERE = { is_ai = no }
+                    LTH = { is_ai = no }
+                }
+            }
         }
         
+        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
+        available = {
+            always = yes
+        }
         completion_reward = {
-			# offmap mils?  
-            add_offsite_building = { type = arms_factory level = 3 }
+			# increase gain of mp from casualties inflicted  
+            increase_mp_from_enemy_casualties = yes
 		}
     }
 
     focus = {
-        id = SPI_expand_the_brood_burrows
-		relative_position_id = SPI_the_spiders_nest
+        id = SPI_the_great_feast
+		relative_position_id = SPI_hunger
         
-        prerequisite = { focus = SPI_silk_spun_workshops }
+        prerequisite = { focus = SPI_matriphagy }
         
-        icon = GFX_goal_SPI_hanging_egg
+        icon = GFX_goal_SPI_hunger_fangs_1
         
-        x = 1
-        y = 3
+        x = 0
+        y = 4
 
-        cost = 5
-        ai_will_do = { factor = 30 }
+        cost = 10
+        ai_will_do = { factor = 100 }
         
-        search_filters = { FOCUS_FILTER_INDUSTRY }
+        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
         available = {
-            controls_state = 82
+            spiders_has_inflicted_casualties_stage2 = yes
         }
         
         completion_reward = {
-			# civs  
-            82 = {
-                add_building_slot_and_civ_x2 = yes
+			# upgrade spiders
+            add_unit_bonus = {
+                category_special_spiders = {
+                   soft_attack = 0.1
+                   hard_attack = 0.1
+                   defense = 0.1
+                }
             }
 		}
     }
 
     focus = {
-        id = SPI_deepening_the_nest
-		relative_position_id = SPI_the_spiders_nest
+        id = SPI_the_colony_wakes
+		relative_position_id = SPI_control_over_mirkwood
         
-        prerequisite = { focus = SPI_the_spiders_nest }
+        prerequisite = { focus = SPI_broodmothers_woodland }
         
-        icon = GFX_goal_SPI_spider_nest_burrow
+        icon = GFX_goal_SPI_spiders_in_tree
         
-        x = 0
+        x = 8
         y = 2
 
         cost = 5
-        ai_will_do = { factor = 15 }
+        ai_will_do = { factor = 25 }
         
         search_filters = { FOCUS_FILTER_INDUSTRY }
         available = {
             controls_state = 82
         }
-        
+        bypass_if_unavailable = yes
         completion_reward = {
-            # extra building slots, higher state category, and infrastructure
-            82 = {
-                set_state_category = large_city
-                add_building_construction = { type = infrastructure level = 2 instant_build = yes }
+			# gain lump of mp  
+            add_manpower = 3000
+		}
+    }
+
+    focus = {
+        id = SPI_defensive_stance
+		relative_position_id = SPI_control_over_mirkwood
+        
+        prerequisite = { focus = SPI_control_over_mirkwood }
+        
+        icon = GFX_goal_SPI_spider_in_cave
+
+        mutually_exclusive = {
+            focus = SPI_aggresive_stance
+        }
+        
+        x = -2
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 20
+            modifier = {
+                factor = 2
+                is_historical_focus_on = yes
+                MIR = { is_ai = yes }
+            }
+            modifier = {
+                factor = 0.75
+                MIR = { is_ai = no }
             }
         }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			add_timed_idea = {
+                idea = SPI_defensive_stance
+                days = 720
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_aggresive_stance
+		relative_position_id = SPI_control_over_mirkwood
+        
+        prerequisite = { focus = SPI_control_over_mirkwood }
+        
+        icon = GFX_goal_SPI_spiders_in_tree
+
+        mutually_exclusive = {
+            focus = SPI_defensive_stance
+        }
+        
+        x = -5
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 1.25
+                MIR = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        completion_reward = {
+			add_timed_idea = {
+                idea = SPI_aggresive_stance
+                days = 270
+            }
+            custom_effect_tooltip = SPI_aggresive_stance_tt
+		}
+    }
+
+    focus = {
+        id = SPI_step_out_of_the_shadows
+		relative_position_id = SPI_control_over_mirkwood
+        
+        prerequisite = { focus = SPI_control_over_mirkwood }
+        
+        icon = GFX_goal_LTH_golden_wood_shield_barrier_pres
+        
+        x = 2
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 35
+            modifier = {
+                factor = 1.3
+                any_enemy_country = {
+                    is_ai = no
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            if = {
+                limit = { is_ai = no }
+                custom_trigger_tooltip = {
+                    tooltip = SPI_step_out_of_the_shadows_condition_tt
+                    any_controlled_state = {
+                        NOT = { is_on_continent = mirkwood }
+                    }
+                }
+            }
+            else = {
+                any_enemy_country = {
+                    capital_scope = { NOT = { is_on_continent = mirkwood } }
+                }
+            }
+        }
+        
+        completion_reward = {
+			# remove debuff on non-jungle terrain  
+            custom_effect_tooltip = SPI_step_out_of_the_shadows_tt
+            hidden_effect = {
+                add_unit_bonus = {
+                    category_special_spiders = {
+                        hills = {
+                            movement = 0.2
+                            defence = 0.2
+                            attack = 0.2
+                        }
+                        mountain = {
+                            movement = 0.2
+                            defence = 0.2
+                            attack = 0.2
+                        }
+                        marsh = {
+                            movement = 0.2
+                            defence = 0.2
+                            attack = 0.2
+                        }
+                        plains = {
+                            movement = 0.2
+                            defence = 0.2
+                            attack = 0.2
+                        }
+                        desert = {
+                            movement = 0.2
+                            defence = 0.2
+                            attack = 0.2
+                        }
+                    }
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_hatred_of_the_bright_folk
+		relative_position_id = SPI_let_roam_the_brood
+        
+        prerequisite = { focus = SPI_direct_the_hunting_brood }
+        
+        icon = GFX_goal_SPI_target_attack_elves
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 5
+                threat > 0.2
+            }
+            modifier = {
+                add = 5
+                threat > 0.6
+            }
+            modifier = {
+                add = 5
+                has_opinion = {
+                    target = MIR
+                    value < -10
+                }
+            }
+            modifier = {
+                add = 5
+                has_opinion = {
+                    target = MIR
+                    value < -35
+                }
+            }
+            modifier = {
+                factor = 0
+                has_war = yes
+                alliance_strength_ratio < 1.5
+            }
+            modifier = {
+                factor = 0.5
+                has_war = yes
+            }
+            modifier = {
+                add = 10
+                MIR = { is_weaker = yes }
+            }
+            modifier = {
+                add = 15
+                MIR = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                add = 10
+                MIR = { has_war = yes }
+                has_war = no
+            }
+            modifier = {
+                factor = 0.1
+                has_country_flag = has_likely_next_random_war_target
+            }
+            modifier = {
+                factor = 1.2
+                MIR = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_ANNEXATION }
+       available = {
+            MIR = {
+                war_with_is_possible = yes
+                is_neighbor_of = SPI
+            }
+            is_subject = no
+        }
+        bypass = {
+            has_war_with = MIR
+        }
+        completion_reward = {
+            MIR = {
+                set_as_likely_next_random_war_target = yes
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_the_taste_of_stone_flesh
+		relative_position_id = SPI_let_roam_the_brood
+        
+        prerequisite = { focus = SPI_direct_the_hunting_brood }
+        
+        icon = GFX_goal_SPI_target_attack_dwarves
+        
+        x = -3
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 5
+                threat > 0.2
+            }
+            modifier = {
+                add = 5
+                threat > 0.6
+            }
+            modifier = {
+                add = 5
+                has_opinion = {
+                    target = ERE
+                    value < -10
+                }
+            }
+            modifier = {
+                add = 5
+                has_opinion = {
+                    target = ERE
+                    value < -35
+                }
+            }
+            modifier = {
+                factor = 0
+                has_war = yes
+                alliance_strength_ratio < 1.5
+            }
+            modifier = {
+                factor = 0.5
+                has_war = yes
+            }
+            modifier = {
+                add = 10
+                ERE = { is_weaker = yes }
+            }
+            modifier = {
+                add = 15
+                ERE = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                add = 10
+                ERE = { has_war = yes }
+                has_war = no
+            }
+            modifier = {
+                factor = 0.1
+                has_country_flag = has_likely_next_random_war_target
+            }
+            modifier = {
+                factor = 1.2
+                ERE = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_ANNEXATION }
+        available = {
+            ERE = {
+                war_with_is_possible = yes
+                is_neighbor_of = SPI
+            }
+            is_subject = no
+        }
+        bypass = {
+            has_war_with = ERE
+        }
+        completion_reward = {
+            ERE = {
+                set_as_likely_next_random_war_target = yes
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_stench_of_the_rotten
+		relative_position_id = SPI_let_roam_the_brood
+        
+        prerequisite = { focus = SPI_direct_the_hunting_brood }
+        
+        icon = GFX_goal_SPI_target_attack_orcs
+        
+        x = 1
+        y = 2
+
+        cost = 5
+
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 5
+                threat > 0.2
+            }
+            modifier = {
+                add = 5
+                threat > 0.6
+            }
+            modifier = {
+                add = 5
+                has_opinion = {
+                    target = DGU
+                    value < -10
+                }
+            }
+            modifier = {
+                add = 5
+                has_opinion = {
+                    target = DGU
+                    value < -35
+                }
+            }
+            modifier = {
+                factor = 0
+                has_war = yes
+                alliance_strength_ratio < 1.5
+            }
+            modifier = {
+                factor = 0.5
+                has_war = yes
+            }
+            modifier = {
+                add = 10
+                DGU = { is_weaker = yes }
+            }
+            modifier = {
+                add = 15
+                DGU = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                add = 10
+                DGU = { has_war = yes }
+                has_war = no
+            }
+            modifier = {
+                factor = 0.1
+                has_country_flag = has_likely_next_random_war_target
+            }
+            modifier = {
+                factor = 1.2
+                DGU = { is_ai = no }
+            }
+        }
+        
+        
+        search_filters = { FOCUS_FILTER_ANNEXATION }
+        available = {
+            DGU = {
+                war_with_is_possible = yes
+                is_neighbor_of = SPI
+            }
+            is_subject = no
+        }
+        bypass = {
+            has_war_with = DGU
+        }
+        completion_reward = {
+            DGU = {
+                set_as_likely_next_random_war_target = yes
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_exalt_the_brood_warriors
+		relative_position_id = SPI_hierarchy_order
+        
+        prerequisite = { focus = SPI_hierarchy_order }
+        
+        icon = GFX_goal_SPI_infighting_cann
+        
+        x = -3
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                has_war = yes
+            }
+            modifier = {
+                factor = 2
+                MIR = { is_ai = no }
+                NOT = { is_ally_with = MIR }
+            }
+            modifier = {
+                factor = 2
+                threat > 0.2
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# something with military and traits  
+            hidden_effect = {
+                every_unit_leader = {
+                    remove_unit_leader_trait = instinct_driven
+                    add_unit_leader_trait = instinct_driven_improved
+                }
+            }
+            custom_effect_tooltip = SPI_exalt_the_brood_warriors_tt
+		}
     }
 
     focus = {
@@ -2320,172 +1968,6 @@ focus_tree = {
             }
             
         }
-    }
-
-    focus = {
-        id = SPI_proliferation_of_the_swarm
-		relative_position_id = SPI_the_brood_lairs
-        
-        prerequisite = { focus = SPI_the_brood_lairs }
-        
-        icon = GFX_goal_SPI_eyes_in_the_dark
-        
-        x = 0
-        y = 1
-
-        cost = 5
-        ai_will_do = { factor = 20 }
-        
-        search_filters = { FOCUS_FILTER_INDUSTRY }
-        available = {
-            controls_state = 82
-        }
-        
-        completion_reward = {
-            add_manpower = 3000
-        }
-    }
-
-    focus = {
-        id = SPI_grand_ambitions
-		relative_position_id = SPI_step_out_of_the_shadows
-		prerequisite = { focus = SPI_step_out_of_the_shadows }
-		prerequisite = { focus = SPI_control_all_mirkwood }
-        
-        icon = GFX_goal_generic_triumph_over_elven_crown
-        
-        x = 0
-        y = 2
-
-        cost = 10
-        ai_will_do = {
-            factor = 1
-            modifier = {
-                add = 5
-                VAL = { is_weaker = yes }
-            }
-            modifier = {
-                add = 5
-                GLD = { is_weaker = yes }
-            }
-            modifier = {
-                add = 5
-                RGL = { is_weaker = yes }
-            }
-            modifier = {
-                add = 5
-                LTH = { is_weaker = yes }
-            }
-            modifier = {
-                factor = 0
-                has_war = yes
-                alliance_strength_ratio < 1.3
-            }
-            modifier = {
-                factor = 0.6
-                has_war = yes
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            is_subject = no
-            has_army_manpower = {
-                size = 15000
-            }
-        }
-        
-        completion_reward = {
-			# claim every anduinian-state not allied with SPI and some more
-            every_state = {
-                limit = {
-                    OR = {
-                        is_core_of = GLD
-                        is_core_of = RGL
-                        is_core_of = VAL
-                        is_core_of = LTH
-                    }
-                    NOT = { controller = { is_ally_with = SPI } }
-                    NOT = { is_core_of = SPI }
-                }
-                add_claim_by = SPI
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_world_wide_web
-		relative_position_id = SPI_step_out_of_the_shadows
-        
-        prerequisite = { focus = SPI_grand_ambitions }
-        
-        icon = GFX_goal_SPI_cobweb_constr_architecture
-        
-        x = 0
-        y = 3
-
-        cost = 10
-        ai_will_do = { factor = 50 }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            # needs to control 30% of all states in the game
-            custom_trigger_tooltip = {
-                set_temp_variable = { states_amount = global.states^num }
-                multiply_temp_variable = { states_amount = 0.25 }
-                check_variable = {
-                    var:num_controlled_states > states_amount
-                }
-                tooltip = SPI_world_wide_web_condition_tt
-            }
-        }
-        
-        completion_reward = {
-			# late game manifest  
-            # change name/flag (formable nation effectively)
-            set_cosmetic_tag = SPIEMPIRE
-            custom_effect_tooltip = SPI_world_wide_web_tt
-            hidden_effect = {
-                every_controlled_state = {
-                    limit = {
-                        NOT = { is_core_of = SPI }
-                        impassable = no
-                    }
-                    add_compliance = 15
-                    add_building_slot_and_civ = yes
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_seek_new_knowledge
-		relative_position_id = SPI_arachnid_nature
-        
-        prerequisite = { focus = SPI_arachnid_nature }
-        
-        icon = GFX_goal_SPI_hive_mind_knowledge_res_2
-        
-        x = -5
-        y = 1
-
-        cost = 10
-        ai_will_do = { factor = 15 }
-        
-        search_filters = { FOCUS_FILTER_RESEARCH }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			# generic research  
-            add_tech_bonus = {
-                name = special_bonus
-                category = lotr_spider_secrets
-                uses = 1
-                bonus = 0.5
-            }
-		}
     }
 
     focus = {
@@ -2981,6 +2463,1232 @@ focus_tree = {
     }
 
     focus = {
+        id = SPI_matriphagy
+		relative_position_id = SPI_hunger
+        
+        prerequisite = { focus = SPI_hunger }
+        
+        icon = GFX_goal_SPI_matriphagy_3
+        
+        x = 0
+        y = 2
+
+        cost = 7
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 10
+                has_war = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
+        available = {
+            OR = {
+                has_war_support > 0.8
+                spiders_has_inflicted_casualties_stage1 = yes
+            }
+        }
+        
+        completion_reward = {
+			add_ideas = SPI_matriphagy
+		}
+    }
+
+    focus = {
+        id = SPI_increase_silk_production
+		relative_position_id = SPI_boons_of_the_nest
+
+        prerequisite = { focus = SPI_boons_of_the_nest }
+
+        mutually_exclusive = {
+            focus = SPI_the_silk_trade
+        }
+        
+        icon = GFX_goal_SPI_produce_more_silk
+        
+        x = -1
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                needs_tungsten = yes
+            }
+            modifier = {
+                factor = 2
+                needs_rubber = yes
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            82 = {
+                add_resource = {
+                    type = tungsten
+                    amount = 12
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_hungering_for_the_riverlands
+		relative_position_id = SPI_let_roam_the_brood
+        
+        prerequisite = { focus = SPI_direct_the_hunting_brood }
+        
+        icon = GFX_goal_SPI_target_attack_men
+        
+        x = 3
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 5
+                threat > 0.2
+            }
+            modifier = {
+                add = 5
+                threat > 0.6
+            }
+            modifier = {
+                add = 5
+                has_opinion = {
+                    target = VAL
+                    value < -10
+                }
+            }
+            modifier = {
+                add = 5
+                has_opinion = {
+                    target = VAL
+                    value < -35
+                }
+            }
+            modifier = {
+                factor = 0
+                has_war = yes
+                alliance_strength_ratio < 1.5
+            }
+            modifier = {
+                factor = 0.5
+                has_war = yes
+            }
+            modifier = {
+                add = 10
+                VAL = { is_weaker = yes }
+            }
+            modifier = {
+                add = 15
+                VAL = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                add = 10
+                VAL = { has_war = yes }
+                has_war = no
+            }
+            modifier = {
+                factor = 0.1
+                has_country_flag = has_likely_next_random_war_target
+            }
+            modifier = {
+                factor = 1.2
+                VAL = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_ANNEXATION }
+        available = {
+            VAL = {
+                war_with_is_possible = yes
+                is_neighbor_of = SPI
+            }
+            is_subject = no
+        }
+        bypass = {
+            has_war_with = VAL
+        }
+        completion_reward = {
+			# target vales of anduin
+            VAL = {
+                set_as_likely_next_random_war_target = yes
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_erratic_ascendance
+		relative_position_id = SPI_seek_new_knowledge
+
+        prerequisite = { focus = SPI_seek_new_knowledge }
+
+        mutually_exclusive = { focus = SPI_measured_mutations }
+        
+        icon = GFX_goal_SPI_erratic_ascendance
+        
+        x = -1
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# choose one of the following at random instant  
+            hidden_effect = {
+                random_list = {
+                    10 = { complete_national_focus = SPI_sharpened_fangs }
+                    10 = { complete_national_focus = SPI_volatile_gland_experiments }
+                    10 = { complete_national_focus = SPI_arachnid_engineering }
+                    10 = { complete_national_focus = SPI_whispers_in_the_webs }
+                }
+            }
+            custom_effect_tooltip = SPI_through_cannibal_rites_tt
+		}
+    }
+
+    focus = {
+        id = SPI_measured_mutations
+		relative_position_id = SPI_seek_new_knowledge
+        
+        prerequisite = { focus = SPI_seek_new_knowledge }
+        
+        icon = GFX_goal_SPI_measured_mutations
+
+        mutually_exclusive = { focus = SPI_erratic_ascendance }
+        
+        x = 1
+        y = 1
+
+        cost = 10
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# slow but select next one (maybe some small generic boost)  
+            add_tech_bonus = {
+                name = special_bonus
+                uses = 1
+                bonus = 0.2
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_carpaces_and_fangs
+		relative_position_id = SPI_hierarchy_order
+        
+        prerequisite = { focus = SPI_exalt_the_brood_warriors }
+        
+        icon = GFX_goal_SPI_venomous_fangs
+        
+        x = -4
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                has_equipment = {
+                    infantry_equipment < 100
+                }
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# mils  
+            random_state_add_building_slot_and_mil_x2 = yes
+		}
+    }
+
+    focus = {
+        id = SPI_adaptive_learning
+		relative_position_id = SPI_hierarchy_order
+        
+        prerequisite = { focus = SPI_exalt_the_brood_warriors }
+        
+        icon = GFX_goal_SPI_predation_senses
+        
+        x = -2
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 3
+            modifier = {
+                factor = 2
+                has_war = yes
+            }
+            modifier = {
+                factor = 2
+                MIR = { is_ai = no }
+                NOT = { is_ally_with = MIR }
+            }
+            modifier = {
+                factor = 2
+                threat > 0.2
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# doctrine bonus
+            add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 2
+				category = land_doctrine
+			}
+			add_mastery_bonus = {
+				name = mastery_bonus
+				bonus = 0.1
+				days = 240
+				grand_doctrine = horde_tactics_doctrine
+			}
+		}
+    }
+
+    focus = {
+        id = SPI_devour_the_deep_kin
+		relative_position_id = SPI_let_roam_the_brood
+        
+        prerequisite = { focus = SPI_the_taste_of_stone_flesh }
+        
+        icon = GFX_goal_SPI_dwarf_skulls_cobweb
+        
+        x = -3
+        y = 3
+
+        cost = 10
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 5
+                num_occupied_states > 1
+            }
+            modifier = {
+                add = 10
+                num_occupied_states > 2
+            }
+            modifier = {
+                add = 10
+                num_occupied_states > 3
+            }
+            modifier = {
+                add = 15
+                num_occupied_states > 5
+            }
+            modifier = {
+                factor = 0.1
+                has_war_with = ERE
+                country_exists = ERE
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_ANNEXATION }
+        available = {
+            any_controlled_state = {
+                is_core_of = ERE
+            }
+            NOT = { is_ally_with = ERE }
+        }
+        
+        completion_reward = {
+            # remove 10% of population from all states with dwarven cores we control.
+            # Gain +1% entrenchment for every 10k population removed this way.
+            custom_effect_tooltip = SPI_devour_the_deep_kin_tt
+
+            hidden_effect = {
+                spiders_init_devour_modifiers = yes
+            }
+
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = { any_country_with_core = { is_dwarves = yes } }
+                    # set bonus
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
+                    add_to_variable = { SPI.spider_bonus_from_dwarves = temp_pop_remove }
+                    # remove pop
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = -50 }
+                    add_manpower = temp_pop_remove
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_feast_on_the_fair
+		relative_position_id = SPI_let_roam_the_brood
+        
+        prerequisite = { focus = SPI_hatred_of_the_bright_folk }
+        
+        icon = GFX_goal_SPI_elven_bows_cobweb
+        
+        x = -1
+        y = 3
+
+        cost = 10
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 5
+                num_occupied_states > 1
+            }
+            modifier = {
+                add = 10
+                num_occupied_states > 2
+            }
+            modifier = {
+                add = 10
+                num_occupied_states > 3
+            }
+            modifier = {
+                add = 15
+                num_occupied_states > 5
+            }
+            modifier = {
+                factor = 0.1
+                has_war_with = MIR
+                country_exists = MIR
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_ANNEXATION }
+        available = {
+            any_controlled_state = {
+                is_core_of = MIR
+            }
+            NOT = { is_ally_with = MIR }
+        }
+        
+        completion_reward = {
+            # gain 1% org for every 10k we eat
+            custom_effect_tooltip = SPI_feast_on_the_fair_tt
+
+            hidden_effect = {
+                spiders_init_devour_modifiers = yes
+    
+                every_controlled_state = {
+                    limit = { any_country_with_core = { is_elves = yes } }
+                    # set bonus
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
+                    add_to_variable = { SPI.spider_bonus_from_elves = temp_pop_remove }
+                    # remove pop
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = -50 }
+                    add_manpower = temp_pop_remove
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_webs_over_the_black_tower
+		relative_position_id = SPI_let_roam_the_brood
+        
+        prerequisite = { focus = SPI_stench_of_the_rotten }
+        
+        icon = GFX_goal_generic_defeat_death_fallen
+        
+        x = 1
+        y = 3
+
+        cost = 10
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 5
+                num_occupied_states > 1
+            }
+            modifier = {
+                add = 10
+                num_occupied_states > 2
+            }
+            modifier = {
+                add = 10
+                num_occupied_states > 3
+            }
+            modifier = {
+                add = 15
+                num_occupied_states > 5
+            }
+            modifier = {
+                factor = 0.1
+                has_war_with = DGU
+                country_exists = DGU
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_ANNEXATION }
+        available = {
+            any_controlled_state = {
+                is_core_of = DGU
+            }
+            NOT = { is_ally_with = DGU }
+        }
+        
+        completion_reward = {
+            # gain 1% strength for every 10k we eat
+            custom_effect_tooltip = SPI_webs_over_the_black_tower_tt
+
+            hidden_effect = {
+                spiders_init_devour_modifiers = yes
+
+                every_controlled_state = {
+                    limit = { any_country_with_core = { is_orcs = yes } }
+                    # set bonus
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
+                    add_to_variable = { SPI.spider_bonus_from_orcs = temp_pop_remove }
+                    # remove pop
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = -50 }
+                    add_manpower = temp_pop_remove
+                }
+            }
+
+            if = {
+                limit = { control_all_mordor_states = yes }
+                set_country_flag = mcsaurons_achievement_flag
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_delicous_warm_blood
+		relative_position_id = SPI_let_roam_the_brood
+        
+        prerequisite = { focus = SPI_hungering_for_the_riverlands }
+        
+        icon = GFX_goal_SPI_human_skull_spider
+        
+        x = 3
+        y = 3
+
+        cost = 10
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 5
+                num_occupied_states > 1
+            }
+            modifier = {
+                add = 10
+                num_occupied_states > 2
+            }
+            modifier = {
+                add = 10
+                num_occupied_states > 3
+            }
+            modifier = {
+                add = 15
+                num_occupied_states > 5
+            }
+            modifier = {
+                factor = 0.1
+                has_war_with = VAL
+                country_exists = VAL
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_ANNEXATION }
+        available = {
+            any_controlled_state = {
+                OR = {
+                    is_core_of = VAL
+                    is_core_of = RGL
+                    is_core_of = GLD
+                }
+            }
+        }
+        
+        completion_reward = {
+            # gain 1% morale for every 10k we eat
+            custom_effect_tooltip = SPI_delicous_warm_blood_tt
+            hidden_effect = {
+                spiders_init_devour_modifiers = yes
+
+                every_controlled_state = {
+                    limit = { any_country_with_core = { is_men = yes } }
+                    # set bonus
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
+                    add_to_variable = { SPI.spider_bonus_from_men = temp_pop_remove }
+                    # remove pop
+                    set_temp_variable = { temp_pop_remove = state_population_k }
+                    multiply_temp_variable = { temp_pop_remove = -50 }
+                    add_manpower = temp_pop_remove
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_the_silk_trade
+		relative_position_id = SPI_boons_of_the_nest
+        
+        prerequisite = { focus = SPI_boons_of_the_nest }
+        
+        icon = GFX_goal_SPI_silk_string_trade_dark
+
+        mutually_exclusive = {
+            focus = SPI_increase_silk_production
+        }
+        
+        x = 1
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 0.5
+                has_country_flag = rng_50p_flag_4
+            }
+            modifier = {
+                factor = 1.7
+                has_country_flag = rng_30p_flag_6
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			swap_ideas = {
+                remove_idea = lth_special_closed_economy
+                add_idea = limited_exports
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_arachnid_adaptations
+		relative_position_id = SPI_boons_of_the_nest
+        
+        prerequisite = { focus = SPI_the_silk_trade }
+        
+        icon = GFX_goal_SPI_fang_protect_egg
+        
+        x = 1
+        y = 2
+
+        cost = 10
+        ai_will_do = { factor = 12 }
+        
+        search_filters = { }
+        available = {
+            spiders_has_inflicted_casualties_stage1 = yes
+        }
+        completion_reward = {
+			# less resource pnealty  
+            if = {
+                limit = {
+                    has_idea = SPI_arachnid_adaptations_eq
+                }
+                swap_ideas = {
+                    remove_idea = SPI_arachnid_adaptations_eq
+                    add_idea = SPI_arachnid_adaptations_res_eq
+                }
+            }
+            else = {
+                add_ideas = SPI_arachnid_adaptations_res
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_skin_captured_prey
+		relative_position_id = SPI_boons_of_the_nest
+        
+        prerequisite = { focus = SPI_increase_silk_production }
+        
+        icon = GFX_goal_SPI_entrapped_soldier_web
+        
+        x = -1
+        y = 2
+
+        cost = 10
+        ai_will_do = {
+            factor = 7
+            modifier = {
+                factor = 3
+                needs_rubber = yes
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            spiders_has_inflicted_casualties_stage1 = yes
+        }
+        
+        completion_reward = {
+            82 = {
+                add_resource = {
+                    type = rubber
+                    amount = 15
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_ungoliants_apetite
+		relative_position_id = SPI_hunger
+        
+        prerequisite = { focus = SPI_the_great_feast }
+        
+        icon = GFX_goal_SPI_spider_attack_loom_lasrge
+        
+        x = 0
+        y = 6
+
+        cost = 10
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
+        available = {
+            spiders_has_inflicted_casualties_stage3 = yes
+        }
+        completion_reward = {
+            add_political_power = 150
+            add_stability = 0.1
+            add_war_support = 0.1
+
+            add_unit_bonus = {
+                category_special_spiders = {
+                    supply_consumption_factor = -0.1
+                    hardness = 0.15
+                    armor_value = 0.15
+                    hard_attack = 0.15
+                }
+            }
+
+			do_ungoliants_appetite = yes
+		}
+    }
+
+    focus = {
+        id = SPI_tender_flesh
+		relative_position_id = SPI_hunger
+        
+        prerequisite = { focus = SPI_the_great_feast }
+        
+        icon = GFX_goal_SPI_target_attack_elves
+
+        mutually_exclusive = {
+            focus = SPI_black_blood
+        }
+        
+        x = -2
+        y = 5
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                add = 35
+                any_enemy_country = {
+                    is_elves = yes
+                }
+            }
+            modifier = {
+                add = 35
+                any_enemy_country = {
+                    is_elves = yes
+                    is_neighbor_of = ROOT
+                }
+            }
+            modifier = {
+                factor = 0.5
+                any_enemy_country = {
+                    is_elves = yes
+                    is_ai = no # We are less likely to inflict casualties against someone who knows how to play
+                }
+            }
+            modifier = {
+                factor = 1.5
+                check_variable = {
+                    casualties_on_elves_total > casualties_on_orcs_total
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
+        available = {
+            spiders_has_inflicted_casualties_vs_elves = yes
+        }
+        
+        completion_reward = {
+			# get more mp from killing elves  
+            add_vs_elves_bonus = yes
+		}
+    }
+
+    focus = {
+        id = SPI_black_blood
+		relative_position_id = SPI_hunger
+        
+        prerequisite = { focus = SPI_the_great_feast }
+        
+        icon = GFX_goal_SPI_target_attack_orcs
+
+        mutually_exclusive = {
+            focus = SPI_tender_flesh
+        }
+        
+        x = 2
+        y = 5
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                add = 35
+                any_enemy_country = {
+                    is_orcs = yes
+                }
+            }
+            modifier = {
+                add = 35
+                any_enemy_country = {
+                    is_orcs = yes
+                    is_neighbor_of = ROOT
+                }
+            }
+            modifier = {
+                factor = 0.5
+                any_enemy_country = {
+                    is_orcs = yes
+                    is_ai = no # We are less likely to inflict casualties against someone who knows how to play
+                }
+            }
+            modifier = {
+                factor = 1.5
+                check_variable = {
+                    casualties_on_orcs_total > casualties_on_elves_total
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
+        available = {
+            spiders_has_inflicted_casualties_vs_orcs = yes
+        }
+        
+        completion_reward = {
+			# get more mp from killing orcs  
+            add_vs_orcs_bonus = yes
+		}
+    }
+
+    focus = {
+        id = SPI_the_brood_lairs
+		relative_position_id = SPI_the_colony_wakes
+        
+        prerequisite = { focus = SPI_the_colony_wakes }
+        
+        icon = GFX_goal_SPI_spider_with_eggs
+        
+        x = -3
+        y = 1
+
+        cost = 10
+        ai_will_do = { factor = 20 }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            controls_state = 82
+        }
+        completion_reward = {
+			# gain idea with a small amount of weekly mp  
+            add_ideas = SPI_the_brood_lairs
+		}
+    }
+
+    focus = {
+        id = SPI_the_spiders_nest
+		relative_position_id = SPI_the_colony_wakes
+		prerequisite = { focus = SPI_the_colony_wakes }
+		prerequisite = { focus = SPI_economy_of_hunger }
+        
+        icon = GFX_goal_SPI_burrow_holes_nest
+        
+        x = 4
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            controls_state = 82
+        }
+        completion_reward = {
+			# add a landmark building doing cool stuff
+            82 = {
+                add_building_construction = {
+                    type = landmark_spiders_nest
+                    level = 1
+                    instant_build = yes
+                    province = 9131
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_heed_the_necromancer
+		relative_position_id = SPI_alliance_building
+        
+        prerequisite = { focus = SPI_alliance_building }
+        
+        icon = GFX_goal_SPI_eye_of_sauron_submit
+
+        mutually_exclusive = {
+            focus = SPI_we_spin_our_own_threads
+            focus = SPI_light_and_shadow
+        }
+        
+        x = -5
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                add = 50
+                MOR = { is_significantly_stronger = yes }
+            }
+            modifier = {
+                factor = 0.25
+                OR = {
+                    MOR = { is_weaker = yes }
+                    MOR = { surrender_progress > 0.01 }
+                }
+            }
+            modifier = {
+                factor = 0
+                MOR = { is_significantly_weaker = yes }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        bypass = {
+            is_ally_with = MOR
+        }
+        available = {
+            NOT = { has_war_with = MOR }
+            NOT = { is_in_faction = yes }
+            country_exists = MOR
+            is_subject = no
+            MOR = {
+                is_subject = no
+                OR = {
+                    is_faction_leader = yes
+                    is_in_faction = no
+                }
+            }
+            MOR = { NOT = { eternal_animosity_exists_between = yes } }
+        }
+        
+        completion_reward = {
+			# send event to Mordor  
+            if = {
+                limit = { MOR = { is_faction_leader = yes } }
+                country_event = { id = spiders.106 days = 1 }
+            }
+            else = {
+                MOR = { country_event = { id = spiders.116 days = 1 } }
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_light_and_shadow
+		relative_position_id = SPI_alliance_building
+        
+        prerequisite = { focus = SPI_alliance_building }
+        
+        icon = GFX_goal_SPI_alliance_with_elves_coop
+
+        mutually_exclusive = {
+            focus = SPI_we_spin_our_own_threads
+            focus = SPI_heed_the_necromancer
+        }
+        
+        x = 5
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 0.7
+                MIR = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        bypass = {
+            is_ally_with = MIR
+        }
+        available = {
+            NOT = { has_war_with = MIR }
+            NOT = { is_in_faction = yes }
+            country_exists = MIR
+            is_subject = no
+            MIR = {
+                is_subject = no
+                OR = {
+                    is_faction_leader = yes
+                    is_in_faction = no
+                }
+            }
+            MIR = { NOT = { eternal_animosity_exists_between = yes } }
+        }
+        completion_reward = {
+			# send event to elves  
+            if = {
+                limit = { MIR = { is_faction_leader = yes } }
+                MIR = { ask_to_join_faction = yes }
+            }
+            else = {
+                MIR = { country_event = { id = spiders.116 days = 1 } }
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_consume_the_light
+		relative_position_id = SPI_step_out_of_the_shadows
+        
+        prerequisite = { focus = SPI_step_out_of_the_shadows }
+        
+        icon = GFX_goal_SPI_consume_the_light
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 3
+                any_enemy_country = {
+                    is_ai = no
+                }
+            }
+            modifier = {
+                factor = 2
+                alliance_strength_ratio < 1.3
+            }
+            modifier = {
+                factor = 2
+                alliance_strength_ratio < 1.0
+            }
+            modifier = {
+                factor = 2
+                alliance_strength_ratio < 0.5
+            }
+            modifier = {
+                factor = 2
+                surrender_progress > 0.3
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_war = yes
+            any_enemy_country = {
+                is_neighbor_of = SPI
+            }
+        }
+        # all neighbouring countries currently at war with us receive a 100% penalty for night attack
+        # (removed once they are no longer at war with us)
+        completion_reward = {
+            custom_effect_tooltip = SPI_consume_the_light_tt
+            hidden_effect = {
+                every_enemy_country = {
+                    limit = {
+                        is_neighbor_of = SPI
+                    }
+                    add_ideas = SPI_consume_the_light
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_build_up_defenses
+		relative_position_id = SPI_the_colony_wakes
+        
+        prerequisite = { focus = SPI_the_colony_wakes }
+        
+        icon = GFX_goal_DGU_dark_spires
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 20 }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# defense construction buff maybe something else  
+            add_timed_idea = {
+                idea = fortification_focus
+                days = 470
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_grand_ambitions
+		relative_position_id = SPI_step_out_of_the_shadows
+		prerequisite = { focus = SPI_step_out_of_the_shadows }
+		prerequisite = { focus = SPI_control_all_mirkwood }
+        
+        icon = GFX_goal_generic_triumph_over_elven_crown
+        
+        x = 0
+        y = 2
+
+        cost = 10
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 5
+                VAL = { is_weaker = yes }
+            }
+            modifier = {
+                add = 5
+                GLD = { is_weaker = yes }
+            }
+            modifier = {
+                add = 5
+                RGL = { is_weaker = yes }
+            }
+            modifier = {
+                add = 5
+                LTH = { is_weaker = yes }
+            }
+            modifier = {
+                factor = 0
+                has_war = yes
+                alliance_strength_ratio < 1.3
+            }
+            modifier = {
+                factor = 0.6
+                has_war = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            is_subject = no
+            has_army_manpower = {
+                size = 15000
+            }
+        }
+        
+        completion_reward = {
+			# claim every anduinian-state not allied with SPI and some more
+            every_state = {
+                limit = {
+                    OR = {
+                        is_core_of = GLD
+                        is_core_of = RGL
+                        is_core_of = VAL
+                        is_core_of = LTH
+                    }
+                    NOT = { controller = { is_ally_with = SPI } }
+                    NOT = { is_core_of = SPI }
+                }
+                add_claim_by = SPI
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_world_wide_web
+		relative_position_id = SPI_step_out_of_the_shadows
+        
+        prerequisite = { focus = SPI_grand_ambitions }
+        
+        icon = GFX_goal_SPI_cobweb_constr_architecture
+        
+        x = 0
+        y = 3
+
+        cost = 10
+        ai_will_do = { factor = 50 }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            # needs to control 30% of all states in the game
+            custom_trigger_tooltip = {
+                set_temp_variable = { states_amount = global.states^num }
+                multiply_temp_variable = { states_amount = 0.25 }
+                check_variable = {
+                    var:num_controlled_states > states_amount
+                }
+                tooltip = SPI_world_wide_web_condition_tt
+            }
+        }
+        
+        completion_reward = {
+			# late game manifest  
+            # change name/flag (formable nation effectively)
+            set_cosmetic_tag = SPIEMPIRE
+            custom_effect_tooltip = SPI_world_wide_web_tt
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = {
+                        NOT = { is_core_of = SPI }
+                        impassable = no
+                    }
+                    add_compliance = 15
+                    add_building_slot_and_civ = yes
+                }
+            }
+		}
+    }
+
+    focus = {
         id = SPI_focus_on_the_essentials
 		relative_position_id = SPI_web_wisdom_converged
         
@@ -3130,39 +3838,6 @@ focus_tree = {
     }
 
     focus = {
-        id = SPI_matriphagy
-		relative_position_id = SPI_hunger
-        
-        prerequisite = { focus = SPI_hunger }
-        
-        icon = GFX_goal_SPI_matriphagy_3
-        
-        x = 0
-        y = 2
-
-        cost = 7
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 10
-                has_war = yes
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
-        available = {
-            OR = {
-                has_war_support > 0.8
-                spiders_has_inflicted_casualties_stage1 = yes
-            }
-        }
-        
-        completion_reward = {
-			add_ideas = SPI_matriphagy
-		}
-    }
-
-    focus = {
         id = SPI_we_spin_our_own_threads
 		relative_position_id = SPI_alliance_building
         
@@ -3205,168 +3880,682 @@ focus_tree = {
     }
 
     focus = {
-        id = SPI_boons_of_the_nest
-		relative_position_id = SPI_matriarchs_court
+        id = SPI_strike_north
+		relative_position_id = SPI_aggresive_stance
         
-        prerequisite = { focus = SPI_matriarchs_court }
+        prerequisite = { focus = SPI_aggresive_stance }
         
-        icon = GFX_goal_SPI_nest_entrance
-        
-        x = -5
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                factor = 2
-                has_country_flag = rng_50p_flag_4
-            }
-
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-            add_tech_bonus = {
-                name = special_bonus
-                category = lotr_labour_metalworking_mining
-                uses = 1
-                bonus = 0.6
-            }
-        }
-    }
-
-    focus = {
-        id = SPI_increase_silk_production
-		relative_position_id = SPI_boons_of_the_nest
-
-        prerequisite = { focus = SPI_boons_of_the_nest }
+        icon = GFX_goal_SPI_spider_on_rocks
 
         mutually_exclusive = {
-            focus = SPI_the_silk_trade
+            focus = SPI_move_south
         }
-        
-        icon = GFX_goal_SPI_produce_more_silk
         
         x = -1
         y = 1
 
-        cost = 10
+        cost = 5
         ai_will_do = {
-            factor = 5
+            factor = 10
             modifier = {
-                factor = 2
-                needs_tungsten = yes
-            }
-            modifier = {
-                factor = 2
-                needs_rubber = yes
+                factor = 1.5
+                MIR = { is_ai = no }
+                has_country_flag = rng_50p_flag_1
             }
         }
         
-        search_filters = { }
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
         available = {
-            always = yes
+            has_cfm_active = yes
+            NOT = { controls_state = 80 }
+
+            80 = { borders_state = yes }
         }
+        bypass = {
+            controls_state = 80
+        }
+        
         completion_reward = {
-            82 = {
-                add_resource = {
-                    type = tungsten
-                    amount = 12
-                }
+			# put presence in certain state  
+            80 = {
+                cfm_restrict_to_state = yes
             }
-        }
+            
+            add_timed_idea = {
+                idea = SPI_strike_north
+                days = 365
+            }
+
+		}
     }
 
     focus = {
-        id = SPI_hungering_for_the_riverlands
-		relative_position_id = SPI_let_roam_the_brood
+        id = SPI_recall_the_roaming_brood
+		relative_position_id = SPI_defensive_stance
         
-        prerequisite = { focus = SPI_direct_the_hunting_brood }
+        prerequisite = { focus = SPI_defensive_stance }
         
-        icon = GFX_goal_SPI_target_attack_men
+        icon = GFX_goal_SPI_unleash_guide_brood_2
         
-        x = 3
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 20 }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			remove_ideas = SPI_defensive_stance
+            add_timed_idea = {
+                idea = SPI_defensive_stance_2
+                days = 720
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_move_south
+		relative_position_id = SPI_aggresive_stance
+        
+        prerequisite = { focus = SPI_aggresive_stance }
+        
+        icon = GFX_goal_SPI_spider_on_rocks
+
+        mutually_exclusive = {
+            focus = SPI_strike_north
+        }
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 1.5
+                MIR = { is_ai = no }
+                has_country_flag = rng_50p_flag_1
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+            NOT = { controls_state = 85 }
+
+            85 = { borders_state = yes }
+        }
+        bypass = {
+            controls_state = 85
+        }
+        
+        completion_reward = {
+			# put presence in other state  
+            85 = {
+                cfm_restrict_to_state = yes
+            }
+            
+            add_timed_idea = {
+                idea = SPI_move_south
+                days = 365
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_secure_the_north
+		relative_position_id = SPI_defensive_stance
+        
+        prerequisite = { focus = SPI_recall_the_roaming_brood }
+        
+        icon = GFX_goal_SPI_spider_on_rocks
+        
+        x = -1
         y = 2
+
+        cost = 5
+        ai_will_do = { factor = 20 }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            controls_state = 226
+        }
+        
+        completion_reward = {
+			# building sot state 226
+            226 = {
+                add_building_slot_and_mil = yes
+                add_building_slot_and_civ = yes
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_endless_sprawl
+		relative_position_id = SPI_aggresive_stance
+        
+        prerequisite = { focus = SPI_aggresive_stance }
+        
+        icon = GFX_goal_SPI_eyes_in_the_dark
+        
+        x = 0
+        y = 2
+
+        cost = 10
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 1.5
+                MIR = { is_ai = no }
+            }
+            modifier = {
+                factor = 2
+                has_country_flag = rng_30p_flag_3
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            NOT = { is_ally_with = MIR }
+            country_exists = MIR
+            is_neighbor_of = MIR
+        }
+        
+        completion_reward = {
+			# add spider infestation to all neighbour mirkwood states. Gain 25 pp per state affected.
+            custom_effect_tooltip = SPI_endless_sprawl_tt
+            hidden_effect = {
+                every_controlled_state = {
+                    every_neighbor_state = {
+                        limit = {
+                            is_on_continent = mirkwood
+                            NOT = { is_controlled_by = SPI }
+                            controller = { NOT = { is_ally_with = SPI } }
+                            impassable = no
+                            NOT = { has_dynamic_modifier = spider_infestation }
+                        }
+                        add_dynamic_modifier = {
+                            modifier = spider_infestation
+                        }
+                        SPI = {
+                            add_political_power = 25
+                        }
+                    }   
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_secure_the_south
+		relative_position_id = SPI_defensive_stance
+        
+        prerequisite = { focus = SPI_recall_the_roaming_brood }
+        
+        icon = GFX_goal_SPI_spider_on_rocks
+        
+        x = 1
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 20 }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            controls_state = 226
+        }
+        
+        completion_reward = {
+			# building sot state 229
+            229 = {
+                add_building_slot_and_mil = yes
+                add_building_slot_and_civ = yes
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_call_up_the_hatchlings
+		relative_position_id = SPI_the_brood_lairs
+        
+        prerequisite = { focus = SPI_proliferation_of_the_swarm }
+        
+        icon = GFX_goal_SPI_eggs_on_branch
+
+        mutually_exclusive = {
+            focus = SPI_let_eggs_mature
+        }
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 1.5
+                has_war = yes
+            }
+            modifier = {
+                factor = 1.5
+                threat > 0.1
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            controls_state = 82
+        }
+        completion_reward = {
+			# gain bad divs now  
+            hidden_effect = {
+                load_oob = SPI_hatchlings
+            }
+            custom_effect_tooltip = SPI_call_up_the_hatchlings_tt
+		}
+    }
+
+    focus = {
+        id = SPI_let_eggs_mature
+		relative_position_id = SPI_the_brood_lairs
+        
+        prerequisite = { focus = SPI_proliferation_of_the_swarm }
+        
+        icon = GFX_goal_SPI_egg_colonies
+
+        mutually_exclusive = {
+            focus = SPI_call_up_the_hatchlings
+        }
+        
+        x = 1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 0.1
+                has_war = yes
+            }
+            modifier = {
+                factor = 1.5
+                threat < 0.1
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            controls_state = 82
+        }
+        completion_reward = { 
+			# gain good divs later  
+            hidden_effect = {
+                activate_mission = SPI_maturing_eggs
+            }
+            custom_effect_tooltip = SPI_let_eggs_mature_tt
+		}
+    }
+
+    focus = {
+        id = SPI_the_mothers_guard
+		relative_position_id = SPI_the_brood_lairs
+        
+        prerequisite = { focus = SPI_proliferation_of_the_swarm }
+        
+        icon = GFX_goal_SPI_matriphagy_1
+        
+        x = 0
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 2
+                has_war_with = MIR
+            }
+            modifier = {
+                factor = 2
+                has_war_with = DGU
+            }
+            modifier = {
+                factor = 0.5
+                any_controlled_state = {
+                    NOT = { is_on_continent = mirkwood }
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            controls_state = 82
+            has_tech = great_webstalkers
+        }
+        
+        completion_reward = {
+			# gain a super strong div that can dies when exits nest
+            hidden_effect = {
+                country_event = spiders.103
+            }
+            custom_effect_tooltip = SPI_the_mothers_guard_tt
+
+            # AI cant control the nest guardians properly, so they get this one for free
+            hidden_effect = {
+                if = {
+                    limit = { is_ai = yes }
+                    complete_national_focus = SPI_extend_the_perimeter
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_return_of_night_mother_shelob
+		relative_position_id = SPI_heed_the_necromancer
+        
+        prerequisite = { focus = SPI_heed_the_necromancer focus = SPI_the_one_ring_gambit }
+        
+        icon = GFX_goal_SPI_shelob
+        
+        x = 0
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 0
+                has_completed_focus = SPI_heed_the_necromancer
+                has_country_flag = rng_30p_flag_1
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            OR = {
+                5 = { controller = { is_ally_with = SPI } }
+                5 = { is_controlled_by = SPI }
+            }
+            NOT = { has_global_flag = MOR_shelob_driven_off }
+        }
+
+        bypass = {
+            has_country_leader = { character = SPI_shelob ruling_only = yes }
+        }
+        
+        completion_reward = {
+			# send event to get shelob as leader
+            if = {
+                limit = { 5 = { is_controlled_by = ROOT } }
+                empower_shelob = yes
+            }
+            else = {
+                5 = { controller = { country_event = { id = spiders.100 days = 1 } } }
+                custom_effect_tooltip = if_they_accept_tt
+                effect_tooltip = {
+                    empower_shelob = yes
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_daughter_of_ungoliant
+		relative_position_id = SPI_heed_the_necromancer
+        
+        prerequisite = { focus = SPI_return_of_night_mother_shelob }
+        
+        icon = GFX_goal_SPI_subjugate_lesser_spiders_auth
+        
+        x = 0
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            has_country_leader = {
+	            character = SPI_shelob
+	            ruling_only = yes
+            }
+        }
+        
+        completion_reward = {
+			# give shelob special trait  
+            add_country_leader_trait = last_child_of_ungoliant
+		}
+    }
+
+    focus = {
+        id = SPI_ensnare_the_invaders
+		relative_position_id = SPI_build_up_defenses
+        
+        prerequisite = { focus = SPI_build_up_defenses }
+        
+        icon = GFX_goal_SPI_entrapped_soldier_web
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 8
+            modifier = {
+                factor = 2
+                MIR = { is_ai = no }
+            }
+            modifier = {
+                factor = 2
+                has_war = yes
+            }
+            modifier = {
+                factor = 2
+                threat > 0.2
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# debuff to enemies in mirkwood  
+            custom_effect_tooltip = for_every_core_state_tt
+            every_core_state = {
+                add_dynamic_modifier = {
+                    modifier = web_traps
+                    scope = SPI
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_aerial_webwalls
+		relative_position_id = SPI_build_up_defenses
+        
+        prerequisite = { focus = SPI_build_up_defenses }
+        
+        icon = GFX_goal_generic_anti_air_eagle
+        
+        x = -1
+        y = 1
 
         cost = 5
         ai_will_do = {
             factor = 1
             modifier = {
-                add = 5
-                threat > 0.2
-            }
-            modifier = {
-                add = 5
-                threat > 0.6
-            }
-            modifier = {
-                add = 5
-                has_opinion = {
-                    target = VAL
-                    value < -10
+                add = 10
+                any_enemy_country = {
+                    has_deployed_air_force_size = { size > 10 }
                 }
             }
             modifier = {
-                add = 5
-                has_opinion = {
-                    target = VAL
-                    value < -35
+                add = 10
+                any_enemy_country = {
+                    has_deployed_air_force_size = { size > 20 }
                 }
             }
             modifier = {
-                factor = 0
-                has_war = yes
-                alliance_strength_ratio < 1.5
-            }
-            modifier = {
-                factor = 0.5
-                has_war = yes
-            }
-            modifier = {
                 add = 10
-                VAL = { is_weaker = yes }
-            }
-            modifier = {
-                add = 15
-                VAL = { is_significantly_weaker = yes }
-            }
-            modifier = {
-                add = 10
-                VAL = { has_war = yes }
-                has_war = no
-            }
-            modifier = {
-                factor = 0.1
-                has_country_flag = has_likely_next_random_war_target
-            }
-            modifier = {
-                factor = 1.2
-                VAL = { is_ai = no }
+                any_enemy_country = {
+                    has_deployed_air_force_size = { size > 30 }
+                }
             }
         }
         
-        search_filters = { FOCUS_FILTER_ANNEXATION }
+        search_filters = { FOCUS_FILTER_INDUSTRY }
         available = {
-            VAL = {
-                war_with_is_possible = yes
-                is_neighbor_of = SPI
-            }
-            is_subject = no
+            always = yes
         }
-        bypass = {
-            has_war_with = VAL
+        
+        completion_reward = {
+			# +AA  
+            hidden_effect = {
+                every_core_state = {
+                    add_building_construction = { type = anti_air_building level = 2 instant_build = yes }
+                }
+            }
+            custom_effect_tooltip = SPI_aerial_webwalls_tt
+		}
+    }
+
+    focus = {
+        id = SPI_silk_spun_workshops
+		relative_position_id = SPI_the_spiders_nest
+        
+        prerequisite = { focus = SPI_the_spiders_nest }
+        
+        icon = GFX_goal_SPI_hanging_egg
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 30 }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            controls_state = 82
         }
         completion_reward = {
-			# target vales of anduin
-            VAL = {
-                set_as_likely_next_random_war_target = yes
+			# civs  
+            82 = {
+                add_building_slot_and_civ_x2 = yes
             }
 		}
+    }
+
+    focus = {
+        id = SPI_underground_colonies
+		relative_position_id = SPI_the_spiders_nest
+		prerequisite = { focus = SPI_deepening_the_nest }
+		prerequisite = { focus = SPI_protect_the_egg_chambers }
+        
+        icon = GFX_goal_DGU_spiderweb_eggs
+        
+        x = -1
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 40 }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            controls_state = 82
+        }
+        
+        completion_reward = {
+			# offmap mils?  
+            add_offsite_building = { type = arms_factory level = 3 }
+		}
+    }
+
+    focus = {
+        id = SPI_expand_the_brood_burrows
+		relative_position_id = SPI_the_spiders_nest
+        
+        prerequisite = { focus = SPI_silk_spun_workshops }
+        
+        icon = GFX_goal_SPI_hanging_egg
+        
+        x = 1
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 30 }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            controls_state = 82
+        }
+        
+        completion_reward = {
+			# civs  
+            82 = {
+                add_building_slot_and_civ_x2 = yes
+            }
+		}
+    }
+
+    focus = {
+        id = SPI_deepening_the_nest
+		relative_position_id = SPI_the_spiders_nest
+        
+        prerequisite = { focus = SPI_the_spiders_nest }
+        
+        icon = GFX_goal_SPI_spider_nest_burrow
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 15 }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            controls_state = 82
+        }
+        
+        completion_reward = {
+            # extra building slots, higher state category, and infrastructure
+            82 = {
+                set_state_category = large_city
+                add_building_construction = { type = infrastructure level = 2 instant_build = yes }
+            }
+        }
+    }
+
+    focus = {
+        id = SPI_proliferation_of_the_swarm
+		relative_position_id = SPI_the_brood_lairs
+        
+        prerequisite = { focus = SPI_the_brood_lairs }
+        
+        icon = GFX_goal_SPI_eyes_in_the_dark
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 20 }
+        
+        search_filters = { FOCUS_FILTER_INDUSTRY }
+        available = {
+            controls_state = 82
+        }
+        
+        completion_reward = {
+            add_manpower = 3000
+        }
     }
 
     focus = {
@@ -3583,72 +4772,6 @@ focus_tree = {
                 add_building_construction = { type = anti_air_building level = 1 instant_build = yes }
                 add_building_construction = { type = industrial_complex level = 1 instant_build = yes }
                 add_building_construction = { type = arms_factory level = 1 instant_build = yes }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_erratic_ascendance
-		relative_position_id = SPI_seek_new_knowledge
-
-        prerequisite = { focus = SPI_seek_new_knowledge }
-
-        mutually_exclusive = { focus = SPI_measured_mutations }
-        
-        icon = GFX_goal_SPI_erratic_ascendance
-        
-        x = -1
-        y = 1
-
-        cost = 5
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { FOCUS_FILTER_RESEARCH }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			# choose one of the following at random instant  
-            hidden_effect = {
-                random_list = {
-                    10 = { complete_national_focus = SPI_sharpened_fangs }
-                    10 = { complete_national_focus = SPI_volatile_gland_experiments }
-                    10 = { complete_national_focus = SPI_arachnid_engineering }
-                    10 = { complete_national_focus = SPI_whispers_in_the_webs }
-                }
-            }
-            custom_effect_tooltip = SPI_through_cannibal_rites_tt
-		}
-    }
-
-    focus = {
-        id = SPI_measured_mutations
-		relative_position_id = SPI_seek_new_knowledge
-        
-        prerequisite = { focus = SPI_seek_new_knowledge }
-        
-        icon = GFX_goal_SPI_measured_mutations
-
-        mutually_exclusive = { focus = SPI_erratic_ascendance }
-        
-        x = 1
-        y = 1
-
-        cost = 10
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { FOCUS_FILTER_RESEARCH }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			# slow but select next one (maybe some small generic boost)  
-            add_tech_bonus = {
-                name = special_bonus
-                uses = 1
-                bonus = 0.2
             }
 		}
     }
@@ -4091,895 +5214,6 @@ focus_tree = {
     }
 
     focus = {
-        id = SPI_carpaces_and_fangs
-		relative_position_id = SPI_hierarchy_order
-        
-        prerequisite = { focus = SPI_exalt_the_brood_warriors }
-        
-        icon = GFX_goal_SPI_venomous_fangs
-        
-        x = -4
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-            factor = 15
-            modifier = {
-                factor = 2
-                has_equipment = {
-                    infantry_equipment < 100
-                }
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			# mils  
-            random_state_add_building_slot_and_mil_x2 = yes
-		}
-    }
-
-    focus = {
-        id = SPI_adaptive_learning
-		relative_position_id = SPI_hierarchy_order
-        
-        prerequisite = { focus = SPI_exalt_the_brood_warriors }
-        
-        icon = GFX_goal_SPI_predation_senses
-        
-        x = -2
-        y = 2
-
-        cost = 5
-        ai_will_do = {
-            factor = 3
-            modifier = {
-                factor = 2
-                has_war = yes
-            }
-            modifier = {
-                factor = 2
-                MIR = { is_ai = no }
-                NOT = { is_ally_with = MIR }
-            }
-            modifier = {
-                factor = 2
-                threat > 0.2
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			# doctrine bonus
-            add_doctrine_cost_reduction = {
-				cost_reduction = 0.5
-				uses = 2
-				category = land_doctrine
-			}
-			add_mastery_bonus = {
-				name = mastery_bonus
-				bonus = 0.1
-				days = 240
-				grand_doctrine = horde_tactics_doctrine
-			}
-		}
-    }
-
-    focus = {
-        id = SPI_devour_the_deep_kin
-		relative_position_id = SPI_let_roam_the_brood
-        
-        prerequisite = { focus = SPI_the_taste_of_stone_flesh }
-        
-        icon = GFX_goal_SPI_dwarf_skulls_cobweb
-        
-        x = -3
-        y = 3
-
-        cost = 10
-        ai_will_do = {
-            factor = 1
-            modifier = {
-                add = 5
-                num_occupied_states > 1
-            }
-            modifier = {
-                add = 10
-                num_occupied_states > 2
-            }
-            modifier = {
-                add = 10
-                num_occupied_states > 3
-            }
-            modifier = {
-                add = 15
-                num_occupied_states > 5
-            }
-            modifier = {
-                factor = 0.1
-                has_war_with = ERE
-                country_exists = ERE
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_ANNEXATION }
-        available = {
-            any_controlled_state = {
-                is_core_of = ERE
-            }
-            NOT = { is_ally_with = ERE }
-        }
-        
-        completion_reward = {
-            # remove 10% of population from all states with dwarven cores we control.
-            # Gain +1% entrenchment for every 10k population removed this way.
-            custom_effect_tooltip = SPI_devour_the_deep_kin_tt
-
-            hidden_effect = {
-                spiders_init_devour_modifiers = yes
-            }
-
-            hidden_effect = {
-                every_controlled_state = {
-                    limit = { any_country_with_core = { is_dwarves = yes } }
-                    # set bonus
-                    set_temp_variable = { temp_pop_remove = state_population_k }
-                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
-                    add_to_variable = { SPI.spider_bonus_from_dwarves = temp_pop_remove }
-                    # remove pop
-                    set_temp_variable = { temp_pop_remove = state_population_k }
-                    multiply_temp_variable = { temp_pop_remove = -50 }
-                    add_manpower = temp_pop_remove
-                }
-            }
-        }
-    }
-
-    focus = {
-        id = SPI_feast_on_the_fair
-		relative_position_id = SPI_let_roam_the_brood
-        
-        prerequisite = { focus = SPI_hatred_of_the_bright_folk }
-        
-        icon = GFX_goal_SPI_elven_bows_cobweb
-        
-        x = -1
-        y = 3
-
-        cost = 10
-        ai_will_do = {
-            factor = 1
-            modifier = {
-                add = 5
-                num_occupied_states > 1
-            }
-            modifier = {
-                add = 10
-                num_occupied_states > 2
-            }
-            modifier = {
-                add = 10
-                num_occupied_states > 3
-            }
-            modifier = {
-                add = 15
-                num_occupied_states > 5
-            }
-            modifier = {
-                factor = 0.1
-                has_war_with = MIR
-                country_exists = MIR
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_ANNEXATION }
-        available = {
-            any_controlled_state = {
-                is_core_of = MIR
-            }
-            NOT = { is_ally_with = MIR }
-        }
-        
-        completion_reward = {
-            # gain 1% org for every 10k we eat
-            custom_effect_tooltip = SPI_feast_on_the_fair_tt
-
-            hidden_effect = {
-                spiders_init_devour_modifiers = yes
-    
-                every_controlled_state = {
-                    limit = { any_country_with_core = { is_elves = yes } }
-                    # set bonus
-                    set_temp_variable = { temp_pop_remove = state_population_k }
-                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
-                    add_to_variable = { SPI.spider_bonus_from_elves = temp_pop_remove }
-                    # remove pop
-                    set_temp_variable = { temp_pop_remove = state_population_k }
-                    multiply_temp_variable = { temp_pop_remove = -50 }
-                    add_manpower = temp_pop_remove
-                }
-            }
-        }
-    }
-
-    focus = {
-        id = SPI_webs_over_the_black_tower
-		relative_position_id = SPI_let_roam_the_brood
-        
-        prerequisite = { focus = SPI_stench_of_the_rotten }
-        
-        icon = GFX_goal_generic_defeat_death_fallen
-        
-        x = 1
-        y = 3
-
-        cost = 10
-        ai_will_do = {
-            factor = 1
-            modifier = {
-                add = 5
-                num_occupied_states > 1
-            }
-            modifier = {
-                add = 10
-                num_occupied_states > 2
-            }
-            modifier = {
-                add = 10
-                num_occupied_states > 3
-            }
-            modifier = {
-                add = 15
-                num_occupied_states > 5
-            }
-            modifier = {
-                factor = 0.1
-                has_war_with = DGU
-                country_exists = DGU
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_ANNEXATION }
-        available = {
-            any_controlled_state = {
-                is_core_of = DGU
-            }
-            NOT = { is_ally_with = DGU }
-        }
-        
-        completion_reward = {
-            # gain 1% strength for every 10k we eat
-            custom_effect_tooltip = SPI_webs_over_the_black_tower_tt
-
-            hidden_effect = {
-                spiders_init_devour_modifiers = yes
-
-                every_controlled_state = {
-                    limit = { any_country_with_core = { is_orcs = yes } }
-                    # set bonus
-                    set_temp_variable = { temp_pop_remove = state_population_k }
-                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
-                    add_to_variable = { SPI.spider_bonus_from_orcs = temp_pop_remove }
-                    # remove pop
-                    set_temp_variable = { temp_pop_remove = state_population_k }
-                    multiply_temp_variable = { temp_pop_remove = -50 }
-                    add_manpower = temp_pop_remove
-                }
-            }
-
-            if = {
-                limit = { control_all_mordor_states = yes }
-                set_country_flag = mcsaurons_achievement_flag
-            }
-        }
-    }
-
-    focus = {
-        id = SPI_delicous_warm_blood
-		relative_position_id = SPI_let_roam_the_brood
-        
-        prerequisite = { focus = SPI_hungering_for_the_riverlands }
-        
-        icon = GFX_goal_SPI_human_skull_spider
-        
-        x = 3
-        y = 3
-
-        cost = 10
-        ai_will_do = {
-            factor = 1
-            modifier = {
-                add = 5
-                num_occupied_states > 1
-            }
-            modifier = {
-                add = 10
-                num_occupied_states > 2
-            }
-            modifier = {
-                add = 10
-                num_occupied_states > 3
-            }
-            modifier = {
-                add = 15
-                num_occupied_states > 5
-            }
-            modifier = {
-                factor = 0.1
-                has_war_with = VAL
-                country_exists = VAL
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_ANNEXATION }
-        available = {
-            any_controlled_state = {
-                OR = {
-                    is_core_of = VAL
-                    is_core_of = RGL
-                    is_core_of = GLD
-                }
-            }
-        }
-        
-        completion_reward = {
-            # gain 1% morale for every 10k we eat
-            custom_effect_tooltip = SPI_delicous_warm_blood_tt
-            hidden_effect = {
-                spiders_init_devour_modifiers = yes
-
-                every_controlled_state = {
-                    limit = { any_country_with_core = { is_men = yes } }
-                    # set bonus
-                    set_temp_variable = { temp_pop_remove = state_population_k }
-                    multiply_temp_variable = { temp_pop_remove = 0.0005 }
-                    add_to_variable = { SPI.spider_bonus_from_men = temp_pop_remove }
-                    # remove pop
-                    set_temp_variable = { temp_pop_remove = state_population_k }
-                    multiply_temp_variable = { temp_pop_remove = -50 }
-                    add_manpower = temp_pop_remove
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_economy_of_hunger
-		relative_position_id = SPI_matriarchs_court
-        
-        prerequisite = { focus = SPI_architects_of_silk }
-        
-        icon = GFX_goal_SPI_hunger_fangs_2
-        
-        x = -2
-        y = 3
-
-        cost = 5
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			# less consumers  
-            swap_ideas = {
-                remove_idea = economy_of_hunger
-                add_idea = economy_of_hunger_2
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_rouse_the_war_broods
-		relative_position_id = SPI_matriarchs_court
-        
-        prerequisite = { focus = SPI_economy_of_hunger }
-        
-        icon = GFX_goal_SPI_long_legs_spider
-        
-        x = -2
-        y = 4
-
-        cost = 10
-        ai_will_do = {
-            factor = 10
-            modifier = {
-                factor = 0.5
-                has_army_experience > 25
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			# generic military mobilization
-            army_experience = 100
-		}
-    }
-
-    focus = {
-        id = SPI_strike_north
-		relative_position_id = SPI_aggresive_stance
-        
-        prerequisite = { focus = SPI_aggresive_stance }
-        
-        icon = GFX_goal_SPI_spider_on_rocks
-
-        mutually_exclusive = {
-            focus = SPI_move_south
-        }
-        
-        x = -1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 10
-            modifier = {
-                factor = 1.5
-                MIR = { is_ai = no }
-                has_country_flag = rng_50p_flag_1
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            has_cfm_active = yes
-            NOT = { controls_state = 80 }
-
-            80 = { borders_state = yes }
-        }
-        bypass = {
-            controls_state = 80
-        }
-        
-        completion_reward = {
-			# put presence in certain state  
-            80 = {
-                cfm_restrict_to_state = yes
-            }
-            
-            add_timed_idea = {
-                idea = SPI_strike_north
-                days = 365
-            }
-
-		}
-    }
-
-    focus = {
-        id = SPI_recall_the_roaming_brood
-		relative_position_id = SPI_defensive_stance
-        
-        prerequisite = { focus = SPI_defensive_stance }
-        
-        icon = GFX_goal_SPI_unleash_guide_brood_2
-        
-        x = 0
-        y = 1
-
-        cost = 5
-        ai_will_do = { factor = 20 }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            always = yes
-        }
-        
-        completion_reward = {
-			remove_ideas = SPI_defensive_stance
-            add_timed_idea = {
-                idea = SPI_defensive_stance_2
-                days = 720
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_move_south
-		relative_position_id = SPI_aggresive_stance
-        
-        prerequisite = { focus = SPI_aggresive_stance }
-        
-        icon = GFX_goal_SPI_spider_on_rocks
-
-        mutually_exclusive = {
-            focus = SPI_strike_north
-        }
-        
-        x = 1
-        y = 1
-
-        cost = 5
-        ai_will_do = {
-            factor = 10
-            modifier = {
-                factor = 1.5
-                MIR = { is_ai = no }
-                has_country_flag = rng_50p_flag_1
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            has_cfm_active = yes
-            NOT = { controls_state = 85 }
-
-            85 = { borders_state = yes }
-        }
-        bypass = {
-            controls_state = 85
-        }
-        
-        completion_reward = {
-			# put presence in other state  
-            85 = {
-                cfm_restrict_to_state = yes
-            }
-            
-            add_timed_idea = {
-                idea = SPI_move_south
-                days = 365
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_secure_the_north
-		relative_position_id = SPI_defensive_stance
-        
-        prerequisite = { focus = SPI_recall_the_roaming_brood }
-        
-        icon = GFX_goal_SPI_spider_on_rocks
-        
-        x = -1
-        y = 2
-
-        cost = 5
-        ai_will_do = { factor = 20 }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            controls_state = 226
-        }
-        
-        completion_reward = {
-			# building sot state 226
-            226 = {
-                add_building_slot_and_mil = yes
-                add_building_slot_and_civ = yes
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_endless_sprawl
-		relative_position_id = SPI_aggresive_stance
-        
-        prerequisite = { focus = SPI_aggresive_stance }
-        
-        icon = GFX_goal_SPI_eyes_in_the_dark
-        
-        x = 0
-        y = 2
-
-        cost = 10
-        ai_will_do = {
-            factor = 10
-            modifier = {
-                factor = 1.5
-                MIR = { is_ai = no }
-            }
-            modifier = {
-                factor = 2
-                has_country_flag = rng_30p_flag_3
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            NOT = { is_ally_with = MIR }
-            country_exists = MIR
-            is_neighbor_of = MIR
-        }
-        
-        completion_reward = {
-			# add spider infestation to all neighbour mirkwood states. Gain 25 pp per state affected.
-            custom_effect_tooltip = SPI_endless_sprawl_tt
-            hidden_effect = {
-                every_controlled_state = {
-                    every_neighbor_state = {
-                        limit = {
-                            is_on_continent = mirkwood
-                            NOT = { is_controlled_by = SPI }
-                            controller = { NOT = { is_ally_with = SPI } }
-                            impassable = no
-                            NOT = { has_dynamic_modifier = spider_infestation }
-                        }
-                        add_dynamic_modifier = {
-                            modifier = spider_infestation
-                        }
-                        SPI = {
-                            add_political_power = 25
-                        }
-                    }   
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_secure_the_south
-		relative_position_id = SPI_defensive_stance
-        
-        prerequisite = { focus = SPI_recall_the_roaming_brood }
-        
-        icon = GFX_goal_SPI_spider_on_rocks
-        
-        x = 1
-        y = 2
-
-        cost = 5
-        ai_will_do = { factor = 20 }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            controls_state = 226
-        }
-        
-        completion_reward = {
-			# building sot state 229
-            229 = {
-                add_building_slot_and_mil = yes
-                add_building_slot_and_civ = yes
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_the_silk_trade
-		relative_position_id = SPI_boons_of_the_nest
-        
-        prerequisite = { focus = SPI_boons_of_the_nest }
-        
-        icon = GFX_goal_SPI_silk_string_trade_dark
-
-        mutually_exclusive = {
-            focus = SPI_increase_silk_production
-        }
-        
-        x = 1
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 15
-            modifier = {
-                factor = 0.5
-                has_country_flag = rng_50p_flag_4
-            }
-            modifier = {
-                factor = 1.7
-                has_country_flag = rng_30p_flag_6
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            always = yes
-        }
-        completion_reward = {
-			swap_ideas = {
-                remove_idea = lth_special_closed_economy
-                add_idea = limited_exports
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_arachnid_adaptations
-		relative_position_id = SPI_boons_of_the_nest
-        
-        prerequisite = { focus = SPI_the_silk_trade }
-        
-        icon = GFX_goal_SPI_fang_protect_egg
-        
-        x = 1
-        y = 2
-
-        cost = 10
-        ai_will_do = { factor = 12 }
-        
-        search_filters = { }
-        available = {
-            spiders_has_inflicted_casualties_stage1 = yes
-        }
-        completion_reward = {
-			# less resource pnealty  
-            if = {
-                limit = {
-                    has_idea = SPI_arachnid_adaptations_eq
-                }
-                swap_ideas = {
-                    remove_idea = SPI_arachnid_adaptations_eq
-                    add_idea = SPI_arachnid_adaptations_res_eq
-                }
-            }
-            else = {
-                add_ideas = SPI_arachnid_adaptations_res
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_skin_captured_prey
-		relative_position_id = SPI_boons_of_the_nest
-        
-        prerequisite = { focus = SPI_increase_silk_production }
-        
-        icon = GFX_goal_SPI_entrapped_soldier_web
-        
-        x = -1
-        y = 2
-
-        cost = 10
-        ai_will_do = {
-            factor = 7
-            modifier = {
-                factor = 3
-                needs_rubber = yes
-            }
-        }
-        
-        search_filters = { }
-        available = {
-            spiders_has_inflicted_casualties_stage1 = yes
-        }
-        
-        completion_reward = {
-            82 = {
-                add_resource = {
-                    type = rubber
-                    amount = 15
-                }
-            }
-        }
-    }
-
-    focus = {
-        id = SPI_purge_the_two_leggeds
-		relative_position_id = SPI_control_all_mirkwood
-        
-        prerequisite = { focus = SPI_control_all_mirkwood }
-        
-        icon = GFX_goal_SPI_human_skulls
-        
-        x = 0
-        y = 2
-
-        cost = 10
-        ai_will_do = { factor = 25 }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            control_all_mirkwood_states = yes
-        }
-        completion_reward = {
-			hidden_effect = {
-                every_controlled_state = {
-                    limit = {
-                        is_on_continent = mirkwood
-                        NOT = { is_core_of = DGU }
-                        impassable = no
-                    }
-                    add_compliance = 35
-                }
-            }
-            custom_effect_tooltip = DGU_masters_of_the_mirkwood_tt
-
-            set_country_flag = {
-                flag = SPI_completed_purge_the_two_leggeds
-                value = 1
-                days = 365
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_the_great_nest
-		relative_position_id = SPI_control_all_mirkwood
-        
-        prerequisite = { focus = SPI_purge_the_two_leggeds }
-        
-        icon = GFX_goal_SPI_ungoliant_large_spider_loom_shadow
-        
-        x = -1
-        y = 3
-
-        cost = 10
-        ai_will_do = { factor = 100 }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            control_all_mirkwood_states = yes
-            has_stability > 0.5
-            has_war_support > 0.5
-        }
-        completion_reward = {
-			# build up all mirkwood  
-            custom_effect_tooltip = SPI_the_great_nest_tt
-            hidden_effect = {
-                every_controlled_state = {
-                    limit = {
-                        is_on_continent = mirkwood
-                        impassable = no
-                    }
-                    add_building_construction = {
-                        type = industrial_complex
-                        level = 1
-                        instant_build = yes
-                    }
-                    add_building_construction = {
-                        type = infrastructure
-                        level = 1
-                        instant_build = yes
-                    }
-                }
-            }
-		}
-    }
-
-    focus = {
-        id = SPI_assert_out_control
-		relative_position_id = SPI_control_all_mirkwood
-        
-        prerequisite = { focus = SPI_purge_the_two_leggeds }
-        
-        icon = GFX_goal_SPI_ungoliant_large_spider_loom
-        
-        x = 1
-        y = 3
-
-        cost = 10
-        ai_will_do = { factor = 100 }
-        
-        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
-        available = {
-            custom_trigger_tooltip = {
-                tooltip = SPI_purge_the_two_leggeds_condition_tt
-                control_all_mirkwood_states = yes
-                NOT = { has_country_flag = SPI_completed_purge_the_two_leggeds }
-                NOT = { has_country_flag = dgu_lost_mirkwood_control }   
-            }
-        }
-        completion_reward = {
-			hidden_effect = {
-                every_state = {
-                    limit = {
-                        is_on_continent = mirkwood
-                        NOT = { is_core_of = DGU }
-                    }
-                    add_core_of = DGU
-                }
-            }
-            custom_effect_tooltip = DGU_forest_of_shadows_tt
-		}
-    }
-
-    focus = {
         id = SPI_the_one_ring_gambit
 		relative_position_id = SPI_we_spin_our_own_threads
         
@@ -5018,156 +5252,6 @@ focus_tree = {
     }
 
     focus = {
-        id = SPI_ungoliants_apetite
-		relative_position_id = SPI_hunger
-        
-        prerequisite = { focus = SPI_the_great_feast }
-        
-        icon = GFX_goal_SPI_spider_attack_loom_lasrge
-        
-        x = 0
-        y = 6
-
-        cost = 10
-        ai_will_do = { factor = 100 }
-        
-        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
-        available = {
-            spiders_has_inflicted_casualties_stage3 = yes
-        }
-        completion_reward = {
-            add_political_power = 150
-            add_stability = 0.1
-            add_war_support = 0.1
-
-            add_unit_bonus = {
-                category_special_spiders = {
-                    supply_consumption_factor = -0.1
-                    hardness = 0.15
-                    armor_value = 0.15
-                    hard_attack = 0.15
-                }
-            }
-
-			do_ungoliants_appetite = yes
-		}
-    }
-
-    focus = {
-        id = SPI_tender_flesh
-		relative_position_id = SPI_hunger
-        
-        prerequisite = { focus = SPI_the_great_feast }
-        
-        icon = GFX_goal_SPI_target_attack_elves
-
-        mutually_exclusive = {
-            focus = SPI_black_blood
-        }
-        
-        x = -2
-        y = 5
-
-        cost = 5
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                add = 35
-                any_enemy_country = {
-                    is_elves = yes
-                }
-            }
-            modifier = {
-                add = 35
-                any_enemy_country = {
-                    is_elves = yes
-                    is_neighbor_of = ROOT
-                }
-            }
-            modifier = {
-                factor = 0.5
-                any_enemy_country = {
-                    is_elves = yes
-                    is_ai = no # We are less likely to inflict casualties against someone who knows how to play
-                }
-            }
-            modifier = {
-                factor = 1.5
-                check_variable = {
-                    casualties_on_elves_total > casualties_on_orcs_total
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
-        available = {
-            spiders_has_inflicted_casualties_vs_elves = yes
-        }
-        
-        completion_reward = {
-			# get more mp from killing elves  
-            add_vs_elves_bonus = yes
-		}
-    }
-
-    focus = {
-        id = SPI_black_blood
-		relative_position_id = SPI_hunger
-        
-        prerequisite = { focus = SPI_the_great_feast }
-        
-        icon = GFX_goal_SPI_target_attack_orcs
-
-        mutually_exclusive = {
-            focus = SPI_tender_flesh
-        }
-        
-        x = 2
-        y = 5
-
-        cost = 5
-        ai_will_do = {
-            factor = 5
-            modifier = {
-                add = 35
-                any_enemy_country = {
-                    is_orcs = yes
-                }
-            }
-            modifier = {
-                add = 35
-                any_enemy_country = {
-                    is_orcs = yes
-                    is_neighbor_of = ROOT
-                }
-            }
-            modifier = {
-                factor = 0.5
-                any_enemy_country = {
-                    is_orcs = yes
-                    is_ai = no # We are less likely to inflict casualties against someone who knows how to play
-                }
-            }
-            modifier = {
-                factor = 1.5
-                check_variable = {
-                    casualties_on_orcs_total > casualties_on_elves_total
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
-        available = {
-            spiders_has_inflicted_casualties_vs_orcs = yes
-        }
-        
-        completion_reward = {
-			# get more mp from killing orcs  
-            add_vs_orcs_bonus = yes
-		}
-    }
-
-    focus = {
         id = SPI_extend_the_perimeter
 		relative_position_id = SPI_the_brood_lairs
         
@@ -5198,88 +5282,4 @@ focus_tree = {
         }
     }
 
-    focus = {
-        id = SPI_ecdysis
-		relative_position_id = SPI_arachnid_nature
-        
-        prerequisite = { focus = SPI_arachnid_nature }
-        
-        icon = GFX_goal_SPI_ecdysis
-        
-        x = 2
-        y = 1
-
-        cost = 10
-        ai_will_do = { factor = 8 }
-        
-        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
-        available = {
-            casualties > 1500
-            check_variable = {
-				var = casrt
-				compare = greater_than_or_equals
-				value = 1500
-				tooltip = has_inflicted_casualties_1_5k_tt
-			}
-        }
-        completion_reward = {
-            add_unit_bonus = {
-                category_special_spiders = {
-                    armor_value = 0.25
-                    hardness = 0.15
-                }
-            }
-        }
     }
-
-    focus = {
-        id = SPI_boons_of_the_hunt
-		relative_position_id = SPI_arachnid_nature
-        
-        prerequisite = { focus = SPI_arachnid_nature }
-        
-        icon = GFX_goal_SPI_prey_webbing
-        
-        x = -2
-        y = 1
-
-        cost = 10
-        ai_will_do = {
-            factor = 7
-            modifier = {
-                factor = 2
-                has_country_flag = rng_30p_flag_3
-            }
-            modifier = {
-                factor = 0.6
-                has_country_flag = rng_30p_flag_1
-            }
-            modifier = {
-                factor = 1.8
-                has_war = yes
-                has_equipment = {
-                    infantry_equipment < 1000
-                }
-            }
-        }
-        
-        search_filters = { FOCUS_FILTER_RESTLESS_HUNGER }
-        available = {
-            spiders_has_inflicted_casualties_stage1 = yes
-        }
-        completion_reward = {
-            if = {
-                limit = {
-                    has_idea = SPI_arachnid_adaptations_res
-                }
-                swap_ideas = {
-                    remove_idea = SPI_arachnid_adaptations_res
-                    add_idea = SPI_arachnid_adaptations_res_eq
-                }
-            }
-            else = {
-                add_ideas = SPI_arachnid_adaptations_eq
-            }
-        }
-    }
-}
