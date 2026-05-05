@@ -2141,7 +2141,7 @@ focus_tree = {
 		id = seekalliesinthewest
 		icon = GFX_goal_generic_dangerous_deal
 		ai_will_do = { factor = 4 }
-		x = -3
+		x = -4
 		y = 1
 		relative_position_id = conquestofmiddleearth
 		prerequisite = { focus = conquestofmiddleearth}
@@ -2155,7 +2155,6 @@ focus_tree = {
 		}
 	}
 
-	#Focus for Reach out to Isengard
 	focus = {
 		id = reach_out_to_isengard
 		icon = GFX_goal_ise_the_white_hand_flag
@@ -2182,7 +2181,6 @@ focus_tree = {
 		}
 	}
 
-	#Take over Isengard
 	focus = {
 		id = demand_submission_isengard
 		icon = GFX_goal_generic_forceful_treaty
@@ -2198,11 +2196,11 @@ focus_tree = {
 				}
 			}
 		}
-		x = 1
-		y = 2
+		x = 2
+		y = 1
 		relative_position_id = reach_out_to_isengard
 		prerequisite = { focus = reach_out_to_isengard }
-		mutually_exclusive = { focus = invite_isengard_to_faction }
+		mutually_exclusive = { focus = MOR_suggest_non_agression_pact }
 		cost = 10
 		search_filters = { FOCUS_FILTER_ANNEXATION }
 		will_lead_to_war_with = ISE
@@ -2223,9 +2221,7 @@ focus_tree = {
 					country_event = { id = isengard.10 }
 				}
 			}else = {
-				create_wargoal = {
-					type = annex_everything target = ISE
-				}
+				create_wargoal = { type = annex_everything target = ISE }
 			}
 		}
 	}
@@ -2262,10 +2258,47 @@ focus_tree = {
 		}
 	}
 
-	#Invite Isengard
+	focus = {
+		id = MOR_suggest_non_agression_pact
+		icon = GFX_goal_isengard_deal
+		ai_will_do = { base = 75 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		x = 0
+		y = 1
+		relative_position_id = reach_out_to_isengard
+		bypass = { ISE = { is_in_faction_with = MOR } }
+		prerequisite = { focus = reach_out_to_isengard }
+		mutually_exclusive = { focus = demand_submission_isengard }
+		cost = 5
+		available = { NOT = { has_war_with = ISE } }
+		completion_reward  = {
+			ISE = { country_event = { id = isengard.24 } }
+		}
+	}
+
+	focus = {
+		id = MOR_increase_influence_ISE
+		icon = GFX_goal_sauron_eye
+		ai_will_do = { base = 25 }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		x = 0
+		y = 1
+		relative_position_id = MOR_suggest_non_agression_pact
+		available = { ISE = { has_government = belligerent } NOT = { has_war_with = ISE } }
+		bypass = { ISE = { is_in_faction_with = MOR } }
+		prerequisite = { focus = MOR_suggest_non_agression_pact }
+		cost = 5
+		completion_reward  = {
+			ISE = { country_event = { id = isengard.25 } }
+			custom_effect_tooltip = GENERIC_custom_tooltip_this_will_have_the_following_effect
+			event_option_tooltip = isengard.25.a
+		}
+	}
+
 	focus = {
 		id = invite_isengard_to_faction
-		icon = GFX_goal_army_uruk_hai
+		icon = GFX_goal_isengard_deal
+		search_filters = { FOCUS_FILTER_POLITICAL }
 		ai_will_do = {
 			factor = 5
 			modifier = {
@@ -2282,89 +2315,110 @@ focus_tree = {
 				surrender_progress > 0
 			}
 		}
-		x = 0
+		x = 2
 		y = 1
-		relative_position_id = reach_out_to_isengard
-		available = {
-			ISE = {
-				has_government = belligerent
-			}
-		}
-		bypass = {
-			ISE = {
-				is_in_faction_with = MOR
-			}
-		}
-		mutually_exclusive = { focus = demand_submission_isengard }
-		prerequisite = { focus = reach_out_to_isengard }
+		relative_position_id = MOR_increase_influence_ISE
+		available = { ISE = { has_government = belligerent } NOT = { has_war_with = ISE } }
+		bypass = { ISE = { is_in_faction_with = MOR } }
+		prerequisite = { focus = MOR_increase_influence_ISE }
 		cost = 5
-		completion_reward = {
-			ISE = {
-				country_event = { id = isengard.8 }
-			}
+		completion_reward  = {
+			ISE = { country_event = { id = isengard.8 } }
 		}
 	}
 
 	focus = {
-		id = suggest_war_with_gondor
-		icon = GFX_goal_generic_military_deal
+		id = MOR_suggest_war_with_gondor
+		icon = GFX_goal_goal_generic_dangerous_deal
+		cost = 5
 		ai_will_do = {
 			factor = 3
+			modifier = {
+				add = -999
+				ISE = { has_war_with = GON }
+			}
 		}
 		x = 0
-		y = 4
-		relative_position_id = invite_isengard_to_faction
+		y = 1
+		relative_position_id = MOR_increase_influence_ISE
+		prerequisite = { focus = MOR_increase_influence_ISE }
+		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ANNEXATION }
 		available = {
-			threat > 0.2
 			OR = {
 				MOR = {
-					any_neighbor_country = {
+					any_neighbor_country  = {
 						tag = GON
 					}
 				}
 				MOR = {
-					any_subject_country = {
-						any_neighbor_country = {
+					any_subject_country  = {
+						any_neighbor_country  = {
 							tag = GON
 						}
 					}
 				}
 			}
+			OR = {
+				ISE = {
+					any_neighbor_country  = {
+						tag = GON
+					}
+				}
+				ISE = {
+					any_subject_country  = {
+						any_neighbor_country  = {
+							tag = GON
+						}
+					}
+				}
+			}
+			num_divisions > 40
 			ISE = {
 				has_government = belligerent
 				is_in_faction_with = MOR
-			}
-			OR = {
-				ISE = {
-					any_neighbor_country = {
-						tag = GON
-					}
-				}
-				ISE = {
-					any_subject_country = {
-						any_neighbor_country = {
-							tag = GON
-						}
-					}
-				}
+				NOT = { has_completed_focus = ISE_betray_sauron }
 			}
 			GON = {
+				exists = yes
 				NOT = {
 					is_in_faction_with = MOR
 					has_government = belligerent
-					exists = no
 				}
 			}
 		}
+		completion_reward = {
+			ISE = { country_event = { id = isengard.23 } }
+		}
+	}
+
+	focus = {
+		id = MOR_together_against_gondor
+		icon = GFX_goal_mor_wargoal_gondor
+		ai_will_do = {
+			factor = 3
+			modifier = {
+				add = -999
+				ISE = { has_war_with = GON }
+			}
+		}
+		x = 0
+		y = 2
+		relative_position_id = MOR_suggest_war_with_gondor
 		will_lead_to_war_with = GON
 		mutually_exclusive = { focus = war_with_gondor }
-		prerequisite = { focus = invite_isengard_to_faction }
+		prerequisite = { focus = MOR_suggest_war_with_gondor }
+		available = { 
+			ISE = { 
+				has_country_flag = ISE_accepted_joined_war_against_gondor 
+				NOT = { has_war_with = MOR } 
+			} 
+			NOT = { has_war_with = GON }
+		}
 		cost = 10
 		search_filters = { FOCUS_FILTER_ANNEXATION }
-		completion_reward = {
-			ISE = {
-				country_event = { id = isengard.9 }
-			}
+		completion_reward  = {
+			ISE = { country_event = { id = isengard.9 } }
+			declare_war_on = { target = GON    type = annex_everything }
 			custom_effect_tooltip = MOR_will_lead_to_war_if_accepted
 		}
 	}
@@ -2427,13 +2481,13 @@ focus_tree = {
 		icon = GFX_goal_riv_elrond_ring_vilya
 		ai_will_do = { factor = 3 }
 		x = 0
-		y = 1
-		relative_position_id = invite_angmar_to_faction
+		y = 7
+		relative_position_id = seekalliesinthewest
 		available = {
 			is_in_faction = yes
 			has_government = belligerent
 		}
-		prerequisite = { focus = invite_angmar_to_faction focus = invite_isengard_to_faction}
+		prerequisite = { focus = seekalliesinthewest }
 		cost = 10
 		available_if_capitulated = yes
 		completion_reward = {
@@ -2917,7 +2971,7 @@ focus_tree = {
 		id = gatherthenazgl
 		icon = GFX_goal_mor_nazgul_ringwraiths
 		ai_will_do = { factor = 100 }
-		x = 0
+		x = -1
 		y = 1
 		relative_position_id = submittosauron
 		prerequisite = { focus = submittosauron}
