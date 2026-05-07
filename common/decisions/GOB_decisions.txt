@@ -10,7 +10,7 @@ GOB_unrest_and_displeasure = {
 		is_good = no # is the timer running out a good thing?
 
 		allowed = {
-			always = no
+			tag = GOB
 		}
 
 		activation = {
@@ -18,7 +18,7 @@ GOB_unrest_and_displeasure = {
 		}
 
 		available = {
-			always = yes
+			always = no
 		}
 
 		timeout_effect = {
@@ -338,20 +338,26 @@ political_actions = {
 		target_root_trigger = {
 			has_completed_focus = GOB_send_out_the_boys
 			has_war = no
-			has_country_flag = gob_country_has_mercenaries
 			NOT = { has_country_flag = merc_offer_pending }
+			NOT = {
+				any_country = {
+					has_idea = GOB_mercenary_contract # No country already has the contract
+				}
+			}
 		}
 
 		available = {
 			always = yes
 			custom_trigger_tooltip = {
 				tooltip = gob_mercs_equipped_tt
-				NOT = {
-					any_country_division = {
-						division_has_majority_template = goblin_mercenary_infantry
-						unit_strength < 0.95
-					}
-				}
+                OR = {
+                    is_ai = yes
+                    AND = {
+                        check_variable = {
+                            num_armies_with_type@goblin_mercenary_infantry > 4 # still has all of the mercs
+                        }
+                    }
+                }
 			}
 		}
 
@@ -363,7 +369,7 @@ political_actions = {
 				NOT = { has_war_with = GOB }
 				has_war = yes
 				OR = {
-					alliance_strength_ratio < 1.75
+					alliance_strength_ratio < 1.85
 					is_ai = no
 				}
 				NOT = { has_idea = no_mercenaries } # Needs to have mercs allowed by law
@@ -408,7 +414,7 @@ political_actions = {
 			has_completed_focus = GOB_send_out_the_boys
 			any_country = {
 				NOT = { tag = GOB }
-				has_country_flag = gob_country_has_mercenaries
+				has_idea = GOB_mercenary_contract
 			}
 		}
 
@@ -435,48 +441,18 @@ political_actions = {
 		
 		complete_effect = {
 			# when decision is taken
+			set_global_flag = GOB_merc_contract_no_extension
 			every_country = {
 				limit = {
 					NOT = { tag = GOB }
-					has_country_flag = gob_country_has_mercenaries
+					has_idea = GOB_mercenary_contract
 				}
+				remove_ideas = GOB_mercenary_contract
 				country_event = goblintown.115
 			}
+			clr_global_flag = GOB_merc_contract_no_extension
 
 			custom_effect_tooltip = gob_recall_mercenaries_tt
-		}
-	}
-
-	gob_mercenary_contract = {
-		icon = GFX_decision_unknown
-
-		fire_only_once = no
-		days_remove = 180
-
-		allowed = {
-			always = no
-		}
-
-		visible = {
-			NOT = { tag = GOB }
-			has_country_flag = gob_country_has_mercenaries
-		}
-
-		available = {
-			always = yes
-		}
-
-		remove_effect = {
-			# Get event to decide if to extend contract or no
-			hidden_effect = {
-				country_event = goblintown.109
-			}
-			custom_effect_tooltip = gob_mercenary_contract_timeout_tt
-		}
-
-		targeted_modifier = {
-			tag = GOB
-			cic_to_target_factor = 0.2
 		}
 	}
 
@@ -508,7 +484,6 @@ political_actions = {
 				gob_remove_mercs_and_template = yes
 				GOB = {
 					country_event = goblintown.116
-					gob_create_merc_divisions_equipped = yes
 				}
 			}
 		}

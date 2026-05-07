@@ -148,7 +148,7 @@ NDefines.NResistance.MIN_DAMAGE_TO_GARRISONS_MODIFIER = 0.05 -- was 0.1
 
 -- FOOD RELATED STUFF
 NDefines.NCountry.BASE_FUEL_GAIN_PER_OIL = 2						-- base amount of fuel gained hourly per excess oil
-NDefines.NCountry.BASE_FUEL_GAIN = 5.0							-- base amount of fuel gained hourly independent of excess oil
+NDefines.NCountry.BASE_FUEL_GAIN = 7.5							-- base amount of fuel gained hourly independent of excess oil
 NDefines.NCountry.BASE_FUEL_CAPACITY = 50000						-- base amount of fuel capacity
 
 NDefines.NMilitary.FUEL_PENALTY_START_RATIO = 0.25				-- ratio of fuel in an army to start getting penalties
