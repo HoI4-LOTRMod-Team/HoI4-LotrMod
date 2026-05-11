@@ -115,6 +115,7 @@ focus_tree = {
 			lotr_switch_to_orcs = yes
 			set_politics = { ruling_party = belligerent elections_allowed = no }
 			add_named_threat = { threat = 1 name = "Rebranded Isengard" }
+			add_popularity = { ideology = belligerent popularity = 0.1 }
 			every_neighbor_country = {
 				limit = {
 					NOT = { has_government = belligerent }
@@ -124,13 +125,9 @@ focus_tree = {
 			hidden_effect = {
 				if = {
 					limit = {
-						GON = {
-							is_denethor_paranoid = yes
-						}
+						GON = { is_denethor_paranoid = yes }
 					}
-					GON = {
-						country_event = { id = denethor_paranoid.4 }
-					}
+					GON = { country_event = { id = denethor_paranoid.4 } }
 				}
 			}
 		}
@@ -535,10 +532,7 @@ focus_tree = {
 		ai_will_do = { base = 100 }
 		mutually_exclusive = { focus = ISE_white_hand_control }
 		available = {
-			is_in_faction_with = MOR
-			NOT = {
-				has_completed_focus = ISE_betray_sauron
-			}
+			NOT = { has_completed_focus = ISE_betray_sauron }
 		}
 		prerequisite = { focus = ISE_collabiration_with_mordor }
 		relative_position_id = ISE_collabiration_with_mordor
@@ -1153,8 +1147,11 @@ focus_tree = {
 		ai_will_do = { 
 			base = 25 
 			modifier = {
-				add = -15
-				has_country_flag = gameplan_going_belligerent
+				add = -999
+				OR = {
+					has_country_flag = gameplan_going_belligerent_historical
+					has_country_flag = gameplan_going_belligerent_betraying_sauron
+				}
 			}
 		}
 		relative_position_id = ISE_influence_neighbouring_tribes
@@ -2401,16 +2398,13 @@ focus_tree = {
 			} 
 			modifier = { #High change when going belligerent path
 				add = 25
-				has_country_flag = gameplan_going_belligerent
+				OR = {
+					has_country_flag = gameplan_going_belligerent_historical
+					has_country_flag = gameplan_going_belligerent_betraying_sauron
+					has_government = belligerent
+				}
+				
 			} 
-			modifier = { #Higher change when already belligerent
-				add = 25
-				has_government = belligerent
-			} 
-			modifier = { #Small change when going cooperative
-				add = 5
-				has_completed_focus = ISE_unite_with_gandalf
-			}
 		}
 		prerequisite = { focus = ISE_expand_isengard_logistics }
 		mutually_exclusive = { focus = ISE_befriend_entwood }
