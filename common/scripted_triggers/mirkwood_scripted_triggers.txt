@@ -86,6 +86,14 @@ state_is_valid_cfm_target = {
 			array = ROOT.cfm_restricted_states
 			value = THIS
 		}
+		# In the case that we have a restriction but can't actually attack it, we lift the restriction
+		all_of_scopes = {
+			array = ROOT.cfm_restricted_states
+			OR = {
+				NOT = { is_controlled_by = MIR }
+				NOT = { any_neighbor_state = { controller = { tag = ROOT } } }
+			}
+		}
 	}
 
 	if = {
