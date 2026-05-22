@@ -25,11 +25,11 @@ class FocusNodeTree:
     
     def save_focus_tree(self, filepath):
         SaveObjValueToFile(self.root_pobj, filepath)
-        self.locfile.save(r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\rhudaur\rhudaur_focus_l_english.yml')
+        self.locfile.save(r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\shire\shire_focus_l_english.yml')
     
     def __init__(self, graph, filepath):
 
-        self.locfile = LocFile(r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\rhudaur\rhudaur_focus_l_english.yml')
+        self.locfile = LocFile(r'C:\Users\Kahl\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\localisation\english\shire\shire_focus_l_english.yml')
 
         focus_menu = graph.get_context_menu('graph').add_menu('Focus Tree')
         focus_menu.add_command('Save Focus Tree', lambda: self.save_focus_tree(filepath), 'Ctrl+S')
