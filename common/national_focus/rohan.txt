@@ -12,11 +12,16 @@ focus_tree = {
 
 	default = no
 
-	continuous_focus_position = { x = 2850 y = 1500 }
+	continuous_focus_position = { x = 4050 y = 1600 }
+
+	inlay_window = {
+  		id = rohan_lords_inlay_window
+  		position = { x = 2850 y = 1300 }
+	}
 
 	focus = {
 		id = ROH_the_fate_of_rohan
-		icon = GFX_goal_goal_generic_CAS
+		icon = GFX_goal_ROH_shadow_over_meduseld
 		available = { }
 		ai_will_do = { factor = 100 }
 		x =0
@@ -525,7 +530,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_southbound_roads
-		icon = GFX_goal_ROH_expanded_trade_network_infra_wagon
+		icon = GFX_goal_ROH_direction_allegiance
 		relative_position_id = ROH_the_fate_of_rohan
 		prerequisite = { focus = ROH_the_fate_of_rohan }
 		available = {
@@ -643,7 +648,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_accept_grima
-		icon = GFX_goal_ROH_accept_grima
+		icon = GFX_goal_ROH_grima_corrupt_king_theoden_council
 		relative_position_id = ROH_the_fate_of_rohan
 		prerequisite = { focus = ROH_the_fate_of_rohan }
 		available = {
@@ -667,7 +672,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_corrupt_the_court
-		icon = GFX_goal_ROH_currpution_bribes_aristocracy
+		icon = GFX_goal_generic_conspiracy_whispers_schemes_corr
 		relative_position_id = ROH_accept_grima
 		prerequisite = { focus = ROH_accept_grima }
 		available = { rohan_has_bop = yes }
@@ -972,18 +977,27 @@ focus_tree = {
 		mutually_exclusive = { }
 		cost = 10
 		completion_reward = {
-			if = {
-				limit = { rohan_has_bop = yes }
-				roh_add_intermediate_grima_drift = yes
-			}
 			# national spirit
 			add_ideas = ROH_fear_propaganda
+
+			if = {
+				limit = { rohan_has_bop = yes }
+				
+				custom_effect_tooltip = roh_add_intermediate_grima_drift_tt
+				hidden_effect = {
+					add_power_balance_modifier = {
+						id = power_balance_wormtongue
+						modifier = ROH_propaganda_of_fear
+					}	
+				}
+
+			}
 		}
 	}
 
 	focus = {
 		id = ROH_isolate_the_king
-		icon = GFX_goal_ROH_king_theoden_old
+		icon = GFX_goal_ROH_corrupt_bind_king_theoden
 		relative_position_id = ROH_accept_grima
 		prerequisite = { focus = ROH_accept_grima }
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BOP_GRIMA }
@@ -1018,8 +1032,16 @@ focus_tree = {
 				remove = afflicted
 				add = isolated_and_paranoid
 			}
-			roh_add_intermediate_grima_drift = yes
+			
 			unlock_decision_tooltip = ROH_bop_backroom_assassinations
+
+			custom_effect_tooltip = roh_add_intermediate_grima_drift_tt
+			hidden_effect = {
+				add_power_balance_modifier = {
+					id = power_balance_wormtongue
+					modifier = ROH_isolate_the_king
+				}	
+			}
 		}
 	}
 
@@ -1179,7 +1201,13 @@ focus_tree = {
 			# add stability
 			add_stability = 0.1
 
-			roh_add_minor_theoden_drift = yes
+			custom_effect_tooltip = roh_add_minor_theoden_drift_tt
+			hidden_effect = {
+				add_power_balance_modifier = {
+					id = power_balance_wormtongue
+					modifier = ROH_maintain_stability
+				}	
+			}
 		}
 	}
 
@@ -1220,9 +1248,15 @@ focus_tree = {
 		completion_reward = {			
 			decrease_centralization = yes
 
-			roh_add_intermediate_theoden_drift = yes
-
 			unlock_decision_tooltip = ROH_bop_form_secret_resistance_movement
+
+			custom_effect_tooltip = roh_add_intermediate_theoden_drift_tt
+			hidden_effect = {
+				add_power_balance_modifier = {
+					id = power_balance_wormtongue
+					modifier = ROH_power_to_provincial_governors
+				}	
+			}
 		}
 	}
 
@@ -1257,7 +1291,13 @@ focus_tree = {
 			# lower taxes, disable increasing taxes for some time
 			disallow_medium_and_low_taxes_1y = yes
 
-			roh_add_intermediate_theoden_drift = yes
+			custom_effect_tooltip = roh_add_intermediate_theoden_drift_tt
+			hidden_effect = {
+				add_power_balance_modifier = {
+					id = power_balance_wormtongue
+					modifier = ROH_enact_tax_cuts
+				}	
+			}
 		}
 	}
 
@@ -1271,7 +1311,7 @@ focus_tree = {
 		cancel_if_invalid = no
 		continue_if_invalid = yes
 		ai_will_do = {
-			factor = 5
+			factor = 10
 			modifier = {
 				factor = 2
 				threat > 0.1
@@ -1310,7 +1350,14 @@ focus_tree = {
 
 			if = {
 				limit = { rohan_has_bop = yes }
-				roh_add_minor_theoden_drift = yes
+				
+				custom_effect_tooltip = roh_add_minor_theoden_drift_tt
+				hidden_effect = {
+					add_power_balance_modifier = {
+						id = power_balance_wormtongue
+						modifier = ROH_defensive_measures
+					}	
+				}
 			}
 		}
 	}
@@ -1361,7 +1408,13 @@ focus_tree = {
 				}
 			}
 
-			roh_add_minor_theoden_drift = yes
+			custom_effect_tooltip = roh_add_minor_theoden_drift_tt
+			hidden_effect = {
+				add_power_balance_modifier = {
+					id = power_balance_wormtongue
+					modifier = ROH_curb_foreign_influence
+				}	
+			}
 		}
 	}
 
@@ -1409,13 +1462,20 @@ focus_tree = {
 					add_idea = ROH_idea_dm_military_vigilance
 				}
 			}
-			roh_add_minor_theoden_drift = yes
+			
+			custom_effect_tooltip = roh_add_minor_theoden_drift_tt
+			hidden_effect = {
+				add_power_balance_modifier = {
+					id = power_balance_wormtongue
+					modifier = ROH_military_vigilance
+				}	
+			}
 		}
 	}
 
 	focus = {
 		id = ROH_secure_the_riddermark
-		icon = GFX_goal_ROH_secure_the_riddermark_rohan_flag
+		icon = GFX_goal_ROH_rohan_flag_banner
 		relative_position_id = ROH_military_vigilance
 		prerequisite = { focus = ROH_military_vigilance }
 		available = { threat > 0.05 NOT = { is_ally_with = ISE } }
@@ -1470,7 +1530,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_reinforce_helms_deep
-		icon = GFX_goal_ROH_reinforce_helms_deep
+		icon = GFX_goal_ROH_helms_deep_2
 		relative_position_id = ROH_secure_the_riddermark
 		prerequisite = { focus = ROH_secure_the_riddermark }
 		available = {
@@ -1517,7 +1577,7 @@ focus_tree = {
 		available = {
 			has_tech = construction2
 			184 = { is_controlled_by = ROOT }
-			NOT = { ISE = { has_completed_focus = helmsdeephasbutoneweakness } }
+			NOT = { ISE = { has_completed_focus = ISE_helms_deep_has_but_one_weakness } }
 		}
 		ai_will_do = {
 			factor = 2
@@ -1621,7 +1681,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_secure_the_westmarch
-		icon = GFX_goal_ROH_secure_the_riddermark_rohan_flag
+		icon = GFX_goal_ROH_rohan_banner_flagbearer
 		relative_position_id = ROH_secure_the_riddermark
 		prerequisite = { focus = ROH_secure_the_riddermark }
 		available = { controls_state = 23 }
@@ -1668,7 +1728,7 @@ focus_tree = {
 				build_railway = {
 					level = 2
 					path = {
-						2180 3442 6740 3954 4374 4804
+						2180 3442 9498 6767 583 6759 5444 4804
 					}
 					build_only_on_allied = yes
 				}
@@ -1916,13 +1976,19 @@ focus_tree = {
 			# make it more expensive to declare small council members
 			add_ideas = ROH_the_kings_council
 
-			roh_add_major_theoden_drift = yes
+			custom_effect_tooltip = roh_add_major_theoden_drift_tt
+			hidden_effect = {
+				add_power_balance_modifier = {
+					id = power_balance_wormtongue
+					modifier = ROH_form_the_kings_council
+				}	
+			}
 		}
 	}
 
 	focus = {
 		id = ROH_gandalfs_arrival
-		icon = GFX_goal_ROH_gandalfs_arrival
+		icon = GFX_goal_generic_fellowship_gandalf_grey
 		relative_position_id = ROH_accept_grima
 		prerequisite = { focus = ROH_accept_grima }
 		available = { autocompleted_on_event = yes }
@@ -1941,7 +2007,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_let_gandalf_in
-		icon = GFX_goal_ROH_let_gandalf_in
+		icon = GFX_goal_generic_fellowship_gandalf_white
 		relative_position_id = ROH_gandalfs_arrival
 		prerequisite = { focus = ROH_gandalfs_arrival }
 		available = { autocompleted_on_event = yes }
@@ -1996,7 +2062,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_purge_the_rot
-		icon = GFX_goal_ROH_purge_the_rot
+		icon = GFX_goal_ROH_exile_grima_2
 		relative_position_id = ROH_let_gandalf_in
 		prerequisite = { focus = ROH_form_the_kings_council }
 		available = { date > "3020.6.1" rohan_has_bop = yes rohan_has_very_high_sanity = yes }
@@ -2067,11 +2133,7 @@ focus_tree = {
 			}
 			# give theoden "merciful" trait
 			add_ideas = ROH_anti_eorl_plot_3
-			ROH_theoden = {
-				add_trait = {
-					trait = the_merciful
-				}
-			}
+			add_country_leader_trait = the_merciful
 		}
 	}
 
@@ -2188,7 +2250,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_restore_the_realm
-		icon = GFX_goal_ROH_restore_the_realm
+		icon = GFX_goal_generic_rohan_theoden_king
 		relative_position_id = ROH_let_gandalf_in
 		prerequisite = { focus = ROH_purge_grima_sympathizers }
 		available = { }
@@ -2262,7 +2324,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_heroes_of_rohan
-		icon = GFX_goal_ROH_heroes_of_rohan
+		icon = GFX_goal_ROH_eomer_hero
 		relative_position_id = ROH_restore_the_realm
 		prerequisite = { focus = ROH_restore_the_realm }
 		available = { }
@@ -2300,14 +2362,14 @@ focus_tree = {
 			# get a bunch of cavalry for free
 			add_timed_idea = {
 				idea = ROH_equine_requisitions
-				days = 210
+				days = 300
 			}
 		}
 	}
 
 	focus = {
 		id = ROH_hunt_down_stragglers
-		icon = GFX_goal_ROH_hunt_down_stragglers
+		icon = GFX_goal_ROH_cav_charge_against_orcs
 		relative_position_id = ROH_restore_the_realm
 		prerequisite = { focus = ROH_equine_requisitions }
 		prerequisite = { focus = ROH_heroes_of_rohan }
@@ -2326,7 +2388,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_intelligence_network
-		icon = GFX_goal_ROH_intelligence_network_tower_recon
+		icon = GFX_goal_generic_watchtower
 		relative_position_id = ROH_restore_the_realm
 		prerequisite = { focus = ROH_barrack_construction }
 		prerequisite = { focus = ROH_heroes_of_rohan }
@@ -2682,9 +2744,9 @@ focus_tree = {
 		icon = GFX_goal_generic_soldier_rearmament
 		relative_position_id = ROH_loth_ise_alliance
 		prerequisite = { focus = ROH_loth_ise_alliance }
+		allow_branch = { has_dlc = "No Compromise, No Surrender" }
 		available = {
 			is_subject = no
-			has_dlc = "No Compromise, No Surrender"
 			is_faction_leader = yes
 			num_faction_members > 1
 			collection_size = {
@@ -2717,7 +2779,9 @@ focus_tree = {
 			is_subject = no
 			# needs good opinion withs ents, needs isengard burned ents etc...
 			is_in_faction = yes
-			ISE = { has_completed_focus = burnthefangornforest }
+			ISE = { 
+				has_completed_focus = ISE_burn_the_fangorn_forest 
+			}
 			ENT = {
 				has_opinion = {
 					target = ROOT
@@ -3008,17 +3072,13 @@ focus_tree = {
 			set_global_flag = grima_executed
 			hidden_effect = { news_event = { hours = 48 id = news.342 } }
 			# give theoden "merciless" trait
-			ROH_theoden = {
-				add_trait = {
-					trait = the_merciless
-				}
-			}
+			add_country_leader_trait = the_merciless
 		}
 	}
 
 	focus = {
 		id = ROH_deny_gandalf_entrance
-		icon = GFX_goal_ROH_deny_gandalf_entrance
+		icon = GFX_goal_ROH_deny_gandalf_entry_2
 		relative_position_id = ROH_gandalfs_arrival
 		prerequisite = { focus = ROH_gandalfs_arrival }
 		mutually_exclusive = { focus = ROH_purge_the_rot focus = ROH_let_gandalf_in focus = ROH_wormtongue_cabinet }
@@ -3060,6 +3120,7 @@ focus_tree = {
 		cost = 10
 		completion_reward = {
 			# Theoden dies, Eowyn takes over, bad traits
+			remove_ideas = artifact_herugrim
 			ROH_theoden = {
 				lotr_kill_character = yes
 			}
@@ -3099,7 +3160,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_pull_the_strings
-		icon = GFX_goal_ROH_pull_the_strings_puppet_manipulate
+		icon = GFX_goal_ROH_puppet_king_2
 		relative_position_id = ROH_deny_gandalf_entrance
 		prerequisite = { focus = ROH_deny_gandalf_entrance focus = ROH_wormtongue_cabinet }
 		available = { }
@@ -3239,7 +3300,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_the_puppet_queen
-		icon = GFX_goal_ROH_the_puppet_queen_eowyn
+		icon = GFX_goal_ROH_puppet_queen_w
 		relative_position_id = ROH_the_shadow_over_rohan
 		prerequisite = { focus = ROH_settle_the_succession }
 		available = { }
@@ -3277,7 +3338,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_claim_crown_through_matrimony
-		icon = GFX_goal_ROH_claim_crown_through_matrimony_grima_eowyn
+		icon = GFX_goal_ROH_claim_crown_through_marriage_matr_2
 		relative_position_id = ROH_the_shadow_over_rohan
 		prerequisite = { focus = ROH_settle_the_succession }
 		available = { }
@@ -3304,7 +3365,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_dynastic_legitimacy
-		icon = GFX_goal_generic_support_crown
+		icon = GFX_goal_ROH_grima_wormtongue_at_desk
 		relative_position_id = ROH_the_shadow_over_rohan
 		prerequisite = { focus = ROH_the_puppet_queen focus = ROH_claim_crown_through_matrimony }
 		available = { }
@@ -3364,7 +3425,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_pledge_to_saruman
-		icon = GFX_goal_ROH_pledge_to_saruman
+		icon = GFX_goal_ROH_bow_to_saruman_2
 		relative_position_id = ROH_the_shadow_over_rohan
 		prerequisite = { focus = ROH_the_shadow_over_rohan }
 		available = { ise_is_evil = yes }
@@ -3507,7 +3568,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_resist_saruman
-		icon = GFX_goal_ROH_resist_saruman
+		icon = GFX_goal_generic_attack_defeat_isengard_roh
 		relative_position_id = ROH_the_shadow_over_rohan
 		prerequisite = { focus = ROH_the_shadow_over_rohan }
 		available = {
@@ -3765,7 +3826,7 @@ focus_tree = {
 		prerequisite = { focus = ROH_consolidation_of_power }
 		available = {
 			is_subject = no
-			owns_all_claimed_states = yes
+			controls_all_claimed_states = yes
 			has_completed_focus = ROH_unchecked_ambition
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_BELLIGERENT }
@@ -3835,7 +3896,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_horselords_of_rohan
-		icon = GFX_goal_ROH_horselords_of_rohan
+		icon = GFX_goal_ROH_hero_soldiers_of_rohan
 		available = { }
 		search_filters = { FOCUS_FILTER_ROH_LORDS }
 		ai_will_do = { factor = 50 }
@@ -4124,7 +4185,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_appoint_theodreds_successor
-		icon = GFX_goal_ROH_appoint_theodreds_successor
+		icon = GFX_goal_ROH_theodred_burial
 		relative_position_id = ROH_deal_with_westemnet
 		available = { }
 		search_filters = { FOCUS_FILTER_ROH_LORDS }
@@ -4145,7 +4206,7 @@ focus_tree = {
 		y =1
 		mutually_exclusive = { }
 		prerequisite = { focus = ROH_deal_with_westemnet }
-		cost = 5
+		cost = 3
 		completion_reward = {
 			country_event = rohan.117
 		}
@@ -4171,7 +4232,11 @@ focus_tree = {
 		x =0
 		y =3
 		mutually_exclusive = { }
-		prerequisite = { focus = ROH_appoint_theodreds_successor }
+		prerequisite = {
+			focus = ROH_appoint_theodreds_successor
+			focus = ROH_concessions_to_isengard
+			focus = ROH_grant_erkenbrand_command_over_westemnet
+		}
 		cost = 10
 		completion_reward = {
 			rohan_set_horselords_cooldown = yes
@@ -4220,7 +4285,7 @@ focus_tree = {
 		x =-1
 		y =2
 		mutually_exclusive = { }
-		prerequisite = { focus = ROH_appoint_theodreds_successor }
+		prerequisite = { focus = ROH_deal_with_westemnet }
 		cost = 5
 		completion_reward = {
 			rohan_set_horselords_cooldown = yes
@@ -4265,7 +4330,7 @@ focus_tree = {
 		x =1
 		y =2
 		mutually_exclusive = { }
-		prerequisite = { focus = ROH_appoint_theodreds_successor }
+		prerequisite = { focus = ROH_deal_with_westemnet }
 		cost = 5
 		completion_reward = {
 			rohan_set_horselords_cooldown = yes
@@ -4826,6 +4891,7 @@ focus_tree = {
 		}
 		select_effect = {
 			hidden_effect = {
+				set_country_flag = roh_landsmeet_selection_1
 				country_event = { id = rohan.93 days = 14 }
 				country_event = { id = rohan.93 days = 50 }
 			}
@@ -6661,7 +6727,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_repurpose_orthanc
-		icon = GFX_goal_orthanc_destroyed
+		icon = GFX_goal_ROH_repurpose_orthanc_2
 		relative_position_id = ROH_royal_library_of_edoras
 		prerequisite = { focus = ROH_attract_foreign_scholars }
 		available = {
@@ -6702,7 +6768,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_white_mountain_diplomacy
-		icon = GFX_goal_ROH_white_mountain_diplomacy_gondor_rohan
+		icon = GFX_goal_generic_rohan_gondor_flags
 		relative_position_id = ROH_accept_grima
 		prerequisite = { focus = ROH_accept_grima }
 		prerequisite = { focus = ROH_reaffirm_the_oath_of_eorl }
@@ -6769,7 +6835,14 @@ focus_tree = {
 					popularity = 0.1
 				}
 			}
-			roh_add_intermediate_grima_drift = yes
+			
+			custom_effect_tooltip = roh_add_intermediate_grima_drift_tt
+			hidden_effect = {
+				add_power_balance_modifier = {
+					id = power_balance_wormtongue
+					modifier = ROH_support_denethors_claim
+				}	
+			}
 		}
 	}
 
@@ -6801,13 +6874,20 @@ focus_tree = {
 					popularity = 0.1
 				}
 			}
-			roh_add_intermediate_theoden_drift = yes
+			
+			custom_effect_tooltip = roh_add_intermediate_theoden_drift_tt
+			hidden_effect = {
+				add_power_balance_modifier = {
+					id = power_balance_wormtongue
+					modifier = ROH_support_aragorns_claim
+				}	
+			}
 		}
 	}
 
 	focus = {
 		id = ROH_wed_eomer_to_lothiriel
-		icon = GFX_goal_ROH_wed_eomer_to_lothiriel_marriage
+		icon = GFX_goal_ROH_wed_eomer_to_lothiriel_marriage_2
 		relative_position_id = ROH_white_mountain_diplomacy
 		prerequisite = { focus = ROH_support_aragorns_claim focus = ROH_support_denethors_claim }
 		available = {
@@ -6844,7 +6924,7 @@ focus_tree = {
 
 	focus = {
 		id = ROH_wed_eowyn_to_faramir
-		icon = GFX_goal_ROH_wed_eowyn_to_faramir
+		icon = GFX_goal_ROH_eowyn_faramir_marriage_2
 		relative_position_id = ROH_white_mountain_diplomacy
 		prerequisite = { focus = ROH_support_aragorns_claim focus = ROH_support_denethors_claim }
 		available = {

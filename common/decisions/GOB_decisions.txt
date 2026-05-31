@@ -1,0 +1,936 @@
+
+
+GOB_unrest_and_displeasure = {
+	GOB_overthrow_timer = {
+		icon = GFX_decision_orcs_2
+
+		fire_only_once = no # allow decision to reappear
+		days_mission_timeout = 365
+		selectable_mission = no
+		is_good = no # is the timer running out a good thing?
+
+		allowed = {
+			tag = GOB
+		}
+
+		activation = {
+			NOT = { has_active_mission = GOB_overthrow_timer }
+		}
+
+		available = {
+			always = no
+		}
+
+		timeout_effect = {
+			# when the timer runs out uninterrupted
+			
+			hidden_effect = {
+				random_list = {
+					10 = {
+						modifier = {
+							factor = 0
+							NOT = { has_character = GOB_fubs }
+						}
+						activate_advisor = GOB_fubs
+					}
+					10 = {
+						modifier = {
+							factor = 0
+							NOT = { has_character = GOB_fubs }
+						}
+						activate_advisor = GOB_fubs
+					}
+					10 = {
+						modifier = {
+							factor = 0
+							NOT = { has_character = GOB_fubs }
+						}
+						activate_advisor = GOB_fubs
+					}
+					10 = {
+						modifier = {
+							factor = 0
+							NOT = { has_character = GOB_fubs }
+						}
+						activate_advisor = GOB_fubs
+					}
+				}
+			}
+			custom_effect_tooltip = gob_overthrow_timer_tt
+		}
+	}
+}
+
+
+political_actions = {
+
+	purchase_new_knowledge = {
+		icon = decision_research_sciene_alch
+
+		fire_only_once = no # allow decision to reappear
+		cost = 25
+
+		days_remove = 120
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_purchase_new_knowledge
+		}
+
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				num_of_available_civilian_factories < 10
+			}
+			modifier = {
+				factor = 5
+				num_of_available_civilian_factories > 15
+			}
+			modifier = {
+				factor = 5
+				num_of_available_civilian_factories > 20
+			}
+		}
+
+		available = {
+			always = yes
+		}
+
+		modifier = {
+			civilian_factory_use = 3
+			research_speed_factor = 0.2
+		}
+	}
+
+	request_high_pass_deal = {
+		icon = GFX_decision_generic_cooperation
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 365 # if above set to no, this is the cooldown for re-appear
+		cost = 35
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 10
+				controls_state = 197
+				151 = { controller = { has_war_with = ROOT } }
+				has_country_flag = rng_80p_flag_2
+			}
+			modifier = {
+				add = 10
+				controls_state = 151
+				197 = { controller = { has_war_with = ROOT } }
+				has_country_flag = rng_80p_flag_4
+			}
+			modifier = {
+				add = 5
+				controls_state = 197
+				151 = { controller = { is_ally_with = ROOT } }
+				has_country_flag = rng_30p_flag_2
+			}
+			modifier = {
+				add = 5
+				controls_state = 151
+				197 = { controller = { is_ally_with = ROOT } }
+				has_country_flag = rng_30p_flag_4
+			}
+		}
+
+		allowed = {
+			NOT = { tag = GOB }
+		}
+
+		visible = {
+			gob_can_borrow_high_pass = yes
+			NOT = { tag = GOB }
+		}
+
+		available = {
+			always = yes
+		}
+		
+		complete_effect = {
+			hidden_effect = {
+				GOB = { country_event = { id = goblintown.129 days = 1 } }
+			}
+			custom_effect_tooltip = request_high_pass_deal_tt
+			custom_effect_tooltip = if_they_accept_newline_tt
+			effect_tooltip = {
+				gob_borrow_high_pass = yes
+			}
+		}
+	}
+
+	return_high_pass = {
+		icon = GFX_decision_generic_4
+
+		fire_only_once = no # allow decision to reappear
+		cost = 35
+
+		allowed = {
+			always = yes
+		}
+
+		visible = {
+			has_idea = GOB_high_pass_contract
+			NOT = { tag = GOB }
+		}
+
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0
+				NOT = {
+					controls_state = 197
+					controls_state = 268
+					controls_state = 69
+					controls_state = 153
+					controls_state = 63
+					controls_state = 151
+				}
+			}
+			modifier = {
+				factor = 2
+				has_country_flag = rng_50p_flag_4
+			}
+		}
+
+		available = {
+			263 = { is_fully_controlled_by = ROOT }
+		}
+		
+		complete_effect = {
+			gob_return_high_pass = yes
+		}
+	}
+
+	gob_demand_tribute_from = {
+		icon = GFX_decision_generic_treasure
+
+		fire_only_once = no
+		days_re_enable = 400
+		cost = 50
+
+		# choose where the decisions appear. default is both
+		#on_map_mode = map_and_decisions_view | map_only | decision_view_only 
+
+		allowed = {
+			tag = GOB
+		}
+
+		target_root_trigger = {
+			has_completed_focus = GOB_gold_for_peace
+		}
+
+		available = {
+			has_war = no
+			num_divisions > 4
+		}
+
+		ai_will_do = {
+			factor = 7
+			modifier = {
+				factor = 2
+				FROM = { is_stronger = no }
+			}
+			modifier = {
+				factor = 3
+				FROM = { is_significantly_weaker = no }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_ai = no }
+				has_country_flag = rng_80p_flag_3
+			}
+			modifier = {
+				factor = 0.6
+				any_country = {
+					has_country_flag = gob_refused_tribute
+				}
+			}
+		}
+
+		target_array = neighbors
+		targets_dynamic = yes # Allows you to target civil war dynamic tags by their original_tag
+		
+		target_trigger = {
+			FROM = {
+				war_with_is_possible = yes # no NA pacts/allies etc.
+				strength_ratio = {
+					tag = ROOT
+					ratio < 2.5
+				}
+				NOT = { has_country_flag = gob_raids_disabled }
+			}
+		}
+		
+		complete_effect = {
+			FROM = {
+				country_event = goblintown.125
+			}
+			custom_effect_tooltip = if_they_accept_newline_tt
+			effect_tooltip = {
+				FROM = {
+					add_timed_idea = {
+						idea = two_civs_cost
+						days = 90
+					}
+				}
+				GOB = {
+					random_state_add_building_slot_and_civ = yes
+				}
+			}
+			custom_effect_tooltip = if_they_refuse_newline_tt
+			FROM = {
+				event_option_tooltip = goblintown.126.a
+			}
+		}
+	}
+
+	offer_merc_contract = {
+		icon = GFX_decision_evil_dilomacy
+
+		fire_only_once = no
+		days_re_enable = 100 # To avoid spamming
+		cost = 50
+
+		#on_map_mode = map_and_decisions_view | map_only | decision_view_only 
+
+		allowed = {
+			tag = GOB
+		}
+
+		ai_will_do = {
+			factor = 5
+			modifier = {
+				factor = 0.5
+				has_country_flag = rng_50p_flag_2
+			}
+			modifier = {
+				factor = 0.75
+				FROM = { is_elves = yes }
+			}
+			modifier = {
+				factor = 1.5
+				OR = {
+					FROM = { is_ai = no  }
+					FROM = {
+						any_enemy_country = {
+							is_ai = no
+						}
+					}
+				}
+			}
+			modifier = {
+				factor = enemies_strength_ratio
+			}
+			modifier = {
+				factor = 0
+				FROM = { has_country_flag = sent_merc_offer }
+			}
+		}
+
+		target_root_trigger = {
+			has_completed_focus = GOB_send_out_the_boys
+			has_war = no
+			NOT = { has_country_flag = merc_offer_pending }
+			NOT = {
+				any_country = {
+					has_idea = GOB_mercenary_contract # No country already has the contract
+				}
+			}
+		}
+
+		available = {
+			always = yes
+			custom_trigger_tooltip = {
+				tooltip = gob_mercs_equipped_tt
+                OR = {
+                    is_ai = yes
+                    AND = {
+                        check_variable = {
+                            num_armies_with_type@goblin_mercenary_infantry > 4 # still has all of the mercs
+                        }
+                    }
+                }
+			}
+		}
+
+		target_array = global.countries
+		#targets_dynamic = yes # Allows you to target civil war dynamic tags by their original_tag
+		
+		target_trigger = {
+			FROM = {
+				NOT = { has_war_with = GOB }
+				has_war = yes
+				OR = {
+					alliance_strength_ratio < 1.85
+					is_ai = no
+				}
+				NOT = { has_idea = no_mercenaries } # Needs to have mercs allowed by law
+				NOT = { has_idea = slave_soldiers }
+			}
+		}
+		
+		complete_effect = {
+			FROM = { country_event = { id = goblintown.112 days = 1 } } # target can be scoped to with FROM
+			custom_effect_tooltip = if_they_accept_newline_tt
+			custom_effect_tooltip = offer_merc_contract_tt
+			custom_effect_tooltip = offer_merc_contract_tt_2
+
+			set_country_flag = {
+				flag = merc_offer_pending
+				days = 100
+				value = 1
+			}
+
+			FROM = {
+				set_country_flag = {
+					flag = sent_merc_offer
+					days = 365
+					value = 1
+				}
+			}
+		}
+	}
+
+	gob_recall_mercenaries = {
+		icon = GFX_decision_generic_4
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 10 # if above set to no, this is the cooldown for re-appear
+		cost = 25
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_send_out_the_boys
+			any_country = {
+				NOT = { tag = GOB }
+				has_idea = GOB_mercenary_contract
+			}
+		}
+
+		available = {
+			has_war = yes
+		}
+
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 0
+				alliance_strength_ratio > 1.6
+				surrender_progress < 0.01
+			}
+			modifier = {
+				factor = 0.5
+				alliance_strength_ratio > 1.4
+			}
+			modifier = {
+				factor = 2
+				surrender_progress > 0.12
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			set_global_flag = GOB_merc_contract_no_extension
+			every_country = {
+				limit = {
+					NOT = { tag = GOB }
+					has_idea = GOB_mercenary_contract
+				}
+				remove_ideas = GOB_mercenary_contract
+				country_event = goblintown.115
+			}
+			clr_global_flag = GOB_merc_contract_no_extension
+
+			custom_effect_tooltip = gob_recall_mercenaries_tt
+		}
+	}
+
+
+	gob_mercenaries_being_recalled = {
+		icon = GFX_decision_unknown
+
+		fire_only_once = no
+		days_mission_timeout = 70
+		selectable_mission = no
+		is_good = no
+
+		allowed = {
+			always = no
+		}
+
+		activation = {
+			always = no
+		}
+
+		available = {
+			always = no
+		}
+
+		timeout_effect = {
+			# Get event to decide if to extend contract or no
+			custom_effect_tooltip = goblintown.109.b_tt
+			hidden_effect = {
+				gob_remove_mercs_and_template = yes
+				GOB = {
+					country_event = goblintown.116
+				}
+			}
+		}
+	}
+
+
+	work_the_forges = {
+		icon = decision_forges
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 30 # if above set to no, this is the cooldown for re-appear
+		cost = 20
+
+		days_remove = 90
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_snaga_work_gangs
+		}
+
+		available = {
+			NOT = {
+				has_country_flag = GOB_work_decision_taken
+			}
+		}
+
+		ai_will_do = {
+			base = 5
+			modifier = {
+				factor = 0
+				num_of_available_military_factories < 5
+			}
+			modifier = {
+				factor = 0
+				has_stability < 0.5
+			}
+			modifier = {
+				factor = 2
+				num_of_available_military_factories > 15
+				has_stability > 0.65
+			}
+		}
+
+		modifier = {
+			stability_weekly = -0.003
+			industrial_capacity_factory = 0.25
+		}
+
+		complete_effect = {
+			# when decision is taken
+			set_country_flag = GOB_work_decision_taken
+		}
+
+		remove_effect = {
+			# when timer runs out or remove_trigger is true
+			clr_country_flag = GOB_work_decision_taken
+		}
+	}
+
+	work_the_builders = {
+		icon = decision_construction
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 30 # if above set to no, this is the cooldown for re-appear
+		cost = 20
+
+		days_remove = 90
+
+		allowed = {
+			tag = GOB
+		}
+
+		ai_will_do = {
+			base = 5
+			modifier = {
+				factor = 0
+				num_of_available_civilian_factories < 5
+			}
+			modifier = {
+				factor = 0
+				has_stability < 0.5
+			}
+			modifier = {
+				factor = 2
+				num_of_available_civilian_factories > 15
+				has_stability > 0.65
+			}
+		}
+
+		visible = {
+			has_completed_focus = GOB_snaga_work_gangs
+		}
+
+		available = {
+			NOT = {
+				has_country_flag = GOB_work_decision_taken
+			}
+		}
+
+		modifier = {
+			stability_weekly = -0.003
+			production_speed_buildings_factor = 0.25
+			repair_speed_factor = 0.25
+		}
+
+		complete_effect = {
+			# when decision is taken
+			set_country_flag = GOB_work_decision_taken
+		}
+
+		remove_effect = {
+			# when timer runs out or remove_trigger is true
+			clr_country_flag = GOB_work_decision_taken
+		}
+	}
+
+	work_the_miners = {
+		icon = decision_mining
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 30 # if above set to no, this is the cooldown for re-appear
+		cost = 20
+
+		days_remove = 90
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_snaga_work_gangs
+		}
+
+		available = {
+			NOT = {
+				has_country_flag = GOB_work_decision_taken
+			}
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		modifier = {
+			stability_weekly = -0.003
+			local_resources_factor = 0.25
+		}
+
+		complete_effect = {
+			# when decision is taken
+			set_country_flag = GOB_work_decision_taken
+		}
+
+		remove_effect = {
+			# when timer runs out or remove_trigger is true
+			clr_country_flag = GOB_work_decision_taken
+		}
+	}
+}
+
+
+GOB_scrap_collection = {
+	
+	convert_scrap_into_infantry_equipment = {
+		icon = decision_inf_equipment
+
+		fire_only_once = no # allow decision to reappear
+		cost = 5
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			check_variable = { scrap > 0 }
+		}
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				factor = 10
+				has_equipment = {
+					infantry_equipment < 0
+				}
+			}
+		}
+
+		available = {
+			check_variable = {
+				var = scrap
+				value = 250
+				compare = greater_than_or_equals
+				tooltip = more_scrap_than_tt
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			subtract_from_variable = {
+				var = scrap
+				value = 250
+				tooltip = spend_scrap_tt
+			}
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 250
+			}
+		}
+	}
+
+	convert_scrap_into_support_equipment = {
+		icon = decision_sup_equipment
+
+		fire_only_once = no # allow decision to reappear
+		cost = 5
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			check_variable = { scrap > 0 }
+		}
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				factor = 10
+				has_equipment = {
+					support_equipment < 0
+				}
+			}
+		}
+
+		available = {
+			check_variable = {
+				var = scrap
+				value = 250
+				compare = greater_than_or_equals
+				tooltip = more_scrap_than_tt
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			subtract_from_variable = {
+				var = scrap
+				value = 250
+				tooltip = spend_scrap_tt
+			}
+			add_equipment_to_stockpile = {
+				type = support_equipment
+				amount = 60
+			}
+		}
+	}
+
+	convert_scrap_into_archery_equipment = {
+		icon = decision_archer_equipment
+
+		fire_only_once = no # allow decision to reappear
+		cost = 5
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			check_variable = { scrap > 0 }
+		}
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				factor = 10
+				has_equipment = {
+					artillery_equipment < 0
+				}
+			}
+		}
+
+		available = {
+			check_variable = {
+				var = scrap
+				value = 250
+				compare = greater_than_or_equals
+				tooltip = more_scrap_than_tt
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			subtract_from_variable = {
+				var = scrap
+				value = 250
+				tooltip = spend_scrap_tt
+			}
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = 60
+			}
+		}
+	}
+
+	convert_scrap_into_steel_equipment = {
+		icon = decision_steel_ingots
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 35 # if above set to no, this is the cooldown for re-appear
+		cost = 5
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			check_variable = { scrap > 0 }
+			check_variable = { scrap_converted_to_steel < 50 }
+		}
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				factor = 3
+				needs_steel = yes
+			}
+		}
+
+		available = {
+			check_variable = {
+				var = scrap
+				value = 250
+				compare = greater_than_or_equals
+				tooltip = more_scrap_than_tt
+			}
+		}
+		
+		complete_effect = {
+			add_to_variable = { scrap_converted_to_steel = 1 }
+
+			# when decision is taken
+			subtract_from_variable = {
+				var = scrap
+				value = 250
+				tooltip = spend_scrap_tt
+			}
+			random_core_state = {
+				add_resource = {
+					type = steel
+					amount = 1
+				}
+			}
+		}
+	}
+
+	scrap_old_siege_equipment = {
+		icon = decision_trebuchet
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 35 # if above set to no, this is the cooldown for re-appear
+		cost = 5
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_repurpose_old_equipment
+		}
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				factor = 10
+				target_siege_machines_strat = no
+			}
+		}
+
+		available = {
+			has_equipment = {
+				siege_machine_chassis > 99
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			add_equipment_to_stockpile = {
+				type = siege_machine_chassis
+				amount = -100
+			}
+
+			add_to_variable = {
+				var = scrap
+				value = 100
+				tooltip = add_scrap_tt
+			}
+		}
+	}
+
+	scrap_support_equipment = {
+		icon = decision_sup_equipment
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 35 # if above set to no, this is the cooldown for re-appear
+		cost = 5
+
+		allowed = {
+			tag = GOB
+		}
+
+		visible = {
+			has_completed_focus = GOB_repurpose_old_equipment
+		}
+
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				factor = 10
+				has_equipment = {
+					support_equipment > 8000
+				}
+			}
+		}
+
+		available = {
+			has_equipment = {
+				support_equipment > 299
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			add_equipment_to_stockpile = {
+				type = support_equipment
+				amount = -300
+			}
+
+			add_to_variable = {
+				var = scrap
+				value = 100
+				tooltip = add_scrap_tt
+			}
+		}
+	}
+
+
+}

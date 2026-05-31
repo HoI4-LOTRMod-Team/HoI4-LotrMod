@@ -16,6 +16,7 @@ country_event = {
 
 	option = { # Okay
 		name = misty_pact.1.a
+		add_opinion_modifier = { target = FROM modifier = small_increase }
 	}
 }
 
@@ -30,6 +31,7 @@ country_event = {
 
 	option = { # Okay
 		name = misty_pact.2.a
+		add_opinion_modifier = { target = FROM modifier = small_decrease }
 	}
 }
 
@@ -68,14 +70,24 @@ country_event = {
 		}
 		add_opinion_modifier = { target = FROM modifier = small_increase }
 		add_political_power = 50
-		add_popularity = {
-			ideology = cooperative
-			popularity = 0.05
+		FROM = { country_event = { id = misty_pact.1 } }
+		if = { 
+			limit = { FROM = { has_government = cooperative } }
+			add_popularity = {
+				ideology = cooperative
+				popularity = 0.025
+			}
 		}
-		FROM = {
-			country_event = { id = misty_pact.1 }
+		hidden_effect = {
+			set_country_flag = MISTY_MOUNTAIN_PACT
+			increase_misty_mountain_pact_members = yes
+			ISE = {
+				add_to_array = {
+					array = ISE.misty_mountain_pact_members
+					value = ROOT
+				} 
+			}
 		}
-		set_country_flag = MISTY_PACT
 	}
 
 	option = { #no
@@ -95,13 +107,11 @@ country_event = {
 			}
 		}
 		add_opinion_modifier = { target = FROM modifier = small_decrease }
-		FROM = {
-			country_event = { id = misty_pact.2 }
-		}
+		FROM = { country_event = { id = misty_pact.2 } }
 	}
 }
 
-# Expand misty mountain pact to militair investments
+# Expand misty mountain pact
 country_event = {
 	id = misty_pact.4
 	title = misty_pact.4.t
@@ -114,6 +124,7 @@ country_event = {
 		name = misty_pact.4.a
 		add_opinion_modifier = { target = FROM modifier = small_increase }
 		add_political_power = 50
+		add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses }
 	}
 }
 
@@ -177,5 +188,116 @@ country_event = {
 			}
 		}
 		add_opinion_modifier = { target = FROM modifier = small_decrease }
+	}
+}
+
+
+# Expand misty mountain pact to militair investments
+country_event = {
+	id = misty_pact.6
+	title = misty_pact.6.t
+	desc = misty_pact.6.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = misty_pact.6.a
+		add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses_militair_expansion }
+	}
+}
+
+# Invite for more members for the Musty Mountain Pact
+country_event = {
+	id = misty_pact.7
+	title = misty_pact.7.t
+	desc = misty_pact.7.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = misty_pact.7.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = -10
+				is_puppet = yes
+				NOT = { is_puppet_of = FROM }
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
+			modifier = {
+				add = 10
+				has_non_aggression_pact_with = FROM
+			}
+			modifier = {
+				factor = -999
+				has_war_with = FROM
+			}
+		}
+		add_opinion_modifier = { target = FROM modifier = small_increase }
+		FROM = { country_event = { id = misty_pact.1 } }
+		if = {
+			limit = {
+				FROM = { has_government = cooperative }
+			}
+			add_popularity = {
+				ideology = cooperative
+				popularity = 0.025
+			}
+		}
+		if = {
+			limit = {
+				ISE = { has_completed_focus = ISE_militair_collaboration }
+			}
+			add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses_militair_expansion }
+		}else = {
+			add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses }
+		}
+		hidden_effect = {
+			set_country_flag = MISTY_MOUNTAIN_PACT
+			increase_misty_mountain_pact_members = yes
+		}
+	}
+
+	option = { #no
+		name = misty_pact.7.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+			modifier = {
+				add = 5
+				has_government = revolutionary
+				FROM = { has_government = cooperative }
+			}
+		}
+		FROM = { country_event = { id = misty_pact.2 } }
+	}
+}
+
+# Expand misty mountain pact to militair investments
+country_event = {
+	id = misty_pact.8
+	title = misty_pact.8.t
+	desc = misty_pact.8.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { #yes
+		name = misty_pact.8.a
+		add_dynamic_modifier = { modifier = misty_mountain_pact_bonuses_infastructure_expansion }
 	}
 }

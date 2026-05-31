@@ -1,0 +1,242 @@
+types = {
+	GLD_burning_of_the_webs_raid = {
+
+		days_to_prepare = 20
+		speed_multiplier = 1.1 # Fast hit-and-run required
+		category = land_infiltration_raids
+
+		# Icons
+		custom_map_icon = GFX_raid_target_icon_guerilla_raid
+		target_icon = GFX_other_target_icon
+		launch_sound = raid_land_launchable_sound
+
+		arrow = {
+			type = land
+		}
+
+		unit_model = {
+			entity = lotr_generic_raid_infantry_entity
+		}
+
+		ai_will_do = {
+			base = 3
+			modifier = {
+				factor = 0.1
+				has_war = yes
+			}
+			modifier = {
+				factor = 0.5
+				has_equipment = {
+					infantry_equipment < 2000
+				}
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = rng_50p_flag_2
+			}
+		}
+
+		command_power = 35
+
+		allowed = {
+			original_tag = GLD
+		}
+
+		fire_only_once = yes
+
+		visible = {
+			original_tag = GLD
+			SPI = { owns_state = 82 }
+			has_completed_focus = GLD_burn_the_nests
+		}
+
+		show_target = {
+			var:target_state = {
+				state = 82
+				controller = {
+					original_tag = SPI
+				}
+			}
+		}
+
+		available = {
+			var:target_state = {
+				state = 82
+			}
+			# Must be neighbors or close enough to strike
+			var:target_state = {
+				any_neighbor_state = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+			}
+		}
+
+		launchable = {
+			has_war_with = SPI
+		}
+		
+		starting_point = {
+			building_types = { supply_node }
+			allow_faction_buildings = yes
+		}
+
+		unit_requirements = {
+			battalion_types = {
+				infantry = { min = 4 }
+			}
+		}
+
+		# Target Type: Focusing on the "Nest" (State)
+		target_type = {
+			province = 9131
+		}
+
+		success_factors = {
+			success = {
+				base = 0.5
+
+				# Unit Factors
+				experience = {
+					weight = 0.2
+					reference = 1.0
+				}
+				organisation = {
+					weight = 0.1
+					reference = 50
+				}
+				
+				# Intel helps navigate the webs
+				intel = {
+					weight = 0.2
+					reference = 100
+				}
+			}
+		}
+
+		success_levels = {
+			failure = {
+				victim_effects = {
+					# Spiders feed on the failure
+					var:victim_country = {
+						add_manpower = 200 # Spiders gain "manpower" (food)
+						add_war_support = 0.05
+					}
+				}
+				actor_effects = {
+					# CATASTROPHIC FAILURE
+					# "The unit should take huge damage, if not destroyed entirely."
+					raid_damage_units = {
+						org_damage = 1.0   # 100% Org loss
+						str_damage = 1.0  # 95% Strength loss (almost wiped out) 
+						ratio = yes
+					}
+					raid_add_unit_experience = 0.0
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "raid_failed_entity"
+					animation = "attack"
+				}
+			}
+
+			limited_success = {
+				victim_effects = {
+					var:victim_country = {
+						add_manpower = -500
+					}
+					var:target_state = {
+						# Damage some silk (tungsten)
+						add_resource = { 
+							type = tungsten 
+							amount = -4 
+						}
+					}
+				}
+				actor_effects = {
+					# Significant damage even on limited success
+					raid_damage_units = {
+						org_damage = 0.7
+						str_damage = 0.5
+						ratio = yes
+					}
+					raid_add_unit_experience = 0.1
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_limited_success_entity"
+					animation = "attack"
+				}
+			}
+
+			success = {
+				victim_effects = {
+					var:victim_country = {
+						add_manpower = -1000
+						add_timed_idea = { 
+							idea = generic_disrupted_leadership 
+							days = 100 
+						}
+					}
+					var:target_state = {
+						# Destroy silk stores
+						add_resource = { 
+							type = tungsten 
+							amount = -10 
+						}
+					}
+				}
+				actor_effects = {
+					# "Even if the raid is successful, there should be some damage."
+					raid_damage_units = {
+						org_damage = 0.5
+						str_damage = 0.25
+						ratio = yes
+					}
+					raid_add_unit_experience = 0.25
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_success_entity"
+					animation = "attack"
+				}
+			}
+
+			critical_success = {
+				victim_effects = {
+					var:victim_country = {
+						add_manpower = -1200 # Massive brood kill
+						add_timed_idea = { 
+							idea = generic_disrupted_leadership 
+							days = 180 
+						}
+					}
+					var:target_state = {
+						# Major resource destruction
+						add_resource = { 
+							type = tungsten 
+							amount = -10
+						}
+						damage_building = {
+							type = infrastructure
+							damage = 2
+						}
+					}
+				}
+				actor_effects = {
+					# Still take damage, this is a suicide mission that went well
+					raid_damage_units = {
+						org_damage = 0.3
+						str_damage = 0.15
+						ratio = yes
+					}
+					raid_add_unit_experience = 0.5
+					add_raid_history_entry = yes
+				}
+				visual_effect = {
+					entity = "land_raids_critical_success_entity"
+					animation = "attack"
+				}
+			}
+		}
+	}
+}

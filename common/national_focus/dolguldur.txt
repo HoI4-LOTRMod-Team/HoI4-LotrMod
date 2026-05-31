@@ -1,0 +1,5602 @@
+#!gfx:interface\auto_generated\lotr_goals.gfx
+
+focus_tree = {
+	id = dolguldur
+	country = {
+		factor = 0
+		modifier = {
+			add = 10
+			tag = DGU
+		}
+	}
+
+
+	default = no
+
+	continuous_focus_position = { x = 50 y = 2000 }
+
+	
+
+    focus = {
+        id = DGU_rearmament_effort
+        icon = GFX_goal_DGU_army_inf_equipment_2
+        
+        x = -22
+        y = 0
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { }
+        
+        completion_reward = {
+            add_ideas = DGU_rearmament_effort
+		}
+    }
+
+    focus = {
+        id = DGU_the_shadow_over_the_mirkwood
+        icon = GFX_goal_MIR_dark_wood_taint_tree
+        
+        x = 8
+        y = 0
+
+        cost = 5
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { }
+        
+        completion_reward = {
+			# add pp?  
+            add_political_power = 150
+		}
+    }
+
+    focus = {
+        id = DGU_the_armies_of_the_necromancer
+		prerequisite = { focus = DGU_master_of_the_fortress }
+        
+        icon = GFX_goal_DGU_orcs_enslaved
+        
+        x = -18
+        y = 5
+
+        cost = 5
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 0
+                is_going_revolutionary = yes
+            }
+        }
+
+        mutually_exclusive = {
+            focus = DGU_shadow_without_master
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = no
+        }
+        bypass = {
+            is_ally_with = MOR
+        }
+        
+        completion_reward = {
+            MOR = { swear_secret_fealty = yes }
+
+            custom_effect_tooltip = DGU_saurons_schedule_effect_tt
+
+            hidden_effect = {
+                MOR = { country_event = { id = dolguldur.138 days = 25 random_days = 10 } }
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_shadow_without_master
+		prerequisite = { focus = DGU_master_of_the_fortress }
+        
+        icon = GFX_goal_DGU_orcs_liberated
+        
+        x = -12
+        y = 5
+
+        cost = 5
+        ai_will_do = {
+            factor = 50
+            modifier = {
+                factor = 0
+                is_historical_focus_on = yes
+            }
+            modifier = {
+                factor = 0
+                is_going_belligerent = yes
+            }
+        }
+
+        mutually_exclusive = {
+            focus = DGU_the_armies_of_the_necromancer
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = no
+        }
+        bypass = {
+            has_war_with = MOR
+        }
+        
+        completion_reward = {
+            hidden_effect = {
+                MOR = { country_event = dolguldur.4 }   
+            }
+            effect_tooltip = {
+                MOR = { DGU = { swear_eternal_animosity = yes } }
+            }
+
+            add_popularity = {
+                ideology = revolutionary
+                popularity = 0.1
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_instill_strict_discipline
+		relative_position_id = DGU_rearmament_effort
+        
+        prerequisite = { focus = DGU_rearmament_effort }
+        
+        icon = GFX_goal_generic_orc_with_whip
+
+        mutually_exclusive = {
+            focus = DGU_encourage_individual_initiative
+        }
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 50
+            modifier = {
+                factor = 2
+                is_going_belligerent = yes
+            }
+        }
+        
+        search_filters = { }
+        
+        completion_reward = {
+            add_timed_idea = {
+                idea = generic_belligerent
+                days = 240
+            }
+            if = {
+                limit = { has_dlc = "No Step Back" }
+                add_ideas = hardline_discipline_spirit
+            }
+            else = {
+                army_experience = 50
+            }
+            
+        }
+    }
+
+    focus = {
+        id = DGU_encourage_individual_initiative
+		relative_position_id = DGU_rearmament_effort
+        
+        prerequisite = { focus = DGU_rearmament_effort }
+        
+        icon = GFX_goal_generic_orc_with_axe
+
+        mutually_exclusive = {
+            focus = DGU_instill_strict_discipline
+        }
+        
+        x = -1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 50
+            modifier = {
+                factor = 2
+                is_going_revolutionary = yes
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            is_subject = no
+        }
+        
+        completion_reward = {
+            add_timed_idea = {
+                idea = generic_revolutionary
+                days = 240
+            }
+            if = {
+                limit = { has_dlc = "No Step Back" }
+                add_ideas = meritocratic_command_spirit
+            }
+            else = {
+                hidden_effect = {
+                    create_corps_commander = {
+                        name = "Korbuz"
+                        skill = 3
+                        attack_skill = 3
+                        defense_skill = 1
+                        planning_skill = 2
+                        logistics_skill = 2
+                        traits = {
+                            skilled_staffer
+                        }
+                    }
+                }
+                custom_effect_tooltip = DGU_encourage_individual_initiative_tt
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_revised_army_drills
+		relative_position_id = DGU_rearmament_effort
+        
+        prerequisite = { focus = DGU_instill_strict_discipline }
+        
+        icon = GFX_goal_DGU_orc_army_training
+        
+        x = 1
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { }
+        
+        completion_reward = {
+            add_timed_idea = {
+				idea = army_xp_gain
+				days = 365
+			}
+        }
+    }
+
+    focus = {
+        id = DGU_meritocratic_army_command
+		relative_position_id = DGU_rearmament_effort
+        
+        prerequisite = { focus = DGU_encourage_individual_initiative }
+        
+        icon = GFX_goal_DGU_oc_training_2
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { }
+        
+        completion_reward = {
+            # Improve previous idea so that new commanders start at higher level
+            if = {
+                limit = { has_dlc = "No Step Back" }
+                swap_ideas = {
+                    remove_idea = meritocratic_command_spirit
+                    add_idea = meritocratic_command_spirit_improved
+                }
+            }
+            else = {
+                hidden_effect = {
+                    create_corps_commander = {
+                        name = "Storbutz"
+                        skill = 4
+                        attack_skill = 1
+                        defense_skill = 5
+                        planning_skill = 3
+                        logistics_skill = 2
+                        traits = {
+                            logistics_wizard
+                        }
+                    }
+                }
+                custom_effect_tooltip = DGU_meritocratic_army_command
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_siege_trolls
+		relative_position_id = DGU_the_armies_of_the_necromancer
+        
+        prerequisite = { focus = DGU_better_army_leaders }
+        
+        icon = GFX_goal_generic_troll_with_hammer
+        
+        x = -2
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                schedule_met_successfully = yes
+            }
+            modifier = {
+                factor = 0.25
+                OR = {
+                    has_completed_focus = DGU_siege_trolls
+                    has_completed_focus = DGU_dark_sorcery
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            NOT = { has_war_with = MOR }
+            MOR = { exists = yes }
+            has_tech = troll
+        }
+        completion_reward = {
+			# get some trolls (if we have it researched)  
+            if = {
+                limit = {
+                    has_tech = olog_hai
+                }
+                add_equipment_to_stockpile = {
+                    type = orc_troll_equipment_2
+                    amount = 600
+                }
+            }
+            else = {
+                add_equipment_to_stockpile = {
+                    type = orc_troll_equipment_1
+                    amount = 600
+                }
+            }
+            custom_effect_tooltip = DGU_siege_trolls_tt
+		}
+    }
+
+    focus = {
+        id = DGU_dark_sorcery
+		relative_position_id = DGU_the_armies_of_the_necromancer
+        
+        prerequisite = { focus = DGU_the_eyes_eyes }
+        
+        icon = GFX_goal_DGU_necromancy_dark_sorcerer
+        
+        x = 2
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                schedule_met_successfully = yes
+            }
+            modifier = {
+                factor = 0.15
+                OR = {
+                    has_completed_focus = DGU_siege_trolls
+                    has_completed_focus = DGU_dark_sorcery
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            NOT = { has_war_with = MOR }
+            MOR = { exists = yes }
+        }
+        
+        completion_reward = {
+			# magic research bonus  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_knowledge_magic
+                uses = 1
+                bonus = 0.7
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_the_eyes_eyes
+		relative_position_id = DGU_the_armies_of_the_necromancer
+        
+        prerequisite = { focus = DGU_the_armies_of_the_necromancer }
+        
+        icon = GFX_goal_generic_eye_sauron_palantir
+        
+        x = 2
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 2
+                schedule_met_successfully = yes
+            }
+            modifier = {
+                factor = 0.2
+                OR = {
+                    has_completed_focus = DGU_siege_trolls
+                    has_completed_focus = DGU_specialized_equipment
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            NOT = { has_war_with = MOR }
+            MOR = { exists = yes }
+        }
+        bypass = {
+            has_intelligence_agency = yes
+        }
+        
+        completion_reward = {
+			# intelligence agency  
+            if = {
+                limit = {
+                    has_intelligence_agency = no
+                    has_dlc = "La Resistance"
+                }
+                create_intelligence_agency = {
+                    name = "Dol Guldur Crowstorm"
+                    icon = GFX_intelligence_agency_logo_generic_2
+                }
+            }
+            else = {
+                add_tech_bonus = {
+                    name = special_bonus
+                    category = lotr_knowledge_intrigue
+                    uses = 2
+                    bonus = 0.5
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_expand_the_thrall_pits
+		relative_position_id = DGU_shadow_without_master
+        
+        prerequisite = { focus = DGU_shadow_without_master }
+        
+        icon = GFX_goal_generic_troll_pit_train
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 2
+                has_manpower < 2000
+            }
+            modifier = {
+                factor = 3
+                has_war_with = MOR
+            }
+            modifier = {
+                factor = 2
+                MOR = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            is_subject = no
+        }
+        
+        completion_reward = {
+			# gain a bit of revo, add manpower  
+            add_popularity = {
+                ideology = revolutionary
+                popularity = 0.2
+            }
+            add_manpower = 6000
+		}
+    }
+
+    focus = {
+        id = DGU_a_reward_from_mordor
+		relative_position_id = DGU_the_armies_of_the_necromancer
+        
+        prerequisite = { focus = DGU_siege_trolls focus = DGU_specialized_equipment focus = DGU_dark_sorcery }
+        
+        icon = GFX_goal_DGU_nazgul_orders_message
+        
+        x = 0
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 35 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            NOT = { has_war_with = MOR }
+            MOR = { exists = yes }
+
+            schedule_met_successfully = yes
+        }
+        completion_reward = {
+			# if we fulfilled plan, get a bunch of cool stuff  
+            hidden_effect = {
+                country_event = { id = dolguldur.5 days = 1 }
+            }
+            event_option_tooltip = dolguldur.5.a
+		}
+    }
+
+    focus = {
+        id = DGU_salvage_the_ruins
+		relative_position_id = DGU_the_shadow_over_the_mirkwood
+        
+        prerequisite = { focus = DGU_fortify_the_naked_hill }
+        
+        icon = GFX_goal_DGU_construction_efforts_tower
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { }
+        available = {
+            controls_state = 87
+        }
+        bypass_if_unavailable = yes
+        
+        completion_reward = {
+			# civs  
+            87 = { add_building_slot_and_civ_x3 = yes }
+            87 = { add_building_slot_and_mil_x2 = yes }
+		}
+    }
+
+    focus = {
+        id = DGU_restore_the_dungeons
+		relative_position_id = DGU_the_shadow_over_the_mirkwood
+        
+        prerequisite = { focus = DGU_fortify_the_naked_hill }
+        
+        icon = GFX_goal_generic_prisoner_skeleton
+        
+        x = 1
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { }
+        available = {
+            controls_state = 87
+        }
+        bypass_if_unavailable = yes
+        
+        completion_reward = {
+            add_stability = 0.12
+        }
+    }
+
+    focus = {
+        id = DGU_whispers_in_the_boughs
+		relative_position_id = DGU_the_shadow_over_the_mirkwood
+		prerequisite = { focus = DGU_salvage_the_ruins }
+		prerequisite = { focus = DGU_restore_the_dungeons }
+        
+        icon = GFX_goal_generic_encoraching_darkness
+        
+        x = 0
+        y = 3
+
+        cost = 10
+        ai_will_do = { factor = 100 }
+        available = {
+            any_neighbor_country = {
+                NOT = { is_orcs = yes }
+                NOT = { is_ally_with = ROOT }
+                NOT = { has_war_with = ROOT }
+            }
+        }
+        bypass_if_unavailable = yes
+        
+        search_filters = { }
+        completion_reward = {
+            hidden_effect = {
+                add_named_threat = {
+                    threat = 1
+                    name = "Rumors of Dol Guldur Rebuilding"
+                }
+            }
+
+            cfm_increase_10p = yes
+
+			# lower stability in all neighbors that arent orcs  
+            every_country = {
+                limit = { 
+                    OR = {
+                        is_neighbor_of = ROOT
+                        tag = LTH
+                    }
+                    NOT = { is_orcs = yes }
+                    NOT = { is_ally_with = ROOT }
+                    NOT = { has_war_with = ROOT }
+                }
+                hidden_effect = {
+                    country_event = { id = dolguldur.6 days = 1 }
+                }
+                event_option_tooltip = dolguldur.6.a
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_centralize_military_planning
+		relative_position_id = DGU_rearmament_effort
+        
+        prerequisite = { focus = DGU_quell_the_infighting }
+        
+        icon = GFX_goal_DGU_orc_commander
+        
+        x = -10
+        y = 4
+
+        cost = 10
+        ai_will_do = {
+            factor = 35
+            modifier = {
+                factor = 2
+                date > "3019.1.1"
+            }
+            modifier = {
+                factor = 2
+                has_war = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        
+        completion_reward = {
+            remove_ideas = DGU_incoherent_military_command
+        }
+    }
+
+    focus = {
+        id = DGU_master_of_the_fortress
+		relative_position_id = DGU_rearmament_effort
+        
+        prerequisite = { focus = DGU_quell_the_infighting }
+        
+        icon = GFX_goal_generic_dark_fortress_dol_guldur
+        
+        x = 7
+        y = 4
+
+        cost = 10
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                add = -10
+                has_country_flag = rng_80p_flag_1
+            }
+            modifier = {
+                add = 15
+                date > "3019.1.1"
+            }
+            modifier = {
+                add = 30
+                date > "3020.1.1"
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        bypass = {
+            OR = {
+                is_in_faction = yes
+                is_subject = yes
+            }
+        }
+        
+        completion_reward = {
+			# choose if mordor alignment or no  
+            country_event = dolguldur.7
+		}
+    }
+
+    focus = {
+        id = DGU_purge_the_eyes_faithful
+		relative_position_id = DGU_shadow_without_master
+        
+        prerequisite = { focus = DGU_shadow_without_master }
+        
+        icon = GFX_goal_DGU_eye_of_sauron_unleashed
+        
+        x = -1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 3
+                date > "3021.1.1"
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            is_subject = no
+        }
+        
+        completion_reward = {
+            add_popularity = {
+                ideology = belligerent
+                popularity = -0.2
+            }
+            add_popularity = {
+                ideology = revolutionary
+                popularity = 0.1
+            }
+            add_stability = -0.1
+            add_war_support = -0.1
+            custom_effect_tooltip = DGU_purge_the_eyes_faithful_tt
+            hidden_effect = {
+                # retire 30% of our unit leaders (randomly)
+                every_unit_leader = {
+                    random_list = {
+                        30 = { lotr_retire_character = yes }
+                        70 = { }
+                    }
+                }   
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_fortify_the_naked_hill
+		relative_position_id = DGU_the_shadow_over_the_mirkwood
+        
+        prerequisite = { focus = DGU_the_shadow_over_the_mirkwood }
+        
+        icon = GFX_goal_DGU_dark_fortress
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { }
+        available = {
+            controls_state = 87
+        }
+        bypass_if_unavailable = yes
+        
+        completion_reward = {
+			# add castle  
+            hidden_effect = {
+                87 = {
+                    add_building_construction = { type = castle level = 2 province = 382 instant_build = yes }
+                    add_building_construction = {
+                        type = bunker
+                        level = 2
+                        instant_build = yes
+                        province = {
+                            all_provinces = yes
+                            limit_to_border = yes
+                        }
+                    }
+                }
+            }
+            87 = {
+                custom_effect_tooltip = DGU_fortify_the_naked_hill_tt
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_quell_the_infighting
+		relative_position_id = DGU_rearmament_effort
+        
+        prerequisite = { focus = DGU_revised_army_drills focus = DGU_meritocratic_army_command }
+        
+        icon = GFX_goal_generic_orc_infighting_brawl
+        
+        x = 0
+        y = 3
+
+        cost = 10
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { }
+        completion_reward = {
+			# get rid of bad spirit  
+            remove_ideas = DGU_infighting
+		}
+    }
+
+    focus = {
+        id = DGU_meat_from_mordor
+		relative_position_id = DGU_the_armies_of_the_necromancer
+        
+        prerequisite = { focus = DGU_the_armies_of_the_necromancer }
+        
+        icon = GFX_goal_DGU_army_of_mordor
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 2
+                schedule_met_successfully = yes
+            }
+            modifier = {
+                factor = 0.25
+                OR = {
+                    has_completed_focus = DGU_siege_trolls
+                    has_completed_focus = DGU_dark_sorcery
+                }
+            }
+            modifier = {
+                factor = 2
+                has_manpower < 1500
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            NOT = { has_war_with = MOR }
+            MOR = { exists = yes }
+        }
+        
+        completion_reward = {
+			# gain manpower  
+            add_manpower = 4000
+		}
+    }
+
+    focus = {
+        id = DGU_specialized_equipment
+		relative_position_id = DGU_the_armies_of_the_necromancer
+        
+        prerequisite = { focus = DGU_meat_from_mordor }
+        
+        icon = GFX_goal_generic_dark_inf_equip_pile
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 2
+                schedule_met_successfully = yes
+            }
+            modifier = {
+                factor = 0.25
+                OR = {
+                    has_completed_focus = DGU_siege_trolls
+                    has_completed_focus = DGU_dark_sorcery
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            OR = {
+                MOR = { has_tech = siege_equipment_0 }
+                MOR = { has_tech = catapult_0 }
+            }
+            NOT = { has_war_with = MOR }
+            MOR = { exists = yes }
+        }
+        
+        completion_reward = {
+			MOR = { 
+                license_newest_siege_equipment = yes
+                license_newest_catapult_equipment = yes
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_better_army_leaders
+		relative_position_id = DGU_the_armies_of_the_necromancer
+        
+        prerequisite = { focus = DGU_the_armies_of_the_necromancer }
+        
+        icon = GFX_goal_generic_orc_with_axe
+        
+        x = -2
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 30
+            modifier = {
+                factor = 2
+                schedule_met_successfully = yes
+            }
+            modifier = {
+                factor = 0.5
+                OR = {
+                    has_completed_focus = DGU_specialized_equipment
+                    has_completed_focus = DGU_dark_sorcery
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            NOT = { has_war_with = MOR }
+            MOR = { exists = yes }
+        }
+        
+        completion_reward = {
+			# gain better leaders  
+            custom_effect_tooltip = DGU_better_army_leaders_tt
+		}
+    }
+
+    focus = {
+        id = DGU_the_iron_crown_of_mirkwood
+		relative_position_id = DGU_shadow_without_master
+        
+        prerequisite = { focus = DGU_purge_the_eyes_faithful }
+        
+        icon = GFX_goal_DGU_iron_crown_of_mirkwood_2
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 20
+            modifier = {
+                factor = 2
+                date > "3022.1.1"
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            is_subject = no
+        }
+        
+        completion_reward = {
+			# switch ideology to revo, gain a cool spirit  
+            set_politics = {
+                ruling_party = revolutionary
+                elections_allowed = no
+            }
+            add_ideas = DGU_iron_crown_of_mirkwood
+
+            add_popularity = {
+                ideology = revolutionary
+                popularity = 0.1
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_ward_against_the_east
+		relative_position_id = DGU_shadow_without_master
+        
+        prerequisite = { focus = DGU_expand_the_thrall_pits }
+        
+        icon = GFX_goal_goal_generic_defence
+        
+        x = 1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 3
+                has_war_with = MOR
+            }
+            modifier = {
+                factor = 2
+                MOR = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            is_subject = no
+        }
+        
+        completion_reward = {
+			# gain bonuses against mordor  
+            add_ideas = DGU_stragglers_of_mordor    
+            
+            add_popularity = {
+                ideology = revolutionary
+                popularity = 0.1
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_the_twilight_dominion
+		relative_position_id = DGU_shadow_without_master
+		prerequisite = { focus = DGU_ward_against_the_east }
+		prerequisite = { focus = DGU_the_iron_crown_of_mirkwood }
+        
+        icon = GFX_goal_generic_black_sun_darkness
+        
+        x = 0
+        y = 4
+
+        cost = 10
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                date > "3022.1.1"
+            }
+            modifier = {
+                factor = 2
+                date > "3023.1.1"
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            is_subject = no
+            is_major = yes
+        }
+        bypass = {
+            is_in_faction = yes
+        }
+        
+        completion_reward = {
+			# create faction  
+            create_faction_from_template = {
+                template = faction_template_generic
+                name = "Amon Lanc Alliance"
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_unlock_mordors_knowledge
+		relative_position_id = DGU_the_armies_of_the_necromancer
+        
+        prerequisite = { focus = DGU_a_reward_from_mordor }
+        
+        icon = GFX_goal_DGU_dark_sauron_tome
+        
+        x = 0
+        y = 4
+
+        cost = 10
+        ai_will_do = { factor = 50 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            NOT = { has_war_with = MOR }
+            MOR = { exists = yes }
+        }
+        completion_reward = {
+            add_research_slot = 1
+        }
+    }
+
+    focus = {
+        id = DGU_unitary_initiatives
+		relative_position_id = DGU_the_armies_of_the_necromancer
+		prerequisite = { focus = DGU_the_twilight_dominion }
+		prerequisite = { focus = DGU_unlock_mordors_knowledge }
+        
+        icon = GFX_goal_generic_unity_among_orcs
+        
+        x = 3
+        y = 5
+
+        cost = 10
+        ai_will_do = { factor = 3 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            is_in_faction = yes
+        }
+        completion_reward = {
+            if = {
+                limit = {
+                    has_dlc = "No Compromise, No Surrender"
+                }
+                add_faction_initiative = 100
+            }
+            else = {
+                add_political_power = 150
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_the_grand_strategy
+		relative_position_id = DGU_centralize_military_planning
+		prerequisite = { focus = DGU_centralize_military_planning }
+		prerequisite = { focus = DGU_master_of_the_fortress }
+        
+        icon = GFX_goal_generic_black_dagger_on_map
+        
+        x = 0
+        y = 1
+
+        cost = 10
+        ai_will_do = { factor = 35 }
+
+        available = {
+            if = {
+                limit = { has_completed_focus = DGU_the_armies_of_the_necromancer }
+                custom_trigger_tooltip = {
+                    tooltip = DGU_mordor_chooses_tt
+                    always = no
+                }
+            }
+            else = {
+                has_completed_focus = DGU_shadow_without_master
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        
+        completion_reward = {
+			# add planning and stuff. cant be chosen if mordor cucks  
+            add_ideas = DGU_grand_plan
+		}
+    }
+
+    focus = {
+        id = DGU_enxtinguish_elven_light
+		relative_position_id = DGU_centralize_military_planning
+        
+        prerequisite = { focus = DGU_the_grand_strategy }
+        
+        icon = GFX_goal_DGU_plan_elves
+
+        mutually_exclusive = {
+            focus = DGU_a_well_timed_distraction
+            focus = DGU_attack_rohan
+            focus = DGU_terror_of_the_anduin
+            focus = DGU_threaten_the_east
+        }
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 35
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            if = {
+                limit = { has_completed_focus = DGU_the_armies_of_the_necromancer }
+                custom_trigger_tooltip = {
+                    tooltip = DGU_mordor_chooses_tt
+                    always = no
+                }
+            }
+            else = {
+                has_completed_focus = DGU_shadow_without_master
+            }
+        }
+        
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = DGU_grand_plan
+                add_idea = DGU_grand_plan_extinguish_elven_light
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_terror_of_the_anduin
+		relative_position_id = DGU_centralize_military_planning
+        
+        prerequisite = { focus = DGU_the_grand_strategy }
+        
+        icon = GFX_goal_DGU_plan_anduin
+        
+        x = -4
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 35
+            modifier = {
+                factor = 0
+                is_historical_focus_on = yes
+            }
+        }
+
+        mutually_exclusive = {
+            focus = DGU_a_well_timed_distraction
+            focus = DGU_attack_rohan
+            focus = DGU_enxtinguish_elven_light
+            focus = DGU_threaten_the_east
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            if = {
+                limit = { has_completed_focus = DGU_the_armies_of_the_necromancer }
+                custom_trigger_tooltip = {
+                    tooltip = DGU_mordor_chooses_tt
+                    always = no
+                }
+            }
+            else = {
+                has_completed_focus = DGU_shadow_without_master
+            }
+        }
+        
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = DGU_grand_plan
+                add_idea = DGU_grand_plan_terror_of_the_anduin
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_attack_rohan
+		relative_position_id = DGU_centralize_military_planning
+        
+        prerequisite = { focus = DGU_the_grand_strategy }
+        
+        icon = GFX_goal_DGU_plan_rohan
+
+        mutually_exclusive = {
+            focus = DGU_a_well_timed_distraction
+            focus = DGU_enxtinguish_elven_light
+            focus = DGU_terror_of_the_anduin
+            focus = DGU_threaten_the_east
+        }
+        
+        x = 4
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 0
+                is_historical_focus_on = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            if = {
+                limit = { has_completed_focus = DGU_the_armies_of_the_necromancer }
+                custom_trigger_tooltip = {
+                    tooltip = DGU_mordor_chooses_tt
+                    always = no
+                }
+            }
+            else = {
+                has_completed_focus = DGU_shadow_without_master
+            }
+        }
+        
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = DGU_grand_plan
+                add_idea = DGU_grand_plan_attack_rohan
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_the_creeping_gloom
+		relative_position_id = DGU_whispers_in_the_boughs
+        
+        prerequisite = { focus = DGU_whispers_in_the_boughs }
+        
+        icon = GFX_goal_DGU_encroachment_map_shadow
+        
+        x = 6
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 20
+            modifier = {
+                factor = 1.5
+                MIR = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        bypass_if_unavailable = yes
+        
+        completion_reward = {
+            add_timed_idea = {
+                idea = CFM_creeping_gloom
+                days = 1200
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_the_masters_of_the_mirkwood
+		relative_position_id = DGU_whispers_in_the_boughs
+        
+        prerequisite = { focus = DGU_whispers_in_the_boughs }
+        
+        icon = GFX_goal_DGU_iron_crown_of_mirkwood_2
+        
+        x = 0
+        y = 1
+
+        cost = 10
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { }
+        available = {
+            control_all_mirkwood_states = yes
+        }
+        
+        completion_reward = {
+            hidden_effect = {
+                add_named_threat = {
+                    threat = 3
+                    name = "Dol Guldur Controls Mirkwood"
+                }
+            }
+
+			# late game manifest if we own all mirkwood  
+            add_ideas = DGU_masters_of_mirkwood
+            hidden_effect = {
+                news_event = news.407
+                every_controlled_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        NOT = { is_core_of = DGU }
+                        impassable = no
+                    }
+                    add_compliance = 35
+                }
+            }
+            custom_effect_tooltip = DGU_masters_of_the_mirkwood_tt
+
+            set_country_flag = {
+                flag = DGU_completed_masters_of_mirkwood
+                value = 1
+                days = 365
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_dark_constructs
+		relative_position_id = DGU_whispers_in_the_boughs
+        
+        prerequisite = { focus = DGU_whispers_in_the_boughs }
+        
+        icon = GFX_goal_DGU_dark_construction
+        
+        x = -4
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                add = 10
+                has_manpower < 500
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# create special project that eats some civs *until* we reach necro forge (but also grants some minor bonus)  
+            add_ideas = DGU_dark_constructs
+            custom_effect_tooltip = DGU_dark_constructs_effect_tt
+		}
+    }
+
+    focus = {
+        id = DGU_threaten_the_east
+		relative_position_id = DGU_centralize_military_planning
+        
+        prerequisite = { focus = DGU_the_grand_strategy }
+        
+        icon = GFX_goal_DGU_plan_east
+
+        mutually_exclusive = {
+            focus = DGU_a_well_timed_distraction
+            focus = DGU_attack_rohan
+            focus = DGU_enxtinguish_elven_light
+            focus = DGU_terror_of_the_anduin
+        }
+
+        available = {
+            if = {
+                limit = { has_completed_focus = DGU_the_armies_of_the_necromancer }
+                custom_trigger_tooltip = {
+                    tooltip = DGU_mordor_chooses_tt
+                    always = no
+                }
+            }
+            else = {
+                has_completed_focus = DGU_shadow_without_master
+            }
+        }
+        
+        x = -8
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 0
+                is_historical_focus_on = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = DGU_grand_plan
+                add_idea = DGU_grand_plan_threaten_the_east
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_a_well_timed_distraction
+		relative_position_id = DGU_centralize_military_planning
+
+        prerequisite = { focus = DGU_the_grand_strategy }
+
+        mutually_exclusive = {
+            focus = DGU_attack_rohan
+            focus = DGU_enxtinguish_elven_light
+            focus = DGU_terror_of_the_anduin
+            focus = DGU_threaten_the_east
+        }
+        
+        icon = GFX_goal_DGU_plan_distr
+        
+        x = 8
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 0
+                is_historical_focus_on = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            if = {
+                limit = { has_completed_focus = DGU_the_armies_of_the_necromancer }
+                custom_trigger_tooltip = {
+                    tooltip = DGU_mordor_chooses_tt
+                    always = no
+                }
+            }
+            else = {
+                has_completed_focus = DGU_shadow_without_master
+            }
+        }
+        
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = DGU_grand_plan
+                add_idea = DGU_grand_plan_well_timed_distraction
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_reasearch_and_misc
+		relative_position_id = DGU_whispers_in_the_boughs
+        
+        prerequisite = { focus = DGU_whispers_in_the_boughs focus = DGU_quell_the_infighting }
+        
+        icon = GFX_goal_DGU_old_books_and_lore
+        
+        x = -13
+        y = 1
+
+        cost = 7
+        ai_will_do = {
+            factor = 4
+            modifier = {
+                factor = 2
+                OR = {
+                    target_any_cavalry_strat = yes
+                    target_air_focus = yes
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# generic research boost  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_knowledge_scriptorium
+                uses = 1
+                bonus = 0.5
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_forest_of_shadows
+		relative_position_id = DGU_whispers_in_the_boughs
+        
+        prerequisite = { focus = DGU_the_masters_of_the_mirkwood }
+        
+        icon = GFX_goal_DGU_dark_forest_taint
+        
+        x = 0
+        y = 3
+
+        cost = 10
+        ai_will_do = { factor = 100 }
+        
+        search_filters = { }
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = DGU_forest_of_shadows_condition_tt
+                control_all_mirkwood_states = yes
+                NOT = { has_country_flag = DGU_completed_masters_of_mirkwood }
+                NOT = { has_country_flag = dgu_lost_mirkwood_control }   
+            }
+        }
+        completion_reward = {
+            hidden_effect = {
+                every_state = {
+                    limit = {
+                        is_on_continent = mirkwood
+                        NOT = { is_core_of = DGU }
+                    }
+                    add_core_of = DGU
+                }
+            }
+            custom_effect_tooltip = DGU_forest_of_shadows_tt
+        }
+    }
+
+    focus = {
+        id = DGU_consolidate_the_guilds
+		relative_position_id = DGU_unitary_initiatives
+        
+        prerequisite = { focus = DGU_unitary_initiatives }
+        
+        icon = GFX_goal_generic_miner_guild_picks
+        
+        x = -2
+        y = 1
+
+        cost = 10
+        ai_will_do = { factor = 3 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            if = {
+                limit = {
+                    has_dlc = "Arms Against Tyranny"
+                }
+                every_military_industrial_organization = {
+                    add_mio_funds_gain_factor = 0.15
+                    add_mio_research_bonus = 0.1   
+                }
+            }
+            else = {
+                random_state_add_building_slot_and_civ_x2 = yes
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_consolidate_intelligence
+		relative_position_id = DGU_unitary_initiatives
+        
+        prerequisite = { focus = DGU_unitary_initiatives }
+        
+        icon = GFX_goal_generic_nazgul_ringwraith
+        
+        x = 0
+        y = 1
+
+        cost = 10
+        ai_will_do = { factor = 3 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            if = {
+                limit = {
+                    has_dlc = "La Resistance"
+                }
+                gain_random_agency_upgrade = yes
+            }
+            else = {
+                add_tech_bonus = {
+                    name = special_bonus
+                    category = lotr_knowledge_intrigue
+                    uses = 1
+                    bonus = 0.5
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_black_market_trading
+		relative_position_id = DGU_unitary_initiatives
+        
+        prerequisite = { focus = DGU_unitary_initiatives }
+        
+        icon = GFX_goal_GOB_weapons_market_sale
+        
+        x = 2
+        y = 1
+
+        cost = 10
+        ai_will_do = { factor = 5 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            add_cic = 2000
+        }
+    }
+
+    focus = {
+        id = DGU_deep_forest_farming
+		relative_position_id = DGU_unitary_initiatives
+        
+        prerequisite = { focus = DGU_consolidate_intelligence focus = DGU_consolidate_the_guilds }
+        
+        icon = GFX_goal_generic_plow_farming_equip
+        
+        x = -1
+        y = 2
+
+        cost = 10
+        ai_will_do = { factor = 2 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour_farming
+                uses = 2
+                bonus = 0.5
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_knowledge_preservation
+		relative_position_id = DGU_unitary_initiatives
+        
+        prerequisite = { focus = DGU_black_market_trading focus = DGU_consolidate_intelligence }
+        
+        icon = GFX_goal_GOB_research_book_alchemy
+        
+        x = 1
+        y = 2
+
+        cost = 10
+        ai_will_do = { factor = 3 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_knowledge_intrigue
+                uses = 1
+                bonus = 0.5
+            }
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_knowledge_scriptorium
+                uses = 1
+                bonus = 0.5
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_economic_consolidation
+		relative_position_id = DGU_unitary_initiatives
+        
+        prerequisite = { focus = DGU_deep_forest_farming focus = DGU_knowledge_preservation }
+        
+        icon = GFX_goal_DGU_tools_and_gold
+        
+        x = 0
+        y = 3
+
+        cost = 10
+        ai_will_do = { factor = 5 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            add_ideas = DGU_less_consumer_goods
+        }
+    }
+focus = {
+        id = DGU_burn_the_ancient_woods
+		relative_position_id = DGU_the_creeping_gloom
+        
+        prerequisite = { focus = DGU_the_creeping_gloom }
+        
+        icon = GFX_goal_DGU_burning_wood
+        
+        x = -3
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 3
+                coal < 3
+            }
+            modifier = {
+                factor = 3
+                has_country_flag = rng_30p_flag_1
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            OR = {
+                controls_state = 232
+                controls_state = 233
+                controls_state = 231
+            }
+        }
+        
+        completion_reward = {
+            # in specific states surrounding DGU, convert half the wood into twice as much coal
+            custom_effect_tooltip = DGU_burn_the_ancient_woods_tt
+            set_temp_variable = { temp_total_wood = 0 }
+            add_to_temp_variable = { temp_total_wood = 87.resource@chromium }
+            if = {
+                limit = { 232 = { is_controlled_by = ROOT } }
+                add_to_temp_variable = { temp_total_wood = 232.resource@chromium }
+            }
+            if = {
+                limit = { 233 = { is_controlled_by = ROOT } }
+                add_to_temp_variable = { temp_total_wood = 233.resource@chromium }
+            }
+            if = {
+                limit = { 231 = { is_controlled_by = ROOT } }
+                add_to_temp_variable = { temp_total_wood = 231.resource@chromium }
+            }
+            multiply_temp_variable = { temp_total_wood = 2.0 }
+            add_resource = {
+                type = coal
+                amount = temp_total_wood
+                state = 87
+            }
+        }
+    }
+
+	focus = {
+		id = DGU_pillage_the_rhosgobel_farmlands
+		relative_position_id = DGU_burn_the_ancient_woods
+		
+		prerequisite = { focus = DGU_burn_the_ancient_woods }
+		
+		icon = GFX_goal_remove_the_weeds_from_the_crops_farm
+		
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			factor = 3
+		}
+		
+		search_filters = { }
+		available = {
+		}
+		
+		completion_reward = {
+			custom_effect_tooltip = DGU_food_raids_rhosgobel_tt
+			country_event = {
+				id = dolguldur.153
+				days = 2
+				random_hours = 4
+			}
+		}
+	}
+		
+    focus = {
+        id = DGU_poison_the_river_running
+		relative_position_id = DGU_enxtinguish_elven_light
+        
+        prerequisite = { focus = DGU_focus_on_lothlorien }
+        
+        icon = GFX_goal_DGU_poison_river_ru
+        
+        x = 1
+        y = 3
+
+        cost = 10
+        ai_will_do = {
+            factor = 18
+            modifier = {
+                factor = 2
+                date > "3021.1.1"
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            is_subject = no
+            country_exists = LTH
+            is_neighbor_of = LTH
+            NOT = { is_ally_with = LTH }
+        }
+        
+        completion_reward = {
+            cfm_increase_10p = yes
+
+            LTH = {
+                hidden_effect = { country_event = dolguldur.1 }
+                event_option_tooltip = dolguldur.1.a
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_weaken_the_woodland_guard
+		relative_position_id = DGU_enxtinguish_elven_light
+        
+        prerequisite = { focus = DGU_focus_on_mirkwood }
+        
+        icon = GFX_goal_DGU_attack_elves_backstab_2
+        
+        x = -1
+        y = 3
+
+        cost = 10
+        ai_will_do = {
+            factor = 18
+            modifier = {
+                factor = 2
+                date > "3021.1.1"
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            is_subject = no
+            country_exists = MIR
+            is_neighbor_of = MIR
+            NOT = { is_ally_with = MIR }
+        }
+        
+        completion_reward = {
+            cfm_increase_10p = yes
+
+            MIR = {
+                hidden_effect = { country_event = dolguldur.2 }
+                event_option_tooltip = dolguldur.2.a
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_a_match_for_elven_might
+		relative_position_id = DGU_enxtinguish_elven_light
+        
+        prerequisite = { focus = DGU_enxtinguish_elven_light }
+        
+        icon = GFX_goal_DGU_orc_muscle_power
+        
+        x = 0
+        y = 2
+
+        cost = 7
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 1.5
+                NOT = { has_completed_focus = DGU_war_forges }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+            87 = { add_building_slot_and_mil_x2 = yes }
+            add_manpower = 1800
+        }
+    }
+
+    focus = {
+        id = DGU_the_siege_of_the_elven_halls
+		relative_position_id = DGU_enxtinguish_elven_light
+        
+        prerequisite = { focus = DGU_weaken_the_woodland_guard }
+        
+        will_lead_to_war_with = MIR
+        
+        icon = GFX_goal_goal_generic_major_war
+        
+        x = -1
+        y = 5
+
+        cost = 10
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 0.1
+                has_war = yes
+            }
+            modifier = {
+                factor = 0.5
+                date < "3021.1.1"
+            }
+            modifier = {
+                factor = 2
+                date < "3022.1.1"
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = MIR
+                    ratio > 0.75
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = MIR
+                    ratio > 1.5
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = MIR
+                    ratio > 2
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            is_neighbor_of = MIR
+            is_subject = no
+            NOT = { is_ally_with = MIR }
+            NOT = { has_non_aggression_pact_with = MIR }
+        }
+        bypass = {
+            has_war_with = MIR
+        }
+        
+        completion_reward = {
+            declare_war_on = {
+                target = MIR
+                type = annex_everything
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_stalk_the_vales
+		relative_position_id = DGU_terror_of_the_anduin
+        
+        prerequisite = { focus = DGU_terror_of_the_anduin }
+        
+        icon = GFX_goal_RHU_generic_intel
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                date > "3019.1.1"
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+            VAL = {
+                give_intel_on_country = yes
+            }
+            GLD = {
+                give_intel_on_country = yes
+            }
+            RGL = {
+                give_intel_on_country = yes
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_cross_the_old_ford
+		relative_position_id = DGU_terror_of_the_anduin
+        
+        prerequisite = { focus = DGU_invasion }
+        
+        icon = GFX_goal_VAL_battle_at_river_2
+        
+        x = -1
+        y = 5
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 0.1
+                has_war = yes
+            }
+            modifier = {
+                factor = 0.1
+                date < "3021.6.1"
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = GLD
+                    ratio > 1
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = GLD
+                    ratio > 1.5
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = GLD
+                    ratio > 2
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            is_subject = no
+            OR = {
+                RGL = { has_ever_capitulated = yes }
+                GLD = { has_ever_capitulated = yes }
+            }
+        }
+        bypass = {
+            OR = {
+                has_war_with = GLD
+                is_in_faction_with = GLD
+                GLD = { has_ever_capitulated = yes }
+            }
+        }
+        
+        completion_reward = {
+            create_wargoal = {
+                target = GLD
+                type = annex_everything
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_divide_the_woodmen_clans
+		relative_position_id = DGU_terror_of_the_anduin
+        
+        prerequisite = { focus = DGU_stalk_the_vales }
+        
+        icon = GFX_goal_generic_nazgul_whispers_rumor_manip
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                date > "3020.1.1"
+            }
+            modifier = {
+                factor = 2
+                OR = {
+                    RGL = { is_ai = no }
+                    GLD = { is_ai = no }
+                    VAL = { is_ai = no }
+                }
+            }
+            modifier = {
+                factor = 0.25
+                NOT = { has_country_flag = rng_50p_flag_3 }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            NOT = { has_completed_focus = DGU_invasion }
+            is_subject = no
+            NOT = { is_in_faction_with = GLD }
+            NOT = { is_in_faction_with = RGL }
+            NOT = { is_in_faction_with = VAL }
+        }
+        bypass = {
+            OR = {
+                has_war_with = GLD
+                has_war_with = RGL
+                has_war_with = VAL
+            }
+        }
+        
+        completion_reward = {
+            VAL = {
+                hidden_effect = { country_event = dolguldur.3 }
+                event_option_tooltip = dolguldur.3.a
+            }
+            GLD = {
+                hidden_effect = { country_event = dolguldur.3 }
+                event_option_tooltip = dolguldur.3.a
+            }
+            RGL = {
+                hidden_effect = { country_event = dolguldur.3 }
+                event_option_tooltip = dolguldur.3.a
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_the_forges_of_night
+		relative_position_id = DGU_dark_constructs
+        
+        prerequisite = { focus = DGU_war_forges }
+        
+        icon = GFX_goal_DGU_dark_industry_forge
+        
+        x = -3
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 2
+                has_equipment = {
+                    infantry_equipment < 1000
+                }
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# mils  
+            87 = { add_building_slot_and_mil_x3 = yes }
+		}
+    }
+
+    focus = {
+        id = DGU_war_forges
+		relative_position_id = DGU_dark_constructs
+        
+        prerequisite = { focus = DGU_dark_constructs }
+        
+        icon = GFX_goal_generic_mass_forge
+        
+        x = -3
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 0
+                NOT = { has_completed_focus = DGU_necromantic_forge }
+                has_country_flag = rng_50p_flag_3
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# mils  
+            87 = { add_building_slot_and_mil_x3 = yes }
+		}
+    }
+
+    focus = {
+        id = DGU_sorcerous_spires
+		relative_position_id = DGU_dark_constructs
+        
+        prerequisite = { focus = DGU_clear_the_ruins }
+        
+        icon = GFX_goal_DGU_dark_spires
+        
+        x = 1
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 35 }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+            add_breakthrough_points = {
+                specialization = all
+                value = 2
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_necromantic_forge
+		relative_position_id = DGU_dark_constructs
+		prerequisite = { focus = DGU_sorcerous_spires }
+		prerequisite = { focus = DGU_lay_the_foundations }
+        
+        icon = GFX_goal_DGU_necromantic_forge
+        
+        x = 0
+        y = 3
+
+        cost = 10
+        ai_will_do = { factor = 35 }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            controls_state = 87
+            if = {
+                limit = { is_ai = no }
+                has_tech = construction2
+            }
+        }
+        
+        completion_reward = {
+            hidden_effect = {
+                add_named_threat = {
+                    threat = 1
+                    name = "Necromantic Forge Constructed"
+                }
+            }
+
+			# unlock necro forge  
+            remove_ideas = DGU_dark_constructs
+            
+            hidden_effect = {
+                set_technology = {
+                    necromantic_forge_tech = 1
+                    popup = no
+                }
+            }
+            custom_effect_tooltip = DGU_the_necromantic_forge_unlock_tt
+		}
+    }
+
+    focus = {
+        id = DGU_excavate_the_hill_of_sorcery
+		relative_position_id = DGU_dark_constructs
+        
+        prerequisite = { focus = DGU_dark_constructs }
+        
+        icon = GFX_goal_DGU_shovels_digging_exc
+        
+        x = -1
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 35 }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# add building slots  
+            87 = { add_building_slot_and_civ = yes }
+            87 = {
+                add_resource = {
+                    type = steel
+                    amount = 10
+                }
+                add_resource = {
+                    type = coal
+                    amount = 5
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_clear_the_ruins
+		relative_position_id = DGU_dark_constructs
+        
+        prerequisite = { focus = DGU_dark_constructs }
+        
+        icon = GFX_goal_DGU_clean_up_ruins
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 35 }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+            87 = {
+                remove_dynamic_modifier = {
+                    modifier = fortress_ruins
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_lay_the_foundations
+		relative_position_id = DGU_dark_constructs
+        
+        prerequisite = { focus = DGU_excavate_the_hill_of_sorcery }
+        
+        icon = GFX_goal_DGU_foundations_dark_build
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 35 }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# railroads/infra and shit?  
+            87 = { add_extra_state_shared_building_slots = 1 }
+            87 = { add_building_construction = { type = infrastructure level = 1 instant_build = yes } }
+		}
+    }
+
+    focus = {
+        id = DGU_treat_with_the_spawn_of_ungoliant
+		relative_position_id = DGU_the_creeping_gloom
+        
+        prerequisite = { focus = DGU_subjugate_the_spiders }
+        
+        icon = GFX_goal_DGU_offer_spider_meat
+
+        mutually_exclusive = {
+            focus = DGU_enslave_the_spiders
+        }
+        
+        x = -5
+        y = 7
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            has_global_flag = SPI_responded_well_to_DGU
+            NOT = { has_war_with = SPI }
+            country_exists = SPI
+            is_subject = no
+        }
+        
+        completion_reward = {
+			# if friendly, gain cool stuff  
+            87 = {
+                add_resource = {
+                    type = tungsten
+                    amount = 15
+                }
+            }
+            set_technology = {
+                paralytic_venom_others = 1
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_territorial_incursions
+		relative_position_id = DGU_the_creeping_gloom
+        
+        prerequisite = { focus = DGU_the_creeping_gloom }
+        
+        icon = GFX_goal_DGU_shadow_map_seize
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 18
+            modifier = {
+                factor = 2
+                MIR = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        
+        completion_reward = {
+			# unlock some decisions relating to cfm
+            custom_effect_tooltip = SPI_aggresive_stance_tt
+		}
+    }
+
+    focus = {
+        id = DGU_spur_the_spawn_of_ungoliant
+		relative_position_id = DGU_the_creeping_gloom
+        
+        prerequisite = { focus = DGU_burn_the_ancient_woods }
+        
+        icon = GFX_goal_SPI_spider_on_rocks
+        
+        x = -3
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 1.5
+                OR = {
+                    MIR = { is_ai = no }
+                    SPI = { is_ai = no }
+                }
+            }
+            modifier = {
+                factor = 3
+                has_country_flag = rng_30p_flag_1
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            NOT = { is_ally_with = MIR }
+            NOT = { has_war_with = MIR }
+            NOT = { is_ally_with = SPI }
+            NOT = { has_war_with = SPI }
+            SPI = {
+                exists = yes
+                NOT = { has_war_with = MIR }
+                NOT = { is_ally_with = MIR }
+            }
+            MIR = { exists = yes }
+            NOT = { has_completed_focus = DGU_subjugate_the_spiders }
+        }
+        
+        completion_reward = {
+			# make spiders more annoying against elves (+ presence)  
+            hidden_effect = {
+                SPI = { country_event = { id = dolguldur.100 days = 3 } }
+            }
+            custom_effect_tooltip = DGU_spur_the_spiders_tt
+		}
+    }
+
+    focus = {
+        id = DGU_a_guise_of_sorcery
+		relative_position_id = DGU_the_creeping_gloom
+        
+        prerequisite = { focus = DGU_the_creeping_gloom }
+        
+        icon = GFX_goal_DGU_book_dark_magic_tome
+        
+        x = 3
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 3
+            modifier = {
+                factor = 5
+                has_completed_focus = DGU_focus_on_lothlorien
+            }
+            modifier = {
+                factor = 2
+                LTH = { is_ai = no }
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            controls_state = 87
+            has_tech = magic
+        }
+        
+        completion_reward = {
+			# build a lab  
+            87 = {
+                add_building_construction = {
+                    type = laboratory
+                    level = 1
+                    province = 382
+                    instant_build = yes
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_the_veil_against_the_golden_wood
+		relative_position_id = DGU_the_creeping_gloom
+        
+        prerequisite = { focus = DGU_a_guise_of_sorcery }
+        
+        icon = GFX_goal_LTH_golden_wood_shield_barrier_pres
+        
+        x = 3
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 4
+            modifier = {
+                factor = 5
+                has_completed_focus = DGU_focus_on_lothlorien
+            }
+            modifier = {
+                factor = 2
+                LTH = { is_ai = no }
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            controls_state = 87
+            NOT = { is_ally_with = LTH }
+        }
+        
+        completion_reward = {
+			# bonuses against loth  
+            87 = {
+                add_dynamic_modifier = {
+                    modifier = dark_veil
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_subjugate_the_spiders
+		relative_position_id = DGU_the_creeping_gloom
+        
+        prerequisite = { focus = DGU_spur_the_spawn_of_ungoliant focus = DGU_necromantic_forge }
+        
+        icon = GFX_goal_DGU_spider_descent
+        
+        x = -6
+        y = 5
+
+        cost = 10
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 2
+                necromantic_forge > 1
+            }
+            modifier = {
+                add = 2
+                necromantic_forge > 2
+            }
+            modifier = {
+                add = 2
+                necromantic_forge > 3
+            }
+            modifier = {
+                add = 2
+                necromantic_forge > 4
+            }
+            modifier = {
+                factor = 3
+                has_country_flag = rng_30p_flag_2
+            }
+            modifier = {
+                factor = 0.01
+                has_country_flag = rng_30p_flag_3
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = SPI
+                    ratio > 1
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = SPI
+                    ratio > 2
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            is_subject = no
+            SPI = { exists = yes }
+            NOT = { has_war_with = SPI }
+            NOT = { is_ally_with = SPI }
+            necromantic_forge > 0
+            strength_ratio = {
+                tag = SPI
+                ratio > 0.5
+            }
+        }
+        
+        completion_reward = {
+			# send event to puppet spiders  
+            # if the spiders are AI, each necroforge we've built will increase their chanced of accepting by 10%
+            hidden_effect = {
+                SPI = { country_event = { id = dolguldur.8 days = 3 } }
+            }
+            custom_effect_tooltip = DGU_subjugate_the_spiders_tt
+            if = {
+                limit = {
+                    SPI = { is_ai = yes }
+                }
+                custom_effect_tooltip = DGU_subjugate_the_spiders_ai_tt
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_focus_on_lothlorien
+		relative_position_id = DGU_enxtinguish_elven_light
+
+        prerequisite = { focus = DGU_enxtinguish_elven_light }
+
+        icon = GFX_goal_MIR_target_gala_lth
+
+        mutually_exclusive = {
+            focus = DGU_focus_on_mirkwood
+        }
+        
+        x = 1
+        y = 1
+
+        cost = 7
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 1.5
+                LTH = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            country_exists = LTH
+            NOT = { is_ally_with = LTH }
+        }
+        
+        completion_reward = {
+            custom_effect_tooltip = DGU_upon_war_with_loth_tt
+            show_ideas_tooltip = DGU_focus_on_lothlorien
+        }
+    }
+
+    focus = {
+        id = DGU_focus_on_mirkwood
+		relative_position_id = DGU_enxtinguish_elven_light
+
+        prerequisite = { focus = DGU_enxtinguish_elven_light }
+
+        icon = GFX_goal_MIR_target_thrand_mir
+
+        mutually_exclusive = {
+            focus = DGU_focus_on_lothlorien
+        }
+        
+        x = -1
+        y = 1
+
+        cost = 7
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 1.5
+                MIR = { is_ai = no }
+            }
+            modifier = {
+                factor = 0
+                is_historical_focus_on = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            country_exists = MIR
+            NOT = { is_ally_with = MIR }
+        }
+        
+        completion_reward = {
+            custom_effect_tooltip = DGU_upon_war_with_mir_tt
+            show_ideas_tooltip = DGU_focus_on_mirkwood
+        }
+    }
+
+    focus = {
+        id = DGU_the_assault_on_lorien
+		relative_position_id = DGU_enxtinguish_elven_light
+        
+        prerequisite = { focus = DGU_poison_the_river_running }
+        
+        will_lead_to_war_with = LTH
+        
+        icon = GFX_goal_goal_generic_major_war
+        
+        x = 1
+        y = 5
+
+        cost = 10
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 0.1
+                has_war = yes
+            }
+            modifier = {
+                factor = 0.3
+                date < "3021.3.1"
+            }
+            modifier = {
+                factor = 0
+                date < "3021.8.1"
+                is_historical_focus_on = yes
+            }
+            modifier = {
+                factor = 2
+                date < "3022.3.1"
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = LTH
+                    ratio > 0.75
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = LTH
+                    ratio > 1.5
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = LTH
+                    ratio > 2
+                }
+            }
+        }
+
+        select_effect = {
+            if = {
+                limit = { MIR = { has_completed_focus = MIR_promise_support_against_dol_guldur } }
+                add_ai_strategy = {
+                    type = prepare_for_war
+                    id = LTH
+                    value = 200
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            is_neighbor_of = LTH
+            is_subject = no
+            NOT = { is_ally_with = LTH }
+            NOT = { has_non_aggression_pact_with = LTH }
+        }
+        bypass = {
+            has_war_with = LTH
+        }
+        
+        completion_reward = {
+            declare_war_on = {
+                target = LTH
+                type = annex_everything
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_secure_the_outskirts
+		relative_position_id = DGU_enxtinguish_elven_light
+		prerequisite = { focus = DGU_focus_on_lothlorien }
+		icon = GFX_goal_generic_claim_demand_ter_7
+        
+        x = 2
+        y = 2
+
+        cost = 7
+        ai_will_do = {
+            factor = 35
+            modifier = {
+                factor = 3
+                cfm_states_locked_imminent = yes
+            }
+            modifier = {
+                factor = 0.35
+                has_over_50_presence = yes
+            }
+            modifier = {
+                factor = 0.05
+                has_over_80_presence = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+            NOT = { has_idea = CFM_restricted_boost }
+            NOT = { controls_state = 191 }
+
+            191 = { borders_state = yes }
+        }
+        bypass = {
+            controls_state = 191
+        }
+        
+        completion_reward = {
+            191 = { cfm_restrict_to_state = yes }
+
+            cfm_add_restricted_boost = yes
+        }
+    }
+
+    focus = {
+        id = DGU_thurst_north
+		relative_position_id = DGU_enxtinguish_elven_light
+        
+        prerequisite = { focus = DGU_focus_on_mirkwood }
+        
+        icon = GFX_goal_generic_claim_demand_ter_7
+        
+        x = -2
+        y = 4
+
+        cost = 10
+        ai_will_do = {
+            factor = 17
+            modifier = {
+                factor = 3
+                cfm_states_locked_imminent = yes
+            }
+            modifier = {
+                factor = 0.35
+                has_over_50_presence = yes
+            }
+            modifier = {
+                factor = 0.05
+                has_over_80_presence = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+            NOT = { has_idea = CFM_restricted_boost }
+            OR = {
+                NOT = { controls_state = 232 }
+                NOT = { controls_state = 190 }
+            }
+
+            OR = {
+                232 = { borders_state = yes }
+                190 = { borders_state = yes }
+            }
+        }
+        bypass = {
+            controls_state = 232
+            controls_state = 190
+        }
+        
+        completion_reward = {
+            if = {
+                limit = { 232 = { NOT = { is_controlled_by = ROOT } } }
+                232 = { cfm_restrict_to_state = yes }
+            }
+            # If we already own north, gain points in narrows instead
+            else_if = {
+                limit = { 190 = { NOT = { is_controlled_by = ROOT } } }
+                190 = { cfm_restrict_to_state = yes }
+            }
+            cfm_add_restricted_boost = yes
+        }
+    }
+
+    focus = {
+        id = DGU_probing_raids
+		relative_position_id = DGU_enxtinguish_elven_light
+        
+        prerequisite = { focus = DGU_a_match_for_elven_might }
+        
+        icon = GFX_goal_DGU_torch_march_orcs
+        
+        x = 0
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+            factor = 12
+            modifier = {
+                factor = 1.5
+                OR = {
+                    MIR = { is_ai = no }
+                    LTH = { is_ai = no }
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            is_subject = no
+            has_cfm_active = yes
+            NOT = { is_ally_with = MIR }
+            NOT = { is_ally_with = LTH }
+        }
+        
+        completion_reward = {
+            custom_effect_tooltip = DGU_probing_raids_tt
+        }
+    }
+
+    focus = {
+        id = DGU_elves_in_chains
+		relative_position_id = DGU_enxtinguish_elven_light
+        
+        prerequisite = { focus = DGU_the_siege_of_the_elven_halls focus = DGU_the_assault_on_lorien }
+        
+        icon = GFX_goal_DGU_elves_in_chains
+        
+        x = 0
+        y = 6
+
+        cost = 10
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 2
+                num_of_controlled_states > 3
+            }
+            modifier = {
+                factor = 2
+                num_of_controlled_states > 5
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            OR = {
+                MIR = { has_ever_capitulated = yes }
+                LTH = { has_ever_capitulated = yes }
+            }
+            any_controlled_state = {
+                OR = {
+                    is_core_of = MIR
+                    is_core_of = LTH
+                }
+            }
+        }
+        
+        completion_reward = {
+            custom_effect_tooltip = elven_enslavement_occupation_unlock_tt
+        }
+    }
+
+    focus = {
+        id = DGU_offer_support
+		relative_position_id = DGU_terror_of_the_anduin
+        
+        prerequisite = { focus = DGU_divide_the_woodmen_clans }
+        
+        icon = GFX_goal_generic_deal_with_orcs
+        
+        x = -1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                date > "3020.1.1"
+            }
+            modifier = {
+                factor = 2
+                OR = {
+                    RGL = { is_ai = no }
+                    GLD = { is_ai = no }
+                    VAL = { is_ai = no }
+                }
+            }
+            modifier = {
+                factor = 0.35
+                NOT = { has_country_flag = rng_50p_flag_3 }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            NOT = { has_completed_focus = DGU_invasion }
+            is_subject = no
+            NOT = { is_in_faction_with = GLD }
+            NOT = { is_in_faction_with = RGL }
+            NOT = { is_in_faction_with = VAL }
+        }
+        bypass = {
+            OR = {
+                has_war_with = GLD
+                has_war_with = RGL
+                has_war_with = VAL
+            }
+        }
+        
+        completion_reward = {
+            hidden_effect = {
+                country_event = dolguldur.102
+            }
+            custom_effect_tooltip = DGU_offer_support_tt
+        }
+    }
+
+    focus = {
+        id = DGU_to_the_mountains_and_beyond
+		relative_position_id = DGU_terror_of_the_anduin
+        
+        prerequisite = { focus = DGU_cross_the_old_ford focus = DGU_seek_help_from_goblin_town }
+        
+        icon = GFX_goal_generic_lonely_mountain_ere
+        
+        x = 0
+        y = 6
+
+        cost = 5
+        ai_will_do = { factor = 15 }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            is_subject = no
+            OR = {
+                controls_state = 197
+                controls_state = 268
+            }
+        }
+        
+        completion_reward = {
+            every_state = {
+                limit = {
+                    is_core_of = RHD
+                }
+                add_claim_by = ROOT
+            }
+            custom_effect_tooltip = DGU_mountains_and_beyond_raid_unlock_tt
+        }
+    }
+
+    focus = {
+        id = DGU_seek_help_from_goblin_town
+		relative_position_id = DGU_terror_of_the_anduin
+        
+        prerequisite = { focus = DGU_invasion }
+        
+        icon = GFX_goal_GOB_goblin_king_on_throne
+        
+        x = 1
+        y = 5
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                GOB = { is_ai = no }
+            }
+            modifier = {
+                factor = 2
+                any_enemy_country = {
+                    is_ai = no
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            any_country = {
+                is_neighbor_of = GOB
+                has_war_with = ROOT
+            }
+        }
+        
+        completion_reward = {
+            GOB = { country_event = { id = dolguldur.117 days = 1 } }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = dolguldur.117.a
+        }
+    }
+
+    focus = {
+        id = DGU_invasion
+		relative_position_id = DGU_terror_of_the_anduin
+        
+        prerequisite = { focus = DGU_coordinate_with_gundabad focus = DGU_offer_support }
+        
+        icon = GFX_goal_goal_generic_major_war
+        
+        x = 0
+        y = 4
+
+        cost = 10
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 0.1
+                has_war = yes
+            }
+            modifier = {
+                factor = 0.1
+                date < "3021.1.1"
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = RGL
+                    ratio > 1
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = RGL
+                    ratio > 1.5
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = RGL
+                    ratio > 2
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            OR = {
+                is_neighbor_of = RGL
+                is_neighbor_of = GLD
+            }
+            is_subject = no
+            NOT = { is_in_faction_with = GLD }
+            NOT = { is_in_faction_with = RGL }
+            NOT = { is_in_faction_with = VAL }
+            NOT = { has_war_with = GUN }
+        }
+        bypass = {
+            OR = {
+                has_war_with = GLD
+                has_war_with = RGL
+                has_war_with = VAL
+            }
+        }
+        
+        completion_reward = {
+            if = {
+                limit = {
+                    RGL = { has_country_flag = DGU_secret_deal_accepted }
+                    NOT = { MOR = { is_ally_with = GLD } has_completed_focus = DGU_the_armies_of_the_necromancer }
+                    NOT = { has_non_aggression_pact_with = GLD }
+                    NOT = { is_ally_with = GLD }
+                }
+                declare_war_on = {
+                    target = GLD
+                    type = annex_everything
+                }
+            }
+            else_if = {
+                limit = {
+                    GLD = { has_country_flag = DGU_secret_deal_accepted }
+                    NOT = { MOR = { is_ally_with = RGL } has_completed_focus = DGU_the_armies_of_the_necromancer }
+                    NOT = { has_non_aggression_pact_with = RGL }
+                    NOT = { is_ally_with = RGL }
+                }
+                declare_war_on = {
+                    target = RGL
+                    type = annex_everything
+                }
+            }
+            else_if = {
+                limit = {
+                    VAL = { has_country_flag = DGU_secret_deal_accepted }
+                    NOT = { MOR = { is_ally_with = VAL } has_completed_focus = DGU_the_armies_of_the_necromancer }
+                    NOT = { has_non_aggression_pact_with = VAL }
+                    NOT = { is_ally_with = VAL }
+                }
+                declare_war_on = {
+                    target = VAL
+                    type = annex_everything
+                }
+            }
+            # backup
+            else = {
+                create_wargoal = {
+                    target = RGL
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    GUN = {
+                        has_country_flag = DGU_GUN_agree_to_attack_VAL
+                        NOT = { has_war_with = DGU }
+		                is_subject = no
+                    }
+                }
+                GUN = {
+                    country_event = { id = dolguldur.132 days = 1 }
+                }
+            }
+            if = {
+                limit = { has_completed_focus = DGU_sabotage_supplies }
+                every_enemy_country = {
+                    every_core_state = {
+                        add_dynamic_modifier = {
+                            modifier = sabotaged_supplies
+                            days = 90
+                        }
+                    }
+                }
+            }
+            custom_effect_tooltip = DGU_effects_change_discl_tt
+        }
+    }
+
+    focus = {
+        id = DGU_coordinate_with_gundabad
+		relative_position_id = DGU_terror_of_the_anduin
+        
+        prerequisite = { focus = DGU_sabotage_supplies }
+        
+        icon = GFX_goal_generic_befriend_gun
+        
+        x = 1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                date > "3020.1.1"
+            }
+            modifier = {
+                factor = 2
+                GUN = { is_ai = no }
+            }
+            modifier = {
+                factor = 0.25
+                has_country_flag = rng_50p_flag_3
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            NOT = { has_completed_focus = DGU_invasion }
+            is_subject = no
+            NOT = { is_in_faction_with = GLD }
+            NOT = { is_in_faction_with = RGL }
+            NOT = { is_in_faction_with = VAL }
+            NOT = { has_war_with = GUN }
+        }
+        bypass = {
+            OR = {
+                has_war_with = GLD
+                has_war_with = RGL
+                has_war_with = VAL
+            }
+        }
+        
+        completion_reward = {
+            hidden_effect = {
+                country_event = dolguldur.123
+            }
+            custom_effect_tooltip = DGU_coordinate_with_gundabad_tt
+        }
+    }
+
+    focus = {
+        id = DGU_sabotage_supplies
+		relative_position_id = DGU_terror_of_the_anduin
+        
+        prerequisite = { focus = DGU_stalk_the_vales }
+        
+        icon = GFX_goal_generic_blow_bridge_sabo
+        
+        x = 1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                date > "3020.1.1"
+            }
+            modifier = {
+                factor = 2
+                GUN = { is_ai = no }
+            }
+            modifier = {
+                factor = 0.25
+                has_country_flag = rng_50p_flag_3
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            NOT = { has_completed_focus = DGU_invasion }
+            is_subject = no
+            NOT = { is_in_faction_with = GLD }
+            NOT = { is_in_faction_with = RGL }
+            NOT = { is_in_faction_with = VAL }
+        }
+        bypass = {
+            OR = {
+                has_war_with = GLD
+                has_war_with = RGL
+                has_war_with = VAL
+            }
+        }
+        
+        completion_reward = {
+            custom_effect_tooltip = DGU_sabotage_supplies_tt
+        }
+    }
+
+    focus = {
+        id = DGU_prepare_a_supplyline_roh
+		relative_position_id = DGU_attack_rohan
+        
+        prerequisite = { focus = DGU_occupy_the_outskirts }
+        
+        icon = GFX_goal_generic_supply_wagon_inf_gear
+        
+        x = 0
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                date > "3020.1.1"
+            }
+            modifier = {
+                factor = 3
+                dgu_schedule_urgent = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            controls_state = 198
+        }
+        
+        completion_reward = {
+            # add railroad/hub and stuff
+            build_railway = {
+                level = 2
+                path = { 328 9125 9124 6406 2090 5395 5408 }
+                #build_only_on_allied = yes
+            }
+            build_railway = {
+                level = 1
+                path = { 5408 3658 4250 6500 }
+                #build_only_on_allied = yes
+            }
+            191 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 5408
+				}
+			}
+            191 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 4250
+				}
+			}
+        }
+    }
+
+    focus = {
+        id = DGU_fall_upon_the_wold
+		relative_position_id = DGU_attack_rohan
+        
+        prerequisite = { focus = DGU_prepare_a_supplyline_roh }
+        
+        icon = GFX_goal_goal_generic_major_war
+        
+        x = 0
+        y = 5
+
+        cost = 10
+        ai_will_do = {
+            factor = 7
+            modifier = {
+                factor = 0.1
+                has_war = yes
+            }
+            modifier = {
+                factor = 0.1
+                date < "3021.1.1"
+            }
+            modifier = {
+                factor = 2
+                ROH = { has_war = yes }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = ROH
+                    ratio > 1
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = ROH
+                    ratio > 1.5
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = ROH
+                    ratio > 2
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            is_subject = no
+            NOT = { is_ally_with = ROH }
+            NOT = { has_non_aggression_pact_with = ROH }
+            NOT = { is_ally_with = WOL }
+            NOT = { has_non_aggression_pact_with = WOL }
+            OR = {
+                is_neighbor_of = ROH
+                is_neighbor_of = WOL
+            }
+            OR = {
+                country_exists = WOL
+                country_exists = ROH
+            }
+        }
+        
+        completion_reward = {
+            if = {
+                limit = {
+                    is_neighbor_of = WOL
+                }
+                declare_war_on = {
+                    target = WOL
+                    type = annex_everything
+                }
+            }
+            else = {
+                declare_war_on = {
+                    target = ROH
+                    type = annex_everything
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_study_rohirrim_tactics
+		relative_position_id = DGU_attack_rohan
+        
+        prerequisite = { focus = DGU_attack_rohan }
+        
+        icon = GFX_goal_DGU_spy_on_rohan_riders
+        
+        x = -1
+        y = 1
+
+        cost = 5
+         ai_will_do = {
+            factor = 15
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            ROH = { exists = yes }
+            NOT = { has_war_with = ROH }
+        }
+        
+        completion_reward = {
+            army_experience = 50
+            add_mastery = {
+                amount = 150
+                folder = land
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_coordinate_with_isengard
+		relative_position_id = DGU_attack_rohan
+        
+        prerequisite = { focus = DGU_attack_rohan }
+        
+        icon = GFX_goal_DGU_orc_armies_banners
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            ISE = {
+                exists = yes
+                is_subject = no
+                has_completed_focus = ISE_rebrand_isengard
+                NOT = { has_completed_focus = ISE_all_out_war }
+            }
+            NOT = { has_war_with = ISE }
+        }
+        
+        completion_reward = {
+            # both countries get an event to choose 1 of three different bonuses (attack, speed, supplies)
+            # which they receive when they both end up at war with ROH (and not with each other)
+            ISE = { country_event = dolguldur.133 }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            custom_effect_tooltip = DGU_coordinate_with_isengard_tt
+        }
+    }
+
+    focus = {
+        id = DGU_occupy_the_outskirts
+		relative_position_id = DGU_attack_rohan
+        
+        prerequisite = { focus = DGU_attack_rohan }
+        
+        icon = GFX_goal_generic_claim_demand_ter_7
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 35
+            modifier = {
+                factor = 3
+                cfm_states_locked_imminent = yes
+            }
+            modifier = {
+                factor = 0.35
+                has_over_50_presence = yes
+            }
+            modifier = {
+                factor = 0.05
+                has_over_80_presence = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+            NOT = { has_idea = CFM_restricted_boost }
+            NOT = { controls_state = 198 }
+
+            198 = { borders_state = yes }
+        }
+        bypass = {
+            controls_state = 198
+        }
+        
+        completion_reward = {
+            cfm_add_restricted_boost = yes
+
+            198 = { cfm_restrict_to_state = yes }
+        }
+    }
+
+    focus = {
+        id = DGU_cavalry_innovations
+		relative_position_id = DGU_attack_rohan
+        
+        prerequisite = { focus = DGU_study_rohirrim_tactics }
+        
+        icon = GFX_goal_generic_wolfwirder_warg
+        
+        x = -1
+        y = 3
+
+        cost = 5
+         ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 17
+                target_any_cavalry_strat = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            ROH = { exists = yes }
+            NOT = { has_war_with = ROH }
+        }
+        
+        completion_reward = {
+            steal_random_tech_bonus = {
+                category = lotr_cavalry
+                ahead_reduction = 0.8
+                bonus = 1.2
+                base_bonus = 1.1
+                dynamic = yes
+                name = DGU_study_rohirrim_tactics
+                target = ROH
+                uses = 2
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_shared_army_exercises
+		relative_position_id = DGU_attack_rohan
+        
+        prerequisite = { focus = DGU_coordinate_with_isengard }
+        
+        icon = GFX_goal_DGU_orc_training
+        
+        x = 1
+        y = 3
+
+        cost = 5
+         ai_will_do = {
+            factor = 15
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            ISE = {
+                exists = yes
+                is_subject = no
+                has_completed_focus = ISE_rebrand_isengard
+            }
+            NOT = { has_war_with = ISE }
+        }
+        
+        completion_reward = {
+            ISE = { country_event = dolguldur.136 }
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = dolguldur.136.a
+        }
+    }
+
+    focus = {
+        id = DGU_secure_southern_mirkwood
+		relative_position_id = DGU_threaten_the_east
+        
+        prerequisite = { focus = DGU_threaten_the_east }
+        
+        icon = GFX_goal_generic_claim_demand_ter_7
+        
+        x = -1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 1.5
+                MIR = { is_ai = no }
+            }
+            modifier = {
+                factor = 2
+                date > "3019.1.1"
+            }
+            modifier = {
+                factor = 2
+                cfm_states_locked_imminent = yes
+            }
+            modifier = {
+                factor = 3
+                dgu_schedule_urgent = yes
+            }
+            modifier = {
+                factor = 0.35
+                has_over_50_presence = yes
+            }
+            modifier = {
+                factor = 0.05
+                has_over_80_presence = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            NOT = { has_completed_focus = DGU_topple_the_old_kingdom }
+            has_cfm_active = yes
+            NOT = { has_idea = CFM_restricted_boost }
+            NOT = { controls_state = 86 }
+
+            86 = { borders_state = yes }
+        }
+        bypass = {
+            controls_state = 86
+        }
+        
+        completion_reward = {
+            # add presence in southern states
+            cfm_add_restricted_boost = yes
+
+            86 = { cfm_restrict_to_state = yes }
+        }
+    }
+
+    focus = {
+        id = DGU_forge_eastwards
+		relative_position_id = DGU_threaten_the_east
+        
+        prerequisite = { focus = DGU_secure_southern_mirkwood }
+        
+        icon = GFX_goal_generic_road_through_forest
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 1.5
+                MIR = { is_ai = no }
+            }
+            modifier = {
+                factor = 2
+                date > "3019.1.1"
+            }
+            modifier = {
+                factor = 2
+                cfm_states_locked_imminent = yes
+            }
+            modifier = {
+                factor = 3
+                dgu_schedule_urgent = yes
+            }
+            modifier = {
+                factor = 0.35
+                has_over_50_presence = yes
+            }
+            modifier = {
+                factor = 0.05
+                has_over_80_presence = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            NOT = { has_completed_focus = DGU_topple_the_old_kingdom }
+            has_cfm_active = yes
+            NOT = { has_idea = CFM_restricted_boost }
+            NOT = { controls_state = 228 }
+
+            228 = { borders_state = yes }
+        }
+        bypass = {
+            controls_state = 228
+        }
+        
+        completion_reward = {
+            # add presence in southern states
+            cfm_add_restricted_boost = yes
+
+            228 = { cfm_restrict_to_state = yes }
+        }
+    }
+
+    focus = {
+        id = DGU_coordinate_with_rhun
+		relative_position_id = DGU_threaten_the_east
+        
+        prerequisite = { focus = DGU_threaten_the_east }
+        
+        icon = GFX_goal_MIR_dealings_with_the_shadow
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 2
+                RHU = { is_ai = no }
+            }
+            modifier = {
+                factor = 0
+                has_country_flag = rng_30p_flag_1
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            NOT = { has_completed_focus = DGU_topple_the_old_kingdom }
+            is_subject = no
+            RHU = {
+                exists = yes
+                if = {
+                    limit = { is_ai = no }
+                    has_opinion = {
+                        target = ROOT
+                        value > 0
+                    }
+                }
+            }
+            NOT = { has_war_with = RHU }
+        }
+        
+        completion_reward = {
+            hidden_effect = {
+                RHU = { country_event = { id = dolguldur.147 days = 1 } }
+            }
+            custom_effect_tooltip = DGU_coordinate_with_rhun_tt
+        }
+    }
+
+    focus = {
+        id = DGU_prepare_a_supplyline
+		relative_position_id = DGU_threaten_the_east
+        
+        prerequisite = { focus = DGU_raid_the_fields_of_rhovanion }
+        
+        icon = GFX_goal_generic_supply_wagon
+        
+        x = 0
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                date > "3020.1.1"
+            }
+            modifier = {
+                factor = 3
+                dgu_schedule_urgent = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            controls_state = 86
+            controls_state = 231
+        }
+        bypass = {
+            OR = {
+                has_war_with = RHO
+                AND = {
+                    is_neighbor_of = RHO
+                    NOT = { controls_state = 86 }
+                    NOT = { controls_state = 231 }
+                }
+            }
+        }
+        
+        completion_reward = {
+            # railroads and stuff
+            build_railway = {
+                path = { 3985 4343 2446 621 6342 3806 7 }
+            }
+            86 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 469
+				}
+			}
+            228 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 3985
+				}
+			}
+        }
+    }
+
+    focus = {
+        id = DGU_raid_the_fields_of_rhovanion
+		relative_position_id = DGU_threaten_the_east
+        
+        prerequisite = { focus = DGU_threaten_the_east }
+        
+        icon = GFX_goal_DGU_raid_the_fields_of_rhovanion
+        
+        x = 0
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 2
+                date > "3020.1.1"
+            }
+            modifier = {
+                factor = 3
+                dgu_schedule_urgent = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            NOT = { is_ally_with = RHO }
+            is_subject = no
+            NOT = { has_non_aggression_pact_with = RHO }
+        }
+        bypass = {
+            has_war_with = RHO
+        }
+        
+        completion_reward = {
+            # unlock a raid
+            custom_effect_tooltip = DGU_raid_the_fields_of_rhovanion_tt
+        }
+    }
+
+    focus = {
+        id = DGU_topple_the_old_kingdom
+		relative_position_id = DGU_threaten_the_east
+        
+        prerequisite = { focus = DGU_prepare_a_supplyline }
+        
+        icon = GFX_goal_goal_generic_major_war
+        
+        x = 0
+        y = 5
+
+        cost = 10
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 0.1
+                date < "3021.1.1"
+            }
+            modifier = {
+                factor = 2
+                date > "3020.1.1"
+            }
+            modifier = {
+                factor = 2
+                RHO = { has_war = yes }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = RHO
+                    ratio > 1.2
+                }
+            }
+            modifier = {
+                factor = 2
+                strength_ratio = {
+                    tag = RHO
+                    ratio > 2
+                }
+            }
+            modifier = {
+                factor = 3
+                dgu_schedule_urgent = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            is_neighbor_of = RHO
+            is_subject = no
+            NOT = { is_ally_with = RHO }
+            NOT = { has_non_aggression_pact_with = RHO }
+        }
+        bypass = {
+            has_war_with = RHO
+        }
+    
+        completion_reward = {
+            declare_war_on = {
+                target = RHO
+                type = annex_everything
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_build_up_our_forces
+		relative_position_id = DGU_a_well_timed_distraction
+        
+        prerequisite = { focus = DGU_a_well_timed_distraction }
+        
+        icon = GFX_goal_DGU_large_orc_army
+        
+        x = 0
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+            modifier = {
+                factor = 2
+                date > "3019.1.1"
+            }
+            modifier = {
+                factor = 10
+                dgu_schedule_urgent = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = DGU_grand_plan_well_timed_distraction
+                add_idea = DGU_grand_plan_well_timed_distraction_2
+            }
+            87 = { add_building_slot_and_mil_x2 = yes }
+            add_manpower = 1800
+        }
+    }
+
+    focus = {
+        id = DGU_secret_army_drills
+		relative_position_id = DGU_a_well_timed_distraction
+        
+        prerequisite = { focus = DGU_build_up_our_forces }
+        
+        icon = GFX_goal_DGU_orc_army_training
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+            add_mastery = {
+                amount = 200
+                folder = land
+            }
+            army_experience = 50
+        }
+    }
+
+    focus = {
+        id = DGU_secure_a_perimeter
+		relative_position_id = DGU_a_well_timed_distraction
+        
+        prerequisite = { focus = DGU_build_up_our_forces }
+        
+        icon = GFX_goal_DGU_army_camp
+        
+        x = 1
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        bypass = {
+            has_cfm_active = no
+        }
+        
+        completion_reward = {
+            custom_effect_tooltip = DGU_secure_a_perimeter_tt
+            add_timed_idea = {
+                idea = DGU_secure_a_perimeter
+                days = 1090
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_await_the_signal
+		relative_position_id = DGU_a_well_timed_distraction
+		prerequisite = { focus = DGU_secure_a_perimeter }
+		prerequisite = { focus = DGU_secret_army_drills }
+        
+        icon = GFX_goal_generic_torch_2
+        
+        x = 0
+        y = 4
+
+        cost = 5
+        ai_will_do = { factor = 25 }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+            # This is a hidden idea
+            add_ideas = DGU_preparing_for_all_out_offensive # should give a ton of max-planning
+
+            set_country_flag = {
+                flag = dgu_has_completed_await_the_signal
+                days = 120
+                value = 1
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_in_all_directions
+		relative_position_id = DGU_a_well_timed_distraction
+        
+        prerequisite = { focus = DGU_await_the_signal }
+        
+        icon = GFX_goal_goal_generic_major_war
+        
+        x = 0
+        y = 5
+
+        cost = 10
+        ai_will_do = {
+            factor = 7
+            modifier = {
+                factor = 0
+                has_war = yes
+            }
+            modifier = {
+                factor = 0.1
+                date < "3021.1.1"
+            }
+            modifier = {
+                factor = 2
+                date > "3022.1.1"
+            }
+            modifier = {
+                factor = 2
+                is_neighbor_of = LTH
+                OR = {
+                    strength_ratio = { tag = LTH ratio > 1 }
+                    LTH = { has_war = yes }
+                }
+            }
+            modifier = {
+                factor = 2
+                is_neighbor_of = RGL
+                OR = {
+                    strength_ratio = { tag = RGL ratio > 1 }
+                    RGL = { has_war = yes }
+                }
+            }
+            modifier = {
+                factor = 2
+                is_neighbor_of = MIR
+                OR = {
+                    strength_ratio = { tag = MIR ratio > 1 }
+                    MIR = { has_war = yes }
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            if = {
+                limit = { has_completed_focus = DGU_shadow_without_master }
+                custom_trigger_tooltip = {
+                    tooltip = DGU_in_all_directions_condition_tt
+                    NOT = { has_country_flag = dgu_has_completed_await_the_signal }
+                }
+            }
+            else = {
+                MOR = { has_war = yes }
+            }
+        }
+
+        select_effect = {
+            hidden_effect = {
+                every_neighbor_country = {
+                    add_ai_strategy = {
+                        type = prepare_for_war
+                        id = GUN
+                        value = 100
+                    }
+                }
+            }
+        }
+        
+        completion_reward = {
+            # declare war against every neighbour that's not orc, allied or NA-pacted
+            # if we're aligned with mordor, we won't declare war on Mordor's allies either
+            custom_effect_tooltip = DGU_in_all_directions_tt
+            if = {
+                limit = { has_completed_focus = DGU_shadow_without_master }
+                custom_effect_tooltip = DGU_in_all_directions_na_disc_tt
+            }
+            else = {
+                custom_effect_tooltip = DGU_in_all_directions_na_disc_2_tt
+            }
+            custom_effect_tooltip = generic_current_effects
+            every_neighbor_country = {
+                limit = {
+                    NOT = { is_orcs = yes }
+                    NOT = { has_non_aggression_pact_with = ROOT }
+                    NOT = { is_ally_with = ROOT }
+                    OR = {
+                        NOT = { is_ally_with = MOR }
+                        ROOT = { has_completed_focus = DGU_shadow_without_master }
+                    }
+                }
+                ROOT = {
+                    declare_war_on = {
+                        target = PREV
+                        type = annex_everything
+                    }
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_enslave_the_spiders
+		relative_position_id = DGU_the_creeping_gloom
+        
+        prerequisite = { focus = DGU_subjugate_the_spiders }
+        
+        icon = GFX_goal_DGU_spider_contained_subjug
+
+        mutually_exclusive = {
+            focus = DGU_treat_with_the_spawn_of_ungoliant
+        }
+        
+        x = -7
+        y = 7
+
+        cost = 10
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                factor = 3
+                strength_ratio = {
+                    tag = SPI
+                    ratio > 1
+                }
+            }
+            modifier = {
+                factor = 10
+                strength_ratio = {
+                    tag = SPI
+                    ratio > 2
+                }
+            }
+            modifier = {
+                factor = 0
+                has_war = yes
+            }
+            modifier = {
+                add = 1
+                has_country_flag = rng_50p_flag_1
+            }
+            modifier = {
+                factor = 0
+                has_country_flag = rng_30p_flag_3
+
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_POLITICAL }
+        available = {
+            has_global_flag = SPI_responded_badly_to_DGU
+            NOT = { has_war_with = SPI }
+            country_exists = SPI
+            is_subject = no
+            is_neighbor_of = SPI
+        }
+        
+        completion_reward = {
+			# if not friendly, gain wargoal  
+            create_wargoal = {
+                target = SPI
+                type = puppet_wargoal_focus
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_jagged_steel
+		relative_position_id = DGU_reasearch_and_misc
+        
+        prerequisite = { focus = DGU_reasearch_and_misc }
+        
+        icon = GFX_goal_DGU_serrated_blade_forged
+        
+        x = -2
+        y = 1
+
+        cost = 5
+        ai_will_do = { factor = 5 }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# inf equip boost  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_infantry_weapons
+                uses = 1
+                bonus = 0.5
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_hammers_of_amon_lanc
+		relative_position_id = DGU_reasearch_and_misc
+        
+        prerequisite = { focus = DGU_reasearch_and_misc }
+        
+        icon = GFX_goal_DGU_smith_production
+        
+        x = 2
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                OR = {
+                    target_any_cavalry_strat = yes
+                    target_air_focus = yes
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# metalworking/labor boost  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour_metalworking
+                uses = 1
+                bonus = 0.5
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_black_iron_casting
+		relative_position_id = DGU_reasearch_and_misc
+        
+        prerequisite = { focus = DGU_jagged_steel }
+        
+        icon = GFX_goal_DGU_dark_forge
+        
+        x = -3
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 8 }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            controls_state = 87
+        }
+        completion_reward = {
+			# more production  
+            add_ideas = DGU_black_iron_casting
+		}
+    }
+
+    focus = {
+        id = DGU_black_fletching
+		relative_position_id = DGU_reasearch_and_misc
+        
+        prerequisite = { focus = DGU_jagged_steel }
+        
+        icon = GFX_goal_DGU_black_arrows_quiver
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                target_7_2_strat = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# better arty  
+            add_ideas = DGU_black_fletching
+		}
+    }
+
+    focus = {
+        id = DGU_construction_efforts_cBi347
+		relative_position_id = DGU_reasearch_and_misc
+        
+        prerequisite = { focus = DGU_hammers_of_amon_lanc }
+        
+        icon = GFX_goal_generic_construction_siege_tower
+        
+        x = 2
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                OR = {
+                    target_any_cavalry_strat = yes
+                    target_air_focus = yes
+                }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# construction boost  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour_construction
+                uses = 1
+                bonus = 0.5
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_spider_venom_dipping
+		relative_position_id = DGU_reasearch_and_misc
+        
+        prerequisite = { focus = DGU_black_fletching }
+        
+        icon = GFX_goal_DGU_venom_poison_dagger_coating
+        
+        x = -1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 7
+            modifier = {
+                factor = 2
+                target_7_2_strat = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            SPI = { is_ally_with = ROOT }
+        }
+        
+        completion_reward = {
+			# better arty yet (only if spiders friendly)  
+            swap_ideas = {
+                remove_idea = DGU_black_fletching
+                add_idea = DGU_black_fletching_2
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_machines_of_war
+		relative_position_id = DGU_reasearch_and_misc
+        
+        prerequisite = { focus = DGU_construction_efforts_cBi347 }
+        
+        icon = GFX_goal_generic_dark_siege_equipment_trebuchet_machines
+        
+        x = 1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 10
+                target_siege_machines_strat = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# machs boost  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_machines
+                uses = 2
+                bonus = 0.35
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_war_riders_of_the_dark_hill
+		relative_position_id = DGU_reasearch_and_misc
+        
+        prerequisite = { focus = DGU_construction_efforts_cBi347 }
+        
+        icon = GFX_goal_DGU_wolf_rider
+        
+        x = 3
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 2
+            modifier = {
+                add = 10
+                target_any_cavalry_strat = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# cav boost  
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_cavalry
+                uses = 1
+                bonus = 0.5
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_fellbeast_supremacy
+		relative_position_id = DGU_reasearch_and_misc
+        
+        prerequisite = { focus = DGU_war_riders_of_the_dark_hill focus = DGU_machines_of_war }
+        
+        icon = GFX_goal_DGU_dragon_fellbeast
+        
+        x = 2
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 10
+                target_air_focus = yes
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            controls_state = 87
+        }
+        
+        completion_reward = {
+			# fellbeasts
+            increase_eagles_cap_5 = yes
+            add_tech_bonus = {
+                name = special_bonus
+                category = lotr_fellbeasts
+                uses = 1
+                bonus = 0.5
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_establish_a_supplyline
+		relative_position_id = DGU_enxtinguish_elven_light
+        
+        prerequisite = { focus = DGU_secure_the_outskirts }
+        
+        icon = GFX_goal_generic_supply_wagon_inf_gear
+        
+        x = 2
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+            factor = 15
+            modifier = {
+                factor = 1.5
+                LTH = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_SAURONS_SCHEDULE }
+        available = {
+            controls_state = 191
+        }
+        completion_reward = {
+            # build supplyline to LTH
+            build_railway = {
+                level = 2
+                path = { 382 9125 9124 6406 4982 2821 6405 1714 3538 }
+            }
+            191 = {
+				add_building_construction = {
+					type = supply_node
+					level = 1
+					instant_build = yes
+					province = 2821
+				}
+			}
+        }
+    }
+
+    focus = {
+        id = DGU_wartime_endeavors
+		relative_position_id = DGU_reasearch_and_misc
+        
+        prerequisite = { focus = DGU_reasearch_and_misc }
+        
+        icon = GFX_goal_generic_man_spear_orc_cleaver
+        
+        x = 0
+        y = 4
+
+        cost = 10
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            add_ideas = DGU_wartime_endeavors
+		}
+    }
+
+    focus = {
+        id = DGU_restore_the_fortress
+		relative_position_id = DGU_necromantic_forge
+        
+        prerequisite = { focus = DGU_necromantic_forge }
+        
+        icon = GFX_goal_DGU_dark_fortress_2
+        
+        x = 0
+        y = 1
+
+        cost = 10
+        ai_will_do = {
+            factor = 35
+        }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            controls_state = 87
+            87 = { necromantic_forge > 0 }
+        }
+        
+        completion_reward = {
+            # add a landmark building here that gives some cool stuff
+            87 = {
+                add_building_construction = {
+                    type = landmark_dol_guldur
+                    level = 1
+                    province = 382
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_construction_efforts
+		relative_position_id = DGU_necromantic_forge
+        
+        prerequisite = { focus = DGU_necromantic_forge }
+        
+        icon = GFX_goal_DGU_dark_construction
+        
+        x = -2
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 20
+            modifier = {
+                add = 15
+                has_manpower < 1000
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            always = yes
+        }
+        
+        completion_reward = {
+			# temporary constr. boost to necr forges  
+            add_timed_idea = {
+                idea = DGU_necroforge_construction_efforts
+                days = 200
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_improve_the_design
+		relative_position_id = DGU_necromantic_forge
+        
+        prerequisite = { focus = DGU_construction_efforts }
+        
+        icon = GFX_goal_DGU_dark_construction
+        
+        x = -2
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 25
+        }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            necromantic_forge > 6
+        }
+        
+        completion_reward = {
+            custom_effect_tooltip = DGU_improve_the_design_tt
+            hidden_effect = {
+                set_technology = {
+                    necromantic_forge_tech_2 = 1
+                    popup = no
+                }
+            }
+        }
+    }
+
+    focus = {
+        id = DGU_black_smoke_rises
+		relative_position_id = DGU_necromantic_forge
+        
+        prerequisite = { focus = DGU_flesh_sculpting_pits }
+        
+        icon = GFX_goal_generic_anti_air_lance_2
+        
+        x = -1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 35
+        }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            necromantic_forge > 4
+        }
+        
+        completion_reward = {
+            custom_effect_tooltip = DGU_black_smoke_rises_tt
+            hidden_effect = {
+			    # AA  
+                every_controlled_state = {
+                    limit = {
+                        necromantic_forge > 0
+                        anti_air_building < 5
+                    }
+                    add_building_construction = {
+                        type = anti_air_building
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_inner_chamber_storage
+		relative_position_id = DGU_necromantic_forge
+        
+        prerequisite = { focus = DGU_flesh_sculpting_pits }
+        
+        icon = GFX_goal_generic_supplies_from_mordor
+        
+        x = 1
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 35
+        }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            necromantic_forge > 4
+        }
+        
+        completion_reward = {
+            custom_effect_tooltip = DGU_inner_chamber_storage_tt
+            hidden_effect = {
+			    # less supply in state  
+                every_controlled_state = {
+                    limit = {
+                        necromantic_forge > 0
+                    }
+                    add_dynamic_modifier = {
+                        modifier = supply_depots
+                    }
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_flesh_sculpting_pits
+		relative_position_id = DGU_necromantic_forge
+        
+        prerequisite = { focus = DGU_restore_the_fortress }
+        
+        icon = GFX_goal_DGU_flesh_sculpting_pits_orc_born
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 35
+        }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            necromantic_forge > 3
+        }
+        # Gain 2k manpower per state with necro forge
+        completion_reward = {
+            custom_effect_tooltip = DGU_flesh_sculpting_pits_tt
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = { necromantic_forge > 0 }
+                    ROOT = { add_manpower = 2000 }
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_prepare_a_ring_interception
+		relative_position_id = DGU_territorial_incursions
+        
+        prerequisite = { focus = DGU_learn_from_our_raids }
+        
+        icon = GFX_goal_DGU_prepare_a_ring_interception
+        
+        x = 1
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 0
+                NOT = { has_country_flag = fs_hostile_attitude }
+            }
+            modifier = {
+                 factor = 2
+                    has_country_flag = rng_30p_flag_1
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_RING }
+
+        available = {
+            OR = {
+                controls_state = 191
+                controls_state = 227
+            }
+            NOT = { ring_seized = yes }
+            NOT = { has_country_flag = fs_interceptions_disabled }
+        }
+        
+        completion_reward = {
+			# get extra combat turns against fellowship  
+            ring_get_extra_2_attacks = yes
+		}
+    }
+
+    focus = {
+        id = DGU_aggressive_expansion
+		relative_position_id = DGU_territorial_incursions
+        
+        prerequisite = { focus = DGU_territorial_incursions }
+        
+        icon = GFX_goal_generic_evil_dark_power_move
+
+        mutually_exclusive = {
+            focus = DGU_creeping_presence
+        }
+        
+        x = 1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 17
+            modifier = {
+                factor = 0.5
+                check_variable = { cfm_num_states_seized > 2 }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = { cfm_num_states_seized > 3 }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = { cfm_num_states_seized > 4 }
+            }
+            modifier = {
+                factor = 2
+                MIR = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        completion_reward = {
+			# gain medium length, but decent presence boost  
+            add_timed_idea = {
+                idea = DGU_aggressive_expansion
+                days = 365
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_creeping_presence
+		relative_position_id = DGU_territorial_incursions
+        
+        prerequisite = { focus = DGU_territorial_incursions }
+        
+        icon = GFX_goal_generic_evil_dark_force
+
+        mutually_exclusive = {
+            focus = DGU_aggressive_expansion
+        }
+        
+        x = -1
+        y = 1
+
+        cost = 5
+        ai_will_do = {
+            factor = 27
+            modifier = {
+                factor = 0.5
+                check_variable = { cfm_num_states_seized > 2 }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = { cfm_num_states_seized > 3 }
+            }
+            modifier = {
+                factor = 0.5
+                check_variable = { cfm_num_states_seized > 4 }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        completion_reward = {
+			# gain eternal but small presence boost (base)  
+            add_timed_idea = {
+                idea = CFM_creeping_expansion
+                days = 1200
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_learn_from_our_raids
+		relative_position_id = DGU_territorial_incursions
+        
+        prerequisite = { focus = DGU_aggressive_expansion }
+        
+        icon = GFX_goal_generic_torch_map_warplan
+        
+        x = 1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 0.5
+                check_variable = { cfm_num_states_seized > 2 }
+            }
+            modifier = {
+                factor = 0
+                check_variable = { cfm_num_states_seized > 3 }
+            }
+            modifier = {
+                factor = 2
+                MIR = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        completion_reward = {
+            # Every time we seize a state, gain some army xp and mastery
+            custom_effect_tooltip = DGU_learn_from_our_raids_tt
+		}
+    }
+
+    focus = {
+        id = DGU_an_audacious_move
+		relative_position_id = DGU_territorial_incursions
+        
+        prerequisite = { focus = DGU_learn_from_our_raids }
+        
+        icon = GFX_goal_generic_bold_move_topple
+
+        mutually_exclusive = {
+            focus = DGU_southern_consolidation
+        }
+        
+        x = 2
+        y = 3
+
+        cost = 5
+        ai_will_do = { factor = 2 }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        completion_reward = {
+			# Gain a raid against Tharnduil's Halls. Gain presence based on how successful it is.
+            custom_effect_tooltip = DGU_an_audacious_move_tt
+		}
+    }
+
+    focus = {
+        id = DGU_southern_consolidation
+		relative_position_id = DGU_territorial_incursions
+        
+        prerequisite = { focus = DGU_learn_from_our_raids }
+        
+        icon = GFX_goal_generic_grey_flag
+
+        mutually_exclusive = {
+            focus = DGU_an_audacious_move
+        }
+        
+        x = 0
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 0.5
+                check_variable = { cfm_num_states_seized > 2 }
+            }
+            modifier = {
+                factor = 0
+                check_variable = { cfm_num_states_seized > 3 }
+            }
+            modifier = {
+                factor = 2
+                MIR = { is_ai = no }
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        completion_reward = {
+			# We can't seize any states north of the Forest Narrows. Remove all "neglected state" things from our controleld states and gain a smaller presence boost
+            custom_effect_tooltip = DGU_southern_consolidation_tt
+            
+            add_timed_idea = {
+                idea = DGU_southern_consolidation
+                days = 200
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_local_propaganda
+		relative_position_id = DGU_territorial_incursions
+        
+        prerequisite = { focus = DGU_creeping_presence }
+        
+        icon = GFX_goal_generic_orc_rights_debate
+        
+        x = -1
+        y = 2
+
+        cost = 5
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 2
+                check_variable = { cfm_num_states_seized < 1 }
+            }
+            modifier = {
+                factor = 2
+                check_variable = { cfm_num_states_seized < 2 }
+            }
+            modifier = {
+                factor = 2
+                check_variable = { cfm_num_states_seized < 3 }
+            }
+            modifier = {
+                factor = 0.5
+                has_country_flag = rng_30p_flag_2
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        completion_reward = {
+            # Every time we take a new state via CFM, it automaticall gains +1 infrastructure and 75pp
+            custom_effect_tooltip = DGU_local_propaganda_tt
+		}
+    }
+
+    focus = {
+        id = DGU_resistance_suppression
+		relative_position_id = DGU_territorial_incursions
+        
+        prerequisite = { focus = DGU_local_propaganda }
+        
+        icon = GFX_goal_generic_resistance_fist
+        
+        x = -2
+        y = 3
+
+        cost = 5
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 10
+                num_of_controlled_states > 2
+            }
+            modifier = {
+                add = 10
+                num_of_controlled_states > 3
+            }
+            modifier = {
+                factor = 2
+                num_of_controlled_states > 4
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            any_controlled_state = {
+                NOT = { is_core_of = ROOT }
+            }
+        }
+        completion_reward = {
+			# lower resistance in all controlled states  
+            custom_effect_tooltip = DGU_resistance_suppression_tt
+            hidden_effect = {
+                every_controlled_state = {
+                    remove_resistance_target = 10
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_resource_extraction
+		relative_position_id = DGU_territorial_incursions
+        
+        prerequisite = { focus = DGU_resistance_suppression }
+        
+        icon = GFX_goal_generic_mining_pickaxe_labor
+        
+        x = -2
+        y = 5
+
+        cost = 5
+        ai_will_do = {
+            factor = 1
+            modifier = {
+                add = 10
+                num_of_controlled_states > 2
+            }
+            modifier = {
+                add = 10
+                num_of_controlled_states > 3
+            }
+            modifier = {
+                factor = 2
+                num_of_controlled_states > 4
+            }
+        }
+        
+        search_filters = { }
+        available = {
+            any_controlled_state = {
+                NOT = { is_core_of = ROOT }
+            }
+        }
+        completion_reward = {
+			# gain extra resource extraction %  
+            custom_effect_tooltip = DGU_resource_extraction_tt
+            hidden_effect = {
+                every_controlled_state = {
+                    increase_resources_in_state_10p = yes
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_local_recruitment
+		relative_position_id = DGU_territorial_incursions
+        
+        prerequisite = { focus = DGU_local_propaganda }
+        
+        icon = GFX_goal_next_26
+        
+        x = -1
+        y = 4
+
+        cost = 5
+        ai_will_do = {
+            factor = 5
+            modifier = {
+                factor = 2
+                check_variable = { cfm_num_states_seized < 1 }
+            }
+            modifier = {
+                factor = 2
+                check_variable = { cfm_num_states_seized < 2 }
+            }
+            modifier = {
+                factor = 2
+                check_variable = { cfm_num_states_seized < 3 }
+            }
+            modifier = {
+                factor = 0
+                has_country_flag = rng_30p_flag_2
+            }
+        }
+        
+        search_filters = { FOCUS_FILTER_CONTEST_FOR_MIRKWOOD }
+        available = {
+            has_cfm_active = yes
+        }
+        completion_reward = {
+			# every time we take a state via CFM, gain a 10 width infantry division
+            custom_effect_tooltip = DGU_local_recruitment_tt
+		}
+    }
+
+    focus = {
+        id = DGU_extra_research_slot
+		relative_position_id = DGU_necromantic_forge
+        
+        prerequisite = { focus = DGU_inner_chamber_storage focus = DGU_black_smoke_rises }
+        
+        icon = GFX_goal_DGU_book_dark_magic_tome
+        
+        x = 0
+        y = 4
+
+        cost = 10
+        ai_will_do = { factor = 50 }
+        
+        search_filters = { FOCUS_FILTER_NECROMANTIC_FORGE }
+        available = {
+            necromantic_forge > 8
+        }
+        completion_reward = {
+            add_research_slot = 1
+        }
+    }
+
+    focus = {
+        id = DGU_forging_methods
+		relative_position_id = DGU_wartime_endeavors
+        
+        prerequisite = { focus = DGU_wartime_endeavors }
+        
+        icon = GFX_goal_DGU_orc_blacksmith
+        
+        x = -1
+        y = 1
+
+        cost = 7
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour_metalworking
+                ahead_reduction = 1
+                bonus = 0.5
+                uses = 1
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_crafting_methods
+		relative_position_id = DGU_wartime_endeavors
+        
+        prerequisite = { focus = DGU_wartime_endeavors }
+        
+        icon = GFX_goal_GOB_weapon_maker_sharp_smith
+        
+        x = 1
+        y = 1
+
+        cost = 7
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			add_tech_bonus = {
+                name = special_bonus
+                category = lotr_labour_construction_industry
+                ahead_reduction = 1
+                bonus = 0.5
+                uses = 1
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_orc_secrets
+		relative_position_id = DGU_wartime_endeavors
+		prerequisite = { focus = DGU_crafting_methods }
+		prerequisite = { focus = DGU_forging_methods }
+        
+        icon = GFX_goal_generic_armed_orc_warrior
+        
+        x = 0
+        y = 2
+
+        cost = 5
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			add_tech_bonus = {
+                name = special_bonus
+                category = lotr_orcs_secrets
+                ahead_reduction = 1
+                bonus = 0.5
+                uses = 1
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_support_gear
+		relative_position_id = DGU_wartime_endeavors
+        
+        prerequisite = { focus = DGU_forging_methods }
+        
+        icon = GFX_goal_generic_armor_plate_spears_inf_equ
+        
+        x = -1
+        y = 3
+
+        cost = 7
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+            add_equipment_bonus = {
+                name = DGU_support_gear
+                bonus = {
+                    support_equipment = {
+                        build_cost_ic = -0.1
+                        reliability = 0.03
+                    }
+                }
+            }
+		}
+    }
+
+    focus = {
+        id = DGU_bow_crafting
+		relative_position_id = DGU_wartime_endeavors
+        
+        prerequisite = { focus = DGU_crafting_methods }
+        
+        icon = GFX_goal_generic_orc_archer_bow
+        
+        x = 1
+        y = 3
+
+        cost = 7
+        ai_will_do = { factor = 1 }
+        
+        search_filters = { FOCUS_FILTER_RESEARCH }
+        available = {
+            always = yes
+        }
+        completion_reward = {
+			add_equipment_bonus = {
+                name = DGU_bow_crafting
+                bonus = {
+                    artillery_equipment = {
+                        build_cost_ic = -0.1
+                        reliability = 0.03
+                    }
+                    rocket_artillery_equipment = {
+                        build_cost_ic = -0.1
+                        reliability = 0.03
+                    }
+                }
+            }
+		}
+    }
+
+    }

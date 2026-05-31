@@ -1,0 +1,374 @@
+
+
+
+
+
+spiders_country_setup = {
+	SPI = {
+		set_variable = { casualties_inflicted_to_mp_factor = 0.5 }
+		set_variable = { casualties_taken_to_mp_factor = 0.25 }
+
+		set_variable = { mp_gained_from_enemy_casualties = 0 } # in thousands
+		set_variable = { mp_gained_from_own_casualties = 0 } # in thousands
+		set_variable = { mp_gained_total = 0 } # in thousands
+
+		set_variable = { taken_casualties_prev = 0 }
+
+		init_casualties_counts = yes
+	}
+}
+
+
+
+spiders_weekly_tick = {
+	SPI = {
+
+		# NOTE: as cursed as the count_casualties code is, I've run it through the profiler and it seems to run remarkably fast (literally <1ms), so fuck it
+		count_casualties_inflicted = yes
+
+		if = {
+			limit = {
+				check_variable = { casualties_this_week > 0 }
+			}
+
+			if = {
+				limit = {
+					has_completed_focus = SPI_tender_flesh # the focus that gives more for elves
+					check_variable = { casualties_on_elves_this_week > 0 }
+				}
+				# add 0.5 times this to this week's casualties
+				multiply_variable = { casualties_on_elves_this_week = 0.5 }
+				add_to_variable = { casualties_this_week = casualties_on_elves_this_week }
+			}
+
+			if = {
+				limit = {
+					has_completed_focus = SPI_black_blood # the focus that gives more for orcs
+					check_variable = { casualties_on_orcs_this_week > 0 }
+				}
+				# add 0.5 times this to this week's casualties
+				multiply_variable = { casualties_on_orcs_this_week = 0.5 }
+				add_to_variable = { casualties_this_week = casualties_on_orcs_this_week }
+			}
+
+			# calculate casualties diff
+			set_temp_variable = { temp_casualties_diff = casualties_this_week }
+			multiply_temp_variable = { temp_casualties_diff = casualties_inflicted_to_mp_factor }
+
+			# add equivalent manpower
+			add_to_variable = { mp_gained_from_enemy_casualties = temp_casualties_diff }
+			multiply_temp_variable = { temp_casualties_diff = 1000 }
+			add_manpower = temp_casualties_diff
+		}
+
+		if = {
+			limit = {
+				check_variable = { casualties_k > taken_casualties_prev }
+			}
+			set_temp_variable = { temp_casualties_diff = casualties_k }
+			subtract_from_temp_variable = { temp_casualties_diff = taken_casualties_prev }
+			multiply_temp_variable = { temp_casualties_diff = casualties_taken_to_mp_factor }
+
+			# add equivalent manpower
+			add_to_variable = { mp_gained_from_own_casualties = temp_casualties_diff }
+			multiply_temp_variable = { temp_casualties_diff = 1000 }
+			add_manpower = temp_casualties_diff
+
+			# set prev
+			set_variable = { taken_casualties_prev = casualties_k }
+		}
+
+		set_variable = { mp_gained_total = 0 }
+		add_to_variable = { mp_gained_total = mp_gained_from_own_casualties }
+		add_to_variable = { mp_gained_total = mp_gained_from_enemy_casualties }
+	}
+}
+
+
+do_ungoliants_appetite = {
+	custom_effect_tooltip = increase_mp_ungoliants_appetite_tt
+
+	add_to_variable = {
+		casualties_taken_to_mp_factor = 0.25
+	}
+	add_to_variable = {
+		casualties_inflicted_to_mp_factor = 0.25
+	}
+}
+
+
+increase_mp_from_self_casualties = {
+	
+	custom_effect_tooltip = increase_mp_from_self_casualties_tt
+	
+	add_to_variable = {
+		casualties_taken_to_mp_factor = 0.5
+	}
+}
+
+
+increase_mp_from_enemy_casualties = {
+	
+	custom_effect_tooltip = increase_mp_from_enemy_casualties_tt
+
+	add_to_variable = {
+		casualties_inflicted_to_mp_factor = 0.5
+	}
+}
+
+add_vs_orcs_bonus = {
+	custom_effect_tooltip = add_vs_orcs_bonus_tt
+	hidden_effect = {
+		remove_dynamic_modifier = { modifier = unceasing_hunger }
+		add_dynamic_modifier = { modifier = unceasing_hunger_vs_orcs }
+	}
+}
+
+add_vs_elves_bonus = {
+	custom_effect_tooltip = add_vs_elves_bonus_tt
+	hidden_effect = {
+		remove_dynamic_modifier = { modifier = unceasing_hunger }
+		add_dynamic_modifier = { modifier = unceasing_hunger_vs_elves }
+	}
+}
+
+
+
+spiders_on_hire_small_council_advisor = {
+	if = {
+		limit = {
+			tag = SPI
+			has_idea = spi_next_advisor_cheaper_small_council
+		}
+		remove_ideas = spi_next_advisor_cheaper_small_council
+	}
+}
+
+spiders_on_hire_war_council_advisor = {
+	if = {
+		limit = {
+			tag = SPI
+			has_idea = spi_next_advisor_cheaper_war_council
+		}
+		remove_ideas = spi_next_advisor_cheaper_war_council
+	}
+}
+
+spiders_on_hire_research_council_advisor = {
+	if = {
+		limit = {
+			tag = SPI
+			has_idea = spi_next_advisor_cheaper_research_council
+		}
+		remove_ideas = spi_next_advisor_cheaper_research_council
+	}
+}
+
+
+
+
+set_as_likely_next_random_war_target = {
+    hidden_effect = {
+		SPI = {
+			set_country_flag = has_likely_next_random_war_target
+			set_variable = { likely_next_random_war_target = PREV }
+		}
+	}
+	custom_effect_tooltip = set_as_likely_next_random_war_target_tt
+}
+
+
+
+SPI_enable_random_war_declarations = {
+    custom_effect_tooltip = SPI_enable_random_war_declarations_tt
+}
+
+# states bordering the Mirkwood (wood, not country):
+# 193 90 211 94 212 96 99 97 205 227 191 198 261 199 71 196 260
+# NOTE: If the Mirkwood borders change, this needs to be adjusted!
+# or, alternatively, find a way to compute it automatically
+spiders_daily_tick = {
+	if = {
+		limit = {
+			has_completed_focus = SPI_the_mothers_guard
+		}
+
+
+		if = {
+			limit = {
+				NOT = { has_completed_focus = SPI_extend_the_perimeter }
+				num_battalions_in_states = {
+					count > 0
+					states = { 229 71 260 193 226 83 80 } # states bordering Spider's nest state
+					types = { nest_mothers }
+				}
+			}
+
+			country_event = spiders.105
+		}
+
+		else_if = {
+			limit = {
+				num_battalions_in_states = {
+					count > 0
+					states = { 193 90 211 94 212 96 99 97 205 227 191 198 261 199 71 196 260 } # states bordering all of mirkwood
+					types = { nest_mothers }
+				}
+			}
+
+			country_event = spiders.105
+		}
+	}
+
+	set_variable = { global.days_until_3021 = 1103030 }
+	subtract_from_variable = { global.days_until_3022 = global.num_days }
+	clamp_variable = { var = global.days_until_3022 min = 0 }
+}
+
+create_nest_guardians = {
+	division_template = {
+		name = "Nest Guardians"
+		is_locked = yes
+		division_cap = 1
+		force_allow_recruiting = no
+		priority = 2
+		#template_counter = 0 # use if I want to change the icon
+		regiments = {
+			nest_mothers = { x = 0 y = 0 }
+			nest_mothers = { x = 0 y = 1 }
+			nest_mothers = { x = 0 y = 2 }
+			nest_mothers = { x = 1 y = 0 }
+			nest_mothers = { x = 1 y = 1 }
+			nest_mothers = { x = 1 y = 2 }
+			nest_mothers = { x = 2 y = 0 }
+			nest_mothers = { x = 2 y = 1 }
+			nest_mothers = { x = 2 y = 2 }
+		}
+		support = {
+			
+		}
+	}
+
+	82 = {
+		create_unit = {
+    		division = "name = \"Nest Guardians\" division_template = \"Nest Guardians\" start_experience_factor = 1.0"
+    		owner = SPI
+		}
+	}
+
+	custom_effect_tooltip = nest_guardians_restriction_tt
+}
+
+empower_nest_guardians = {
+	add_units_to_division_template = {
+		template_name = "Nest Guardians"
+		regiments = {
+			nest_mothers = 0
+			nest_mothers = 1
+			nest_mothers = 2
+		}
+	}
+
+	custom_effect_tooltip = nest_guardians_restriction_empowered_tt
+}
+
+
+delete_nest_guardians = {
+	delete_unit_template_and_units = {
+		division_template = "Nest Guardians"
+		disband = no
+	}
+}
+
+
+
+empower_shelob = {
+	set_global_flag = shelob_empowered
+	SPI_shelob = {
+		add_country_leader_role = {
+			promote_leader = yes
+			country_leader={
+				ideology=federative
+				expire="1980.1.1.1"
+				traits = { her_ladyship }
+				id=-1
+			}
+		}
+		add_country_leader_role = {
+			promote_leader = yes
+			country_leader={
+				ideology=survivalist
+				expire="1980.1.1.1"
+				traits = { her_ladyship }
+				id=-1
+			}
+		}
+		add_country_leader_role = {
+			promote_leader = yes
+			country_leader={
+				ideology=expansionist
+				expire="1980.1.1.1"
+				traits = { her_ladyship }
+				id=-1
+			}
+		}
+		add_country_leader_role = {
+			promote_leader = yes
+			country_leader={
+				ideology=devouring_swarm
+				expire="1980.1.1.1"
+				traits = { her_ladyship }
+				id=-1
+			}
+		}
+		add_field_marshal_role={
+			traits = { offensive_doctrine }
+			skill=4
+			attack_skill=4
+			defense_skill=2
+			planning_skill=3
+			logistics_skill=2
+			legacy_id=-1
+		}
+	}
+}
+
+
+
+spider_incident_effect = {
+	random_controlled_state = {
+		limit = {
+			any_neighbor_state = { is_controlled_by = SPI }
+		}
+		set_temp_variable = { temp_population = state_population }
+		multiply_temp_variable = { var:temp_population = -0.025 }
+		add_manpower = temp_population
+	}
+}
+
+
+spider_disable_incidents = {
+	custom_effect_tooltip = spider_disable_incidents_tt
+	set_country_flag = spider_incidents_fixed
+}
+
+spider_increase_incident_frequency = {
+	custom_effect_tooltip = spider_increase_incident_frequency_tt
+	set_country_flag = spider_incidents_higher_frequency
+}
+
+
+spiders_init_devour_modifiers = {
+	if = {
+		limit = { NOT = { has_dynamic_modifier = spider_devour_bonuses } }
+
+		set_variable = { spider_bonus_from_dwarves = 0.0 }
+		set_variable = { spider_bonus_from_elves = 0.0 }
+		set_variable = { spider_bonus_from_orcs = 0.0 }
+		set_variable = { spider_bonus_from_men = 0.0 }
+
+		add_dynamic_modifier = {
+			modifier = spider_devour_bonuses
+		}
+	}
+}

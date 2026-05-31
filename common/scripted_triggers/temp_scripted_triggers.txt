@@ -1,0 +1,273 @@
+
+
+
+
+
+
+# @docs(Generic): Starting a war between PREV and THIS is possible (no NA pacts, allies or existing wars)
+war_with_is_possible = {
+    custom_trigger_tooltip = {
+        tooltip = war_with_is_possible_tt
+        exists = yes
+        NOT = { is_ally_with = PREV }
+        NOT = { has_war_with = PREV }
+        NOT = { has_non_aggression_pact_with = PREV }
+        NOT = { has_truce_with = PREV }   
+    }
+}
+
+# @docs(Generic): ROOT can invite THIS to a faction
+can_invite_to_faction = {
+    custom_trigger_tooltip = {
+        tooltip = can_invite_to_faction_tt
+        ROOT = {
+            is_subject = no
+            is_faction_leader = yes
+            NOT = { eternal_animosity_exists_between = yes }
+        }
+        exists = yes
+        is_subject = no
+        is_in_faction = no
+        NOT = { has_war_with = ROOT }
+    }
+}
+
+# @docs(Generic): ROOT can ask THIS to join their faction
+can_ask_to_join_faction = {
+    custom_trigger_tooltip = {
+        tooltip = can_ask_to_join_faction_tt
+        ROOT = {
+            is_subject = no
+            NOT = { has_war_with = PREV }    
+            is_in_faction = no
+            exists = yes
+        }
+        exists = yes
+        is_subject = no
+        is_faction_leader = yes
+        NOT = { eternal_animosity_exists_between = yes }
+    }
+}
+
+
+# @docs(Generic): Will declaring war cause trouble with other countries?
+is_isolated_target = {
+    is_in_faction = no
+    NOT = { any_country = { has_guaranteed = PREV } }
+    is_subject = no
+}
+
+# @docs(Generic): ROOT or one of their allies is a neighbor of THIS
+can_reach = {
+    custom_trigger_tooltip = {
+        tooltip = can_reach_tt
+        exists = yes
+        OR = {
+            is_neighbor_of = ROOT
+            any_neighbor_country = {
+                is_ally_with = ROOT
+            }
+        }
+    }
+}
+
+
+# @docs(Generic): ROOT can engage in diplomacy with THIS (not at war, exists, etc)
+can_engage_in_diplo_with = {
+    custom_trigger_tooltip = {
+        tooltip = can_engage_in_diplo_with_tt
+        NOT = {
+            has_war_with = PREV
+        }
+        exists = yes
+    }
+}
+
+
+# @docs(Generic): ROOT and THIS have a common enemy
+has_common_enemy_with = {
+    custom_trigger_tooltip = {
+        tooltip = has_common_enemy_with_tt
+        any_enemy_country = {
+            has_war_with = ROOT
+        }
+    }
+}
+
+
+# @docs(Generic): THIS is behind on infantry equipment research
+is_behind_on_inf_equipment = {
+    OR = {
+        AND = {
+            NOT = { has_tech = infantry_weapons2 }
+            NOT = { has_tech = cheap_infantry_weapons2 }
+            date > 3018.5.1
+        }
+        AND = {
+            NOT = { has_tech = improved_infantry_weapons }
+            NOT = { has_tech = cheap_improved_infantry_weapons }
+            date > 3020.1.1
+        }
+        AND = {
+            NOT = { has_tech = advanced_infantry_weapons }
+            NOT = { has_tech = cheap_advanced_infantry_weapons }
+            date > 3023.1.1
+        }
+        AND = {
+            NOT = { has_tech = universal_infantry_weapons }
+            date > 3025.1.1
+        }
+    }
+}
+
+
+# @docs(Generic): all of THIS' core states are controlled by ROOT or their subjects
+all_core_states_controlled_or_puppeted = {
+    custom_trigger_tooltip = {
+        tooltip = all_core_states_controlled_or_puppeted_tt
+        all_core_state = {
+            OR = {
+                is_controlled_by = ROOT
+                controller = { is_subject_of = ROOT }
+            }
+        }
+    }
+}
+
+
+# @docs(Generic): THIS is consuming more steel that producing
+needs_steel = {
+    OR = {
+        check_variable = { resource_imported@steel > 1 }
+        check_variable = { resource_consumed@steel > resource_produced@steel }
+    }
+}
+
+# @docs(Generic): THIS is consuming more wood that producing
+needs_chromium = {
+    OR = {
+        check_variable = { resource_imported@chromium > 1 }
+        check_variable = { resource_consumed@chromium > resource_produced@chromium }
+    }
+}
+
+# @docs(Generic): THIS is consuming more leather that producing
+needs_rubber = {
+    OR = {
+        check_variable = { resource_imported@rubber > 1 }
+        check_variable = { resource_consumed@rubber > resource_produced@rubber }
+    }
+}
+
+# @docs(Generic): THIS is consuming more string that producing
+needs_tungsten = {
+    OR = {
+        check_variable = { resource_imported@tungsten > 1 }
+        check_variable = { resource_consumed@tungsten > resource_produced@tungsten }
+    }
+}
+
+# @docs(Generic): THIS is consuming more mithril that producing
+needs_aluminium = {
+    OR = {
+        check_variable = { resource_imported@aluminium > 1 }
+        check_variable = { resource_consumed@aluminium > resource_produced@aluminium }
+    }
+}
+
+# @docs(Generic): THIS is producing more food than consuming
+is_gaining_fuel = {
+    check_variable = {
+        modifier@fuel_cost < modifier@fuel_gain
+    }
+}
+
+# @docs(Generic): THIS is losing more fuel than gaining
+is_loosing_fuel = {
+    check_variable = {
+        modifier@fuel_cost > modifier@fuel_gain
+    }
+}
+
+
+
+dgu_schedule_urgent = {
+    if = {
+        limit = { has_completed_focus = DGU_threaten_the_east }
+        OR = {
+            check_variable = { days_mission_timeout@saurons_schedule_east_task_1 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_east_task_2 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_east_task_3 < 150 }
+        }
+    }
+    if = {
+        limit = { has_completed_focus = DGU_terror_of_the_anduin }
+        OR = {
+            check_variable = { days_mission_timeout@saurons_schedule_anduin_task_1 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_anduin_task_2 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_anduin_task_3 < 150 }
+        }
+    }
+    if = {
+        limit = { has_completed_focus = DGU_enxtinguish_elven_light }
+        OR = {
+            check_variable = { days_mission_timeout@saurons_schedule_elves_task_1 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_elves_task_2 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_elves_task_3 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_elves_task_4 < 150 }
+        }
+    }
+    if = {
+        limit = { has_completed_focus = DGU_attack_rohan }
+        OR = {
+            check_variable = { days_mission_timeout@saurons_schedule_rohan_task_1 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_rohan_task_2 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_rohan_task_3 < 150 }
+        }
+    }
+    if = {
+        limit = { has_completed_focus = DGU_a_well_timed_distraction }
+        OR = {
+            check_variable = { days_mission_timeout@saurons_schedule_distraction_task_1 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_distraction_task_2 < 150 }
+            check_variable = { days_mission_timeout@saurons_schedule_distraction_task_3 < 150 }
+        }
+    }
+    else = {
+        always = no
+    }
+}
+
+
+
+# Note: This is a rough approximate to calculate how many civs we get from trade by taking the total, any additionals or offmaps as well as factories in states
+# There is a lot of stuff where this approximation could be wrong (non-core, other offmap sources etc.)
+gob_factories_from_trade_limit = {
+    
+    set_temp_variable = { temp_civs = num_of_civilian_factories }
+
+    subtract_from_temp_variable = { temp_civs = modifier@extra_civilian_factories }
+    
+    all_controlled_state = {
+        subtract_from_temp_variable = { PREV.temp_civs = building_level@industrial_complex }
+        always = yes
+    }
+
+    subtract_from_temp_variable = { temp_civs = interest_factories }
+
+    check_variable = {
+        temp_civs > 2
+    }
+
+}
+
+
+# @docs(Generic): ROOT (country) borders THIS (state)
+borders_state = {
+    custom_trigger_tooltip = {
+        tooltip = borders_state_tt
+        any_neighbor_state = {
+            is_controlled_by = ROOT
+        }
+    }
+}

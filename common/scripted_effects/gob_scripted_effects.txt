@@ -1,0 +1,272 @@
+
+gob_create_merc_divisions_unequipped = {
+    if = {
+        limit = { NOT = { tag = GOB } }
+        gob_start_mercenary_contract = yes
+    }
+    if = {
+        limit = {
+            NOT = { has_template = "Goblin Mercenaries" }
+        }
+        division_template = {
+            name = "Goblin Mercenaries"
+            is_locked = yes
+            override_model = generic_orcs_gfx_lotr_infantry_entity
+            division_cap = 5
+            
+            regiments = {
+                goblin_mercenary_infantry = { x = 0 y = 0 }
+                goblin_mercenary_infantry = { x = 0 y = 1 }
+                goblin_mercenary_infantry = { x = 0 y = 2 }
+
+                goblin_mercenary_infantry = { x = 1 y = 0 }
+                goblin_mercenary_infantry = { x = 1 y = 1 }
+                goblin_mercenary_infantry = { x = 1 y = 2 }
+                
+                goblin_mercenary_infantry = { x = 2 y = 0 }
+                goblin_mercenary_infantry = { x = 2 y = 1 }
+                goblin_mercenary_infantry = { x = 2 y = 2 }
+
+                artillery_brigade = { x = 0 y = 1 }
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                recon = { x = 0 y = 1 }
+            }
+        }
+    }
+
+    if = {
+        limit = { is_ai = yes }
+        random_controlled_state = {
+            limit = {
+                impassable = no
+            }
+            create_unit = {
+                division = "name = \"Goblin Mercenaries\" division_template = \"Goblin Mercenaries\" start_experience_factor = 0.5 start_equipment_factor = 0.8 start_manpower_factor = 1.0"
+                owner = ROOT
+                count = 5
+                allow_spawning_on_enemy_provs = no
+            }
+        }
+    }
+    else = {
+        random_controlled_state = {
+            limit = {
+                impassable = no
+            }
+            create_unit = {
+                division = "name = \"Goblin Mercenaries\" division_template = \"Goblin Mercenaries\" start_experience_factor = 0.5 start_equipment_factor = 0.35 start_manpower_factor = 1.0"
+                owner = ROOT
+                count = 5
+                allow_spawning_on_enemy_provs = no
+            }
+        }
+    }
+}
+
+gob_create_merc_divisions_equipped = {
+    if = {
+        limit = { NOT = { tag = GOB } }
+        gob_start_mercenary_contract = yes
+    }
+    if = {
+        limit = {
+            NOT = { has_template = "Goblin Mercenaries" }
+        }
+        division_template = {
+            name = "Goblin Mercenaries"
+            is_locked = yes
+            override_model = generic_orcs_gfx_lotr_infantry_entity
+            division_cap = 5
+            
+            regiments = {
+                goblin_mercenary_infantry = { x = 0 y = 0 }
+                goblin_mercenary_infantry = { x = 0 y = 1 }
+                goblin_mercenary_infantry = { x = 0 y = 2 }
+
+                goblin_mercenary_infantry = { x = 1 y = 0 }
+                goblin_mercenary_infantry = { x = 1 y = 1 }
+                goblin_mercenary_infantry = { x = 1 y = 2 }
+                
+                goblin_mercenary_infantry = { x = 2 y = 0 }
+                goblin_mercenary_infantry = { x = 2 y = 1 }
+                goblin_mercenary_infantry = { x = 2 y = 2 }
+
+                artillery_brigade = { x = 0 y = 1 }
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                recon = { x = 0 y = 1 }
+            }
+        }
+    }
+
+    random_controlled_state = {
+        limit = {
+            impassable = no
+        }
+        create_unit = {
+            division = "name = \"Goblin Mercenaries\" division_template = \"Goblin Mercenaries\" start_experience_factor = 0.5 start_equipment_factor = 1.0 start_manpower_factor = 1.0"
+            owner = ROOT
+            count = 5
+            allow_spawning_on_enemy_provs = no
+        }
+    }
+}
+
+
+
+gob_remove_mercs = {
+    if = {
+        limit = { has_idea = GOB_mercenary_contract }
+        set_global_flag = GOB_merc_contract_no_extension
+        remove_ideas = GOB_mercenary_contract
+        clr_global_flag = GOB_merc_contract_no_extension
+    }
+    delete_unit = {
+        division_template = "Goblin Mercenaries"
+    }
+}
+
+gob_remove_mercs_and_template = {
+    if = {
+        limit = { has_idea = GOB_mercenary_contract }
+        set_global_flag = GOB_merc_contract_no_extension
+        remove_ideas = GOB_mercenary_contract
+        clr_global_flag = GOB_merc_contract_no_extension
+    }
+    delete_unit_template_and_units = {
+        division_template = "Goblin Mercenaries"
+        disband = no
+    }
+}
+
+gob_start_mercenary_contract = {
+    add_timed_idea = {
+        idea = GOB_mercenary_contract
+        days = 180
+    }
+}
+
+
+gob_offer_mercenary_contract = {
+    country_event = goblintown.112
+    custom_effect_tooltip = if_they_accept_newline_tt
+    event_option_tooltip = goblintown.113.a
+}
+
+
+gob_recall_mercenaries = {
+    # stop current contract mission
+    set_global_flag = GOB_merc_contract_no_extension
+    remove_ideas = GOB_mercenary_contract
+    clr_global_flag = GOB_merc_contract_no_extension
+
+    # start notice-period mission
+    activate_mission = gob_mercenaries_being_recalled
+}
+
+
+gob_borrow_high_pass = {
+    transfer_state = 263
+    hidden_effect = {
+        263 = {
+            cancel_resistance = yes
+            remove_claim_by = GOB
+        }
+    }
+    custom_effect_tooltip = gob_borrow_high_pass_tt
+    hidden_effect = {
+        every_country = {
+            limit = { has_idea = GOB_high_pass_contract }
+            remove_ideas = GOB_high_pass_contract
+        }
+
+        add_ideas = GOB_high_pass_contract
+    
+        GOB = { set_country_flag = gob_high_pass_loaned_out }
+        GOB = { set_country_flag = { flag = gob_high_pass_loaned_out_120_days value = 1 days = 120 } }
+    
+        # Notify neighbours
+        every_country = {
+            limit = {
+                NOT = { tag = GOB }
+                OR = {
+                    controls_state = 197
+                    controls_state = 151
+                    controls_state = 63
+                }
+                NOT = { controls_state = 263 }
+                NOT = { has_country_flag = high_pass_notified }
+            }
+            country_event = goblintown.132
+            set_country_flag = high_pass_notified
+        }
+    }
+}
+
+
+gob_collapse_tunnels = {
+    hidden_effect = {
+        damage_units = {
+            #province = a
+            state = THIS
+            limit = { NOT = { tag = GOB } has_war_with = GOB }
+            org_damage = 0.85
+            str_damage = 0.85
+            ratio = yes
+            army = yes
+        }
+        damage_units = {
+            #province = a
+            state = THIS
+            limit = { OR = { tag = GOB NOT = { has_war_with = GOB } } }
+            org_damage = 0.12
+            str_damage = 0.12
+            ratio = yes
+            army = yes
+        }
+        damage_building = {
+            type = infrastructure
+            damage = 3
+        }
+    }
+}
+
+# @docs(Generic): ROOT provokes war with THIS
+provoke_war_with = {
+    hidden_effect = {
+        country_event = { id = lotr_generic.128 days = 1 }
+    }
+    custom_effect_tooltip = provoke_war_with_tt
+}
+
+
+
+gob_return_high_pass = {
+    GOB = {
+        clr_country_flag = gob_high_pass_loaned_out
+        transfer_state = 263
+    }
+    remove_ideas = GOB_high_pass_contract
+
+    GOB = { country_event = goblintown.135 }
+}
+
+
+
+transfer_high_pass_contract = {
+    263 = {
+        cancel_resistance = yes
+    }
+    every_country = {
+        limit = { has_idea = GOB_high_pass_contract }
+        remove_ideas = GOB_high_pass_contract
+    }
+    add_ideas = GOB_high_pass_contract
+
+    country_event = goblintown.133
+
+    GOB = { country_event = goblintown.134 }
+}

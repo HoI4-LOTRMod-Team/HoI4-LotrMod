@@ -50,13 +50,12 @@ country_event = {
 
 }
 
-
 # Erebor prompted to stand down
 country_event = {
 	id = mirkwood.2
 	title = mirkwood.2.t
 	desc = mirkwood.2.d
-	picture = GFX_report_event_paper
+	picture = GFX_report_event_thranduil
 
 	fire_only_once = yes
 
@@ -106,7 +105,7 @@ country_event = {
 	id = mirkwood.3
 	title = mirkwood.3.t
 	desc = mirkwood.3.d
-	picture = GFX_report_event_paper
+	picture = GFX_report_event_thranduil
 
 	fire_only_once = yes
 
@@ -165,387 +164,12 @@ country_event = {
 
 }
 
-
-# Spider attack (warningshot)
-country_event = {
-	id = mirkwood.4
-	title = mirkwood.4.t
-	desc = mirkwood.4.d
-	picture = GFX_report_event_paper
-
-	fire_only_once = yes
-
-	trigger = {
-		tag = MIR
-		date > 3019.7.1
-		NOT = { has_global_flag = mirkwood_spiders_purged }
-		NOT = { has_global_flag = mirkwood_spiders_free }
-		NOT = { has_global_flag = mirkwood_spiders_warning }
-		NOT = { has_global_flag = mirkwood_spider_attack }
-		has_capitulated = no
-	}
-
-	mean_time_to_happen = {
-		days = 350
-		modifier = {
-			add = 20
-			has_global_flag = mirkwood_stabilize_attempt
-		}
-		modifier = {
-			add = 70
-			has_global_flag = mirkwood_dealing_with_spiders
-		}
-	}
-
-	option = {
-		name = mirkwood.4.a
-		set_global_flag = mirkwood_spider_warning
-		add_manpower = -1000
-		82 = { remove_core_of = MIR }
-		SPI = {
-			add_state_core = 82
-		}
-	}
-
-}
-
-# Spider war
-country_event = {
-	id = mirkwood.5
-	title = mirkwood.5.t
-	desc = mirkwood.5.d
-	picture = GFX_report_event_paper
-
-	fire_only_once = yes
-
-	trigger = {
-		tag = MIR
-		date > 3020.6.1
-		has_global_flag = mirkwood_spider_warning
-		NOT = { has_global_flag = mirkwood_spiders_purged }
-		NOT = { has_global_flag = mirkwood_spiders_free }
-		NOT = { has_global_flag = mirkwood_spider_attack }
-		has_capitulated = no
-	}
-
-	mean_time_to_happen = {
-		days = 120
-		modifier = {
-			add = 40
-			has_global_flag = mirkwood_stabilize_attempt
-		}
-		modifier = {
-			add = 60
-			has_global_flag = mirkwood_dealing_with_spiders
-		}
-		modifier = {
-			add = 200
-			revolutionary > 0.4
-		}
-	}
-
-	option = {
-		name = mirkwood.5.a
-		set_global_flag = mirkwood_spider_attack
-		SPI = {
-			add_state_core = 82
-			set_capital = { state = 82 }
-			set_state_controller = 82
-			set_state_owner = 82
-
-			inherit_technology = MIR
-
-			load_oob = "SPI_Spiders"
-			set_politics = {
-				ruling_party = revolutionary
-			    elections_allowed = no
-			}
-			set_popularities = {
-				revolutionary = 100
-			}
-
-
-			declare_war_on = { target = MIR type = annex_everything }
-		}
-		transfer_units_fraction= {
-			target = SPI
-			size = 0.15
-			stockpile_ratio = 0.15
-			army_ratio = 0.15
-			navy_ratio = 0.15
-			air_ratio = 0.15
-			keep_unit_leaders_trigger = {
-				always = yes
-			}
-		}
-		hidden_effect = {news_event = { hours = 24 id = news.382 }}
-	}
-
-}
-
-# Dol Guldur attack (warningshot)
-country_event = {
-	id = mirkwood.6
-	title = mirkwood.6.t
-	desc = mirkwood.6.d
-	picture = GFX_report_event_paper
-
-	fire_only_once = yes
-
-	trigger = {
-		tag = MIR
-		date > 3020.5.1
-		NOT = { has_global_flag = mirkwood_dolguldur_purged }
-		NOT = { has_global_flag = mirkwood_dolguldur_attack }
-		NOT = { has_global_flag = mirkwood_dolguldur_warning }
-		MIR = {
-			controls_state = 87
-		}
-		has_capitulated = no
-	}
-
-	mean_time_to_happen = {
-		days = 350
-		modifier = {
-			add = 20
-			has_global_flag = mirkwood_stabilize_attempt
-		}
-		modifier = {
-			add = 70
-			has_global_flag = mirkwood_dealing_with_dolguldur
-		}
-	}
-
-	option = {
-		name = mirkwood.6.a
-		set_global_flag = mirkwood_dolguldur_warning
-		add_manpower = -2000
-		87 = { remove_core_of = MIR }
-	}
-
-}
-
-# Dol Guldur war
-country_event = {
-	id = mirkwood.7
-	title = mirkwood.7.t
-	desc = mirkwood.7.d
-	picture = GFX_report_event_paper
-
-	fire_only_once = yes
-
-	trigger = {
-		tag = MIR
-		date > 3020.12.1
-		has_global_flag = mirkwood_dolguldur_warning
-		NOT = { has_global_flag = mirkwood_dolguldur_purged }
-		NOT = { has_global_flag = mirkwood_dolguldur_attack }
-		MIR = {
-			controls_state = 87
-		}
-		has_capitulated = no
-	}
-
-	mean_time_to_happen = {
-		days = 90
-		modifier = {
-			add = 40
-			has_global_flag = mirkwood_stabilize_attempt
-		}
-		modifier = {
-			add = 120
-			has_global_flag = mirkwood_dealing_with_dolguldur
-		}
-	}
-
-	option = {
-		name = mirkwood.7.a
-		set_global_flag = mirkwood_dolguldur_attack
-		DGU = {
-			inherit_technology = MOR
-			set_state_controller = 87
-			set_state_owner = 87
-			load_oob = "DGU_Orcs"
-			set_politics = {
-				ruling_party = belligerent
-				elections_allowed = no
-			}
-		}
-		MOR = {
-			add_to_faction = DGU
-		}
-		hidden_effect = {news_event = { hours = 24 id = news.383 }}
-	}
-
-}
-
-# Send message about troops being sent to Dol Guldur by Mordor
-country_event = {
-	id = mirkwood.8
-	title = mirkwood.8.t
-	desc = mirkwood.8.d
-	picture = GFX_report_event_dolguldur
-
-	is_triggered_only = yes
-
-	option = {
-		name = mirkwood.8.a
-		custom_effect_tooltip = MIR_defending_dol_guldur_tooltip
-	}
-}
-
-# Mordor requests Dol Guldur for alliance
-country_event = {
-	id = mirkwood.9
-	title = mirkwood.9.t
-	desc = mirkwood.9.d
-	picture = GFX_report_event_ring
-
-	is_triggered_only = yes
-
-	option = {
-		name = mirkwood.9.a
-		ai_chance = {
-			base = 30
-		}
-		hidden_effect = {
-			MIR = {
-				release = DGU
-			}
-			DGU = {
-				inherit_technology = MOR
-				set_state_controller = 87
-				set_state_owner = 87
-				load_oob = "DGU_Orcs"
-				set_politics = {
-					ruling_party = belligerent
-					elections_allowed = no
-				}
-			}
-		}
-		MOR = {
-			puppet = DGU
-			add_to_faction = MIR
-		}
-
-	}
-	option = {
-		name = mirkwood.9.b
-		ai_chance = {
-			base = 5
-		}
-		MOR = {
-			country_event = { id = mordor.49 }
-			add_opinion_modifier = {
-				target = MIR
-				modifier = small_decrease
-			}
-		}
-	}
-}
-
-# Mordor requests Dol Guldur for alliance
-country_event = {
-	id = mirkwood.10
-	title = mirkwood.10.t
-	desc = mirkwood.10.d
-	picture = GFX_report_event_ring
-
-	is_triggered_only = yes
-
-	option = {
-		name = mirkwood.10.a
-		hidden_effect = {
-			MIR = {
-				release = DGU
-			}
-			DGU = {
-				inherit_technology = MOR
-				set_state_controller = 87
-				set_state_owner = 87
-				load_oob = "DGU_Orcs"
-				set_politics = {
-					ruling_party = belligerent
-					elections_allowed = no
-				}
-			}
-		}
-		MOR = {
-			puppet = DGU
-			add_to_faction = MIR
-		}
-	}
-	option = {
-		name = mirkwood.10.b
-		MOR = {
-			country_event = { id = mordor.49 }
-			add_opinion_modifier = {
-				target = MIR
-				modifier = small_decrease
-			}
-		}
-	}
-}
-
-# Mordor has succesfully setup fortress
-country_event = {
-	id = mirkwood.11
-	title = mirkwood.11.t
-	desc = mirkwood.11.d
-	picture = GFX_report_event_orcs_marching
-
-	is_triggered_only = yes
-
-	option = {
-		name = mirkwood.11.a
-		add_stability = -0.10
-		add_war_support = 0.10
-		add_political_power = -50
-	}
-}
-
-### Core Dol Guldur
-country_event = {
-	id = mirkwood.12
-	title = mirkwood.12.t
-	desc = mirkwood.12.d
-	picture = GFX_report_event_orcs_marching
-
-	fire_only_once = yes
-
-	trigger = {
-		tag = MIR
-		date > 3021.1.1
-		NOT = {
-			87 = {
-				is_core_of = MIR
-			}
-		}
-		87 = {
-			compliance > 40
-		}
-		controls_state = 87
-		has_capitulated = no
-	}
-
-	option = {
-		name = mirkwood.12.a
-		add_state_core = 87
-		add_stability = 0.05
-		add_manpower = -150
-		add_equipment_to_stockpile = { 
-			type = infantry_equipment_1   
-			amount = -1000  
-		}
-	}
-}
-
-### Angmar demands right to string in trade of peace
+# Angmar demands right to string in trade of peace
 country_event = {
 	id = mirkwood.13
 	title = mirkwood.13.t
 	desc = mirkwood.13.d
-	picture = GFX_report_event_building_sawmill
+	picture = GFX_report_event_paper
 
 	fire_only_once = yes
 	is_triggered_only = yes
@@ -576,13 +200,13 @@ country_event = {
 			}
 		}
 		ANG = {
-            add_opinion_modifier = { target = MIR modifier = large_increase }
-            country_event = { id = angmar.14 days = 5 }
-        }
+			add_opinion_modifier = { target = MIR modifier = large_increase }
+			country_event = { id = angmar.14 days = 5 }
+		}
 		give_resource_rights = { receiver = ANG state = 85 resources = { tungsten } }
 	}
 
-	
+
 	option = {#denie
 		name = mirkwood.13.b
 		ai_chance = {
@@ -607,4 +231,2842 @@ country_event = {
 		}
 		add_opinion_modifier = { target = MIR modifier = small_decrease }
 	}
+}
+
+
+### NEW EVENTS
+
+
+# Mirkwood invites other elves to secret research group
+country_event = {
+	id = mirkwood.14
+	title = mirkwood.14.t
+	desc = mirkwood.14.d
+	#picture = GFX_report_event_orcs_marching
+
+	is_triggered_only = yes
+
+	# yeah
+	option = {
+		name = mirkwood.14.a
+		ai_chance = {
+			base = 180
+			modifier = {
+				add = opinion@MIR
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_going_same_path_as_root = yes }
+			}
+		}
+		add_to_tech_sharing_group = mirkwood_elves_group
+	}
+
+	# nah
+	option = {
+		ai_chance = {
+			base = 60
+			modifier = {
+				factor = 1.5
+				MIR = { is_going_different_path_as_root = yes }
+			}
+		}
+		name = mirkwood.14.b
+	}
+}
+
+
+# The enchanted vale is under attack! Deploy the hidden guard!
+country_event = {
+	id = mirkwood.15
+	title = mirkwood.15.t
+	desc = mirkwood.15.d
+	picture = GFX_report_event_elves_army
+
+	is_triggered_only = yes
+
+	# yeah
+	option = {
+		name = mirkwood.15.a
+		load_oob = "MIR_Hidden_Guard"
+	}
+}
+
+# POV: elven country. Mirkwood offers guarantees
+country_event = {
+	id = mirkwood.100
+	picture = GFX_report_event_thranduil
+	title = mirkwood.100.t
+	desc = mirkwood.100.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.100.a
+
+		effect_tooltip = {
+			MIR = {
+				give_guarantee = ROOT
+			}
+		}
+	}
+}
+
+
+# POV: MIR. Decide how to approach Rivendell
+country_event = {
+	id = mirkwood.101
+	picture = GFX_report_event_rivendell
+	title = mirkwood.101.t
+	desc = mirkwood.101.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 4
+			modifier = {
+				factor = 2
+				RIV = { is_stronger = yes }
+			}
+		}
+		name = mirkwood.101.a
+		RIV = {
+			country_event = { id = mirkwood.102 days = 3 }
+		}
+
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.102.a
+	}
+
+	option = {
+		ai_chance = {
+			base = 4
+			modifier = {
+				factor = 2
+				RIV = { is_weaker = yes }
+			}
+		}
+		name = mirkwood.101.b
+		RIV = {
+			country_event = { id = mirkwood.103 days = 3 }
+		}
+
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.103.a
+	}
+
+	option = {
+		ai_chance = {
+			base = 3
+			modifier = {
+				factor = 0.5
+				RIV = { is_ai = no }
+			}
+			modifier = {
+				factor = 0
+				RIV = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 2
+				RIV = { is_significantly_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				RIV = { is_weaker = yes }
+			}
+		}
+		name = mirkwood.101.c
+		RIV = {
+			country_event = { id = mirkwood.104 days = 3 }
+		}
+
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.104.a
+	}
+}
+
+
+# POV: RIV. Mirkwood demands we return guarantee
+country_event = {
+	id = mirkwood.102
+	picture = GFX_report_event_thranduil
+	title = mirkwood.102.t
+	desc = mirkwood.102.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 150
+			modifier = {
+				add = opinion@MIR
+			}
+		}
+		name = mirkwood.102.a
+		MIR = {
+			country_event = { id = mirkwood.105 days = 3 }
+		}
+		RIV = {
+			give_guarantee = MIR
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 25
+			modifier = {
+				factor = 2
+				MIR = { is_going_different_path_as_root = yes }
+			}
+			modifier = {
+				factor = 3
+				MIR = { is_weaker = yes }
+			}
+		}
+		name = mirkwood.102.b
+		MIR = {
+			country_event = { id = mirkwood.106 days = 3 }
+		}
+
+		custom_effect_tooltip = "Mirkwood may withdraw their guarantee in response."
+	}
+}
+
+
+# POV: RIV. Mirkwood demands tribute
+country_event = {
+	id = mirkwood.103
+	picture = GFX_report_event_thranduil
+	title = mirkwood.103.t
+	desc = mirkwood.103.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 300
+			modifier = {
+				add = opinion@MIR
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_significantly_stronger = yes }
+			}
+		}
+		name = mirkwood.103.a
+		MIR = {
+			country_event = { id = mirkwood.107 days = 3 }
+		}
+
+		RIV = { MIR = { pay_6_civs_for_180_day = yes } }
+	}
+
+	option = {
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 2
+				MIR = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_significantly_weaker = yes }
+
+			}
+		}
+		name = mirkwood.103.b
+		MIR = {
+			country_event = { id = mirkwood.108 days = 3 }
+		}
+
+		custom_effect_tooltip = "Mirkwood may withdraw their guarantee in response."
+	}
+}
+
+
+# POV: RIV. Mirkwood demands submission
+country_event = {
+	id = mirkwood.104
+	picture = GFX_report_event_thranduil
+	title = mirkwood.104.t
+	desc = mirkwood.104.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 150
+			modifier = {
+				add = opinion@MIR
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_significantly_stronger = yes }
+			}
+		}
+		name = mirkwood.104.a
+		MIR = {
+			country_event = { id = mirkwood.109 days = 3 }
+		}
+
+		hidden_effect = {
+			store_ideologies_before_puppeting = yes
+		}
+		MIR = {
+			set_autonomy = {
+				target = RIV
+				autonomy_state = autonomy_autonomous_tributary
+			}
+		}
+		hidden_effect = {
+			restore_ideologies_post_puppeting = yes
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 65
+			modifier = {
+				factor = 2
+				MIR = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_significantly_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				has_government = cooperative
+			}
+			modifier = {
+				factor = 10
+				has_country_leader_ideology = supremacist
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_going_different_path_as_root = yes }
+			}
+		}
+		name = mirkwood.104.b
+		MIR = {
+			country_event = { id = mirkwood.110 days = 3 }
+		}
+
+		custom_effect_tooltip = "Mirkwood may withdraw their guarantee in response."
+	}
+}
+
+
+# POV: MIR. Riv accepts to return guarantee
+country_event = {
+	id = mirkwood.105
+	title = mirkwood.105.t
+	desc = mirkwood.105.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.105.a
+
+		effect_tooltip = {
+			RIV = {
+				give_guarantee = MIR
+			}
+		}
+	}
+}
+
+
+# POV: MIR. Riv declines to return guarantee
+country_event = {
+	id = mirkwood.106
+	title = mirkwood.106.t
+	desc = mirkwood.106.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = mirkwood.106.a
+		RIV = {
+			country_event = { id = mirkwood.111 days = 3 }
+		}
+
+		MIR = {
+			diplomatic_relation = {
+				country = RIV
+				relation = guarantee
+				active = no
+			}
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 3
+				RIV = { has_same_ideology = yes }
+			}
+			modifier = {
+				factor = 2
+				RIV = { is_going_same_path_as_root = yes }
+			}
+		}
+		name = mirkwood.106.b
+	}
+}
+
+
+# POV: MIR. Riv pays tribute
+country_event = {
+	id = mirkwood.107
+	title = mirkwood.107.t
+	desc = mirkwood.107.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.107.a
+
+		effect_tooltip = {
+			RIV = { MIR = { pay_6_civs_for_180_day = yes } }
+		}
+	}
+}
+
+
+# POV: MIR. Riv refuses to pay tribute
+country_event = {
+	id = mirkwood.108
+	title = mirkwood.108.t
+	desc = mirkwood.108.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = mirkwood.108.a
+		RIV = {
+			country_event = { id = mirkwood.111 days = 3 }
+		}
+
+		MIR = {
+			diplomatic_relation = {
+				country = RIV
+				relation = guarantee
+				active = no
+			}
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 3
+				RIV = { has_same_ideology = yes }
+			}
+			modifier = {
+				factor = 2
+				RIV = { is_going_same_path_as_root = yes }
+			}
+		}
+		name = mirkwood.108.b
+	}
+
+	option = {
+		ai_chance = {
+			base = 7
+			modifier = {
+				factor = 2
+				RIV = { is_significantly_weaker = yes }
+			}
+			modifier = {
+				factor = 1.3
+				RIV = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 0.85
+				RIV = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 0.5
+				RIV = { is_significantly_stronger = yes }
+			}
+		}
+		name = mirkwood.108.c
+		RIV = {
+			country_event = { id = mirkwood.113 days = 3 }
+		}
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.113.a
+
+		custom_effect_tooltip = if_they_refuse_newline_tt
+		event_option_tooltip = mirkwood.113.b
+	}
+}
+
+
+# POV: MIR. Riv accepts vassalage
+country_event = {
+	id = mirkwood.109
+	title = mirkwood.109.t
+	desc = mirkwood.109.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.109.a
+
+		effect_tooltip = {
+			MIR = {
+				set_autonomy = {
+					target = RIV
+					autonomy_state = autonomy_autonomous_tributary
+				}
+			}
+		}
+	}
+}
+
+
+# POV: MIR. Riv rejects vassalage
+country_event = {
+	id = mirkwood.110
+	title = mirkwood.110.t
+	desc = mirkwood.110.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = mirkwood.110.a
+		RIV = {
+			country_event = { id = mirkwood.111 days = 3 }
+		}
+
+		MIR = {
+			diplomatic_relation = {
+				country = RIV
+				relation = guarantee
+				active = no
+			}
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 3
+				RIV = { has_same_ideology = yes }
+			}
+			modifier = {
+				factor = 2
+				RIV = { is_going_same_path_as_root = yes }
+			}
+		}
+		name = mirkwood.110.b
+	}
+
+	option = {
+		ai_chance = {
+			base = 7
+			modifier = {
+				factor = 2
+				RIV = { is_significantly_weaker = yes }
+			}
+			modifier = {
+				factor = 1.3
+				RIV = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 0.85
+				RIV = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 0.5
+				RIV = { is_significantly_stronger = yes }
+			}
+		}
+		name = mirkwood.110.c
+		RIV = {
+			country_event = { id = mirkwood.103 days = 3 }
+		}
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.103.a
+	}
+}
+
+
+# POV: RIV. MIR withdraws guarantee
+country_event = {
+	id = mirkwood.111
+	title = mirkwood.111.t
+	desc = mirkwood.111.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.111.a
+
+		effect_tooltip = {
+			MIR = {
+				diplomatic_relation = {
+					country = RIV
+					relation = guarantee
+					active = no
+				}
+			}
+		}
+	}
+}
+
+
+# POV: MIR. RIV pays the tribute at last
+country_event = {
+	id = mirkwood.112
+	title = mirkwood.112.t
+	desc = mirkwood.112.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.112.a
+
+		effect_tooltip = {
+			RIV = { MIR = { pay_6_civs_for_180_day = yes } }
+		}
+	}
+}
+
+
+# POV: RIV. MIR gives us one final chance to pay tribute
+country_event = {
+	id = mirkwood.113
+	title = mirkwood.113.t
+	desc = mirkwood.113.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 230
+			modifier = {
+				add = opinion@MIR
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_significantly_stronger = yes }
+			}
+			modifier = {
+				factor = 1.3
+				has_government = unaligned
+			}
+			modifier = {
+				factor = 1.5
+				has_government = belligerent
+			}
+		}
+		name = mirkwood.113.a
+		MIR = {
+			country_event = { id = mirkwood.112 days = 3 }
+		}
+
+		RIV = { MIR = { pay_6_civs_for_180_day = yes } }
+	}
+
+	option = {
+		ai_chance = {
+			base = 230
+			modifier = {
+				factor = 2
+				MIR = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				MIR = { is_significantly_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				is_in_faction = yes
+			}
+			modifier = {
+				factor = 2
+				has_government = cooperative
+			}
+		}
+		name = mirkwood.113.b
+		MIR = {
+			country_event = { id = mirkwood.114 days = 3 }
+		}
+
+		event_option_tooltip = mirkwood.114.a
+	}
+}
+
+
+# POV: MIR. RIV refuses to pay tribute again
+country_event = {
+	id = mirkwood.114
+	title = mirkwood.114.t
+	desc = mirkwood.114.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.114.a
+
+		MIR = {
+			create_wargoal = {
+				target = RIV
+				type = puppet_wargoal_focus
+			}
+		}
+	}
+}
+
+
+# POV: MIR. What do we do about Lothlorien?
+country_event = {
+	id = mirkwood.115
+	picture = GFX_report_event_galadriel
+	title = mirkwood.115.t
+	desc = mirkwood.115.desc
+
+	is_triggered_only = yes
+
+	# If LTH is belliegerent, ask for alliance
+	option = {
+		trigger = {
+			LTH = { has_government = belligerent }
+		}
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 0.5
+				LTH = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 0.5
+				LTH = { is_significantly_stronger = yes }
+			}
+		}
+		name = mirkwood.115.a
+		LTH = {
+			country_event = { id = mirkwood.116 days = 3 }
+		}
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.116.a
+	}
+
+	# Ask LTH to become vassal
+	option = {
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 2
+				LTH = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_significantly_weaker = yes }
+			}
+		}
+		name = mirkwood.115.b
+		LTH = {
+			country_event = { id = mirkwood.117 days = 3 }
+		}
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.117.a
+	}
+
+	# Ask for guarantees in return
+	option = {
+		ai_chance = {
+			base = 50
+		}
+		name = mirkwood.115.c
+		LTH = {
+			country_event = { id = mirkwood.118 days = 3 }
+		}
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = mirkwood.118.a
+	}
+}
+
+
+# POV: Belligerent LTH. Belligerent MIR asks for alliance
+country_event = {
+	id = mirkwood.116
+	picture = GFX_report_event_thranduil
+	title = mirkwood.116.t
+	desc = mirkwood.116.desc
+
+	is_triggered_only = yes
+
+	# yes
+	option = {
+		ai_chance = {
+			base = 125
+			modifier = {
+				add = opinion@FROM
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_ai = yes }
+			}
+		}
+		name = mirkwood.116.a
+		MIR = {
+			country_event = { id = mirkwood.119 days = 3 }
+		}
+		if = {
+			limit = { MIR = { is_faction_leader = yes } }
+			MIR = { add_to_faction = LTH }
+		}
+		else_if = {
+			limit = { LTH = { is_faction_leader = yes } }
+			LTH = { add_to_faction = MIR }
+		}
+		else_if = {
+			limit = { LTH = { is_in_faction = no } MIR = { is_in_faction = no } }
+			MIR = {
+				create_faction_from_template = {
+					template = faction_template_belligerent_expansionist
+					name = "Mirkwood Alliance"
+				}
+				add_to_faction = LTH
+			}
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 50
+		}
+		name = mirkwood.116.b
+		MIR = {
+			country_event = { id = mirkwood.120 days = 3 }
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_decrease
+			}
+		}
+		custom_effect_tooltip = "Mirkwood may withdraw their guarantee, or even declare war."
+	}
+}
+
+
+# POV: LTH. MIR asks for us to submit and become vassal
+country_event = {
+	id = mirkwood.117
+	picture = GFX_report_event_thranduil
+	title = mirkwood.117.t
+	desc = mirkwood.117.desc
+
+	is_triggered_only = yes
+
+	# yes
+	option = {
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = FROM.num_divisions
+			}
+			modifier = {
+				add = FROM.num_of_factories
+			}
+			modifier = {
+				factor = 0
+				FROM = { is_significantly_weaker = yes }
+			}
+			modifier = {
+				factor = 0.7
+				FROM = { is_weaker = yes }
+			}
+		}
+		name = mirkwood.117.a
+		hidden_effect = {
+			store_ideologies_before_puppeting = yes
+		}
+		MIR = {
+			country_event = { id = mirkwood.119 days = 3 }
+			set_autonomy = {
+				target = LTH
+				autonomy_state = autonomy_autonomous_tributary
+			}
+		}
+		hidden_effect = {
+			restore_ideologies_post_puppeting = yes
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 35
+			modifier = {
+				add = ROOT.num_divisions
+			}
+			modifier = {
+				add = ROOT.num_of_factories
+			}
+			modifier = {
+				factor = 1.35
+			}
+		}
+		name = mirkwood.117.b
+		MIR = {
+			country_event = { id = mirkwood.120 days = 3 }
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_decrease
+			}
+		}
+		custom_effect_tooltip = "Mirkwood may withdraw their guarantee, or even declare war."
+	}
+}
+
+
+# POV: LTH. MIR asks for guarantees
+country_event = {
+	id = mirkwood.118
+	picture = GFX_report_event_thranduil
+	title = mirkwood.118.t
+	desc = mirkwood.118.desc
+
+	is_triggered_only = yes
+
+	# yes
+	option = {
+		ai_chance = {
+			base = 100
+		}
+		name = mirkwood.118.a
+		MIR = {
+			country_event = { id = mirkwood.119 days = 3 }
+		}
+		LTH = {
+			give_guarantee = MIR
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 15
+		}
+		name = mirkwood.118.b
+		MIR = {
+			country_event = { id = mirkwood.120 days = 3 }
+			add_opinion_modifier = {
+				target = LTH
+				modifier = medium_decrease
+			}
+		}
+		custom_effect_tooltip = "Mirkwood may withdraw their guarantee, or even declare war."
+	}
+}
+
+
+# POV: MIR. LTH accepts
+country_event = {
+	id = mirkwood.119
+	picture = GFX_report_event_fellowship_lothlorien
+	title = mirkwood.119.t
+	desc = mirkwood.119.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.119.a
+		MIR = {
+			add_opinion_modifier = {
+				target = LTH
+				modifier = small_increase
+			}
+		}
+	}
+}
+
+
+# POV MIR. LTH refuses
+country_event = {
+	id = mirkwood.120
+	picture = GFX_report_event_galadriel
+	title = mirkwood.120.t
+	desc = mirkwood.120.desc
+
+	is_triggered_only = yes
+
+	# do nothing
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = opinion@LTH
+			}
+		}
+		name = mirkwood.120.a
+		add_political_power = -50
+	}
+
+	# war it is then
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = ROOT.num_divisions
+				add = ROOT.num_of_factories
+			}
+			modifier = {
+				factor = 2
+				has_war = no
+			}
+			modifier = {
+				factor = 2
+				LTH = { has_war = yes }
+				has_war = no
+			}
+			modifier = {
+				factor = 2
+				LTH = { is_isolated_target = yes }
+			}
+			modifier = {
+				factor = 0.3
+				LTH = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 0.3
+				LTH = { is_significantly_stronger = yes }
+			}
+		}
+		name = mirkwood.120.b
+		create_wargoal = {
+			target = LTH
+			type = puppet_wargoal_focus
+		}
+	}
+
+	# withdraw guarantee
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = FROM.num_divisions
+				add = FROM.num_of_factories
+			}
+		}
+		name = mirkwood.120.c
+		MIR = {
+			diplomatic_relation = {
+				country = LTH
+				relation = guarantee
+				active = no
+			}
+		}
+	}
+}
+
+
+# POV: ERE. MIR expells diplomats
+country_event = {
+	id = mirkwood.121
+	picture = GFX_report_event_thranduil
+	title = mirkwood.121.t
+	desc = mirkwood.121.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 50
+		}
+		name = mirkwood.121.a
+
+		MIR = {
+			hidden_effect = {
+				reduce_focus_completion_cost = { cost = -24 focus = MIR_reclaim_the_gems_of_lasgalen }
+			}
+			custom_effect_tooltip = mirkwood.121.a_tt
+		}
+		add_political_power = -50
+	}
+
+	option = {
+		ai_chance = {
+			base = 50
+		}
+		name = mirkwood.121.b
+
+		MIR = {
+			add_opinion_modifier = {
+				target = ERE
+				modifier = large_decrease
+			}
+			hidden_effect = {
+				reduce_focus_completion_cost = { cost = 24 focus = MIR_reclaim_the_gems_of_lasgalen }
+			}
+			custom_effect_tooltip = mirkwood.121.b_tt
+		}
+	}
+}
+
+
+# POV: MIR. How to deal with spiders?
+country_event = {
+	id = mirkwood.122
+	picture = GFX_report_event_spider_nest
+	title = mirkwood.122.t
+	desc = mirkwood.122.desc
+
+	is_triggered_only = yes
+
+	# Ask for NA pact
+	option = {
+		ai_chance = {
+			base = 100
+		}
+		name = mirkwood.122.a
+
+		SPI = {
+			country_event = { id = mirkwood.123 days = 3 }
+		}
+		custom_effect_tooltip = if_they_accept_newline_tt
+		effect_tooltip = {
+			SPI = {
+				diplomatic_relation = {
+					country = MIR
+					relation = non_aggression_pact
+					active = yes
+				}
+			}
+		}
+	}
+
+	# Bolster numbers and defenses
+	option = {
+		ai_chance = {
+			base = 100
+		}
+		name = mirkwood.122.b
+
+		hidden_effect = {
+			SPI = { country_event = { id = mirkwood.124 days = 3 } }	
+		}
+
+		SPI = {
+			add_timed_idea = {
+				idea = CFM_presence_suppressed
+				days = 365
+			}
+		}
+
+		MIR = {
+			add_war_support = 0.05
+			add_timed_idea = {
+				idea = generic_military_mobilization
+				days = 120
+			}
+		}
+	}
+
+	# Assemble for war
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 500
+				has_country_flag = gameplan_spider_war_rush
+				has_war = no
+			}
+		}
+		name = mirkwood.122.c
+
+		hidden_effect = {
+			SPI = { country_event = { id = mirkwood.125 days = 3 } }	
+		}
+
+		MIR = {
+			if = { limit = { threat < 0.1 }
+				add_political_power = -350
+				add_stability = -0.12
+				add_war_support = -0.25
+			}
+			else_if = { limit = { threat < 0.3 }
+				add_political_power = -250
+				add_stability = -0.08
+				add_war_support = -0.17
+			}
+			else_if = { limit = { threat < 0.6 }
+				add_political_power = -150
+				add_war_support = -0.12
+			}
+		}
+
+		MIR = {
+			add_timed_idea = {
+				idea = MIR_prepare_for_war_against_spiders
+				days = 120
+			}
+		}
+	}
+}
+
+
+# POV: SPI. MIR asks for NA-pact
+country_event = {
+	id = mirkwood.123
+	title = mirkwood.123.t
+	desc = mirkwood.123.desc
+
+	is_triggered_only = yes
+
+	# eat envoy
+	option = {
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 0.5
+				MIR = { is_significantly_stronger = yes }
+			}
+		}
+		name = mirkwood.123.a
+		hidden_effect = {
+			MIR = { country_event = { id = mirkwood.126 days = 3 } }	
+		}
+
+		MIR = {
+			add_manpower = -1
+			add_opinion_modifier = {
+				target = SPI
+				modifier = large_decrease
+			}
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 100
+			modifier = {
+				factor = 0.5
+				MIR = { is_significantly_stronger = yes }
+			}
+		}
+		name = mirkwood.123.b
+
+		hidden_effect = { MIR = { country_event = { id = mirkwood.127 days = 3 } } }
+
+		MIR = {
+			add_opinion_modifier = {
+				target = SPI
+				modifier = small_decrease
+			}
+		}
+	}
+
+	# yes
+	option = {
+		ai_chance = {
+			base = 175
+			modifier = {
+				add = opinion@MIR
+			}
+		}
+		name = mirkwood.123.c
+
+		hidden_effect = { MIR = { country_event = { id = mirkwood.128 days = 3 } } }
+
+		SPI = {
+			diplomatic_relation = {
+				country = MIR
+				relation = non_aggression_pact
+				active = yes
+			}
+		}
+	}	
+}
+
+
+# POV: SPI. MIR bolsters numbers and defenses
+country_event = {
+	id = mirkwood.124
+	picture = GFX_report_event_elves_mirkwood
+	title = mirkwood.124.t
+	desc = mirkwood.124.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.124.a
+
+		event_option_tooltip = mirkwood.122.b
+	}
+}
+
+
+# POV: SPI. MIR assembles for war
+country_event = {
+	id = mirkwood.125
+	picture = GFX_report_event_elves_mirkwood
+	title = mirkwood.125.t
+	desc = mirkwood.125.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.125.a
+
+		event_option_tooltip = mirkwood.122.c
+	}
+}
+
+
+# POV: MIR. SPI ate our envoy
+country_event = {
+	id = mirkwood.126
+	picture = GFX_report_event_big_spider
+	title = mirkwood.126.t
+	desc = mirkwood.126.desc
+
+	is_triggered_only = yes
+
+	# retaliate
+	option = {
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 2
+				SPI = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 1.5
+				SPI = { is_significantly_weaker = yes }
+			}
+		}
+		name = mirkwood.126.a
+
+		event_option_tooltip = mirkwood.123.a
+
+		hidden_effect = {
+			SPI = { country_event = { id = mirkwood.129 days = 3 } }	
+		}
+
+		MIR = {
+			add_command_power = -100
+		}
+
+		SPI = {
+			random_state = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+			}
+
+			add_opinion_modifier = {
+				target = MIR
+				modifier = medium_decrease
+			}
+		}
+	}
+
+	# let it slide
+	option = {
+		ai_chance = {
+			base = 50
+		}
+		name = mirkwood.126.b
+
+		event_option_tooltip = mirkwood.123.a
+	}
+}
+
+
+# POV: MIR. SPI refuses NA-pact
+country_event = {
+	id = mirkwood.127
+	picture = GFX_report_event_big_spider
+	title = mirkwood.127.t
+	desc = mirkwood.127.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.127.a
+
+		event_option_tooltip = mirkwood.123.b
+	}
+}
+
+
+# POV: MIR. SPI agrees to NA pact
+country_event = {
+	id = mirkwood.128
+	picture = GFX_report_event_spider_hive
+	title = mirkwood.128.t
+	desc = mirkwood.128.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.128.a
+
+		event_option_tooltip = mirkwood.123.c
+	}
+}
+
+
+# POV: SPI. MIR retaliates
+country_event = {
+	id = mirkwood.129
+	picture = GFX_report_event_elves_mirkwood
+	title = mirkwood.129.t
+	desc = mirkwood.129.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.129.a
+
+		event_option_tooltip = mirkwood.126.a
+	}
+}
+
+
+# POV: LTH. MIR promises support in case of Dol Guldur attack
+country_event = {
+	id = mirkwood.130
+	picture = GFX_report_event_thranduil
+	title = mirkwood.130.t
+	desc = mirkwood.130.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.130.a
+
+		custom_effect_tooltip = "If we are attacked by Dol Guldur, [MIR.GetName] will be compelled to come to our aid."
+	}
+}
+
+
+# POV: MIR. Dol Guldur attacks LTH
+country_event = {
+	id = mirkwood.131
+	picture = GFX_report_event_elves_army
+	title = mirkwood.131.t
+	desc = mirkwood.131.desc
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = MIR
+		has_completed_focus = MIR_promise_support_against_dol_guldur
+		LTH = { has_defensive_war_with = DGU }
+		NOT = { has_war_with = DGU }
+		is_subject = no
+		NOT = { has_war_with = LTH }
+	}
+
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = mirkwood.131.a
+
+		declare_war_on = {
+			target = DGU
+			type = annex_everything
+		}
+	}
+
+	option = {
+		trigger = {
+			has_war = yes
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				surrender_progress > 0.25
+			}
+			modifier = {
+				add = 10
+				surrender_progress > 0.5
+			}
+		}
+		name = mirkwood.131.b
+
+		add_political_power = -200
+		add_stability = -0.1
+
+		LTH = {
+			decrease_their_opinion_of_us_medium = yes
+		}
+	}
+}
+
+
+# POV: some elven country. Mirkwood asks for aid against DGU
+country_event = {
+	id = mirkwood.132
+	title = mirkwood.132.t
+	desc = mirkwood.132.desc
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			is_neighbor_of = DGU
+		}
+		ai_chance = {
+			base = 9
+			modifier = {
+				factor = 1.5
+				DGU = { is_isolated_target = yes }
+			}
+			modifier = {
+				factor = 2
+				DGU = { is_significantly_weaker = yes }
+			}
+			modifier = {
+				factor = 0
+				DGU = { can_reach = no }
+			}
+			modifier = {
+				factor = 2
+				tag = LTH
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 1.5
+				DGU = { is_ai = no }
+			}
+			modifier = {
+				factor = 2
+				MIR = { surrender_progress > 0.1 }
+			}
+		}
+		name = mirkwood.132.a
+
+		declare_war_on = {
+			target = DGU
+			type = annex_everything
+		}
+		add_war_support = 0.05
+	}
+
+	option = {
+		ai_chance = {
+			base = 15
+		}
+		name = mirkwood.132.b
+
+		send_equipment = {
+			amount = 1500
+			target = MIR
+			type = infantry_equipment
+		}
+		send_equipment = {
+			amount = 100
+			target = MIR
+			type = support_equipment
+		}
+		add_war_support = 0.01
+	}
+
+	option = {
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				has_war = yes
+			}
+			modifier = {
+				factor = 2
+				alliance_strength_ratio < 1.1
+			}
+			modifier = {
+				factor = 5
+				surrender_progress > 0.1
+			}
+			modifier = {
+				factor = 5
+				surrender_progress > 0.3
+			}
+		}
+		name = mirkwood.132.c
+
+		add_war_support = -0.03
+		add_political_power = -75
+	}
+}
+
+
+# POV: some elven country. Mirkwood asks for aid against Spiders
+country_event = {
+	id = mirkwood.133
+	title = mirkwood.133.t
+	desc = mirkwood.133.desc
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			is_neighbor_of = SPI
+		}
+		ai_chance = {
+			base = 6
+			modifier = {
+				factor = 1.5
+				SPI = { is_isolated_target = yes }
+			}
+			modifier = {
+				factor = 2
+				SPI = { is_significantly_weaker = yes }
+			}
+			modifier = {
+				factor = 0
+				SPI = { can_reach = no }
+			}
+			modifier = {
+				factor = 1.5
+				SPI = { is_ai = no }
+			}
+			modifier = {
+				factor = 2
+				MIR = { surrender_progress > 0.1 }
+			}
+		}
+		name = mirkwood.133.a
+
+		declare_war_on = {
+			target = SPI
+			type = annex_everything
+		}
+		add_war_support = 0.05
+	}
+
+	option = {
+		ai_chance = {
+			base = 15
+		}
+		name = mirkwood.133.b
+
+		send_equipment = {
+			amount = 1500
+			target = MIR
+			type = infantry_equipment
+		}
+		send_equipment = {
+			amount = 100
+			target = MIR
+			type = support_equipment
+		}
+		add_war_support = 0.01
+	}
+
+	option = {
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 2
+				has_war = yes
+			}
+			modifier = {
+				factor = 2
+				alliance_strength_ratio < 1.1
+			}
+			modifier = {
+				factor = 5
+				surrender_progress > 0.1
+			}
+			modifier = {
+				factor = 5
+				surrender_progress > 0.3
+			}
+		}
+		name = mirkwood.133.c
+
+		add_war_support = -0.03
+		add_political_power = -75
+	}
+}
+
+
+# RGL asks for Radagast
+country_event = {
+	id = mirkwood.134
+	picture = GFX_report_event_radagast
+	title = mirkwood.134.t
+	desc = mirkwood.134.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 100
+			modifier = {
+				add = opinion@FROM
+			}
+			modifier = {
+				factor = 0.5
+				is_historical_focus_on = yes
+				FROM = { is_ai = yes }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { is_ai = yes }
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { has_same_ideology = yes }
+			}
+			modifier = {
+				factor = 2
+				is_ally_with = FROM
+			}
+		}
+		name = mirkwood.134.a
+		RGL = {
+			country_event = { id = mirkwood.135 days = 3 }
+		}
+		event_option_tooltip = mirkwood.135.a
+	}
+
+	option = {
+		ai_chance = {
+			base = 100
+		}
+		name = mirkwood.134.b
+		RGL = {
+			country_event = { id = mirkwood.136 days = 3 }
+		}
+		add_political_power = -50
+	}
+}
+
+
+# Radagast return accepted
+country_event = {
+	id = mirkwood.135
+	picture = GFX_report_event_radagast
+	title = mirkwood.135.t
+	desc = mirkwood.135.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.135.a
+
+		MIR = {
+			MIR_radagast = { lotr_retire_character = yes }
+		}
+		RGL = {
+			RGL_radagast = {
+				add_advisor_role = {
+					advisor = {
+						ai_will_do = {
+							factor = 100
+						}
+						slot = chief_advisor
+						traits = { the_brown }
+					}
+				}
+			}
+		}
+	}
+}
+
+
+# Radagast return declined
+country_event = {
+	id = mirkwood.136
+	picture = GFX_report_event_radagast
+	title = mirkwood.136.t
+	desc = mirkwood.136.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = mirkwood.136.a
+	}
+}
+
+
+
+# Offer: wood for civs
+country_event = {
+    id = mirkwood.137
+    title = mirkwood.137.t
+    desc = mirkwood.137.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 200
+			modifier = {
+				add = opinion@FROM
+			}
+        }
+        name = mirkwood.137.a
+		hidden_effect = {
+			MIR = {
+				country_event = { id = mirkwood.138 days = 3 }
+			}
+		}
+		MIR = {
+			random_controlled_state = {
+				limit = { chromium > 8 }
+				add_resource = {
+					type = chromium
+					amount = -8
+				}
+				add_building_slot_and_civ_x2 = yes
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = small_increase
+			}
+		}
+		THIS = {
+			random_controlled_state = {
+				limit = { industrial_complex > 1 }
+				add_resource = {
+					type = chromium
+					amount = 8
+				}
+				remove_building = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			add_opinion_modifier = {
+				target = MIR
+				modifier = small_increase
+			}
+		}
+	}
+
+    option = {
+        ai_chance = {
+            base = 50
+        }
+        name = mirkwood.137.b
+		hidden_effect = {
+			MIR = {
+				country_event = { id = mirkwood.139 days = 3 }
+	    	}
+		}
+	}
+}
+
+
+# offer accepted
+country_event = {
+    id = mirkwood.138
+    title = mirkwood.138.t
+    desc = mirkwood.138.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.138.a
+		effect_tooltip = {
+			MIR = {
+				random_controlled_state = {
+					limit = { chromium > 8 }
+					add_resource = {
+						type = chromium
+						amount = -8
+					}
+					add_building_slot_and_civ_x2 = yes
+				}
+				add_opinion_modifier = {
+					target = FROM
+					modifier = small_increase
+				}
+			}
+			FROM = {
+				random_controlled_state = {
+					limit = { industrial_complex > 1 }
+					add_resource = {
+						type = chromium
+						amount = 8
+					}
+					remove_building = {
+						type = industrial_complex
+						level = 1
+					}
+				}
+				add_opinion_modifier = {
+					target = MIR
+					modifier = small_increase
+				}
+			}
+		}
+    }
+}
+
+
+# offer declined
+country_event = {
+    id = mirkwood.139
+    title = mirkwood.139.t
+    desc = mirkwood.139.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.139.a
+    }
+}
+
+
+# MIR offers DGU to trade territory for peace
+country_event = {
+    id = mirkwood.140
+	picture = GFX_report_event_paper
+    title = mirkwood.140.t
+    desc = mirkwood.140.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 50
+			modifier = {
+				factor = 0
+				has_completed_focus = DGU_enxtinguish_elven_light
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_ai = no }
+			}
+        }
+        name = mirkwood.140.a
+		hidden_effect = {
+			MIR = { country_event = { id = mirkwood.141 days = 1 } }
+		}
+		custom_effect_tooltip = mirkwood.140.a_tt
+		MIR = {
+			every_controlled_state = {
+				limit = { has_state_flag = cfm_south_of_narrows }
+				transfer_state_to = DGU
+			}
+			random_state_add_building_slot_and_civ_x2 = yes
+		}
+		244 = { transfer_state_to = DGU }
+		234 = { transfer_state_to = DGU }
+		DGU = {
+			cfm_disable_for_country = yes
+			diplomatic_relation = {
+				country = MIR
+				relation = non_aggression_pact
+			}
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 30
+			modifier = {
+				factor = 2
+				FROM = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 2
+				FROM = { is_significantly_weaker = yes }
+			}
+        }
+        name = mirkwood.140.b
+		hidden_effect = {
+			MIR = { country_event = { id = mirkwood.142 days = 3 } }
+		}
+		add_political_power = -35
+		MIR = {
+			add_opinion_modifier = {
+				target = DGU
+				modifier = medium_decrease
+			}
+		}
+    }
+}
+
+
+# MIR deal accepted
+country_event = {
+    id = mirkwood.141
+	picture = GFX_report_event_dol_guldur_fort
+    title = mirkwood.141.t
+    desc = mirkwood.141.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.141.a
+		effect_tooltip = {
+			custom_effect_tooltip = mirkwood.140.a_tt
+			MIR = {
+				random_state_add_building_slot_and_civ_x2 = yes
+			}
+			DGU = {
+				cfm_disable_for_country = yes
+				diplomatic_relation = {
+					country = MIR
+					relation = non_aggression_pact
+				}
+			}
+		}
+    }
+}
+
+
+# MIR deal declined
+country_event = {
+    id = mirkwood.142
+	picture = GFX_report_event_dol_guldur_fort
+    title = mirkwood.142.t
+    desc = mirkwood.142.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.142.a
+		effect_tooltip = {
+			MIR = {
+				add_opinion_modifier = {
+					target = DGU
+					modifier = medium_decrease
+				}
+			}
+		}
+    }
+}
+
+
+# MIR demands ring from RIV
+country_event = {
+    id = mirkwood.143
+	picture = GFX_report_event_thranduil
+    title = mirkwood.143.t
+    desc = mirkwood.143.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 100
+			modifier = {
+				add = opinion@FROM
+			}
+        }
+        name = mirkwood.143.a
+		hidden_effect = {
+			MIR = { country_event = { id = mirkwood.145 days = 3 } }
+		}
+		THIS = {
+			if = {
+				limit = { has_idea = artifact_vilya }
+				remove_ideas = artifact_vilya
+				MIR = {
+					add_ideas = artifact_vilya
+				}
+			}
+		}
+		
+    }
+
+    option = {
+        ai_chance = {
+            base = 100
+			modifier = {
+				factor = 2
+				has_government = cooperative
+			}
+        }
+        name = mirkwood.143.b
+		hidden_effect = {
+			MIR = { country_event = { id = mirkwood.147 days = 3 } }
+		}
+		ROOT = {
+			RIV_elrond = {
+				lotr_retire_character = yes
+			}
+			add_political_power = -100
+			add_stability = -0.1
+			MIR = {
+				add_opinion_modifier = {
+					target = RIV
+					modifier = large_decrease
+				}
+			}
+		}
+	}
+}
+
+
+# MIR demands ring from LTH
+country_event = {
+    id = mirkwood.144
+	picture = GFX_report_event_thranduil
+    title = mirkwood.144.t
+    desc = mirkwood.144.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 100
+			modifier = {
+				add = opinion@FROM
+			}
+        }
+        name = mirkwood.144.a
+		hidden_effect = {
+			MIR = { country_event = { id = mirkwood.145 days = 3 } }
+		}
+		THIS = {
+			if = {
+				limit = { has_idea = artifact_nenya }
+				remove_ideas = artifact_nenya
+				MIR = {
+					add_ideas = artifact_nenya
+				}
+			}
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 130
+			modifier = {
+				factor = 2
+				has_government = cooperative
+			}
+        }
+        name = mirkwood.144.b
+		hidden_effect = {
+			MIR = { country_event = { id = mirkwood.146 days = 3 } }
+		}
+		ROOT = {
+			LTH_galadriel = {
+				lotr_retire_character = yes
+			}
+			add_political_power = -100
+			add_stability = -0.1
+			MIR = {
+				add_opinion_modifier = {
+					target = LTH
+					modifier = large_decrease
+				}
+			}
+		}
+    }
+}
+
+
+# Ring demand accepted
+country_event = {
+    id = mirkwood.145
+    title = mirkwood.145.t
+    desc = mirkwood.145.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.145.a
+		if = {
+			limit = { FROM = { tag = LTH } }
+			effect_tooltip = {
+				add_ideas = artifact_nenya
+			}
+		}
+		else_if = {
+			limit = { FROM = { tag = LTH } }
+			effect_tooltip = {
+				add_ideas = artifact_vilya
+			}
+		}
+    }
+}
+
+
+# Galadriel flees
+country_event = {
+    id = mirkwood.146
+	picture = GFX_report_event_galadriel
+    title = mirkwood.146.t
+    desc = mirkwood.146.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.146.a
+		effect_tooltip = {
+			LTH = {
+				LTH_galadriel = {
+					lotr_retire_character = yes
+				}
+				add_political_power = -100
+				add_stability = -0.1
+				MIR = {
+					add_opinion_modifier = {
+						target = LTH
+						modifier = large_decrease
+					}
+				}
+			}
+		}
+    }
+}
+
+
+# Elrond flees
+country_event = {
+    id = mirkwood.147
+	picture = GFX_report_event_elrond
+    title = mirkwood.147.t
+    desc = mirkwood.147.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.147.a
+		effect_tooltip = {
+			RIV = {
+				RIV_elrond = {
+					lotr_retire_character = yes
+				}
+				add_political_power = -100
+				add_stability = -0.1
+				MIR = {
+					add_opinion_modifier = {
+						target = RIV
+						modifier = large_decrease
+					}
+				}
+			}
+		}
+    }
+}
+
+
+# MIR meddling
+country_event = {
+    id = mirkwood.148
+    title = mirkwood.148.t
+    desc = mirkwood.148.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 3
+        }
+        name = mirkwood.148.a
+		add_political_power = -100
+		add_timed_idea = {
+			idea = MIR_information_crackdown
+			days = 270
+		}
+		add_timed_idea = {
+			idea = generic_belligerent
+			days = 365
+		}
+
+		custom_effect_tooltip = mirkwood.148.a_tt
+	}
+
+    option = {
+        ai_chance = {
+            base = 2
+			modifier = {
+				factor = 3
+				is_going_belligerent = yes
+			}
+        }
+        name = mirkwood.148.b
+		add_timed_idea = {
+			idea = generic_belligerent
+			days = 365
+		}
+
+		custom_effect_tooltip = mirkwood.148.a_tt
+	}
+}
+
+
+# ERE civil war
+country_event = {
+    id = mirkwood.149
+	picture = GFX_report_event_dwarves_ered_luin_marching
+    title = mirkwood.149.t
+    desc = mirkwood.149.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.149.a
+		start_civil_war = {
+			ideology = belligerent
+			size = 0.35
+		}
+    }
+}
+
+
+# ERE coup
+country_event = {
+    id = mirkwood.150
+	picture = GFX_report_event_dwarves_ered_luin_marching
+    title = mirkwood.150.t
+    desc = mirkwood.150.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.150.a
+
+		set_politics = {
+			ruling_party = belligerent
+		}
+    }
+}
+
+
+# Necklace of Girion returned
+country_event = {
+    id = mirkwood.151
+	picture = GFX_report_event_emmeralds_of_girion
+    title = mirkwood.151.t
+    desc = mirkwood.151.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.151.a
+		MIR = {
+			remove_ideas = artifact_necklace_of_girion
+		}
+		ERE = {
+			add_opinion_modifier = {
+				target = MIR
+				modifier = huge_increase
+			}
+			add_ideas = artifact_necklace_of_girion
+		}
+    }
+}
+
+
+# Seeking a worthy ally
+country_event = {
+    id = mirkwood.152
+    title = mirkwood.152.t
+    desc = mirkwood.152.desc
+
+    is_triggered_only = yes
+
+	# great kingdoms
+    option = {
+        ai_chance = {
+            base = 120
+			modifier = {
+				add = opinion@GON
+			}
+        }
+        name = mirkwood.152.a
+		complete_national_focus = MIR_join_the_great_realms_of_men
+    }
+
+	# vales of anduin
+    option = {
+        ai_chance = {
+            base = 120
+			modifier = {
+				add = opinion@VAL
+			}
+        }
+        name = mirkwood.152.b
+		trigger = {
+			VAL = {
+				exists = yes
+				NOT = { has_war_with = MIR }
+				is_subject = no
+				OR = {
+					is_faction_leader = yes
+					is_in_faction = no
+				}
+			}
+		}
+		if = {
+			limit = { VAL = { is_faction_leader = yes } }
+			VAL = { ask_to_join_faction = yes }
+		}
+		else = {
+			VAL = { ask_to_form_faction = yes }
+		}
+    }
+
+	# spiders
+    option = {
+        ai_chance = {
+            base = 100
+			modifier = {
+				add = opinion@SPI
+			}
+        }
+        name = mirkwood.152.c
+		trigger = {
+			SPI = {
+				exists = yes
+				NOT = { has_war_with = MIR }
+				is_subject = no
+				OR = {
+					is_faction_leader = yes
+					is_in_faction = no
+				}
+			}
+		}
+		if = {
+			limit = { SPI = { is_faction_leader = yes } }
+			SPI = { ask_to_join_faction = yes }
+		}
+		else = {
+			SPI = { ask_to_form_faction = yes }
+		}
+
+    }
+
+	# Rhovanion
+    option = {
+        ai_chance = {
+            base = 110
+			modifier = {
+				add = opinion@RHO
+			}
+        }
+        name = mirkwood.152.e
+		trigger = {
+			RHO = {
+				exists = yes
+				NOT = { has_war_with = MIR }
+				is_subject = no
+				OR = {
+					is_faction_leader = yes
+					is_in_faction = no
+				}
+			}
+		}
+		if = {
+			limit = { RHO = { is_faction_leader = yes } }
+			RHO = { ask_to_join_faction = yes }
+		}
+		else = {
+			RHO = { ask_to_form_faction = yes }
+		}
+    }
+}
+
+
+# future of elves and orcs
+country_event = {
+    id = mirkwood.153
+	picture = GFX_report_event_elves_and_orcs
+    title = mirkwood.153.t
+    desc = mirkwood.153.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 100
+			modifier = {
+				add = opinion@MOR
+			}
+        }
+        name = mirkwood.153.a
+		complete_national_focus = MIR_hold_on_to_the_light
+    }
+
+    option = {
+        ai_chance = {
+            base = 100
+        }
+        name = mirkwood.153.b
+		complete_national_focus = MIR_forsake_the_past
+    }
+}
+
+
+# which way the shadows fall
+country_event = {
+    id = mirkwood.154
+	picture = GFX_report_event_barad_dur_2
+    title = mirkwood.154.t
+    desc = mirkwood.154.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 100
+			modifier = {
+				add = opinion@MOR
+			}
+        }
+        name = mirkwood.154.a
+		complete_national_focus = MIR_vassal_of_the_eye
+    }
+
+    option = {
+        ai_chance = {
+            base = 100
+			modifier = {
+				factor = 1.35
+				MOR = { is_ai = no }
+			}
+        }
+        name = mirkwood.154.b
+		complete_national_focus = MIR_a_new_dark_realm
+    }
+}
+
+
+# Lembas and Honeycake exchange
+country_event = {
+    id = mirkwood.155
+	picture = GFX_report_event_honey_cakes_lembas
+    title = mirkwood.155.t
+    desc = mirkwood.155.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.155.a
+		VAL = {
+			set_technology = {
+				lembas_bread = 1
+			}
+		}
+		MIR = {
+			set_technology = {
+				honeycakes = 1
+			}
+		}
+    }
+}
+
+
+# ERE asked for help in CFM
+country_event = {
+    id = mirkwood.156
+    title = mirkwood.156.t
+    desc = mirkwood.156.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 80
+			modifier = {
+				add = opinion@FROM
+			}
+			modifier = {
+				factor = 2
+				DGU = { is_ai = no }
+			}
+			modifier = {
+				factor = 1.5
+				MIR = { is_ai = no }
+			}
+        }
+        name = mirkwood.156.a
+		hidden_effect = {
+			country_event = { id = mirkwood.158 days = 3 }
+		}
+		add_manpower = -250
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = -350
+		}
+		effect_tooltip = {
+			SPI = {
+				add_timed_idea = {
+					idea = CFM_erebor_help_spiders
+					days = 120
+				}
+			}
+			DGU = {
+				add_timed_idea = {
+					idea = CFM_erebor_help_dolguldur
+					days = 90
+				}
+			}
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 60
+        }
+        name = mirkwood.156.b
+
+		add_political_power = -50
+    }
+}
+
+
+# LOTH asked for help in CFM
+country_event = {
+    id = mirkwood.157
+    title = mirkwood.157.t
+    desc = mirkwood.157.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 80
+			modifier = {
+				add = opinion@FROM
+			}
+			modifier = {
+				factor = 2
+				DGU = { is_ai = no }
+			}
+			modifier = {
+				factor = 1.5
+				MIR = { is_ai = no }
+			}
+        }
+        name = mirkwood.157.a
+		hidden_effect = {
+			country_event = { id = mirkwood.158 days = 3 }
+		}
+		add_manpower = -250
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = -350
+		}
+		effect_tooltip = {
+			DGU = {
+				add_timed_idea = {
+					idea = CFM_lothlorien_help_dolguldur
+					days = 120
+				}
+			}
+			SPI = {
+				add_timed_idea = {
+					idea = CFM_lothlorien_help_spiders
+					days = 90
+				}
+			}
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 60
+        }
+        name = mirkwood.157.b
+
+		add_political_power = -50
+    }
+}
+
+
+# Help provided
+country_event = {
+    id = mirkwood.158
+    title = mirkwood.158.t
+    desc = mirkwood.158.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.158.a
+
+		if = {
+			limit = { FROM = { tag = LTH } }
+			DGU = {
+				add_timed_idea = {
+					idea = CFM_lothlorien_help_dolguldur
+					days = 120
+				}
+			}
+			SPI = {
+				add_timed_idea = {
+					idea = CFM_lothlorien_help_spiders
+					days = 90
+				}
+			}
+		}
+		else = {
+			SPI = {
+				add_timed_idea = {
+					idea = CFM_erebor_help_spiders
+					days = 120
+				}
+			}
+			DGU = {
+				add_timed_idea = {
+					idea = CFM_erebor_help_dolguldur
+					days = 90
+				}
+			}
+		}
+    }
+}
+
+
+# CFM: state seized
+country_event = {
+    id = mirkwood.159
+    title = mirkwood.159.t
+    desc = mirkwood.159.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.159.a
+
+		effect_tooltip = {
+			event_target:target_state = {
+				transfer_state_to = FROM
+			}
+		}
+    }
+}
+
+
+# CFM ended
+country_event = {
+    id = mirkwood.160
+    title = mirkwood.160.t
+    desc = mirkwood.160.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = mirkwood.160.a
+
+		custom_effect_tooltip = cfm_disabled_tt
+    }
 }

@@ -139,7 +139,6 @@ country_event = {
 	option = {
 		name = gondor.4.a
 		add_political_power = -150
-		GON = {complete_national_focus = haveboromirstealthering}
 		ai_chance = {
 			base = 100
 		}
@@ -1083,5 +1082,71 @@ country_event = {
 			add_opinion_modifier = { target = GON modifier = small_decrease }
 			country_event = { id = arthedain.11 }
 		}
+	}
+}
+
+# Emergency levy when Mordor attacks
+country_event = {
+	id = gondor.27
+	title = gondor.27.t
+	desc = gondor.27.d
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = GON
+		NOT = { has_government = belligerent }
+		is_ai = yes
+		has_war_with = MOR
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = gondor.27.a
+		
+		division_template = {
+			name = "Emergency Levy"
+			regiments = {
+				infantry = { x = 0 y = 0 }
+				infantry = { x = 0 y = 1 }
+				infantry = { x = 0 y = 2 }
+				infantry = { x = 1 y = 0 }
+				infantry = { x = 1 y = 1 }
+				infantry = { x = 1 y = 2 }
+				infantry = { x = 2 y = 0 }
+				infantry = { x = 1 y = 1 }
+			}
+			support = {
+				engineer = { x = 0 y = 0 }
+				artillery = { x = 0 y = 1 }
+			}
+		}
+
+		if = {
+			limit = { MOR = { is_ai = no } }
+
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Emergency Levy\" division_template = \"Emergency Levy\" start_experience_factor = 0.5"
+					owner = ROOT
+					count = 7
+					allow_spawning_on_enemy_provs = no
+				}	
+			}
+		}
+		else = {
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Emergency Levy\" division_template = \"Emergency Levy\" start_experience_factor = 0.5"
+					owner = ROOT
+					count = 4
+					allow_spawning_on_enemy_provs = no
+				}	
+			}
+		}		
+		
 	}
 }

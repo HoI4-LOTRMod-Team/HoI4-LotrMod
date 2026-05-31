@@ -1,4 +1,126 @@
 defined_text = {
+	name = GetInterceptionDetectionStats
+	text = {
+		trigger = {
+			ring_interceptions_are_disabled = yes
+		}
+		localization_key = empty_line
+	}
+	text = {
+		trigger = {
+			# Calculate average stealth skills (planning_skill)
+			set_temp_variable = { temp_avg_fs_stealth = 0 }
+			set_temp_variable = { temp_avg_hp_stealth = 0 }
+			set_temp_variable = { temp_watchtower_bonus = 0 }
+			set_temp_variable = { temp_detection_bonus = 0 }
+			set_temp_variable = { temp_avg_hp_stealth_total = 0 }
+			set_temp_variable = { temp_detection_chances = 0 }
+		
+			# Calculate average fellowship stealth skill (planning_skill)
+			if = {
+				limit = { check_variable = { global.fs_members^num > 0 } }
+				all_of = {
+					array = global.fs_members
+					value = v
+
+					var:v = { add_to_temp_variable = { PREV.temp_avg_fs_stealth = planning_level } }
+
+					always = yes
+				}
+				divide_temp_variable = { temp_avg_fs_stealth = global.fs_members^num }
+			}
+
+			# Calculate average fellowship stealth skill (planning_skill)
+			if = {
+				limit = { check_variable = { ROOT.fs_hunting_party^num > 0 } }
+				all_of = {
+					array = ROOT.fs_hunting_party
+					value = v
+
+					var:v = { add_to_temp_variable = { PREV.temp_avg_hp_stealth = planning_level } }
+
+					always = yes
+				}
+				divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
+			}
+
+			# Extra bonus from watchtowers!
+			var:global.fs_currentstate = {
+				add_to_temp_variable = {
+					PREV.temp_watchtower_bonus = building_level@radar_station
+				}
+			}
+
+			# Home turf + core advantage, 200%
+			if = {
+				limit = { var:global.fs_currentstate = { is_core_of = ROOT is_controlled_by = ROOT } }
+				set_temp_variable = { temp_detection_bonus = 1.8 }
+			}
+			# Home turf advantage, 150%
+			else_if = {
+				limit = { var:global.fs_currentstate = { is_controlled_by = ROOT } }
+				set_temp_variable = { temp_detection_bonus = 1.5 }
+			}
+			# Exceptional base, 100%
+			else = {
+				set_temp_variable = { temp_detection_bonus = 1.0 }
+			}
+			add_to_temp_variable = { temp_detection_bonus = ROOT.modifier@fellowship_detection_factor }
+
+			set_temp_variable = { temp_avg_hp_stealth_total = temp_avg_hp_stealth }
+			add_to_temp_variable = { temp_avg_hp_stealth_total = temp_watchtower_bonus }
+			multiply_temp_variable = { temp_avg_hp_stealth_total = temp_detection_bonus }
+
+			set_temp_variable = { temp_detection_denonimator = temp_avg_fs_stealth }
+			add_to_temp_variable = { temp_detection_denonimator = temp_avg_hp_stealth_total }
+
+			add_to_temp_variable = { temp_detection_chances = temp_avg_hp_stealth_total }
+			if = {
+				limit = { check_variable = { temp_detection_denonimator > 0 } }
+				divide_temp_variable = { temp_detection_chances = temp_detection_denonimator }
+			}
+
+			always = yes
+		}
+		localization_key = ring_interception_detection_stats
+	}
+}
+
+
+defined_text = {
+	name = GetCurrentFellowshipStatus
+	text = {
+		trigger = {
+			NOT = { has_global_flag = fs_started }
+		}
+		localization_key = ring_status_not_started
+	}
+	text = {
+		trigger = {
+			ring_has_been_seized = yes
+		}
+		localization_key = ring_status_seized
+	}
+	text = {
+		trigger = {
+			ring_has_been_destroyed = yes
+		}
+		localization_key = ring_status_destroyed
+	}
+	text = {
+		trigger = {
+			tag = LTH
+			NOT = { has_completed_focus = lth_theonering }
+		}
+		localization_key = ring_status_locked
+	}
+	text = {
+		localization_key = ring_status_default
+	}
+}
+
+
+defined_text = {
 	name = DisplayRingEventLog
 	text = {
 		trigger = {

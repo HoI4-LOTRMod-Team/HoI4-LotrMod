@@ -6,7 +6,7 @@ fires_of_isengard_increase = {
         }
         swap_ideas = {
             remove_idea = ISE_the_fires_of_isengard_0
-            add_idea = GON_denethor_1
+            add_idea = ISE_the_fires_of_isengard_1
         }
     }
     else_if = {
@@ -24,132 +24,215 @@ fires_of_isengard_increase = {
         }
         swap_ideas = {
             remove_idea = ISE_the_fires_of_isengard_2
-            add_idea = GON_denethor_3
+            add_idea = ISE_the_fires_of_isengard_3
+        }
+    }
+    else_if = {
+        limit = {
+            has_idea = ISE_the_fires_of_isengard_3
+        }
+        swap_ideas = {
+            remove_idea = ISE_the_fires_of_isengard_3
+            add_idea = ISE_the_fires_of_isengard_4
         }
     }
     else = {
-        custom_effect_tooltip = "Will increase Fires of Isengard"
+        custom_effect_tooltip = ISE_tooltip_will_increase_fires_of_isengard
     }
 }
 
-# @docs(Isengard): Increases Palantir spirit
-palantir_increase = {
-    if = {
-        limit = { 
-            has_idea = ISE_palantir_0
+### ISE - SHI influence system
+# @docs(Isengard): Small increase ISE influence in the Shire
+small_increase_shire_influence = {
+	if = { 
+        limit = {
+            ISE = { NOT = { has_completed_focus = ISE_establish_base_of_operations } }
         }
-        swap_ideas = {
-            remove_idea = ISE_palantir_0
-            add_idea = ISE_palantir_1
+        if = {
+            limit = {
+                check_variable = { global.influence_ise_in_shi < 46 }
+            }
+            add_to_variable = { global.influence_ise_in_shi = 5 }
+            custom_effect_tooltip = ISE_effect_tooltip_small_increase_influence_shi
+        } else = {
+            custom_effect_tooltip = ISE_effect_tooltip_max_and_min
         }
     }
-    else_if = {
+}
+# @docs(Isengard): Big increase ISE influence in the Shire
+increase_shire_influence = {
+    if = { 
         limit = {
-            has_idea = ISE_palantir_1
+            ISE = { NOT = { has_completed_focus = ISE_establish_base_of_operations } }
         }
-        swap_ideas = {
-            remove_idea = ISE_palantir_1
-            add_idea = ISE_palantir_2
+        if = {
+            limit = {
+                check_variable = { global.influence_ise_in_shi < 41 }
+            }
+            add_to_variable = { global.influence_ise_in_shi = 10 }
+            custom_effect_tooltip = ISE_effect_tooltip_increase_influence_shi
+        } else = {
+            custom_effect_tooltip = ISE_effect_tooltip_max_and_min
+        }
+    }
+}
+# @docs(Isengard): Small decrease ISE influence in the Shire
+small_decrease_shire_influence = {
+    if = { 
+        limit = {
+            ISE = { NOT = { has_completed_focus = ISE_establish_base_of_operations } }
+        }
+        if = {
+            limit = {
+                check_variable = { global.influence_ise_in_shi > 4 }
+            }
+            add_to_variable = { global.influence_ise_in_shi = -5 }
+            custom_effect_tooltip = ISE_effect_tooltip_small_decrease_influence_shi
+        } else = {
+            custom_effect_tooltip = ISE_effect_tooltip_max_and_min
+        }
+    }
+}
+# @docs(Isengard): Decrease ISE influence in the Shire
+decrease_shire_influence = {
+    if = { 
+        limit = {
+            ISE = { NOT = { has_completed_focus = ISE_establish_base_of_operations } }
+        }
+        if = {
+            limit = {
+                check_variable = { global.influence_ise_in_shi > 9 }
+            }
+            add_to_variable = { global.influence_ise_in_shi = -10 }
+            custom_effect_tooltip = ISE_effect_tooltip_decrease_influence_shi
+        } else = {
+            custom_effect_tooltip = ISE_effect_tooltip_max_and_min
+        }
+    }
+}
+# @docs(Isengard): Establish base of opertation
+establish_base_of_operations = {
+    custom_effect_tooltip = ISE_effect_tooltip_establish_base_of_operation
+    43 = {
+        set_state_flag = ISE_infiltrated_state
+        custom_effect_tooltip = ISE_effect_tooltip_infultrate_state
+    }
+    43 = {
+        increase_ISE_influence_in_SHI_state = yes
+    }
+    hidden_effect = { 
+        if = {
+            limit = {
+                check_variable = { var = global.influence_ise_in_shi  value = 30  compare = greater_than_or_equals }
+            }
+            SHI = {
+                44 = {
+                    set_state_flag = ISE_infiltrated_state
+                    increase_ISE_influence_in_SHI_state = yes
+                }
+                38 = {
+                    set_state_flag = ISE_infiltrated_state
+                    increase_ISE_influence_in_SHI_state = yes
+                }
+                43 = {
+                    increase_ISE_influence_in_SHI_state = yes
+                }
+            }
+        } else_if = {
+            limit = {
+                check_variable = { var = global.influence_ise_in_shi  value = 20  compare = greater_than_or_equals }
+            }
+            SHI = {
+                43 = {
+                    increase_ISE_influence_in_SHI_state = yes
+                }
+            }
         }
     }
 }
 
-# @docs(Isengard): Decreases Palantir spirit
-palantir_decrease = {
-    if = {
-        limit = { 
-            has_idea = ISE_palantir_2
-        }
-        swap_ideas = {
-            remove_idea = ISE_palantir_2
-            add_idea = ISE_palantir_1
+# @docs(Isengard): Increase ISE influence in SHI state
+increase_ISE_influence_in_SHI_state = {
+	hidden_effect = {
+        if = {
+            limit = {
+                NOT = {
+                    OR = {
+                        has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+                        has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+                        has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+                    }
+                }
+            }
+            add_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+        } else_if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            add_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+        } else_if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            add_dynamic_modifier = { modifier = ise_influence_modifier_3 }
         }
     }
-    else_if = {
-        limit = {
-            has_idea = ISE_palantir_1
-        }
-        swap_ideas = {
-            remove_idea = ISE_palantir_1
-            add_idea = ISE_palantir_0
-        }
-    }
+    custom_effect_tooltip = ISE_effect_tooltip_increase_influence_in_state
 }
 
-# @docs(Isengard): Remove Palantir spirit
-palantir_removed = {
-    if = {
-        limit = { 
-            has_idea = ISE_palantir_2
+# @docs(Isengard): Decrease ISE influence in SHI state
+decrease_ISE_influence_in_SHI_state = {
+	hidden_effect = {
+        if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+            add_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            custom_effect_tooltip = "Decrease Isengard influence"
+        } else_if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            add_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            custom_effect_tooltip = "Decrease Isengard influence"
+        } else_if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            custom_effect_tooltip = "Decrease Isengard influence"
         }
-        remove_ideas = ISE_palantir_2
     }
-    else_if = {
-        limit = {
-            has_idea = ISE_palantir_1
-        }
-        remove_ideas = ISE_palantir_1
-    }
-    else_if = {
-        limit = {
-            has_idea = ISE_palantir_0
-        }
-        remove_ideas = ISE_palantir_0
-    }
+    custom_effect_tooltip = ISE_effect_tooltip_decrease_influence_in_state
 }
 
-# @docs(Isengard): Give in to the Palantir
-palantir_give_in = {
-    if = {
-        limit = { 
-            has_idea = ISE_palantir_2
+# @docs(Isengard): Decrease ISE influence in SHI state to zero
+influence_ise_in_state_removed = {
+    hidden_effect = {
+        if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_1 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_1 }
         }
-        swap_ideas = {
-            remove_idea = ISE_palantir_2
-            add_idea = ISE_palantir_3
+        if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_2 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_2 }
         }
-    }
-    else_if = {
-        limit = {
-            has_idea = ISE_palantir_1
-        }
-        swap_ideas = {
-            remove_idea = ISE_palantir_1
-            add_idea = ISE_palantir_3
-        }
-    }
-    else_if = {
-        limit = {
-            has_idea = ISE_palantir_0
-        }
-        swap_ideas = {
-            remove_idea = ISE_palantir_0
-            add_idea = ISE_palantir_3
+        if = {
+            limit = {
+                has_dynamic_modifier = { modifier = ise_influence_modifier_3 }
+            }
+            remove_dynamic_modifier = { modifier = ise_influence_modifier_3 }
         }
     }
-}
-
-### ISE - ROH influence system
-# @docs(Isengard): Increase ISE influence in Rohan Gap
-increase_rohan_gap_influence = {
-	add_to_variable = { global.influence_rohan_gap = 10 }
-    custom_effect_tooltip = "WIP Increase influence in Rohan Gap by 10"
-}
-# @docs(Isengard): Increase ISE influence in West March
-increase_west_march_influence = {
-	add_to_variable = { global.influence_west_march = 10 }
-    custom_effect_tooltip = "WIP Increase influence in West March by 10"
-}
-
-# @docs(Isengard): Increase ISE influence in Rohan Gap
-increase_rohan_gap_influence_20 = {
-	add_to_variable = { global.influence_rohan_gap = 20 }
-    custom_effect_tooltip = "WIP Increase influence in Rohan Gap by 20"
-}
-# @docs(Isengard): Increase ISE influence in West March
-increase_west_march_influence_20 = {
-	add_to_variable = { global.influence_west_march = 20 }
-    custom_effect_tooltip = "WIP Increase influence in West March by 20"
+    custom_effect_tooltip = ISE_effect_tooltip_remove_influence_in_state
 }
 
 ### ISE - ROH Orc pillaging
@@ -210,6 +293,27 @@ decrease_orc_pillaging = {
                 remove_idea = ROH_orc_pillage_1
                 add_idea = ROH_orc_pillage_0
             }
+        }
+    }
+}
+
+# @docs(Isengard): Increase Misty Mountain Pact Members And Bonus (max 15% bonus)
+increase_misty_mountain_pact_members = {
+    if = { 
+        limit = {
+            ISE = { has_completed_focus = ISE_misty_mountains_pact }
+        }
+        if = {
+            limit = {
+                check_variable = { ISE.misty_pact_bonus_effect < 0.15 }
+            }
+            ISE = { 
+				add_to_variable = { misty_pact_members = 1 }
+				add_to_variable = { misty_pact_bonus_effect = 0.03 } 
+				add_to_variable = { misty_pact_bonus_effect_text = 3 } 
+			}
+        } else = {
+            ISE = { add_to_variable = { misty_pact_members = 1 } }
         }
     }
 }

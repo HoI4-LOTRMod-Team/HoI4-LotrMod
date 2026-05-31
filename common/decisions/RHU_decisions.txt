@@ -2,224 +2,21 @@
 ##### RHU ######
 ################
 RHU_spread_support = {
-	RHU_steal_weapons = {
-		icon = GFX_decision_generic_army_2
-		cost = 75
-
-		visible = {
-			has_civil_war = no
-		}
-
-		available = {
-
-		}
-
-		days_remove = 25
-		fire_only_once = yes
-        fixed_random_seed = no
-
-		remove_effect = {
-			set_global_flag = RHU_stolen_weapons
-			add_equipment_to_stockpile = { type = infantry_equipment_0   amount = -750  }
-			custom_effect_tooltip = RHU_tooltip_steal_weapons
-		}
-		ai_will_do = {
-			factor = 3
-		}
-	}
-
-	RHU_hide_supplies = {
-		icon = GFX_decision_generic_army_1
+	RHU_impending_civil_war = { # NOTE: This should prolly be a mission, but it works so eh
+		icon = GFX_decision_generic_army_3
 		cost = 50
 
 		visible = {
 			has_civil_war = no
+			has_completed_focus = RHUN_break_free_from_mordor
 		}
 
-		days_remove = 75
+		days_remove = 180
 		fire_only_once = yes
         fixed_random_seed = no
 
 		remove_effect = {
-			set_global_flag = RHU_hiden_supplies
-			custom_effect_tooltip = RHU_tooltip_hide_supplies
-		}
-		ai_will_do = {
-			factor = 3
-		}
-	}
-
-	RHU_send_support = {
-        icon = GFX_decision_generic_army_3
-		cost = 50
-
-        state_target = yes
-        targets = { 104 124 208 131 132 130 128 129 209 126 125 102 207 127 }
-        available = {
-            owns_state = FROM
-        }
-
-		visible = {
-			has_civil_war = no
-		}
-
-		days_remove = 20
-		fire_only_once = yes
-        fixed_random_seed = no
-
-		remove_effect = {
-			hidden_effect = {
-				if = {
-					limit = {
-						check_variable = {
-							RHU_count_states_civil_war > 3
-						}
-					}
-					random_list = {
-						60 = {
-							#nothing happends
-						}
-						40 = {
-							 country_event = { id = rhun.5 } #civil war breaks out
-						}
-					}
-				}
-			}
-            add_stability = -0.025
-            add_popularity = {
-			    ideology = cooperative
-			    popularity = 0.05
-		    }
-            add_to_array = {
-                array = RHU_list_states_civil_war
-                value = FROM
-            }
-			add_to_variable = { RHU_count_states_civil_war = 1 }
-			custom_effect_tooltip = RHU_rally_state
-		}
-		ai_will_do = {
-			factor = 3
-		}
-	}
-
-	RHU_rally_troops_lithlad = {
-		icon = GFX_decision_generic_army
-		cost = 75
-
-        state_target = yes
-        targets = { 124 }
-        available = {
-            owns_state = FROM
-			is_in_array = {
-				array = RHU_list_states_civil_war
-				value = FROM 
-			}
-        }
-
-		visible = {
-			has_civil_war = no
-		}
-
-		days_remove = 30
-		fire_only_once = yes
-        fixed_random_seed = no
-
-		remove_effect = {
-			set_global_flag = easterlings_lithlad_rallied
-			custom_effect_tooltip = RHU_rally_troops
-		}
-		ai_will_do = {
-			factor = 3
-		}
-	}
-
-	RHU_rally_troops_agasha = {
-		icon = GFX_decision_generic_army
-		cost = 75
-
-        state_target = yes
-        targets = { 130 }
-        available = {
-            owns_state = FROM
-			is_in_array = {
-				array = RHU_list_states_civil_war
-				value = FROM 
-			}
-        }
-
-		visible = {
-			has_civil_war = no
-		}
-
-		days_remove = 30
-		fire_only_once = yes
-        fixed_random_seed = no
-
-		remove_effect = {
-			set_global_flag = easterlings_agasha_rallied
-			custom_effect_tooltip = RHU_rally_troops
-		}
-		ai_will_do = {
-			factor = 3
-		}
-	}
-
-	RHU_rally_troops_far_eastern = {
-		icon = GFX_decision_generic_army
-		cost = 75
-
-        state_target = yes
-        targets = { 132 }
-        available = {
-            owns_state = FROM
-			is_in_array = {
-				array = RHU_list_states_civil_war
-				value = FROM 
-			}
-        }
-
-		visible = {
-			has_civil_war = no
-		}
-
-		days_remove = 30
-		fire_only_once = yes
-        fixed_random_seed = no
-
-		remove_effect = {
-			set_global_flag = easterlings_far_eastern_rallied
-			custom_effect_tooltip = RHU_rally_troops
-		}
-		ai_will_do = {
-			factor = 3
-		}
-	}
-
-	RHU_rally_troops_north_rhun= {
-		icon = GFX_decision_generic_army
-		cost = 75
-
-        state_target = yes
-        targets = { 102 }
-        available = {
-            owns_state = FROM
-			is_in_array = {
-				array = RHU_list_states_civil_war
-				value = FROM 
-			}
-        }
-
-		visible = {
-			has_civil_war = no
-		}
-
-		days_remove = 30
-		fire_only_once = yes
-        fixed_random_seed = no
-
-		remove_effect = {
-			set_global_flag = easterlings_north_rhun_rallied
-			custom_effect_tooltip = RHU_rally_troops
+			RHU = { country_event = rhun.12 }
 		}
 		ai_will_do = {
 			factor = 3
@@ -227,279 +24,151 @@ RHU_spread_support = {
 	}
 }
 
-#############
-# Kill the blue wizards 
-#############
-RHU_kill_the_blue_wizards_cat = {
-	RHU_kill_alatar = {
-		icon = GFX_decision_generic_plot
+political_actions = {
+	plunder_erebor = {
+		icon = GFX_decision_generic_treasure
+
+		fire_only_once = yes
 		cost = 50
 
-        available = {
-			OR = {
-				has_idea = RHU_mission_of_the_blue_wizards
-				has_idea = RHU_mission_of_the_blue_wizards_1
+		allowed = {
+			tag = RHU
+		}
+
+		ai_will_do = {
+			base = 100
+			modifier = {
+				factor = 0
+				check_variable = {
+					rhun_economy_of_conquest_bonus < 0
+				}
 			}
-        }
+		}
 
 		visible = {
-			has_civil_war = no
-			NOT = {
-				has_global_flag = rhun_alatar_has_fallen
-			}
+			has_dynamic_modifier = rhun_economy_of_conquest
 		}
 
-		days_remove = 20
-        fixed_random_seed = no
-
-		remove_effect = {
-			random_list = {
-				40 = {
-					modifier = {
-						factor = 0.8
-						is_ai = yes
-					}
-					add_stability = -0.025
-					add_popularity = {
-						ideology = cooperative
-						popularity = 0.05
-					}
-				}
-				60 = {
-					modifier = {
-						factor = 1.2
-						is_ai = yes
-					}
-					add_stability = -0.025
-					add_popularity = {
-						ideology = belligerent
-						popularity = 0.05
-					}
-					set_global_flag = rhun_alatar_has_fallen
-					if = {
-						limit = {
-							has_idea = RHU_mission_of_the_blue_wizards
-						}
-						swap_ideas = { 
-							remove_idea = RHU_mission_of_the_blue_wizards 
-							add_idea = RHU_mission_of_the_blue_wizards_1
-						}
-					} else = {
-						remove_ideas = RHU_mission_of_the_blue_wizards_1
-						add_stability = 0.05
-					}
-				}
-			}
+		available = {
+			controls_province = 2768
 		}
-		ai_will_do = {
-			factor = 7
+		
+		complete_effect = {
+			# when decision is taken
+			remove_dynamic_modifier = {
+				modifier = rhun_economy_of_conquest
+			}
 		}
 	}
-	RHU_kill_pallando = {
-		icon = GFX_decision_generic_plot
+
+	plunder_thranduils_halls = {
+		icon = GFX_decision_generic_treasure
+
+		fire_only_once = yes
 		cost = 50
 
-        available = {
-			OR = {
-				has_idea = RHU_mission_of_the_blue_wizards
-				has_idea = RHU_mission_of_the_blue_wizards_1
-			}
-        }
-
-		visible = {
-			has_civil_war = no
-			NOT = {
-				has_global_flag = rhun_pallando_has_fallen
-			}
+		allowed = {
+			tag = RHU
 		}
 
-		days_remove = 20
-        fixed_random_seed = no
-
-		remove_effect = {
-			random_list = {
-				40 = {
-					modifier = {
-						factor = 0.8
-						is_ai = yes
-					}
-					add_stability = -0.025
-					add_popularity = {
-						ideology = cooperative
-						popularity = 0.05
-					}
-				}
-				60 = {
-					modifier = {
-						factor = 1.2
-						is_ai = yes
-					}
-					add_stability = -0.025
-					add_popularity = {
-						ideology = belligerent
-						popularity = 0.05
-					}
-					set_global_flag = rhun_pallando_has_fallen
-					if = {
-						limit = {
-							has_idea = RHU_mission_of_the_blue_wizards
-						}
-						swap_ideas = { 
-							remove_idea = RHU_mission_of_the_blue_wizards 
-							add_idea = RHU_mission_of_the_blue_wizards_1
-						}
-					} else = {
-						remove_ideas = RHU_mission_of_the_blue_wizards_1
-						add_stability = 0.05
-					}
+		ai_will_do = {
+			base = 100
+			modifier = {
+				factor = 0
+				check_variable = {
+					rhun_economy_of_conquest_bonus < 0
 				}
 			}
 		}
-		ai_will_do = {
-			factor = 7
-		}
-	}
-}
-
-#############
-# Influencing neighbours
-#############
-RHU_influencing_neighbours = {
-	RHU_influencing_dorwinion = {
-		icon = GFX_decision_dorwinion_fascism
-		cost = 100
 
 		visible = {
-			has_civil_war = no
+			has_dynamic_modifier = rhun_economy_of_conquest
 		}
 
 		available = {
-
+			controls_province = 9087
 		}
-
-		fire_only_once = yes
-        fixed_random_seed = no
-
+		
 		complete_effect = {
-			DOR = {
-				add_timed_idea = { idea = RHU_dark_influences days = 365 }
+			# when decision is taken
+			remove_dynamic_modifier = {
+				modifier = rhun_economy_of_conquest
 			}
-		}
-		ai_will_do = {
-			factor = 3
 		}
 	}
 
-	RHU_propose_construction_embassy = {
-		icon = GFX_decision_dorwinion_fascism
-		cost = 150
-
-		visible = {
-			has_civil_war = no
-		}
-
-		available = {
-
-		}
+	plunder_dale = {
+		icon = GFX_decision_generic_treasure
 
 		fire_only_once = yes
-        fixed_random_seed = no
+		cost = 50
 
-		complete_effect = {
-			DOR = {
-				country_event = { id = dorwinion.2 }
-			}
+		allowed = {
+			tag = RHU
 		}
+
 		ai_will_do = {
-			factor = 3
-		}
-	}
-
-	RHU_ignite_civil_war = {
-		icon = GFX_decision_dorwinion_fascism
-		cost = 200
-
-		visible = {
-			has_civil_war = no
-		}
-
-		available = {
-			DOR = {
-				belligerent > 0.55
-			}
-		}
-
-		fire_only_once = yes
-        fixed_random_seed = no
-
-		complete_effect = {
-			DOR = {
-				start_civil_war = {
-					ideology = belligerent
-					size = 0.7
+			base = 100
+			modifier = {
+				factor = 0
+				check_variable = {
+					rhun_economy_of_conquest_bonus < 0
 				}
 			}
 		}
-		ai_will_do = {
-			factor = 3
-		}
-	}
-
-	RHU_influencing_harad = {
-		icon = GFX_decision_harad_fascism
-		cost = 100
 
 		visible = {
-			has_civil_war = no
-			NOT = {
-				is_in_faction_with = HAR
-			}
+			has_dynamic_modifier = rhun_economy_of_conquest
 		}
 
 		available = {
-
+			controls_province = 5792
 		}
-
-		fire_only_once = yes
-        fixed_random_seed = no
-
+		
 		complete_effect = {
-			HAR = {
-				add_timed_idea = { idea = RHU_dark_influences days = 365 }
+			# when decision is taken
+			remove_dynamic_modifier = {
+				modifier = rhun_economy_of_conquest
 			}
-		}
-		ai_will_do = {
-			factor = 3
 		}
 	}
 
-	RHU_meet_insecret_with_harad = {
-		icon = GFX_decision_harad_fascism
-		cost = 125
+	plunder_barad_dur = {
+		icon = GFX_decision_generic_treasure
+
+		fire_only_once = yes
+		cost = 50
+
+		allowed = {
+			tag = RHU
+		}
+
+		ai_will_do = {
+			base = 100
+			modifier = {
+				factor = 0
+				check_variable = {
+					rhun_economy_of_conquest_bonus < 0
+				}
+			}
+		}
 
 		visible = {
-			has_civil_war = no
+			has_dynamic_modifier = rhun_economy_of_conquest
 			NOT = {
-				is_in_faction_with = HAR
+				is_ally_with = MOR
 			}
 		}
 
 		available = {
-
+			controls_province = 3972
 		}
-
-		days_remove = 25
-		fire_only_once = yes
-        fixed_random_seed = no
-
-		remove_effect = {
-			custom_effect_tooltip = RHU_make_contact_with_belligerent_tooltip
-			HAR = {
-				country_event = { id = harad.1 }
+		
+		complete_effect = {
+			# when decision is taken
+			remove_dynamic_modifier = {
+				modifier = rhun_economy_of_conquest
 			}
-		}
-		ai_will_do = {
-			factor = 3
 		}
 	}
 }

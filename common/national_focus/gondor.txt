@@ -185,7 +185,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 
 	focus = {
 		id = GON_the_steward_of_gondor
-		icon = GFX_focus_rom_royal_dictatorship
+		icon = GFX_goal_generic_gondor_flag
 		ai_will_do = { factor = 100 }
 		available = { unaligned > 0.75 }
 		prerequisite = { focus = GON_publish_statement }
@@ -753,7 +753,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 	#Focus for Crown Aragorn King of Gondor
 	focus = {
 		id = GON_crown_aragorn_king
-		icon = GFX_goal_gondor_king_aragorn
+		icon = GFX_goal_GON_aragorn_king
 		ai_will_do = { factor = 15 }
 		relative_position_id = GON_invite_aragorn_to_minas_tirith
 		prerequisite = { focus = GON_invite_aragorn_to_minas_tirith}
@@ -847,7 +847,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 
 	focus = {
 		id = GON_restore_the_kingdom_of_gondor
-		icon = GFX_focus_generic_home_defense
+		icon = GFX_goal_GON_elendil_sword
 		ai_will_do = { factor = 30 }
 		relative_position_id = GON_crown_aragorn_king
 		x = 0
@@ -913,7 +913,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 
 	focus = {
 		id = GON_increase_bonds_with_the_kingdoms_of_arnor
-		icon = GFX_goal_generic_national_unity
+		icon = GFX_goal_DGU_free_peoples_unity
 		ai_will_do = { factor = 30 }
 		relative_position_id = GON_restore_the_kingdom_of_gondor
 		x = 0
@@ -945,6 +945,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 		prerequisite = { focus = GON_increase_bonds_with_the_kingdoms_of_arnor }
 		mutually_exclusive = { focus = GON_demand_reinstate_kingdom_of_arnor }
 		available = {
+			is_subject = no
 			ART = {
 				has_country_flag = ART_established_arnor
 				is_puppet = no
@@ -1269,33 +1270,36 @@ continuous_focus_position = { x = 50 y = 1700 }
 		id = GON_reclaim_orthanc
 		icon = GFX_goal_orthanc_destroyed
 		ai_will_do = {
-			factor = 15
+			factor = 0
 			modifier = {
-				factor = 0
-				is_historical_focus_on = yes
+				factor = 10
+				is_historical_focus_on = no
+				any_neighbor_country = {
+					tag = ISE
+				}
+				ISE = { has_government = belligerent }
+			}
+			modifier = {
+				factor = 15
+				ISE = { NOT = { has_government = belligerent  } }
 			}
 		}
+		mutually_exclusive = { focus = GON_alliance_with_saruman }
 		relative_position_id = GON_historical_claims
 		prerequisite = { focus = GON_historical_claims }
-		x = 2
+		x = 1
 		y = 1
 		cost = 10
 		search_filters = { FOCUS_FILTER_ANNEXATION }
 		available = {
-			ISE = {
-				owns_state = 31
-			}
+			ISE = { owns_state = 31 }
 			the_other_gondor_does_not_exist = yes
 		}
-		bypass = {
-			has_war_with = ISE
-		}
+		bypass = { has_war_with = ISE }
 		completion_reward = {
 			if = {
 				limit = {
-					ISE = {
-						has_government = belligerent
-					}
+					ISE = { has_government = belligerent }
 				}
 				create_wargoal = {
 					type = annex_everything
@@ -1330,8 +1334,54 @@ continuous_focus_position = { x = 50 y = 1700 }
 	}
 
 	focus = {
+		id = GON_alliance_with_saruman
+		icon = GFX_goal_roh_trust_saruman
+		ai_will_do = { factor = 30 }
+		available = { 
+			ISE = { 
+				NOT = { 
+					OR = { 
+						has_government = belligerent 
+						has_government = revolutionary 
+					} 
+				} 
+			} 
+			the_other_gondor_does_not_exist = yes 
+			is_in_faction = yes
+		}
+		mutually_exclusive = { focus = GON_reclaim_orthanc }
+		relative_position_id = GON_historical_claims
+		prerequisite = { focus = GON_historical_claims }
+		x = 3
+		y = 1
+		cost = 5
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		completion_reward = {
+			ISE = { country_event = { id = isengard.26 } }
+		}
+	}
+
+	focus = {
+		id = GON_instate_military_alliance
+		icon = GFX_goal_ROH_military_vigilance_soldier_shield
+		ai_will_do = { factor = 30 }
+		available = { ISE = { NOT = { OR = { has_government = belligerent has_government = revolutionary } } } }
+		relative_position_id = GON_alliance_with_saruman
+		prerequisite = { focus = GON_alliance_with_saruman }
+		x = 0
+		y = 1
+		cost = 10
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+		available = { the_other_gondor_does_not_exist = yes is_in_faction_with = ISE }
+		completion_reward = {
+			ISE = { add_ideas = GON_ise_gon_alliance }
+			add_ideas = GON_ise_gon_alliance
+		}
+	}
+
+	focus = {
 		id = GON_send_boromir_with_the_fellowship
-		icon = GFX_goal_gondor_boromir
+		icon = GFX_goal_generic_fellowship_boromir
 		ai_will_do = { factor = 100 }
 		available = { has_global_flag = fs_gondor_boromir }
 		relative_position_id = GON_honor_isildurs_legacy
@@ -1398,13 +1448,12 @@ continuous_focus_position = { x = 50 y = 1700 }
 			news_event = { hours = 12 id = news.367 }
 			clr_global_flag = gondor_has_ring
 			set_global_flag = sauron_has_ring
+			ring_give_sauron_ring = yes
 			random_other_country = {
 				limit = { original_tag = MOR has_government = belligerent }
-				add_ideas = one_true_ring
 				white_peace = ROOT
 				diplomatic_relation = { country = ROOT relation = non_aggression_pact }
 			}
-			remove_ideas = one_true_ring
 		}
 	}
 
@@ -1425,7 +1474,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 
 	focus = {
 		id = GON_send_faramir_with_the_fellowship
-		icon = GFX_goal_gondor_faramir
+		icon = GFX_goal_generic_fellowship_faramir
 		ai_will_do = { factor = 100 }
 		available = { has_global_flag = fs_gondor_faramir }
 		mutually_exclusive = { focus = GON_send_boromir_with_the_fellowship }
@@ -1886,7 +1935,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 
 	focus = {
 		id = GON_internal_policy_department
-		icon = GFX_focus_generic_improve_the_administration
+		icon = GFX_goal_GON_white_tree
 		ai_will_do = { factor = 5 }
 		x = 40
 		y = 0
@@ -2352,7 +2401,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 	}
 	focus = {
 		id = GON_reinforce_osgilliath
-		icon = GFX_goal_generic_coastal_fort_building
+		icon = GFX_goal_GON_swan_knight
 		ai_will_do = { factor = 10 }
 		relative_position_id = GON_internal_policy_department
 		prerequisite = { focus = GON_internal_policy_department }
@@ -2373,6 +2422,8 @@ continuous_focus_position = { x = 50 y = 1700 }
 				}
 				add_building_construction = {type = bunker level = 3 instant_build = yes province = 1778 }
 			}
+
+			unlock_summer_offensives = yes
 		}
 	}
 
@@ -2591,9 +2642,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 		id = GON_expand_the_netwerk
 		icon = GFX_goal_generic_radar
 		ai_will_do = { factor = 3 }
-		available = {
-			has_dlc = "La Resistance"
-		}
+		allow_branch = { has_dlc = "La Resistance" }
 		relative_position_id = GON_ears_everywhere
 		prerequisite = { focus = GON_ears_everywhere }
 		x = 0
@@ -2608,9 +2657,6 @@ continuous_focus_position = { x = 50 y = 1700 }
 		id = GON_sneaky_peaky
 		icon = GFX_goal_generic_position_armies
 		ai_will_do = { factor = 3 }
-		available = {
-			has_dlc = "La Resistance"
-		}
 		relative_position_id = GON_expand_the_netwerk
 		prerequisite = { focus = GON_expand_the_netwerk }
 		mutually_exclusive = { focus = GON_we_see_everything }
@@ -2629,9 +2675,6 @@ continuous_focus_position = { x = 50 y = 1700 }
 		id = GON_we_see_everything
 		icon = GFX_goal_generic_territory_or_war
 		ai_will_do = { factor = 3 }
-		available = {
-			has_dlc = "La Resistance"
-		}
 		relative_position_id = GON_expand_the_netwerk
 		prerequisite = { focus = GON_expand_the_netwerk }
 		mutually_exclusive = { focus = GON_sneaky_peaky }
@@ -2662,7 +2705,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 
 	focus = {
 		id = GON_improve_relations_with_rohan
-		icon = GFX_goal_roh_rohan_flag
+		icon = GFX_goal_ROH_oath_of_eorl_theoden_denethor_gondor_rohan
 		ai_will_do = { factor = 5 }
 		relative_position_id = GON_external_policy_department
 		prerequisite = { focus = GON_external_policy_department }
@@ -2685,7 +2728,7 @@ continuous_focus_position = { x = 50 y = 1700 }
 			modifier = {
 				add = 5
 				ISE = {
-					has_completed_focus = pillagethetownsofrohan
+					#has_completed_focus = pillagethetownsofrohan
 				}
 			}
 		}
@@ -2697,7 +2740,9 @@ continuous_focus_position = { x = 50 y = 1700 }
 		search_filters = { FOCUS_FILTER_MANPOWER }
 		available = {
 			the_other_gondor_does_not_exist = yes
-			ISE = { has_completed_focus = quarrelwithrohan }
+			ISE = { 
+				#has_completed_focus = quarrelwithrohan
+			}
 		}
 		completion_reward = {
 			add_manpower = -1000

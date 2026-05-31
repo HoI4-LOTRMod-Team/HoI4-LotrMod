@@ -1,0 +1,2782 @@
+
+
+add_namespace = dolguldur
+
+# DGU poisons the river Anduin
+country_event = {
+	id = dolguldur.1
+	title = dolguldur.1.t
+	desc = dolguldur.1.d
+	picture = GFX_report_event_forest_river
+
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.1.a
+		ai_chance = {
+			base = 3
+		}
+
+		add_timed_idea = {
+			idea = DGU_poisoned_water_supply
+			days = 365
+		}
+	}
+
+	# take measures to improve situation
+	option = {
+		name = dolguldur.1.b
+		ai_chance = {
+			base = 1
+		}
+
+		add_political_power = -150
+		add_timed_idea = {
+			idea = three_civs_cost
+			days = 120
+		}
+		add_timed_idea = {
+			idea = DGU_poisoned_water_supply
+			days = 200
+		}
+	}
+}
+
+# DGU launches skirmishes and sabotage, weaking MIR/LTH
+country_event = {
+	id = dolguldur.2
+	title = dolguldur.2.t
+	desc = dolguldur.2.d
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.2.a
+		ai_chance = {
+			base = 1
+		}
+
+		custom_effect_tooltip = DGU_river_poison_tt
+
+		hidden_effect = {
+			random_controlled_state = {
+				limit = {
+					controller = {
+						divisions_in_state = { size > 3 state = PREV }
+					}
+				}
+
+				damage_units = {
+					state = THIS
+					limit = { tag = prev.controller }
+					org_damage = 0.5
+					str_damage = 0.15
+					ratio = yes
+					army = yes
+				}
+			}
+		}
+	}
+}
+
+# DGU causes division and strife between the nations of the vale
+country_event = {
+	id = dolguldur.3
+	title = dolguldur.3.t
+	desc = dolguldur.3.d
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.3.a
+		ai_chance = {
+			base = 1
+		}
+		add_timed_idea = {
+			idea = DGU_division_and_strife
+			days = 720
+		}
+	}
+}
+
+# DGU rejects Mordor leadership
+country_event = {
+	id = dolguldur.4
+	title = dolguldur.4.t
+	desc = dolguldur.4.d
+	picture = GFX_report_event_orcs_2
+
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.4.a
+		ai_chance = {
+			base = 1
+		}
+		DGU = { swear_eternal_animosity = yes }
+	}
+}
+
+# DGU gets a reward from Mordor for achieving the schedule
+country_event = {
+	id = dolguldur.5
+	title = dolguldur.5.t
+	desc = dolguldur.5.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.5.a
+		ai_chance = {
+			base = 1
+		}
+		add_stability = 0.1
+		add_war_support = 0.1
+		add_offsite_building = { type = industrial_complex level = 3 }
+
+		add_equipment_subsidy = {
+			cic = 3000
+			equipment_type = infantry_equipment
+			seller_tags = { MOR }
+		}
+		add_equipment_subsidy = {
+			cic = 1000
+			equipment_type = support_equipment
+			seller_tags = { MOR }
+		}
+	}
+}
+
+# Something evil is stirring in DGU and lowering our stability
+country_event = {
+	id = dolguldur.6
+	title = dolguldur.6.t
+	desc = dolguldur.6.d
+	picture = GFX_report_event_dol_guldur_fort
+
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.6.a
+		ai_chance = {
+			base = 1
+		}
+		add_stability = -0.05
+	}
+}
+
+# DGU needs to choose whether to align with Mordor or without (Master of the fortress focus)
+country_event = {
+	id = dolguldur.7
+	title = dolguldur.7.t
+	desc = dolguldur.7.d
+	picture = GFX_report_event_sauron_eye
+
+	is_triggered_only = yes
+
+	# Go pro mordor
+	option = {
+		name = dolguldur.7.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 0
+				is_going_revolutionary = yes
+			}
+			modifier = {
+				factor = 2
+				MOR = { ring_has_the_ring = yes }
+			}
+		}
+		trigger = {
+			NOT = { has_war_with = MOR }
+		}
+
+		complete_national_focus = DGU_the_armies_of_the_necromancer
+
+		effect_tooltip = {
+			MOR = { swear_secret_fealty = yes }
+
+			custom_effect_tooltip = DGU_saurons_schedule_effect_tt
+
+		}
+		hidden_effect = {
+			MOR = { country_event = { id = dolguldur.144 days = 3 } }
+		}
+	}
+
+	# Go anti mordor
+	option = {
+		name = dolguldur.7.b
+		ai_chance = {
+			base = 18
+			modifier = {
+				factor = 0
+				is_going_belligerent = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		trigger = {
+			NOT = { is_ally_with = MOR }
+		}
+
+		complete_national_focus = DGU_shadow_without_master
+
+		effect_tooltip = {
+			MOR = { DGU = { swear_eternal_animosity = yes } }
+		}
+		hidden_effect = {
+			MOR = { country_event = { id = dolguldur.145 days = 3 } }
+		}
+	}
+}
+
+# DGU sends event to puppet spiders. If spiders are AI, each necroforge increases their chance of accepting
+country_event = {
+	id = dolguldur.8
+	title = dolguldur.8.t
+	desc = dolguldur.8.d
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.8.a
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 2
+				DGU = { is_stronger = yes }
+			}
+			modifier = {
+				factor = 2
+				DGU = { is_significantly_stronger = yes }
+			}
+			modifier = {
+				factor = 0.5
+				DGU = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 0.5
+				DGU = { is_significantly_weaker = yes }
+			}
+			modifier = { add = 2 DGU = { necromantic_forge > 0 } }
+			modifier = { add = 2 DGU = { necromantic_forge > 1 } }
+			modifier = { add = 2 DGU = { necromantic_forge > 2 } }
+			modifier = { add = 2 DGU = { necromantic_forge > 3 } }
+			modifier = { add = 2 DGU = { necromantic_forge > 4 } }
+			modifier = { add = 2 DGU = { necromantic_forge > 5 } }
+			modifier = { add = 2 DGU = { necromantic_forge > 6 } }
+			modifier = { add = 2 DGU = { necromantic_forge > 7 } }
+		}
+		set_global_flag = SPI_responded_well_to_DGU
+	}
+
+	option = {
+		name = dolguldur.8.b
+		ai_chance = {
+			base = 10
+		}
+
+		set_global_flag = SPI_responded_badly_to_DGU
+	}
+}
+
+# POV: Mordor. DGU has failed to meet the schedule. Time to assume direct control
+country_event = {
+	id = dolguldur.9
+	title = dolguldur.9.t
+	desc = dolguldur.9.d
+	picture = GFX_report_event_orcs_2
+
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.9.a
+		ai_chance = {
+			base = 1
+		}
+		MOR = {
+			set_autonomy = {
+				target = DGU
+				autonomy_state = autonomy_puppet
+				end_wars = no
+				end_civil_wars = no
+			}
+		}
+		hidden_effect = {
+			DGU = { country_event = dolguldur.10 }
+		}
+	}
+
+	option = {
+		name = dolguldur.9.b
+		ai_chance = {
+			base = 0
+		}
+		add_political_power = -100
+	}
+}
+
+# Mordor assumes control
+country_event = {
+	id = dolguldur.10
+	title = dolguldur.10.t
+	desc = dolguldur.10.d
+	picture = GFX_report_event_barad_dur_2
+
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.10.a
+		ai_chance = {
+			base = 1
+		}
+		effect_tooltip = {
+			MOR = {
+				set_autonomy = {
+					target = DGU
+					autonomy_state = autonomy_puppet
+					end_wars = no
+					end_civil_wars = no
+				}
+			}
+		}
+	}
+}
+
+# Mordor appoints nazgul as leader
+country_event = {
+	id = dolguldur.11
+	title = dolguldur.11.t
+	desc = dolguldur.11.d
+	picture = GFX_report_event_nazgul
+
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.11.a
+		ai_chance = {
+			base = 1
+		}
+		DGU_adunaphel = {
+			add_country_leader_role = {
+				promote_leader = yes
+				country_leader = {
+					ideology = expansionist
+					traits = {
+						ringbearer
+					}
+				}
+			}
+			add_field_marshal_role = {
+				traits = { winter_specialist }
+				skill = 2
+				attack_skill = 1
+				defense_skill = 3
+				planning_skill = 3
+				logistics_skill = 2
+			}
+		}
+	}
+}
+
+# Mordor sends aid
+country_event = {
+	id = dolguldur.12
+	title = dolguldur.12.t
+	desc = dolguldur.12.d
+	picture = GFX_report_event_barad_dur_2
+
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.12.a
+		ai_chance = {
+			base = 1
+		}
+		DGU = {
+			add_timed_idea = {
+				idea = CFM_mordor_help
+				days = 210
+			}
+		}
+	}
+}
+
+
+
+
+# POV: Spiders. DGU has spurred some of our spiders into an attack on the elves of mirkwood
+country_event = {
+	id = dolguldur.100
+	title = dolguldur.100.t
+	desc = dolguldur.100.desc
+
+	is_triggered_only = yes
+
+	# try to minimize damage
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.100.a
+
+		add_manpower = -250
+
+		MIR = { country_event = { id = dolguldur.101 days = 3 } }
+		custom_effect_tooltip = dolguldur.101.a
+	}
+
+	# encourage them
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.100.b
+
+		add_manpower = -500
+		add_war_support = 0.03
+
+		MIR = { country_event = { id = dolguldur.104 days = 3 } }
+		custom_effect_tooltip = dolguldur.104.a
+	}
+}
+
+
+# POV: Mirkwood. We have been attacked by spiders, little damage
+country_event = {
+	id = dolguldur.101
+	picture = GFX_report_event_spiders
+	title = dolguldur.101.t
+	desc = dolguldur.101.desc
+
+	is_triggered_only = yes
+
+	# let it slide
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.101.a
+
+		MIR = {
+			add_manpower = -500
+			add_stability = -0.03
+			add_opinion_modifier = {
+				target = SPI
+				modifier = medium_decrease
+			}
+		}
+	}
+
+	# retaliate
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.101.b
+
+		MIR = {
+			add_manpower = -100
+			add_war_support = 0.03
+			add_opinion_modifier = {
+				target = SPI
+				modifier = medium_decrease
+			}
+		}
+
+		SPI = { country_event = { id = dolguldur.103 days = 5 } }
+		event_option_tooltip = dolguldur.103.a
+	}
+}
+
+
+# POV: DGU. Ask one of the kingdoms of the Vales to join a secret deal
+country_event = {
+	id = dolguldur.102
+	picture = GFX_report_event_dwarves_ered_luin_north
+	title = dolguldur.102.t
+	desc = dolguldur.102.desc
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			RGL = {
+				is_subject = no
+				NOT = { has_war_with = DGU }
+				is_in_faction = no
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.102.a
+		RGL = { country_event = { id = dolguldur.105 days = 3 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.108.a
+	}
+
+	option = {
+		trigger = {
+			GLD = {
+				is_subject = no
+				NOT = { has_war_with = DGU }
+				is_in_faction = no
+			}
+		}
+		ai_chance = {
+			base = 3
+		}
+		name = dolguldur.102.b
+		GLD = { country_event = { id = dolguldur.106 days = 3 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.110.a
+	}
+
+	option = {
+		trigger = {
+			VAL = {
+				is_subject = no
+				NOT = { has_war_with = DGU }
+				is_in_faction = no
+			}
+		}
+		ai_chance = {
+			base = 2
+		}
+		name = dolguldur.102.c
+		VAL = { country_event = { id = dolguldur.107 days = 3 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.112.a
+	}
+
+	# Shows up when the other options are not available
+	option = {
+		trigger = {
+			RGL = { OR = { is_subject = yes has_war_with = DGU is_in_faction = yes } }
+			GLD = { OR = { is_subject = yes has_war_with = DGU is_in_faction = yes } }
+			VAL = { OR = { is_subject = yes has_war_with = DGU is_in_faction = yes } }
+		}
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.102.d
+
+		add_political_power = 150
+	}
+}
+
+
+# POV: Spiders. Mirkwood elves retaliated against us for our attack
+country_event = {
+	id = dolguldur.103
+	title = dolguldur.103.t
+	desc = dolguldur.103.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.103.a
+
+		SPI = {
+			add_manpower = -1500
+			add_stability = -0.03
+			random_controlled_state = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+			}
+			add_opinion_modifier = {
+				target = SPI
+				modifier = large_decrease
+			}
+		}
+	}
+}
+
+
+# POV: Mirkwood. We have been attacked by spiders, big damage
+country_event = {
+	id = dolguldur.104
+	picture = GFX_report_event_spiders
+	title = dolguldur.104.t
+	desc = dolguldur.104.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.104.a
+
+		MIR = {
+			add_manpower = -1000
+			add_stability = -0.05
+			random_controlled_state = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+				damage_building = {
+					type = industrial_complex
+					damage = 1
+				}
+			}
+			add_opinion_modifier = {
+				target = SPI
+				modifier = medium_decrease
+			}
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.104.b
+
+		MIR = {
+			add_manpower = -1500
+			add_stability = -0.03
+			add_war_support = 0.03
+			random_controlled_state = {
+				damage_building = {
+					type = infrastructure
+					damage = 1
+				}
+				damage_building = {
+					type = industrial_complex
+					damage = 1
+				}
+			}
+			add_opinion_modifier = {
+				target = SPI
+				modifier = medium_decrease
+			}
+		}
+
+		SPI = { country_event = { id = dolguldur.103 days = 5 } }
+		event_option_tooltip = dolguldur.103.a
+	}
+}
+
+
+# Ask Rhosgobel to attack Chiefdoms of Gladden together
+country_event = {
+	id = dolguldur.105
+	picture = GFX_report_event_dol_guldur_fort
+	title = dolguldur.105.t
+	desc = dolguldur.105.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 3
+			modifier = {
+				factor = 1.5
+				DGU = { is_ai = no }
+			}
+		}
+		name = dolguldur.105.a
+		DGU = { country_event = { id = dolguldur.108 days = 3 } }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.105.b
+		DGU = { country_event = { id = dolguldur.109 days = 3 } }
+	}
+}
+
+
+# Ask Gladden to attack Rhosgobel together
+country_event = {
+	id = dolguldur.106
+	picture = GFX_report_event_dol_guldur_fort
+	title = dolguldur.106.t
+	desc = dolguldur.106.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 3
+			modifier = {
+				factor = 1.5
+				DGU = { is_ai = no }
+			}
+		}
+		name = dolguldur.106.a
+		DGU = { country_event = { id = dolguldur.110 days = 3 } }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.106.b
+		DGU = { country_event = { id = dolguldur.111 days = 3 } }
+	}
+}
+
+
+# Ask vales to attack Gladden while we attack Rhosgobel
+country_event = {
+	id = dolguldur.107
+	picture = GFX_report_event_dol_guldur_fort
+	title = dolguldur.107.t
+	desc = dolguldur.107.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 3
+			modifier = {
+				factor = 1.5
+				DGU = { is_ai = no }
+			}
+		}
+		name = dolguldur.107.a
+		DGU = { country_event = { id = dolguldur.112 days = 3 } }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.107.b
+		DGU = { country_event = { id = dolguldur.113 days = 3 } }
+	}
+}
+
+
+# Rhosgobel accepts the secret deal
+country_event = {
+	id = dolguldur.108
+	picture = GFX_report_event_dark_consp_pact
+	title = dolguldur.108.t
+	desc = dolguldur.108.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.108.a
+
+		RGL = {
+			set_country_flag = DGU_secret_deal_accepted
+			custom_effect_tooltip = dolguldur.108.a_tt
+		}
+	}
+}
+
+
+# Rhosgobel declines the secret deal
+country_event = {
+	id = dolguldur.109
+	title = dolguldur.109.t
+	desc = dolguldur.109.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.109.a
+
+		RGL = {
+			decrease_our_opinion_of_them_small = yes
+		}
+	}
+}
+
+
+# Gladden accepts the secret deal
+country_event = {
+	id = dolguldur.110
+	picture = GFX_report_event_dark_consp_pact
+	title = dolguldur.110.t
+	desc = dolguldur.110.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.110.a
+
+		GLD = {
+			set_country_flag = DGU_secret_deal_accepted
+			custom_effect_tooltip = dolguldur.110.a_tt
+		}
+	}
+}
+
+
+# Gladden declines the secret deal
+country_event = {
+	id = dolguldur.111
+	title = dolguldur.111.t
+	desc = dolguldur.111.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.111.a
+
+		GLD = {
+			decrease_our_opinion_of_them_small = yes
+		}
+	}
+}
+
+
+# Vales accepts the secret deal
+country_event = {
+	id = dolguldur.112
+	picture = GFX_report_army_camp_mob
+	title = dolguldur.112.t
+	desc = dolguldur.112.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.112.a
+
+		VAL = {
+			set_country_flag = DGU_secret_deal_accepted
+			custom_effect_tooltip = dolguldur.112.a_tt
+		}
+	}
+}
+
+
+# Vales declines the secret deal
+country_event = {
+	id = dolguldur.113
+	title = dolguldur.113.t
+	desc = dolguldur.113.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.113.a
+
+		VAL = {
+			decrease_our_opinion_of_them_small = yes
+		}
+	}
+}
+
+
+# Rhosgobel called to the secret deal
+country_event = {
+	id = dolguldur.114
+	title = dolguldur.114.t
+	desc = dolguldur.114.desc
+
+	fire_only_once = yes
+	trigger = {
+		tag = RGL
+		has_country_flag = DGU_secret_deal_accepted
+		NOT = { has_war_with = DGU }
+		is_subject = no
+
+		DGU = { has_war_with = GLD }
+	}
+
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = dolguldur.114.a
+
+		declare_war_on = {
+			target = GLD
+			type = annex_everything
+		}
+		give_military_access = DGU
+	}
+
+	option = {
+		trigger = {
+			has_war = yes
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				surrender_progress > 0.25
+			}
+			modifier = {
+				add = 10
+				surrender_progress > 0.5
+			}
+		}
+		name = dolguldur.114.b
+
+		add_political_power = -500
+		add_stability = -0.15
+	}
+}
+
+
+# Gladden called to the secret deal
+country_event = {
+	id = dolguldur.115
+	title = dolguldur.115.t
+	desc = dolguldur.115.desc
+
+	fire_only_once = yes
+	trigger = {
+		tag = GLD
+		has_country_flag = DGU_secret_deal_accepted
+		NOT = { has_war_with = DGU }
+		is_subject = no
+
+		DGU = { has_war_with = RGL }
+	}
+
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = dolguldur.115.a
+
+		declare_war_on = {
+			target = RGL
+			type = annex_everything
+		}
+	}
+
+	option = {
+		trigger = {
+			has_war = yes
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				surrender_progress > 0.25
+			}
+			modifier = {
+				add = 10
+				surrender_progress > 0.5
+			}
+		}
+		name = dolguldur.115.b
+
+		add_political_power = -500
+		add_stability = -0.15
+	}
+}
+
+
+# Vales called to the secret deal
+country_event = {
+	id = dolguldur.116
+	title = dolguldur.116.t
+	desc = dolguldur.116.desc
+
+	fire_only_once = yes
+	trigger = {
+		tag = VAL
+		has_country_flag = DGU_secret_deal_accepted
+		NOT = { has_war_with = DGU }
+		is_subject = no
+
+		DGU = { has_war_with = RGL }
+	}
+
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = dolguldur.116.a
+
+		declare_war_on = {
+			target = GLD
+			type = annex_everything
+		}
+	}
+
+	option = {
+		trigger = {
+			has_war = yes
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				surrender_progress > 0.25
+			}
+			modifier = {
+				add = 10
+				surrender_progress > 0.5
+			}
+		}
+		name = dolguldur.116.b
+
+		add_political_power = -500
+		add_stability = -0.15
+	}
+}
+
+
+# POV: Goblin Town. Dol Guldur asks us to join their offensive against one of their neighbors
+country_event = {
+	id = dolguldur.117
+	picture = GFX_report_event_dol_guldur_fort
+	title = dolguldur.117.t
+	desc = dolguldur.117.desc
+
+	is_triggered_only = yes
+
+	# yes
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				DGU = { is_ai = no }
+			}
+		}
+		name = dolguldur.117.a
+
+		hidden_effect = {
+			DGU = { country_event = { id = dolguldur.118 days = 3 } }
+		}
+
+		custom_effect_tooltip = dolguldur.117.a_tt
+		hidden_effect = {
+			every_neighbor_country = {
+				limit = { has_war_with = DGU }
+				ROOT = {
+					declare_war_on = {
+						target = PREV
+						type = annex_everything
+					}
+				}
+			}	
+		}
+	}
+
+	# no
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.117.b
+
+		DGU = { country_event = { id = dolguldur.119 days = 3 } }
+		event_option_tooltip = dolguldur.119.a
+	}
+
+	# yes, but only in return for stuff
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 3
+				DGU = { is_ai = no }
+			}
+		}
+		name = dolguldur.117.c
+
+		DGU = { country_event = { id = dolguldur.120 days = 3 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.121.a
+	}
+}
+
+
+# POV: DGU: Goblin Town agrees to join our offensive
+country_event = {
+	id = dolguldur.118
+	picture = GFX_report_event_goblin_town
+	title = dolguldur.118.t
+	desc = dolguldur.118.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.118.a
+
+		DGU = {
+			add_opinion_modifier = {
+				target = GOB
+				modifier = medium_increase
+			}
+		}
+	}
+}
+
+
+# POV: DGU: Goblin Town refuses to join our offensive
+country_event = {
+	id = dolguldur.119
+	title = dolguldur.119.t
+	desc = dolguldur.119.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.119.a
+
+		DGU = {
+			add_opinion_modifier = {
+				target = GOB
+				modifier = medium_decrease
+			}
+		}
+	}
+}
+
+
+# POV: DGU: Goblin Town wants a reward for joining our offensive
+country_event = {
+	id = dolguldur.120
+	picture = GFX_report_event_goblin_town
+	title = dolguldur.120.t
+	desc = dolguldur.120.desc
+
+	is_triggered_only = yes
+
+	# accept
+	option = {
+		ai_chance = {
+			base = 3
+			modifier = {
+				factor = 1.5
+				GOB = { is_ai = no }
+			}
+		}
+		name = dolguldur.120.a
+		GOB = { country_event = { id = dolguldur.121 days = 3 } }
+	}
+
+	# reject
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.120.b
+		GOB = { country_event = { id = dolguldur.122 days = 3 } }
+	}
+}
+
+
+# POV: GOB. DGU agrees to our reward demands
+country_event = {
+	id = dolguldur.121
+	title = dolguldur.121.t
+	desc = dolguldur.121.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.121.a
+
+		DGU = {
+			send_equipment = {
+				type = infantry_equipment
+				amount = 2000
+				target = GOB
+			}
+			send_equipment = {
+				type = support_equipment
+				amount = 150
+				target = GOB
+			}
+			pay_3_civs_for_180_day = yes
+		}
+
+		custom_effect_tooltip = dolguldur.121.a_tt
+		hidden_effect = {
+			every_neighbor_country = {
+				limit = { has_war_with = DGU }
+				ROOT = {
+					declare_war_on = {
+						target = PREV
+						type = annex_everything
+					}
+				}
+			}	
+		}
+	}
+}
+
+
+# POV: GOB. DGU refuses our reward demands
+country_event = {
+	id = dolguldur.122
+	title = dolguldur.122.t
+	desc = dolguldur.122.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.122.a
+
+		GOB = {
+			add_opinion_modifier = {
+				target = DGU
+				modifier = small_decrease
+			}
+		}
+	}
+}
+
+
+# POV: DGU. How shall we coorindate with Gundabad?
+country_event = {
+	id = dolguldur.123
+	picture = GFX_report_event_gundabad
+	title = dolguldur.123.t
+	desc = dolguldur.123.desc
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			NOT = { VAL = { has_country_flag = DGU_secret_deal_accepted } }
+		}
+		ai_chance = {
+			base = 3
+			modifier = {
+				factor = 2
+				VAL = { is_ai = no }
+			}
+		}
+		name = dolguldur.123.a
+		GUN = { country_event = { id = dolguldur.124 days = 3 } }
+
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.124.a
+	}
+
+	option = {
+		trigger = {
+			VAL = { has_country_flag = DGU_secret_deal_accepted }
+		}
+		ai_chance = {
+			base = 3
+			modifier = {
+				factor = 2
+				VAL = { is_ai = no }
+			}
+		}
+		name = dolguldur.123.b
+		GUN = { country_event = { id = dolguldur.125 days = 3 } }
+
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.125.a
+	}
+
+	option = {
+		ai_chance = {
+			base = 2
+		}
+		name = dolguldur.123.c
+		GUN = { country_event = { id = dolguldur.126 days = 3 } }
+
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = dolguldur.126.a
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.123.e
+
+		add_war_support = 0.1
+	}
+}
+
+
+# POV: GUN. DGU wants us to attack vales when they go to war
+country_event = {
+	id = dolguldur.124
+	picture = GFX_report_event_dol_guldur_fort
+	title = dolguldur.124.t
+	desc = dolguldur.124.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 2
+				DGU = { is_ai = no }
+			}
+			modifier = {
+				factor = 3
+				VAL = { is_ai = no }
+			}
+		}
+		name = dolguldur.124.a
+		DGU = { country_event = { id = dolguldur.128 days = 3 } }
+
+		custom_effect_tooltip = dolguldur.124.a_tt
+		set_country_flag = DGU_GUN_agree_to_attack_VAL
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.124.b
+
+		DGU = { country_event = { id = dolguldur.129 days = 3 } }
+	}
+}
+
+
+# POV: GUN. DGU wants us to attack Vales when Vales go to war (backstab)
+country_event = {
+	id = dolguldur.125
+	picture = GFX_report_event_dol_guldur_fort
+	title = dolguldur.125.t
+	desc = dolguldur.125.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 2
+				DGU = { is_ai = no }
+			}
+			modifier = {
+				factor = 3
+				VAL = { is_ai = no }
+			}
+		}
+		name = dolguldur.125.a
+		DGU = { country_event = { id = dolguldur.128 days = 3 } }
+
+		custom_effect_tooltip = dolguldur.125.a_tt
+		set_country_flag = DGU_GUN_agree_to_backstab_VAL
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.125.b
+
+		DGU = { country_event = { id = dolguldur.129 days = 3 } }
+	}
+}
+
+
+# POV: GUN. DGU wants supplies for their upcoming war
+country_event = {
+	id = dolguldur.126
+	picture = GFX_report_event_dol_guldur_fort
+	title = dolguldur.126.t
+	desc = dolguldur.126.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 2
+				DGU = { is_ai = no }
+			}
+		}
+		name = dolguldur.126.a
+
+		DGU = { country_event = { id = dolguldur.127 days = 3 } }
+
+		GUN = {
+			send_equipment = {
+				type = infantry_equipment
+				amount = 2000
+				target = DGU
+			}
+			send_equipment = {
+				type = support_equipment
+				amount = 150
+				target = DGU
+			}
+		}
+		DGU = {
+			army_experience = 50
+			add_war_support = 0.05
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.126.b
+
+		DGU = { country_event = { id = dolguldur.130 days = 3 } }
+	}
+}
+
+
+# POV: DGU. Gun agrees to supply us
+country_event = {
+	id = dolguldur.127
+	picture = GFX_report_event_gundabad
+	title = dolguldur.127.t
+	desc = dolguldur.127.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.127.a
+
+		GUN = { increase_our_opinion_of_them_medium = yes }
+	}
+}
+
+
+# POV: DGU. Gun agrees to attack Vales (both scenarios)
+country_event = {
+	id = dolguldur.128
+	picture = GFX_report_event_gundabad
+	title = dolguldur.128.t
+	desc = dolguldur.128.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.128.a
+	}
+}
+
+
+# POV: DGU. Gun declines to attack Vales (both scenarios)
+country_event = {
+	id = dolguldur.129
+	title = dolguldur.129.t
+	desc = dolguldur.129.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.129.a
+
+		GUN = { decrease_our_opinion_of_them_small = yes }
+	}
+}
+
+
+# POV: DGU. Gun declines to supply us
+country_event = {
+	id = dolguldur.130
+	title = dolguldur.130.t
+	desc = dolguldur.130.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.130.a
+
+		GUN = { decrease_our_opinion_of_them_small = yes }
+	}
+}
+
+# GUN prompted to attack VALES as backstab
+country_event = {
+	id = dolguldur.131
+	title = dolguldur.131.t
+	desc = dolguldur.131.desc
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = GUN
+		VAL = { 
+			has_country_flag = DGU_secret_deal_accepted
+			has_war_with = GLD
+		}
+
+		has_country_flag = DGU_GUN_agree_to_backstab_VAL
+
+		NOT = { has_war_with = DGU }
+		is_subject = no
+
+		DGU = { has_war_with = RGL }
+	}
+
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = dolguldur.131.a
+
+		declare_war_on = {
+			target = VAL
+			type = annex_everything
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				surrender_progress > 0.25
+			}
+			modifier = {
+				add = 10
+				surrender_progress > 0.5
+			}
+		}
+		name = dolguldur.131.b
+
+		add_political_power = -500
+		add_stability = -0.15
+	}
+}
+
+# GUN prompted to attack VALES as part of deal
+country_event = {
+	id = dolguldur.132
+	title = dolguldur.132.t
+	desc = dolguldur.132.desc
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = dolguldur.132.a
+
+		declare_war_on = {
+			target = VAL
+			type = annex_everything
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 5
+				surrender_progress > 0.25
+			}
+			modifier = {
+				add = 10
+				surrender_progress > 0.5
+			}
+		}
+		name = dolguldur.132.b
+
+		add_political_power = -500
+		add_stability = -0.15
+	}
+}
+
+# ISE asked for coordination against ROH
+country_event = {
+	id = dolguldur.133
+	picture = GFX_report_event_dol_guldur_fort
+	title = dolguldur.133.t
+	desc = dolguldur.133.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.133.a
+		DGU = {
+			country_event = { id = dolguldur.134 days = 3 }
+		}
+		set_country_flag = DGU_coordination_accepted
+		set_country_flag = DGU_coordination_attack_attack
+		custom_effect_tooltip = dolguldur.133.a_tt
+		show_ideas_tooltip = DGU_coordinated_attack_attack
+		custom_effect_tooltip = for_120_days_tt
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.133.b
+		DGU = {
+			country_event = { id = dolguldur.134 days = 3 }
+		}
+		set_country_flag = DGU_coordination_accepted
+		set_country_flag = DGU_coordination_attack_speed
+		custom_effect_tooltip = dolguldur.133.b_tt
+		show_ideas_tooltip = DGU_coordinated_attack_speed
+		custom_effect_tooltip = for_120_days_tt
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.133.c
+		DGU = {
+			country_event = { id = dolguldur.134 days = 3 }
+		}
+		set_country_flag = DGU_coordination_accepted
+		set_country_flag = DGU_coordination_attack_supplies
+		custom_effect_tooltip = dolguldur.133.c_tt
+		show_ideas_tooltip = DGU_coordinated_attack_supplies
+		custom_effect_tooltip = for_120_days_tt
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.133.e
+	}
+}
+
+
+# ISE accepted coordination against ROH
+country_event = {
+	id = dolguldur.134
+	picture = GFX_report_saruman_lurtz
+	title = dolguldur.134.t
+	desc = dolguldur.134.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.134.a
+
+		set_country_flag = DGU_coordination_accepted
+		set_country_flag = DGU_coordination_attack_attack
+		custom_effect_tooltip = dolguldur.134.a_tt
+		show_ideas_tooltip = DGU_coordinated_attack_attack
+		custom_effect_tooltip = for_120_days_tt
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.134.b
+
+		set_country_flag = DGU_coordination_accepted
+		set_country_flag = DGU_coordination_attack_speed
+		custom_effect_tooltip = dolguldur.134.b_tt
+		show_ideas_tooltip = DGU_coordinated_attack_speed
+		custom_effect_tooltip = for_120_days_tt
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.134.c
+
+		set_country_flag = DGU_coordination_accepted
+		set_country_flag = DGU_coordination_attack_supplies
+		custom_effect_tooltip = dolguldur.134.c_tt
+		show_ideas_tooltip = DGU_coordinated_attack_supplies
+		custom_effect_tooltip = for_120_days_tt
+	}
+}
+
+country_event = {
+	id = dolguldur.135
+	hidden = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = ISE
+		has_country_flag = DGU_coordination_accepted
+		has_war_with = ROH
+		NOT = { has_war_with = DGU }
+		exists = yes
+		DGU = {
+			has_war_with = ROH
+			exists = yes
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = { has_country_flag = DGU_coordination_attack_attack }
+			add_timed_idea = {
+				idea = DGU_coordinated_attack_attack
+				days = 120
+			}
+		}
+		else_if = {
+			limit = { has_country_flag = DGU_coordination_attack_speed }
+			add_timed_idea = {
+				idea = DGU_coordinated_attack_speed
+				days = 120
+			}
+		}
+		else_if = {
+			limit = { has_country_flag = DGU_coordination_attack_supplies }
+			add_timed_idea = {
+				idea = DGU_coordinated_attack_supplies
+				days = 120
+			}
+		}
+	}
+}
+
+country_event = {
+	id = dolguldur.151
+	hidden = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = DGU
+		has_country_flag = DGU_coordination_accepted
+		has_war_with = ROH
+		NOT = { has_war_with = ISE }
+		exists = yes
+		ISE = {
+			has_war_with = ROH
+			exists = yes
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = { has_country_flag = DGU_coordination_attack_attack }
+			add_timed_idea = {
+				idea = DGU_coordinated_attack_attack
+				days = 120
+			}
+		}
+		else_if = {
+			limit = { has_country_flag = DGU_coordination_attack_speed }
+			add_timed_idea = {
+				idea = DGU_coordinated_attack_speed
+				days = 120
+			}
+		}
+		else_if = {
+			limit = { has_country_flag = DGU_coordination_attack_supplies }
+			add_timed_idea = {
+				idea = DGU_coordinated_attack_supplies
+				days = 120
+			}
+		}
+	}
+}
+
+# Isengard asked for shared army exercises
+country_event = {
+	id = dolguldur.136
+	picture = GFX_report_event_dol_guldur_fort
+	title = dolguldur.136.t
+	desc = dolguldur.136.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 5
+		}
+		name = dolguldur.136.a
+
+		DGU = {
+			army_experience = 50
+			add_mastery = {
+				amount = 150
+				folder = land
+			}
+		}
+
+		ISE = {
+			add_political_power = -100
+			army_experience = 50
+			add_mastery = {
+				amount = 150
+				folder = land
+			}
+		}
+	}
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.136.b
+
+		DGU = { decrease_their_opinion_of_us_small = yes }
+	}
+}
+
+# DGU cuts off MIR reinforcements
+country_event = {
+	id = dolguldur.137
+	title = dolguldur.137.t
+	desc = dolguldur.137.d
+	picture = GFX_report_event_burning_forest_supply
+
+	is_triggered_only = yes
+
+	option = {
+		name = dolguldur.137.a
+		ai_chance = {
+			base = 1
+		}
+		MIR = {
+			add_timed_idea = {
+				idea = DGU_southern_logistics_sabotaged
+				days = 240
+			}
+		}
+		262 = {
+			damage_building = {
+				type = infrastructure
+				damage = 2
+				repair_speed_modifier = -0.9
+			}
+		}
+		190 = {
+			damage_building = {
+				type = infrastructure
+				damage = 2
+				repair_speed_modifier = -0.9
+			}
+		}
+
+	}
+}
+
+# POV: Mordor. Choose DGU's role in the war to come
+country_event = {
+	id = dolguldur.138
+	picture = GFX_report_event_dol_guldur_fort
+	title = dolguldur.138.t
+	desc = dolguldur.138.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 3
+			modifier = {
+				factor = 2.67
+				DGU = { is_ai = yes }
+			}
+			modifier = {
+				factor = 1.4
+				OR = {
+					MIR = { is_ai = no }
+					LTH = { is_ai = no }
+				}
+			}
+		}
+		name = dolguldur.138.c
+		hidden_effect = { DGU = { country_event = { id = dolguldur.141 days = 1 } } }
+		DGU = { event_option_tooltip = dolguldur.141.a }
+	}
+
+	option = {
+		ai_chance = {
+			base = 5.4
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 1.5
+				OR = {
+					GLD = { is_ai = no }
+					RGL = { is_ai = no }
+					VAL = { is_ai = no }
+					ROH = { is_ai = no }
+					RHO = { is_ai = no }
+				}
+			}
+		}
+		name = dolguldur.138.a
+		hidden_effect = {
+			country_event = dolguldur.152
+		}
+		custom_effect_tooltip = dolguldur.138.a_tt
+	}
+}
+
+
+# attack east
+country_event = {
+	id = dolguldur.139
+	picture = GFX_report_event_sauron_eye
+	title = dolguldur.139.t
+	desc = dolguldur.139.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.139.a
+
+		dgu_schedule_commence_schedule_east = yes
+
+		hidden_effect = {
+			complete_national_focus = DGU_the_grand_strategy
+			complete_national_focus = DGU_threaten_the_east
+		}
+	}
+}
+
+
+# seize anduin
+country_event = {
+	id = dolguldur.140
+	picture = GFX_report_event_sauron_eye
+	title = dolguldur.140.t
+	desc = dolguldur.140.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.140.a
+
+		dgu_schedule_commence_schedule_anduin = yes
+
+		hidden_effect = {
+			complete_national_focus = DGU_the_grand_strategy
+			complete_national_focus = DGU_terror_of_the_anduin
+		}
+	}
+}
+
+
+# attack elves
+country_event = {
+	id = dolguldur.141
+	picture = GFX_report_event_sauron_eye
+	title = dolguldur.141.t
+	desc = dolguldur.141.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.141.a
+
+		dgu_schedule_commence_schedule_elves = yes
+
+		hidden_effect = {
+			complete_national_focus = DGU_the_grand_strategy
+			complete_national_focus = DGU_enxtinguish_elven_light
+		}
+	}
+}
+
+
+# attack rohan
+country_event = {
+	id = dolguldur.142
+	picture = GFX_report_event_sauron_eye
+	title = dolguldur.142.t
+	desc = dolguldur.142.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.142.a
+
+		dgu_schedule_commence_schedule_rohan = yes
+
+		hidden_effect = {
+			complete_national_focus = DGU_the_grand_strategy
+			complete_national_focus = DGU_attack_rohan
+		}
+	}
+}
+
+
+# distraction
+country_event = {
+	id = dolguldur.143
+	picture = GFX_report_event_sauron_eye
+	title = dolguldur.143.t
+	desc = dolguldur.143.desc
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = dolguldur.143.a
+
+		dgu_schedule_commence_schedule_distraction = yes
+
+		hidden_effect = {
+			complete_national_focus = DGU_the_grand_strategy
+			complete_national_focus = DGU_a_well_timed_distraction
+		}
+	}
+}
+
+
+# DGU bows to MOR
+country_event = {
+    id = dolguldur.144
+	picture = GFX_report_event_orcs_2
+    title = dolguldur.144.t
+    desc = dolguldur.144.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.144.a
+		effect_tooltip = {
+			DGU = {
+				MOR = { swear_secret_fealty = yes }
+
+				custom_effect_tooltip = DGU_saurons_schedule_effect_tt
+			}
+
+		}
+    }
+}
+
+
+# DGU rejects to bow to MOR
+country_event = {
+    id = dolguldur.145
+	picture = GFX_report_event_orcs_2
+    title = dolguldur.145.t
+    desc = dolguldur.145.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.145.a
+
+		effect_tooltip = {
+			MOR = { DGU = { swear_eternal_animosity = yes } }
+		}
+    }
+}
+
+
+# allegiance demanded by MOR
+country_event = {
+    id = dolguldur.146
+	picture = GFX_report_event_sauron_eye
+    title = dolguldur.146.t
+    desc = dolguldur.146.desc
+
+    is_triggered_only = yes
+
+    # Go pro mordor
+	option = {
+		name = dolguldur.146.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				factor = 0
+				is_going_revolutionary = yes
+			}
+			modifier = {
+				factor = 2
+				MOR = { ring_has_the_ring = yes }
+			}
+		}
+		trigger = {
+			NOT = { has_war_with = MOR }
+		}
+
+		if = {
+			limit = { NOT = { has_completed_focus = DGU_master_of_the_fortress } }
+			unlock_national_focus = DGU_master_of_the_fortress
+		}
+
+		complete_national_focus = DGU_the_armies_of_the_necromancer
+
+		effect_tooltip = {
+			MOR = { swear_secret_fealty = yes }
+
+			custom_effect_tooltip = DGU_saurons_schedule_effect_tt
+
+		}
+		hidden_effect = {
+			MOR = { country_event = { id = dolguldur.144 days = 3 } }
+		}
+	}
+
+	# Go anti mordor
+	option = {
+		name = dolguldur.146.b
+		ai_chance = {
+			base = 20
+			modifier = {
+				factor = 0
+				is_going_belligerent = yes
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		trigger = {
+			NOT = { is_ally_with = MOR }
+		}
+
+		if = {
+			limit = { NOT = { has_completed_focus = DGU_master_of_the_fortress } }
+			unlock_national_focus = DGU_master_of_the_fortress
+		}
+
+		complete_national_focus = DGU_shadow_without_master
+
+		effect_tooltip = {
+			MOR = { DGU = { swear_eternal_animosity = yes } }
+		}
+		hidden_effect = {
+			MOR = { country_event = { id = dolguldur.145 days = 3 } }
+		}
+	}
+}
+
+
+# DGU asks RHU for cooperation attacking RHO
+country_event = {
+    id = dolguldur.147
+	picture = GFX_report_event_dol_guldur_fort
+    title = dolguldur.147.t
+    desc = dolguldur.147.desc
+
+    is_triggered_only = yes
+
+	# join war when time comes
+    option = {
+        ai_chance = {
+            base = 1
+			modifier = {
+				factor = 0
+				has_war = yes
+			}
+			modifier = {
+				factor = 0
+				DGU = { is_going_same_path_as_root = yes }
+			}
+			modifier = {
+				factor = 0
+				DGU = { has_government = revolutionary }
+			}
+        }
+        name = dolguldur.147.a
+		hidden_effect = {
+			DGU = { country_event = { id = dolguldur.148 days = 3 } }
+		}
+		add_political_power = -150
+		add_stability = -0.05
+		custom_effect_tooltip = dolguldur.148.a_tt
+	}
+
+	# send supplies
+    option = {
+        ai_chance = {
+            base = 3
+        }
+        name = dolguldur.147.b
+		hidden_effect = {
+			DGU = { country_event = { id = dolguldur.149 days = 3 } }
+		}
+		event_option_tooltip = dolguldur.149.a
+	}
+
+	# nothing
+    option = {
+        ai_chance = {
+            base = 1
+			modifier = {
+				factor = 3
+				has_war = yes
+			}
+        }
+        name = dolguldur.147.c
+		hidden_effect = {
+			DGU = { country_event = { id = dolguldur.150 days = 3 } }
+		}
+	}
+}
+
+
+# RHU agrees to cooperation
+country_event = {
+    id = dolguldur.148
+    title = dolguldur.148.t
+    desc = dolguldur.148.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.148.a
+
+		custom_effect_tooltip = dolguldur.148.a_tt
+
+		DGU = {
+			set_country_flag = DGU_RHU_cooperation_accepted
+			add_opinion_modifier = {
+				target = RHU
+				modifier = large_increase
+			}
+		}
+    }
+}
+
+# spawn troops in RHO
+country_event = {
+	id = dolguldur.10148
+	hidden = yes
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = DGU
+		has_country_flag = DGU_RHU_cooperation_accepted
+		has_war_with = RHO
+	}
+
+	immediate = {
+		DGU = {
+			division_template = {
+				name = "Rhunic Volunteers"
+				priority = 0
+				regiments = {
+					infantry = { x = 0 y = 0 }
+					infantry = { x = 0 y = 1 }
+					infantry = { x = 0 y = 2 }
+					infantry = { x = 0 y = 3 }
+				}
+			}
+		}
+		RHO = {
+			random_controlled_state = {
+				create_unit = {
+					division = "name = \"Rhunic Volunteers\" division_template = \"Rhunic Volunteers\" start_manpower_factor = 0.85"
+					owner = DGU
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+			random_controlled_state = {
+				create_unit = {
+					division = "name = \"Rhunic Volunteers\" division_template = \"Rhunic Volunteers\" start_manpower_factor = 0.85"
+					owner = DGU
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+			random_controlled_state = {
+				create_unit = {
+					division = "name = \"Rhunic Volunteers\" division_template = \"Rhunic Volunteers\" start_manpower_factor = 0.85"
+					owner = DGU
+					allow_spawning_on_enemy_provs = yes
+				}
+			}
+		}
+	}
+}
+
+
+# RHU sends supplies
+country_event = {
+    id = dolguldur.149
+	picture = GFX_report_event_rhun_eastern_army
+    title = dolguldur.149.t
+    desc = dolguldur.149.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.149.a
+
+		RHU = {
+			add_political_power = 50
+			send_equipment = {
+				amount = 800
+				equipment = infantry_equipment
+				target = DGU
+			}
+		}
+
+		DGU = {
+			army_experience = 15
+			add_political_power = 50
+			add_timed_idea = {
+				idea = DGU_coordinate_with_rhun
+				days = 120
+			}
+
+			add_opinion_modifier = {
+				target = RHU
+				modifier = medium_increase
+			}
+		}
+    }
+}
+
+
+# RHU refuses cooperation
+country_event = {
+    id = dolguldur.150
+    title = dolguldur.150.t
+    desc = dolguldur.150.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.150.a
+
+		DGU = {
+			add_opinion_modifier = {
+				target = RHU
+				modifier = small_decrease
+			}
+		}
+    }
+}
+
+
+# Purpose of DGU: submenu for non-original plan
+country_event = {
+    id = dolguldur.152
+    title = dolguldur.152.t
+    desc = dolguldur.152.desc
+
+	picture = GFX_report_event_dol_guldur_fort
+
+    is_triggered_only = yes
+
+    option = {
+		ai_chance = {
+			base = 1.2
+			modifier = {
+				factor = 1.5
+				OR = {
+					ERE = { is_ai = no }
+					RHO = { is_ai = no }
+				}
+			}
+		}
+		name = dolguldur.152.a
+		hidden_effect = { DGU = { country_event = { id = dolguldur.139 days = 1 } } }
+		DGU = { event_option_tooltip = dolguldur.139.a }
+	}
+
+	option = {
+		ai_chance = {
+			base = 2
+			modifier = {
+				factor = 1.5
+				OR = {
+					RGL = { is_ai = no }
+					GLD = { is_ai = no }
+					VAL = { is_ai = no }
+				}
+			}
+		}
+		name = dolguldur.152.b
+		hidden_effect = { DGU = { country_event = { id = dolguldur.140 days = 1 } } }
+		DGU = { event_option_tooltip = dolguldur.140.a }
+	}
+
+	option = {
+		ai_chance = {
+			base = 0.7
+			modifier = {
+				factor = 1.5
+				ROH = { is_ai = no }
+			}
+			modifier = {
+				factor = 0.25
+				ISE = { is_ai = no }
+			}
+		}
+		name = dolguldur.152.c
+		hidden_effect = { DGU = { country_event = { id = dolguldur.142 days = 1 } } }
+		DGU = { event_option_tooltip = dolguldur.142.a }
+	}
+
+	option = {
+		ai_chance = {
+			base = 1.5
+		}
+		name = dolguldur.152.e
+		hidden_effect = { DGU = { country_event = { id = dolguldur.143 days = 1 } } }
+		DGU = { event_option_tooltip = dolguldur.143.a }
+	}
+}
+
+country_event = {
+    id = dolguldur.153 ###preparing for the raid
+    title = dolguldur.153.t
+    desc = dolguldur.153.desc
+	
+	picture = GFX_report_event_vineyards
+
+    is_triggered_only = yes
+
+    option = { ###assemble a hard hitting and mobile force
+        ai_chance = {
+            base = 1
+			modifier = {
+				factor = 2
+				DGU = { 
+					has_equipment = {
+						light_cavalry_chassis > 50
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				DGU = { 
+					has_equipment = {
+						motorized_equipment > 100
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				DGU = { 
+					has_equipment = {
+						train_equipment > 5
+					}
+				}
+			}
+		}
+        name = dolguldur.153.a
+		hidden_effect = { DGU = { random_list = { 75 = { country_event = { id = dolguldur.154 days = 3 } } 25 = { country_event = { id = dolguldur.155 days = 3 } } } } }
+		custom_effect_tooltip = dolguldur.153.a_tt
+    }
+	
+	option = { ###a swarm of goblins!
+        ai_chance = {
+            base = 1
+			modifier = {
+				factor = 2
+				DGU = { 
+					has_equipment = {
+						infantry_equipment > 500
+					}
+				}
+			}
+			modifier = {
+				factor = 2
+				DGU = { 
+					has_manpower > 1000
+				}
+			}
+        }
+        name = dolguldur.153.b
+		hidden_effect = { DGU = { random_list = { 50 = { country_event = { id = dolguldur.156 days = 3 } } 50 = { country_event = { id = dolguldur.157 days = 3 } } } } }
+		custom_effect_tooltip = dolguldur.153.b_tt
+    }
+	
+	option = { ###a minimal specialized force
+        ai_chance = {
+            base = 1
+			modifier = {
+				factor = 2
+				DGU = { 
+					has_equipment = {
+						artillery_equipment > 50
+					}
+				}
+			}
+        }
+        name = dolguldur.153.c
+		hidden_effect = { DGU = { random_list = { 70 = { country_event = { id = dolguldur.158 days = 3 } } 30 = { country_event = { id = dolguldur.159 days = 3 } } } } }
+		custom_effect_tooltip = dolguldur.153.c_tt
+    }
+}
+
+###option a success
+country_event = {
+    id = dolguldur.154
+    title = dolguldur.154.t
+    desc = dolguldur.154.desc
+	
+	picture = GFX_report_event_war_loan
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.154.a
+
+		DGU = {
+			add_equipment_to_stockpile = {
+				type = motorized_equipment
+				amount = -20
+				producer = DGU
+			}
+			87 = {
+				add_resource = {
+					type = oil
+					amount = 20
+				}
+			}
+		}
+    }
+}
+
+###option a fail
+country_event = {
+    id = dolguldur.155
+    title = dolguldur.155.t
+    desc = dolguldur.155.desc
+	
+	picture = GFX_report_event_rangers
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.155.a
+
+		DGU = {
+			add_equipment_to_stockpile = {
+				type = motorized_equipment
+				amount = -80
+				producer = DGU
+			}
+			add_equipment_to_stockpile = {
+				type = light_cavalry_chassis
+				amount = -30
+				producer = DGU
+			}
+			add_equipment_to_stockpile = {
+				type = train_equipment
+				amount = -3
+				producer = DGU
+			}
+			87 = {
+				add_resource = {
+					type = oil
+					amount = 10
+				}
+			}
+		}
+    }
+}
+
+###option b succes
+country_event = {
+    id = dolguldur.156
+    title = dolguldur.156.t
+    desc = dolguldur.156.desc
+	
+	picture = GFX_report_event_war_loan
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.156.a
+
+		DGU = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = -150
+				producer = DGU
+			}
+			add_manpower = -300
+			87 = {
+				add_resource = {
+					type = oil
+					amount = 15
+				}
+			}
+		}
+    }
+}
+
+###option b fail
+country_event = {
+    id = dolguldur.157
+    title = dolguldur.157.t
+    desc = dolguldur.157.desc
+
+	picture = GFX_report_event_rangers
+	
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.157.a
+
+		DGU = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = -500
+				producer = DGU
+			}
+			add_manpower = -1000
+			87 = {
+				add_resource = {
+					type = oil
+					amount = 8
+				}
+			}
+		}
+    }
+}
+
+###option c succes
+country_event = {
+    id = dolguldur.158
+    title = dolguldur.158.t
+    desc = dolguldur.158.desc
+	
+	picture = GFX_report_event_war_loan
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.158.a
+
+		DGU = {
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = -10
+				producer = DGU
+			}
+			87 = {
+				add_resource = {
+					type = oil
+					amount = 10
+				}
+			}
+		}
+    }
+}
+
+###option c fail
+country_event = {
+    id = dolguldur.159
+    title = dolguldur.159.t
+    desc = dolguldur.159.desc
+
+	picture = GFX_report_event_rangers
+	
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = dolguldur.159.a
+
+		DGU = {
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = -100
+				producer = DGU
+			}
+			add_manpower = -100
+			87 = {
+				add_resource = {
+					type = oil
+					amount = 4
+				}
+			}
+		}
+    }
+}

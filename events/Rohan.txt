@@ -1526,7 +1526,30 @@ country_event = {
 			}
 		}
 
-		FROM = { roh_add_intermediate_theoden_drift = yes }
+		if = {
+			limit = { tag = DOR }
+			FROM = {
+				custom_effect_tooltip = roh_add_intermediate_theoden_drift_tt
+				hidden_effect = {
+					add_power_balance_modifier = {
+						id = power_balance_wormtongue
+						modifier = ROH_befriend_dorwinion_accepted
+					}	
+				}
+			}
+		}
+		if = {
+			limit = { tag = DAL }
+			FROM = {
+				custom_effect_tooltip = roh_add_intermediate_theoden_drift_tt
+				hidden_effect = {
+					add_power_balance_modifier = {
+						id = power_balance_wormtongue
+						modifier = ROH_befriend_dale_accepted
+					}	
+				}
+			}
+		}
 
 		set_country_flag = has_accepted_cross_anduin_diplo
 	}
@@ -1556,7 +1579,30 @@ country_event = {
 			}
 		}
 
-		FROM = { roh_add_intermediate_theoden_drift = yes }
+		if = {
+			limit = { tag = DOR }
+			FROM = {
+				custom_effect_tooltip = roh_add_intermediate_theoden_drift_tt
+				hidden_effect = {
+					add_power_balance_modifier = {
+						id = power_balance_wormtongue
+						modifier = ROH_befriend_dorwinion_accepted
+					}	
+				}
+			}
+		}
+		if = {
+			limit = { tag = DAL }
+			FROM = {
+				custom_effect_tooltip = roh_add_intermediate_theoden_drift_tt
+				hidden_effect = {
+					add_power_balance_modifier = {
+						id = power_balance_wormtongue
+						modifier = ROH_befriend_dale_accepted
+					}	
+				}
+			}
+		}
 
 		set_country_flag = has_accepted_cross_anduin_diplo
 	}
@@ -1590,7 +1636,30 @@ country_event = {
 			}
 		}
 
-		FROM = { roh_add_minor_grima_drift = yes }
+		if = {
+			limit = { tag = DOR }
+			FROM = {
+				custom_effect_tooltip = roh_add_minor_grima_drift_tt
+				hidden_effect = {
+					add_power_balance_modifier = {
+						id = power_balance_wormtongue
+						modifier = ROH_befriend_dorwinion_rejected
+					}	
+				}
+			}
+		}
+		if = {
+			limit = { tag = DAL }
+			FROM = {
+				custom_effect_tooltip = roh_add_minor_grima_drift_tt
+				hidden_effect = {
+					add_power_balance_modifier = {
+						id = power_balance_wormtongue
+						modifier = ROH_befriend_dale_rejected
+					}	
+				}
+			}
+		}
 	}
 }
 
@@ -1885,10 +1954,14 @@ country_event = {
 		}
 		trigger = {
 			rohan_lords_controls_region_1 = yes
-			NOT = { has_completed_focus = ROH_deal_with_the_wold }
+			has_country_flag = roh_landsmeet_selection_1
+			#NOT = { has_completed_focus = ROH_deal_with_the_wold }
 		}
 		name = rohan.93.a
 		country_event = { id = rohanlords.5 days = 3 }
+
+		clr_global_flag = roh_landsmeet_selection_1
+		set_country_flag = roh_landsmeet_selection_2
 	}
 
 	# region 2
@@ -1898,10 +1971,14 @@ country_event = {
 		}
 		trigger = {
 			rohan_lords_controls_region_2 = yes
-			NOT = { has_completed_focus = ROH_deal_with_eastemnet }
+			has_country_flag = roh_landsmeet_selection_1
+			#NOT = { has_completed_focus = ROH_deal_with_eastemnet }
 		}
 		name = rohan.93.b
 		country_event = { id = rohanlords.4 days = 3 }
+
+		clr_global_flag = roh_landsmeet_selection_1
+		set_country_flag = roh_landsmeet_selection_2
 	}
 
 	# region 3
@@ -1911,10 +1988,14 @@ country_event = {
 		}
 		trigger = {
 			rohan_lords_controls_region_3 = yes
-			NOT = { has_completed_focus = ROH_deal_with_westemnet }
+			has_country_flag = roh_landsmeet_selection_1
+			#NOT = { has_completed_focus = ROH_deal_with_westemnet }
 		}
 		name = rohan.93.c
 		country_event = { id = rohanlords.2 days = 3 }
+
+		clr_global_flag = roh_landsmeet_selection_1
+		set_country_flag = roh_landsmeet_selection_2
 	}
 
 	# region 4
@@ -1924,7 +2005,8 @@ country_event = {
 		}
 		trigger = {
 			rohan_lords_controls_region_4 = yes
-			NOT = { has_completed_focus = ROH_deal_with_westmarch }
+			has_country_flag = roh_landsmeet_selection_2
+			#NOT = { has_completed_focus = ROH_deal_with_westmarch }
 		}
 		name = rohan.93.d
 		country_event = { id = rohanlords.1 days = 3 }
@@ -1937,13 +2019,17 @@ country_event = {
 		}
 		trigger = {
 			rohan_lords_controls_region_5 = yes
-			NOT = { has_completed_focus = ROH_deal_with_eastfold }
+			has_country_flag = roh_landsmeet_selection_2
+			#NOT = { has_completed_focus = ROH_deal_with_eastfold }
 		}
 		name = rohan.93.e
 		country_event = { id = rohanlords.3 days = 3 }
 	}
 
 	option = {
+		trigger = {
+			has_country_flag = roh_landsmeet_selection_2
+		}
 		ai_chance = {
 			base = 15
 		}
@@ -2677,5 +2763,335 @@ country_event = {
 
 	option = {
 		name = rohan.117.a
+
+		add_war_support = 0.05
+		add_political_power = 100
+		add_timed_idea = {
+			idea = decreased_morale
+			days = 90
+		}
+	}
+}
+
+# Eowyn's Stew
+country_event = {
+	id = rohan.118
+	title = rohan.118.t
+	desc = rohan.118.d
+
+	trigger = {
+		tag = ROH
+		has_war = yes
+		has_country_flag = rng_30p_flag_2
+		has_country_flag = rng_80p_flag_1
+		has_government = cooperative
+		has_character = ROH_eowyn
+		ROH_eowyn = { is_alive = yes }
+	}
+
+	mean_time_to_happen = {
+		days = 270
+		modifier = {
+			factor = 2
+			has_country_flag = rng_50p_flag_4
+		}
+	}
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_eowyn_stew
+
+	option = {
+		name = rohan.118.a
+
+		add_stability = 0.05
+		add_manpower = -1
+	}
+
+	option = {
+		name = rohan.118.b
+
+		add_political_power = -50
+		add_stability = -0.03
+		set_technology = {
+			digestive_venom = 1
+		}
+	}
+}
+
+# Emergency Helm's Deep Levy
+country_event = {
+	id = rohan.119
+	title = rohan.119.t
+	desc = rohan.119.d
+
+	trigger = {
+		tag = ROH
+		has_war_with = ISE
+		controls_province = 4628
+		ISE = { controls_province = 2483 }
+
+		OR = {
+			is_ai = yes
+			difficulty < 2
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_army_camp
+
+	option = {
+		name = rohan.119.a
+
+		division_template = {
+			name = "Helm's Deep Levy"
+			regiments = {
+				infantry = { x = 0 y = 0 }
+				infantry = { x = 0 y = 1 }
+				infantry = { x = 0 y = 2 }
+				infantry = { x = 1 y = 0 }
+				infantry = { x = 1 y = 1 }
+				infantry = { x = 1 y = 2 }
+				infantry = { x = 2 y = 0 }
+				infantry = { x = 2 y = 1 }
+				infantry = { x = 2 y = 2 }
+			}
+		}
+
+		60 = {
+			create_unit = {
+				division = "name = \"Helm's Deep Levy\" division_template = \"Helm's Deep Levy\" start_experience_factor = 0.5"
+				owner = ROH
+				prioritize_location = 4628
+			}
+		}
+	}
+}
+
+# Isengard requests increasing relations
+country_event = {
+	id = rohan.120
+	title = rohan.120.t
+	desc = rohan.120.d
+	picture = GFX_report_event_paper
+	
+	is_triggered_only = yes
+	
+	option = { #Accept
+		name = rohan.120.a
+		ai_chance = {
+			base = 30
+			modifier = {
+				has_opinion = { target = ROH value > 0 }
+				add = 15
+			}
+			modifier = {
+				has_opinion = { target = ROH value > 50 }
+				add = 30
+			}
+			modifier = {
+				FROM = { has_same_ideology = yes }
+				add = 15
+			}
+		}
+		add_opinion_modifier = { target = ISE modifier = small_increase }
+		add_political_power = 25
+		event_option_tooltip = isengard.37.a
+		hidden_effect = { ISE = { country_event = { id = isengard.37 } } }
+	}
+	option = { #Refuse
+		name = rohan.120.b
+		ai_chance = {
+			base = 30
+			modifier = {
+				has_opinion = { target = ROH value < 0 }
+				add = 15
+			}
+			modifier = {
+				add = 999
+				has_war_with = ISE
+			}
+		}
+		ISE = {
+			country_event = { id = isengard.16 }
+			event_option_tooltip = isengard.16.a
+		}
+	}
+}
+
+# Saruman supporting Wormtongue efforts
+country_event = {
+	id = rohan.121
+	title = rohan.121.t
+	desc = rohan.121.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = { #Give in
+		name = rohan.121.a
+		activate_decision = ROH_bop_ise_wormtongue_support
+	}
+}
+
+# Unholy Alliance Opposel
+country_event = {
+	id = rohan.122
+	title = rohan.122.t
+	desc = rohan.122.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = { #Agree
+		name = rohan.122.a
+		if = {
+			limit = { is_in_faction = yes }
+		} 
+		create_faction_from_template = {
+			name = "Horseman of the West"
+			template = faction_template_belligerent_expansionist
+		}
+		add_to_faction = ROH
+		ISE = { country_event = { id = isengard.37 } }
+	}
+
+	option = { #Denie
+		name = rohan.122.b
+		add_opinion_modifier = { target = ISE modifier = small_decrease }
+		ISE = { country_event = { id = isengard.38 } }
+	}
+}
+
+# Trade deal with Isengard
+country_event = {
+	id = rohan.123
+	title = rohan.123.t
+	desc = rohan.123.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = { #Agree
+		name = rohan.123.a
+		add_ideas = ISE_trade_deal_with_ROH
+		ROH = { add_ideas = ROH_trade_deal_with_ISE }
+		ISE = { country_event = { id = isengard.37 } }
+	}
+
+	option = { #Denie
+		name = rohan.123.b
+		add_opinion_modifier = { target = ISE modifier = small_decrease }
+		ISE = { country_event = { id = isengard.38 } }
+	}
+}
+
+# Isengards request to sharing knowledge
+country_event = {
+	id = rohan.124
+	title = rohan.124.t
+	desc = rohan.124.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = {
+		name = rohan.124.a
+		ai_chance = {
+			base = 20
+			modifier = {
+				add = 25
+				is_in_faction_with = ISE
+			}
+			modifier = {
+				add = 10
+				has_government = cooperative
+				ISE = { has_government = cooperative }
+			}
+			modifier = {
+				add = 10
+				has_government = belligerent
+				ISE = { has_government = belligerent }
+			}
+			modifier = {
+				add = 10
+				has_war = yes
+				NOT = { has_war_with = ISE }
+			}
+			modifier = {
+				has_opinion = { target = ISE value > 25 }
+				add = 5
+			}
+			modifier = {
+				has_opinion = { target = ISE value > 90 }
+				add = 10
+			}
+		}
+		add_ideas = ROH_isengard_knowledge
+		ISE = { country_event = { id = isengard.20 } }
+	}
+	option = {
+		name = rohan.124.b
+		ai_chance = {
+			base = 20
+			modifier = {
+				add = 999
+				has_war_with = ISE
+			}
+			modifier = {
+				add = 10
+				has_government = cooperative
+				ISE = { has_government = belligerent }
+			}
+			modifier = {
+				has_opinion = { target = ISE value < 0 }
+				add = 5
+			}
+		}
+		ISE = { country_event = { id = isengard.21 } }
+	}
+}
+
+# Isengard invading the Westmarch
+country_event = {
+	id = rohan.125
+	title = rohan.125.t
+	desc = rohan.125.d
+
+	is_triggered_only = yes
+
+	fire_only_once = yes
+
+	picture = GFX_report_event_dead_unit_leader
+
+	option = { #Give in
+		name = rohan.125.a
+		ISE = { transfer_state = 23 }
+		add_stability = -0.1
+	}
+	option = { #Fight back
+		name = rohan.125.b
+		ISE = { 
+			country_event = { id = isengard.36 } 
+			event_option_tooltip = isengard.36.a
+		}
+		
 	}
 }

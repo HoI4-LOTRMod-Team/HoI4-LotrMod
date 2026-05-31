@@ -418,6 +418,277 @@ VertexShader =
 PixelShader =
 {
 
+	MainCode PixelPdxMeshStandardLotr
+	[[
+		float3 ApplySnowMesh( float3 vColor, float3 vPos, inout float3 vNormal, float4 vFoWColor, out float vSnowAlpha )
+		{
+			float vIsSnow = GetSnow( vFoWColor );
+			
+			// --- UNIFIED LOTR SNOW LOGIC ---
+			// 1. Elevation
+			float elevation_factor = smoothstep( 20.0f, 26.0f, vPos.y ); 
+			
+			// 2. Incline: Snow settles on flat ground. 
+			// (Noise omitted. The mesh's normal map will naturally break up the edges!)
+			float incline_factor = smoothstep( 0.5f, 0.8f, vNormal.y );
+			
+			// 3. Base Winter Presence: 20% opacity frost everywhere it is winter
+			float base_frost = vIsSnow * 0.2f; 
+			
+			// 4. Thick Snow: Only applied where elevation and incline allow it. 
+			float thick_snow = vIsSnow * max(elevation_factor, incline_factor);
+			
+			// Combine factors
+			float total_snow = saturate( base_frost + thick_snow );
+			
+			// Camera distance fade (Vanilla mesh behavior)
+			float vOpacity = cam_distance( SNOW_CAM_MIN, SNOW_CAM_MAX );
+			vOpacity = SNOW_OPACITY_MIN + vOpacity * ( SNOW_OPACITY_MAX - SNOW_OPACITY_MIN );
+			
+			// Calculate final alpha, retaining the 1.5 multiplier to give the mesh snow proper visual weight
+			vSnowAlpha = saturate(total_snow * 1.5f) * vOpacity;
+			
+			// Apply Color
+			vColor = lerp( vColor, SNOW_COLOR, vSnowAlpha );
+			
+			return vColor;
+		}
+
+		void calculate_custom_map_tex_index_local( float2 base_uv, float2 tex_size, float2 texel_size, out float4 IndexU, out float4 IndexV, out float vAllSame )
+		{
+			// 1. Shift UVs by -0.5 to perfectly align the sampling grid with the vFrac blending grid
+			float2 grid_uv = base_uv * tex_size - 0.5f;
+
+			// 2. Snap to the top-left texel center of our 2x2 blending group
+			float2 snapped_uv = (floor(grid_uv) + 0.5f) * texel_size;
+
+			// 3. Sample the RED channel at the 4 corners of our 2x2 grid
+			float id_00 = tex2D( SpecularMap, snapped_uv ).a;                                     // Top-Left
+			float id_10 = tex2D( SpecularMap, snapped_uv + float2(texel_size.x, 0) ).a;           // Top-Right
+			float id_01 = tex2D( SpecularMap, snapped_uv + float2(0, texel_size.y) ).a;           // Bottom-Left
+			float id_11 = tex2D( SpecularMap, snapped_uv + float2(texel_size.x, texel_size.y) ).a;// Bottom-Right
+
+			// 4. Reconstruct the IDs vector
+			// We map them to the float4 channels: w = 00, x = 10, y = 01, z = 11
+			float4 IDs = float4(id_10, id_01, id_11, id_00);
+			IDs *= 255.0f;
+
+			// 5. Calculate vAllSame manually to skip blending if all 4 corners are identical
+			float max_diff = max( max( abs(IDs.x - IDs.w), abs(IDs.y - IDs.w) ), abs(IDs.z - IDs.w) );
+			vAllSame = (max_diff < 0.5f) ? 1.0f : 0.0f; 
+
+			// 6. Standard atlas math
+			IndexV = trunc( ( IDs + 0.5f ) / MAP_NUM_TILES );
+			IndexU = trunc( IDs - ( IndexV * MAP_NUM_TILES ) + 0.5f );
+		}
+
+		float4 main( VS_OUTPUT_PDXMESHSTANDARD In ) : PDX_COLOR
+		{
+			float2 local_tex_size = float2(512.0f, 512.0f);
+			float2 local_texel_size = 1.0f / local_tex_size;
+
+			float vAllSame;
+			float4 IndexU;
+			float4 IndexV;
+
+			// 1. Fetch IDs using LOCAL model UVs and our corrected grid math
+			calculate_custom_map_tex_index_local( In.vUV0, local_tex_size, local_texel_size, IndexU, IndexV, vAllSame );
+
+			// 2. Calculate World UVs strictly for tiling
+			float2 map_uv = float2( ( ( In.vPos_Height.x+0.5f ) / MAP_SIZE_X ), ( ( In.vPos_Height.z+0.5f-MAP_SIZE_Y ) / -MAP_SIZE_Y ));
+			float2 vTileRepeat = map_uv * TERRAIN_TILE_FREQ;
+			vTileRepeat.x *= MAP_SIZE_X/MAP_SIZE_Y;
+
+			float lod = clamp( mipmapLevel( vTileRepeat ) - 0.5f, 0.0f, 6.0f );
+			float vMipTexels = pow( 2.0f, ATLAS_TEXEL_POW2_EXPONENT - lod );
+
+			// 3. Sample the Base Corner (Top-Left) for BOTH Diffuse and Normal
+			float4 diffuse = tex2Dlod( DiffuseMap, sample_terrain( IndexU.w, IndexV.w, vTileRepeat, vMipTexels, lod ) ).rgba;
+			float4 normalRaw = tex2Dlod( NormalMap, sample_terrain( IndexU.w, IndexV.w, vTileRepeat, vMipTexels, lod ) );
+			float vGlossiness = diffuse.a;
+
+			// 4. Standard Bilinear Blending for Diffuse AND Normal
+			if ( vAllSame < 1.0f )
+			{
+				// Diffuse Corners
+				float4 Color10 = tex2Dlod( DiffuseMap, sample_terrain( IndexU.x, IndexV.x, vTileRepeat, vMipTexels, lod ) ).rgba;
+				float4 Color01 = tex2Dlod( DiffuseMap, sample_terrain( IndexU.y, IndexV.y, vTileRepeat, vMipTexels, lod ) ).rgba;
+				float4 Color11 = tex2Dlod( DiffuseMap, sample_terrain( IndexU.z, IndexV.z, vTileRepeat, vMipTexels, lod ) ).rgba;
+
+				// Normal Corners
+				float4 Norm10 = tex2Dlod( NormalMap, sample_terrain( IndexU.x, IndexV.x, vTileRepeat, vMipTexels, lod ) );
+				float4 Norm01 = tex2Dlod( NormalMap, sample_terrain( IndexU.y, IndexV.y, vTileRepeat, vMipTexels, lod ) );
+				float4 Norm11 = tex2Dlod( NormalMap, sample_terrain( IndexU.z, IndexV.z, vTileRepeat, vMipTexels, lod ) );
+
+				float2 vFrac = frac( In.vUV0 * local_tex_size - 0.5f );
+
+				// Blend Diffuse
+				diffuse = lerp(
+					lerp( diffuse, Color10, vFrac.x ), 
+					lerp( Color01, Color11, vFrac.x ), 
+					vFrac.y );
+					
+				// Blend Normal
+				normalRaw = lerp(
+					lerp( normalRaw, Norm10, vFrac.x ), 
+					lerp( Norm01, Norm11, vFrac.x ), 
+					vFrac.y );
+			}
+
+			// Process the Blended Normal & Specular ---
+			// Extract Specular from the Alpha channel of the normal map
+			float vSpec = normalRaw.a;
+
+			// Unpack the terrain detail normal (NOTE: HoI4 swizzles this as .rbg!)
+			float3 detail_normal = normalize( normalRaw.rbg - 0.5f );
+
+			// Create the TBN matrix from the mesh's vertex data to wrap the detail normal over the 3D shape
+			float3x3 TBN = Create3x3( normalize( In.vTangent ), normalize( In.vBitangent ), normalize( In.vNormal ) );
+			float3 vNormal = normalize( mul( detail_normal, TBN ) );
+
+			// --- 5. Terrain Color Tint ---
+			float3 TerrainColor = tex2D( SpecularMap, In.vUV0 ).rgb;
+			diffuse.rgb = GetOverlay( diffuse.rgb, TerrainColor, COLORMAP_OVERLAY_STRENGTH );
+
+			// --- 6. Snow Application ---
+			float3 vPos = In.vPos_Height.xyz;
+			float4 vMudSnow = GetMudSnowColor( vPos, SnowMudData );
+			float vSnowAlpha = 1.0f - vSpec; // Use the actual specular value for snow alpha
+
+			// Apply the mesh-specific snow function using our new vNormal!
+			diffuse.rgb = ApplySnowMesh( diffuse.rgb, vPos, vNormal, vMudSnow, vSnowAlpha );
+
+			// --- 7. Gradient Borders & Secondary Color Mask ---
+			float vBloomAlpha = 0.0f;
+			gradient_border_apply( diffuse.rgb, vNormal, map_uv, GradientBorderChannel1, GradientBorderChannel2, 1.0f, vGBCamDistOverride_GBOutlineCutoff.zw, vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+			secondary_color_mask( diffuse.rgb, vNormal, map_uv, ProvinceSecondaryColorMap, vBloomAlpha );
+
+			// --- 8. Lighting Properties Setup ---
+			LightingProperties lightingProperties;
+			lightingProperties._WorldSpacePos = vPos;
+			lightingProperties._ToCameraDir = normalize(vCamPos - vPos);
+			lightingProperties._Normal = vNormal;
+
+			#ifdef PDX_IMPROVED_BLINN_PHONG
+				float SpecRemapped = vSpec * vSpec * 0.4f;
+				float MetalnessRemapped = 0.0f;
+				lightingProperties._Diffuse = MetalnessToDiffuse(MetalnessRemapped, diffuse.rgb);
+				lightingProperties._Glossiness = vGlossiness;
+				lightingProperties._SpecularColor = MetalnessToSpec(MetalnessRemapped, diffuse.rgb, SpecRemapped);
+				lightingProperties._NonLinearGlossiness = GetNonLinearGlossiness(vGlossiness);
+			#else
+				lightingProperties._Diffuse = diffuse.rgb;
+				lightingProperties._Glossiness = vGlossiness;
+				lightingProperties._SpecularColor = vec3(vSpec);
+				lightingProperties._NonLinearGlossiness = GetNonLinearGlossiness(vGlossiness);
+			#endif
+
+			float3 diffuseLight = vec3(0.0);
+			float3 specularLight = vec3(0.0);
+
+			// --- 8. Screen Coordinates & Shadows ---
+			// Translate our 3D world position into 2D clip-space monitor coordinates
+			float4 clipSpacePos = mul( ViewProjectionMatrix, float4(vPos, 1.0f) );
+			float4 vScreenCoord;
+
+			// Convert to UV space (0.0 to 1.0)
+			vScreenCoord.x = ( clipSpacePos.x * 0.5f + clipSpacePos.w * 0.5f );
+			vScreenCoord.y = ( clipSpacePos.w * 0.5f - clipSpacePos.y * 0.5f );
+
+			#ifdef PDX_OPENGL
+				vScreenCoord.y = -vScreenCoord.y;
+			#endif
+
+			vScreenCoord.z = clipSpacePos.w;
+			vScreenCoord.w = clipSpacePos.w;
+
+			// We dont have access to ShadowMap, so we just set this to 1.0 (it works)
+			//fShadowTerm = max(GetShadowScaled( SHADOW_WEIGHT_TERRAIN, vScreenCoord, ShadowMap ), 0.1f );
+			float fShadowTerm = 1.0f;
+
+			// --- 9. Light Calculation ---
+			CalculateSunLight( lightingProperties, fShadowTerm, diffuseLight, specularLight );
+
+			#ifdef PDX_IMPROVED_BLINN_PHONG
+				CalculatePointLights( lightingProperties, LightDataMap, LightIndexMap, diffuseLight, specularLight);
+			#endif
+
+			#ifdef PDX_IMPROVED_BLINN_PHONG
+				float3 vEyeDir = normalize( vPos - vCamPos.xyz );
+				float3 reflectiveColor = FAKE_CUBEMAP_COLOR; 
+				specularLight += reflectiveColor * FresnelGlossy(lightingProperties._SpecularColor, -vEyeDir, lightingProperties._Normal, lightingProperties._Glossiness);
+			#endif
+
+			float3 vOut = ComposeLightSnow(lightingProperties, diffuseLight, specularLight, vSnowAlpha);
+
+			// Smoothly remove lighting/shadows near country borders so the colors pop
+			vOut = lerp( vOut, diffuse.rgb, BORDER_LIGHT_REMOVAL_FACTOR * ( 1 - vBloomAlpha ) );
+
+			// --- 10. Global Map Effects (Day/Night & Fog of War) ---
+			float3 vGlobeNormal = CalcGlobeNormal( vPos.xz );
+			float vNightFactor = DayNightFactor( vGlobeNormal );
+
+			// We don't have access to ShadowMap, so FOW is not shown for this object.
+			//float3 vFOW = ApplyFOW( vOut, ShadowMap, vScreenCoord );
+			//vOut = lerp( vFOW, vOut, BORDER_FOW_REMOVAL_FACTOR * ( 1 - vBloomAlpha ) );
+
+			#ifdef PDX_IMPROVED_BLINN_PHONG
+				vOut = ApplyDistanceFog( vOut, vPos );
+			#endif
+
+			vOut = DayNightWithBlend( vOut, vGlobeNormal, lerp(BORDER_NIGHT_DESATURATION_MAX, 1.0f, vBloomAlpha) );
+
+			// --- 11. Final Alpha & Fades ---
+			float final_alpha = 1.0f;
+
+			// 1. Long Distance Fade (Paper Map Transition)
+			// Applies to ALL mountains using this shader so they don't obstruct the paper map
+			float far_fade = 1.0f - smoothstep(500.0f, 750.0f, vCamPos.y);
+			final_alpha *= far_fade;
+
+			#ifdef LOTR_UNDERGROUND_MOUNTAIN
+				float2 ndc_pos = clipSpacePos.xy / clipSpacePos.w;
+				ndc_pos.y *= 0.6f;
+
+				// Calculate distance from screen center. 
+				float dist_from_center = length(ndc_pos);
+
+				// Camera height factor: 0.0 when zoomed in (<100), 1.0 when zoomed out (>200)
+				float height_factor = smoothstep(65.0f, 200.0f, vCamPos.y);
+				height_factor = sqrt(height_factor);
+
+				// --- 1. CONTROL THE SIZE OF THE HOLE ---
+				float max_hole_radius = 1.5f; 
+				float hole_radius = lerp(max_hole_radius, 0.0f, height_factor);
+
+				// --- 2. SMOOTH TRANSITION FOR ALPHA AND COLOR ---
+				// You might want to slightly increase thickness since a gradient 
+				// takes up more visual space than a hard line to be noticeable.
+				float outline_thickness = 0.1f; 
+
+				// smoothstep returns 0.0 when dist <= hole_radius (completely inside the hole)
+				// returns 1.0 when dist >= hole_radius + thickness (completely outside)
+				// interpolates smoothly between 0.0 and 1.0 across the outline thickness.
+				float transition_factor = smoothstep(hole_radius, hole_radius + outline_thickness, dist_from_center);
+
+				// Prevent a blurry dark dot from rendering in the center when fully zoomed out.
+				// As the hole_radius approaches 0, we force the transition_factor to 1.0 (normal color/alpha).
+				float hole_visibility = smoothstep(0.0f, 0.05f, hole_radius);
+				transition_factor = lerp(1.0f, transition_factor, hole_visibility);
+
+				// --- 3. APPLY TO OUTPUT ---
+				// Fade alpha to 0.0 (transparent) as it approaches the hole edge.
+				final_alpha *= transition_factor;
+
+				// Fade color to 0.0 (black) as it approaches the hole edge.
+				// Multiplying by transition_factor is mathematically equivalent to lerp(float3(0,0,0), vOut.rgb, transition_factor).
+				vOut.rgb *= transition_factor;
+			#endif
+
+			return float4(vOut, final_alpha);
+		}
+	]]
+
 	MainCode PixelPdxMeshStandard
 	[[
 		float3 ApplySnowMesh( float3 vColor, float3 vPos, inout float3 vNormal, float4 vFoWColor, out float vSnowAlpha )
@@ -602,6 +873,16 @@ PixelShader =
 			alpha *= clipalpha * smoothalpha;
 
 			return float4(vColor, alpha);
+
+		// TRANSLUCENT effect contains FADE_AT_DISTANCE by default, because I say so
+		#elif defined(TRANSLUCENT)
+			float4 ret = lerp(vDiffuse, float4(vColor, vDiffuse.a), 0.7f);
+			ret.a *= 1.0f-smoothstep(200, 400, vCamPos.y);
+			return ret;
+
+		#elif defined(FADE_AT_DISTANCE)
+			return float4(vColor, 1.0f-smoothstep(200, 400, vCamPos.y));
+
 		#else
 			return float4(vColor, max(alpha, MinMeshAlpha));
 		#endif
@@ -735,6 +1016,13 @@ BlendState BlendStateAlphaTestTrain
 	WriteMask = "RED|GREEN|BLUE"
 }
 
+BlendState BlendStateTranslucent
+{
+	BlendEnable = yes
+	SourceBlend = "SRC_ALPHA"
+	DestBlend = "INV_SRC_ALPHA"
+}
+
 Effect PdxMeshStandard
 {
 	VertexShader = "VertexPdxMeshStandard"
@@ -768,6 +1056,48 @@ Effect PdxMeshStandardSnow
 }
 
 Effect PdxMeshStandardSnowShadow
+{
+	VertexShader = "VertexPdxMeshStandardShadow"
+	PixelShader = "PixelPdxMeshStandardShadow"
+}
+
+Effect PdxMeshStandardLotr
+{
+	VertexShader = "VertexPdxMeshStandard"
+	PixelShader = "PixelPdxMeshStandardLotr"
+	BlendState = "BlendStateAlphaTestTrain"
+	Defines = { "PDX_IMPROVED_BLINN_PHONG" }
+}
+
+Effect PdxMeshStandardLotrShadow
+{
+	VertexShader = "VertexPdxMeshStandardShadow"
+	PixelShader = "PixelPdxMeshStandardShadow"
+}
+
+Effect PdxMeshStandardLotrFade
+{
+	VertexShader = "VertexPdxMeshStandard"
+	PixelShader = "PixelPdxMeshStandardLotr"
+	BlendState = "BlendStateAlphaTestTrain"
+	Defines = { "PDX_IMPROVED_BLINN_PHONG" "LOTR_UNDERGROUND_MOUNTAIN" }
+}
+
+Effect PdxMeshStandardLotrFadeShadow
+{
+	VertexShader = "VertexPdxMeshStandardShadow"
+	PixelShader = "PixelPdxMeshStandardShadow"
+}
+
+Effect PdxMeshStandardLotrFadeAmbientObject
+{
+	VertexShader = "VertexPdxMeshStandard"
+	PixelShader = "PixelPdxMeshStandard"
+	BlendState = "BlendStateTranslucent"
+	Defines = { "EMISSIVE" "PDX_IMPROVED_BLINN_PHONG" "RIM_LIGHT" "PDX_SNOW" "PDX_GRADIENT_BORDERS" "FADE_AT_DISTANCE" }
+}
+
+Effect PdxMeshStandardLotrFadeAmbientObjectShadow
 {
 	VertexShader = "VertexPdxMeshStandardShadow"
 	PixelShader = "PixelPdxMeshStandardShadow"
@@ -856,6 +1186,19 @@ Effect PdxMeshAdvancedAnimSkinnedShadow
 	PixelShader = "PixelPdxMeshStandardShadow"
 }
 
+Effect PdxMeshTranslucent
+{
+	VertexShader = "VertexPdxMeshStandard"
+	PixelShader = "PixelPdxMeshStandard"
+	BlendState = "BlendStateTranslucent"
+	Defines = { "TRANSLUCENT" }
+}
+
+Effect PdxMeshTranslucentShadow
+{
+	VertexShader = "VertexPdxMeshStandardShadow"
+	PixelShader = "PixelPdxMeshNoShadow"
+}
 
 Effect PdxMeshAlphaBlend
 {

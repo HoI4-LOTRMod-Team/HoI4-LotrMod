@@ -1,0 +1,298 @@
+
+
+
+
+
+
+
+
+# variable names:
+# presence_MIR, presence_DGU, presence_SPI
+
+
+# relevant states
+# 191 - Mirkwood Outskirts
+# 227 - West Undeep (the other outskirts)
+# 231 - Darkmist (southern dgu borderstate)
+# 233 - Amon Lanc Outskits (middle dgu bordder)
+# 232 - Gathburz (northern dgu border)
+# 86 - Southern Mirkwood / Drownholt
+# 228 - Naur Hoit (south-eastern tip)
+# 190 - Forest Narrows
+# 262 - Southern Forest Narrows
+# 85 - Taur Morvith (western middle, owned by MIR)
+# 230 - Mirk-Eaves (above Eastbight)
+# 84 - Emyn Lum (Underneath Thranduils halls to the right)
+# 80 - Ashenlades (border with ERE)
+# 226 - Scuttledells (spider north)
+# 229 - Dourstocks (southern spider territory (west)
+
+
+contest_for_mirkwood_setup = {
+	set_global_flag = cfm_active
+	SPI = {
+		add_ideas = CFM_base_gain_SPI
+		set_country_flag = cfm_allowed
+	}
+	DGU = {
+		add_ideas = CFM_base_gain_DGU
+		set_country_flag = cfm_allowed
+	}
+	MIR = {
+		set_country_flag = cfm_allowed
+	}
+
+	DGU = { set_variable = { cfm_presence = 18.3 } }
+	SPI = { set_variable = { cfm_presence = 4.3 } }
+
+	191 = {
+		set_state_flag = cfm_allowed
+		set_state_flag = cfm_south_of_narrows
+		set_state_flag = cfm_dgu_border
+	}
+	227 = {
+		set_state_flag = cfm_allowed
+		set_state_flag = cfm_south_of_narrows
+	}
+	231 = {
+		set_state_flag = cfm_allowed
+		set_state_flag = cfm_south_of_narrows
+		set_state_flag = cfm_dgu_border
+	}
+	233 = {
+		set_state_flag = cfm_allowed
+		set_state_flag = cfm_south_of_narrows
+		set_state_flag = cfm_dgu_border
+	}
+	232 = {
+		set_state_flag = cfm_allowed
+		set_state_flag = cfm_south_of_narrows
+		set_state_flag = cfm_dgu_border
+	}
+	86  = {
+		set_state_flag = cfm_allowed
+		set_state_flag = cfm_south_of_narrows
+	}
+	228 = {
+		set_state_flag = cfm_allowed
+		set_state_flag = cfm_south_of_narrows
+	}
+	262 = {
+		set_state_flag = cfm_allowed
+		set_state_flag = cfm_south_of_narrows
+	}
+	190 = {
+		set_state_flag = cfm_allowed
+	}
+	85  = {
+		set_state_flag = cfm_allowed
+	}
+	230 = {
+		set_state_flag = cfm_allowed
+	}
+	84  = {
+		set_state_flag = cfm_allowed
+	}
+	80  = {
+		set_state_flag = cfm_allowed
+	}
+	226 = {
+		set_state_flag = cfm_allowed
+	}
+	229 = {
+		set_state_flag = cfm_allowed
+	}
+}
+
+# disable the cfm mechanic
+cfm_deactivate = {
+	clr_global_flag = cfm_active
+	every_state = {
+		limit = { has_state_flag = cfm_allowed }
+		clr_state_flag = cfm_allowed
+	}
+	if = {
+		limit = { SPI = { has_country_flag = cfm_allowed } }
+		SPI = { country_event = mirkwood.160 }
+	}
+	if = {
+		limit = { DGU = { has_country_flag = cfm_allowed } }
+		DGU = { country_event = mirkwood.160 }
+	}
+}
+
+
+cfm_disable_for_country = {
+	clr_country_flag = cfm_allowed
+	custom_effect_tooltip = cfm_disable_for_country_tt
+}
+
+
+cfm_increase_10p = {
+	if = {
+		limit = { has_cfm_active = yes }
+		add_to_variable = {
+			var = cfm_presence
+			value = 10.0
+			tooltip = cfm_increase_presence_tt
+		}
+	}
+	cfm_on_presence_changed = yes
+}
+
+cfm_weekly_update = {
+	if = {
+		limit = { has_global_flag = cfm_active DGU = { has_country_flag = cfm_allowed } }
+		DGU = { cfm_update_presence_weekly = yes }
+	}
+	if = {
+		limit = { has_global_flag = cfm_active SPI = { has_country_flag = cfm_allowed } }
+		SPI = { cfm_update_presence_weekly = yes }
+	}
+}
+
+cfm_update_presence_weekly = {
+	set_temp_variable = { temp_presence_gain = modifier@cfm_presence_gain }
+	set_temp_variable = { temp_presence_gain_mult = modifier@cfm_presence_gain_factor }
+	add_to_temp_variable = { temp_presence_gain_mult = 1.0 }
+	multiply_temp_variable = { temp_presence_gain = temp_presence_gain_mult }
+
+	# increase presence
+	add_to_variable = { cfm_presence = temp_presence_gain }
+
+	clamp_variable = { var = cfm_presence min = 0 max = 100 }
+
+	cfm_on_presence_changed = yes
+}
+
+cfm_on_presence_changed = {
+	clamp_variable = { var = cfm_presence min = 0 max = 100 }
+}
+
+cfm_attack_state = {
+	save_event_target_as = target_claimed_state
+	MIR = {
+		country_event = mirkwood.159
+	}
+
+	cfm_reset_presence = yes
+	transfer_state_to = ROOT
+
+	# Handle force-linked states
+	every_state = {
+		limit = {
+			impassable = yes
+			has_variable = force_linked_to
+			check_variable = { force_linked_to = PREV.id }
+		}
+		transfer_state_to = ROOT
+	}
+
+	clr_state_flag = cfm_allowed # every state can only be seized once
+
+	MIR = { add_to_variable = { cfm_states_seized = 1 } }
+	if = {
+		limit = { ROOT = { tag = SPI } }
+		MIR = { add_to_variable = { cfm_states_seized_SPI = 1 } }
+	}
+	else_if = {
+		limit = { ROOT = { tag = DGU } }
+		MIR = { add_to_variable = { cfm_states_seized_DGU = 1 } }
+	}
+
+	ROOT = {
+		clr_country_flag = cfm_event_window_visible
+	}
+
+	ROOT = {
+		if = {
+			limit = { NOT = { has_variable = cfm_num_states_seized } }
+			set_variable = { cfm_num_states_seized = 0 }
+		}
+		add_to_variable = { cfm_num_states_seized = 1 }
+	}
+
+	if = {
+		limit = {
+			ROOT = { tag = DGU has_completed_focus = DGU_learn_from_our_raids }
+		}
+		ROOT = {
+			army_experience = 25
+			add_mastery = {
+				amount = 50
+				folder = land
+			}
+		}
+	}
+
+	if = {
+		limit = {
+			ROOT = { tag = DGU has_completed_focus = DGU_local_propaganda }
+		}
+		ROOT = { add_political_power = 75 }
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+		}
+	}
+	if = {
+		limit = {
+			ROOT = { tag = DGU has_completed_focus = DGU_local_recruitment }
+		}
+
+		if = {
+			limit = {
+				ROOT = { NOT = { has_template = "Local Militia" } }
+			}
+			ROOT = {
+				division_template = {
+					name = "Local Militia"
+					priority = 0
+					template_counter = 0
+					regiments = {
+						infantry = { x = 0 y = 0 }
+						infantry = { x = 0 y = 1 }
+						infantry = { x = 0 y = 2 }
+						infantry = { x = 1 y = 0 }
+						infantry = { x = 1 y = 1 }
+					}
+				}
+			}
+		}
+		create_unit = {
+			division = "name = \"Local Militiamen\" division_template = \"Local Militia\" start_experience_factor = 0.5"
+			owner = DGU
+		}
+	}
+}
+
+cfm_reset_presence = {
+	ROOT = { cfm_clear_restrictions = yes }
+
+	ROOT = { set_variable = { cfm_presence = 0 } }
+	custom_effect_tooltip = cfm_reset_presence_tt
+}
+
+cfm_restrict_to_state = {
+	custom_effect_tooltip = cfm_restrict_state_tt
+	add_to_array = {
+		array = ROOT.cfm_restricted_states
+		value = THIS
+	}
+	ROOT = {
+		set_country_flag = cfm_restriction_active
+	}
+}
+
+cfm_clear_restrictions = {
+	clear_array = root.cfm_restricted_states
+	clr_country_flag = cfm_restriction_active
+}
+
+cfm_add_restricted_boost = {
+	add_timed_idea = {
+		idea = CFM_restricted_boost
+		days = 150
+	}
+}

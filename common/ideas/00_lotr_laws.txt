@@ -3,12 +3,38 @@ ideas = {
 	taxation_law = {
 		law = yes
 
+		lack_of_tax_enforcement = {
+
+			picture = taxes_gob
+
+			allowed = {
+				tag = GOB
+			}
+			visible = {
+				NOT = { has_completed_focus = GOB_wealth_driven_ventures }
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				consumer_goods_expected_value = 0.8
+			}
+
+			allowed_to_remove = {
+				has_completed_focus = GOB_wealth_driven_ventures
+			}
+
+			cancel_if_invalid = no
+
+			level = 1
+		}
+
 		no_taxes = {
 
 			picture = law_no_taxes
 
 			allowed = {
-				always = yes
+				is_spiders_init = no
 			}
 			removal_cost = -1
 			cost = 300
@@ -32,7 +58,7 @@ ideas = {
 			picture = law_low_taxes
 
 			allowed = {
-				always = yes
+				is_spiders_init = no
 			}
 			removal_cost = -1
 			cost = 300
@@ -76,7 +102,7 @@ ideas = {
 			picture = law_medium_taxes
 
 			allowed = {
-				always = yes
+				is_spiders_init = no
 			}
 			removal_cost = -1
 			cost = 300
@@ -88,8 +114,12 @@ ideas = {
 
 			available = {
 				if = {
-					limit = { has_country_flag = medium_and_low_taxes_not_allowed }
-					NOT = { has_country_flag = medium_and_low_taxes_not_allowed }
+					limit = { tag = GOB }
+					has_completed_focus = GOB_secure_the_kings_hold
+				}
+				if = {
+					limit = { has_country_flag = medium_and_high_taxes_not_allowed }
+					NOT = { has_country_flag = medium_and_high_taxes_not_allowed }
 				}
 				else = {
 					always = yes
@@ -130,10 +160,14 @@ ideas = {
 			picture = law_high_taxes
 
 			allowed = {
-				always = yes
+				is_spiders_init = no
 			}
 
 			available = {
+				if = {
+					limit = { tag = GOB }
+					has_completed_focus = GOB_secure_the_kings_hold
+				}
 				if = {
 					limit = { tag = ROH }
 					has_completed_focus = ROH_wartime_economy
@@ -143,8 +177,8 @@ ideas = {
 					NOT = { has_idea = LTH_peasant_assembly }
 				}
 				else_if = {
-					limit = { has_country_flag = medium_and_low_taxes_not_allowed }
-					NOT = { has_country_flag = medium_and_low_taxes_not_allowed }
+					limit = { has_country_flag = medium_and_high_taxes_not_allowed }
+					NOT = { has_country_flag = medium_and_high_taxes_not_allowed }
 				}
 				else = {
 					always = yes
@@ -238,6 +272,187 @@ ideas = {
 			cancel_if_invalid = no
 			level = 4
 		}
+
+		high_taxes_gob = {
+
+			picture = taxes_gob_2
+
+			allowed = {
+				tag = GOB
+			}
+
+			available = {
+				if = {
+					limit = { tag = GOB }
+					has_completed_focus = GOB_the_king_takes_his_cut
+				}
+				if = {
+					limit = { tag = ROH }
+					has_completed_focus = ROH_wartime_economy
+				}
+				if = {
+					limit = { original_tag = LTH }
+					NOT = { has_idea = LTH_peasant_assembly }
+				}
+				else_if = {
+					limit = { has_country_flag = medium_and_high_taxes_not_allowed }
+					NOT = { has_country_flag = medium_and_high_taxes_not_allowed }
+				}
+				else = {
+					always = yes
+				}
+			}
+			visible = {
+				has_completed_focus = GOB_the_king_takes_his_cut
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				consumer_goods_expected_value = 0.08
+				political_power_gain = -0.35
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 5
+
+				modifier = {
+					factor = 0.5
+					date < 3019.1.1
+				}
+
+				modifier = {
+					factor = 0.8
+					date < 3020.1.1
+				}
+
+				modifier = {
+					factor = 0.5
+					NOT = { is_major = yes }
+				}
+
+				modifier = {
+					factor = 3
+					political_power_growth > 1.25
+					has_idea = medium_taxes
+				}
+
+				modifier = {
+					factor = 10
+					political_power_growth > 1.5
+					has_idea = medium_taxes
+				}
+
+				modifier = {
+					factor = 15
+					political_power_growth > 1.8
+					has_idea = medium_taxes
+				}
+
+				modifier = {
+					factor = 0.2
+					political_power_growth < 0.8
+					has_idea = medium_taxes
+				}
+
+				modifier = { # dont increase taxes if we need more mp
+					factor = 0
+					OR = {
+						has_idea = no_standing_army
+						has_idea = priviledged_service
+					}
+					has_manpower < 10000
+				}
+
+				modifier = { # dont increase taxes if we need more mp
+					factor = 0.5
+					has_manpower < 20000
+				}
+
+				modifier = {
+					factor = 0
+					political_power_growth < 0.5
+				}
+
+				modifier = {
+					factor = 0
+					NOT = { has_idea = medium_taxes }
+				}
+
+				modifier = {
+					factor = 0
+					original_tag = LTH
+					has_government = revolutionary
+				}
+			}
+
+			cancel_if_invalid = no
+			level = 4
+		}
+
+		economy_of_hunger = {
+
+			picture = taxes_spiders
+
+			allowed = {
+				is_spiders_init = yes
+			}
+			removal_cost = -1
+
+			visible = {
+				NOT = { has_completed_focus = SPI_economy_of_hunger }
+			}
+
+			modifier = {
+				consumer_goods_expected_value = 0.35
+			}
+
+			ai_will_do = {
+   				factor = 5
+			}
+
+			allowed_to_remove = {
+				always = no
+			}
+
+			cancel_if_invalid = no
+			default = yes
+			level = 2
+		}
+
+		economy_of_hunger_2 = {
+
+			picture = taxes_spiders
+
+			allowed = {
+				is_spiders_init = yes
+			}
+			removal_cost = -1
+
+			modifier = {
+				consumer_goods_expected_value = 0.2
+			}
+
+			visible = {
+				has_completed_focus = SPI_economy_of_hunger
+			}
+
+			ai_will_do = {
+   				factor = 50
+			}
+
+			allowed_to_remove = {
+				always = no
+			}
+
+			cancel_if_invalid = no
+			default = yes
+			level = 3
+		}
 	}
 
 	trade_law = {
@@ -249,11 +464,23 @@ ideas = {
 			picture = law_closed_economy
 
 			allowed = {
-				tag = LTH
+				OR = {
+					tag = LTH
+					tag = MIR
+				}
 			}
 			visible = {
-				tag = LTH
-				has_completed_focus = lth_sealtheborders
+				OR = {
+					AND = {
+						tag = LTH
+						has_completed_focus = lth_sealtheborders
+					}
+					AND = {
+						tag = MIR
+						has_completed_focus = MIR_shut_the_gates
+					}
+					tag = SPI
+				}
 			}
 			removal_cost = -1
 			cost = 300
@@ -460,6 +687,81 @@ ideas = {
 			level = 1
 		}
 
+		gob_special_free_trade = {
+
+			picture = trade_gob
+
+			allowed = {
+				tag = GOB
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				min_export = 0.8
+				trade_opinion_factor = 0.15
+				local_resources_factor = 0.15
+				political_power_gain = 0.0
+				civilian_intel_to_others = 40.0
+				navy_intel_to_others = 20.0
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			visible = {
+				has_completed_focus = GOB_open_the_black_markets
+				NOT = { has_completed_focus = GOB_anyone_with_coin_welcome }
+			}
+
+			ai_will_do = {
+   				factor = 10
+				modifier = {
+					factor = 0
+					has_completed_focus = GOB_anyone_with_coin_welcome
+				}
+   			}
+
+			cancel_if_invalid = no
+			level = 1
+		}
+
+		gob_special_free_trade_2 = {
+
+			picture = trade_gob
+
+			allowed = {
+				tag = GOB
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				min_export = 0.8
+				trade_opinion_factor = 0.75
+				local_resources_factor = 0.15
+				political_power_gain = 0.0
+				civilian_intel_to_others = 40.0
+				navy_intel_to_others = 20.0
+			}
+
+			allowed_to_remove = {
+				always = yes
+			}
+
+			ai_will_do = {
+   				factor = 10
+   			}
+
+			visible = {
+				has_completed_focus = GOB_anyone_with_coin_welcome
+			}
+
+			cancel_if_invalid = no
+			level = 1
+		}
+
 		protectionist_trade = {
 
 			picture = law_protectionist_trade
@@ -544,6 +846,32 @@ ideas = {
 
 	conscription_law = {
 		law = yes
+
+		spider_conscription = {
+
+			picture = conscription_spiders
+
+			allowed = {
+				tag = SPI
+			}
+			removal_cost = -1
+			cost = 300
+
+			modifier = {
+				hidden_modifier = {
+					conscription = 0.0	
+				}
+				
+				custom_modifier_tooltip = no_mercenaries_spiders_tt
+			}
+
+			allowed_to_remove = {
+				always = no
+			}
+
+			cancel_if_invalid = no
+			level = 0
+		}
 
 		no_standing_army = {
 
@@ -686,7 +1014,7 @@ ideas = {
 			cost = 300
 
 			modifier = {
-				conscription = 0.02
+				conscription = 0.025
 				political_power_gain = -0.15
 				training_time_factor = 0.1
 			}
@@ -778,7 +1106,7 @@ ideas = {
 			cost = 300
 
 			modifier = {
-				conscription = 0.04
+				conscription = 0.05
 				political_power_gain = -0.3
 				industrial_capacity_factory = -0.1
 				industrial_capacity_dockyard = -0.1
@@ -978,6 +1306,40 @@ ideas = {
 	mercenary_law = {
 		law = yes
 
+		no_mercenaries_spiders = {
+
+			picture = mercs_spiders
+
+			allowed = {
+				tag = SPI
+			}
+			removal_cost = -1
+
+			modifier = {
+				hidden_modifier = {
+					consumer_goods_factor = 0.0
+					conscription = 0.00	
+				}
+
+				custom_modifier_tooltip = no_mercenaries_spiders_tt
+			}
+
+			allowed_to_remove = {
+				NOT = { tag = SPI }
+			}
+
+			ai_will_do = {
+   				factor = 2
+				modifier = {
+					factor = 0
+					manpower_per_military_factory < 100
+				}
+			}
+
+			cancel_if_invalid = no
+			level = 1
+		}
+
 		no_mercenaries = {
 
 			picture = law_no_mercenaries
@@ -1022,6 +1384,16 @@ ideas = {
 				conscription = 0.006
 			}
 
+			available = {
+				if = {
+					limit = { tag = MIR }
+					NOT = { has_idea = MIR_elven_arrogance }
+				}
+				else = {
+					always = yes
+				}
+			}
+
 			allowed_to_remove = {
 				always = yes
 			}
@@ -1060,13 +1432,23 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.1
-				conscription = 0.03
+				consumer_goods_factor = 0.12
+				conscription = 0.025
 				army_org_factor = -0.05
 			}
 
 			allowed_to_remove = {
 				always = yes
+			}
+
+			available = {
+				if = {
+					limit = { tag = MIR }
+					NOT = { has_idea = MIR_elven_arrogance }
+				}
+				else = {
+					always = yes
+				}
 			}
 
 			ai_will_do = {
@@ -1086,6 +1468,11 @@ ideas = {
 					manpower_per_military_factory < 100
 					num_of_civilian_factories > 45
 				}
+				modifier = {
+					factor = 0
+					tag = GOB
+					NOT = { has_completed_focus = GOB_secure_the_kings_hold }
+				}
 			}
 
 			cancel_if_invalid = no
@@ -1102,13 +1489,23 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.2
-				conscription = 0.06
+				consumer_goods_factor = 0.24
+				conscription = 0.05
 				army_org_factor = -0.1
 			}
 
 			allowed_to_remove = {
 				always = yes
+			}
+
+			available = {
+				if = {
+					limit = { tag = MIR }
+					NOT = { has_idea = MIR_elven_arrogance }
+				}
+				else = {
+					always = yes
+				}
 			}
 
 			ai_will_do = {
@@ -1127,6 +1524,11 @@ ideas = {
 					factor = 5
 					manpower_per_military_factory < 100
 					num_of_civilian_factories > 60
+				}
+				modifier = {
+					factor = 0
+					tag = GOB
+					NOT = { has_completed_focus = GOB_secure_the_kings_hold }
 				}
 			}
 
@@ -1154,6 +1556,10 @@ ideas = {
 			}
 
 			available = {
+				if = {
+					limit = { tag = MIR }
+					NOT = { has_idea = MIR_elven_arrogance }
+				}
 				has_government = belligerent
 			}
 
@@ -1180,6 +1586,55 @@ ideas = {
 	centralization_law = {
 		law = yes
 
+		swarm_centralization = {
+
+			picture = cen_swarm
+
+			allowed = {
+				original_tag = SPI
+			}
+			removal_cost = -1
+
+			modifier = {
+				political_power_gain = -0.2
+				consumer_goods_factor = -0.1
+			}
+
+			allowed_to_remove = {
+				always = no
+			}
+
+			ai_will_do = {
+   				factor = 1
+   			}
+		}
+
+		improved_swarm_centralization = {
+
+			picture = cen_swarm
+
+			allowed = {
+				original_tag = SPI
+			}
+			visible = {
+				has_completed_focus = SPI_the_queens_will
+			}
+			removal_cost = -1
+
+			modifier = {
+				political_power_gain = -0.1
+				consumer_goods_factor = -0.1
+			}
+
+			allowed_to_remove = {
+				always = no
+			}
+
+			ai_will_do = {
+   				factor = 1
+   			}
+		}
+
 		communal_decentralization = {
 
 			picture = law_communal_decentralization
@@ -1190,11 +1645,14 @@ ideas = {
 			available = {
 				has_government = revolutionary
 			}
+			allowed = {
+				NOT = { original_tag = SPI }
+			}
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = -0.35
-				consumer_goods_factor = -0.35
+				political_power_gain = -0.2
+				consumer_goods_factor = -0.2
 				taxation_law_cost_factor = 0.2
 				trade_law_cost_factor = 0.2
 				conscription_law_cost_factor = 0.2
@@ -1221,15 +1679,15 @@ ideas = {
 			picture = law_no_centralization
 
 			allowed = {
-				always = yes
+				NOT = { original_tag = SPI }
 			}
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = -0.15
-				taxation_law_cost_factor = 0.15
-				trade_law_cost_factor = 0.15
-				conscription_law_cost_factor = 0.15
+				political_power_gain = -0.1
+				taxation_law_cost_factor = 0.1
+				trade_law_cost_factor = 0.1
+				conscription_law_cost_factor = 0.1
 			}
 
 			allowed_to_remove = {
@@ -1245,15 +1703,15 @@ ideas = {
 			picture = law_weak_centralization
 
 			allowed = {
-				always = yes
+				NOT = { original_tag = SPI }
 			}
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = -0.05
-				taxation_law_cost_factor = 0.05
-				trade_law_cost_factor = 0.05
-				conscription_law_cost_factor = 0.05
+				political_power_gain = 0.0
+				taxation_law_cost_factor = 0.0
+				trade_law_cost_factor = 0.0
+				conscription_law_cost_factor = 0.0
 			}
 
 			allowed_to_remove = {
@@ -1284,7 +1742,7 @@ ideas = {
 			picture = law_moderate_centralization
 
 			allowed = {
-				always = yes
+				NOT = { original_tag = SPI }
 			}
 			available = {
 				has_war_support > 0.25
@@ -1292,10 +1750,10 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.1
-				taxation_law_cost_factor = -0.1
-				trade_law_cost_factor = -0.1
-				conscription_law_cost_factor = -0.1
+				political_power_gain = 0.15
+				taxation_law_cost_factor = -0.15
+				trade_law_cost_factor = -0.15
+				conscription_law_cost_factor = -0.15
 			}
 
 			allowed_to_remove = {
@@ -1319,7 +1777,7 @@ ideas = {
 			picture = law_strong_centralization
 
 			allowed = {
-				always = yes
+				NOT = { original_tag = SPI }
 			}
 			available = {
 				if = {
@@ -1349,10 +1807,10 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.3
-				taxation_law_cost_factor = -0.3
-				trade_law_cost_factor = -0.3
-				conscription_law_cost_factor = -0.3
+				political_power_gain = 0.35
+				taxation_law_cost_factor = -0.35
+				trade_law_cost_factor = -0.35
+				conscription_law_cost_factor = -0.35
 			}
 
 			allowed_to_remove = {
@@ -1382,7 +1840,7 @@ ideas = {
 			picture = law_very_strong_centralization
 
 			allowed = {
-				always = yes
+				NOT = { original_tag = SPI }
 			}
 			available = {
 				if = {
@@ -1410,10 +1868,10 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.45
-				taxation_law_cost_factor = -0.45
-				trade_law_cost_factor = -0.45
-				conscription_law_cost_factor = -0.45
+				political_power_gain = 0.5
+				taxation_law_cost_factor = -0.5
+				trade_law_cost_factor = -0.5
+				conscription_law_cost_factor = -0.5
 			}
 
 			allowed_to_remove = {
@@ -1443,7 +1901,7 @@ ideas = {
 			picture = law_wartime_centralization
 
 			allowed = {
-				always = yes
+				NOT = { original_tag = SPI }
 			}
 			available = {
 				if = {
@@ -1463,10 +1921,10 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.5
-				taxation_law_cost_factor = -0.5
-				trade_law_cost_factor = -0.5
-				conscription_law_cost_factor = -0.5
+				political_power_gain = 0.6
+				taxation_law_cost_factor = -0.6
+				trade_law_cost_factor = -0.6
+				conscription_law_cost_factor = -0.6
 			}
 
 			allowed_to_remove = {
@@ -1496,7 +1954,7 @@ ideas = {
 			picture = law_absolute_centralization
 
 			allowed = {
-				always = yes
+				NOT = { original_tag = SPI }
 			}
 			available = {
 				if = {
@@ -1510,10 +1968,10 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				political_power_gain = 0.7
-				taxation_law_cost_factor = -0.7
-				trade_law_cost_factor = -0.7
-				conscription_law_cost_factor = -0.7
+				political_power_gain = 0.75
+				taxation_law_cost_factor = -0.75
+				trade_law_cost_factor = -0.75
+				conscription_law_cost_factor = -0.75
 			}
 
 			allowed_to_remove = {

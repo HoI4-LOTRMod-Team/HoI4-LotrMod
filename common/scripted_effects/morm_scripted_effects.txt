@@ -1,0 +1,429 @@
+
+
+
+morm_initialize = {
+	# total/current menace
+	set_variable = { morm_menace = 0 }
+	set_variable = { morm_menace_prev = 0 }
+
+	# total/current menace from different sources
+	set_variable = { morm_menace_from_tension = 0 }
+	set_variable = { morm_menace_from_time_passed = 0 }
+	set_variable = { morm_menace_from_industry = 0 }
+	set_variable = { morm_menace_from_battalions = 0 }
+	set_variable = { morm_menace_from_casualties_inflicted = 0 }
+	set_variable = { morm_menace_from_territory_seized = 0 }
+	set_variable = { morm_menace_from_other = 0 }
+
+	# statring values (0)
+	set_variable = { morm_tension_prev = threat }
+	set_variable = { morm_time_prev = global.days_since_start }
+	set_variable = { morm_industry_prev = num_of_factories }
+	set_variable = { morm_battalions_prev = num_battalions }
+	set_variable = { morm_casualties_prev = 0 }
+	set_variable = { morm_territory_prev = num_controlled_states }
+
+	morm_recalculate_menace = yes
+
+	init_casualties_counts = yes # init casualty counting
+}
+
+morm_weekly = {
+	count_casualties_inflicted = yes
+}
+
+@menace_per_tension = 0.15
+@menace_per_time = 0.01
+@menace_per_industry = 0.06
+@menace_per_battalion = 0.015
+@menace_per_casualties = 0.01
+@menace_per_state_seized = 0.15
+
+
+morm_recalculate_menace = {
+	# NOTE: I can set/adjuste the factor of new tension added for specific things here.
+	# I could, for instance, add a "secret rearmament" focus or something that reduces the menace added by battalions
+
+	# menace from tension
+	if = {
+		limit = { check_variable = { threat > morm_tension_prev } }
+		set_temp_variable = { temp_diff = threat }
+		subtract_from_temp_variable = { temp_diff = morm_tension_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_tension }
+		multiply_temp_variable = { temp_diff = modifier@menace_from_tension_factor }
+		add_to_variable = { morm_menace_from_tension = temp_diff }
+		set_variable = { morm_tension_prev = threat }
+	}
+	# menace from time passed
+	if = {
+		limit = { check_variable = { global.days_since_start > morm_time_prev } }
+		set_temp_variable = { temp_diff = global.days_since_start }
+		subtract_from_temp_variable = { temp_diff = morm_time_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_time }
+		multiply_temp_variable = { temp_diff = modifier@menace_from_time_factor }
+		add_to_variable = { morm_menace_from_time_passed = temp_diff }
+		set_variable = { morm_time_prev = global.days_since_start }
+	}
+	# menace from industry
+	if = {
+		limit = { check_variable = { num_of_factories > morm_industry_prev } }
+		set_temp_variable = { temp_diff = num_of_factories }
+		subtract_from_temp_variable = { temp_diff = morm_industry_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_industry }
+		multiply_temp_variable = { temp_diff = modifier@menace_from_industry_factor }
+		add_to_variable = { morm_menace_from_industry = temp_diff }
+		set_variable = { morm_industry_prev = num_of_factories }
+	}
+	# menace from battalions
+	if = {
+		limit = { check_variable = { num_battalions > morm_battalions_prev } }
+		set_temp_variable = { temp_diff = num_battalions }
+		subtract_from_temp_variable = { temp_diff = morm_battalions_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_battalion }
+		multiply_temp_variable = { temp_diff = modifier@menace_from_battalion_factor }
+		add_to_variable = { morm_menace_from_battalions = temp_diff }
+		set_variable = { morm_battalions_prev = num_battalions }
+	}
+	# menace from casualties
+	if = {
+		limit = { check_variable = { casualties_total > morm_casualties_prev } }
+		set_temp_variable = { temp_diff = casualties_total }
+		subtract_from_temp_variable = { temp_diff = morm_casualties_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_casualties }
+		multiply_temp_variable = { temp_diff = modifier@menace_from_casualties_factor }
+		add_to_variable = { morm_menace_from_casualties_inflicted = temp_diff }
+		set_variable = { morm_casualties_prev = casualties_total }
+	}
+	# menace from states sized
+	if = {
+		limit = { check_variable = { num_controlled_states > morm_territory_prev } }
+		set_temp_variable = { temp_diff = num_controlled_states }
+		subtract_from_temp_variable = { temp_diff = morm_territory_prev }
+		multiply_temp_variable = { temp_diff = @menace_per_state_seized }
+		multiply_temp_variable = { temp_diff = modifier@menace_from_state_seized_factor }
+		add_to_variable = { morm_menace_from_territory_seized = temp_diff }
+		set_variable = { morm_territory_prev = num_controlled_states }
+	}
+
+	# calculate total menace
+	set_variable = { morm_menace = 0 }
+	add_to_variable = { morm_menace = morm_menace_from_tension }
+	add_to_variable = { morm_menace = morm_menace_from_time_passed }
+	add_to_variable = { morm_menace = morm_menace_from_industry }
+	add_to_variable = { morm_menace = morm_menace_from_battalions }
+	add_to_variable = { morm_menace = morm_menace_from_casualties_inflicted }
+	add_to_variable = { morm_menace = morm_menace_from_territory_seized }
+	add_to_variable = { morm_menace = morm_menace_from_other }
+
+	morm_menace_thresholds_check = yes
+}
+
+morm_increase_menace_huge = {
+	add_to_variable = {
+		tooltip = morm_increase_menace_tt
+		morm_menace_from_other = 15
+	}
+	hidden_effect = {
+		morm_recalculate_menace = yes
+	}
+}
+
+morm_increase_menace_medium = {
+	add_to_variable = {
+		tooltip = morm_increase_menace_tt
+		morm_menace_from_other = 5
+	}
+	hidden_effect = {
+		morm_recalculate_menace = yes
+	}
+}
+
+morm_increase_menace_small = {
+	add_to_variable = {
+		tooltip = morm_increase_menace_tt
+		morm_menace_from_other = 2.5
+	}
+	hidden_effect = {
+		morm_recalculate_menace = yes
+	}
+}
+
+
+# Concern
+@morm_menace_threshold_1 = 10
+# Risk
+@morm_menace_threshold_2 = 30
+# Danger
+@morm_menace_threshold_3 = 50
+# Calamity
+@morm_menace_threshold_4 = 70
+# Existential Threat
+@morm_menace_threshold_5 = 90
+
+# put effects based on menace here
+morm_menace_thresholds_check = {
+	if = {
+		limit = { check_variable = { morm_menace > morm_menace_prev } }
+
+
+		if = {
+			limit = {
+				morm_threshold_1 = yes
+				morm_threshold_1_prev = no
+			}
+			MOR = {
+				morm_level_1_effects_mordor = yes
+			}
+			every_possible_country = {
+				limit = { NOT = { original_tag = MOR } }
+				morm_level_1_effects_others = yes
+			}
+		}
+
+		else_if = {
+			limit = {
+				morm_threshold_2 = yes
+				morm_threshold_2_prev = no
+			}
+			MOR = {
+				morm_level_2_effects_mordor = yes
+			}
+			every_possible_country = {
+				limit = { NOT = { original_tag = MOR } }
+				morm_level_2_effects_others = yes
+			}
+		}
+
+		else_if = {
+			limit = {
+				morm_threshold_3 = yes
+				morm_threshold_3_prev = no
+			}
+			MOR = {
+				morm_level_3_effects_mordor = yes
+			}
+			every_possible_country = {
+				limit = { NOT = { original_tag = MOR } }
+				morm_level_3_effects_others = yes
+			}
+		}
+
+		else_if = {
+			limit = {
+				morm_threshold_4 = yes
+				morm_threshold_4_prev = no
+			}
+			MOR = {
+				morm_level_4_effects_mordor = yes
+			}
+			every_possible_country = {
+				limit = { NOT = { original_tag = MOR } }
+				morm_level_4_effects_others = yes
+			}
+		}
+
+		else_if = {
+			limit = {
+				morm_threshold_5 = yes
+				morm_threshold_5_prev = no
+			}
+			MOR = {
+				morm_level_5_effects_mordor = yes
+			}
+			every_possible_country = {
+				limit = { NOT = { original_tag = MOR } }
+				morm_level_5_effects_others = yes
+			}
+		}
+
+		
+
+
+		set_variable = { morm_menace_prev = morm_menace }
+	}
+}
+
+
+# Concern
+morm_level_1_effects_mordor = {
+	if = {
+		limit = { MOR = { has_idea = menace_bonus_1_1 } }
+		show_ideas_tooltip = menace_bonus_1_1
+	}
+	else_if = {
+		limit = { MOR = { has_idea = menace_bonus_1_2 } }
+		show_ideas_tooltip = menace_bonus_1_2
+	}
+	else = {
+		custom_effect_tooltip = choose_between_tt
+		show_ideas_tooltip = menace_bonus_1_1
+		custom_effect_tooltip = choose_between_OR_tt
+		show_ideas_tooltip = menace_bonus_1_2
+	}
+
+	if = {
+		limit = { is_ai = yes }
+		add_ideas = menace_bonus_1_1
+	}
+	else = {
+		set_country_flag = menace_level_1_choice_unlock
+	}
+}
+morm_level_1_effects_others = {
+	show_ideas_tooltip = menace_level_concern
+	hidden_effect = {
+		add_ideas = menace_level_concern
+	}
+}
+
+# Risk
+morm_level_2_effects_mordor = {
+	if = {
+		limit = { MOR = { has_idea = menace_bonus_2_1 } }
+		show_ideas_tooltip = menace_bonus_2_1
+	}
+	else_if = {
+		limit = { MOR = { has_idea = menace_bonus_2_2 } }
+		show_ideas_tooltip = menace_bonus_2_2
+	}
+	else = {
+		custom_effect_tooltip = choose_between_tt
+		show_ideas_tooltip = menace_bonus_2_1
+		custom_effect_tooltip = choose_between_OR_tt
+		show_ideas_tooltip = menace_bonus_2_2
+	}
+
+	if = {
+		limit = { is_ai = yes }
+		add_ideas = menace_bonus_2_1
+	}
+	else = {
+		set_country_flag = menace_level_2_choice_unlock
+	}
+}
+morm_level_2_effects_others = {
+	show_ideas_tooltip = menace_level_risk
+	hidden_effect = {
+		add_ideas = menace_level_risk
+	}
+}
+
+# Danger
+morm_level_3_effects_mordor = {
+	if = {
+		limit = { MOR = { has_idea = menace_bonus_3_1 } }
+		show_ideas_tooltip = menace_bonus_3_1
+	}
+	else_if = {
+		limit = { MOR = { has_idea = menace_bonus_3_2 } }
+		show_ideas_tooltip = menace_bonus_3_2
+	}
+	else = {
+		custom_effect_tooltip = choose_between_tt
+		show_ideas_tooltip = menace_bonus_3_1
+		custom_effect_tooltip = choose_between_OR_tt
+		show_ideas_tooltip = menace_bonus_3_2
+	}
+
+	if = {
+		limit = { is_ai = yes }
+		add_ideas = menace_bonus_3_1
+	}
+	else = {
+		set_country_flag = menace_level_3_choice_unlock
+	}
+}
+morm_level_3_effects_others = {
+	hidden_effect = {
+		if = {
+			limit = {
+				has_government = cooperative
+				NOT = { has_country_flag = has_received_morm_3_event }
+				has_opinion = { target = MOR value < 0 }
+				NOT = { has_war_with = MOR }
+				NOT = { is_ally_with = MOR }
+				NOT = { is_embargoing = MOR }
+			}
+			country_event = morm.100
+		}
+	}
+	show_ideas_tooltip = menace_level_danger
+	hidden_effect = {
+		add_ideas = menace_level_danger
+	}
+}
+
+# Calamity
+morm_level_4_effects_mordor = {
+	if = {
+		limit = { MOR = { has_idea = menace_bonus_4_1 } }
+		show_ideas_tooltip = menace_bonus_4_1
+	}
+	else_if = {
+		limit = { MOR = { has_idea = menace_bonus_4_2 } }
+		show_ideas_tooltip = menace_bonus_4_2
+	}
+	else = {
+		custom_effect_tooltip = choose_between_tt
+		show_ideas_tooltip = menace_bonus_4_1
+		custom_effect_tooltip = choose_between_OR_tt
+		show_ideas_tooltip = menace_bonus_4_2
+	}
+
+	if = {
+		limit = { is_ai = yes }
+		add_ideas = menace_bonus_4_1
+	}
+	else = {
+		set_country_flag = menace_level_4_choice_unlock
+	}
+}
+morm_level_4_effects_others = {
+	hidden_effect = {
+		if = {
+			limit = {
+				NOT = { has_country_flag = has_received_morm_3_event }
+				has_opinion = { target = MOR value < 0 }
+				NOT = { has_war_with = MOR }
+				NOT = { is_ally_with = MOR }
+				NOT = { is_embargoing = MOR }
+			}
+			country_event = morm.100
+		}
+		else_if = {
+			limit = {
+				NOT = { has_country_flag = has_received_morm_3_event }
+				NOT = { has_war_with = MOR }
+				NOT = { is_ally_with = MOR }
+			}
+			country_event = morm.101
+		}
+	}
+	show_ideas_tooltip = menace_level_calamity
+	hidden_effect = {
+		add_ideas = menace_level_calamity
+	}
+}
+
+# Existential Threat
+morm_level_5_effects_mordor = {
+	show_ideas_tooltip = menace_bonus_5
+
+	hidden_effect = {
+		add_ideas = menace_bonus_5
+	}
+}
+morm_level_5_effects_others = {
+	show_ideas_tooltip = menace_level_existential
+	hidden_effect = {
+		add_ideas = menace_level_existential
+	}
+}
+
+
+
+
+morm_end_menace = {
+	set_global_flag = morm_disabled
+}
+

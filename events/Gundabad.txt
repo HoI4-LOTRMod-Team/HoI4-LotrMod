@@ -15,9 +15,16 @@ country_event = {
 	
 	option = { #Accept
 		name = gundabad.1.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				FROm = { is_ai = no }
+			}
+		}
 		GUN = {
 			add_timed_idea = {
-				idea =  generic_cooperative
+				idea = generic_cooperative
 				days = 365
 			}
 		}
@@ -27,6 +34,9 @@ country_event = {
 	}
 	option = { #Refuse
 		name = gundabad.1.b
+		ai_chance = {
+			base = 1
+		}
 		ANG = {
             add_opinion_modifier = { target = GUN modifier = medium_decrease }
         }
@@ -79,4 +89,432 @@ country_event = {
 			create_wargoal = { target = GUN type = annex_everything }
 		}
 	}
+}
+
+# the gundabad expedition
+country_event = {
+	id = gundabad.3
+	title = gundabad.3.t
+	desc = gundabad.3.d
+	picture = GFX_report_event_dark_consp_pact
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = gundabad.3.a
+		add_ideas = GUN_gundabad_expedition
+		add_stability = -0.1
+		add_war_support = -0.1
+		set_power_balance = {
+			id = power_balance_gundabad 
+			set_default = yes
+		}
+	}
+}
+
+# Gundabad expedition asks for help
+country_event = {
+	id = gundabad.4
+	title = gundabad.4.t
+	desc = gundabad.4.d
+
+	is_triggered_only = yes
+
+	# Send a force
+	option = {
+		ai_chance = {
+			base = 4
+			modifier = {
+				add = 50
+				has_country_flag = gameplan_going_cooperative
+			}
+			modifier = {
+				add = 25
+				has_country_flag = gameplan_going_unaligned
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { is_ai = no }
+			}
+		}
+		name = gundabad.4.a
+
+		if = {
+			limit = { tag = ERE }
+			add_manpower = -1250
+			add_equipment_to_stockpile = { type = infantry_equipment amount = -350 }
+		}
+
+		GUN = {
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = large_increase
+			}
+			hidden_effect = {
+				country_event = gundabad.5
+			}
+		}
+	}
+
+	# We don't need to interfere
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 999
+				is_orcs = yes
+			}
+			modifier = {
+				add = 5
+				has_war = yes
+			}
+			modifier = {
+				add = 15
+				has_country_flag = gameplan_going_belligerent
+			}
+			modifier = {
+				add = 10
+				has_country_flag = gameplan_going_revolutionary
+			}
+			modifier = {
+				factor = 2
+				FROM = { we_dont_like_them = yes }
+			}
+		}
+		name = gundabad.4.b
+
+		set_country_flag = gundabad_aid_denied # Gundabad will remember this
+
+		custom_effect_tooltip = gundabad.4.b_tt
+
+		add_political_power = -75
+
+		GUN = {
+			add_opinion_modifier = {
+				target = THIS
+				modifier = small_decrease
+			}
+			hidden_effect = {
+				country_event = gundabad.6
+			}
+		}
+	}
+}
+
+# they said yes
+country_event = {
+	id = gundabad.5
+	title = gundabad.5.t
+	desc = gundabad.5.d
+	picture = GFX_report_event_paper
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = gundabad.5.a
+
+		if = {
+			limit = { FROM = { tag = ERE } }
+			set_country_flag = gun_expedition_support_ERE
+			custom_effect_tooltip = GUN_a_message_to_erebor_tt
+		}
+		else_if = {
+			limit = { FROM = { tag = GLD } }
+			set_country_flag = gun_expedition_support_GLD
+			custom_effect_tooltip = GUN_secure_support_from_gladden_tt
+		}
+		else_if = {
+			limit = { FROM = { tag = VAL } }
+			set_country_flag = gun_expedition_support_VAL
+			custom_effect_tooltip = GUN_a_message_to_beorn_tt
+		}
+		else_if = {
+			limit = { FROM = { tag = ANG } }
+			set_country_flag = gun_expedition_support_ANG
+			custom_effect_tooltip = GUN_a_message_to_angmar_tt
+		}
+		custom_effect_tooltip = committed_units_tt
+	}
+}
+
+# they said no
+country_event = {
+	id = gundabad.6
+	title = gundabad.6.t
+	desc = gundabad.6.d
+	picture = GFX_report_event_paper
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = gundabad.6.a
+	}
+}
+
+# The orcs are gone
+country_event = {
+	id = gundabad.7
+	title = gundabad.7.t
+	desc = gundabad.7.d
+	picture = GFX_report_event_dwarves_ered_luin_marching
+
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		ai_chance = {
+			base = 10
+		}
+		name = gundabad.7.a
+
+		remove_power_balance = {
+			id = power_balance_gundabad
+		}
+		swap_ideas = {
+			remove_idea = GUN_gundabad_expedition
+			add_idea = GUN_orc_stragglers
+		}
+	}
+}
+
+# choice of lineage
+country_event = {
+    id = gundabad.100
+	picture = GFX_report_event_dwarves_ered_luin_north
+    title = gundabad.100.t
+    desc = gundabad.100.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+			modifier = {
+				factor = 1.5
+				ERE = { is_ai = no }
+			}
+			modifier = {
+				factor = 1.2
+				MOA = { exists = yes }	
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = gameplan_expedition_men
+			}
+        }
+        name = gundabad.100.a
+		complete_national_focus = GUN_rally_the_scattered_longbeards
+    }
+
+    option = {
+        ai_chance = {
+            base = 1.2
+			modifier = {
+				factor = 1.5
+				ROH = { is_ai = no }
+			}
+			modifier = {
+				factor = 1.2
+				has_country_flag = rng_50p_flag_1
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = gameplan_expedition_dwarves
+			}
+        }
+        name = gundabad.100.b
+		complete_national_focus = GUN_gather_eotheod_descendants
+    }
+}
+
+
+# ELU asked for mithril miners
+country_event = {
+    id = gundabad.101
+	picture = GFX_report_event_gundabad
+    title = gundabad.101.t
+    desc = gundabad.101.desc
+
+    is_triggered_only = yes
+
+	# yes
+    option = {
+        ai_chance = {
+            base = 130
+			modifier = {
+				add = opinion@FROM
+			}
+			modifier = {
+				factor = 3
+				FROM = { is_ally_with = ROOT }
+			}
+			modifier = {
+				factor = 1.25
+				FROM = { is_ai = no }
+			}
+			modifier = {
+				factor = 2
+				has_non_aggression_pact_with = FROM
+			}
+			modifier = {
+				factor = 1.5
+				FROM = { is_stronger = yes }
+			}
+        }
+        name = gundabad.101.a
+		hidden_effect = {
+			GUN = {
+				country_event = { id = gundabad.102 days = 3 }
+				set_country_flag = gundabad_mithril_miners_sent
+	    	}
+		}
+		add_timed_idea = {
+			idea = generic_mining_disruption
+			days = 120
+		}
+		event_option_tooltip = gundabad.102.a
+	}
+
+	# no
+    option = {
+        ai_chance = {
+            base = 100
+        }
+        name = gundabad.101.b
+		hidden_effect = {
+			GUN = {
+				country_event = { id = gundabad.103 days = 3 }
+	    	}
+		}
+		add_political_power = -75
+		event_option_tooltip = gundabad.103.a
+	}
+}
+
+
+# ELU sends miners
+country_event = {
+    id = gundabad.102
+    title = gundabad.102.t
+    desc = gundabad.102.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = gundabad.102.a
+
+		GUN = {
+			add_opinion_modifier = {
+				target = ELU
+				modifier = medium_increase
+			}
+		}
+    }
+}
+
+
+# ELU refuses
+country_event = {
+    id = gundabad.103
+    title = gundabad.103.t
+    desc = gundabad.103.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = gundabad.103.a
+		GUN = {
+			add_opinion_modifier = {
+				target = ELU
+				modifier = medium_decrease
+			}
+		}
+    }
+}
+
+
+# Reward for gundabad expedition
+country_event = {
+    id = gundabad.104
+	picture = GFX_report_event_gundabad
+    title = gundabad.104.t
+    desc = gundabad.104.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = gundabad.104.a
+		# Northern wastes don't get factories, and it's going to make a certain someone sad
+		if = {
+			limit = { tag = NEP }
+			custom_effect_tooltip = "I'm sorry Mr. Eloc, but I'm afraid you're not getting your civilian factory :("
+		}
+		else = {
+			random_state_add_building_slot_and_civ = yes
+			add_political_power = 50
+			add_stability = 0.02
+		}
+		add_opinion_modifier = {
+			target = GUN
+			modifier = medium_increase
+		}
+    }
+}
+
+# Auto-complete Expedition focus
+country_event = {
+    id = gundabad.105
+	picture = GFX_report_event_orcs_2
+    title = gundabad.105.t
+    desc = gundabad.105.desc
+
+    trigger = {
+		tag = GUN
+		has_completed_focus = GUN_the_gundabad_expedition
+		NOT = { has_completed_focus = GUN_the_new_inhabitants }
+		power_balance_value = {
+			id = power_balance_gundabad
+			value > 0.99
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 70
+	}
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = gundabad.105.a
+
+		if = {
+			limit = {
+				NOT = { has_completed_focus = GUN_rally_the_scattered_longbeards }
+				NOT = { has_completed_focus = GUN_gather_eotheod_descendants }
+			}
+			random_list = {
+				50 = {
+					complete_national_focus = GUN_rally_the_scattered_longbeards
+				}
+				50 = {
+					complete_national_focus = GUN_gather_eotheod_descendants
+				}
+			}	
+		}
+
+		complete_national_focus = GUN_the_new_inhabitants
+    }
 }

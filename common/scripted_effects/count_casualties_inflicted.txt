@@ -1,0 +1,68 @@
+
+
+init_casualties_counts = {
+	for_each_scope_loop = {
+		array = global.countries
+
+		set_variable = { PREV.inflicted_casualties_on_@THIS = 0 }
+	}
+	set_variable = { casualties_on_elves_total = 0 }
+	set_variable = { casualties_on_orcs_total = 0 }
+	set_variable = { casualties_total = 0 }
+}
+
+
+
+count_casualties_inflicted = {
+	set_variable = { casualties_this_week = 0 }
+	set_variable = { casualties_on_elves_this_week = 0 }
+	set_variable = { casualties_on_orcs_this_week = 0 }
+
+	every_enemy_country = {
+		limit = {
+			casualties_inflicted_by = {
+				opponent = PREV
+				thousands > PREV.inflicted_casualties_on_@THIS
+			}
+		}
+		set_temp_variable = { temp_cas_counter = PREV.inflicted_casualties_on_@THIS }
+		for_loop_effect = {
+			end = 10
+			#value = value_name
+			break = break_name
+			if = {
+				limit = {
+					casualties_inflicted_by = {
+						opponent = PREV
+						thousands > temp_cas_counter
+					}
+				}
+				add_to_temp_variable = { temp_cas_counter = 1 }
+			}
+			else = {
+				set_temp_variable = { break = 1 }
+			}
+		}
+		#subtract_from_temp_variable = { temp_cas_counter = 1 } # This used to be here to avoid over-counting, but some testing seems to imply it's not necessary?
+
+		clamp_temp_variable = { var = temp_cas_counter min = 0 } # paranoid safety check
+
+		set_temp_variable = { this_week_diff = temp_cas_counter }
+		subtract_from_temp_variable = { this_week_diff = PREV.inflicted_casualties_on_@THIS }
+		add_to_variable = { PREV.casualties_this_week = this_week_diff }
+		add_to_variable = { PREV.casualties_total = this_week_diff }
+
+		if = {
+			limit = { is_elves = yes }
+			add_to_variable = { PREV.casualties_on_elves_this_week = this_week_diff }
+			add_to_variable = { PREV.casualties_on_elves_total = this_week_diff }
+		}
+		else_if = {
+			limit = { is_orcs = yes }
+			add_to_variable = { PREV.casualties_on_orcs_this_week = this_week_diff }
+			add_to_variable = { PREV.casualties_on_orcs_total = this_week_diff }
+		}
+
+		set_variable = { PREV.inflicted_casualties_on_@THIS = temp_cas_counter }
+	}
+}

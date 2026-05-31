@@ -402,7 +402,40 @@ execute_fellowship_step = {
 
 		# Shelob ancounter (just flavour for now)
 		if = {
-			limit = { has_global_flag = MOR_allow_shelob }
+			limit = { SPI = { has_completed_focus = SPI_the_one_ring_gambit } country_exists = SPI NOT = { has_global_flag = shelob_empowered } }
+
+			random_list = {
+				90 = {
+					modifier = {
+						add = 5
+						ring_sam_in_fellowship = yes
+					}
+					# Shelob fails to get ring for spiders
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_shelob_encounter_spi_failure }
+					ring_trim_eventlog = yes
+				}
+				10 = {
+					modifier = {
+						add = -5
+						ring_sam_in_fellowship = yes
+					}
+					# Shelob gets ring for spiders
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_shelob_encounter_spi_success }
+					ring_trim_eventlog = yes
+
+					SPI = {
+						ring_seize_ring = yes
+						country_event = spiders.132
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { has_global_flag = MOR_allow_shelob NOT = { has_global_flag = shelob_empowered } }
 			add_to_array = { global.fs_eventlog_prefix_targets = 0 }
 			add_to_array = { global.fs_eventlog_suffix_targets = 0 }
 			add_to_array = { global.fs_eventlog = token:fs_event_shelob_encounter }
@@ -574,6 +607,8 @@ execute_conclude_council_of_elrond = {
 	FS_merry = { ring_add_member_to_fellowship_nolog = yes }
 	FS_pippin = { ring_add_member_to_fellowship_nolog = yes }
 
+	# NOTE (future): The states in Anduin and around Mirkwood have changed, and the fellowship now does some "skipping" and it doesn't match up 1:1
+	# It doesn't really matter *all* that much (the current pathstacks are okay), so I may not bother. But for the future, especially if more state changes are made, this needs an update!
 	random_list = {
 
 		# Redhorn Pass

@@ -18,21 +18,9 @@
 # faction_goal_defeat_of_belligerent
 # faction_goal_defeat_of_anti_revolutionary
 
-### Faction Specific
+### Faction/Country Specific
 # faction_conquest_of_middle_earth 		#Dark Pact
-
-
-######################################################################
-
-###  ##   ##  ### ###  ##  #  #      ## ###  ###  ##  ### ### ###  ##  
-#   #  # #  #  #   #  #  # ## #     #   #  # #   #  #  #  #    #  #  # 
-##  #### #     #   #  #  # # ##      #  ###  ##  #     #  ##   #  #    
-#   #  # #  #  #   #  #  # #  #       # #    #   #  #  #  #    #  #  # 
-#   #  #  ##   #  ###  ##  #  #     ##  #    ###  ##  ### #   ###  ##  
-
-######################################################################
-
-
+# faction_goal_defeating_rohan			#Isengard Belligerent
 
 ##########################################################
 
@@ -222,6 +210,35 @@ faction_goal_great_offensive = {
 	}
 }
 
+faction_goal_defeating_rohan = {
+	name = defeating_rohan_goal_name
+	description = defeating_rohan_goal_desc
+	category = long_term
+	group = FOCUS_FILTER_ANNEXATION
+	visible = { tag = ISE has_government = belligerent }
+	available = { has_completed_focus = ISE_quarrel_with_rohan }
+	completed = {
+		ROH = {
+			OR = {
+				exists = no
+				is_in_faction_with = ISE
+			}
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 200
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = { add_war_support = 0.1 }
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		every_faction_member = {
+			limit = { is_faction_leader = yes }
+			add_faction_initiative = 1
+		}
+	}
+}
+
 faction_goal_defeating_our_enemies = {
 	name = defeating_our_enemies_goal_name
 	description = defeating_our_enemies_goal_desc
@@ -238,20 +255,18 @@ faction_goal_defeating_our_enemies = {
 		
 	}
 	complete_effect = {
-		add_faction_power_projection = 200
+		add_faction_power_projection = 350
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = THE_FACTION_LEADER
+		add_faction_initiative = 1
 		custom_effect_tooltip = generic_skip_one_line_tt
 		custom_effect_tooltip = ALL_FACTION_MEMBERS
 		every_faction_member = {
-			add_war_support = 0.1
-		}
-		custom_effect_tooltip = generic_skip_one_line_tt
-		custom_effect_tooltip = PEACE_CONFERENCE_WINNERS
-		every_faction_member = {
-			visible_when_empty = yes
-			limit = {
-				has_country_flag = peace_winner_flag
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.15
 			}
-			add_faction_initiative = 1
+			add_war_support = 0.1
 		}
 	}
 }
@@ -280,7 +295,7 @@ faction_goal_industrial_domination = {
 				name = FACTION_NAME
 			}
 			buildings = {  industrial_complex arms_factory dockyard }
-			size > 1000
+			size > 350
 		}
 	}
 	complete_effect = {
@@ -589,10 +604,6 @@ faction_goal_conquest_of_middle_earth = {
 					original_tag = ANG
 					has_country_flag = ANG_sauron_returned
 				}
-				AND = {
-					original_tag = RHU
-					has_completed_focus = RHU_the_new_dark_lord
-				}
 			}
 		}
 	}
@@ -600,6 +611,48 @@ faction_goal_conquest_of_middle_earth = {
 	completed = {
 		all_state = {
 			is_controlled_by_ROOT_or_ally = yes
+		}
+	}
+	complete_effect = {
+		add_faction_power_projection = 500
+		custom_effect_tooltip = generic_skip_one_line_tt
+		custom_effect_tooltip = ALL_FACTION_MEMBERS
+		every_faction_member = {
+			add_popularity = {
+				ideology = belligerent
+				popularity = 0.2
+			}
+			add_stability = 0.1
+			add_political_power = 100
+		}
+	}
+	ai_will_do = {
+		base = 10
+	}
+}
+
+#Servants of Saruman
+#Conquest of all of middle-earth
+faction_goal_bring_order_and_peace = {
+	name = order_and_peace_goal_name
+	description = order_and_peace_goal_desc
+	category = long_term
+	group = FOCUS_FILTER_WAR_SUPPORT
+	visible = {
+		FROM = {
+			has_government = belligerent
+			original_tag = ISE
+			has_country_flag = saruman_betrayed_sauron
+		}
+	}
+	cancel = {  ROOT = { NOT = { has_government = belligerent } } }
+	completed = {
+		all_country = {
+			has_war = no
+			OR = {
+				has_government = belligerent
+				has_government = unaligned
+			}
 		}
 	}
 	complete_effect = {
