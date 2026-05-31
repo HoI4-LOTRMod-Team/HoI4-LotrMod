@@ -1,0 +1,124 @@
+###########################
+# Tribes Events
+###########################
+
+add_namespace = tribes
+# Generic accept
+country_event = {
+	id = tribes.1
+	title = tribes.1.t
+	desc = tribes.1.d
+	picture = GFX_report_event_paper
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = tribes.1.a
+		ai_chance = {
+			base = 30
+        }
+        add_opinion_modifier = { target = FROM modifier = small_increase }
+	}
+}
+
+# Generic decline
+country_event = {
+	id = tribes.2
+	title = tribes.2.t
+	desc = tribes.2.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = tribes.2.a
+		ai_chance = {
+			base = 30
+        }
+        add_opinion_modifier = { target = FROM modifier = small_decrease }
+	}
+}
+
+# Request non-aggression pact
+country_event = {
+	id = tribes.3
+	title = tribes.3.t
+	desc = tribes.3.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = tribes.3.a
+		ai_chance = {
+			base = 25	
+            modifier = {
+				add = 10
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
+            modifier = {
+                add = 25
+                FROM = { has_government = belligerent }
+                has_government = belligerent
+            }
+        }
+        add_opinion_modifier = { target = FROM modifier = small_increase }
+        diplomatic_relation = {
+            country = FROM
+            relation = non_aggression_pact
+            active = yes
+        }
+        FROM = { country_event = { id = tribes.1 } }
+	}
+    option = { # Decline
+		name = tribes.3.b
+		ai_chance = {
+			base = 25			
+            modifier = {
+				add = 10
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+            modifier = {
+                add = 10
+                has_completed_focus = ISE_increase_influence
+            }
+            modifier = {
+                add = 25
+                has_completed_focus = ISE_they_will_listen
+            }
+        }
+        FROM = { country_event = { id = tribes.2 } }
+	}
+}
+
+# Demand to become puppet
+country_event = {
+	id = tribes.4
+	title = tribes.4.t
+	desc = tribes.4.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = tribes.4.a
+		ai_chance = {
+			base = 25	
+        }
+		add_opinion_modifier = { target = FROM modifier = small_increase }
+        FROM = { country_event = { id = isengard.29 } }
+	}
+    option = { # Decline
+		name = tribes.4.a
+		ai_chance = {
+			base = 25	
+        }
+		
+        FROM = { country_event = { id = isengard.30 } }
+	}
+}

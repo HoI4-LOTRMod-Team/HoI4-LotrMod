@@ -1,0 +1,380 @@
+do_rhun_civil_war = {
+
+    # transfer states
+    for_each_loop = {
+        array = RHU_list_states_civil_war
+        DRH = {
+            transfer_state = v
+        }
+    }
+
+    # Set politics
+    RHU = {
+        set_politics = {
+            ruling_party = belligerent
+            elections_allowed = no
+        }
+
+        add_popularity = {
+            ideology = cooperative
+            popularity = -1.0
+        }
+        add_popularity = {
+            ideology = unaligned
+            popularity = -0.2
+        }
+        add_popularity = {
+            ideology = revolutionary
+            popularity = -1.0
+        }
+    }
+    DRH = {
+        set_politics = {
+            ruling_party = cooperative
+            elections_allowed = no
+        }
+
+        set_popularities = {
+            cooperative = 61
+            unaligned = 24
+            belligerent = 13
+            revolutionary = 2
+        }
+    }
+
+    # magical equipment infusion
+    RHU = {
+        add_equipment_to_stockpile = {
+            type = infantry_equipment_0
+            amount = 3000
+        }
+        add_timed_idea = {
+            idea = RHUN_civil_war
+            days = 365
+        }
+    }
+
+    # tech and units and civil war
+    DRH = {
+        transfer_state = 128
+        inherit_technology = RHU
+
+        declare_war_on = { target = RHU type = civil_war }
+        add_civil_war_target = RHU
+        add_ideas = limited_levy
+        set_capital = { state = 128 }
+
+        every_controlled_state = {
+            teleport_armies = {
+                limit = { tag = RHU }
+                to_state_array = owned_controlled_states
+            }
+        }
+    }
+    if = {
+        limit = { RHU = { is_ai = yes } }
+        RHU = {
+            transfer_units_fraction = {
+                target = DRH
+                size = 0.5
+                stockpile_ratio = 0.5
+                army_ratio = 0.5
+                navy_ratio = 0.5
+                air_ratio = 0.5
+                keep_unit_leaders_trigger = {
+                    always = yes
+                }
+            }
+        }
+    }
+    else = { # a human player gets less to make all the prep focuses worthwhile
+        RHU = {
+            transfer_units_fraction = {
+                target = DRH
+                size = 0.4
+                stockpile_ratio = 0.4
+                army_ratio = 0.4
+                navy_ratio = 0.4
+                air_ratio = 0.4
+                keep_unit_leaders_trigger = {
+                    always = yes
+                }
+            }
+        }
+    }
+
+    # Characters and tag switch
+    DRH = {
+        change_tag_from = RHU
+    }
+    set_nationality = {
+        target_country = DRH
+        character = RHU_nezarg
+    }
+    set_nationality = {
+        target_country = DRH
+        character = RHU_wizards
+    }
+    set_nationality = {
+        target_country = DRH
+        character = RHU_alatar
+    }
+    set_nationality = {
+        target_country = DRH
+        character = RHU_pallando
+    }
+    DRH = {
+        promote_character = RHU_nezarg
+    }
+    
+    # Additional effects from focuses etc.
+    RHU = {
+        if = {
+            limit = { has_completed_focus = RHUN_sabotage_the_military }
+            add_timed_idea = {
+                idea = RHUN_sabotaged_military
+                days = 365
+            }
+        }
+        if = {
+            limit = { has_completed_focus = RHUN_turn_the_military }
+            set_nationality = {
+                target_country = DRH
+                character = RHU_tazurak
+            }
+        }
+        if = {
+            limit = {
+                has_completed_focus = RHUN_resistance_preparation
+            }
+            DRH = {
+                add_timed_idea = {
+                    idea = RHUN_fierce_resistance
+                    days = 365
+                }
+            }
+        }
+        if = {
+            limit = {
+                has_completed_focus = RHUN_stockpile_chariots
+            }
+            DRH = {
+                add_equipment_to_stockpile = {
+                    type = chariot_chassis
+                    amount = 500
+                }
+            }
+        }
+        if = {
+            limit = {
+                has_completed_focus = RHUN_stockpile_spears
+            }
+            DRH = {
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment_0
+                    amount = 5000
+                }
+            }
+        }
+        if = {
+            limit = {
+                has_completed_focus = RHUN_hide_supplies
+            }
+            DRH = {
+                add_timed_idea = {
+                    idea = RHUN_hidden_supplies
+                    days = 365 
+                }
+            }
+        }
+        if = {
+            limit = {
+                has_completed_focus = RHUN_offshore_industry
+            }
+            DRH = {
+                add_offsite_building = { type = arms_factory level = 2 }
+                add_offsite_building = { type = industrial_complex level = 1 }
+            }
+        }
+        if = {
+            limit = {
+                has_completed_focus = RHUN_secret_mines
+            }
+            128 = {
+                add_resource = {
+                    type = steel
+                    amount = 15
+                }
+            }
+        }
+        if = {
+            limit = {
+                has_completed_focus = RHUN_secret_militias
+            }
+            128 = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = barracks
+                    level = 1
+                    instant_build = yes
+                }
+            }
+        }
+        if = {
+            limit = { has_completed_focus = RHUN_contact_the_avari controls_state = 273 }
+            273 = { transfer_state_to = DRH set_compliance = 60 }
+        }
+        if = {
+            limit = { has_completed_focus = RHUN_secure_the_oracarni controls_state = 289 }
+            289 = { transfer_state_to = DRH set_compliance = 60 }
+        }
+    }
+
+    ##Load templates
+    RHU = {
+        load_oob = "rhun/CV_templates" 
+        if = {
+            limit = { controls_state = 132 }
+            load_oob = "rhun/CV_rhudel_steppe"
+        }
+        if = {
+            limit = { controls_state = 124 }
+            load_oob = "rhun/CV_mountains_of_ash"
+        }
+        if = {
+            limit = { controls_state = 131 }
+            load_oob = "rhun/CV_rhudel"
+        }
+        if = {
+            limit = { controls_state = 288 }
+            load_oob = "rhun/CV_south_rhun"
+        }
+    }
+
+    DRH = {
+        load_oob = "rhun/CV_templates"
+        if = {
+            limit = { RHU = { has_completed_focus = RHUN_agasha_militia } }
+            load_oob = "rhun/CV_rally_troops_agasha_dag"
+        }
+        if = {
+            limit = { RHU = { has_completed_focus = RHUN_govedalend_militia } }
+            load_oob = "rhun/CV_rally_troops_govedalend"
+        }
+        if = {
+            limit = { RHU = { has_completed_focus = RHUN_dervesalend_militia } }
+            load_oob = "rhun/CV_rally_troops_dervesalend"
+        }
+        if = {
+            limit = { RHU = { has_completed_focus = RHUN_secure_the_oracarni } }
+            load_oob = "rhun/CV_rally_troops_oracarni"
+        }
+        division_template = {
+            name = "Wainriders"
+            regiments = {
+                chariot = { x = 0 y = 0 }
+                chariot = { x = 0 y = 1 }
+                chariot = { x = 1 y = 0 }
+                chariot = { x = 1 y = 1 }
+                chariot = { x = 2 y = 0 }
+                chariot = { x = 2 y = 1 }
+                chariot = { x = 3 y = 0 }
+                chariot = { x = 3 y = 1 }
+            }
+        }
+    }
+
+    DRH = {
+        ##flags
+        set_global_flag = DRH_civil_war_flag
+    }
+
+    # Sync up focuses
+    RHU = {
+        # Incredible, high IQ, amazing, grade 1-A code right here. Take notes. THIS is how it's done!
+        # (The tech-tree related focuses)
+        if = { limit = { has_completed_focus = RHUN_light_cavalry } DRH = { unlock_national_focus = RHUN_light_cavalry } }
+        if = { limit = { has_completed_focus = RHUN_commission_expert_craftmanship } DRH = { unlock_national_focus = RHUN_commission_expert_craftmanship } }
+        if = { limit = { has_completed_focus = RHUN_construct_barracks } DRH = { unlock_national_focus = RHUN_construct_barracks } }
+        if = { limit = { has_completed_focus = RHUN_market_of_mistrand } DRH = { unlock_national_focus = RHUN_market_of_mistrand } }
+        if = { limit = { has_completed_focus = RHUN_modernize_the_south } DRH = { unlock_national_focus = RHUN_modernize_the_south } }
+        if = { limit = { has_completed_focus = RHUN_subsidize_mountain_logging } DRH = { unlock_national_focus = RHUN_subsidize_mountain_logging } }
+        if = { limit = { has_completed_focus = RHUN_train_chieftains } DRH = { unlock_national_focus = RHUN_train_chieftains } }
+        if = { limit = { has_completed_focus = RHUN_a_balanced_force } DRH = { unlock_national_focus = RHUN_a_balanced_force } }
+        if = { limit = { has_completed_focus = RHUN_skirmisher_companies } DRH = { unlock_national_focus = RHUN_skirmisher_companies } }
+        if = { limit = { has_completed_focus = RHUN_bow_companies } DRH = { unlock_national_focus = RHUN_bow_companies } }
+        if = { limit = { has_completed_focus = RHUN_heavy_cavalry } DRH = { unlock_national_focus = RHUN_heavy_cavalry } }
+        if = { limit = { has_completed_focus = RHUN_university_of_kelepar } DRH = { unlock_national_focus = RHUN_university_of_kelepar } }
+        if = { limit = { has_completed_focus = RHUN_cavalry_focus } DRH = { unlock_national_focus = RHUN_cavalry_focus } }
+        if = { limit = { has_completed_focus = RHUN_army_of_the_east } DRH = { unlock_national_focus = RHUN_army_of_the_east } }
+        if = { limit = { has_completed_focus = RHUN_focus_on_war_chariots } DRH = { unlock_national_focus = RHUN_focus_on_war_chariots } }
+        if = { limit = { has_completed_focus = RHUN_exploit_southern_deposits } DRH = { unlock_national_focus = RHUN_exploit_southern_deposits } }
+        if = { limit = { has_completed_focus = RHUN_subsidize_wainrider_chariots } DRH = { unlock_national_focus = RHUN_subsidize_wainrider_chariots } }
+        if = { limit = { has_completed_focus = RHUN_develop_the_industry } DRH = { unlock_national_focus = RHUN_develop_the_industry } }
+        if = { limit = { has_completed_focus = RHUN_eastern_adaptations } DRH = { unlock_national_focus = RHUN_eastern_adaptations } }
+        if = { limit = { has_completed_focus = RHUN_chariot_archers } DRH = { unlock_national_focus = RHUN_chariot_archers } }
+        if = { limit = { has_completed_focus = RHUN_forge_of_mistrand } DRH = { unlock_national_focus = RHUN_forge_of_mistrand } }
+        if = { limit = { has_completed_focus = RHUN_wainriders_of_rhun } DRH = { unlock_national_focus = RHUN_wainriders_of_rhun } }
+        if = { limit = { has_completed_focus = RHUN_subsidize_production } DRH = { unlock_national_focus = RHUN_subsidize_production } }
+        if = { limit = { has_completed_focus = RHUN_granary_for_the_north } DRH = { unlock_national_focus = RHUN_granary_for_the_north } }
+        if = { limit = { has_completed_focus = RHUN_infantry_modernization } DRH = { unlock_national_focus = RHUN_infantry_modernization } }
+        if = { limit = { has_completed_focus = RHUN_fishing_industry_of_the_north } DRH = { unlock_national_focus = RHUN_fishing_industry_of_the_north } }
+        if = { limit = { has_completed_focus = RHUN_archery } DRH = { unlock_national_focus = RHUN_archery } }
+        if = { limit = { has_completed_focus = RHUN_market_of_kelepar } DRH = { unlock_national_focus = RHUN_market_of_kelepar } }
+        if = { limit = { has_completed_focus = RHUN_state_investment } DRH = { unlock_national_focus = RHUN_state_investment } }
+        if = { limit = { has_completed_focus = RHUN_strengthen_the_north } DRH = { unlock_national_focus = RHUN_strengthen_the_north } }
+        if = { limit = { has_completed_focus = RHUN_doctrine_focus } DRH = { unlock_national_focus = RHUN_doctrine_focus } }
+        if = { limit = { has_completed_focus = RHUN_farms_of_the_steppe } DRH = { unlock_national_focus = RHUN_farms_of_the_steppe } }
+        if = { limit = { has_completed_focus = RHUN_reallocate_civilian_resources } DRH = { unlock_national_focus = RHUN_reallocate_civilian_resources } }
+        if = { limit = { has_completed_focus = RHUN_crossbow } DRH = { unlock_national_focus = RHUN_crossbow } }
+        if = { limit = { has_completed_focus = RHUN_doctrine_focus_2 } DRH = { unlock_national_focus = RHUN_doctrine_focus_2 } }
+        if = { limit = { has_completed_focus = RHUN_way_of_the_wainriders } DRH = { unlock_national_focus = RHUN_way_of_the_wainriders } }
+        if = { limit = { has_completed_focus = RHUN_northern_pathfinding } DRH = { unlock_national_focus = RHUN_northern_pathfinding } }
+        if = { limit = { has_completed_focus = RHUN_mapcharting_expeditions } DRH = { unlock_national_focus = RHUN_mapcharting_expeditions } }
+        if = { limit = { has_completed_focus = RHUN_ballista } DRH = { unlock_national_focus = RHUN_ballista } }
+        if = { limit = { has_completed_focus = RHUN_way_of_the_balchoth } DRH = { unlock_national_focus = RHUN_way_of_the_balchoth } }
+        if = { limit = { has_completed_focus = RHUN_southern_pathfinding } DRH = { unlock_national_focus = RHUN_southern_pathfinding } }
+        if = { limit = { has_completed_focus = RHUN_chariot_modernization } DRH = { unlock_national_focus = RHUN_chariot_modernization } }
+        if = { limit = { has_completed_focus = RHUN_library_of_mistrand } DRH = { unlock_national_focus = RHUN_library_of_mistrand } }
+        # The break free-from-mordor related focuses
+        if = { limit = { has_completed_focus = RHUN_hide_supplies } DRH = { unlock_national_focus = RHUN_hide_supplies } }
+        if = { limit = { has_completed_focus = RHUN_secret_militias } DRH = { unlock_national_focus = RHUN_secret_militias } }
+        if = { limit = { has_completed_focus = RHUN_contact_the_avari } DRH = { unlock_national_focus = RHUN_contact_the_avari } }
+        if = { limit = { has_completed_focus = RHUN_break_free_from_mordor } DRH = { unlock_national_focus = RHUN_break_free_from_mordor } }
+        if = { limit = { has_completed_focus = RHUN_govedalend_militia } DRH = { unlock_national_focus = RHUN_govedalend_militia } }
+        if = { limit = { has_completed_focus = RHUN_agasha_militia } DRH = { unlock_national_focus = RHUN_agasha_militia } }
+        if = { limit = { has_completed_focus = RHUN_stockpile_spears } DRH = { unlock_national_focus = RHUN_stockpile_spears } }
+        if = { limit = { has_completed_focus = RHUN_denounce_dark_pact } DRH = { unlock_national_focus = RHUN_denounce_dark_pact } }
+        if = { limit = { has_completed_focus = RHUN_east_rhunian_secession } DRH = { unlock_national_focus = RHUN_east_rhunian_secession } }
+        if = { limit = { has_completed_focus = RHUN_secret_mines } DRH = { unlock_national_focus = RHUN_secret_mines } }
+        if = { limit = { has_completed_focus = RHUN_offshore_industry } DRH = { unlock_national_focus = RHUN_offshore_industry } }
+        if = { limit = { has_completed_focus = RHUN_stir_confusion } DRH = { unlock_national_focus = RHUN_stir_confusion } }
+        if = { limit = { has_completed_focus = RHUN_stockpile_chariots } DRH = { unlock_national_focus = RHUN_stockpile_chariots } }
+        if = { limit = { has_completed_focus = RHUN_resistance_preparation } DRH = { unlock_national_focus = RHUN_resistance_preparation } }
+        if = { limit = { has_completed_focus = RHUN_ask_the_blue_wizards_to_buy_time } DRH = { unlock_national_focus = RHUN_ask_the_blue_wizards_to_buy_time } }
+        if = { limit = { has_completed_focus = RHUN_secure_dorwinion_support } DRH = { unlock_national_focus = RHUN_secure_dorwinion_support } }
+        if = { limit = { has_completed_focus = RHUN_sabotage_the_military } DRH = { unlock_national_focus = RHUN_sabotage_the_military } }
+        if = { limit = { has_completed_focus = RHUN_dervesalend_militia } DRH = { unlock_national_focus = RHUN_dervesalend_militia } }
+        if = { limit = { has_completed_focus = RHUN_rally_support } DRH = { unlock_national_focus = RHUN_rally_support } }
+        if = { limit = { has_completed_focus = RHUN_agasha_dag_secession } DRH = { unlock_national_focus = RHUN_agasha_dag_secession } }
+        if = { limit = { has_completed_focus = RHUN_turn_the_military } DRH = { unlock_national_focus = RHUN_turn_the_military } }
+        if = { limit = { has_completed_focus = RHUN_secure_the_oracarni } DRH = { unlock_national_focus = RHUN_secure_the_oracarni } }
+
+        DRH = { complete_national_focus = DRH_civil_war }
+
+        DRH = { set_country_flag = DRH_civil_war_has_happened }
+
+        DRH = { mark_focus_tree_layout_dirty = yes }
+
+        # Rhuns focuses
+        uncomplete_national_focus = {
+            focus = RHUN_break_free_from_mordor
+            uncomplete_children = yes
+            refund_political_power = no
+        }
+        complete_national_focus = RHUN_teachings_of_morgoth
+        complete_national_focus = RHUN_guide_the_tribes
+        complete_national_focus = RHUN_one_tribe_supremacy
+        mark_focus_tree_layout_dirty = yes
+    }
+}

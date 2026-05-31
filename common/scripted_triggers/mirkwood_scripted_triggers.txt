@@ -1,0 +1,122 @@
+
+
+
+
+
+
+# if this COuntry has cfm active
+has_cfm_active = {
+	custom_trigger_tooltip = {
+		tooltip = cfm_active_tt
+
+		has_war = no
+		exists = yes
+		has_capitulated = no
+		country_exists = MIR
+
+		OR = {
+			tag = MIR
+			NOT = { is_ally_with = MIR }
+		}
+		
+		has_global_flag = cfm_active
+	}
+}
+
+cfm_states_locked_imminent = {
+    OR = {
+        date > 3020.1.1
+        threat > 0.4
+        MIR = {
+            check_variable = {
+                cfm_states_seized > 3
+            }   
+        }
+    }
+}
+
+
+has_100_presence = {
+	check_variable = {
+		tooltip = more_presence_than_tt
+		var = cfm_presence
+		value = 99.9
+		compare = greater_than_or_equals
+	}
+}
+
+has_under_70_presence = {
+	check_variable = {
+		tooltip = less_presence_than_tt
+		var = cfm_presence
+		value = 70
+		compare = less_than_or_equals
+	}
+}
+
+has_over_50_presence = {
+	check_variable = {
+		tooltip = more_presence_than_tt
+		var = cfm_presence
+		value = 50
+		compare = greater_than_or_equals
+	}
+}
+
+has_over_80_presence = {
+	check_variable = {
+		tooltip = more_presence_than_tt
+		var = cfm_presence
+		value = 80
+		compare = greater_than_or_equals
+	}
+}
+
+state_is_valid_cfm_target = {
+	has_state_flag = cfm_allowed
+	controller = {
+		NOT = { tag = ROOT } # we are not the owner
+		has_cfm_active = yes # owner is cfm country
+	}
+	any_neighbor_state = { controller = { tag = ROOT } } # ROOT neighbors this state
+	
+	OR = {
+		NOT = { ROOT = { has_country_flag = cfm_restriction_active } }
+		is_in_array = {
+			array = ROOT.cfm_restricted_states
+			value = THIS
+		}
+		# In the case that we have a restriction but can't actually attack it, we lift the restriction
+		all_of_scopes = {
+			array = ROOT.cfm_restricted_states
+			OR = {
+				NOT = { is_controlled_by = MIR }
+				NOT = { any_neighbor_state = { controller = { tag = ROOT } } }
+			}
+		}
+	}
+
+	if = {
+		limit = { ROOT = { tag = DGU has_completed_focus = DGU_southern_consolidation } }
+		has_state_flag = cfm_south_of_narrows
+	}
+
+	if = {
+		limit = { ROOT = { tag = DGU has_completed_focus = DGU_secure_a_perimeter } }
+		has_state_flag = cfm_dgu_border
+	}
+}
+
+has_cfm_restrictions = {
+	has_country_flag = cfm_restriction_active
+}
+
+mir_comitted_to_path = {
+    OR = {
+        has_completed_focus = MIR_ancient_glory
+        has_completed_focus = MIR_bulwark_against_the_dark
+        has_completed_focus = MIR_by_our_own_light
+        has_completed_focus = MIR_the_northern_accord
+        has_completed_focus = MIR_accept_the_new_order
+    }
+}

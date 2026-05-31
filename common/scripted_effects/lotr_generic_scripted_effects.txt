@@ -84,19 +84,28 @@ give_steal_tech_from_country = {
     }
 }
 
-# @docs(Generic): ROOT gets 20% intel in all categories on THIS
+# @docs(Generic): PREV gets 20% intel in all categories on THIS
 give_intel_on_country = {
-    ROOT = {
-        add_intel = {
-            target = PREV
-            civilian_intel = 20
-            army_intel = 20
-            navy_intel = 20
-            airforce_intel = 20
+    hidden_effect = {
+        PREV = {
+            add_intel = {
+                target = PREV
+                civilian_intel = 20
+                army_intel = 20
+                navy_intel = 20
+                airforce_intel = 20
+            }
         }
     }
+    custom_effect_tooltip = give_intel_on_country_tt
 }
 
+# @docs(Generic): Increase a country's mercenary law with no pre-requisite checks
+increase_mercenary = {
+    if = { limit = { has_idea = no_mercenaries } swap_ideas = { add_idea = elite_mercenaries remove_idea = no_mercenaries } }
+    else_if = { limit = { has_idea = elite_mercenaries } swap_ideas = { add_idea = limited_mercenaries remove_idea = elite_mercenaries } }
+    else_if = { limit = { has_idea = limited_mercenaries } swap_ideas = { add_idea = extensive_mercenaries remove_idea = limited_mercenaries } }
+}
 
 # @docs(Generic): Increase a country's levies law with no pre-requisite checks
 increase_levies = {
@@ -105,6 +114,13 @@ increase_levies = {
     else_if = { limit = { has_idea = volunteer_service } swap_ideas = { add_idea = limited_levy remove_idea = volunteer_service } }
     else_if = { limit = { has_idea = limited_levy } swap_ideas = { add_idea = extensive_levy remove_idea = limited_levy } }
     else_if = { limit = { has_idea = limited_levy } swap_ideas = { add_idea = mass_levy remove_idea = limited_levy } }
+}
+
+# @docs(Generic): Increase a country's tax law with no pre-requisite checks
+increase_taxes = {
+    if = { limit = { has_idea = no_taxes } swap_ideas = { add_idea = low_taxes remove_idea = no_taxes } }
+    else_if = { limit = { has_idea = low_taxes } swap_ideas = { add_idea = medium_taxes remove_idea = low_taxes } }
+    else_if = { limit = { has_idea = medium_taxes } swap_ideas = { add_idea = high_taxes remove_idea = medium_taxes } }
 }
 
 # @docs(Generic): Increase a country's centralization law with no pre-requisite checks
@@ -123,6 +139,16 @@ decrease_centralization = {
     else_if = { limit = { has_idea = strong_centralization } swap_ideas = { remove_idea = strong_centralization add_idea = moderate_centralization } }
     else_if = { limit = { has_idea = very_strong_centralization } swap_ideas = { remove_idea = very_strong_centralization add_idea = strong_centralization } }
     else = { add_political_power = 100 }
+}
+
+# @docs(Generic): Adds a level of infrastructure to the state
+add_building_infrastructure = {
+    add_building_construction = { type = infrastructure level = 1 instant_build = yes }
+}
+
+# @docs(Generic): Adds 2 levels of infrastructure to the state
+add_building_infrastructure_x2 = {
+    add_building_construction = { type = infrastructure level = 2 instant_build = yes }
 }
 
 # @docs(Generic): Adds a building slot and civilian factory to a state
@@ -187,11 +213,18 @@ kill_durins_bane = {
 remove_durins_bane_from_moria = {
     73 = { remove_dynamic_modifier = { modifier = moria_loose_balrog } }
     134 = { remove_dynamic_modifier = { modifier = moria_loose_balrog } }
+    304 = { remove_dynamic_modifier = { modifier = moria_loose_balrog } }
+    303 = { remove_dynamic_modifier = { modifier = moria_loose_balrog } }
+    302 = { remove_dynamic_modifier = { modifier = moria_loose_balrog } }
+    301 = { remove_dynamic_modifier = { modifier = moria_loose_balrog } }
 }
 
 # @docs(Generic): Add a building slot and civilian factory to a random controlled state
 random_state_add_building_slot_and_civ = {
     random_controlled_state = {
+        limit = {
+            impassable = no
+        }
         custom_effect_tooltip = random_state_add_building_slot_and_civ_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 1
@@ -203,6 +236,9 @@ random_state_add_building_slot_and_civ = {
 # @docs(Generic): Add a building slot and military factory to a random controlled state
 random_state_add_building_slot_and_mil = {
     random_controlled_state = {
+        limit = {
+            impassable = no
+        }
         custom_effect_tooltip = random_state_add_building_slot_and_mil_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 1
@@ -214,7 +250,7 @@ random_state_add_building_slot_and_mil = {
 # @docs(Generic): Add a building slot and dockyard factory to a random controlled state
 random_state_add_building_slot_and_doc = {
     random_controlled_state = {
-        limit = { is_coastal = yes }
+        limit = { is_coastal = yes impassable = no }
         custom_effect_tooltip = random_state_add_building_slot_and_doc_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 2
@@ -226,6 +262,9 @@ random_state_add_building_slot_and_doc = {
 # @docs(Generic): Add 2 building slots and civilian factories to a random controlled state
 random_state_add_building_slot_and_civ_x2 = {
     random_controlled_state = {
+        limit = {
+            impassable = no
+        }
         custom_effect_tooltip = random_state_add_building_slot_and_civ_x2_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 2
@@ -237,6 +276,9 @@ random_state_add_building_slot_and_civ_x2 = {
 # @docs(Generic): Add 2 building slots and military factories to a random controlled state
 random_state_add_building_slot_and_mil_x2 = {
     random_controlled_state = {
+        limit = {
+            impassable = no
+        }
         custom_effect_tooltip = random_state_add_building_slot_and_mil_x2_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 2
@@ -248,7 +290,7 @@ random_state_add_building_slot_and_mil_x2 = {
 # @docs(Generic): Add 2 building slots and dockyard factories to a random controlled state
 random_state_add_building_slot_and_doc_x2 = {
     random_controlled_state = {
-        limit = { is_coastal = yes }
+        limit = { is_coastal = yes impassable = no }
         custom_effect_tooltip = random_state_add_building_slot_and_doc_x2_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 2
@@ -260,6 +302,9 @@ random_state_add_building_slot_and_doc_x2 = {
 # @docs(Generic): Add 3 building slots and civilian factories to a random controlled state
 random_state_add_building_slot_and_civ_x3 = {
     random_controlled_state = {
+        limit = {
+            impassable = no
+        }
         custom_effect_tooltip = random_state_add_building_slot_and_civ_x3_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 3
@@ -271,6 +316,9 @@ random_state_add_building_slot_and_civ_x3 = {
 # @docs(Generic): Add 3 building slots and military factories to a random controlled state
 random_state_add_building_slot_and_mil_x3 = {
     random_controlled_state = {
+        limit = {
+            impassable = no
+        }
         custom_effect_tooltip = random_state_add_building_slot_and_mil_x3_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 3
@@ -282,7 +330,7 @@ random_state_add_building_slot_and_mil_x3 = {
 # @docs(Generic): Add 3 building slots and dockyard factories to a random controlled state
 random_state_add_building_slot_and_doc_x3 = {
     random_controlled_state = {
-        limit = { is_coastal = yes }
+        limit = { is_coastal = yes impassable = no }
         custom_effect_tooltip = random_state_add_building_slot_and_doc_x3_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 3
@@ -294,6 +342,9 @@ random_state_add_building_slot_and_doc_x3 = {
 # @docs(Generic): Add 4 building slots and civilian factories to a random controlled state
 random_state_add_building_slot_and_civ_x4 = {
     random_controlled_state = {
+        limit = {
+            impassable = no
+        }
         custom_effect_tooltip = random_state_add_building_slot_and_civ_x4_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 4
@@ -305,6 +356,9 @@ random_state_add_building_slot_and_civ_x4 = {
 # @docs(Generic): Add 4 building slots and military factories to a random controlled state
 random_state_add_building_slot_and_mil_x4 = {
     random_controlled_state = {
+        limit = {
+            impassable = no
+        }
         custom_effect_tooltip = random_state_add_building_slot_and_mil_x4_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 4
@@ -316,7 +370,7 @@ random_state_add_building_slot_and_mil_x4 = {
 # @docs(Generic): Add 4 building slots and dockyard factories to a random controlled state
 random_state_add_building_slot_and_doc_x4 = {
     random_controlled_state = {
-        limit = { is_coastal = yes }
+        limit = { is_coastal = yes impassable = no }
         custom_effect_tooltip = random_state_add_building_slot_and_doc_x4_tt
         hidden_effect = {
             add_extra_state_shared_building_slots = 4
@@ -332,12 +386,18 @@ invite_to_non_aggession_pact = {
 
 # @docs(Generic): Send and event to a country inviting them to your faction
 invite_to_faction = {
-    country_event = { id = lotr_generic.11 days = 1 }
+    hidden_effect = {
+        country_event = { id = lotr_generic.11 days = 1 }
+    }
+    custom_effect_tooltip = invite_to_faction_tt
 }
 
 # @docs(Generic): Send and event to a country asking to join their faction
 ask_to_join_faction = {
-    country_event = { id = lotr_generic.8 days = 1 }
+    hidden_effect = {
+        country_event = { id = lotr_generic.8 days = 1 }
+    }
+    custom_effect_tooltip = ask_to_join_faction_tt
 }
 
 # @docs(Generic): Temporarily store the ideologies of ROOT. You can use `restore_ideologies_post_puppeting` to restore said ideologies after being puppeted.
@@ -392,7 +452,7 @@ disallow_medium_and_low_taxes = {
     if = { limit = { has_idea = medium_taxes } swap_ideas = { remove_idea = medium_taxes add_idea = low_taxes } }
     if = { limit = { has_idea = high_taxes } swap_ideas = { remove_idea = high_taxes add_idea = low_taxes } }
     custom_effect_tooltip = "disallow_medium_and_low_taxes_tt"
-    set_country_flag = medium_and_low_taxes_not_allowed
+    set_country_flag = medium_and_high_taxes_not_allowed
 }
 
 # @docs(Generic): reduces tax-law to low (unless it is none) and disallows a higher tax law for a year
@@ -401,8 +461,9 @@ disallow_medium_and_low_taxes_1y = {
     if = { limit = { has_idea = high_taxes } swap_ideas = { remove_idea = high_taxes add_idea = low_taxes } }
     custom_effect_tooltip = "disallow_medium_and_low_taxes_1y_tt"
     set_country_flag = {
-        flag = medium_and_low_taxes_not_allowed
+        flag = medium_and_high_taxes_not_allowed
         days = 370
+        value = 1
     }
 }
 
@@ -602,4 +663,800 @@ add_ruling_party_support = {
             popularity = 0.1
         }
     }
+}
+
+# @docs(Generic): increase ROOT's opinion of THIS by a small amount
+increase_our_opinion_of_them_small = {
+    ROOT = { add_opinion_modifier = { target = PREV modifier = small_increase } }
+}
+
+# @docs(Generic): increase ROOT's opinion of THIS by a medium amount
+increase_our_opinion_of_them_medium = {
+    ROOT = { add_opinion_modifier = { target = PREV modifier = medium_increase } }
+}
+
+# @docs(Generic): increase ROOT's opinion of THIS by a large amount
+increase_our_opinion_of_them_large = {
+    ROOT = { add_opinion_modifier = { target = PREV modifier = large_increase } }
+}
+
+# @docs(Generic): increase ROOT's opinion of THIS by a huge amount
+increase_our_opinion_of_them_huge = {
+    ROOT = { add_opinion_modifier = { target = PREV modifier = huge_increase } }
+}
+
+
+
+# @docs(Generic): increase THIS's opinion of ROOT by a small amount
+increase_their_opinion_of_us_small = {
+    add_opinion_modifier = { target = ROOT modifier = small_increase }
+}
+
+# @docs(Generic): increase THIS's opinion of ROOT by a medium amount
+increase_their_opinion_of_us_medium = {
+    add_opinion_modifier = { target = ROOT modifier = medium_increase }
+}
+
+# @docs(Generic): increase THIS's opinion of ROOT by a large amount
+increase_their_opinion_of_us_large = {
+    add_opinion_modifier = { target = ROOT modifier = large_increase }
+}
+
+# @docs(Generic): increase THIS's opinion of ROOT by a huge amount
+increase_their_opinion_of_us_huge = {
+    add_opinion_modifier = { target = ROOT modifier = huge_increase }
+}
+
+
+# @docs(Generic): decrease ROOT's opinion of THIS by a small amount
+decrease_our_opinion_of_them_small = {
+    ROOT = { add_opinion_modifier = { target = PREV modifier = small_decrease } }
+}
+
+# @docs(Generic): decrease ROOT's opinion of THIS by a medium amount
+decrease_our_opinion_of_them_medium = {
+    ROOT = { add_opinion_modifier = { target = PREV modifier = medium_decrease } }
+}
+
+# @docs(Generic): decrease ROOT's opinion of THIS by a large amount
+decrease_our_opinion_of_them_large = {
+    ROOT = { add_opinion_modifier = { target = PREV modifier = large_decrease } }
+}
+
+
+
+# @docs(Generic): decrease THIS's opinion of ROOT by a small amount
+decrease_their_opinion_of_us_small = {
+    add_opinion_modifier = { target = ROOT modifier = small_decrease }
+}
+
+# @docs(Generic): decrease THIS's opinion of ROOT by a medium amount
+decrease_their_opinion_of_us_medium = {
+    add_opinion_modifier = { target = ROOT modifier = medium_decrease }
+}
+
+# @docs(Generic): decrease THIS's opinion of ROOT by a large amount
+decrease_their_opinion_of_us_large = {
+    add_opinion_modifier = { target = ROOT modifier = large_decrease }
+}
+
+
+# @docs(Generic): Will prevent ROOT from entering hostilities with THIS, or joining any faction that THIS isn't a part of.
+swear_secret_fealty = {
+    hidden_effect = {
+        PREV = {
+            add_relation_modifier = {
+                target = PREV
+                modifier = secret_fealty
+            }
+            add_opinion_modifier = {
+                target = PREV
+                modifier = large_increase
+            }
+            set_country_flag = has_secret_fealty
+        }
+    }
+
+    # NOTE: tooltip. The effect itself *should* work, but it's mostly untested. ESPECIALLY this one (there's a lot of ways to join a war)
+    custom_effect_tooltip = swear_secret_fealty_tt
+}
+
+
+# @docs(Generic): Will prevent ROOT from ever joining a faction with or allying in any way THIS (like oath of feanor)
+swear_eternal_animosity = {
+    hidden_effect = {
+        PREV = {
+            add_relation_modifier = {
+                target = PREV
+                modifier = eternal_animosity
+            }
+            add_opinion_modifier = {
+                target = PREV
+                modifier = large_decrease
+            }
+            add_opinion_modifier = {
+                target = PREV
+                modifier = embargo
+            }
+        }
+    }
+    custom_effect_tooltip = swear_eternal_animosity_tt
+}
+
+# @docs(Generic): PREV pays 3 civs to THIS cost for 90 days
+pay_3_civs_for_90_day = {
+    custom_effect_tooltip = pay_3_civs_for_90_day_tt
+    hidden_effect = {
+        PREV = {
+            add_timed_idea = {
+                idea = three_civs_cost
+                days = 90
+            }
+        }
+        THIS = {
+            add_timed_idea = {
+                idea = three_civs_gain
+                days = 90
+            }
+        }
+    }
+}
+
+# @docs(Generic): PREV pays 3 civs to THIS cost for 180 days
+pay_3_civs_for_180_day = {
+    custom_effect_tooltip = pay_3_civs_for_180_day_tt
+    hidden_effect = {
+        PREV = {
+            add_timed_idea = {
+                idea = three_civs_cost
+                days = 180
+            }
+        }
+        THIS = {
+            add_timed_idea = {
+                idea = three_civs_gain
+                days = 180
+            }
+        }
+    }
+}
+
+# @docs(Generic): PREV pays 6 civs to THIS cost for 90 days
+pay_6_civs_for_90_day = {
+    custom_effect_tooltip = pay_6_civs_for_90_day_tt
+    hidden_effect = {
+        PREV = {
+            add_timed_idea = {
+                idea = six_civs_cost
+                days = 90
+            }
+        }
+        THIS = {
+            add_timed_idea = {
+                idea = six_civs_gain
+                days = 90
+            }
+        }
+    }
+}
+
+# @docs(Generic): PREV pays 3 civs to THIS cost for 180 days
+pay_6_civs_for_180_day = {
+    custom_effect_tooltip = pay_6_civs_for_180_day_tt
+    hidden_effect = {
+        PREV = {
+            add_timed_idea = {
+                idea = six_civs_cost
+                days = 180
+            }
+        }
+        THIS = {
+            add_timed_idea = {
+                idea = six_civs_gain
+                days = 180
+            }
+        }
+    }
+}
+
+# @docs(Generic): ROOT gets a license from THIS on the newest siege equipment technology they don't have, that ROOT does have
+license_newest_siege_equipment = {
+    custom_effect_tooltip = license_newest_siege_equip_tt
+
+    hidden_effect = {
+        if = {
+            limit = {
+                THIS = { has_tech = siege_equipment_2 }
+                ROOT = { NOT = { has_tech = siege_equipment_2 } }
+            }
+            ROOT = {
+                create_production_license = {
+                    target = PREV
+                    equipment = {
+                        type = siege_machine_chassis_2
+                    }
+                    cost_factor = -1
+                }
+            }
+        }
+        else_if = {
+            limit = {
+                THIS = { has_tech = siege_equipment_1 }
+                ROOT = { NOT = { has_tech = siege_equipment_1 } }
+            }
+            ROOT = {
+                create_production_license = {
+                    target = PREV
+                    equipment = {
+                        type = siege_machine_chassis_1
+                    }
+                    cost_factor = -1
+                }
+            }
+        }
+        else_if = {
+            limit = {
+                THIS = { has_tech = siege_equipment_0 }
+                ROOT = { NOT = { has_tech = siege_equipment_0 } }
+            }
+            ROOT = {
+                create_production_license = {
+                    target = PREV
+                    equipment = {
+                        type = siege_machine_chassis_0
+                    }
+                    cost_factor = -1
+                }
+            }
+        }   
+    }
+}
+
+# @docs(Generic): ROOT gets a license from THIS on the newest catapult equipment technology they don't have, that ROOT does have
+license_newest_catapult_equipment = {
+    custom_effect_tooltip = license_newest_catapult_equipment_tt
+
+    hidden_effect = {
+        if = {
+            limit = {
+                THIS = { has_tech = catapult_1 }
+                ROOT = { NOT = { has_tech = catapult_1 } }
+            }
+            ROOT = {
+                create_production_license = {
+                    target = PREV
+                    equipment = {
+                        type = catapult_chassis_1
+                    }
+                    cost_factor = -1
+                }
+            }
+        }
+        else_if = {
+            limit = {
+                THIS = { has_tech = catapult_0 }
+                ROOT = { NOT = { has_tech = catapult_0 } }
+            }
+            ROOT = {
+                create_production_license = {
+                    target = PREV
+                    equipment = {
+                        type = catapult_chassis_0
+                    }
+                    cost_factor = -1
+                }
+            }
+        } 
+    }
+}
+
+# @docs(Generic): Increases resources in a state by 10%
+increase_resources_in_state_10p = {
+    custom_effect_tooltip = increase_resources_in_state_10p_tt
+
+    hidden_effect = {
+        set_temp_variable = { temp_res = resource@aluminium }
+        multiply_temp_variable = { temp_res = 0.1 }
+        round_temp_variable = temp_res
+        add_resource = { type = aluminium amount = temp_res }
+
+        set_temp_variable = { temp_res = resource@chromium }
+        multiply_temp_variable = { temp_res = 0.1 }
+        round_temp_variable = temp_res
+        add_resource = { type = chromium amount = temp_res }
+
+        set_temp_variable = { temp_res = resource@oil }
+        multiply_temp_variable = { temp_res = 0.1 }
+        round_temp_variable = temp_res
+        add_resource = { type = oil amount = temp_res }
+
+        set_temp_variable = { temp_res = resource@rubber }
+        multiply_temp_variable = { temp_res = 0.1 }
+        round_temp_variable = temp_res
+        add_resource = { type = rubber amount = temp_res }
+
+        set_temp_variable = { temp_res = resource@steel }
+        multiply_temp_variable = { temp_res = 0.1 }
+        round_temp_variable = temp_res
+        add_resource = { type = steel amount = temp_res }
+
+        set_temp_variable = { temp_res = resource@tungsten }
+        multiply_temp_variable = { temp_res = 0.1 }
+        round_temp_variable = temp_res
+        add_resource = { type = tungsten amount = temp_res }
+
+        set_temp_variable = { temp_res = resource@coal }
+        multiply_temp_variable = { temp_res = 0.1 }
+        round_temp_variable = temp_res
+        add_resource = { type = coal amount = temp_res }
+    }
+}
+
+
+# @docs(Generic): Unlock decision to gain inf  and supp equip when in a defensive war or at > 50% surrender limit
+create_defensive_weapons_stockpile = {
+    set_country_flag = defensive_weapons_stockpile
+    custom_effect_tooltip = create_defensive_weapons_stockpile_tt
+}
+
+# @docs(Generic): Unlock decision to gain 1000 manpower when in a defensive war or at > 50% surrender limit
+create_defensive_musters = {
+    set_country_flag = defensive_musters
+    custom_effect_tooltip = create_defensive_musters_tt
+}
+
+
+
+# @docs(Generic): ROOT asks THIS for guarantee of independence
+ask_for_guarantee_of_independence = {
+    country_event = lotr_generic.100
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        give_guarantee = ROOT
+    }
+}
+
+
+# @docs(Generic): ROOT asks THIS to become tributary
+ask_to_become_tributary = {
+    country_event = lotr_generic.103
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        set_autonomy = {
+            target = ROOT
+            autonomy_state = autonomy_autonomous_tributary
+        }
+    }
+}
+
+# @docs(Generic): ROOT asks THIS to form faction
+ask_to_form_faction = {
+    country_event = lotr_generic.106
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        create_faction_from_template = faction_template_generic
+        add_to_faction = ROOT
+    }
+}
+
+
+# @docs(Generic): THIS declares on PREV
+declare_war_after_delay = {
+    hidden_effect = {
+        set_variable = { delayed_war_declaration_target = PREV }
+        activate_mission = delayed_war_declaration
+    }
+    custom_effect_tooltip = declare_war_after_delay_tt
+}
+
+
+# @docs(Generic): THIS signs NA pact with PREV
+sign_non_aggression_pact = {
+    diplomatic_relation = {
+        country = PREV
+        relation = non_aggression_pact
+        active = yes
+    }
+}
+
+
+# @docs(Generic): ROOT asks THIS for mutual guarantee
+ask_for_mutual_guarantee = {
+    hidden_effect = {
+        country_event = lotr_generic.109
+    }
+    custom_effect_tooltip = ask_for_mutual_guarantee_tt
+}
+
+
+
+# @docs(Generic): ROOT claims state from THIS
+claim_random_border_state = {
+    custom_effect_tooltip = ambitous_expansionist_send_demand_tooltip
+    hidden_effect = {
+        random_owned_state = {
+            limit = {
+                any_neighbor_state = { is_owned_by = ROOT }
+            }
+
+            save_event_target_as = target_claimed_state
+        }
+        country_event = { id = lotr_generic.1 days = 7 random_days = 7 }
+    }
+}
+
+# @docs(Generic): ROOT claims state from THIS
+claim_state = {
+    save_event_target_as = target_claimed_state
+    country_event = { id = lotr_generic.1 days = 7 random_days = 7 }
+}
+
+# @docs(Generic): ROOT offers THIS to become ROOT's puppet
+offer_to_become_puppet = {
+    country_event = { id = lotr_generic.112 days = 1 }
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        ROOT = {
+            puppet = PREV
+        }
+    }
+}
+
+
+# @docs(Generic): Remove a civilian factory from a random core state
+remove_civ_from_core_state = {
+    custom_effect_tooltip = remove_civ_from_core_state_tt
+    hidden_effect = {
+        random_core_state = {
+            limit = { industrial_complex > 0 }
+            remove_building = {
+                type = industrial_complex
+                level = 1
+            }
+        }
+    }
+}
+
+# @docs(Generic): Remove 2 civilian factories from random core states
+remove_civ_from_core_state_x2 = {
+    custom_effect_tooltip = remove_civ_from_core_state_x2_tt
+    hidden_effect = {
+        random_core_state = {
+            limit = { industrial_complex > 0 }
+            remove_building = {
+                type = industrial_complex
+                level = 1
+            }
+        }
+        random_core_state = {
+            limit = { industrial_complex > 0 }
+            remove_building = {
+                type = industrial_complex
+                level = 1
+            }
+        }
+    }
+}
+
+
+# @docs(Generic): ROOT demands THIS become their puppet. ROOT gets wargoal if refused.
+demand_subjugation = {
+    country_event = { id = lotr_generic.115 days = 1 }
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        ROOT = {
+            puppet = PREV
+        }
+    }
+    custom_effect_tooltip = if_they_refuse_newline_tt
+    effect_tooltip = {
+        ROOT = {
+            create_wargoal = {
+                target = PREV
+                type = puppet_wargoal_focus
+            }
+        }
+    }
+}
+
+
+
+# @docs(Generic): ROOT demands THIS become their puppet without wargoal on refusal.
+demand_subjugation_nowargoal = {
+    country_event = { id = lotr_generic.118 days = 1 }
+    custom_effect_tooltip = if_they_accept_newline_tt
+    effect_tooltip = {
+        ROOT = {
+            puppet = PREV
+        }
+    }
+}
+
+# @docs(Generic): ROOT antagonizes THIS, decreasing relations
+antagonize_country = {
+    hidden_effect = {
+        country_event = lotr_generic.133
+    }
+    effect_tooltip = {
+        add_opinion_modifier = {
+            target = PREV
+            modifier = large_decrease
+        }
+    }
+}
+
+# @docs(Generic): ROOT demands THIS. Gets wargoal of refused
+demand_state = {
+    hidden_effect = {
+        save_event_target_as = target_state
+        controller = {
+            country_event = lotr_generic.120
+        }
+    }
+    custom_effect_tooltip = demand_state_tt
+}
+
+# @docs(Generic): ROOT demands THIS. No wargoal on refusal
+demand_state_nowargoal = {
+    hidden_effect = {
+        save_event_target_as = target_state
+        controller = {
+            country_event = lotr_generic.123
+        }
+    }
+    custom_effect_tooltip = demand_state_nowargoal_tt
+}
+
+
+# @docs(Generic): trade between THIS and PREV costs nothing
+create_free_trade_with = {
+    custom_effect_tooltip = create_free_trade_with_tt
+    hidden_effect = {
+        if = {
+            limit = { NOT = { has_relation_modifier = { target = PREV modifier =  free_trade_with } } }
+            add_relation_modifier = {
+                target = PREV
+                modifier = free_trade_with
+            }
+        }
+        
+        PREV = {
+            if = {
+                limit = { NOT = { has_relation_modifier = { target = PREV modifier =  free_trade_with } } }
+                add_relation_modifier = {
+                    target = PREV
+                    modifier = free_trade_with
+                }
+            }
+        }
+    }
+}
+
+
+# @docs(Generic): Fortify the borders of all core states of ROOT bordering PREV with level 1 encampments
+fortify_border_core = {
+    custom_effect_tooltip = fortify_border_core_tt
+    hidden_effect = {
+        ROOT = {
+            every_core_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 1
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): Fortify the borders of all core states of ROOT bordering PREV with level 2 encampments
+fortify_border_core_x2 = {
+    custom_effect_tooltip = fortify_border_core_x2_tt
+    hidden_effect = {
+        ROOT = {
+            every_core_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): Fortify the borders of all core states of ROOT bordering PREV with level 3 encampments
+fortify_border_core_x3 = {
+    custom_effect_tooltip = fortify_border_core_x3_tt
+    hidden_effect = {
+        ROOT = {
+            every_core_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 3
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): Fortify the borders of all states of ROOT bordering PREV with level 1 encampments
+fortify_border = {
+    custom_effect_tooltip = fortify_border_tt
+    hidden_effect = {
+        ROOT = {
+            every_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 1
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): Fortify the borders of all states of ROOT bordering PREV with level 2 encampments
+fortify_border_x2 = {
+    custom_effect_tooltip = fortify_border_x2_tt
+    hidden_effect = {
+        ROOT = {
+            every_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 2
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): Fortify the borders of all states of ROOT bordering PREV with level 3 encampments
+fortify_border_x3 = {
+    custom_effect_tooltip = fortify_border_x3_tt
+    hidden_effect = {
+        ROOT = {
+            every_state = {
+                limit = {
+                    impassable = no
+                }
+                add_building_construction = {
+                    type = bunker
+                    level = 3
+                    province = {
+                        all_provinces = yes
+                        limit_to_border = yes
+                        limit_to_border_country = PREV
+                    }
+                }
+            }
+        }
+    }
+}
+
+# @docs(Generic): ROOT requests THIS for aid. THIS can either send gear, army exp or nothing
+request_aid = {
+    country_event = lotr_generic.125
+    custom_effect_tooltip = request_aid_tt
+}
+
+
+# @docs(Generic): THIS improves trade relations with PREV
+improve_trade_relations = {
+    add_opinion_modifier = {
+        target = PREV
+        modifier = improved_trade_relations
+    }
+    PREV = {
+        add_opinion_modifier = {
+            target = PREV
+            modifier = improved_trade_relations
+        }
+    }
+}
+
+
+# @docs(Generic): Suggest the faction leader of PREV to invite THIS to the faction. (Invites if PREV is faction leader)
+suggest_faction_leader_to_invite = {
+    if = {
+        limit = { PREV = { is_faction_leader = yes } }
+        invite_to_faction = yes
+    }
+    else_if = {
+        limit = { PREV = { is_in_faction = yes } }
+        custom_effect_tooltip = suggest_faction_leader_to_invite_tt
+        hidden_effect = {
+            save_event_target_as = invite_target
+            PREV = {
+                var:faction_leader = {
+                    country_event = lotr_generic.131
+                }
+            }
+        }
+    }
+    else = {
+        effect_tooltip = {
+            invite_to_faction = yes # purely for tooltip purposes
+        }
+    }
+}
+
+
+# @docs(Generic): THIS unlocks decisions to prospect untapped resources in states.
+unlock_resource_prospecting = {
+    set_country_flag = resource_prospecting_unlocked
+    custom_effect_tooltip = unlock_resource_prospecting_tt
+}
+
+
+# @docs(Generic): THIS unlocks decisions to prospect untapped mithril in states.
+unlock_mithril_prospecting = {
+    set_country_flag = mithril_prospecting_unlocked
+    custom_effect_tooltip = unlock_mithril_prospecting_tt
+}
+
+
+# @docs(Generic): THIS unlocks decisions to launch offensives in winter.
+unlock_winter_offensives = {
+    set_country_flag = winter_offensives_unlocked
+    custom_effect_tooltip = unlock_winter_offensives_tt
+}
+
+# @docs(Generic): THIS unlocks decisions to launch offensives in summer.
+unlock_summer_offensives = {
+    set_country_flag = summer_offensives_unlocked
+    custom_effect_tooltip = unlock_summer_offensives_tt
+}
+
+
+
+
+# @docs(Generic): Make a character unavailable. (NOTE: requires the unavailable character flag to be set up)
+make_unavailable = {
+    set_character_flag = unavailable
+    custom_effect_tooltip = make_unavailable_tt
+}
+
+
+# @docs(Generic): Make a character available. (NOTE: requires the unavailable character flag to be set up)
+make_available = {
+    clr_character_flag = unavailable
+    custom_effect_tooltip = make_available_tt
 }

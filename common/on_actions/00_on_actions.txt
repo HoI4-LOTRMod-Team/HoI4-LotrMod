@@ -152,6 +152,7 @@ on_actions = {
 					name = "Rohan has fallen"
 				}
 				add_to_variable = { global.ring_mor_max_attempts = 1 }
+				morm_increase_menace_small = yes
 			}
 			if = {
 				limit = {
@@ -167,6 +168,7 @@ on_actions = {
 					name = "Gondor has fallen"
 				}
 				add_to_variable = { global.ring_mor_max_attempts = 1 }
+				morm_increase_menace_medium = yes
 			}
 			if = {
 				limit = {
@@ -182,6 +184,7 @@ on_actions = {
 				}
 				set_global_flag = rivendell_has_fallen
 				add_to_variable = { global.ring_mor_max_attempts = 1 }
+				morm_increase_menace_medium = yes
 			}
 		}
 	}
@@ -220,6 +223,47 @@ on_actions = {
 				}
 				set_global_flag = GON_won_war_against_MOR_flag
 			}
+
+			#Making Saruman flee to the mountains to try take over the Shire
+			if = {
+				limit = {
+					FROM = { tag = ISE }
+				}
+				FROM = {
+					218 = {
+						transfer_state_to = ISE
+					}
+					set_capital = { state = 218 }
+					set_global_flag = ise_orthanc_has_fallen
+					set_country_leader_name = {
+						ideology = belligerent
+						name = "Sharkey"
+					}
+					set_country_leader_portrait = {
+						ideology = belligerent
+						portrait = GFX_portrait_isengard_sharkey
+					}
+				}
+			}
+			#Sharkey takes over the Shire
+			if = {
+				limit = { 
+					FROM = { tag = SHI }
+					ROOT = { tag = ISE }
+					has_global_flag = ise_orthanc_has_fallen
+					NOT = { has_global_flag = ise_sharkey_succesfull }
+				}
+				ROOT = {
+					add_state_core = 43
+					set_capital = { state = 43 }
+					set_global_flag = ise_sharkey_succesfull
+					add_ideas = SHA_weak_control_2
+					load_focus_tree = sharkey_isengard
+					218 = {
+						transfer_state_to = 31.owner
+					}
+				}
+			}
 		}
 	}
 
@@ -237,12 +281,9 @@ on_actions = {
 			## LOTR mod specific stuff starts here
 			ROOT = { set_country_flag = has_ever_capitulated }
 
-			if = {
-				limit = { ring_has_the_ring = yes }
+			# Transfer artifacts from Root to From
+			FROM = { ROOT = { lotr_transfer_all_artifacts = yes } }
 
-				# transfer the ring from loser to winner
-				FROM = { ring_seize_ring = yes }
-			}
 			if = {
 				limit = {
 					ROOT = { tag = ROH }

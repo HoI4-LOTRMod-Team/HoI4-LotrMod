@@ -1,0 +1,42 @@
+calc_globals_init = {
+    set_variable = { global.days_since_start = 0 }
+}
+
+
+calc_globals_daily = {
+    add_to_variable = { global.days_since_start = 1 }
+}
+
+building_modifiers_init = {
+    set_variable = {
+        current_military_factory_mod = modifier@extra_military_factories
+    }
+
+    set_variable = {
+        current_civilian_factory_mod = modifier@extra_civilian_factories
+    }
+
+    building_modifiers_apply = yes
+}
+
+building_modifiers_apply = {
+    if = {
+        limit = {
+            NOT = { check_variable = { modifier@extra_military_factories = current_military_factory_mod } }
+        }
+        multiply_variable = { current_military_factory_mod = -1 }
+        add_offsite_building = { type = arms_factory level = current_military_factory_mod }
+        set_variable = { current_military_factory_mod = modifier@extra_military_factories }
+        add_offsite_building = { type = arms_factory level = current_military_factory_mod }
+    }
+
+    if = {
+        limit = {
+            NOT = { check_variable = { modifier@extra_civilian_factories = current_civilian_factory_mod } }
+        }
+        multiply_variable = { current_civilian_factory_mod = -1 }
+        add_offsite_building = { type = industrial_complex level = current_civilian_factory_mod }
+        set_variable = { current_military_factory_mod = modifier@extra_civilian_factories }
+        add_offsite_building = { type = industrial_complex level = current_civilian_factory_mod }
+    }
+}

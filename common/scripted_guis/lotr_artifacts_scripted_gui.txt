@@ -1,0 +1,93 @@
+scripted_gui = {
+	lotr_artifacts_scripted_gui = {
+	
+		context_type = player_context
+		
+		window_name = "lotr_artifacts_gui"
+
+		visible = {
+			has_country_flag = lotr_artifacts_details_view_open
+		}
+
+		dynamic_lists = {
+			artifacts_list_gridbox = {
+					#The array to use. Will call a gui for each index.
+					array = country_artifacts
+
+					#value of the current array index. Optional. Default value is v.
+					value = v
+
+					#current array index. Optional. Default value is i.
+					index = i
+					
+					#This will change the scope to the value if yes
+					change_scope = no
+
+					#The GUI drawn for each index
+					entry_container = "artifacts_list_item"
+			}
+		}
+		effects = {
+			artifacts_list_item_button_click = {
+				hidden_effect = {
+					add_political_power = -50
+
+					set_variable = {
+						last_artifact_activation_t = global.num_days
+					}
+					add_to_variable = {
+						last_artifact_activation_t = 180
+					}
+				}
+
+				meta_effect = {
+					text = {
+						show_ideas_tooltip = [ARTIFACT_ID]
+					}
+					ARTIFACT_ID = "[?v.GetTokenKey]"
+				}
+
+				custom_effect_tooltip = click_to_activate_artifact_tt
+
+				set_temp_variable = { temp_selected_artifact = v }
+				lotr_artifacts_active_effects = yes
+
+				custom_effect_tooltip = all_artifacts_cooldown_tt
+
+				meta_effect = {
+					text = {
+						custom_effect_tooltip = [ARTIFACT_ID]_desc
+					}
+					ARTIFACT_ID = "[?v.GetTokenKey]"
+				}
+			}
+
+			close_button_click = {
+				lotr_artifacts_toggle_details_view = yes
+			}
+
+			help_button_click = {
+				country_event = ring_tuto.4
+			}
+		}
+		triggers = {
+			artifacts_list_item_button_click_enabled = {
+				NOT = { has_country_flag = artifact_cooldown_active }
+				has_political_power > 49
+			}
+
+			artifacts_discl_visible = {
+				check_variable = { country_artifacts^num < 1 }
+			}
+
+			artifacts_discl_text_visible = {
+				check_variable = { country_artifacts^num < 1 }
+			}
+		}
+		properties = {
+			artifacts_list_item_icon = {
+				image = "[GetArtifactIcon]"
+			}
+		}
+	}
+}

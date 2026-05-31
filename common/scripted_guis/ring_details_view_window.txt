@@ -131,11 +131,113 @@ scripted_gui = {
             overlay_message_bg_visible = { OR = { has_global_flag = fs_ring_seized has_global_flag = fs_ring_destroyed } }
 
             next_state_visible = { check_variable = { global.fs_path_stack^num > 0 } }
+
+			launch_interception_button_visible = {
+				has_global_flag = fs_started
+				NOT = { ring_has_special_interaction = yes }
+				NOT = { has_global_flag = fs_ring_seized }
+				NOT = { has_global_flag = fs_ring_destroyed }
+			}
+
+			launch_interception_button_click_enabled = {
+				has_political_power > 149
+				custom_trigger_tooltip = {
+					tooltip = fs_controls_currentstate_tt
+					controls_state = var:global.fs_currentstate
+				}
+				check_variable = { army_leaders^num > 0 }
+
+				custom_trigger_tooltip = {
+					tooltip = fs_rivendell_departure_tt
+					OR = {
+						has_country_flag = fs_early_interception_unlocked
+						has_global_flag = fs_arrived_in_rivendell
+					}
+				}
+
+				if = {
+					limit = { tag = MOR }
+					check_variable = { global.ring_mor_attempts_made < global.ring_mor_max_attempts }
+				}
+				else = {
+					NOT = { has_country_flag = fs_has_used_action }
+					NOT = { has_country_flag = fs_interceptions_disabled }
+
+					if = {
+						limit = { tag = ROH }
+						has_completed_focus = ROH_prepare_a_ring_interception
+					}
+				}
+			}
+
+			help_fellowship_button_visible = {
+				has_global_flag = fs_started
+
+				NOT = { ring_has_special_interaction = yes }
+				NOT = { tag = MOR }
+
+				NOT = { has_global_flag = fs_ring_seized }
+				NOT = { has_global_flag = fs_ring_destroyed }
+			}
+
+			help_fellowship_button_click_enabled = {
+				has_political_power > 149
+				custom_trigger_tooltip = {
+					tooltip = fs_controls_currentstate_tt
+					controls_state = var:global.fs_currentstate
+				}
+
+				custom_trigger_tooltip = {
+					tooltip = fs_rivendell_departure_tt
+					OR = {
+						has_country_flag = fs_early_interception_unlocked
+						has_global_flag = fs_arrived_in_rivendell
+					}
+				}
+
+				NOT = { has_country_flag = fs_has_used_action }
+			}
         }
 
         effects = {
+			launch_interception_button_click = {
+				add_political_power = -150
+
+				if = {
+					limit = { tag = MOR }
+					add_to_variable = { global.ring_mor_attempts_made = 1 }
+					custom_effect_tooltip = ring_launch_interception_tt
+					custom_effect_tooltip = ring_launch_interception_mordor_tt
+				}
+				else = {
+					ring_rivendell_disapproves = yes
+					custom_effect_tooltip = ring_launch_interception_tt
+					set_country_flag = fs_has_used_action
+				}
+
+				ring_open_interception_attempt_prompt = yes
+			}
+
+			help_fellowship_button_click = {
+				add_political_power = -150
+				ring_rivendell_approves = yes
+
+				add_timed_idea = {
+					idea = minor_expense
+					days = 60
+				}
+
+				# random fellowship member gets +1 attack +1 defense
+				ring_gear_up_random_member = yes
+
+				# heal up fellowship
+				ring_heal_fellowship = yes
+
+				set_country_flag = fs_has_used_action
+			}
+
             close_click = {
-                clr_country_flag = ring_details_view_open
+                ring_toggle_details_view = yes
             }
             help_click = {
                 country_event = ring_tuto.3

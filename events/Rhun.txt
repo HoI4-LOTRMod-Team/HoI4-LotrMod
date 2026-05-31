@@ -23,8 +23,6 @@ country_event = {
 	id = rhun.2
 	title = rhun.2.t
 	desc = rhun.2.d
-	picture = GFX_report_event_elven_alliance
-
 	is_triggered_only = yes
 
 	option = { # Okay
@@ -37,199 +35,10 @@ country_event = {
 	id = rhun.3
 	title = rhun.3.t
 	desc = rhun.3.d
-	picture = GFX_report_event_elven_alliance
-
 	is_triggered_only = yes
 
 	option = { # Okay
 		name = rhun.3.a
-	}
-}
-
-# Invite to defensive pact
-country_event = {
-	id = rhun.4
-	title = rhun.4.t
-	desc = rhun.4.d
-	picture = GFX_report_event_ring
-
-	is_triggered_only = yes
-
-	option = { #yes
-		name = rhun.4.a
-		ai_chance = {
-			base = 40
-			modifier = { # Rohan has higher chance of saying yes when either Gondor or Isengard is belligerent
-				factor = 20
-				original_tag = ROH
-				OR = {
-					ISE = {
-						has_government = belligerent
-					}
-					GON = {
-						has_government = belligerent
-					}
-				}
-			}
-			modifier = { # Dale has higher chance of saying yes when Erebor is belligerent
-				factor = 20
-				original_tag = DAL
-				ERE = {
-					has_government = belligerent
-				}
-			}
-		}
-		RHU = {
-			add_to_faction = ROOT
-		}
-	}
-
-	option = { #no
-		name = rhun.4.b
-		ai_chance = {
-			base = 10
-			modifier = { # Rohan has higher chance of saying no when Gondor and Isengard aren't belligerent or revolutionary
-				factor = 20
-				original_tag = ROH
-				NOT = {
-					GON = {
-						has_government = belligerent
-						has_government = revolutionary
-					}
-					ISE = {
-						has_government = belligerent
-						has_government = revolutionary
-					}
-				}
-			}
-		}
-	}
-}
-
-# Start of cooperative civil war
-country_event = {
-	id = rhun.5
-	title = rhun.5.t
-	desc = rhun.5.d
-	picture = GFX_report_event_ring
-
-	is_triggered_only = yes
-
-	option = { #yes
-		name = rhun.5.a
-		ai_chance = {
-			base = 50
-		}
-		hidden_effect = {
-            set_politics = {
-                ruling_party = cooperative
-                elections_allowed = yes
-            }
-        }
-        start_civil_war = {
-            ideology = belligerent
-            size = 0.9
-            capital = 128
-        }
-		news_event = { hours = 6 id = news.385 }
-
-        hidden_effect = {
-            for_each_loop = {
-                array = RHU_list_states_civil_war
-                RHU = {
-                    transfer_state = v
-                }
-            }
-
-            RHU = {
-                add_equipment_to_stockpile = {
-                    type = infantry_equipment_0
-                    amount = 750
-                }
-            }
-			##Stolen weapons
-			if = {
-				limit = {
-					has_global_flag = RHU_stolen_weapons
-				}
-				RHU = {
-					add_equipment_to_stockpile = {
-						type = infantry_equipment_0
-						amount = 750
-					}
-				}
-			}
-			##Hidden supplies
-			if = {
-				limit = {
-					has_global_flag = RHU_hiden_supplies
-				}
-				RHU = {
-					add_ideas = RHU_hidden_supplies
-				}
-			}
-			##Load templates
-			load_oob = "rhun/CV_templates"
-			## If troops are rallied
-			if = {
-				limit = {
-					has_global_flag = easterlings_lithlad_rallied
-				}
-				load_oob = "rhun/CV_rally_troops_lithlad"
-			}
-			if = {
-				limit = {
-					has_global_flag = easterlings_agasha_rallied
-				}
-				load_oob = "rhun/CV_rally_troops_agasha_dag"
-			}
-			if = {
-				limit = {
-					has_global_flag = easterlings_far_eastern_rallied
-				}
-				load_oob = "rhun/CV_rally_troops_far_eastern"
-			}
-			if = {
-				limit = {
-					has_global_flag = easterlings_north_rhun_rallied
-				}
-				load_oob = "rhun/CV_rally_troops_lithlad"
-			}
-
-
-			## If land is controlled
-            if = {
-                limit = {
-                    controls_state = 128 #Central Rhun
-                }
-                load_oob = "rhun/CV_central_rhun"
-            }
-            if = {
-                limit = {
-                    controls_state = 104 #South Rhun
-                }
-                load_oob = "rhun/CV_south_rhun"
-            }
-            if = {
-                limit = {
-                    controls_state = 102 #North Rhun
-                }
-                load_oob = "rhun/CV_north_rhun"
-            }
-
-			## Man from Harad
-			if = {
-                limit = {
-                    controls_state = 132 #Rhudel Steppe
-					HAR = {
-						cooperative > 0.01
-					}
-                }
-                country_event = {
-					id = rhun.9
-				}
-            }
-        }
 	}
 }
 
@@ -238,8 +47,6 @@ country_event = {
 	id = rhun.6
 	title = rhun.6.t
 	desc = rhun.6.d
-	picture = GFX_report_event_ring
-
 	is_triggered_only = yes
 
 	option = { #yes
@@ -304,51 +111,11 @@ country_event = {
 	}
 }
 
-# Invite to the easterlings faction
-country_event = {
-	id = rhun.7
-	title = rhun.7.t
-	desc = rhun.7.d
-	picture = GFX_report_event_ring
-
-	is_triggered_only = yes
-
-	option = { #yes
-		name = rhun.7.a
-		ai_chance = {
-			base = 40
-			modifier = {
-				add = 20
-				has_opinion = {
-					target = RHU
-					value > 75
-				}
-			}
-			modifier = {
-				add = 999
-				has_global_flag = RHU_made_contact_with_belligerent
-			}
-		}
-		RHU = {
-			add_to_faction = ROOT
-		}
-	}
-
-	option = { #no
-		name = rhun.7.b
-		ai_chance = {
-			base = 10
-		}
-	}
-}
-
 # Dorwinion agreed
 country_event = {
 	id = rhun.8
 	title = rhun.8.t
 	desc = rhun.8.d
-	picture = GFX_report_event_ring
-
 	is_triggered_only = yes
 
 	option = {
@@ -360,23 +127,1341 @@ country_event = {
 	}
 }
 
-# Free people of Harad
+# DRH calls DOR to help against Rhun
 country_event = {
-	id = rhun.9
-	title = rhun.9.t
-	desc = rhun.9.d
-	picture = GFX_report_event_ring
+	id = rhun.10
+	title = rhun.10.t
+	desc = rhun.10.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.10.a
+		ai_chance = {
+			base = 3
+			modifier = {
+				add = 1
+				FROM = { is_ai = no }
+			}
+			modifier = {
+				add = 1
+				has_government = unaligned 
+			}
+			modifier = {
+				add = 2
+				has_government = cooperative 
+			}
+			modifier = {
+				factor = 0
+				has_war = yes
+			}
+		}
+		DRH = {
+			set_rule = {
+				can_create_factions = yes
+			}
+			create_faction_from_template = {
+				template = faction_template_defensive_cooperative
+				name = eastern_defense_league
+			}
+		}
+		DOR = {
+			declare_war_on = {
+				target = RHU
+				type = annex_everything
+			}
+		}
+		clr_global_flag = DRH_civil_war_flag
+		set_global_flag = DOR_DRH_civil_war_flag
+		DRH = { add_to_faction = DOR }
+	}
+
+	option = { # reject
+		name = rhun.10.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 5
+				has_government = belligerent 
+			}
+		}
+
+	}
+}
+
+country_event = {
+	id = rhun.11
+	title = rhun.11.t
+	desc = rhun.11.d
+	picture = GFX_report_event_mount_doom
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.11.a
+		ai_chance = {
+			base = 100 
+		}
+		add_timed_idea = {
+			idea = RHUN_one_ring_destroyed
+			days = 90 
+		} 
+	}
+}
+
+# Start of cooperative civil war
+country_event = {
+	id = rhun.12
+	title = rhun.12.t
+	desc = rhun.12.d
+	picture = GFX_report_event_peasant_revolt3
 
 	is_triggered_only = yes
 
 	option = {
-		name = rhun.9.a
-		RHU = {
-			load_oob = "rhun/CV_free_man_of_harad"
-		}
+		name = rhun.12.a
 		ai_chance = {
-			base = 40
+			base = 50
+		}
+		hidden_effect = {
+			do_rhun_civil_war = yes
 		}
 
 	}
+}
+
+country_event = {
+	id = rhun.13
+	title = rhun.13.t
+	desc = rhun.13.d
+	picture = GFX_report_event_easterling_demands
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.13.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 1
+				strength_ratio = {
+					tag = FROM
+					ratio < 1 
+				} 
+			}
+			modifier = {
+				factor = 0
+				FROM = { is_weaker = yes }
+			}
+			modifier = {
+				factor = 0.3
+				is_isolated_target = no
+			}
+		}
+		208 = { transfer_state_to = FROM }
+		custom_effect_tooltip = rhun.13.a_tt
+		hidden_effect = {
+			FROM = {
+				set_country_flag = {
+					flag = RHUN_nurkhizdin_or_war_accepted
+					value = 1
+					days = 365
+				}
+				country_event = {
+					id = rhun.14
+					days = 5
+					random_hours = 12
+					random_days = 2 
+				}
+			}
+		}
+	}
+
+	option = { # Reject
+		name = rhun.13.b
+		ai_chance = {
+			base = 1 
+			modifier = {
+				factor = 0.4
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0.4
+				is_historical_focus_on = yes
+				FROM = { is_ai = no }
+			}
+		}
+		FROM = {
+			effect_tooltip = {
+				create_wargoal = {
+					type = take_state_focus
+					target = DOR
+					generator = { 208 } 
+				} 
+			}
+			hidden_effect = {
+				country_event = {
+					id = rhun.15
+					days = 5
+					random_hours = 12
+					random_days = 2 
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rhun.14
+	title = rhun.14.t
+	desc = rhun.14.d
+	picture = GFX_report_event_submit_to_demands_2
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.14.a
+		ai_chance = { 
+			base = 100 
+		}
+	}
+}
+
+country_event = {
+	id = rhun.15
+	title = rhun.15.t
+	desc = rhun.15.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.15.a
+		ai_chance = { 
+			base = 100 
+		}
+
+		create_wargoal = {
+			type = take_state_focus
+			target = DOR
+			generator = { 208 } 
+		} 
+	}
+}
+
+country_event = {
+	id = rhun.16
+	title = rhun.16.t
+	desc = rhun.16.d
+	picture = GFX_report_event_vineyards
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.16.a
+		ai_chance = {
+			base = 4
+			modifier = {
+				add = 1
+				DOR = {
+					has_opinion = { target = RHU value > 10 }
+				} 
+			}
+		}
+		add_stability = -0.02
+		137 = {
+			add_resource = {
+				type = oil
+				amount = 10
+			}
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = { type = fuel_silo level = 2 instant_build = yes }
+		}
+		RHU = {
+			country_event = {
+				id = rhun.17
+				days = 5
+				random_hours = 12
+				random_days = 2 
+			}
+		}
+	}
+
+	option = { # Reject
+		name = rhun.16.b
+		ai_chance = {
+			base = 1 
+		}
+		add_war_support = 0.05
+		RHU = {
+			country_event = {
+				id = rhun.18
+				days = 5
+				random_hours = 12
+				random_days = 2 
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rhun.17
+	title = rhun.17.t
+	desc = rhun.17.d
+	picture = GFX_report_event_vineyards
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.17.a
+		ai_chance = { 
+			base = 100 
+		}
+		add_offsite_building = { type = arms_factory level = 1 }
+	}
+}
+
+country_event = {
+	id = rhun.18
+	title = rhun.18.t
+	desc = rhun.18.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.18.a
+		ai_chance = { 
+			base = 100 
+		}
+	}
+}
+
+country_event = {
+	id = rhun.19
+	title = rhun.19.t
+	desc = rhun.19.d
+	picture = GFX_report_event_easterling_demands
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.19.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 1
+				strength_ratio = {
+					tag = RHU
+					ratio < 1 
+				} 
+			}
+			modifier = {
+				add = 15
+				is_historical_focus_on = yes 
+				FROM = { is_weaker = no }
+				is_isolated_target = yes
+			}
+		}
+		effect_tooltip = {
+			RHU = { puppet = RHO }
+		}
+		hidden_effect = {
+			RHU = {
+				country_event = {
+					id = rhun.20
+					days = 5
+					random_hours = 12
+					random_days = 2 
+				}
+			}
+		}
+	}
+
+	option = { # Reject
+		name = rhun.19.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 2
+				strength_ratio = {
+					tag = RHU
+					ratio > 1 
+				} 
+			}
+			modifier = {
+				add = 1
+				FROM = { is_ai = no }
+			}
+			modifier = {
+				factor = 2
+				is_isolated_target = no
+			}
+		}
+		add_stability = -0.1
+		add_war_support = 0.05
+		event_option_tooltip = rhun.21.a
+		hidden_effect = {
+			RHU = {
+				country_event = {
+					id = rhun.21
+					days = 5
+					random_hours = 12
+					random_days = 2 
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rhun.20
+	title = rhun.20.t
+	desc = rhun.20.d
+	picture = GFX_report_event_submit_to_demands_2
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.20.a
+		ai_chance = { 
+			base = 100 
+		}
+		RHU = { puppet = RHO }
+	}
+}
+
+country_event = {
+	id = rhun.21
+	title = rhun.21.t
+	desc = rhun.21.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.21.a
+		ai_chance = { 
+			base = 100 
+		}
+		RHU = {
+			create_wargoal = {
+				target = RHO
+				type = puppet_wargoal_focus
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rhun.22
+	title = rhun.22.t
+	desc = rhun.22.d
+	picture = GFX_report_event_easterling_demands
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.22.a
+		ai_chance = {
+			base = 5
+			modifier = {
+				add = 2
+				strength_ratio = {
+					tag = RHU
+					ratio < 1 
+				}
+			}
+			modifier = {
+				add = 5
+				HAR = { is_in_faction_with = RHU }
+			}
+		}
+		HAR = {
+			add_opinion_modifier = {
+				target = RHU
+				modifier = medium_increase
+			}
+		}
+		RHU = {
+			add_opinion_modifier = {
+				target = HAR
+				modifier = medium_increase
+			}
+		}
+		RHU = {
+			country_event = {
+				id = rhun.23
+				days = 3
+				random_hours = 12
+				random_days = 2 
+			}
+		}
+	}
+
+	option = { # Reject
+		name = rhun.22.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 2
+				strength_ratio = {
+					tag = RHU
+					ratio > 1 
+				} 
+			}
+		}
+		HAR = {
+			add_opinion_modifier = {
+				target = RHU
+				modifier = medium_decrease
+			}
+		}
+		RHU = {
+			add_opinion_modifier = {
+				target = HAR
+				modifier = medium_decrease
+			}
+		}
+		RHU = {
+			country_event = {
+				id = rhun.24
+				days = 3
+				random_hours = 12
+				random_days = 2 
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rhun.23
+	title = rhun.23.t
+	desc = rhun.23.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.23.a
+		ai_chance = { 
+			base = 100 
+		}
+		216 = { transfer_state_to = KND }
+	}
+}
+
+country_event = {
+	id = rhun.24
+	title = rhun.24.t
+	desc = rhun.24.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.24.a
+		ai_chance = { 
+			base = 100 
+		}
+	}
+}
+
+country_event = {
+	id = rhun.25
+	title = rhun.25.t
+	desc = rhun.25.d
+	picture = GFX_report_event_rangers
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.25.a
+		ai_chance = { 
+			base = 100 
+		}
+		115 = { transfer_state_to = KND }
+		117 = { transfer_state_to = KND }
+	}
+}
+
+country_event = {
+	id = rhun.26
+	title = rhun.26.t
+	desc = rhun.26.d
+	picture = GFX_report_event_rangers
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.26.a
+		ai_chance = { 
+			base = 100 
+		}
+	}
+}
+
+country_event = {
+	id = rhun.27
+	title = rhun.27.t
+	desc = rhun.27.d
+	picture = GFX_report_event_rangers
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.27.a
+		ai_chance = { 
+			base = 100 
+		}
+	}
+}
+
+country_event = {
+	id = rhun.28
+	title = rhun.28.t
+	desc = rhun.28.d
+	picture = GFX_report_event_rangers
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.28.a
+		ai_chance = { 
+			base = 100 
+		}
+	}
+}
+
+country_event = {
+	id = rhun.29
+	title = rhun.29.t
+	desc = rhun.29.d
+	picture = GFX_report_event_sauron_eye
+
+	fire_only_once = no
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = rhun.29.a
+		ai_chance = { 
+			base = 100 
+		}
+	}
+}
+
+# RHU demands independent KHD
+country_event = {
+    id = rhun.100
+    title = rhun.100.t
+    desc = rhun.100.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 150
+			modifier = {
+				add = opinion@FROM
+			}
+			modifier = {
+				factor = 1.6
+				FROM = { is_ai = no }
+			}
+        }
+        name = rhun.100.a
+		hidden_effect = {
+			RHU = { country_event = { id = rhun.101 days = 3 } }
+		}
+		release_puppet_on_controlled = KND
+    }
+
+    option = {
+        ai_chance = {
+            base = 150
+			modifier = {
+				factor = 2
+				FROM = { is_significantly_weaker = yes }
+			}
+        }
+        name = rhun.100.b
+		hidden_effect = {
+			RHU = { country_event = { id = rhun.102 days = 3 } }
+		}
+		add_political_power = -100
+		every_controlled_state = {
+			limit = {
+				is_core_of = KND
+			}
+			add_resistance_target = 10
+		}
+    }
+}
+
+
+# independent KHD accepted
+country_event = {
+    id = rhun.101
+    title = rhun.101.t
+    desc = rhun.101.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.101.a
+    }
+}
+
+
+# independent KHD denied
+country_event = {
+    id = rhun.102
+    title = rhun.102.t
+    desc = rhun.102.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.102.a
+    }
+}
+
+
+# Neutral buffer zone KHD proposed
+country_event = {
+    id = rhun.103
+    title = rhun.103.t
+    desc = rhun.103.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 150
+			modifier = {
+				add = opinion@FROM
+			}
+			modifier = {
+				factor = 1.6
+				FROM = { is_ai = no }
+			}
+        }
+        name = rhun.103.a
+		hidden_effect = {
+			RHU = { country_event = { id = rhun.104 days = 3 } }
+		}
+		ROOT = {
+			123 = { transfer_state_to = KND }
+			275 = { transfer_state_to = KND }
+			diplomatic_relation = {
+				country = KND
+				relation = non_aggression_pact
+				active = yes
+			}
+		}
+		RHU = {
+			287 = { transfer_state_to = KND }
+			272 = { transfer_state_to = KND }
+			diplomatic_relation = {
+				country = KND
+				relation = non_aggression_pact
+				active = yes
+			}
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 150
+			modifier = {
+				factor = 2
+				FROM = { is_significantly_weaker = yes }
+			}
+        }
+        name = rhun.103.b
+		hidden_effect = {
+			RHU = { country_event = { id = rhun.105 days = 3 } }
+		}
+    }
+}
+
+
+# Neutral buffer zone KHD accepted
+country_event = {
+    id = rhun.104
+    title = rhun.104.t
+    desc = rhun.104.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.104.a
+    }
+}
+
+
+# Neutral buffer zone KHD denied
+country_event = {
+    id = rhun.105
+    title = rhun.105.t
+    desc = rhun.105.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.105.a
+    }
+}
+
+
+# RHU demands resource rights
+country_event = {
+    id = rhun.106
+	picture = GFX_report_event_easterling_demands
+    title = rhun.106.t
+    desc = rhun.106.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 50
+			modifier = {
+				factor = 0.1
+				FROM = { is_significantly_weaker = yes }
+			}
+        }
+        name = rhun.106.a
+		every_controlled_state = {
+			ROOT = { give_resource_rights = { receiver = RHU state = PREV } }
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.106.b
+    }
+}
+
+
+# blue wizards in Dorwinion
+country_event = {
+    id = rhun.107
+    title = rhun.107.t
+    desc = rhun.107.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.107.a
+
+		custom_effect_tooltip = rhun.107.a_tt
+    }
+}
+
+
+# get 3 options for gear
+country_event = {
+    id = rhun.108
+    title = rhun.108.t
+    desc = rhun.108.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 5
+			modifier = {
+				factor = 2
+				has_manpower < 5000
+			}
+        }
+        name = rhun.108.a
+		add_manpower = 8000
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 2500
+			producer = RHU
+		}
+		add_equipment_to_stockpile = {
+			type = chariot_chassis
+			amount = 250
+			producer = RHU
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 8
+        }
+        name = rhun.108.b
+		add_manpower = 4000
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 5000
+			producer = RHU
+		}
+		add_equipment_to_stockpile = {
+			type = chariot_chassis
+			amount = 500
+			producer = RHU
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+			modifier = {
+				factor = 10
+				target_chariots_strat = yes
+			}
+        }
+        name = rhun.108.c
+		add_manpower = 4000
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 2500
+			producer = RHU
+		}
+		add_equipment_to_stockpile = {
+			type = chariot_chassis
+			amount = 1000
+			producer = RHU
+		}
+    }
+}
+
+
+# RHU demands settlement treaty with LGT
+country_event = {
+    id = rhun.109
+	picture = GFX_report_event_easterling_demands
+    title = rhun.109.t
+    desc = rhun.109.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.109.a
+		hidden_effect = {
+			RHU = { country_event = { id = rhun.110 days = 1 } }
+		}
+		RHU = {
+			event_option_tooltip = rhun.110.a
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.109.b
+		hidden_effect = {
+			RHU = { country_event = { id = rhun.111 days = 1 } }
+		}
+		RHU = {
+			event_option_tooltip = rhun.111.a
+		}
+    }
+}
+
+
+# settlement treaty accepted
+country_event = {
+    id = rhun.110
+	picture = GFX_report_event_paper
+    title = rhun.110.t
+    desc = rhun.110.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.110.a
+
+		if = {
+			limit = { 129 = { is_controlled_by = LGT } }
+			129 = {
+				hidden_effect = { transfer_state_to = RHU }
+				custom_effect_tooltip = state_ceded_to_rhun_tt
+			}
+		}
+		if = {
+			limit = { 126 = { is_controlled_by = LGT } }
+			126 = {
+				hidden_effect = { transfer_state_to = RHU }
+				custom_effect_tooltip = state_ceded_to_rhun_tt
+			}
+		}
+
+		hidden_effect = {
+			create_dynamic_country = {
+				original_tag = LGT
+				RHU = {
+					set_autonomy = {
+						target = PREV
+						autonomy_state = autonomy_puppet
+					}
+				}
+				set_cosmetic_tag = LGT_RHU_puppet
+				create_country_leader = {
+					name = "Urlak"
+					picture = GFX_portrait_logath_urlak
+					ideology = expansionist
+				}
+
+				if = { limit = { 209 = { is_controlled_by = LGT } } transfer_state = 209 }
+				if = { limit = { 286 = { is_controlled_by = LGT } } transfer_state = 286 }
+				if = { limit = { 102 = { is_controlled_by = LGT } } transfer_state = 102 }
+				if = { limit = { 285 = { is_controlled_by = LGT } } transfer_state = 285 }
+				if = { limit = { 207 = { is_controlled_by = LGT } } transfer_state = 207 }
+				if = { limit = { 127 = { is_controlled_by = LGT } } transfer_state = 127 }
+			}
+		}
+		custom_effect_tooltip = create_logathvuld_tt
+
+		if = { limit = { 209 = { is_controlled_by = LGT } } 209 = { custom_effect_tooltip = state_ceded_to_logathvuld_tt } }
+		if = { limit = { 286 = { is_controlled_by = LGT } } 286 = { custom_effect_tooltip = state_ceded_to_logathvuld_tt } }
+		if = { limit = { 102 = { is_controlled_by = LGT } } 102 = { custom_effect_tooltip = state_ceded_to_logathvuld_tt } }
+		if = { limit = { 285 = { is_controlled_by = LGT } } 285 = { custom_effect_tooltip = state_ceded_to_logathvuld_tt } }
+		if = { limit = { 207 = { is_controlled_by = LGT } } 207 = { custom_effect_tooltip = state_ceded_to_logathvuld_tt } }
+		if = { limit = { 127 = { is_controlled_by = LGT } } 127 = { custom_effect_tooltip = state_ceded_to_logathvuld_tt } }
+		
+    }
+}
+
+
+# settlement treaty denied
+country_event = {
+    id = rhun.111
+    title = rhun.111.t
+    desc = rhun.111.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.111.a
+
+		create_wargoal = {
+			target = LGT
+			type = puppet_wargoal_focus
+		}
+    }
+}
+
+
+# RHU demands submission treaty with LGT
+country_event = {
+    id = rhun.112
+	picture = GFX_report_event_easterling_demands
+    title = rhun.112.t
+    desc = rhun.112.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.112.a
+		hidden_effect = {
+			RHU = { country_event = { id = rhun.113 days = 3 } }
+		}
+		RHU = {
+			event_option_tooltip = rhun.113.a
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.112.b
+		hidden_effect = {
+			RHU = { country_event = { id = rhun.114 days = 3 } }
+		}
+		RHU = {
+			event_option_tooltip = rhun.114.a
+		}
+    }
+}
+
+
+# submission treaty accepted
+country_event = {
+    id = rhun.113
+	picture = GFX_report_event_paper
+    title = rhun.113.t
+    desc = rhun.113.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.113.a
+
+		set_autonomy = {
+			target = LGT
+			autonomy_state = autonomy_bulwark
+		}
+
+		if = {
+			limit = { 129 = { is_controlled_by = LGT } }
+			129 = {
+				hidden_effect = { transfer_state_to = RHU }
+				custom_effect_tooltip = state_ceded_to_rhun_tt
+			}
+		}
+		if = {
+			limit = { 126 = { is_controlled_by = LGT } }
+			126 = {
+				hidden_effect = { transfer_state_to = RHU }
+				custom_effect_tooltip = state_ceded_to_rhun_tt
+			}
+		}
+
+		LGT = {
+			set_cosmetic_tag = LGT_RHU_puppet
+		}
+    }
+}
+
+
+# submission treaty denied
+country_event = {
+    id = rhun.114
+    title = rhun.114.t
+    desc = rhun.114.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.114.a
+
+		create_wargoal = {
+			target = LGT
+			type = puppet_wargoal_focus
+		}
+    }
+}
+
+
+# Rhûn assumes control over KND
+country_event = {
+    id = rhun.115
+	picture = GFX_report_event_rhun_eastern_army
+    title = rhun.115.t
+    desc = rhun.115.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = rhun.115.a
+		effect_tooltip = {
+			RHU = {
+				puppet = KND
+			}
+		}
+    }
+}
+
+
+# Treaty of the Steppe
+country_event = {
+    id = rhun.116
+	picture = GFX_report_event_intense_diplomatic_negotiations
+    title = rhun.116.t
+    desc = rhun.116.desc
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = DRH
+		has_civil_war = yes
+		country_exists = RHU
+		surrender_progress > 0.7
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+    option = {
+        ai_chance = {
+            base = 50
+        }
+        name = rhun.116.a
+		complete_national_focus = DRH_treaty_of_the_steppe
+		RHU = {
+			add_political_power = 150
+			add_war_support = 0.1
+		}
+		DRH = {
+			add_political_power = -150
+			add_war_support = -0.1
+		}
+		custom_effect_tooltip = rhun.116.a
+		hidden_effect = {
+			DRH = {
+				every_controlled_state = {
+					set_state_flag = treaty_of_the_steppe_drh_control
+				}
+			}
+			RHU = {
+				every_controlled_state = {
+					set_state_flag = treaty_of_the_steppe_rhun_control
+				}
+			}
+			DRH = {
+				white_peace = RHU
+				set_truce = {
+					target = RHU
+					days = 365
+				}
+			}
+			every_state = {
+				limit = { has_state_flag = treaty_of_the_steppe_drh_control }
+				transfer_state_to = DRH
+			}
+			every_state = {
+				limit = { has_state_flag = treaty_of_the_steppe_rhun_control }
+				transfer_state_to = RHU
+			}
+		}
+		128 = {
+			transfer_state_to = DRH
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 50
+        }
+        name = rhun.116.b
+		add_war_support = 0.1
+    }
+}
+
+
+# How to deal with Erebor
+country_event = {
+    id = rhun.117
+    title = rhun.117.t
+    desc = rhun.117.desc
+
+    is_triggered_only = yes
+	picture = GFX_report_event_rhun_eastern_army
+
+	option = {
+        ai_chance = {
+            base = 5
+        }
+        name = rhun.117.a
+
+		declare_war_on = {
+			target = ERE
+			type = puppet_wargoal_focus
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 10
+        }
+        name = rhun.117.b
+
+		trigger = {
+			ERE = { controls_state = 92 }
+			ERE = { can_engage_in_diplo_with = yes }
+		}
+
+		92 = {
+			demand_state = yes
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 5
+        }
+        name = rhun.117.c
+
+		trigger = {
+			ERE = { can_engage_in_diplo_with = yes }
+			ERE = { is_subject = no }
+		}
+
+		ERE = {
+			demand_subjugation = yes
+		}
+    }
 }

@@ -1,0 +1,364 @@
+
+
+
+
+
+
+spi_restless_hunger_decision_category = {
+	SPI_emergency_hatching = {
+		icon = decision_spider_eggs
+
+		fire_only_once = yes
+		cost = 0
+
+		allowed = {
+			tag = SPI
+		}
+
+		visible = {
+			is_ai = yes
+			surrender_progress > 0.4
+		}
+
+		available = {
+			always = yes
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+		
+		complete_effect = {
+			division_template = {
+				name = "Emergency Hatchlings"
+				regiments = {
+					spider_infantry = { x = 0 y = 0 }
+					spider_infantry = { x = 0 y = 1 }
+					spider_infantry = { x = 0 y = 2 }
+					spider_infantry = { x = 1 y = 0 }
+					spider_infantry = { x = 1 y = 1 }
+					spider_infantry = { x = 1 y = 2 }
+					spider_infantry = { x = 2 y = 0 }
+					spider_infantry = { x = 2 y = 1 }
+					spider_infantry = { x = 2 y = 2 }
+				}
+			}
+			random_core_state = {
+				limit = { is_controlled_by = ROOT }
+				create_unit = {
+					division = "name = \"Emergency Hatchlings\" division_template = \"Emergency Hatchlings\""
+					owner = SPI
+					count = 3
+					allow_spawning_on_enemy_provs = no
+				}
+			}
+		}
+	}
+
+
+	# activate_mission = mission_name can be used to bypass allowed and activation
+	SPI_maturing_eggs = {
+		icon = decision_spider_eggs
+
+		fire_only_once = yes
+		days_mission_timeout = 365
+		selectable_mission = no
+		is_good = yes
+
+		allowed = {
+			always = no
+		}
+
+		activation = {
+			always = no
+		}
+
+		available = {
+			always = no
+		}
+
+		cancel_trigger = {
+			NOT = { controls_province = 9131 }
+		}
+
+		timeout_effect = {
+			hidden_effect = {
+				load_oob = SPI_matured_eggs
+			}
+			custom_effect_tooltip = SPI_let_eggs_mature_2_tt
+		}
+	}
+
+	# This starts the other thing
+	SPI_unleash_the_brood_select = {
+		icon = GFX_decision_spiders
+
+		fire_only_once = no # allow decision to reappear
+		days_re_enable = 150 # if above set to no, this is the cooldown for re-appear
+		cost = 100
+
+		allowed = {
+			original_tag = SPI
+		}
+
+		visible = {
+			has_completed_focus = SPI_let_roam_the_brood
+		}
+
+		ai_will_do = {
+			base = 5
+			modifier = {
+				factor = 0
+				has_country_flag = rng_50p_flag_3
+				has_country_flag = rng_50p_flag_6
+			}
+			modifier = {
+				factor = 0
+				has_war = yes
+				has_country_flag = rng_80p_flag_3
+			}
+			modifier = {
+				factor = 0
+				has_war = yes
+				alliance_strength_ratio < 1.4
+			}
+			modifier = {
+				factor = 0
+				NOT = {
+					any_neighbor_country = {
+						is_weaker = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 5
+				all_neighbor_country = {
+					is_weaker = yes
+				}
+			}
+			modifier = {
+				factor = 1.5
+				has_country_flag = gameplan_aggro_rush
+			}
+		}
+
+		available = {
+			any_neighbor_country = {
+				NOT = { has_war_with = SPI }
+				NOT = { is_ally_with = SPI }
+				NOT = { has_non_aggression_pact_with = SPI }
+			}
+		}
+		
+		complete_effect = {
+			# when decision is taken
+			custom_effect_tooltip = SPI_unleash_the_brood_select_effect_tt
+
+			hidden_effect = {
+
+				clr_country_flag = gameplan_aggro_rush
+
+				random_list = {
+					50 = {
+						modifier = {
+							factor = 0
+							OR = {
+								NOT = { has_country_flag = has_likely_next_random_war_target }
+								NOT = { is_neighbor_of = var:likely_next_random_war_target }
+								has_war_with = var:likely_next_random_war_target
+								is_ally_with = var:likely_next_random_war_target
+								has_non_aggression_pact_with = var:likely_next_random_war_target
+							}
+						}
+						var:likely_next_random_war_target = {
+							set_variable = { SPI.random_war_target = THIS }
+						}
+						SPI = { activate_mission = SPI_unleash_the_brood }
+						clr_country_flag = has_likely_next_random_war_target
+					}
+					50 = {
+						random_neighbor_country = {
+							limit = {
+								NOT = { has_war_with = SPI }
+								NOT = { is_ally_with = SPI }
+								NOT = { has_non_aggression_pact_with = SPI }
+							}
+							set_variable = { SPI.random_war_target = THIS }
+							SPI = { activate_mission = SPI_unleash_the_brood }
+						}
+					}
+					10 = {
+						modifier = {
+							factor = 0
+							is_historical_focus_on = no
+						}
+						modifier = {
+							factor = 0
+							MIR = { war_with_is_possible = no }
+						}
+						modifier = {
+							factor = 2
+							SPI = { is_ai = yes }
+						}
+						set_variable = { SPI.random_war_target = MIR }
+						SPI = { activate_mission = SPI_unleash_the_brood }
+					}
+				}
+			}
+		}
+	}
+
+	# non-interactible mission
+	# A timer that activates on trigger and runs out. Can be cancelled one of two ways (available and cancel_trigger)
+	# Cannot be interacted with/selected
+	# activate_mission = mission_name can be used to bypass allowed and activation
+	SPI_unleash_the_brood = {
+		icon = GFX_decision_spiders
+
+		fire_only_once = no # allow decision to reappear
+		days_mission_timeout = 70
+		selectable_mission = no
+		is_good = yes
+
+		#war_with_on_timeout = SPI.random_war_target
+
+		allowed = {
+			always = no
+		}
+
+		activation = {
+			always = no
+		}
+
+		available = {
+			has_variable = random_war_target
+			OR = {
+				has_war_with = random_war_target
+				is_ally_with = random_war_target
+				has_non_aggression_pact_with = random_war_target
+				has_truce_with = random_war_target
+				NOT = { country_exists = random_war_target }
+			}
+		}
+
+		complete_effect = {
+			hidden_effect = {
+				var:random_war_target = {
+					country_event = spiders.131
+
+					add_ai_strategy = {
+						type = prepare_for_war
+						id = ROOT
+						value = 200
+					}
+				}
+			}
+		}
+
+		timeout_effect = {
+			declare_war_on = {
+				target = random_war_target
+				type = annex_everything
+			}
+		}
+	}
+
+	SPI_repurpose_spent_carpaces = {
+		icon = GFX_decision_forest_spider_nest
+
+		fire_only_once = yes
+		cost = 50
+
+		allowed = {
+			tag = SPI
+		}
+
+		visible = {
+			always = yes
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+
+		available = {
+			casualties > 3000
+		}
+		
+		complete_effect = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 1000
+			}
+		}
+	}
+
+	hatch_the_great_eggs = {
+		icon = decision_spider_eggs
+
+		fire_only_once = yes
+		cost = 50
+
+		allowed = {
+			tag = SPI
+		}
+
+		visible = {
+			always = yes
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+
+		available = {
+			has_tech = great_webstalkers
+			check_variable = {
+				var = casrt
+				compare = greater_than_or_equals
+				value = 2000
+				tooltip = has_inflicted_casualties_2k_tt
+			}
+		}
+		
+		complete_effect = {
+			add_equipment_to_stockpile = {
+				type = great_webstalker_equipment_1
+				amount = 500
+			}
+		}
+	}
+
+	worker_brood_hatching = {
+		icon = decision_spider_eggs
+
+		fire_only_once = yes
+		cost = 50
+
+		allowed = {
+			tag = SPI
+		}
+
+		visible = {
+			always = yes
+		}
+
+		ai_will_do = {
+			factor = 10
+		}
+
+		available = {
+			check_variable = {
+				var = casrt
+				compare = greater_than_or_equals
+				value = 12000
+				tooltip = has_inflicted_casualties_12k_tt
+			}
+		}
+		
+		complete_effect = {
+			random_state_add_building_slot_and_mil_x2 = yes
+			random_state_add_building_slot_and_civ_x2 = yes
+		}
+	}
+}

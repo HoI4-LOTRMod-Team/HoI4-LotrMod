@@ -281,7 +281,12 @@ PixelShader =
 			float2 nuv = float2(Input.uv.x*0.0065f, Input.uv.y*0.00455f);
 			SampleWater( nuv, 0.2f*vTime_HalfPixelOffset.x, B, M, normal, LeanTexture1, LeanTexture2 );
 
-			float vSpecMap = tex2D( SpecularMap, Input.uv ).a;
+			float4 _vSpecMap = tex2D( SpecularMap, Input.uv ).rgba;
+			float vSpecMap = _vSpecMap.a;
+
+			// LOTR Abyss effect (Moria)
+			float abyss_fac = _vSpecMap.r;
+
 			normal.y += ( 1.0f - vSpecMap );
 			normal.xz *= vSpecMap;
 			normal = normalize( normal );
@@ -423,13 +428,18 @@ PixelShader =
 
 			// papermap factor
 			float map_fac = smoothstep(1800, 2600, vCamPos.y);
+			float papermap_fac = smoothstep(500, 750, vCamPos.y);
+
+			float4 ret = float4(vOut, (1.0f - waterShore)*(1.0f-map_fac));
+
+			if(abyss_fac > 0.0f) return float4(0.015f,0.005f,0.005f, smoothstep(0.2f, 0.78f, abyss_fac * (1.0f - papermap_fac)));
 
 		#ifdef LOW_END_GFX
 			DebugReturn(vOut, lightingProperties, 0.0f);
 		#else
 			DebugReturn(vOut, lightingProperties, fShadowTerm);
 		#endif
-			return float4(vOut, (1.0f - waterShore)*(1.0f-map_fac));
+			return ret;
 		}
 	]]
 }

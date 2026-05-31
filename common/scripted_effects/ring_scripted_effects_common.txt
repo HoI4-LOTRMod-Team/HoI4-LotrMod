@@ -1,13 +1,13 @@
 
 # @docs(Ring): Disables the "stealth" check on ring interceptions for THIS (country)
 ring_disable_stealth_check = {
-	custom_effect_tooltip = "ring_disable_stealth_check_tt"
+	custom_effect_tooltip = ring_disable_stealth_check_tt
 	set_country_flag = ring_no_stealth_check
 }
 
 # @docs(Ring): Makes it so if THIS attacks the fellowship, they get 1 extra attack
 ring_get_extra_1_attacks = {
-	custom_effect_tooltip = "ring_get_extra_1_attacks_tt"
+	custom_effect_tooltip = ring_get_extra_1_attacks_tt
 	THIS = { add_to_variable = {
 		fs_bonus_attacks_on_next_interception = 1
 	} }
@@ -15,7 +15,7 @@ ring_get_extra_1_attacks = {
 
 # @docs(Ring): Makes it so if THIS attacks the fellowship, they get 2 extra attacks
 ring_get_extra_2_attacks = {
-	custom_effect_tooltip = "ring_get_extra_2_attacks_tt"
+	custom_effect_tooltip = ring_get_extra_2_attacks_tt
 	THIS = { add_to_variable = {
 		fs_bonus_attacks_on_next_interception = 2
 	} }
@@ -23,7 +23,7 @@ ring_get_extra_2_attacks = {
 
 # @docs(Ring): Makes it so if THIS attacks the fellowship, they get 3 extra attacks
 ring_get_extra_3_attacks = {
-	custom_effect_tooltip = "ring_get_extra_3_attacks_tt"
+	custom_effect_tooltip = ring_get_extra_3_attacks_tt
 	THIS = { add_to_variable = {
 		fs_bonus_attacks_on_next_interception = 3
 	} }
@@ -153,27 +153,36 @@ ring_heal_fellowship_member = {
 # @docs(Ring): Opens/Closes the details view
 ring_toggle_details_view = {
 	if = {
-		limit = { has_country_flag = elven_alliance_details_view_open }
-		clr_country_flag = elven_alliance_details_view_open
-	}
-	if = {
-		limit = { has_country_flag = rohan_lords_details_view_open }
-		clr_country_flag = rohan_lords_details_view_open
+		limit = { has_country_flag = lotr_artifacts_details_view_open }
+		clr_country_flag = lotr_artifacts_details_view_open
+		set_variable = { lotr_artifacts_details_view_frame = 1 }
 	}
 	if = {
 		limit = { has_country_flag = ring_details_view_open }
 		clr_country_flag = ring_details_view_open
+		set_variable = { ring_details_view_frame = 1 }
 	}
 	# To keep the UI clean and smooth, we won't allow this to open when interception_form is open
 	else_if = {
 		limit = { NOT = { has_country_flag = ring_interception_form_open } }
 		set_country_flag = ring_details_view_open
+		set_variable = { ring_details_view_frame = 2 }
 	}
 }
 
 
+ring_trigger_notification_alert = {
+	every_country = {
+		limit = { is_ai = no }
+		set_country_flag = ring_mechanic_notification_active
+	}
+}
+
 # Ensures that the evenlog is no longer than 25 entries, removing older entries first
 ring_trim_eventlog = {
+
+	# We assume that this gets called whenever something ets added to the log (which it should)
+	ring_trigger_notification_alert = yes
 
 	while_loop_effect = {
 	    limit = { check_variable = { global.fs_eventlog_prefix_targets^num > 25 } }
@@ -389,7 +398,8 @@ ring_destroy_ring = {
 			}
 		}
 		MOR = { country_event = { days = 12 id = fs.106 } }
-	} else_if = {
+	}
+	else_if = {
 		limit = {
 			ANG = {
 				has_government = belligerent
@@ -399,10 +409,22 @@ ring_destroy_ring = {
 		ANG = { country_event = { days = 12 id = fs.108 } }
 	}
 
+	if = {
+		limit = {
+			RHU = {
+				exists = yes
+				is_ally_with = MOR
+			}
+		}
+		RHU = { country_event = { days = 1 id = rhun.11 } }
+	}
+
 	set_global_flag = fs_ring_destroyed
 	ring_clear_pathstack = yes
 	ring_clear_fellowship_members = yes
 	news_event = { hours = 12 id = news.376 }
+
+	morm_end_menace = yes
 }
 
 
@@ -485,6 +507,7 @@ ring_open_interception_attempt_prompt = {
 		# the "normal" way
 		else = {
 			clr_country_flag = ring_details_view_open
+			set_variable = { ring_details_view_frame = 0 }
 
 			# Only one week to select interception group
 			# NOT: do NOT change the 7 day countdown without fixing the GetDayLeftBeforeAutoAbort scripted localization!!
@@ -548,19 +571,6 @@ ring_ai_commence_interception_attempt = {
 	    }
 	}
 
-	# set acceptable casualty rate
-	if = {
-		limit = { OR = { tag = ISE tag = MOR } }
-		set_variable = { ROOT.fs_max_casualty_rate = 1.0 }
-	}
-	else_if = {
-		limit = { OR = { tag = MOC } }
-		set_variable = { ROOT.fs_max_casualty_rate = 0.3 } # MOC has few generals + cave troll. This is lower in order to try to keep Gulthurg alive lol
-	}
-	else = {
-		set_variable = { ROOT.fs_max_casualty_rate = 0.5 }
-	}
-
 	# launch
 	ring_execute_interception_attempt = yes
 }
@@ -594,20 +604,74 @@ ring_execute_interception_attempt = {
 
 	set_temp_variable = { fs_interception_cancelled = 0 }
 
-	# Maximum amount of casualties before disengaging
-	set_temp_variable = { fs_interception_max_casualties = ROOT.fs_hunting_party^num }
-	multiply_temp_variable = { fs_interception_max_casualties = ROOT.fs_max_casualty_rate }
-
-	# Because its easier to calculate: Min. number of party members to keep fighting
-	set_temp_variable = { fs_interception_min_members = ROOT.fs_hunting_party^num }
-	subtract_from_temp_variable = { fs_interception_min_members = fs_interception_max_casualties }
-
 	add_to_array = { global.fs_eventlog_prefix_targets = ROOT }
 	add_to_array = { global.fs_eventlog_suffix_targets = ROOT.fs_hunting_party^0 }
 	add_to_array = { global.fs_eventlog = token:fs_event_tries_to_intercept }
 	ring_trim_eventlog = yes
 
 	ring_interception_detection_check = yes
+
+	# If attacking country is mirkwood and Legolas or Tauriel is in fellowship, they have a 50% chance of switching sides and grant an extra attack
+	if = {
+		limit = { ROOT = { tag = MIR has_completed_focus = MIR_insider_agent } }
+		random_list = {
+			# betrayal
+			50 = {
+				# Tauriel betrayal
+				if = {
+					limit = { SHI = { FS_tauriel = { is_in_array = { global.fs_members = THIS } } } }
+					SHI = { FS_tauriel = { ring_remove_member_from_fellowship_nolog = yes } }
+					MIR = { MIR_tauriel = { ring_add_member_to_hunting_party = yes clr_character_flag = with_fellowship } }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_tauriel_betrayal }
+					ring_trim_eventlog = yes
+
+					MIR = { MIR_tauriel = { set_temp_variable = { temp_attacker = THIS } } }
+					random_scope_in_array = { array = global.fs_members set_temp_variable = { temp_defender = THIS } }
+					ring_combat_execute_attack = yes
+				}
+				# Legolas betrayal
+				else_if = {
+					limit = { SHI = { FS_legolas = { is_in_array = { global.fs_members = THIS } } } }
+					SHI = { FS_legolas = { ring_remove_member_from_fellowship_nolog = yes } }
+					MIR = { MIR_legolas = { ring_add_member_to_hunting_party = yes clr_character_flag = with_fellowship } }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_legolas_betrayal }
+					ring_trim_eventlog = yes
+
+					MIR = { MIR_legolas = { set_temp_variable = { temp_attacker = THIS } } }
+					random_scope_in_array = { array = global.fs_members set_temp_variable = { temp_defender = THIS } }
+					ring_combat_execute_attack = yes
+				}
+			}
+
+			# loyalty
+			50 = {
+				# Tauriel 
+				if = {
+					limit = { SHI = { FS_tauriel = { is_in_array = { global.fs_members = THIS } } } }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_tauriel_loyal }
+					ring_trim_eventlog = yes
+				}
+				# Legolas 
+				else_if = {
+					limit = { SHI = { FS_legolas = { is_in_array = { global.fs_members = THIS } } } }
+
+					add_to_array = { global.fs_eventlog_prefix_targets = 0 }
+					add_to_array = { global.fs_eventlog_suffix_targets = 0 }
+					add_to_array = { global.fs_eventlog = token:fs_event_legolas_loyal }
+					ring_trim_eventlog = yes
+				}
+			}
+		}
+	}
 
 	for_loop_effect = {
 	    end = 4
@@ -751,6 +815,30 @@ ring_MOR_set_hunting_party_to_nazgul = {
 	}
 }
 
+# Calculate stealth stat for fellowship
+ring_interception_detection_check__calc_fs = {
+	# Calculate average fellowship stealth skill (planning_skill)
+	set_temp_variable = { temp_avg_fs_stealth = 0 }
+	for_each_scope_loop = {
+		array = global.fs_members
+		
+		add_to_temp_variable = { PREV.temp_avg_fs_stealth = planning_level }
+	}
+	divide_temp_variable = { temp_avg_fs_stealth = global.fs_members^num }
+}
+
+# Calculate stealth stat for hunting party
+ring_interception_detection_check__calc_hunting_party = {
+	# Calculate average fellowship stealth skill (planning_skill)
+	set_temp_variable = { temp_avg_hp_stealth = 0 }
+	for_each_scope_loop = {
+		array = ROOT.fs_hunting_party
+		
+		add_to_temp_variable = { PREV.temp_avg_hp_stealth = planning_level }
+	}
+	divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
+}
+
 # Runs a detection check if ROOT can detect the fellowship
 # ARGS: ROOT.fs_hunting_party, global.fs_members
 # RETURN: If the check fails, it sets fs_interception_cancelled to 1
@@ -758,46 +846,37 @@ ring_interception_detection_check = {
 	if = {
 		# Argonath raid does not require stealth-check
 		limit = {
-			NOT = { has_country_flag = is_argonath_raid }
-
-			# Some countries can disable the stealth check
-			NOT = { has_country_flag = ring_no_stealth_check }
-
-			# neither does Lothlorien
-			ROOT = { NOT = { tag = LTH } }
+			NOT = { ring_interceptions_are_disabled = yes }
+			has_variable = var:global.fs_currentstate
 		}
 
-		# Calculate average fellowship stealth skill (planning_skill)
-		set_temp_variable = { temp_avg_fs_stealth = 0 }
-		for_each_scope_loop = {
-		    array = global.fs_members
-		    
-		    add_to_temp_variable = { temp_avg_fs_stealth = planning_level }
-		}
-		divide_temp_variable = { temp_avg_fs_stealth = global.fs_members^num }
+		# Calculate average stealth skills (planning_skill)
+		ring_interception_detection_check__calc_fs = yes
+		ring_interception_detection_check__calc_hunting_party = yes
 
-		# Calculate the average stealth skill of the hunting party
-		set_temp_variable = { temp_avg_hp_stealth = 0 }
-		for_each_scope_loop = {
-		    array = ROOT.fs_hunting_party
-		    
-		    add_to_temp_variable = { temp_avg_hp_stealth = planning_level }
+		# Extra bonus from watchtowers!
+		var:global.fs_currentstate = {
+			add_to_temp_variable = {
+				PREV.temp_avg_hp_stealth = building_level@radar_station
+			}
 		}
-		divide_temp_variable = { temp_avg_hp_stealth = ROOT.fs_hunting_party^num }
-		# Hunting party gets 200% bonus because this is their home turf
-		multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
-
-		# these countries get an additional detection bonus
+		
+		# Home turf + core advantage, 200%
 		if = {
-			limit = { ROOT = { OR = { tag = MOC tag = ISE } } }
-			multiply_temp_variable  = { temp_avg_hp_stealth = 3 }
+			limit = { var:global.fs_currentstate = { is_core_of = ROOT is_controlled_by = ROOT } }
+			set_temp_variable = { temp_detection_bonus = 1.8 }
 		}
-
-		# ring-catcher bonus
-		if = {
-			limit = { has_idea_with_trait = ring_catcher }
-			multiply_temp_variable  = { temp_avg_hp_stealth = 2 }
+		# Home turf advantage, 150%
+		else_if = {
+			limit = { var:global.fs_currentstate = { is_controlled_by = ROOT } }
+			set_temp_variable = { temp_detection_bonus = 1.5 }
 		}
+		# Exceptional base, 100%
+		else = {
+			set_temp_variable = { temp_detection_bonus = 1.0 }
+		}
+		add_to_temp_variable = { temp_detection_bonus = ROOT.modifier@fellowship_detection_factor }
+		multiply_temp_variable = { temp_avg_hp_stealth = temp_detection_bonus }
 
 		# Check which side wins:
 		random_list = {
@@ -965,10 +1044,25 @@ ring_combat_kill_character = {
 			ring_try_seize = yes
 		}
 
+		if = {
+			limit = {
+				ROOT = { tag = MIR }
+				var:temp_defender = { has_character_flag = is_tauriel }
+			}
+			set_global_flag = not_even_in_the_books_achievement_flag
+		}
+
 		# Check if gandalf dead
 		if = {
-			limit = { var:temp_defender = { has_character_flag = is_gandalf } }
+			limit = {
+				var:temp_defender = { has_character_flag = is_gandalf }
+				NOT = { any_country = { has_idea = artifact_gandalfs_staff } }
+			}
 			set_global_flag = fs_gandalf_left_fellowship
+			# Killing Gandalf awards Gandalf's staff!
+			ROOT = {
+				country_event = { id = fs.100 days = 7 }
+			}
 		}
 
 		log = "[?var:SHI.temp_attacker.GetName] killed [?var:temp_defender.GetName]"
@@ -1084,15 +1178,18 @@ ring_interception_disengage_check = {
 
 	if = {
 		# Check if we WANT to disengage in the first place
-		limit = { 
-			NOT = { check_variable = { ROOT.fs_hunting_party^num > fs_interception_min_members } }
+		# If we are hopelessly outnumbered 2 to 1 or worse, try to disengage at 50%
+		limit = {
+			set_temp_variable = { hunting_party_times_2 = ROOT.fs_hunting_party^num }
+			multiply_temp_variable = { hunting_party_times_2 = 2 }
+			check_variable = { var = global.fs_members^num value = hunting_party_times_2 compare = greater_than_or_equals }
 		}
 
 		random_list = {
-			1 = {
+			2 = {
 				# Disengage fails
 			}
-			4 = {
+			2 = {
 				# disengage
 				set_temp_variable = { fs_interception_cancelled = 1 }
 
@@ -1185,12 +1282,12 @@ ring_seize_ring = {
 
 ring_remove_ring = {
 	if = {
-		limit = { has_idea = one_true_ring }
-		remove_ideas = one_true_ring
+		limit = { has_idea = artifact_the_one_ring }
+		remove_ideas = artifact_the_one_ring
 	}
 	else_if = {
-		limit = { has_idea = one_true_ring_2 }
-		remove_ideas = one_true_ring_2
+		limit = { has_idea = artifact_the_one_ring_upgraded }
+		remove_ideas = artifact_the_one_ring_upgraded
 	}
 	clear_variable = global.ring_corruption_percentage
 }
@@ -1198,10 +1295,10 @@ ring_remove_ring = {
 ring_add_ring = {
 	if = {
 		limit = { has_global_flag = ring_merged_with_nenya }
-		add_ideas = one_true_ring_2
+		add_ideas = artifact_the_one_ring_upgraded
 	}
 	else = {
-		add_ideas = one_true_ring
+		add_ideas = artifact_the_one_ring
 	}
 	# add BOP to new owner
 	#if = {
@@ -1228,8 +1325,16 @@ ring_add_ring = {
 ring_upgrade_ring = {
 	set_global_flag = ring_merged_with_nenya
 	swap_ideas = {
-		remove_idea = one_true_ring
-		add_idea = one_true_ring_2
+		remove_idea = artifact_the_one_ring
+		add_idea = artifact_the_one_ring_upgraded
+	}
+}
+
+ring_upgrade_ring_saruman = {
+	set_global_flag = ring_improved_by_saruman
+	swap_ideas = {
+		remove_idea = artifact_the_one_ring
+		add_idea = artifact_the_one_ring_upgraded
 	}
 }
 

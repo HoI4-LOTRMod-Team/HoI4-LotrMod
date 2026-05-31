@@ -1,0 +1,1581 @@
+
+add_namespace = goblintown
+
+
+
+# GOB: raid on spdiers successful
+country_event = {
+    id = goblintown.100
+	picture = GFX_report_event_burning_spider_nest
+    title = goblintown.100.t
+    desc = goblintown.100.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.100.a
+		add_war_support = 0.03
+		event_option_tooltip = goblintown.101.a
+	}
+}
+
+
+# SPI: GOB raid successful
+country_event = {
+    id = goblintown.101
+	picture = GFX_report_event_burning_spider_nest
+    title = goblintown.101.t
+    desc = goblintown.101.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.101.a
+		SPI = {
+			add_war_support = -0.03
+			add_opinion_modifier = {
+				target = GOB
+				modifier = large_decrease
+			}
+			send_embargo = GOB
+		}
+    }
+}
+
+
+# GOB: raid on spiders failed
+country_event = {
+    id = goblintown.102
+	picture = GFX_report_event_big_spider
+    title = goblintown.102.t
+    desc = goblintown.102.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.102.a
+		add_war_support = -0.03
+		event_option_tooltip = goblintown.103.a
+	}
+}
+
+
+# SPI: GOB raid failed
+country_event = {
+    id = goblintown.103
+	title = goblintown.103.t
+    desc = goblintown.103.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.103.a
+		add_manpower = 500
+		SPI = {
+			add_opinion_modifier = {
+				target = GOB
+				modifier = medium_decrease
+			}
+		}
+    }
+}
+
+
+# Bree mad ar GOB for raid
+country_event = {
+    id = goblintown.104
+    title = goblintown.104.t
+    desc = goblintown.104.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.104.a
+		CAR = {
+			add_opinion_modifier = {
+				target = GOB
+				modifier = large_decrease
+			}
+			send_embargo = GOB
+		}
+    }
+}
+
+
+# Raid on Bree succesful
+country_event = {
+    id = goblintown.105
+	picture = GFX_report_event_goblin_raid_2
+    title = goblintown.105.t
+    desc = goblintown.105.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.105.a
+		GOB = {
+			country_event = { id = goblintown.104 days = 3 }
+    	}
+		add_war_support = -0.03
+		event_option_tooltip = goblintown.104.a
+	}
+}
+
+
+# Raid on Bree a failure
+country_event = {
+    id = goblintown.106
+	picture = GFX_report_event_goblin_raid_2
+    title = goblintown.106.t
+    desc = goblintown.106.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.106.a
+		GOB = {
+			country_event = { id = goblintown.104 days = 3 }
+    	}
+		add_war_support = 0.03
+		event_option_tooltip = goblintown.104.a
+	}
+}
+
+# Someone who has goblin mercenaries is at war with goblin town -> recall mercs
+country_event = {
+    id = goblintown.107
+	picture = GFX_report_event_army_in_mountains
+    title = goblintown.107.t
+    desc = goblintown.107.desc
+
+    trigger = {
+        has_war_with = GOB
+        has_idea = GOB_mercenary_contract
+    }
+
+    mean_time_to_happen = {
+        days = 2
+    }
+
+    immediate = {
+        gob_remove_mercs_and_template = yes # this is an instant recall. No notice period (we are at war.)
+        GOB = {
+            country_event = goblintown.108
+        }
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.107.a
+		
+	}
+}
+
+# Someone who has goblin mercenaries is at war with goblin town -> recall mercs (GOB POV)
+country_event = {
+    id = goblintown.108
+	picture = GFX_report_event_army_in_mountains
+    title = goblintown.108.t
+    desc = goblintown.108.desc
+
+    is_triggered_only = yes
+
+    immediate = {
+        gob_create_merc_divisions_equipped = yes
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.108.a
+		
+	}
+}
+
+
+# Goblin contract expired
+country_event = {
+    id = goblintown.109
+	picture = GFX_report_event_mercenary_offer
+    title = goblintown.109.t
+    desc = goblintown.109.desc
+
+    is_triggered_only = yes
+
+    # NOTE: I've literally made a graph plotting out the chances of the AI accepting this offer :skull:. You can see it here: https://i.imgur.com/brqPLsD.png
+
+    # extend
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                set_temp_variable = { temp_str_inv = 1 }
+                divide_temp_variable = { temp_str_inv = alliance_strength_ratio }
+                factor = temp_str_inv
+            }
+            modifier = {
+                factor = 2
+                ai_has_under_25p_wanted_divs = yes
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                factor = 1.5
+                ai_has_under_50p_wanted_divs = yes
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                # evenly matched -> need every advantage
+                factor = 2
+                alliance_strength_ratio > 0.75
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                # offer made by player -> more likely to accept
+                factor = 1.3
+                GOB = { is_ai = no }
+            }
+            modifier = {
+                # we have overwhelming force -> no need
+                factor = 0.001
+                alliance_strength_ratio > 2.0
+            }
+            modifier = {
+                # we are at peace -> no need
+                factor = 0.001
+                has_war = no
+            }
+            modifier = {
+                 # 30% chance to refuse regardless
+                factor = 0.001
+                has_country_flag = rng_30p_flag_2
+            }
+            modifier = {
+                # elves don't like goblins much
+                factor = 0.25
+                is_elves = yes
+                alliance_strength_ratio > 0.5 # I'll take those odds!
+            }
+            modifier = {
+                factor = 1.25
+                has_government = belligerent
+            }
+        }
+        trigger = {
+            # no point in extending if they no longer have mercs
+            any_country_division = {
+                division_has_majority_template = goblin_mercenary_infantry
+            }
+        }
+        name = goblintown.109.a
+        GOB = {
+            country_event = goblintown.110
+        }
+        add_timed_idea = {
+            idea = GOB_mercenary_contract
+            days = 180
+        }
+    }
+
+    # let expire
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                # we are facing tough odds -> need mercs
+                set_temp_variable = { temp_str = alliance_strength_ratio }
+                multiply_temp_variable = { temp_str = alliance_strength_ratio } # alliance ratio squared
+                factor = temp_str
+            }
+            modifier = {
+                # we are loosing -> need mercs
+                factor = 0.001
+                surrender_progress > 0.12
+            }
+            modifier = {
+                # we are outnumbered -> need mercs
+                factor = 0.001
+                alliance_strength_ratio < 0.5
+            }
+        }
+        name = goblintown.109.b
+        custom_effect_tooltip = goblintown.109.b_tt
+        hidden_effect = {
+            gob_remove_mercs_and_template = yes
+            GOB = {
+                gob_create_merc_divisions_equipped = yes
+                country_event = goblintown.111
+            }
+        }
+	}
+}
+
+
+# mercenary contract extended
+country_event = {
+    id = goblintown.110
+	picture = GFX_report_event_mercenary_offer
+    title = goblintown.110.t
+    desc = goblintown.110.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.110.a
+    }
+}
+
+
+# mercenary contract expired
+country_event = {
+    id = goblintown.111
+	picture = GFX_report_event_mercenary_offer
+    title = goblintown.111.t
+    desc = goblintown.111.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.111.a
+    }
+}
+
+
+# GOB merc contract offered
+country_event = {
+    id = goblintown.112
+	picture = GFX_report_event_mercenary_offer
+    title = goblintown.112.t
+    desc = goblintown.112.desc
+
+    is_triggered_only = yes
+
+    # NOTE: I've literally made a graph plotting out the chances of the AI accepting this offer :skull:. You can see it here: https://i.imgur.com/brqPLsD.png
+
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                set_temp_variable = { temp_str_inv = 1 }
+                divide_temp_variable = { temp_str_inv = alliance_strength_ratio }
+                factor = temp_str_inv
+            }
+            modifier = {
+                factor = 2
+                ai_has_under_25p_wanted_divs = yes
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                factor = 1.5
+                ai_has_under_50p_wanted_divs = yes
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                # evenly matched -> need every advantage
+                factor = 2
+                alliance_strength_ratio > 0.75
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                # offer made by player -> more likely to accept
+                factor = 1.3
+                GOB = { is_ai = no }
+            }
+            modifier = {
+                # we have overwhelming force -> no need
+                factor = 0.001
+                alliance_strength_ratio > 2.0
+            }
+            modifier = {
+                # we are at peace -> no need
+                factor = 0.001
+                has_war = no
+            }
+            modifier = {
+                 # 30% chance to refuse regardless
+                factor = 0.001
+                has_country_flag = rng_30p_flag_2
+            }
+            modifier = {
+                # elves don't like goblins much
+                factor = 0.25
+                is_elves = yes
+                alliance_strength_ratio > 0.5 # I'll take those odds!
+            }
+            modifier = {
+                factor = 1.25
+                has_government = belligerent
+            }
+        }
+        name = goblintown.112.a
+        hidden_effect = {
+            GOB = {
+                country_event = goblintown.113
+            }
+            GOB = {
+                gob_remove_mercs = yes
+            }
+            gob_create_merc_divisions_equipped = yes
+        }
+        add_political_power = -25
+        custom_effect_tooltip = goblintown.112.a_tt_1
+        custom_effect_tooltip = goblintown.112.a_tt_2
+        custom_effect_tooltip = goblintown.112.a_tt_3
+        
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                # we are facing tough odds -> need mercs
+                set_temp_variable = { temp_str = alliance_strength_ratio }
+                multiply_temp_variable = { temp_str = alliance_strength_ratio } # alliance ratio squared
+                factor = temp_str
+            }
+            modifier = {
+                # we are loosing -> need mercs
+                factor = 0.001
+                surrender_progress > 0.12
+            }
+            modifier = {
+                # we are outnumbered -> need mercs
+                factor = 0.001
+                alliance_strength_ratio < 0.5
+            }
+            modifier = {
+                factor = 3
+                # supremacsists or demineering non-orcs won't work with goblins
+                OR = {
+                    has_country_leader_ideology = supremacist
+                    has_country_leader_ideology = domineering
+                }
+                is_orcs = no
+            }
+        }
+        name = goblintown.112.b
+        hidden_effect = {
+            GOB = {
+                country_event = goblintown.114
+            }
+        }
+	}
+}
+
+
+# merc contract accepted
+country_event = {
+    id = goblintown.113
+	picture = GFX_report_event_mercenary_offer
+    title = goblintown.113.t
+    desc = goblintown.113.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.113.a
+        custom_effect_tooltip = goblintown.113.a_tt_1
+        custom_effect_tooltip = goblintown.113.a_tt_2
+    }
+}
+
+
+# merc contract declined
+country_event = {
+    id = goblintown.114
+    title = goblintown.114.t
+    desc = goblintown.114.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.114.a
+
+        clr_country_flag = merc_offer_pending
+    }
+}
+
+
+
+# GOB recalls mercs
+country_event = {
+    id = goblintown.115
+	picture = GFX_report_event_mercenary_offer
+    title = goblintown.115.t
+    desc = goblintown.115.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.115.a
+
+        gob_recall_mercenaries = yes
+    }
+}
+
+
+# mercs have returned home
+country_event = {
+    id = goblintown.116
+	picture = GFX_report_event_army_in_mountains
+    title = goblintown.116.t
+    desc = goblintown.116.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.116.a
+
+        gob_create_merc_divisions_equipped = yes
+    }
+}
+
+
+# mercenaries created
+country_event = {
+    id = goblintown.117
+	picture = GFX_report_event_army_in_mountains
+    title = goblintown.117.t
+    desc = goblintown.117.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.117.a
+        custom_effect_tooltip = goblintown.117.a_tt
+        custom_effect_tooltip = goblintown.117.a_tt_2
+    }
+}
+
+
+# mercenaries ready to be sent abroad
+country_event = {
+    id = goblintown.118
+	picture = GFX_report_event_army_in_mountains
+    title = goblintown.118.t
+    desc = goblintown.118.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.118.a
+
+        custom_effect_tooltip = goblintown.118.a_tt
+    }
+}
+
+
+# GOB raid on RIV successful
+country_event = {
+    id = goblintown.119
+	picture = GFX_report_event_riv_raid
+    title = goblintown.119.t
+    desc = goblintown.119.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 3
+            modifier = {
+                factor = 2
+                GOB = { is_weaker = yes is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 2
+                GOB = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                GOB = { has_war = yes }
+                has_war = no
+            }
+        }
+        trigger = {
+            any_country = {
+                is_neighbor_of = GOB
+                OR = {
+                    is_ally_with = RIV
+                    tag = RIV
+                }
+            }
+        }
+        name = goblintown.119.a
+		hidden_effect = {
+            GOB = { country_event = { id = goblintown.121 days = 1 } }
+        }
+        create_wargoal = {
+            target = GOB
+            type = annex_everything
+        }
+        add_opinion_modifier = {
+            target = GOB
+            modifier = large_decrease
+        }
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 2
+                has_war = yes
+            }
+            modifier = {
+                factor = 3
+                alliance_strength_ratio < 1.2
+            }
+            modifier = {
+                factor = 100
+                GOB = { is_weaker = no }
+                has_war = yes
+            }
+        }
+        name = goblintown.119.b
+	    hidden_effect = {
+            GOB = { country_event = { id = goblintown.122 days = 3 } }
+        }
+        send_embargo = GOB
+        add_opinion_modifier = {
+            target = GOB
+            modifier = large_decrease
+        }
+    }
+}
+
+
+# GOB raid on RIV failed
+country_event = {
+    id = goblintown.120
+	picture = GFX_report_event_riv_raid
+    title = goblintown.120.t
+    desc = goblintown.120.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 2
+        }
+        name = goblintown.120.a
+        add_war_support = 0.03
+        add_opinion_modifier = {
+            target = GOB
+            modifier = medium_decrease
+        }
+    }
+
+    option = {
+        ai_chance = {
+            base = 3
+        }
+        name = goblintown.120.b
+	    hidden_effect = {
+            GOB = { country_event = { id = goblintown.122 days = 3 } }
+        }
+        send_embargo = GOB
+        add_opinion_modifier = {
+            target = GOB
+            modifier = large_decrease
+        }
+    }
+}
+
+
+# Response to raid: wargoal
+country_event = {
+    id = goblintown.121
+	picture = GFX_report_event_elrond
+    title = goblintown.121.t
+    desc = goblintown.121.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.121.a
+        effect_tooltip = {
+            RIV = {
+                create_wargoal = {
+                    target = GOB
+                    type = annex_everything
+                }
+                add_opinion_modifier = {
+                    target = GOB
+                    modifier = large_decrease
+                }
+            }
+        }
+    }
+}
+
+
+# Response to raid: embargo
+country_event = {
+    id = goblintown.122
+	picture = GFX_report_event_elrond
+    title = goblintown.122.t
+    desc = goblintown.122.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.122.a
+        effect_tooltip = {
+            RIV = {
+                send_embargo = GOB
+                add_opinion_modifier = {
+                    target = GOB
+                    modifier = large_decrease
+                }
+            }
+        }
+    }
+}
+
+
+# Goblins collapse tunnels
+country_event = {
+    id = goblintown.123
+	picture = GFX_report_event_goblin_trap
+    title = goblintown.123.t
+    desc = goblintown.123.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.123.a
+
+        GOB = {
+            custom_effect_tooltip = for_every_core_state_tt
+            custom_effect_tooltip = GOB_collapse_the_side_shafts_tt
+        }
+    }
+}
+
+
+# Provoking a war
+country_event = {
+    id = goblintown.124
+    title = goblintown.124.t
+    desc = goblintown.124.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 4
+                GLD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 2
+                GLD = { is_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                GLD = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                GLD = { has_war = yes }
+                has_war = no
+            }
+        }
+        trigger = {
+            GLD = { war_with_is_possible = yes }
+            NOT = { GLD = { has_idea = GOB_high_pass_contract } }
+        }
+        name = goblintown.124.a
+        GLD = { provoke_war_with = yes }
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 4
+                RHD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 2
+                RHD = { is_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                RHD = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 2
+                RHD = { has_war = yes }
+                has_war = no
+            }
+        }
+        trigger = {
+            RHD = { war_with_is_possible = yes }
+            NOT = { RHD = { has_idea = GOB_high_pass_contract } }
+        }
+        name = goblintown.124.b
+        RHD = { provoke_war_with = yes }
+    }
+}
+
+
+# GOB demands tribute
+country_event = {
+    id = goblintown.125
+    title = goblintown.125.t
+    desc = goblintown.125.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 3
+            modifier = {
+                factor = 1.5
+                has_government = belligerent
+            }
+            modifier = {
+                factor = 1.5
+                GOB = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 1.25
+                is_in_faction = yes
+            }
+        }
+        name = goblintown.125.a
+		hidden_effect = {
+            FROM = { country_event = { id = goblintown.126 days = 3 } }
+        }
+        set_country_flag = {
+            flag = gob_refused_tribute
+            days = 365
+            value = 1
+        }
+        custom_effect_tooltip = goblintown.126.a
+    }
+
+    option = {
+        ai_chance = {
+            base = 4
+            modifier = {
+                factor = 1.3
+                is_isolated_target = yes
+            }
+            modifier = {
+                factor = 1.75
+                has_war = yes
+            }
+        }
+        name = goblintown.125.b
+	    hidden_effect = {
+            FROM = { country_event = { id = goblintown.127 days = 3 } }
+        }
+        ROOT = {
+            add_timed_idea = {
+                idea = three_civs_cost
+                days = 90
+            }
+        }
+        GOB = {
+            random_state_add_building_slot_and_civ = yes
+        }
+    }
+}
+
+
+# Tribute refused
+country_event = {
+    id = goblintown.126
+	picture = GFX_report_event_no_money_gold
+    title = goblintown.126.t
+    desc = goblintown.126.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.126.a
+        custom_effect_tooltip = goblintown.126.a_tt
+    }
+}
+
+
+# Tribute paid
+country_event = {
+    id = goblintown.127
+	picture = GFX_report_event_money_gold
+    title = goblintown.127.t
+    desc = goblintown.127.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.127.a
+        effect_tooltip = {
+            FROM = {
+                add_timed_idea = {
+                    idea = three_civs_cost
+                    days = 90
+                }
+            }
+            GOB = {
+                random_state_add_building_slot_and_civ = yes
+                add_to_variable = { successful_raids = 1 }
+            }
+        }
+    }
+}
+
+
+# Goblin Town High Pass is open for business
+country_event = {
+    id = goblintown.128
+	picture = GFX_report_event_high_pass
+    title = goblintown.128.t
+    desc = goblintown.128.desc
+
+    trigger = {
+        gob_can_borrow_high_pass = yes
+        NOT = { has_country_flag = gob_high_pass_notification_received }
+    }
+
+    immediate = {
+        set_country_flag = gob_high_pass_notification_received
+    }
+
+    mean_time_to_happen = {
+        days = 7
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.128.a
+        custom_effect_tooltip = goblintown.128.a_tt
+    }
+}
+
+
+# GOB asked to High Pass passage
+country_event = {
+    id = goblintown.129
+	picture = GFX_report_event_paper
+    title = goblintown.129.t
+    desc = goblintown.129.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 3
+            modifier = {
+                factor = 2
+                FROM = { is_ai = no }
+            }
+            modifier = {
+                factor = 5
+                OR = {
+                    FROM = { has_completed_focus = GLD_parley_with_the_goblins }
+                    FROM = { has_completed_focus = GLD_bolder_not_safer }
+                    FROM = { has_completed_focus = RHD_they_will_not_expect_this }
+                }
+            }
+        }
+        name = goblintown.129.a
+		hidden_effect = {
+            FROM = { country_event = { id = goblintown.130 days = 3 } }
+        }
+        FROM = { custom_effect_tooltip = gob_borrow_high_pass_GOB_tt }
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 15
+                has_country_flag = rng_50p_flag_1 # 25 % chance to just not be in the mood
+                has_country_flag = rng_50p_flag_4
+                FROM = { is_ai = no }
+            }
+            modifier = {
+                factor = 12
+                has_country_flag = rng_50p_flag_1 # 25 % chance to just not be in the mood (less for player)
+                has_country_flag = rng_50p_flag_4
+                FROM = { is_ai = yes }
+            }
+        }
+        name = goblintown.129.b
+	    hidden_effect = {
+            FROM = { country_event = { id = goblintown.131 days = 3 } }
+        }
+    }
+}
+
+
+# passage accepted
+country_event = {
+    id = goblintown.130
+	picture = GFX_report_event_high_pass
+    title = goblintown.130.t
+    desc = goblintown.130.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.130.a
+        if = {
+            limit = { gob_can_borrow_high_pass = yes }
+            gob_borrow_high_pass = yes
+        }
+    }
+}
+
+
+# passage declined
+country_event = {
+    id = goblintown.131
+    title = goblintown.131.t
+    desc = goblintown.131.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.131.a
+    }
+}
+
+
+# high pass neighbor notification
+country_event = {
+    id = goblintown.132
+	picture = GFX_report_event_high_pass
+    title = goblintown.132.t
+    desc = goblintown.132.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.132.a
+    }
+}
+
+
+# high pass contract transfer
+country_event = {
+    id = goblintown.133
+	picture = GFX_report_event_high_pass
+    title = goblintown.133.t
+    desc = goblintown.133.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.133.a
+        effect_tooltip = {
+            gob_borrow_high_pass = yes
+        }
+    }
+}
+
+
+# high pass contract transfer
+country_event = {
+    id = goblintown.134
+	picture = GFX_report_event_high_pass
+    title = goblintown.134.t
+    desc = goblintown.134.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.134.a
+        FROM = { custom_effect_tooltip = gob_borrow_high_pass_GOB_tt }
+    }
+}
+
+
+# high pass returned
+country_event = {
+    id = goblintown.135
+	picture = GFX_report_event_high_pass
+    title = goblintown.135.t
+    desc = goblintown.135.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.135.a
+        effect_tooltip = {
+            transfer_state = 263
+        }
+    }
+}
+
+
+# GLD RHD antagonize
+country_event = {
+    id = goblintown.136
+	picture = GFX_report_event_rangers
+    title = goblintown.136.t
+    desc = goblintown.136.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.136.a
+        add_opinion_modifier = {
+            target = GLD
+            modifier = large_decrease
+        }
+        add_stability = -0.03
+    }
+}
+
+
+# GLD RHD antagonize
+country_event = {
+    id = goblintown.137
+	picture = GFX_report_event_rangers
+    title = goblintown.137.t
+    desc = goblintown.137.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.137.a
+        add_opinion_modifier = {
+            target = RHD
+            modifier = large_decrease
+        }
+        add_stability = -0.03
+    }
+}
+
+
+# GOB offers attack through passage to RHD
+country_event = {
+    id = goblintown.138
+	picture = GFX_report_event_goblin_town
+    title = goblintown.138.t
+    desc = goblintown.138.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 0
+                surrender_progress > 0.12
+            }
+            modifier = {
+                factor = 0
+                alliance_strength_ratio < 0.8
+            }
+            modifier = {
+                factor = 0.5
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                factor = 2
+                GLD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 1.5
+                GLD = { is_weaker = yes }
+            }
+            modifier = {
+                factor = 1.5
+                GLD = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 3
+                GOB = { is_ai = no }
+            }
+            modifier = {
+                factor = 0.5
+                has_war = yes
+            }
+        }
+        name = goblintown.138.a
+		hidden_effect = {
+            GLD = {
+                add_ai_strategy = {
+                    type = prepare_for_war
+                    id = RHD
+                    value = 200
+                }
+            }
+            GOB = { country_event = { id = goblintown.142 days = 1 } } # notify GOB
+            country_event = { id = goblintown.144 days = 70 } # gain wargoal
+            GLD = { country_event = { id = goblintown.145 days = 20 } } # warning
+        }
+        gob_borrow_high_pass = yes
+        custom_effect_tooltip = goblintown.138.a_tt
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 0
+                has_war = no
+                GLD = { is_weaker = yes }
+                GLD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 0
+                has_war = no
+                GLD = { is_significantly_stronger = no }
+                GLD = { is_isolated_target = yes }
+            }
+        }
+        name = goblintown.138.b
+	    hidden_effect = {
+            GOB = { country_event = { id = goblintown.140 days = 3 } }
+        }
+    }
+}
+
+
+# GOB offers attack through passage to GLD
+country_event = {
+    id = goblintown.139
+	picture = GFX_report_event_goblin_town
+    title = goblintown.139.t
+    desc = goblintown.139.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 0
+                surrender_progress > 0.05
+            }
+            modifier = {
+                factor = 0
+                alliance_strength_ratio < 0.8
+            }
+            modifier = {
+                factor = 0.5
+                alliance_strength_ratio < 1.1
+            }
+            modifier = {
+                factor = 2
+                RHD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 1.5
+                RHD = { is_weaker = yes }
+            }
+            modifier = {
+                factor = 1.5
+                RHD = { is_significantly_weaker = yes }
+            }
+            modifier = {
+                factor = 3.5
+                GOB = { is_ai = no }
+            }
+            modifier = {
+                factor = 0.5
+                has_war = yes
+            }
+        }
+        name = goblintown.139.a
+		hidden_effect = {
+            RHD = {
+                add_ai_strategy = {
+                    type = prepare_for_war
+                    id = GLD
+                    value = 200
+                }
+            }
+            GOB = { country_event = { id = goblintown.142 days = 1 } } # notify GOB
+            country_event = { id = goblintown.143 days = 70 } # gain wargoal
+            RHD = { country_event = { id = goblintown.141 days = 20 } } # warning
+        }
+        gob_borrow_high_pass = yes
+        custom_effect_tooltip = goblintown.139.a_tt
+    }
+
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 0
+                has_war = no
+                RHD = { is_weaker = yes }
+                RHD = { is_isolated_target = yes }
+            }
+            modifier = {
+                factor = 0
+                has_war = no
+                RHD = { is_significantly_stronger = no }
+                RHD = { is_isolated_target = yes }
+            }
+        }
+        name = goblintown.139.b
+        hidden_effect = {
+            GOB = { country_event = { id = goblintown.140 days = 3 } }
+        }
+    }
+}
+
+
+# offer rejected
+country_event = {
+    id = goblintown.140
+    title = goblintown.140.t
+    desc = goblintown.140.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.140.a
+    }
+}
+
+
+# GLD attack imminent
+country_event = {
+    id = goblintown.141
+	picture = GFX_report_event_mobilizing_army
+    title = goblintown.141.t
+    desc = goblintown.141.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.141.a
+        custom_effect_tooltip = goblintown.141.a_tt
+    }
+}
+
+
+# offer of passage accepted
+country_event = {
+    id = goblintown.142
+    title = goblintown.142.t
+    desc = goblintown.142.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.142.a
+        FROM = { custom_effect_tooltip = gob_borrow_high_pass_GOB_tt }
+    }
+}
+
+
+# wargoal on RHD
+country_event = {
+    id = goblintown.143
+	picture = GFX_report_event_mobilizing_army
+    title = goblintown.143.t
+    desc = goblintown.143.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.143.a
+        create_wargoal = {
+            target = RHD
+            type = puppet_wargoal_focus
+        }
+    }
+}
+
+
+# wargoal on GLD
+country_event = {
+    id = goblintown.144
+	picture = GFX_report_event_mobilizing_army
+    title = goblintown.144.t
+    desc = goblintown.144.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.144.a
+        create_wargoal = {
+            target = GLD
+            type = puppet_wargoal_focus
+        }
+    }
+}
+
+
+# RHD attack imminent
+country_event = {
+    id = goblintown.145
+	picture = GFX_report_event_mobilizing_army
+    title = goblintown.145.t
+    desc = goblintown.145.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.145.a
+        custom_effect_tooltip = goblintown.145.a_tt
+    }
+}
+
+
+# Deal struck
+country_event = {
+    id = goblintown.146
+	picture = GFX_report_event_money_gold
+    title = goblintown.146.t
+    desc = goblintown.146.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.146.a
+
+        random_state_add_building_slot_and_civ = yes
+        custom_effect_tooltip = goblintown.146.a_tt
+    }
+}
+
+
+# king overthrown
+country_event = {
+    id = goblintown.147
+    title = goblintown.147.t
+    desc = goblintown.147.desc
+
+    is_triggered_only = yes
+	picture = GFX_report_event_goblin_town
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = goblintown.147.a
+
+        effect_tooltip = {
+            add_popularity = {
+                ideology = revolutionary
+                popularity = 0.1
+            }
+            kill_country_leader = yes
+            add_timed_idea = {
+                idea = GOB_power_vacuum
+                days = 90
+            }
+        }
+    }
+}

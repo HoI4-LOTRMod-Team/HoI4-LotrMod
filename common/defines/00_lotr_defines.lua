@@ -125,9 +125,6 @@ NDefines.NProduction.MIN_FIELD_TO_TRAINING_MANPOWER_RATIO = 0.5
 -- Speed at which scientists give spell points
 NDefines.NProject.BREAKTHROUGH_DAILY_SCIENTIST_SKILL_GAIN = 8
 
--- Food consumption etc.
-NDefines.NMilitary.ARMY_IDLE_FUEL_MULT = 0.05						-- fuel consumption ratio while just existing
-
 -- Resistance
 NDefines.NResistance.RESISTANCE_ACTIVITY_CHANCE_AT_MAX_RESISTANCE = 0.08 -- was 0.312
 NDefines.NResistance.RESISTANCE_ACTIVITY_MIN_GARRISON_PENETRATE_CHANCE = 0.04 -- was 0.02
@@ -146,3 +143,48 @@ NDefines.NResistance.GARRISON_STR_POW_MANPOWER = 1.8 -- was 2
 NDefines.NResistance.GARRISON_STR_POW_EQUIPMENT = 2 -- was 3
 
 NDefines.NResistance.MIN_DAMAGE_TO_GARRISONS_MODIFIER = 0.05 -- was 0.1
+
+
+
+-- FOOD RELATED STUFF
+NDefines.NCountry.BASE_FUEL_GAIN_PER_OIL = 2						-- base amount of fuel gained hourly per excess oil
+NDefines.NCountry.BASE_FUEL_GAIN = 7.5							-- base amount of fuel gained hourly independent of excess oil
+NDefines.NCountry.BASE_FUEL_CAPACITY = 50000						-- base amount of fuel capacity
+
+NDefines.NMilitary.FUEL_PENALTY_START_RATIO = 0.25				-- ratio of fuel in an army to start getting penalties
+
+-- Food consumption for army missions
+NDefines.NMilitary.ARMY_COMBAT_FUEL_MULT =   0.2					-- fuel consumption ratio in combat (plus ARMY_MOVEMENT_FUEL_MULT if you are also moving. ie offensive combat)
+NDefines.NMilitary.ARMY_TRAINING_FUEL_MULT = 0.2					-- fuel consumption ratio while training
+NDefines.NMilitary.ARMY_MOVEMENT_FUEL_MULT = 0.2					-- fuel consumption ratio while moving
+NDefines.NMilitary.ARMY_NAVAL_TRANSFER_FUEL_MULT = 0.2			-- fuel consumption ratio while naval transferring
+NDefines.NMilitary.ARMY_STRATEGIC_DEPLOYMENT_FUEL_MULT = 0.2		-- fuel consumption ratio while doing strategic deployment
+NDefines.NMilitary.ARMY_IDLE_FUEL_MULT = 0.2						-- fuel consumption ratio while just existing
+NDefines.NMilitary.ARMY_FUEL_COST_MULT = 0.5						-- fuel cost multiplier for all army related stuff
+
+-- Food consumption for air missions
+NDefines.NAir.FUEL_COST_MULT = 0.35 -- fuel multiplier for all air missions
+
+-- Food consumption for navy missions
+NDefines.NNavy.HOLD_MISSION_MOVEMENT_COST = 0.15								-- ships on hold cost this much fuel while moving
+NDefines.NNavy.ON_BASE_FUEL_COST = 0.15										-- ships that waits at naval bases cost this ratio
+NDefines.NNavy.STRIKE_FORCE_ON_BASE_FUEL_COST_FACTOR = 0.15					-- fuel cost for naval strike mission in port
+NDefines.NNavy.IN_COMBAT_FUEL_COST = 0.25										-- ships in combat will get this ratio for fuel cost
+NDefines.NNavy.TRAINING_FUEL_COST_FOR_ESCORT_SHIPS = 0.2						-- ships that are on training mission but not training (ie they are at max xp and training will cancel at max xp) will consume this ratio of fuel
+NDefines.NNavy.FUEL_COST_MULT = 0.10 -- fuel multiplier for all naval missions
+
+
+-- Out of food army penalties
+NDefines.NMilitary.OUT_OF_FUEL_EQUIPMENT_MULT = 0.65				-- ratio of the stats that you get from equipments that uses fuel and you lack it
+NDefines.NMilitary.OUT_OF_FUEL_SPEED_MULT = 0.65					-- speed mult that armies get when out of fuel
+NDefines.NMilitary.OUT_OF_FUEL_TRAINING_XP_GAIN_MULT = 0.0		-- xp gain mult from training when a unit is out of fuel
+-- Out of food navy penalties
+NDefines.NNavy.OUT_OF_FUEL_SPEED_FACTOR = -0.5
+NDefines.NNavy.OUT_OF_FUEL_RANGE_FACTOR = 0.3
+NDefines.NNavy.OUT_OF_FUEL_ATTACK_FACTOR = -0.5
+NDefines.NNavy.OUT_OF_FUEL_TORPEDO_FACTOR = -0.5
+
+
+-- Disabling Fighter Aces
+NDefines.NAir.ACE_EARN_CHANCE_BASE = 0.0						-- Base chance % for ace pilot creation roll to happen. Happens only when successfully kill airplane/ship or damage the buildings.
+NDefines.NAir.ACE_EARN_CHANCE_PLANES_MULT = 0.0				-- Ace generation chance per aircraft. Chance is rolled twice because decimal numbers can't be small enough

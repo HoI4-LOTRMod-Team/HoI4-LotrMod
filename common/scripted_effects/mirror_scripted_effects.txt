@@ -1,90 +1,420 @@
 
 
 
-mirror_randomize_targets = {
+
+mirror_look_into_mirror = {
+	add_to_variable = {
+		mirror_uses = 1
+	}
 
 	if = {
-		limit = { has_completed_focus = lth_galadrielsmirror }
+		limit = { tag = LTH mirror_can_continue_storyline = yes }
+		mirror_continue_storyline = yes
+	}
+	else = {
 
-		clear_array = mirror_targets_future
+		random_list = {
 
-		every_other_country = {
-			limit = {
-				NOT = { has_country_flag = mirror_targets_used }
-				NOT = { tag = MOR }
-				NOT = { tag = GON }
-				NOT = { tag = ERE }
-				NOT = { tag = ANG }
-				NOT = { tag = NEP }
-				NOT = { tag = DAG }
-				is_ai = yes
-				OR = {
-					is_going_belligerent = yes
-					is_going_revolutionary = yes
-					is_going_unaligned = yes
-					is_going_cooperative = yes
+			# start storyline
+			20 = {
+				modifier = {
+					factor = 0
+					NOT = { tag = LTH }
 				}
-				NOT = { is_in_array = { mirror_targets_future = THIS } }
+				modifier = {
+					factor = 0
+					has_country_flag = m_has_storyline
+				}
+				modifier = {
+					factor = 0 # only one storyline per playthrough
+					has_country_flag = mirror_has_had_storyline
+				}
+				modifier = {
+					factor = mirror_uses
+				}
+				set_country_flag = mirror_has_had_storyline
+				mirror_start_storyline = yes
 			}
-			random_select_amount = 2
 
-			LTH = { add_to_array = { mirror_targets_future = PREV } }
-		}
-
-		if = {
-			limit = { has_completed_focus = lth_mirrorupgrade }
-
-			every_other_country = {
-				limit = {
-					NOT = { has_country_flag = mirror_targets_used }
-					NOT = { tag = MOR }
-					NOT = { tag = GON }
-					NOT = { tag = ERE }
-					NOT = { tag = ANG }
-					NOT = { tag = NEP }
-					NOT = { tag = DAG }
-					is_ai = yes
-					OR = {
-						is_going_belligerent = yes
-						is_going_revolutionary = yes
-						is_going_unaligned = yes
-						is_going_cooperative = yes
-					}
-					NOT = { is_in_array = { mirror_targets_future = THIS } }
+			# Fellowship path
+			10 = {
+				modifier = {
+					factor = 0
+					has_global_flag = fs_mirkwood_responded
 				}
-				random_select_amount = 1
+				modifier = {
+					factor = 0
+					has_global_flag = mirror_predicted_fellowship_path
+				}
+				modifier = {
+					factor = 0
+					ring_has_been_seized = yes
+				}
+				modifier = {
+					factor = 0
+					ring_has_been_destroyed = yes
+				}
+				modifier = {
+					factor = 0
+					GON = { is_ai = no }
+					MIR = { is_ai = no }
+				}
+				modifier = {
+					factor = 0
+					GON = { is_ai = no }
+					ERE = { is_ai = no }
+				}
+				modifier = {
+					factor = 0
+					ERE = { is_ai = no }
+					MIR = { is_ai = no }
+				}
+				set_global_flag = mirror_predicted_fellowship_path
+				random_list = {
+					# redhorn pass
+					2 = {
+						set_global_flag = mirror_predicted_redhorn
+						country_event = mirror.61
+					}
+					# isengard
+					1 = {
+						modifier = {
+							factor = 3
+							has_global_flag = gandalf_saruman_united
+						}
+						modifier = {
+							factor = 0
+							is_historical_focus_on = yes
+						}
+						set_global_flag = mirror_predicted_isengard
+						country_event = mirror.60
+					}
+					# gundabad
+					1 = {
+						modifier = {
+							factor = 2
+							ANG = { has_completed_focus = ANG_join_gondor }
+						}
+						modifier = {
+							factor = 2
+							ANG = { is_ai = no }
+						}
+						modifier = {
+							factor = 0
+							is_historical_focus_on = yes
+						}
+						set_global_flag = mirror_predicted_gundabad
+						country_event = mirror.84
+					}
+				}
+			}
 
-				LTH = { add_to_array = { mirror_targets_future = PREV } }
+			# Fellowship
+			10 = {
+				# Only show once
+				modifier = {
+					factor = 0
+					has_country_flag = mirror_has_had_fellowship_vision
+				}
+				modifier = {
+					factor = 0
+					has_global_flag = fs_elven_fellowship
+				}
+				# Only show when fellowship started
+				modifier = {
+					factor = 0
+					NOT = { has_global_flag = fs_started  }
+				}
+				set_country_flag = mirror_has_had_fellowship_vision
+				# Fall of fellowship
+				if = {
+					limit = { has_global_flag = fs_ring_seized }
+					country_event = mirror.4
+				}
+				# frodo and the ring
+				else_if = {
+					limit = {
+						has_global_flag = fs_post_argonath
+					}
+					country_event = mirror.3
+				}
+				# fellowship generic
+				else = {
+					country_event = mirror.2
+				}
+			}
+
+			# influence to faction
+			10 = {
+				modifier = {
+					factor = 0
+					NOT = { original_tag = LTH }
+				}
+				modifier = {
+					factor = 0.25
+					has_country_flag = mirror_has_had_influence_vision
+				}
+				set_country_flag = mirror_has_had_influence_vision
+				random_list = {
+					10 = { country_event = mirror.5 }
+					10 = { country_event = mirror.6 }
+					10 = { country_event = mirror.7 }
+					10 = { country_event = mirror.8 }
+				}
+			}
+
+			# ring-related visions
+			50 = {
+				modifier = {
+					factor = 0
+					NOT = { ring_has_the_ring = yes }
+				}
+				modifier = {
+					factor = 0
+					tag = MOR
+				}
+				modifier = {
+					factor = 0.15
+					has_country_flag = mirror_has_had_ring_vision
+				}
+				set_country_flag = mirror_has_had_ring_vision
+				random_list = {
+					10 = { country_event = mirror.9 }
+					10 = { country_event = mirror.10 }
+				}
+			}
+
+			# Generic
+			18 = {
+				random_list = {
+					10 = { country_event = mirror.1 }
+					10 = { country_event = mirror.16 }
+					10 = { country_event = mirror.17 }
+					10 = { country_event = mirror.18 }
+				}
+			}
+
+			# Visions of a place
+			10 = {
+				modifier = {
+					factor = 0.35
+					has_country_flag = mirror_has_had_place_vision
+				}
+				set_country_flag = mirror_has_had_place_vision
+				random_list = {
+					10 = {
+						modifier = { factor = 0 tag = MOR }
+						modifier = { factor = 0.1 MOR = { exists = no } }
+						modifier = { factor = 0.5 is_ally_with = MOR }
+						country_event = mirror.11
+					}
+					10 = {
+						modifier = { factor = 0 tag = GON }
+						modifier = { factor = 0.1 GON = { exists = no } }
+						modifier = { factor = 0.5 is_ally_with = GON }
+						country_event = mirror.12
+					}
+					10 = {
+						modifier = { factor = 0 tag = ERE }
+						modifier = { factor = 0.1 ERE = { exists = no } }
+						modifier = { factor = 0.5 is_ally_with = ERE }
+						country_event = mirror.13
+					}
+					10 = {
+						modifier = { factor = 0 tag = ANG }
+						modifier = { factor = 0.1 ANG = { exists = no } }
+						modifier = { factor = 0.5 is_ally_with = ANG }
+						country_event = mirror.14
+					}
+				}
+			}
+
+			# visions of the fall of a country
+			10 = {
+				modifier = {
+					factor = 0
+					NOT = { any_country = { has_capitulated = yes } }
+				}
+				modifier = {
+					has_country_flag = mirror_has_had_fall_vision
+					factor = 0.15
+				}
+				set_country_flag = mirror_has_had_fall_vision
+				random_other_country = {
+					limit = { has_capitulated = yes }
+					LTH = { country_event = mirror.19 }
+				}
+			}
+
+			# Predict path of country
+			10 = {
+				modifier = {
+					factor = 0.2
+					is_historical_focus_on = yes
+				}
+				modifier = {
+					factor = 0.35
+					has_country_flag = mirror_has_had_path_prediction
+				}
+				modifier = {
+					factor = 1.35
+					date < 3019.6.1
+				}
+				modifier = {
+					factor = 0.5
+					date > 3020.1.1
+				}
+				modifier = {
+					factor = 0.5
+					date > 3022.1.1
+				}
+				modifier = {
+					factor = 0.2
+					date > 3024.1.1
+				}
+				set_country_flag = mirror_has_had_path_prediction
+				random_other_country = {
+					limit = {
+						is_ai = yes
+						NOT = { has_country_flag = mirror_targets_used }
+					}
+
+					set_country_flag = mirror_targets_used
+
+					save_event_target_as = mirror_future_target
+
+					if = {
+						limit = { is_going_belligerent = yes }
+						random_list = {
+							10 = { LTH = { country_event = mirror.67 } }
+							10 = { LTH = { country_event = mirror.68 } }
+							10 = { LTH = { country_event = mirror.69 } }
+						}
+					}
+
+
+					else_if = {
+						limit = { is_going_revolutionary = yes }
+						random_list = {
+							10 = { LTH = { country_event = mirror.70 } }
+							10 = { LTH = { country_event = mirror.71 } }
+							10 = { LTH = { country_event = mirror.72 } }
+						}
+					}
+
+					else_if = {
+						limit = { is_going_cooperative = yes }
+						random_list = {
+							10 = { LTH = { country_event = mirror.73 } }
+							10 = { LTH = { country_event = mirror.74 } }
+							10 = { LTH = { country_event = mirror.75 } }
+						}
+					}
+
+					else_if = {
+						limit = { is_going_unaligned = yes }
+						random_list = {
+							10 = { LTH = { country_event = mirror.76 } }
+							10 = { LTH = { country_event = mirror.77 } }
+							10 = { LTH = { country_event = mirror.78 } }
+						}
+					}
+
+					else = {
+						random_list = {
+							10 = { LTH = { country_event = mirror.79 } }
+							10 = { LTH = { country_event = mirror.80 } }
+							10 = { LTH = { country_event = mirror.81 } }
+						}
+					}
+				}
+			}
+
+			# Nothing
+			5 = {
+				country_event = mirror.15
 			}
 		}
 	}
+
 }
 
 
-mirror_look_into_mirror = {
+# Same as above, but no storyline or fellowship
+mirror_run_generic_mirror_event = {
 	random_list = {
 
-		# start storyline
-		20 = {
+		# Fellowship path
+		10 = {
 			modifier = {
 				factor = 0
-				has_country_flag = m_has_storyline
+				has_global_flag = fs_mirkwood_responded
 			}
-			modifier = {
-				factor = 0.25
-				has_country_flag = mirror_has_had_storyline
-			}
-			set_country_flag = mirror_has_had_storyline
-			mirror_start_storyline = yes
-		}
-
-		# continue storyline
-		320 = {
 			modifier = {
 				factor = 0
-				NOT = { mirror_can_continue_storyline = yes }
+				has_global_flag = mirror_predicted_fellowship_path
 			}
-			mirror_continue_storyline = yes
+			modifier = {
+				factor = 0
+				ring_has_been_seized = yes
+			}
+			modifier = {
+				factor = 0
+				ring_has_been_destroyed = yes
+			}
+			modifier = {
+				factor = 0
+				GON = { is_ai = no }
+				MIR = { is_ai = no }
+			}
+			modifier = {
+				factor = 0
+				GON = { is_ai = no }
+				ERE = { is_ai = no }
+			}
+			modifier = {
+				factor = 0
+				ERE = { is_ai = no }
+				MIR = { is_ai = no }
+			}
+			set_global_flag = mirror_predicted_fellowship_path
+			random_list = {
+				# redhorn pass
+				2 = {
+					set_global_flag = mirror_predicted_redhorn
+					country_event = mirror.61
+				}
+				# isengard
+				1 = {
+					modifier = {
+						factor = 3
+						has_global_flag = gandalf_saruman_united
+					}
+					modifier = {
+						factor = 0
+						is_historical_focus_on = yes
+					}
+					set_global_flag = mirror_predicted_isengard
+					country_event = mirror.60
+				}
+				# gundabad
+				1 = {
+					modifier = {
+						factor = 2
+						ANG = { has_completed_focus = ANG_join_gondor }
+					}
+					modifier = {
+						factor = 2
+						ANG = { is_ai = no }
+					}
+					modifier = {
+						factor = 0
+						is_historical_focus_on = yes
+					}
+					set_global_flag = mirror_predicted_gundabad
+					country_event = mirror.84
+				}
+			}
 		}
 
 		# Fellowship
@@ -125,87 +455,11 @@ mirror_look_into_mirror = {
 		# influence to faction
 		10 = {
 			modifier = {
-				factor = 0.5
-				has_country_flag = mirror_has_had_influence_vision
-			}
-			random_list = {
-				10 = { country_event = mirror.5 }
-				10 = { country_event = mirror.6 }
-				10 = { country_event = mirror.7 }
-				10 = { country_event = mirror.8 }
-			}
-		}
-
-		# ring-related visions
-		50 = {
-			modifier = {
 				factor = 0
-				NOT = { ring_has_the_ring = yes }
-			}
-			random_list = {
-				10 = { country_event = mirror.9 }
-				10 = { country_event = mirror.10 }
-			}
-		}
-
-		# Generic
-		20 = {
-			random_list = {
-				10 = { country_event = mirror.1 }
-				10 = { country_event = mirror.16 }
-				10 = { country_event = mirror.17 }
-				10 = { country_event = mirror.18 }
-			}
-		}
-
-		# Visions of a place
-		10 = {
-			modifier = {
-				factor = 0.8
-				has_country_flag = mirror_has_had_place_vision
-			}
-			set_country_flag = mirror_has_had_place_vision
-			random_list = {
-				10 = { country_event = mirror.11 }
-				10 = { country_event = mirror.12 }
-				10 = { country_event = mirror.13 }
-				10 = { country_event = mirror.14 }
-			}
-		}
-
-		# visions of the fall of a country
-		10 = {
-			modifier = {
-				factor = 0.0
-				NOT = { any_country = { has_capitulated = yes } }
+				NOT = { original_tag = LTH }
 			}
 			modifier = {
-				has_country_flag = mirror_has_had_fall_vision
-				factor = 0
-			}
-			random_country = {
-				limit = { has_capitulated = yes }
-				LTH = { country_event = mirror.19 }
-			}
-		}
-
-		# Nothing
-		10 = {
-			country_event = mirror.15
-		}
-	}
-
-}
-
-
-# Same as above, but no storyline or fellowship
-mirror_run_generic_mirror_event = {
-	random_list = {
-
-		# influence to faction
-		10 = {
-			modifier = {
-				factor = 0.5
+				factor = 0.25
 				has_country_flag = mirror_has_had_influence_vision
 			}
 			set_country_flag = mirror_has_had_influence_vision
@@ -223,6 +477,15 @@ mirror_run_generic_mirror_event = {
 				factor = 0
 				NOT = { ring_has_the_ring = yes }
 			}
+			modifier = {
+				factor = 0
+				tag = MOR
+			}
+			modifier = {
+				factor = 0.15
+				has_country_flag = mirror_has_had_ring_vision
+			}
+			set_country_flag = mirror_has_had_ring_vision
 			random_list = {
 				10 = { country_event = mirror.9 }
 				10 = { country_event = mirror.10 }
@@ -230,7 +493,7 @@ mirror_run_generic_mirror_event = {
 		}
 
 		# Generic
-		20 = {
+		18 = {
 			random_list = {
 				10 = { country_event = mirror.1 }
 				10 = { country_event = mirror.16 }
@@ -242,34 +505,141 @@ mirror_run_generic_mirror_event = {
 		# Visions of a place
 		10 = {
 			modifier = {
-				factor = 0.8
+				factor = 0.35
 				has_country_flag = mirror_has_had_place_vision
 			}
 			set_country_flag = mirror_has_had_place_vision
 			random_list = {
-				10 = { country_event = mirror.11 }
-				10 = { country_event = mirror.12 }
-				10 = { country_event = mirror.13 }
-				10 = { country_event = mirror.14 }
+				10 = {
+					modifier = { factor = 0 tag = MOR }
+					modifier = { factor = 0.1 MOR = { exists = no } }
+					modifier = { factor = 0.5 is_ally_with = MOR }
+					country_event = mirror.11
+				}
+				10 = {
+					modifier = { factor = 0 tag = GON }
+					modifier = { factor = 0.1 GON = { exists = no } }
+					modifier = { factor = 0.5 is_ally_with = GON }
+					country_event = mirror.12
+				}
+				10 = {
+					modifier = { factor = 0 tag = ERE }
+					modifier = { factor = 0.1 ERE = { exists = no } }
+					modifier = { factor = 0.5 is_ally_with = ERE }
+					country_event = mirror.13
+				}
+				10 = {
+					modifier = { factor = 0 tag = ANG }
+					modifier = { factor = 0.1 ANG = { exists = no } }
+					modifier = { factor = 0.5 is_ally_with = ANG }
+					country_event = mirror.14
+				}
 			}
 		}
 
 		# visions of the fall of a country
 		10 = {
 			modifier = {
-				factor = 0.0
+				factor = 0
 				NOT = { any_country = { has_capitulated = yes } }
 			}
 			modifier = {
-				factor = 0
 				has_country_flag = mirror_has_had_fall_vision
+				factor = 0.15
 			}
 			set_country_flag = mirror_has_had_fall_vision
-			country_event = mirror.19
+			random_other_country = {
+				limit = { has_capitulated = yes }
+				LTH = { country_event = mirror.19 }
+			}
+		}
+
+		# Predict path of country
+		10 = {
+			modifier = {
+				factor = 0.2
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 0.35
+				has_country_flag = mirror_has_had_path_prediction
+			}
+			modifier = {
+				factor = 1.35
+				date < 3019.6.1
+			}
+			modifier = {
+				factor = 0.5
+				date > 3020.1.1
+			}
+			modifier = {
+				factor = 0.5
+				date > 3022.1.1
+			}
+			modifier = {
+				factor = 0.2
+				date > 3024.1.1
+			}
+			set_country_flag = mirror_has_had_path_prediction
+			random_other_country = {
+				limit = {
+					is_ai = yes
+					NOT = { has_country_flag = mirror_targets_used }
+				}
+
+				set_country_flag = mirror_targets_used
+
+				save_event_target_as = mirror_future_target
+
+				if = {
+					limit = { is_going_belligerent = yes }
+					random_list = {
+						10 = { LTH = { country_event = mirror.67 } }
+						10 = { LTH = { country_event = mirror.68 } }
+						10 = { LTH = { country_event = mirror.69 } }
+					}
+				}
+
+
+				else_if = {
+					limit = { is_going_revolutionary = yes }
+					random_list = {
+						10 = { LTH = { country_event = mirror.70 } }
+						10 = { LTH = { country_event = mirror.71 } }
+						10 = { LTH = { country_event = mirror.72 } }
+					}
+				}
+
+				else_if = {
+					limit = { is_going_cooperative = yes }
+					random_list = {
+						10 = { LTH = { country_event = mirror.73 } }
+						10 = { LTH = { country_event = mirror.74 } }
+						10 = { LTH = { country_event = mirror.75 } }
+					}
+				}
+
+				else_if = {
+					limit = { is_going_unaligned = yes }
+					random_list = {
+						10 = { LTH = { country_event = mirror.76 } }
+						10 = { LTH = { country_event = mirror.77 } }
+						10 = { LTH = { country_event = mirror.78 } }
+					}
+				}
+
+				else = {
+					random_list = {
+						10 = { LTH = { country_event = mirror.79 } }
+						10 = { LTH = { country_event = mirror.80 } }
+						10 = { LTH = { country_event = mirror.81 } }
+					}
+				}
+			}
 		}
 
 		# Nothing
-		10 = {
+		5 = {
 			country_event = mirror.15
 		}
 	}

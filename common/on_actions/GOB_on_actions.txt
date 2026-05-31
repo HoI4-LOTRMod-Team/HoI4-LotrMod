@@ -1,0 +1,101 @@
+
+
+
+on_actions = {
+
+	on_startup = {
+		effect = {
+			GOB = {
+				set_variable = { scrap = 0 }
+				set_variable = { equipment_produced = 0 }
+
+				random_list = {
+					10 = {
+						activate_advisor = GOB_fubs
+					}
+					10 = {
+						activate_advisor = GOB_fubs
+					}
+					10 = {
+						activate_advisor = GOB_fubs
+					}
+					10 = {
+						activate_advisor = GOB_fubs
+					}
+				}
+			}
+		}
+	}
+
+	on_weekly_GOB = {
+		effect = {
+
+			if = {
+				limit = { has_completed_focus = GOB_nothing_goes_to_waste }
+
+				set_temp_variable = { temp_equip_diff = total_equipment_produced_infantry }
+				subtract_from_temp_variable = { temp_equip_diff = equipment_produced }
+				multiply_temp_variable = { temp_equip_diff = 0.1 }
+				add_to_variable = { scrap = temp_equip_diff }
+				set_variable = { equipment_produced = total_equipment_produced_infantry }
+			}
+		}
+	}
+
+	on_capitulation = {
+    	effect = {
+			if = {
+				limit = { ROOT = { has_idea = GOB_mercenary_contract } GOB = { exists = yes } }
+				ROOT = {
+					gob_remove_mercs_and_template = yes
+				}
+				GOB = {
+					gob_create_merc_divisions_equipped = yes
+					country_event = goblintown.116
+				}
+			}
+		}
+	}
+
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					ROOT = { has_idea = GOB_mercenary_contract }
+					GOB = { exists = yes has_completed_focus = GOB_war_loot }
+					NOT = { FROM.FROM = { has_state_flag = gob_state_looted } }
+				}
+				FROM.FROM = { set_state_flag = gob_state_looted }
+				GOB = { add_to_variable = { scrap = 800 } }
+				GOB = { add_to_variable = { war_loot_secured = 1 } }
+
+				random = {
+					chance = 35
+
+					if = {
+						limit = {
+							NOT = { has_global_flag = gob_mercs_news_event }
+						}
+						set_global_flag = gob_mercs_news_event
+						news_event = news.424
+					}
+				}
+			}
+
+			if = {
+				limit = {
+					FROM.FROM = { state = 263 }
+					GOB = { exists = yes has_completed_focus = GOB_open_for_business has_country_flag = gob_high_pass_loaned_out }
+					ROOT = { NOT = { has_war_with = GOB } }
+				}
+				if = {
+					limit = { ROOT = { tag = GOB } }
+					clr_country_flag = gob_high_pass_loaned_out
+				}
+				else = {
+					ROOT = { transfer_high_pass_contract = yes }
+				}
+			}
+		}
+	}
+}

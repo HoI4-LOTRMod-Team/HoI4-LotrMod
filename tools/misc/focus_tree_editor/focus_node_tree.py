@@ -1,15 +1,17 @@
 
 
-from pdx_parser import Parse_PObj, Parse_List, PObj, SaveListToFile, ParseListFromFile, ParseListFromFile_asPObj
+from pdx_parser import Parse_PObj, Parse_List, PObj, SaveListToFile, ParseListFromFile, ParseListFromFile_asPObj, SaveObjValueToFile
 
 from core import *
 
-from nodes.focus_node import FocusNode
+from focus_node import FocusNode
 
 
 class FocusNodeTree:
 
     focuses = []
+
+    root_pobj = None
 
     def get_focus_node_by_name(self, name):
         for focus in self.focuses:
@@ -17,40 +19,34 @@ class FocusNodeTree:
                 return focus
         return None
     
-    def __init__(self, graph):
+    def save_focus_tree(self, filepath):
+        SaveObjValueToFile(self.root_pobj, filepath)
+    
+    def __init__(self, graph, filepath):
 
-        focus_list = ParseListFromFile_asPObj(r'C:\Users\ben32801\Documents\Paradox Interactive\Hearts of Iron IV\mod\lotr\common\national_focus\rohan.txt').Get("focus_tree")
+        focus_menu = graph.get_context_menu('graph').add_menu('Focus Tree')
+        focus_menu.add_command('Save Focus Tree', lambda: self.save_focus_tree(filepath), 'Ctrl+S')
 
-        focuses_pobjs = focus_list.GetAll("focus").value
+        self.root_pobj = ParseListFromFile_asPObj(filepath)
+        if self.root_pobj.Has("focus_tree"):
+            focus_list = self.root_pobj.Get("focus_tree")
+            focuses_pobjs = focus_list.GetAll("focus").value
+        else:
+            focuses_pobjs = self.root_pobj.GetAll("shared_focus").value
 
         # Create a node in the graph for each focus and set the respective values
         for focus in focuses_pobjs:
             focus_1 = graph.create_node('nodes.basic.FocusNode')
-            focus_1.set_name("")
-            focus_1.focus_id = focus.Get("id").value
-            focus_1.x = int(focus.GetVal("x"))
-            focus_1.y = int(focus.GetVal("y"))
-            focus_1.pObj = focus
-            self.focuses.append(focus_1)
+            focus_1.init(focus, self)
 
-        # set relative position id to respective focus
+        # set rel pos
         for focus in self.focuses:
-            if focus.pObj.Has("relative_position_id"):
-                self.get_focus_node_by_name(focus.pObj.Get("id").value).relative_position_id = self.get_focus_node_by_name(focus.pObj.Get("relative_position_id").value)
+            focus.init_rel_pos_id()
 
-        # set positions with relative_position_id in mind
+        # post-init function
         for focus in self.focuses:
-            (x, y) = focus.hoi4_get_absolute_pos()
-            (x, y) = focus_to_node_pos((x,y))
-            focus.set_pos(x, y)
+            focus.post_init()
 
-        # Add prerequisite lines/connections
+        # activate
         for focus in self.focuses:
-            if(focus.pObj.Has("prerequisite")):
-                curr_f = self.get_focus_node_by_name(focus.pObj.Get("id").value)
-                preqs = focus.pObj.GetAll("prerequisite")
-                
-                for preq in preqs.value:
-                    preq_focuses = preq.GetAll("focus")
-                    for preq_focus in preq_focuses.value:
-                        self.get_focus_node_by_name(preq_focus.value).set_output(0, curr_f.input(0))
+            focus.activate()

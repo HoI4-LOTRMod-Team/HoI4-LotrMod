@@ -1,0 +1,238 @@
+generic_spider_weavers_brood = {
+	icon = GFX_mio_spiders_2
+	name = spider_weavers_brood
+
+	allowed = {
+		tag = SPI
+	}
+
+	equipment_type = {
+		lotr_equipment_all_infantry_equipment
+	}
+
+	research_categories = {
+		lotr_labour
+		lotr_machines
+	}
+
+	research_bonus = 0.05
+
+	tree_header_text = {
+		text = silk_production
+		x = 1
+	}
+
+	tree_header_text = {
+		text = structural_design
+		x = 4
+	}
+
+	tree_header_text = {
+		text = brood_wisdom
+		x = 7
+	}
+
+	initial_trait = {
+		name = weaving_specialization
+
+		# Base bonus: Research and Production efficiency
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+
+		production_bonus = {
+			production_efficiency_gain_factor = 0.05
+		}
+	}
+
+	# ==========================================
+	# LEFT BRANCH: SILK PRODUCTION (Resources)
+	# ==========================================
+
+	trait = {
+		token = spider_mio_silk_secretion
+		name = silk_secretion
+		icon = GFX_generic_mio_keyring
+
+		position = { x=1 y=0 }
+
+		# Spiders produce their own materials, reducing outside need
+		production_bonus = {
+			production_resource_need_factor = -0.05
+		}
+	}
+
+	trait = {
+		token = spider_mio_harvesting_nests
+		name = harvesting_nests
+		icon = GFX_generic_mio_spider_tree
+
+		relative_position_id = spider_mio_silk_secretion
+		all_parents = { spider_mio_silk_secretion }
+
+		position = { x=-1 y=1 }
+
+		# Simulating the creation of Silk (Tungsten) farms
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.1
+		}
+
+		on_complete = {
+			FROM = { random_owned_controlled_state = {
+				add_resource = {
+					type = tungsten
+					amount = 3
+				}
+			} }
+		}
+	}
+
+	trait = {
+		token = spider_mio_refined_spinning
+		name = refined_spinning
+		icon = GFX_generic_mio_trait_string
+
+		relative_position_id = spider_mio_silk_secretion
+		all_parents = { spider_mio_silk_secretion }
+
+		position = { x=1 y=1 }
+
+		# Faster spinning = higher output cap
+		production_bonus = {
+			production_efficiency_cap_factor = 0.05
+		}
+	}
+
+	trait = {
+		token = spider_mio_endless_silk
+		name = endless_silk
+		icon = GFX_generic_mio_spider_web
+
+		relative_position_id = spider_mio_silk_secretion
+		any_parent = { spider_mio_harvesting_nests spider_mio_refined_spinning }
+
+		position = { x=0 y=3 }
+
+		# Massive reduction in resource cost for basic gear
+		production_bonus = {
+			production_resource_need_factor = -0.10
+		}
+	}
+
+	# ==========================================
+	# CENTER BRANCH: STRUCTURAL DESIGN (Efficiency)
+	# ==========================================
+
+	trait = {
+		token = spider_mio_complex_geometric_webs
+		name = complex_geometric_webs
+		icon = GFX_generic_mio_magic_cobweb
+
+		position = { x=4 y=0 }
+
+		# Efficient geometry saves effort
+		production_bonus = {
+			production_cost_factor = -0.05
+		}
+	}
+
+	trait = {
+		token = spider_mio_tensile_strength
+		name = tensile_strength
+		icon = GFX_generic_mio_trait_icon_air_agility
+
+		relative_position_id = spider_mio_complex_geometric_webs
+		all_parents = { spider_mio_complex_geometric_webs }
+
+		position = { x=-1 y=1 }
+
+		# Silk is stronger than steel pound-for-pound
+		equipment_bonus = {
+			reliability = 0.10
+			defense = 0.02
+		}
+	}
+
+	trait = {
+		token = spider_mio_lightweight_polymers
+		name = lightweight_polymers
+		icon = GFX_generic_mio_trait_feather
+
+		relative_position_id = spider_mio_complex_geometric_webs
+		all_parents = { spider_mio_complex_geometric_webs }
+
+		position = { x=1 y=1 }
+
+		# Lighter equipment is easier to build and move
+		equipment_bonus = {
+			build_cost_ic = -0.05
+		}
+	}
+
+	trait = {
+		token = spider_mio_architectural_mastery
+		name = architectural_mastery
+		icon = GFX_generic_mio_trait_springald
+
+		relative_position_id = spider_mio_complex_geometric_webs
+		any_parent = { spider_mio_tensile_strength spider_mio_lightweight_polymers }
+
+		position = { x=0 y=3 }
+
+		# The pinnacle of weaver construction
+		production_bonus = {
+			production_cost_factor = -0.05
+			production_efficiency_cap_factor = 0.05
+		}
+	}
+
+	# ==========================================
+	# RIGHT BRANCH: BROOD WISDOM (Research/Org)
+	# ==========================================
+
+	trait = {
+		token = spider_mio_ancient_patterns
+		name = ancient_patterns
+		icon = GFX_generic_mio_trait_magic_stone
+
+		position = { x=7 y=0 }
+
+		# Unlocking old secrets
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+	}
+
+	trait = {
+		token = spider_mio_hive_mind_collaboration
+		name = hive_mind_collaboration
+		icon = GFX_generic_mio_spider
+
+		relative_position_id = spider_mio_ancient_patterns
+		all_parents = { spider_mio_ancient_patterns }
+
+		position = { x=0 y=1 }
+
+		# Spiders working in unison level up the MIO faster
+		organization_modifier = {
+			military_industrial_organization_design_team_assign_cost = -0.2
+			military_industrial_organization_size_up_requirement = -0.15
+		}
+	}
+
+	trait = {
+		token = spider_mio_ancestral_archives
+		name = ancestral_archives
+		icon = GFX_generic_mio_trait_bookstack
+
+		relative_position_id = spider_mio_ancient_patterns
+		all_parents = { spider_mio_hive_mind_collaboration }
+
+		position = { x=0 y=3 }
+
+		# Major research boost
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.10
+		}
+	}
+}

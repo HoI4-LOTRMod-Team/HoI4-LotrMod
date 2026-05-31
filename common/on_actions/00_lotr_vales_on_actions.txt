@@ -1,0 +1,50 @@
+on_actions = {
+
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					FROM.FROM = { is_core_of = RGL NOT = { has_state_flag = refugee_levy_created } }
+					FROM = { tag = RGL has_completed_focus = RGL_refugee_levies }
+					ROOT = { has_war_with = FROM }
+				}
+				FROM = { rgl_create_refugee_levy = yes }
+				FROM.FROM = { set_state_flag = refugee_levy_created }
+			}
+		}
+	}
+
+	on_capitulation = {
+		effect = {
+			if = {
+				limit = {
+					RHD = {
+						exists = yes
+						has_completed_focus = RHD_welcome_war_refugees
+						OR = {
+							has_government = cooperative
+							has_government = unaligned
+						}
+					}
+					ROOT = {
+						OR = {
+							has_government = cooperative
+							has_government = unaligned
+						}
+						NOT = { has_war_with = RHD }
+					}
+				}
+				RHD = {
+					random_core_state = {
+						add_manpower = 1000
+					}
+					if = {
+						limit = { NOT = { has_variable = war_refugees_count } }
+						set_variable = { war_refugees_count = 0 }
+					}
+					add_to_variable = { war_refugees_count = 1000 }
+				}
+			}
+		}
+	}
+}

@@ -4,12 +4,70 @@
 
 add_namespace = isengard
 
-# NOT IN USE ANYMORE
+# Meet with Gandalf
 country_event = {
-	id = isengard.4
-	title = isengard.4.t
-	desc = isengard.4.d
+	id = isengard.1
+	title = isengard.1.t
+	desc = isengard.1.d
 	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = { # Imprison him
+		name = isengard.1.a
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 999
+				OR = {
+					has_country_flag = gameplan_going_belligerent_historical
+					has_country_flag = gameplan_going_belligerent_betraying_sauron
+				}
+			}
+		}
+
+		add_popularity = { ideology = belligerent popularity = 0.1 }
+
+		add_ideas = ISE_ways_of_the_dark_0
+		set_global_flag = gandalf_imprisoned
+
+		complete_national_focus = ISE_meet_with_gandalf
+		complete_national_focus = ISE_imprison_gandalf
+
+		hidden_effect = {news_event = { hours = 24 id = news.333 }}
+	}
+	option = { # Unite with him
+		name = isengard.1.b
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 999
+				has_country_flag = gameplan_going_cooperative
+			}
+		}
+		add_timed_idea = {
+			days = 365
+			idea = ISE_commited_to_the_light
+		}
+		set_global_flag = gandalf_saruman_united
+
+		complete_national_focus = ISE_meet_with_gandalf
+		complete_national_focus = ISE_unite_with_gandalf
+
+		hidden_effect = {news_event = { hours = 24 id = news.334 }}
+	}
+}
+
+# Shire requests joining hands
+country_event = {
+	id = isengard.2
+	title = isengard.2.t
+	desc = isengard.2.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
 
 	is_triggered_only = yes
 
@@ -18,20 +76,38 @@ country_event = {
 		ai_chance = {
 			base = 30
 			modifier = {
-				add = -25
-				ISE = { has_army_size = { size < 30 } }
-			}
-			modifier = {
-				add = 30
-				ISE = { has_army_size = { size > 40 } }
+				add = 25
+				ISE = { has_army_size = { size > 15 } }
 			}
 			modifier = {
 				add = 100
 				ENE = { has_government = belligerent }
 			}
 		}
- 		ISE = { annex_country = { target = ENE } }
-		add_named_threat = { threat = 5 name = "Enedwaith annexed by Isengard" }
+		add_to_faction = SHI
+		add_political_power = 50
+		add_opinion_modifier = { target = SHI modifier = small_increase }
+	}
+	option = { # Demand puppet
+		name = isengard.4.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				any_other_country = {
+					has_guaranteed = ENE
+				}
+				factor = 5
+			}
+			modifier = {
+				add = 20
+				ENE = { has_army_size = { size > 20 } }
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+			}
+		}
+		SHI = { country_event = shire.7 }
 	}
 	option = { # Refuse
 		name = isengard.4.b
@@ -52,12 +128,12 @@ country_event = {
 				is_historical_focus_on = yes
 			}
 		}
-		ENE = { declare_war_on = { target = ISE type = annex_everything } }
+		add_opinion_modifier = { target = SHI modifier = large_decrease }
+		add_political_power = -25
 	}
 }
 
-# NOT USED AT THE MOMENT
-# Rohan Refuses to Give up the Westmarch
+# Shire refuses to be a puppet
 country_event = {
 	id = isengard.3
 	title = isengard.3.t
@@ -70,112 +146,26 @@ country_event = {
 
 	option = {
 		name = isengard.3.a
-		create_wargoal = { type = annex_everything target = ROH }
+		add_opinion_modifier = { target = SHI modifier = large_decrease }
 	}
 
 }
 
-# NOT USED AT THE MOMENT
-# Rohan Gives up the Westmarch
+# Shire accepts being a puppet
 country_event = {
-	id = isengard.2
-	title = isengard.2.t
-	desc = isengard.2.d
+	id = isengard.4
+	title = isengard.4.t
+	desc = isengard.4.d
 	picture = GFX_report_event_paper
-
-	fire_only_once = yes
 
 	is_triggered_only = yes
 
-	option = {
-		name = isengard.2.a
-		trigger = { is_ai = no }
-		ISE = { set_state_owner = 23 }
-	}
-
-}
-
-# Meet with Gandalf
-country_event = {
-	id = isengard.1
-	title = isengard.1.t
-	desc = isengard.1.d
-	picture = GFX_report_event_paper
-
-	fire_only_once = yes
-
-	is_triggered_only = yes
-
-	option = { # Imprison him
-		name = isengard.1.a
-		ai_chance = {
-			base = 65
-			modifier = {
-				add = -15
-				MOR = { has_army_size = { size < 15 } }
-			}
-			modifier = {
-				add = 25
-				MOR = { has_army_size = { size > 20 } }
-			}
-		}
-
-		# Adjust gameplan flag
-		set_country_flag = gameplan_going_belligerent
-		clr_country_flag = gameplan_going_cooperative
-
-		add_ideas = ISE_commited_to_the_dark
-		set_global_flag = gandalf_imprisoned
-
-		# Complete focuses
-		if = {
-			limit = { NOT = { has_completed_focus = thefateofisengard } }
-			complete_national_focus = thefateofisengard
-		}
-		if = {
-			limit = { NOT = { has_completed_focus = waysofthelight } NOT = { has_completed_focus = waysofthedark } }
-			complete_national_focus = waysofthedark
-		}
-
-		complete_national_focus = meetwithgandalf
-		complete_national_focus = imprisongandalf
-
-		hidden_effect = {news_event = { hours = 24 id = news.333 }}
-	}
-	option = { # Unite with him
-		name = isengard.1.b
-		ai_chance = {
-			base = 15
-			modifier = {
-				factor = 0
-				is_historical_focus_on = yes
-			}
-			modifier = { factor = 0 is_going_cooperative = no }
-		}
-		add_ideas = ISE_commited_to_the_light
-		set_global_flag = gandalf_saruman_united
-
-		# Adjust gameplan flag
-		set_country_flag = gameplan_going_cooperative
-		clr_country_flag = gameplan_going_belligerent
-
-		# Complete focuses
-		if = {
-			limit = { NOT = { has_completed_focus = thefateofisengard } }
-			complete_national_focus = thefateofisengard
-		}
-		if = {
-			limit = { NOT = { has_completed_focus = waysofthelight } NOT = { has_completed_focus = waysofthedark } }
-			complete_national_focus = waysofthelight
-		}
-
-		complete_national_focus = meetwithgandalf
-		complete_national_focus = unitewithgandalf
-
-		hidden_effect = {news_event = { hours = 24 id = news.334 }}
+	option = { # Accept
+		name = isengard.4.a
+ 		puppet = SHI
+		add_political_power = 50
 	}
 }
-
 
 # Grima arrives in Isengard
 country_event = {
@@ -384,19 +374,61 @@ country_event = {
 
 	is_triggered_only = yes
 
+	# Accept
 	option = {
 		name = isengard.8.a
-		MOR = {
-			add_to_faction = ISE
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 5
+				has_non_aggression_pact_with = MOR
+			}
+			modifier = {
+				add = 5
+				OR = {
+					has_war_with = GON
+					has_war_with = ROH
+				}
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value > 75
+				}
+			}
+			modifier = {
+				add = -999
+				has_completed_focus = ISE_betray_sauron
+			}
+		}
+		MOR = { 
+			add_to_faction = ISE 
+			country_event = { id =  mordor.69 } 
 		}
 	}
-
+	#Decline
 	option = {
 		name = isengard.8.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value < 25
+				}
+			}
+		}
+		add_opinion_modifier = { target = MOR modifier = small_decrease }
+		MOR = { 
+			add_opinion_modifier = { target = ISE modifier = small_decrease } 
+			country_event = { id = mordor.70 }
+		}
 	}
 }
 
-#Mordor invites Isengard to attack Gondor together
+#Mordor innacts plan to attack Gondor together
 country_event = {
 	id = isengard.9
 	title = isengard.9.t
@@ -409,23 +441,24 @@ country_event = {
 		name = isengard.9.a
 		ai_chance = {
 			base = 50
+			modifier = {
+				add = -10
+				has_war = yes
+			}
 		}
+		add_war_support = 0.05
 		declare_war_on = { target = GON    type = annex_everything }
-		MOR = {
-			declare_war_on = { target = GON    type = annex_everything }
-		}
 	}
 
 	option = {
 		name = isengard.9.b
-		ai_chance = {
-			base = 50
-		}
-		add_political_power = -50
-		MOR = {
-			create_wargoal = {
-				type = annex_everything target = GON
-			}
+		ai_chance = { base = 5 }
+		add_stability = -0.075
+		add_political_power = -100
+		complete_national_focus = ISE_betray_sauron
+		MOR = { 
+			add_opinion_modifier = { target = ISE modifier = large_decrease }
+			country_event = { id = mordor.73 }
 		}
 	}
 }
@@ -583,9 +616,7 @@ country_event = {
 		ai_chance = {
 			factor = 10
 		}
-		GON = {
-			add_opinion_modifier = { target = ISE modifier = large_decrease }
-		}
+		GON = { add_opinion_modifier = { target = ISE modifier = large_decrease } }
 	}
 }
 
@@ -612,26 +643,28 @@ country_event = {
 				GON = { has_government = cooperative }
 			}
 		}
-			random_other_country = {
-				limit = {
-					OR = {
-						AND = {
-							original_tag = ENE
-							NOT = { has_government = belligerent }
-						}
-						AND = {
-							original_tag = DUN
-							NOT = { has_government = belligerent }
-						}
+		random_other_country = {
+			limit = {
+				OR = {
+					AND = {
+						original_tag = ENE
+						has_war = yes
+						NOT = { has_government = belligerent }
 					}
-				}
-				ISE = {
-					declare_war_on = {
-						target = PREV
-						type = annex_everything
+					AND = {
+						original_tag = DUN
+						has_war = yes
+						NOT = { has_government = belligerent }
 					}
 				}
 			}
+			ISE = {
+				declare_war_on = {
+					target = PREV
+					type = annex_everything
+				}
+			}
+		}
 	}
 
 	option = { #refusing to help
@@ -655,6 +688,7 @@ country_event = {
 	option = {
 		name = isengard.15.a
 		ISE = {
+			add_political_power = 25
 			add_opinion_modifier = { target = ENT modifier = small_increase } 
 		}
 	}
@@ -672,5 +706,544 @@ country_event = {
 	option = {
 		name = isengard.16.a
 		add_opinion_modifier = { target = ENT modifier = small_decrease } 
+	}
+}
+
+# Mordor agrees to help incase of a battle in the Shire
+country_event = {
+	id = isengard.17
+	title = isengard.17.t
+	desc = isengard.17.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.17.a
+		add_political_power = 50
+		add_opinion_modifier = { target = MOR modifier = small_increase } 
+	}
+}
+
+# Mordor refuses to help incase of a battle in the Shire
+country_event = {
+	id = isengard.18
+	title = isengard.18.t
+	desc = isengard.18.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.18.a
+		add_opinion_modifier = { target = MOR modifier = small_decrease } 
+	}
+}
+
+# Sending help
+country_event = {
+	id = isengard.19
+	title = isengard.19.t
+	desc = isengard.19.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.19.a
+		add_opinion_modifier = { target = ISE modifier = small_increase }
+		add_ideas = ISE_supporting_country
+	}
+	option = {
+		name = isengard.19.b
+		add_stability = -0.01
+	}
+}
+
+# Rohan accepts sharing knowledge
+country_event = {
+	id = isengard.20
+	title = isengard.20.t
+	desc = isengard.20.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.20.a
+		add_ideas = ISE_rohirrim_knowledge
+		add_opinion_modifier = { target = ROH modifier = small_increase } 
+	}
+}
+
+# Rohan declines sharing knowledge
+country_event = {
+	id = isengard.21
+	title = isengard.21.t
+	desc = isengard.21.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.21.a
+		add_opinion_modifier = { target = ROH modifier = small_decrease } 
+	}
+}
+
+# Isengard investing efforts
+country_event = {
+	id = isengard.22
+	title = isengard.22.t
+	desc = isengard.22.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.22.a
+		add_popularity = { ideology = cooperative popularity = 0.05 }
+		add_timed_idea = { days = 150 idea = ISE_isengard_investments }
+		add_opinion_modifier = { target = ISE modifier = small_increase }
+	}
+
+}
+
+# Mordor suggest declaring war on Gondor
+country_event = {
+	id = isengard.23
+	title = isengard.23.t
+	desc = isengard.23.d
+	picture = GFX_report_event_paper
+	is_triggered_only = yes
+
+	#Accept
+	option = {
+		name = isengard.23.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 5
+				has_opinion = { target = MOR value > 75 }
+			}
+			modifier = {
+				add = 5
+				GON = { has_completed_focus = GON_honor_isildurs_legacy }
+			}
+		}
+		set_country_flag = ISE_accepted_joined_war_against_gondor
+		MOR = { 
+			country_event = { id = mordor.71 } 
+			add_opinion_modifier = { target = ISE modifier = small_increase } 
+		}
+	}
+	#Decline
+	option = {
+		name = isengard.23.b
+		ai_chance = {
+			base = 25
+		}
+		MOR = { 
+			add_opinion_modifier = { target = ISE modifier = small_decrease } 
+			country_event = { id = mordor.72 }
+		}
+	}
+}
+
+# Mordor suggest non-aggresion pact
+country_event = {
+	id = isengard.24
+	title = isengard.24.t
+	desc = isengard.24.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.24.a
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 25
+				ISE = { has_government = belligerent }
+			}
+			modifier = {
+				add = -999
+				ISE = { has_government = cooperative }
+			}
+		}
+		diplomatic_relation = {
+			country = MOR
+			relation = non_aggression_pact
+		}
+		MOR = { country_event = { id = mordor.69 } }
+	}
+
+	option = {
+		name = isengard.24.b
+		ai_chance = {
+			base = 25
+		}
+		MOR = { 
+			country_event = { id = mordor.70 } 
+			add_opinion_modifier = { target = ISE modifier = small_decrease }
+		}
+	}
+}
+
+# Mordor fucks with the Palantir
+country_event = {
+	id = isengard.25
+	title = isengard.25.t
+	desc = isengard.25.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.25.a
+		ai_chance = { base = 50 }
+		ISE = { 
+			add_popularity = { ideology = belligerent popularity = 0.05 }
+			add_opinion_modifier = { target = MOR modifier = small_increase }
+		}
+	}
+}
+
+# Gondor invites Isengard to faction
+country_event = {
+	id = isengard.26
+	title = isengard.26.t
+	desc = isengard.26.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	# Accept
+	option = {
+		name = isengard.26.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 5
+				has_non_aggression_pact_with = MOR
+			}
+			modifier = {
+				add = 5
+				OR = {
+					has_war_with = GON
+					has_war_with = ROH
+				}
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value > 75
+				}
+			}
+			modifier = {
+				add = -999
+				has_completed_focus = ISE_betray_sauron
+			}
+		}
+		MOR = { 
+			add_to_faction = ISE 
+			country_event = { id =  mordor.69 } 
+		}
+	}
+	#Decline
+	option = {
+		name = isengard.26.b
+		ai_chance = {
+			base = 50
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = FROM
+					value < 25
+				}
+			}
+		}
+		add_opinion_modifier = { target = MOR modifier = small_decrease }
+		MOR = { 
+			add_opinion_modifier = { target = ISE modifier = small_decrease } 
+			country_event = { id = mordor.70 }
+		}
+	}
+}
+
+# Mordor accepts
+country_event = {
+	id = isengard.27
+	title = isengard.27.t
+	desc = isengard.27.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.27.a
+		ai_chance = { base = 50 }
+	}
+}
+
+# Mordor declines
+country_event = {
+	id = isengard.28
+	title = isengard.28.t
+	desc = isengard.28.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.28.a
+		ai_chance = { base = 50 }
+		
+	}
+}
+# DUN/ENE accepts becoming puppet to join faction
+country_event = {
+	id = isengard.29
+	title = isengard.29.t
+	desc = isengard.29.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.29.a
+		ai_chance = { base = 50 }
+		set_autonomy = {
+			target = FROM
+			autonomous_state = autonomy_puppet
+		}
+		add_political_power = 100
+	}
+}
+
+# DUN/ENE declines becoming puppet to join faction
+country_event = {
+	id = isengard.30
+	title = isengard.30.t
+	desc = isengard.30.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.30.a
+		ai_chance = { base = 50 }
+		add_political_power = -50
+		add_opinion_modifier = { target = FROM modifier = medium_decrease }
+	}
+}
+
+# Request to join faction
+country_event = {
+	id = isengard.31
+	title = isengard.31.t
+	desc = isengard.31.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = isengard.31.a
+		ai_chance = {
+			base = 25	
+            modifier = {
+				add = 10
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
+            modifier = {
+                add = 25
+                FROM = { has_government = belligerent }
+                has_government = belligerent
+            }
+            modifier = {
+				add = 5
+				has_non_aggression_pact_with = FROM
+			}
+			modifier = {
+				add = 999
+				is_historical_focus_on = yes
+			}
+        }
+        add_opinion_modifier = { target = FROM modifier = small_increase }
+        add_to_faction = FROM
+        FROM = { country_event = { id = tribes.1 } }
+	}
+    option = { # Demand to become puppet
+		name = isengard.31.b
+		ai_chance = { base = 25 }
+
+        FROM = { 
+			add_opinion_modifier = { target = ISE modifier = medium_decrease }
+			country_event = { id = tribes.4 }
+		}
+	}
+    option = { # Decline
+		name = isengard.31.c
+		ai_chance = {
+			base = 15			
+            modifier = {
+				add = 10
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+            modifier = {
+                add = 10
+                has_completed_focus = ISE_increase_influence
+            }
+            modifier = {
+                add = 25
+                has_completed_focus = ISE_they_will_listen
+            }
+        }
+        FROM = { country_event = { id = tribes.2 } }
+	}
+}
+
+# Demand other belligerent nations to follow you and betray Sauron
+country_event = {
+	id = isengard.32
+	title = isengard.32.t
+	desc = isengard.32.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { # Accept
+		name = isengard.32.a
+		ai_chance = { base = 50 }
+		add_stability = -0.05
+		MOR = { country_event = { id = mordor.74 } }
+		FROM = {
+			country_event = { id = isengard.33 }
+			event_option_tooltip = isengard.33.a
+		}
+	}
+	option = { # Deny
+		name = isengard.32.b
+		ai_chance = { base = 50 }
+		add_war_support = 0.1
+		FROM = { 
+			country_event = { id = isengard.34 }
+			event_option_tooltip = isengard.34.a
+		}
+	}
+}
+
+# Accepted and betraying Sauron aswell
+country_event = {
+	id = isengard.33
+	title = isengard.33.t
+	desc = isengard.33.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.33.a
+		ai_chance = { base = 50 }
+		add_opinion_modifier = { target = FROM modifier = medium_increase } 
+		add_to_faction = FROM
+	}
+}
+
+# Denied, staying loyal to Sauron
+country_event = {
+	id = isengard.34
+	title = isengard.34.t
+	desc = isengard.34.d
+	picture = GFX_report_event_ring
+
+	is_triggered_only = yes
+
+	option = { 
+		name = isengard.34.a
+		ai_chance = { base = 50 }
+		add_opinion_modifier = { target = FROM modifier = medium_decrease } 
+		create_wargoal = { target = FROM type = puppet_wargoal_focus }
+	}
+}
+
+# Shire makes contact with Isengard
+country_event = {
+	id = isengard.35
+	title = isengard.35.t
+	desc = isengard.35.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.35.a
+		ISE = { add_opinion_modifier = { target = SHI modifier = medium_increase } }
+	}
+
+}
+
+# Rohan resisting invasion Westmarch
+country_event = {
+	id = isengard.36
+	title = isengard.36.t
+	desc = isengard.36.d
+	picture = GFX_report_event_paper
+
+	fire_only_once = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.36.a
+		add_war_support = 0.1
+		23 = { add_dynamic_modifier = { modifier = ise_westmarch_raiding } }
+	}
+}
+
+# Rohan agrees to our proposal
+country_event = {
+	id = isengard.37
+	title = isengard.37.t
+	desc = isengard.37.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.37.a
+		ISE = {
+			diplomatic_relation = {
+				country = ROH
+				relation = non_aggression_pact
+			}
+			add_political_power = 25
+			add_opinion_modifier = { target = ROH modifier = small_increase } 
+		}
+	}
+}
+
+# Rohan refuses our proposal
+country_event = {
+	id = isengard.38
+	title = isengard.38.t
+	desc = isengard.38.d
+	picture = GFX_report_event_paper
+
+	is_triggered_only = yes
+
+	option = {
+		name = isengard.38.a
+		add_opinion_modifier = { target = ROH modifier = small_decrease } 
 	}
 }

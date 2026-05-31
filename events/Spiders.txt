@@ -1,0 +1,1125 @@
+###########################
+# Spider Events
+###########################
+
+add_namespace = spiders
+
+
+
+# Ask for shelobs return
+country_event = {
+    id = spiders.100
+    title = spiders.100.t
+    desc = spiders.100.desc
+
+    is_triggered_only = yes
+	picture = GFX_report_event_shelob
+	option = {
+        ai_chance = {
+            base = 100
+            modifier = {
+                add = opinion@FROM
+            }
+            modifier = {
+                add = FROM.num_divisions
+            }
+            modifier = {
+                factor = 1.5
+                FROM = { is_ai = no }
+            }
+        }
+        name = spiders.100.a
+		hidden_effect = {
+			SPI = { country_event = { id = spiders.101 days = 1 } }	
+		}
+		SPI = {
+			event_option_tooltip = spiders.101.a
+		}
+		SPI = { increase_their_opinion_of_us_medium = yes }
+    }
+
+    option = {
+        ai_chance = {
+            base = 80
+        }
+        name = spiders.100.b
+		hidden_effect = {
+			SPI = { country_event = { id = spiders.102 days = 1 } }
+		}
+		SPI = {
+			event_option_tooltip = spiders.102.a
+		}
+    }
+}
+
+
+# request accepted
+country_event = {
+    id = spiders.101
+	picture = GFX_report_event_shelob
+    title = spiders.101.t
+    desc = spiders.101.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.101.a
+		empower_shelob = yes
+    }
+}
+
+
+# request rejected
+country_event = {
+    id = spiders.102
+    title = spiders.102.t
+    desc = spiders.102.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.102.a
+		FROM = { decrease_our_opinion_of_them_large = yes }
+    }
+}
+
+
+# Nest guardians created
+country_event = {
+    id = spiders.103
+	picture = GFX_report_event_big_spider
+    title = spiders.103.t
+    desc = spiders.103.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.103.a
+		create_nest_guardians = yes
+	}
+}
+
+
+# Nest guardians empowered
+country_event = {
+    id = spiders.104
+	picture = GFX_report_event_big_spider
+    title = spiders.104.t
+    desc = spiders.104.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.104.a
+		empower_nest_guardians = yes
+    }
+}
+
+
+# Nest guardians destroyed
+country_event = {
+    id = spiders.105
+	picture = GFX_report_event_spider_destroyed
+    title = spiders.105.t
+    desc = spiders.105.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.105.a
+		delete_nest_guardians = yes
+    }
+}
+
+
+# ask mordor for alliance
+country_event = {
+    id = spiders.106
+	picture = GFX_report_event_barad_dur
+    title = spiders.106.t
+    desc = spiders.106.desc
+
+    is_triggered_only = yes
+
+	# submit fully
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                add = MOR.num_divisions
+            }
+            modifier = {
+                add = MOR.num_of_factories
+            }
+        }
+        name = spiders.106.a
+		MOR = { country_event = { id = spiders.107 days = 3 } }
+		event_option_tooltip = spiders.107.a
+	}
+
+	# ask for regular alliance
+    option = {
+        ai_chance = {
+            base = 15
+            modifier = {
+                add = SPI.num_divisions
+            }
+            modifier = {
+                add = MOR.num_of_factories
+            }
+            modifier = {
+                factor = 1.5
+            }
+        }
+        name = spiders.106.b
+		MOR = { country_event = { id = spiders.108 days = 3 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = spiders.114.a
+	}
+
+	# try to barter
+    option = {
+        ai_chance = {
+            base = 15
+            modifier = {
+                add = SPI.num_divisions
+            }
+            modifier = {
+                add = MOR.num_of_factories
+            }
+            modifier = {
+                factor = 1.5
+            }
+        }
+        name = spiders.106.c
+		MOR = { country_event = { id = spiders.109 days = 3 } }
+		set_country_flag = spider_negotiations_bartering
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = spiders.110.a
+	}
+}
+
+
+# spiders submit
+country_event = {
+    id = spiders.107
+	picture = GFX_report_event_spider_hive
+    title = spiders.107.t
+    desc = spiders.107.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.107.a
+		MOR = { 
+			set_autonomy = {
+				target = SPI
+				autonomy_state = autonomy_bulwark
+			}
+		}
+        custom_effect_tooltip = spider_incidents_discl
+	}
+}
+
+
+# spiders want normal alliance
+country_event = {
+    id = spiders.108
+	picture = GFX_report_event_spider_hive
+    title = spiders.108.t
+    desc = spiders.108.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 35
+            modifier = {
+                factor = 2
+                SPI = { has_war = no }
+            }
+            modifier = {
+                factor = 1.3
+                SPI = { is_ai = no }
+            }
+        }
+        name = spiders.108.a
+		SPI = { country_event = { id = spiders.114 days = 31 } }
+		event_option_tooltip = spiders.114.a
+	}
+
+    option = {
+        ai_chance = {
+            base = 15
+            modifier = {
+                factor = 3
+                SPI = {
+                    any_enemy_country = {
+                        NOT = { has_war_with = MOR }
+                    }
+                }
+            }
+        }
+        name = spiders.108.b
+		SPI = { country_event = { id = spiders.115 days = 3 } }
+		event_option_tooltip = spiders.115.a
+	}
+}
+
+
+# spiders want stuff
+country_event = {
+    id = spiders.109
+    title = spiders.109.t
+    desc = spiders.109.desc
+
+    is_triggered_only = yes
+
+	# agree
+    option = {
+        ai_chance = {
+            base = 2
+            modifier = {
+                factor = 2
+                SPI = { is_ai = no }
+            }
+            modifier = {
+                factor = 1.5
+                SPI = { we_like_them = yes }
+            }
+        }
+        name = spiders.109.a
+		SPI = { country_event = { id = spiders.110 days = 3 } }
+		event_option_tooltip = spiders.110.a
+	}
+
+	# decline
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 2.5
+                SPI = {
+                    any_enemy_country = {
+                        NOT = { has_war_with = MOR }
+                    }
+                }
+            }
+        }
+        name = spiders.109.b
+		SPI = { country_event = { id = spiders.115 days = 3 } }
+		event_option_tooltip = spiders.115.a
+	}
+
+	# counter-offer
+    option = {
+        ai_chance = {
+            base = 2
+            modifier = {
+                factor = 2
+                SPI = { is_ai = no }
+            }
+        }
+        name = spiders.109.c
+		SPI = { country_event = { id = spiders.113 days = 3 } }
+		custom_effect_tooltip = if_they_accept_newline_tt
+		event_option_tooltip = spiders.112.a
+	}
+}
+
+
+# Mordor accepts barter-deal
+country_event = {
+    id = spiders.110
+	picture = GFX_report_event_sauron_eye
+    title = spiders.110.t
+    desc = spiders.110.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.110.a
+		MOR = {
+			add_to_faction = SPI
+            custom_effect_tooltip = spider_incidents_discl
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 3000
+				target = SPI
+			}
+			send_equipment = {
+				equipment = support_equipment
+				amount = 500
+				target = SPI
+			}
+			add_manpower = -5000
+		}
+		SPI = { add_manpower = 5000 }
+    }
+}
+
+
+# spiders reject counter-offer
+country_event = {
+    id = spiders.111
+    title = spiders.111.t
+    desc = spiders.111.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.111.a
+		SPI = { decrease_our_opinion_of_them_small = yes }
+    }
+}
+
+
+# spiders accept counter-offer
+country_event = {
+    id = spiders.112
+    title = spiders.112.t
+    desc = spiders.112.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.112.a
+		MOR = {
+			add_to_faction = SPI
+            custom_effect_tooltip = spider_incidents_discl
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 1500
+				target = SPI
+			}
+			send_equipment = {
+				equipment = support_equipment
+				amount = 250
+				target = SPI
+			}
+			add_manpower = -2500
+		}
+		SPI = { add_manpower = 2500 }
+    }
+}
+
+
+# Mordor counter-offer
+country_event = {
+    id = spiders.113
+	picture = GFX_report_event_sauron_eye
+    title = spiders.113.t
+    desc = spiders.113.desc
+
+    is_triggered_only = yes
+
+	# accept counter-offer
+    option = {
+        ai_chance = {
+            base = 75
+            modifier = {
+                factor = 0.1
+                strength_ratio = {
+                    tag = MOR
+                    ratio > 1.0
+                }
+            }
+            modifier = {
+                factor = 0.5
+                strength_ratio = {
+                    tag = MOR
+                    ratio > 0.6
+                }
+            }
+        }
+        name = spiders.113.a
+		MOR = { country_event = { id = spiders.112 days = 3 } }
+		event_option_tooltip = spiders.112.a
+    }
+
+	# reject counter-offer
+    option = {
+        ai_chance = {
+            base = 25
+            modifier = {
+                factor = 0.5
+                has_war = yes
+                alliance_strength_ratio < 1.4
+            }
+        }
+        name = spiders.113.b
+		MOR = { country_event = { id = spiders.111 days = 3 } }
+		event_option_tooltip = spiders.111.a
+    }
+}
+
+
+# Mordor accepts
+country_event = {
+    id = spiders.114
+	picture = GFX_report_event_sauron_eye
+    title = spiders.114.t
+    desc = spiders.114.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.114.a
+
+		MOR = {
+			add_to_faction = SPI
+            custom_effect_tooltip = spider_incidents_discl
+		}
+    }
+}
+
+
+# Mordor declines
+country_event = {
+    id = spiders.115
+	picture = GFX_report_event_sauron_eye
+    title = spiders.115.t
+    desc = spiders.115.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.115.a
+
+		MOR = { decrease_our_opinion_of_them_small = yes }
+    }
+}
+
+
+# Spiders propose forming alliance
+country_event = {
+    id = spiders.116
+	picture = GFX_report_event_spider_hive
+    title = spiders.116.t
+    desc = spiders.116.desc
+
+    is_triggered_only = yes
+
+	# yes
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 2
+                FROM = { is_ai = no }
+            }
+            modifier = {
+                factor = 2
+                FROM = { is_stronger = yes }
+            }
+        }
+        name = spiders.116.a
+		SPI = { 
+			country_event = { id = spiders.117 days = 3 }
+			event_option_tooltip = spiders.117.a
+		}
+	}
+
+	# no
+    option = {
+        ai_chance = {
+            base = 2
+            modifier = {
+                factor = 2
+                FROM = {
+                    any_enemy_country = {
+                        NOT = { has_war_with = ROOT }
+                    }
+                }
+            }
+        }
+        name = spiders.116.b
+		SPI = {
+			country_event = { id = spiders.118 days = 3 }
+			event_option_tooltip = spiders.118.a
+		}
+	}
+
+	# only with us as leader
+    option = {
+        ai_chance = {
+            base = 1
+            modifier = {
+                factor = 2
+                FROM = { is_ai = no }
+            }
+            modifier = {
+                factor = 2
+                FROM = { is_weaker = yes }
+            }
+        }
+        name = spiders.116.c
+		SPI = {
+			country_event = { id = spiders.119 days = 3 }
+			custom_effect_tooltip = if_they_accept_newline_tt
+			event_option_tooltip = spiders.120.a
+		}
+	}
+}
+
+
+# alliance accepted
+country_event = {
+    id = spiders.117
+    title = spiders.117.t
+    desc = spiders.117.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.117.a
+		create_faction_from_template = {
+			name = "Arachnid Covenant"
+			template = faction_template_generic
+		}
+		add_to_faction = FROM
+        custom_effect_tooltip = spider_incidents_discl
+    }
+}
+
+
+# alliance rejected
+country_event = {
+    id = spiders.118
+    title = spiders.118.t
+    desc = spiders.118.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.118.a
+		FROM = { decrease_our_opinion_of_them_small = yes }
+    }
+}
+
+
+# FROM wants leadership
+country_event = {
+    id = spiders.119
+    title = spiders.119.t
+    desc = spiders.119.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 200
+            modifier = {
+                add = FROM.num_divisions
+            }
+            modifier = {
+                add = FROM.num_of_factories
+            }
+        }
+        name = spiders.119.a
+		FROM = {
+			country_event = { id = spiders.120 days = 3 }
+			event_option_tooltip = spiders.120.a
+     	}
+	}
+
+    option = {
+        ai_chance = {
+            base = 50
+            modifier = {
+                add = ROOT.num_divisions
+            }
+            modifier = {
+                add = ROOT.num_of_factories
+            }
+        }
+        name = spiders.119.b
+		FROM = {
+			country_event = { id = spiders.121 days = 3 }
+			event_option_tooltip = spiders.121.a
+     	}
+	}
+}
+
+
+# leadership accepted
+country_event = {
+    id = spiders.120
+	picture = GFX_report_event_spider_hive
+    title = spiders.120.t
+    desc = spiders.120.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.120.a
+		create_faction_from_template = {
+			name = "Arachnid Covenant"
+			template = faction_template_generic
+		}
+		add_to_faction = SPI
+        custom_effect_tooltip = spider_incidents_discl
+    }
+}
+
+
+# leadership rejected
+country_event = {
+    id = spiders.121
+	picture = GFX_report_event_spider_hive
+    title = spiders.121.t
+    desc = spiders.121.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.121.a
+		SPI = { decrease_our_opinion_of_them_small = yes }
+    }
+}
+
+
+# What resources to prioritize?
+country_event = {
+    id = spiders.122
+	picture = GFX_report_event_spider_nest
+    title = spiders.122.t
+    desc = spiders.122.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 25
+            modifier = {
+                add = resource_produced@chromium
+            }
+            modifier = {
+                add = resource_imported@tungsten
+            }
+            modifier = {
+                add = resource_consumed@tungsten
+            }
+        }
+        name = spiders.122.a
+        82 = {
+            add_resource = {
+                type = tungsten
+                amount = 25
+            }
+            add_resource = {
+                type = oil
+                amount = 15
+            }
+        }
+    }
+
+    option = {
+        ai_chance = {
+            base = 10
+            modifier = {
+                add = resource@tungsten
+            }
+            modifier = {
+                add = resource_imported@chromium
+            }
+            modifier = {
+                add = resource_consumed@chromium
+            }
+        }
+        name = spiders.122.b
+        82 = {
+            add_resource = {
+                type = chromium
+                amount = 10
+            }
+            add_resource = {
+                type = steel
+                amount = 8
+            }
+        }
+    }
+}
+
+
+country_event = {
+    id = spiders.123
+    title = spiders.123.t
+    desc = spiders.123.desc
+
+    trigger = {
+        can_get_spider_incidents = yes
+    }
+
+    mean_time_to_happen = {
+        months = 7
+        modifier = {
+			factor = 0.75
+			has_country_flag = spider_incidents_higher_frequency
+		}
+        modifier = {
+            factor = 1.25
+            SPI = { check_variable = { allies^num > 2 } }
+        }
+        modifier = {
+            factor = 1.25
+            SPI = { check_variable = { allies^num > 3 } }
+        }
+        modifier = {
+            factor = 1.25
+            SPI = { check_variable = { allies^num > 5 } }
+        }
+    }
+
+    # It can't be helped. It's their nature
+    option = {
+        ai_chance = {
+            base = 30
+            modifier = {
+                factor = 0
+                has_stability < 0.35
+            }
+        }
+        name = spiders.123.a
+        
+        spider_incident_effect = yes
+        if = {
+            limit = { is_orcs = no has_government = belligerent }
+            add_stability = -0.015
+        }
+        else_if = {
+            limit = { is_orcs = no }
+            add_stability = -0.03
+        }
+    }
+
+    # Demmand immediate recompensation!
+    option = {
+        ai_chance = {
+            base = 10
+        }
+        trigger = {
+            NOT = { is_subject_of = SPI }
+        }
+        name = spiders.123.b
+        
+        spider_incident_effect = yes
+        SPI = {
+            decrease_their_opinion_of_us_small = yes
+        }
+    }
+}
+	
+country_event = {
+	id = spiders.124
+	title = spiders.124.t
+	desc = spiders.124.d
+	is_triggered_only = yes
+
+	option = {
+		name = spiders.124.a
+		ai_chance = {
+			base = 1
+		}
+        if = {
+            limit = {
+                OR = {
+                    AND = { SPI = { is_ai = yes } MIR = { is_ai = no } tag = MIR }
+                    AND = { SPI = { is_ai = no } tag = SPI }
+                    AND = { MIR = { is_ai = yes } tag = SPI }
+                }
+            }
+            SPI = {
+                every_controlled_state = {
+                    if = { limit = { is_claimed_by = MIR } remove_claim_by = MIR }
+                    if = { limit = { is_core_of = MIR } remove_core_of = MIR }
+                }
+            }
+            MIR = {
+                every_controlled_state = {
+                    if = { limit = { is_claimed_by = SPI } remove_claim_by = SPI }
+                    if = { limit = { is_core_of = SPI } remove_core_of = SPI }
+                }
+            }
+        }
+        else = {
+            effect_tooltip = {
+                SPI = {
+                    every_controlled_state = {
+                        if = { limit = { is_claimed_by = MIR } remove_claim_by = MIR }
+                        if = { limit = { is_core_of = MIR } remove_core_of = MIR }
+                    }
+                }
+                MIR = {
+                    every_controlled_state = {
+                        if = { limit = { is_claimed_by = SPI } remove_claim_by = SPI }
+                        if = { limit = { is_core_of = SPI } remove_core_of = SPI }
+                    }
+                }
+            }
+        }
+	}
+}
+
+# Spiders seek knowledge for intel
+country_event = {
+    id = spiders.125
+	picture = GFX_report_event_spider_nest
+    title = spiders.125.t
+    desc = spiders.125.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 100
+            modifier = {
+                add = opinion@FROM
+            }
+            modifier = {
+                factor = 1.3
+                FROM = { is_ai = no }
+            }
+        }
+        name = spiders.125.a
+		SPI = { country_event = { id = spiders.129 days = 3 } }
+        event_option_tooltip = spiders.129.a
+    }
+
+    option = {
+        ai_chance = {
+            base = 65
+        }
+        name = spiders.125.b
+	    SPI = { country_event = { id = spiders.130 days = 3 } }
+        event_option_tooltip = spiders.130.a
+	}
+}
+
+# Spiders ask to eat our prisoners in exchange for peace
+country_event = {
+    id = spiders.126
+	picture = GFX_report_event_spider_nest
+    title = spiders.126.t
+    desc = spiders.126.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 100
+            modifier = {
+                add = opinion@FROM
+            }
+            modifier = {
+                factor = 1.3
+                FROM = { is_ai = no }
+            }
+        }
+        name = spiders.126.a
+		SPI = { country_event = { id = spiders.127 days = 3 } }
+        event_option_tooltip = spiders.127.a
+    }
+
+    option = {
+        ai_chance = {
+            base = 65
+        }
+        name = spiders.126.b
+	    SPI = { country_event = { id = spiders.128 days = 3 } }
+        event_option_tooltip = spiders.128.a
+	}
+}
+
+# Elves accept to let us eat their prisoners
+country_event = {
+    id = spiders.127
+    title = spiders.127.t
+    desc = spiders.127.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.127.a
+
+        MIR = {
+            add_manpower = -3000
+        }
+
+        SPI = {
+            add_manpower = 6000
+        }
+
+        MIR = {
+            spider_disable_incidents = yes
+            add_stability = 0.05
+        }
+    }
+}
+
+
+# Elves refuse to let us eat their prisoners
+country_event = {
+    id = spiders.128
+    title = spiders.128.t
+    desc = spiders.128.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.128.a
+
+        SPI = {
+            add_opinion_modifier = {
+                target = MIR
+                modifier = medium_decrease
+            }
+        }
+
+        MIR = {
+            spider_increase_incident_frequency = yes
+        }
+    }
+}
+
+
+# Elves accept to give us wisdom
+country_event = {
+    id = spiders.129
+    title = spiders.129.t
+    desc = spiders.129.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.129.a
+
+        SPI = { add_to_tech_sharing_group = elves_and_spiders }
+        MIR = { add_to_tech_sharing_group = elves_and_spiders }
+    }
+}
+
+
+# Elves refuse to give us wisdom
+country_event = {
+    id = spiders.130
+    title = spiders.130.t
+    desc = spiders.130.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.130.a
+
+        SPI = {
+            add_opinion_modifier = {
+                target = MIR
+                modifier = medium_decrease
+            }
+        }
+    }
+}
+
+# Event declaration warning
+country_event = {
+    id = spiders.131
+	picture = GFX_report_event_spiders
+    title = spiders.131.t
+    desc = spiders.131.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.131.a
+
+        custom_effect_tooltip = lotr_generic.132.a_tt
+    }
+}
+
+
+
+# shelob gets us the ring
+country_event = {
+    id = spiders.132
+    title = spiders.132.t
+    desc = spiders.132.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = spiders.132.a
+
+        effect_tooltip = {
+            add_ideas = artifact_the_one_ring
+        }
+        empower_shelob = yes
+
+        hidden_effect = {
+            news_event = { id = news.420 days = 3 }
+        }
+
+    }
+}

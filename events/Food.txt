@@ -1,0 +1,99 @@
+add_namespace = food
+
+
+# bad harvest
+country_event = {
+	id = food.1
+	title = food.1.t
+	desc = food.1.d
+	picture = GFX_report_event_failed_harvest
+
+	is_triggered_only = yes
+
+	option = {
+		name = food.1.a
+		
+		add_timed_idea = {
+			idea = bad_harvest
+			days = 160
+		}
+	}
+}
+
+# this triggers bad harvest
+country_event = {
+	id = food.2
+	
+	hidden = yes
+
+	trigger = {
+		it_is_summer = yes
+		NOT = { has_country_flag = disable_bad_harvests }
+		has_country_flag = rng_50p_flag_1 # 50% chance to even be possible
+	}
+	mean_time_to_happen = {
+		days = 50
+	}
+
+	immediate = {
+		random = {
+			chance = 12
+
+			# ai gets much lower chance
+			if = {
+				limit = { is_ai = yes }
+
+				random = {
+					chance = 8
+
+					country_event = food.1
+
+					# decrease chance of happening multiple times
+					random = {
+						chance = 75
+						set_country_flag = disable_bad_harvests
+					}
+				}
+			}
+
+			else = {
+				country_event = food.1
+
+				# decrease chance of happening multiple times
+				random = {
+					chance = 20
+					set_country_flag = disable_bad_harvests
+				}
+			}
+		}
+	}
+}
+
+# food riots
+country_event = {
+	id = food.3
+	title = food.3.t
+	desc = food.3.d
+	picture = GFX_report_event_peasant_revolt
+
+	trigger = {
+		has_idea = famine
+		is_ai = no
+	}
+
+	mean_time_to_happen = {
+		days = 80
+	}
+
+	option = {
+		name = food.3.a
+		
+		add_popularity = {
+			ideology = revolutionary
+			popularity = 0.1
+		}
+		add_war_support = -0.1
+		add_stability = -0.1
+		add_manpower = -1000
+	}
+}

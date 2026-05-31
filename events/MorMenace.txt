@@ -1,0 +1,280 @@
+
+
+
+
+add_namespace = morm
+
+
+
+# Embargo event
+country_event = {
+    id = morm.100
+	picture = GFX_report_event_barad_dur
+    title = morm.100.t
+    desc = morm.100.desc
+
+    is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = morm_disabled }
+	}
+
+	immediate = {
+		set_country_flag = has_received_morm_3_event
+	}
+
+    option = {
+        ai_chance = {
+            base = 100
+			modifier = {
+				factor = 0.05
+				is_going_belligerent = yes
+			}
+			modifier = {
+				factor = 0.5
+				is_going_revolutionary = yes
+			}
+			modifier = {
+				factor = 0.1
+				is_orcs = yes
+			}
+			modifier = {
+				factor = 1.8
+				has_government = cooperative
+			}
+        }
+        name = morm.100.a
+		send_embargo = MOR
+
+		custom_effect_tooltip = morm.101.a_tt
+    }
+
+    option = {
+        ai_chance = {
+            base = 75
+			modifier = {
+				add = opinion@MOR
+			}
+        }
+        name = morm.100.b
+
+		custom_effect_tooltip = morm.101.a_tt
+		
+    }
+}
+
+
+# General warning event
+country_event = {
+    id = morm.101
+	picture = GFX_report_event_barad_dur_2
+    title = morm.101.t
+    desc = morm.101.desc
+
+    is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = morm_disabled }
+	}
+
+	immediate = {
+		set_country_flag = has_received_morm_3_event
+	}
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = morm.101.a
+
+		custom_effect_tooltip = morm.101.a_tt
+    }
+}
+
+
+# Time to choose event
+country_event = {
+    id = morm.102
+	picture = GFX_report_event_sauron_eye
+    title = morm.102.t
+    desc = morm.102.desc
+
+    trigger = {
+		morm_threshold_5 = yes
+		is_subject = no
+		any_neighbor_country = {
+			OR = {
+				tag = MOR
+				is_ally_with = MOR
+			}
+		}
+		MOR = { is_faction_leader = yes }
+		NOT = { is_ally_with = MOR }
+		NOT = {
+			any_enemy_country = {
+				is_ally_with = MOR
+			}
+		}
+		NOT = { has_global_flag = morm_disabled }
+	}
+
+	mean_time_to_happen = {
+		days = 100
+	}
+
+    option = {
+        ai_chance = {
+            base = 300
+			modifier = {
+				add = opinion@MOR
+			}
+			modifier = {
+				add = MOR.num_of_factories
+			}
+			modifier = {
+				add = MOR.num_armies
+			}
+			modifier = {
+				factor = 0
+				tag = RIV
+				OR = {
+					has_government = cooperative
+					has_government = unaligned
+				}
+			}
+			modifier = {
+				factor = 0.75
+				MOR = { is_ai = no }
+			}
+        }
+        name = morm.102.a
+		trigger = {
+			MOR = { can_engage_in_diplo_with = yes }
+			MOR = { eternal_animosity_exists_between = no }
+		}
+		hidden_effect = {
+			MOR = { country_event = { id = morm.105 hours = 1 } }
+		}
+		effect_tooltip = {
+			if = {
+				limit = { ROOT = { is_faction_leader = yes } }
+				ROOT = { dismantle_faction = yes }
+			}
+			else_if = {
+				limit = { ROOT = { is_in_faction = yes } }
+				ROOT = { leave_faction = yes }
+			}
+			MOR = {
+				add_to_faction = ROOT
+			}
+		}
+    }
+
+    option = {
+        ai_chance = {
+            base = 600
+			modifier = {
+				factor = 0.3
+				has_government = belligerent
+			}
+			modifier = {
+				factor = 2
+				has_government = cooperative
+			}
+			modifier = {
+				factor = 2
+				has_country_leader_ideology = unchained
+			}
+			modifier = {
+				factor = 0.5
+				is_orcs = yes
+			}
+			modifier = {
+				factor = 1.5
+				is_elves = yes
+			}
+			modifier = {
+				factor = 1.2
+				is_major = yes
+			}
+        }
+        name = morm.102.b
+		trigger = {
+			MOR = { war_with_is_possible = yes }
+			MOR = { secret_fealty_exists_between = no }
+		}
+		hidden_effect = {
+			country_event = { id = morm.104 days = 35 }
+		}
+		custom_effect_tooltip = morm.102.b_tt
+    }
+}
+
+
+# Delayed war event
+country_event = {
+    id = morm.104
+
+	trigger = {
+		NOT = { has_global_flag = morm_disabled }
+	}
+
+    is_triggered_only = yes
+
+    hidden = yes
+
+	immediate = {
+		declare_war_on = {
+			target = MOR
+			type = independence_wargoal
+		}
+	}
+}
+
+
+# Join Mordor event
+country_event = {
+    id = morm.105
+    title = morm.105.t
+    desc = morm.105.desc
+
+	trigger = {
+		NOT = { has_global_flag = morm_disabled }
+	}
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = morm.105.a
+
+		if = {
+			limit = { FROM = { is_faction_leader = yes } }
+			FROM = { dismantle_faction = yes }
+		}
+		else_if = {
+			limit = { FROM = { is_in_faction = yes } }
+			FROM = { leave_faction = yes }
+		}
+		add_to_faction = FROM
+    }
+}
+
+# Tutorial Event
+country_event = {
+    id = morm.106
+	picture = GFX_report_event_sauron_eye
+    title = morm.106.t
+    desc = morm.106.desc
+
+    is_triggered_only = yes
+
+    option = {
+        ai_chance = {
+            base = 1
+        }
+        name = morm.106.a
+    }
+}

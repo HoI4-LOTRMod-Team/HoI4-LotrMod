@@ -11,7 +11,6 @@ on_actions = {
 				if = { limit = { tag = ANG } set_gameplan_ANG = yes }
 				else_if = { limit = { tag = ANG } set_gameplan_ANG = yes }
 				else_if = { limit = { tag = ART } set_gameplan_ART = yes }
-				else_if = { limit = { tag = RHU } set_gameplan_RHU = yes }
 				else_if = { limit = { tag = ELU } set_gameplan_ELU = yes }
 				else_if = { limit = { tag = ENT } set_gameplan_ENT = yes }
 				else_if = { limit = { tag = ERE } set_gameplan_ERE = yes }
@@ -26,10 +25,24 @@ on_actions = {
 				else_if = { limit = { tag = RIV } set_gameplan_RIV = yes }
 				else_if = { limit = { tag = ROH } set_gameplan_ROH = yes }
 				else_if = { limit = { tag = SHI } set_gameplan_SHI = yes }
+				else_if = { limit = { tag = DGU } set_gameplan_DGU = yes }
+				else_if = { limit = { tag = GLD } set_gameplan_GLD = yes }
+				else_if = { limit = { tag = GOB } set_gameplan_GOB = yes }
+				else_if = { limit = { tag = GUN } set_gameplan_GUN = yes }
+				else_if = { limit = { tag = RGL } set_gameplan_RGL = yes }
+				else_if = { limit = { tag = RHD } set_gameplan_RHD = yes }
+				else_if = { limit = { tag = RHU } set_gameplan_RHU = yes }
+				else_if = { limit = { tag = SPI } set_gameplan_SPI = yes }
+				else_if = { limit = { tag = VAL } set_gameplan_VAL = yes }
 				else = { set_gameplan_generic = yes }
 
 				# Set template gameplan
-				set_gameplan_templates_generic = yes
+				if = {
+					limit = {
+						NOT = { tag = SPI } # Spiders have their own template strat
+					}
+					set_gameplan_templates_generic = yes
+				}
 
 				# Apply ai buffs
 				if = {
@@ -40,53 +53,103 @@ on_actions = {
 						days = 370
 					}
 				}
-				# If the player is playing singleplayer Mordor, the free peoples get substantial buffs to make it more challenging
-				if = {
-					limit = {
-						GON = { is_ai = yes }
-						ROH = { is_ai = yes }
-						DAM = { is_ai = yes }
-						OR = {
-							MOR = { is_ai = no }
-							ISE = { is_ai = no }
-							HAR = { is_ai = no }
-							RHU = { is_ai = no }
-							ENE = { is_ai = no }
-						}
-						#all_country = {
-						#	OR = {
-						#		tag = MOR
-						#		is_ai = yes
-						#	}
-						#}
-					}
-					GON = { add_ideas = ai_gondor_buff }
-				}
-				# If the player is playing singleplayer Isengard, the free peoples get substantial buffs to make it more challenging
-				if = {
-					limit = {
+			}
+			
+			# If the player is playing singleplayer Mordor, the free peoples get substantial buffs to make it more challenging
+			if = {
+				limit = {
+					GON = { is_ai = yes }
+					ROH = { is_ai = yes }
+					DAM = { is_ai = yes }
+					OR = {
+						MOR = { is_ai = no }
 						ISE = { is_ai = no }
-						all_country = {
-							OR = {
-								tag = ISE
-								is_ai = yes
-							}
-						}
+						HAR = { is_ai = no }
+						RHU = { is_ai = no }
+						ENE = { is_ai = no }
 					}
-					ROH = { add_ideas = ai_rohan_buff }
+					#all_country = {
+					#	OR = {
+					#		tag = MOR
+					#		is_ai = yes
+					#	}
+					#}
 				}
-				# If the player is playing singleplayer Rohan, Isengard get substantial buffs to make it more challenging
-				if = {
-					limit = {
-						ROH = { is_ai = no }
-						all_country = {
-							OR = {
-								tag = ROH
-								is_ai = yes
-							}
+				GON = { add_ideas = ai_gondor_buff }
+			}
+			if = {
+				limit = {
+					GON = { is_ai = yes }
+				}
+				GON = {
+					add_offsite_building = {
+						type = industrial_complex
+						level = 1
+					}
+					add_offsite_building = {
+						type = arms_factory
+						level = 1
+					}
+				}
+			}
+			# If the player is playing singleplayer Isengard, the free peoples get substantial buffs to make it more challenging
+			if = {
+				limit = {
+					ISE = { is_ai = no }
+					all_country = {
+						OR = {
+							tag = ISE
+							is_ai = yes
 						}
 					}
-					ISE = { add_ideas = ai_isengard_buff }
+				}
+				ROH = { add_ideas = ai_rohan_buff }
+			}
+			# If the player is playing singleplayer Rohan, Isengard get substantial buffs to make it more challenging
+			if = {
+				limit = {
+					ROH = { is_ai = no }
+					all_country = {
+						OR = {
+							tag = ROH
+							is_ai = yes
+						}
+					}
+				}
+				ISE = { add_ideas = ai_isengard_buff }
+			}
+			if = {
+				limit = {
+					DGU = { is_ai = yes }
+				}
+				DGU = {
+					add_manpower = 12000
+					set_technology = {
+						cheap_infantry_weapons2 = 1
+					}
+				}
+			}
+			if = {
+				limit = {
+					DGU = { is_ai = yes }
+					OR = {
+						LTH = { is_ai = yes }
+						MIR = { is_ai = yes }
+					}
+				}
+				DGU = {
+					add_manpower = 5000
+					set_technology = {
+						support_weapons2 = 1
+					}
+					add_tech_bonus = {
+						name = special_bonus
+						uses = 2
+						bonus = 0.5
+					}
+					add_mastery = {
+						amount = 300
+					}
 				}
 			}
 		}

@@ -1,0 +1,239 @@
+
+
+
+
+
+lotr_artifacts_effects__artifact_saurons_mace = {
+	add_war_support = 0.03
+}
+
+lotr_artifacts_effects__artifact_the_one_ring = {
+	ring_corruption_percentage_up = yes
+	add_timed_idea = {
+		idea = one_ring_buff
+		days = 24
+	}
+}
+
+lotr_artifacts_effects__artifact_the_one_ring_upgraded = {
+	ring_corruption_percentage_up = yes
+	add_timed_idea = {
+		idea = one_ring_buff
+		days = 24
+	}
+}
+
+lotr_artifacts_effects__artifact_gandalfs_staff = {
+	add_timed_idea = {
+		idea = gandalf_staff_buff
+		days = 180
+	}
+}
+
+lotr_artifacts_effects__artifact_narya = {
+	add_timed_idea = {
+		idea = narya_buff
+		days = 70
+	}
+}
+
+lotr_artifacts_effects__artifact_nenya = {
+	add_timed_idea = {
+		idea = nenya_buff
+		days = 24
+	}
+}
+
+lotr_artifacts_effects__artifact_vilya = {
+	add_timed_idea = {
+		idea = vilya_buff
+		days = 24
+	}
+}
+
+lotr_artifacts_effects__artifact_necklace_of_girion = {
+	add_timed_idea = {
+		idea = necklace_of_girion_buff
+		days = 90
+	}
+}
+
+lotr_artifacts_effects__artifact_herugrim = {
+	add_timed_idea = {
+		idea = herugrim_buff
+		days = 24
+	}
+}
+
+lotr_artifacts_effects__artifact_shards_of_narsil = {
+	add_stability = 0.025
+}
+
+lotr_artifacts_effects__artifact_blade_of_narsil = {
+	add_timed_idea = {
+		idea = blade_of_narsil_buff
+		days = 24
+	}
+}
+
+lotr_artifacts_effects__artifact_palantir = {
+	custom_effect_tooltip = lotr_artifacts_effects__artifact_palantir_tt
+	hidden_effect = {
+		random_list = {
+			50 = {
+				random_country = {
+					limit = {
+						has_idea = artifact_palantir
+						NOT = { tag = ROOT }
+					}
+					give_intel_on_country = yes
+				}
+			}
+			50 = {
+				random_country = {
+					limit = {
+						has_idea = artifact_palantir
+						NOT = { tag = ROOT }
+					}
+					give_intel_on_country = yes
+					PREV = { give_intel_on_country = yes }
+				}
+			}
+		}
+	}
+}
+
+lotr_artifacts_effects__artifact_galadriels_mirror = {
+	if = {
+		limit = { has_completed_focus = lth_mirrorupgrade }
+		add_political_power = 75
+	}
+	hidden_effect = { mirror_look_into_mirror = yes }
+	custom_effect_tooltip = look_into_mirror_tt
+}
+
+lotr_artifacts_effects__artifact_sarumans_staff = {
+	add_timed_idea = {
+		idea = saruman_staff_buff
+		days = 30
+	}
+}
+
+lotr_artifacts_effects__artifact_blade_of_oropher_upgraded = {
+	add_unit_bonus = {
+		category_all_infantry = {
+			max_organisation = 1.5
+			soft_attack = 0.015
+			hard_attack = 0.015
+		}
+	}
+	custom_effect_tooltip = lotr_artifacts_effects__artifact_blade_of_oropher_tt
+}
+
+lotr_artifacts_effects__artifact_blade_of_oropher = {
+	add_unit_bonus = {
+		category_all_infantry = {
+			max_organisation = 1
+			soft_attack = 0.01
+			hard_attack = 0.01
+		}
+	}
+	custom_effect_tooltip = lotr_artifacts_effects__artifact_blade_of_oropher_tt
+}
+
+lotr_artifacts_effects__artifact_scepter_of_mistrand = {
+	add_command_power = 85
+	add_political_power = 85
+}
+
+
+
+assign_starting_artifacts = {
+	MOR = { add_ideas = artifact_saurons_mace }
+	LIN = { add_ideas = artifact_narya }
+	LTH = { add_ideas = artifact_nenya }
+	RIV = { add_ideas = artifact_vilya }
+	MIR = { add_ideas = artifact_necklace_of_girion }
+	ROH = { add_ideas = artifact_herugrim }
+	RIV = { add_ideas = artifact_shards_of_narsil }
+	LTH = { add_ideas = artifact_galadriels_mirror }
+	ISE = { add_ideas = artifact_sarumans_staff }
+	RHU = { add_ideas = artifact_scepter_of_mistrand }
+	GON = { add_ideas = artifact_palantir }
+	MOR = { add_ideas = artifact_palantir }
+	ISE = { add_ideas = artifact_palantir }
+}
+
+
+lotr_artifacts_trigger_notification = {
+    set_country_flag = artifacts_notification_active
+}
+
+lotr_artifacts_active_effects = {
+
+	meta_effect = {
+		text = {
+			lotr_artifacts_effects__[ARTIFACT_ID] = yes
+		}
+		ARTIFACT_ID = "[?temp_selected_artifact.GetTokenKey]"
+	}
+
+	set_country_flag = {
+		flag = artifact_cooldown_active
+		value = 1
+		days = 180
+	}
+	# after 180 days, lotr_artifacts_trigger_notification
+	hidden_effect = {
+		country_event = { id = ring_tuto.5 days = 180 }
+	}
+
+}
+
+lotr_artifacts_toggle_details_view = {
+	if = {
+		limit = { has_country_flag = ring_details_view_open }
+		clr_country_flag = ring_details_view_open
+		set_variable = { ring_details_view_frame = 1 }
+	}
+	if = {
+		limit = { has_country_flag = lotr_artifacts_details_view_open }
+		clr_country_flag = lotr_artifacts_details_view_open
+		set_variable = { lotr_artifacts_details_view_frame = 1 }
+	}
+	# To keep the UI clean and smooth, we won't allow this to open when interception_form is open
+	else_if = {
+		limit = { NOT = { has_country_flag = ring_interception_form_open } }
+		set_country_flag = lotr_artifacts_details_view_open
+		set_variable = { lotr_artifacts_details_view_frame = 2 }
+	}
+}
+
+lotr_transfer_all_artifacts = {
+	# use special code to transfer ring
+	if = {
+		limit = {
+			ring_has_the_ring = yes
+		}
+		PREV = { ring_seize_ring = yes }
+	}
+
+	while_loop_effect = {
+		limit = {
+			check_variable = { country_artifacts^num > 0 }
+		}
+		random = {
+			chance = 80
+			meta_effect = {
+				text = {
+					remove_ideas = [ARTIFACT_ID]
+					PREV = {
+						add_ideas = [ARTIFACT_ID]
+					}
+				}
+				ARTIFACT_ID = "[?country_artifacts^0.GetTokenKey]"
+			}
+		}
+		
+	}
+}

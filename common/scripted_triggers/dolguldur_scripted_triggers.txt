@@ -1,0 +1,262 @@
+
+
+
+any_schedule_cancelled = {
+	OR = {
+		hidden_trigger = {
+			NOT = { has_country_flag = dgu_saurons_schedule_active }
+		}
+		MOR = {
+			OR = {
+				is_subject = yes
+				exists = no
+				has_capitulated = yes
+				strength_ratio = {
+					tag = DGU
+					ratio < 0.5
+				}
+			}
+		}
+	}
+}
+
+
+schedule_met_successfully = {
+	custom_trigger_tooltip = {
+		tooltip = schedule_met_successfully_tt
+		has_country_flag = dgu_saurons_schedule_started
+		NOT = {
+			has_country_flag = saurons_schedule_task_1_due
+			has_country_flag = saurons_schedule_task_2_due
+			has_country_flag = saurons_schedule_task_3_due
+			has_country_flag = saurons_schedule_task_4_due
+		}
+	}
+}
+
+
+
+
+
+# secure path east
+schedule_east_task_1_completed = {
+	OR = {
+		any_neighbor_country = { tag = RHO }
+		has_war_with = RHO
+		RHO = { has_ever_capitulated = yes }
+		hidden_trigger = { RHO = { is_ally_with = MOR } }
+		hidden_trigger = { RHO = { exists = no } }
+	}
+}
+
+# declare war on Rhovanion
+schedule_east_task_2_completed = {
+	OR = {
+		has_war_with = RHO
+		RHO = { has_ever_capitulated = yes }
+		hidden_trigger = { RHO = { is_ally_with = MOR } }
+		hidden_trigger = { RHO = { exists = no } }
+	}
+}
+
+# Rhovanion defeated
+schedule_east_task_3_completed = {
+	OR = {
+		RHO = { has_ever_capitulated = yes }
+		hidden_trigger = { RHO = { is_ally_with = MOR } }
+		hidden_trigger = { RHO = { exists = no } }
+	}
+}
+
+
+
+# build army of at least 50k men
+schedule_anduin_task_1_completed = {
+	OR = {
+		has_army_manpower = { size > 15000 }
+		hidden_trigger = { is_ai = yes }
+	}
+}
+
+# war with at least one of the vale peoples
+schedule_anduin_task_2_completed = {
+	OR = {
+		has_war_with = RGL
+		has_war_with = GLD
+		has_war_with = VAL
+	}
+}
+
+# any vales people defeated
+schedule_anduin_task_3_completed = {
+	OR = {
+		RGL = { has_ever_capitulated = yes }
+		GLD = { has_ever_capitulated = yes }
+		VAL = { has_ever_capitulated = yes }
+	}
+}
+
+
+
+# has an army at least 5k strong
+schedule_elves_task_1_completed = {
+	num_of_controlled_states > 2
+}
+
+# Be at war with MIR or LTH
+schedule_elves_task_2_completed = {
+	OR = {
+		has_war_with = LTH
+		has_war_with = MIR
+		hidden_trigger = {
+			AND = {
+				OR = {
+					LTH = { is_ally_with = MOR }
+					LTH = { exists = no }
+				}
+				OR = {
+					MIR = { is_ally_with = MOR }
+					MIR = { exists = no }
+				}
+			}
+		}
+	}
+}
+
+# capitulated LIR or LTH
+schedule_elves_task_3_completed = {
+	OR = {
+		MIR = { has_ever_capitulated = yes }
+		LTH = { has_ever_capitulated = yes }
+		hidden_trigger = {
+			AND = {
+				OR = {
+					LTH = { is_ally_with = MOR }
+					LTH = { exists = no }
+				}
+				OR = {
+					MIR = { is_ally_with = MOR }
+					MIR = { exists = no }
+				}
+			}
+		}
+	}
+}
+
+# at least one elven nation defeated
+schedule_elves_task_4_completed = {
+	custom_trigger_tooltip = {
+		tooltip = schedule_elves_task_4_completed_cond_tt
+		75 = {
+			controller = {
+				OR = {
+					is_ally_with = DGU
+					is_ally_with = MOR
+				}
+			}
+		}
+		83 = {
+			controller = {
+				OR = {
+					is_ally_with = DGU
+					is_ally_with = MOR
+				}
+			}
+		}	
+	}
+}
+
+
+
+# secure passage to Rohan's territory
+schedule_rohan_task_1_completed = {
+	OR = {
+		any_neighbor_country = { tag = ROH }
+		has_war_with = ROH
+		ROH = { has_ever_capitulated = yes }
+		hidden_trigger = { ROH = { is_ally_with = MOR } }
+		hidden_trigger = { ROH = { exists = no } }
+	}
+}
+
+schedule_rohan_task_2_completed = {
+	OR = {
+		has_war_with = ROH
+		hidden_trigger = {
+			OR = {
+				ROH = { is_ally_with = MOR }
+				ROH = { exists = no }
+			}
+		}
+	}
+}
+
+schedule_rohan_task_3_completed = {
+	OR = {
+		ROH = { has_ever_capitulated = yes }
+		hidden_trigger = {
+			OR = {
+				ROH = { is_ally_with = MOR }
+				ROH = { exists = no }
+			}
+		}
+	}
+}
+
+
+
+# build up defenses
+schedule_distraction_task_1_completed = {
+	has_completed_focus = DGU_build_up_our_forces
+}
+
+# build army of at least 100k
+schedule_distraction_task_2_completed = {
+	OR = {
+		has_army_manpower = { size > 20000 }
+		hidden_trigger = { is_ai = yes }
+	}
+}
+
+# Within 3 months of Mordor entering war, attack everyone
+schedule_distraction_task_3_completed = {
+	has_completed_focus = DGU_in_all_directions
+}
+
+
+
+control_all_mirkwood_states = {
+	custom_trigger_tooltip = {
+		tooltip = "We control every Mirkwood state."
+		all_state = {
+			OR = {
+				NOT = { is_on_continent = mirkwood }
+				is_controlled_by = ROOT
+			}
+		}
+	}
+}
+
+control_all_mordor_states = {
+	custom_trigger_tooltip = {
+		tooltip = "We control every core state of Mordor."
+		all_state = {
+			OR = {
+				NOT = { is_core_of = MOR }
+				is_controlled_by = ROOT
+			}
+		}
+	}
+}
+
+controls_all_core_states_of = {
+	custom_trigger_tooltip = {
+		tooltip = controls_all_core_states_of_tt
+		all_state = {
+			OR = {
+				NOT = { is_core_of = PREV }
+				is_controlled_by = ROOT
+			}
+		}
+	}
+}
