@@ -6,7 +6,7 @@ shared_focus = {
     x = 25
     y = 0
     cost = 5
-    search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL  
+    search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL }
     available_if_capitulated = yes
     ai_will_do = { base = 25 }
     completion_reward = {
@@ -19,9 +19,10 @@ shared_focus = {
         add_popularity = {
             ideology = belligerent
             popularity = 0.05
+            }
         }
     }
-}
+
 
 shared_focus = {
     id = tribes_steady_as_it_goes
@@ -50,10 +51,9 @@ shared_focus = {
 shared_focus = {
     id = tribes_tribel_traditions
     icon = GFX_goal_generic_treaty
-    mutually_exclusive = { focus = tribes_only_one_true_way }
     relative_position_id = tribes_steady_as_it_goes
     prerequisite = { focus = tribes_steady_as_it_goes }
-    x = -2
+    x = 2
     y = 1
     cost = 10
     search_filters = { FOCUS_FILTER_STABILITY FOCUS_FILTER_POLITICAL FOCUS_FILTER_UNALIGNED }
@@ -403,7 +403,7 @@ shared_focus = {
 shared_focus = {
     id = tribes_only_one_true_way
     icon = GFX_goal_support_belligerent
-    mutually_exclusive = { focus = tribes_steady_as_it_goes focus = tribes_tribel_traditions }
+    mutually_exclusive = { focus = tribes_steady_as_it_goes }
     relative_position_id = tribes_political_start
     prerequisite = { focus = tribes_political_start }
     x = 4
@@ -415,7 +415,10 @@ shared_focus = {
         base = 30
         modifier = {
             add = 999
-            is_historical_focus_on = yes
+            OR = {
+                has_country_flag = gameplan_going_belligerent
+                is_historical_focus_on = yes
+            }
         }
     }
     completion_reward = {
@@ -513,7 +516,10 @@ shared_focus = {
         base = 25
         modifier = {
             add = 999
-            is_historical_focus_on = yes
+            OR = {
+                has_country_flag = gameplan_going_historical
+                is_historical_focus_on = yes
+            }
         }
     }
     completion_reward = {
@@ -778,18 +784,30 @@ shared_focus = {
     cost = 10
     search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY FOCUS_FILTER_WAR_SUPPORT }
     available_if_capitulated = yes
-
+    available = {
+        any_neighbor_country = {
+            has_added_tension_amount > 0.1
+        }
+    }
     ai_will_do = {
         base = 25
     }
 
     completion_reward = {
         custom_effect_tooltip = "Gains wargoal against neighboring countries that have increased world tension"
-        every_neighbor_country = {
-            limit = {
-                has_added_tension_amount > 1
-            }
-            create_wargoal = { target = PREV type = annex_everything }
-        }
+        every_other_country = {
+				limit = {
+					is_neighbor_of = ROOT
+					NOT = { is_in_faction_with = ROOT }
+					has_added_tension_amount > 0.1
+				}
+				ROOT = {
+					create_wargoal = {
+						target = PREV
+						type = annex_everything
+					}
+				}
+			}
+            
     }
 }
