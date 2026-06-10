@@ -5,7 +5,7 @@ tags={
 	"Events"
 	"Gameplay"
 }
-name="Lord of the Rings Mod EARLY ACCES"
+name="Lord of the Rings Mod DEV"
 picture="lotr.png"
 replace_path="history/states"
 replace_path="history/countries"
