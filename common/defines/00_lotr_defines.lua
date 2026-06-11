@@ -115,8 +115,9 @@ NDefines.NProduction.CAPITULATE_STOCKPILES_RATIO = 0.05 -- How much equipment fr
 NDefines.NMilitary.MAX_DIVISION_BRIGADE_WIDTH = 6			-- Max width of regiments in division designer.
 NDefines.NMilitary.MAX_DIVISION_BRIGADE_HEIGHT = 4		-- Max height of regiments in division designer.
 NDefines.NMilitary.MIN_DIVISION_BRIGADE_HEIGHT = 3		-- Min height of regiments in division designer.
-NDefines.NMilitary.MAX_DIVISION_SUPPORT_WIDTH = 5			-- Max width of support in division designer.
-NDefines.NMilitary.MAX_DIVISION_SUPPORT_HEIGHT = 1		-- Max height of support in division designer.
+NDefines.NMilitary.MAX_DIVISION_SUPPORT_WIDTH = 1			-- Max width of support in division designer.
+NDefines.NMilitary.MAX_DIVISION_SUPPORT_HEIGHT = 5		-- Max height of support in division designer. CAUSES CRASH!
+NDefines.NMilitary.MAX_REGIMENTAL_SUPPORT_WIDTH = 6
 
 -- Training divisions
 NDefines.NProduction.MIN_POSSIBLE_TRAINING_MANPOWER = 3000	-- How many deployment lines minimum can be training
