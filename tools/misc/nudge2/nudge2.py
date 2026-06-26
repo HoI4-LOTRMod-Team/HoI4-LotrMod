@@ -26,8 +26,8 @@ from relax_provinces import *
 # --- CONFIGURATION ---
 BASE_PATH = Path(__file__).parent.parent.parent.parent.resolve() 
 HARDCODED_IMAGE_PATH = BASE_PATH / "map" / "provinces.bmp"
-OVERLAY_PATH = BASE_PATH / "map" / "terrain" / "colormap_rgb_cityemissivemask_a.dds"
-#OVERLAY_PATH = BASE_PATH / "map" / "rivers.bmp" # works with several other files too (terrain, height etc.)
+#OVERLAY_PATH = BASE_PATH / "map" / "terrain" / "colormap_rgb_cityemissivemask_a.dds"
+OVERLAY_PATH = BASE_PATH / "map" / "rivers.bmp" # works with several other files too (terrain, height etc.)
 
 # Your Custom Map Modes
 MAP_MODES = [
