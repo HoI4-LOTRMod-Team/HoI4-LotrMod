@@ -1,0 +1,646 @@
+add_namespace = khand
+
+country_event = {#Mordor - Khand wants money to join the faction
+    id = khand.1
+    title = khand.1.t
+    desc = khand.1.d
+	is_triggered_only = yes
+	picture = GFX_report_event_corruption
+    option = {#we will pay them
+        name = khand.1.a
+		ai_chance = {
+			base = 25
+			modifier = {
+				add = 5
+				has_government = belligerent
+				KND = { has_government = belligerent }
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = KND
+					value > 50
+				}
+			}
+            modifier = {
+				add = 25
+				strength_ratio = {
+					tag = GON
+					ratio <1.25
+				}
+            }
+            modifier = {
+				add = 50
+				strength_ratio = {
+					tag = GON
+					ratio <1.0
+				}
+            }
+			modifier = {
+				factor = 999
+				is_historical_focus_on = yes
+			}
+		}
+		MOR = {
+			add_to_faction = KND
+	    	add_ideas = {KND_mercenary_payments}
+		}
+        KND = {
+            add_ideas = {KND_mordor_recieved_payments}
+			country_event = khand.16
+        }
+    }
+    option = {#Deny
+        name = khand.1.b
+        ai_chance = {
+            base = 5
+            modifier = {
+                add = 50
+                has_government = revolutionary
+                KND = {has_government = belligerent}
+            }
+            modifier = {
+				add = 20
+				strength_ratio = {
+					tag = GON
+					ratio >1.75
+				}
+            }
+        }
+		KND = {
+			country_event = khand.15
+		}
+    }
+}
+country_event = {#Rhun - Khand wants money to join the faction
+    id = khand.2
+    title = khand.2.t
+    desc = khand.2.d
+	is_triggered_only = yes
+	picture = GFX_report_event_corruption
+    option = {#we will pay them
+        name = khand.2.a
+		ai_chance = {
+			base = 15
+			modifier = {
+				add = 5
+				has_government = belligerent
+				KND = { has_government = belligerent }
+			}
+			modifier = {
+				add = 5
+				has_government = unaligned
+				KND = {has_government = unaligned}
+			}
+			modifier = {
+				add = 5
+				has_government = cooperative
+				KND = { has_government = cooperative }
+			}
+			modifier = {
+				add = 5
+				has_opinion = {
+					target = KND
+					value > 50
+				}
+			}
+            modifier = {
+				add = 25
+				strength_ratio = {
+					tag = MOR
+					ratio <1.25
+				}
+            }
+            modifier = {
+				add = 50
+				strength_ratio = {
+					tag = MOR
+					ratio <1.0
+				}
+            }
+			modifier = {
+				factor = 999
+				is_historical_focus_on = yes
+			}
+		}
+		RHU = {
+			add_to_faction = KND
+	    	add_ideas = {KND_mercenary_payments}
+		}
+        KND = {
+            add_ideas = {KND_rhun_recieved_payments}
+			country_event = khand.16
+        }
+    }
+    option = {#Deny
+        name = khand.2.b
+        ai_chance = {
+            base = 5
+            modifier = {
+                add = 15
+                has_government = cooperative
+                KND = {has_government = belligerent}
+            }
+            modifier = {
+				add = 25
+				strength_ratio = {
+					tag = MOR
+					ratio >1.75
+				}
+            }
+        }
+		KND = {
+			country_event = khand.15
+		}
+    }
+}
+country_event = {#Khand offers us mercenaries
+    id = khand.3
+    title = khand.3.t
+    desc = khand.3.d
+	is_triggered_only = yes
+	picture = GFX_report_event_cavalry_knights
+    option = {#Accept
+        name = khand.3.a
+        ai_chance = {
+            base = 10
+        }
+        KND = {
+            add_ideas = {
+                six_civs_gain
+            }
+            add_political_power = 50
+			hidden_effect = {
+				if = {
+					limit = {
+						NOT = {has_country_flag = KND_has_ever_sent_mercs}
+					}
+					set_country_flag = KND_has_ever_sent_mercs
+				}
+			}
+        }
+        add_ideas = {six_civs_cost}
+        if = {
+            limit = {
+                KND = {has_country_flag = KND_improved_mercenaries}
+            }
+            division_template = {
+                name = "Elite Variags of Khand"
+                regiments = {
+                    infantry = { x = 0 y = 0 }
+                    infantry = { x = 0 y = 1 }
+                    artillery_brigade = { x = 0 y = 2 }
+                    standard_bearer = { x = 1 y = 0 }
+                    infantry = { x = 1 y = 1 }
+                    infantry = { x = 1 y = 2 }
+                    infantry = { x = 2 y = 0 }
+                    infantry = { x = 2 y = 1 }
+                    artillery_brigade = { x = 2 y = 2 }
+                }
+                support = {artillery = { x = 0 y = 0 }field_hospital = {x = 1 y = 0}} 
+            }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"Khandian Variags\" division_template = \"Elite Variags of Khand\" start_experience_factor = 1.0"
+                    owner = ROOT
+                    count = 2
+                }
+            }
+        }
+        else = {
+            division_template = {
+                name = "Variags of Khand"
+                regiments = {
+                    infantry = { x = 0 y = 0 }
+                    artillery_brigade = { x = 0 y = 1 }
+                    standard_bearer = { x = 1 y = 0 }
+                    infantry = { x = 1 y = 1 }
+                    infantry = { x = 2 y = 0 }
+                    artillery_brigade = { x = 2 y = 1 }
+                }
+                support = {} 
+            }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"Khandian Variags\" division_template = \"Variags of Khand\" start_experience_factor = 0.8"
+                    owner = ROOT
+                    count = 2
+                }
+            }
+        }
+    }
+    option = {#Decline
+        name = khand.3.b
+        ai_chance = {
+            base = 5
+        }
+        add_political_power = -35
+        hidden_effect = {
+            KND = {#give us back our people then
+                country_event = khand.14
+            }
+        }
+    }
+}
+country_event = {#Unrest at the war with Gondor
+	id = khand.4
+	title = khand.4.t
+	desc = khand.4.d
+	picture = GFX_report_event_peasant_revolt
+	fire_only_once = yes
+	trigger = {
+		tag = KND
+        is_in_faction_with = MOR
+		has_government = belligerent
+        has_war_with = GON
+		NOT = { has_country_flag = KND_gondor_war_unrest }
+	}
+	mean_time_to_happen  = { days = 10 }
+	option = {
+		name = khand.4.a
+		add_stability = -0.025
+		if = {
+			limit = {
+				NOT = {
+					has_completed_focus = KND_join_the_great_war
+				}
+			}
+			complete_national_focus = KND_join_the_great_war
+		}
+		set_country_flag = KND_gondor_war_unrest
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+country_event = {#Tribe steals war supplies
+	id = khand.5
+	title = khand.5.t
+	desc = khand.5.d
+	picture = GFX_report_event_army_camp
+	mean_time_to_happen = { days = 120 }
+	trigger = {
+		tag = KND
+		has_country_flag = KND_gondor_war_unrest
+		has_government = belligerent
+        has_war_with = GON
+	}
+	option = {#allow them to get away with it
+		name = khand.5.a
+		ai_chance = {
+			base = 50
+		}
+		add_stability = -0.05
+		add_equipment_to_stockpile = { type = infantry_equipment_0   amount = -300  }
+	}
+    option = {#catch those who are responsible
+        name = khand.5.b
+        ai_chance = {
+            base = 50
+        }
+		add_equipment_to_stockpile = { type = infantry_equipment_0   amount = -200  }
+        add_stability = -0.1
+        add_popularity = {
+            ideology = revolutionary
+            amount = 0.05
+        }
+    }
+}
+country_event = {#Variags oppress tribe
+	id = khand.6
+	title = khand.6.t
+	desc = khand.6.d
+	picture = GFX_report_event_fight
+	mean_time_to_happen = { days = 100 }
+	trigger = {
+		tag = KND
+		has_country_flag = KND_gondor_war_unrest
+		has_government = belligerent
+        has_war_with = GON
+	}
+	option = {
+		name = khand.6.a
+		add_stability = -0.05
+		add_war_support = 0.025
+		add_popularity = {
+			ideology = revolutionary
+			popularity = -0.025
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+country_event = {#Disturbances in the capital
+	id = khand.7
+	title = khand.7.t
+	desc = khand.7.d
+	picture = GFX_report_event_peasant_revolt
+	fire_only_once = yes
+	mean_time_to_happen = { days = 85 }
+	trigger = {
+		tag = KND
+		has_country_flag = KND_gondor_war_unrest
+		has_government = belligerent
+        has_war_with = GON
+	}
+	option = {
+		name = khand.7.a
+		add_stability = -0.1
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+country_event = {#Tribal rally
+	id = khand.8
+	title = khand.8.t
+	desc = khand.8.d
+	picture = GFX_report_event_market
+	mean_time_to_happen = { days = 140 }
+	trigger = {
+		tag = KND
+		has_country_flag = KND_gondor_war_unrest
+		has_government = belligerent
+        has_war_with = GON
+	}
+	option = {
+		name = khand.8.a
+        add_popularity = {
+			ideology = revolutionary
+			popularity = 0.15
+        }
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+country_event = {#Final Tribes' Riot
+	id = khand.9
+	title = khand.9.t
+	desc = khand.9.d
+	picture = GFX_report_event_market
+	mean_time_to_happen = { days = 20 }
+	trigger = {
+		tag = KND
+		has_country_flag = KND_gondor_war_unrest
+		has_government = belligerent
+        has_war_with = GON
+        OR = {
+            AND = {
+                has_stability<0.45
+                revolutionary>0.4
+            }
+            revolutionary>0.55
+            has_stability<0.3
+        }
+	}
+	option = {
+		name = khand.9.a
+        complete_national_focus = KND_the_tribes_riots
+		clr_country_flag = KND_gondor_war_unrest
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+country_event = {#We beat Gondor! Yippee!!!
+	id = khand.10
+	title = khand.10.t
+	desc = khand.10.d
+	picture = GFX_report_event_gondor
+	mean_time_to_happen = { days = 10 }
+	trigger = {
+		tag = KND
+		has_country_flag = KND_gondor_war_unrest
+		has_government = belligerent
+		NOT = {
+	        has_war_with = GON
+		}
+	}
+	option = {
+		name = khand.10.a
+        add_popularity = {
+            party = revolutionary
+            amount = -0.1
+        }
+		add_stability = 0.1
+        complete_national_focus = KND_victory_over_the_west
+		clr_country_flag = KND_gondor_war_unrest
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+country_event = {#raiding rhunian (r)supplies
+	id = khand.11
+	title = khand.11.t
+	desc = khand.11.d
+	is_triggered_only = yes
+	picture = GFX_report_event_fire
+	option = {
+		name = khand.11.a
+		add_timed_idea = {
+			idea = KND_sabatoged_supplies
+			days = 170
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+country_event = {#Meeting with private banks
+	id = khand.12
+	title = khand.12.t
+	desc = khand.12.d
+	is_triggered_only = yes
+	picture = GFX_report_event_corruption
+	option = {#Subsidize the Economy
+		name = khand.12.a
+		ai_chance = {
+			base = 5
+		}
+		add_timed_idea = {
+			idea = KND_bankrolled_economy
+			days = 360
+		}
+	}
+	option = {#Subsidize production
+		name = khand.12.b
+		ai_chance = {
+			base = 5
+		}
+		add_timed_idea = {
+			idea = KND_bankrolled_production
+			days = 360
+		}
+	}
+	option = {#Subsidize mining
+		name = khand.12.c
+		ai_chance = {
+			base = 5
+		}
+		add_timed_idea = {
+			idea = KND_bankrolled_resource_extraction
+			days = 360
+		}
+	}
+	option = {#Bah Humbug
+		name = khand.12.d
+		ai_chance = {
+			base = 1
+		}
+		add_political_power = 100
+		add_stability = 0.1
+	}
+}
+country_event = {#asking mordor for more money
+	id = khand.13
+	title = khand.13.t
+	desc = khand.13.d
+	is_triggered_only = yes
+	picture = GFX_report_event_corruption
+	option = {#agree
+		name = khand.13.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 3
+				num_of_civilian_factories>75
+			}
+			modifier = {
+				factor = 2
+				surrender_progress > 0
+			}
+		}
+		add_timed_idea = {
+			idea = six_civs_cost
+			days = 300
+		}
+		reverse_add_opinion_modifier = {
+			target = KND
+			modifier = small_increase
+		}
+		KND = {
+			add_timed_idea = {
+				idea = KND_temporary_pay_raise
+				days = 300
+			}
+			add_timed_idea = {
+				idea = six_civs_gain
+				days = 300
+			}
+		}
+	}
+	option = {#agree for less time
+		name = khand.13.b
+		ai_chance = {
+			base = 3
+		}
+		add_timed_idea = {
+			idea = six_civs_cost
+			days = 120
+		}
+		KND = {
+			add_timed_idea = {
+				idea = KND_temporary_pay_raise
+				days = 120
+			}
+			add_timed_idea = {
+				idea = six_civs_gain
+				days = 120
+			}
+		}
+	}
+	option = {#no way
+		name = khand.13.c
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 3
+				num_of_civilian_factories<55
+			}
+			modifier = {
+				factor = 3
+				surrender_progress = 0
+			}
+		}
+		add_political_power = -15
+		reverse_add_opinion_modifier = {
+			target = KND
+			modifier = small_decrease
+		}
+	}
+}
+country_event = {#our people come back with failure
+	id = khand.14
+	title = khand.14.t
+	desc = khand.14.d
+	is_triggered_only = yes
+	picture = GFX_report_event_corruption
+	option = {
+		name = khand.14.a
+		ai_chance = {
+			base = 5
+		}
+		add_political_power = 75
+		add_manpower = 850
+	}
+}
+country_event = {#[From.GetName] refuses to let us join their faction
+	id = khand.15
+	title = khand.15.t
+	desc = khand.15.d
+	is_triggered_only = yes
+	picture = GFX_report_event_corruption
+	option = {
+		name = khand.15.a
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+country_event = {#[From.GetName] will pay us to join their faction
+	id = khand.16
+	title = khand.16.t
+	desc = khand.16.d
+	is_triggered_only = yes
+	picture = GFX_report_event_corruption
+	option = {
+		name = khand.16.a
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+country_event = {#Unrest at the war with Erebor
+	id = khand.17
+	title = khand.17.t
+	desc = khand.17.d
+	picture = GFX_report_event_peasant_revolt
+	fire_only_once = yes
+	trigger = {
+		tag = KND
+        is_in_faction_with = RHU
+		has_government = belligerent
+        has_war_with = ERE
+		NOT = { has_country_flag = KND_gondor_war_unrest }
+	}
+	mean_time_to_happen  = { days = 10 }
+	option = {
+		name = khand.7.a
+		add_stability = -0.025
+		if = {
+			limit = {
+				NOT = {
+					has_completed_focus = KND_join_the_great_war
+				}
+			}
+			complete_national_focus = KND_join_the_great_war
+		}
+		set_country_flag = KND_gondor_war_unrest
+		ai_chance = {
+			base = 50
+		}
+	}
+}
