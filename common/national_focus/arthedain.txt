@@ -1193,7 +1193,7 @@ focus = {
 	ai_will_do = { factor = 4 }
 	relative_position_id = ART_unite_the_kingdom_of_arnor
 	prerequisite = { focus = ART_unite_the_kingdom_of_arnor}
-	x = -3
+	x = 1
 	y = 1
 	cost = 10
 	available_if_capitulated = yes
@@ -1418,6 +1418,58 @@ focus = {
 		custom_effect_tooltip = ART_tooltip_reunite_with_gondor
 	}
 }
+
+focus = {
+	id = ART_prepare_the_fight_against_evil
+	icon = GFX_goal_generic_defeat_death_fallen
+	ai_will_do = { 
+		factor = 3 
+		modifier = {
+			add = 15
+			any_neighbor_country = {
+				has_government = belligerent
+			}
+		}
+	}
+	prerequisite = { focus = ART_unite_the_kingdom_of_arnor }
+	relative_position_id = ART_unite_the_kingdom_of_arnor
+	x = -5
+	y = 1
+	cost = 5
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+	available_if_capitulated = no
+	completion_reward = {
+		add_building_slot_and_mil = yes
+		add_timed_idea = { idea = ART_preparing_for_war days = 250 }
+	}
+}
+
+focus = {
+	id = ART_against_old_evil
+	icon = GFX_goal_generic_ward_off_defend_against_danger
+	ai_will_do = { 
+		factor = 3 
+		modifier = {
+			add = -999
+			has_war = yes
+		}
+	}
+	available = {
+		MOR = { NOT = { is_in_faction_with = ART has_government = cooperative } }
+	}
+	prerequisite = { focus = ART_prepare_the_fight_against_evil }
+	relative_position_id = ART_prepare_the_fight_against_evil
+	will_lead_to_war_with = ANG
+	x = -1
+	y = 1
+	cost = 10
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	available_if_capitulated = no
+	completion_reward = {
+		create_wargoal = { target = MOR type = annex_everything }
+	}
+}
+
 focus = {
 	id = ART_revenge_against_angmar
 	icon = GFX_goal_wargoal_angmar_unaligned
@@ -1429,13 +1481,10 @@ focus = {
 		}
 	}
 	available = {
-		OR = {
-			ANG = { NOT = { has_government = cooperative } }
-			ANG = { NOT = { is_in_faction_with = ART } }
-		}
+		ANG = { NOT = { is_in_faction_with = ART has_government = cooperative } }
 	}
-	prerequisite = { focus = ART_unite_the_kingdom_of_arnor }
-	relative_position_id = ART_unite_the_kingdom_of_arnor
+	prerequisite = { focus = ART_prepare_the_fight_against_evil }
+	relative_position_id = ART_prepare_the_fight_against_evil
 	will_lead_to_war_with = ANG
 	x = 1
 	y = 1
@@ -1446,6 +1495,7 @@ focus = {
 		create_wargoal = { target = ANG type = annex_everything }
 	}
 }
+
 focus = {
 	id = ART_remove_evil_out_of_mount_gundabad
 	icon = GFX_goal_wargoal_gundabad
@@ -1470,13 +1520,46 @@ focus = {
 	prerequisite = { focus = ART_revenge_against_angmar }
 	relative_position_id = ART_revenge_against_angmar
 	will_lead_to_war_with = ANG
-	x = 1
+	x = 0
 	y = 1
 	cost = 10
 	available_if_capitulated = no
 	search_filters = { FOCUS_FILTER_ANNEXATION }
 	completion_reward = {
 		create_wargoal = { target = GUN type = annex_everything }
+	}
+}
+
+focus = {
+	id = ART_intergrate_the_nothern_states
+	icon = GFX_goal_generic_propaganda_proclaim_ann
+	ai_will_do = { 
+		factor = 3 
+	}
+	available = {
+		ANG = {
+			exists = no
+			all_core_state = {
+				is_controlled_by = ROOT
+			}
+		}
+		GUN = {
+			exists = no
+			all_core_state = {
+				is_controlled_by = ROOT
+			}
+		}
+	}
+	prerequisite = { focus = ART_remove_evil_out_of_mount_gundabad }
+	relative_position_id = ART_remove_evil_out_of_mount_gundabad
+	x = 0
+	y = 1
+	cost = 10
+	available_if_capitulated = no
+	search_filters = { FOCUS_FILTER_MANPOWER }
+	completion_reward = {
+		add_timed_idea = { idea = ART_intergrating_states days = 100 }
+		custom_effect_tooltip = ART_tooltip_on_cancel_intergrating_northern_states
 	}
 }
 
