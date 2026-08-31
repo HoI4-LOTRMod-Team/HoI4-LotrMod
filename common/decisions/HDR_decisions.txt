@@ -1,0 +1,557 @@
+HDR_maintain_neutrality_gon_category = {
+	
+	HDR_make_moves_gondor = {
+
+		icon = generic_cooperation
+
+		allowed = {
+			tag = GON
+		}
+
+		available = {
+			has_completed_focus = GON_express_intressed_in_haronder
+		}
+
+		targets = { HDR }
+
+		target_trigger = {
+			FROM = {
+				tag = HDR
+			}
+		}
+
+		days_remove = 20
+
+		cost = 10
+
+		fire_only_once = no
+
+		ai_will_do = {
+			base = 0.03
+			modifier = {
+				factor = 5
+				is_historical_focus_on = yes
+			}
+			modifier = {
+				factor = 10
+				date > 3018.08.01
+			}
+			modifier = {
+				factor = 10
+				date > 3019.01.01
+			}
+			modifier = {
+				factor = 2
+				HDR = {
+					check_variable = { var = GON.gon_harondor_influence value = 20 compare = greater_than_or_equals }
+					check_variable = { var = gon_temp_harondor_influence value = 10 compare = greater_than_or_equals }
+				} 
+			}
+			modifier = {
+				factor = 0
+				HDR = {
+					check_variable = { var = gon_temp_harondor_influence value = 10 compare = greater_than_or_equals }
+					NOT = { check_variable = { var = GON.gon_harondor_influence value = 20 compare = greater_than_or_equals } }
+				}
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = HDR_harondor_influence_ai_timer_flag
+				NOT = { date > 3019.01.01 }
+			}
+		}
+
+		complete_effect = {
+		}
+
+		remove_effect = {
+			HDR = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = increased_dutch_trade_opm
+				}	
+			}
+			add_to_variable = { var = gon_harondor_influence value = 5 }
+			HDR = {
+				set_variable = { var = gon_temp_harondor_influence value = GON.gon_harondor_influence }
+				subtract_from_variable = { var = gon_temp_harondor_influence value = HAR.har_harondor_influence }
+				set_variable = { var = har_temp_harondor_influence value = HAR.har_harondor_influence }
+				subtract_from_variable = { var = har_temp_harondor_influence value = GON.gon_harondor_influence }
+				add_to_variable = { var = harondor_influence_pp_total value = 10 }
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						date < 3018.08.01
+					}
+					random_list = {
+						10 = {
+							modifier = {
+								factor = 2
+								is_historical_focus_on = yes
+							}
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 50 }
+						}
+						10 = {
+							modifier = {
+								factor = 2
+								is_historical_focus_on = yes
+							}
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 55 }
+						}
+						10 = {
+							modifier = {
+								factor = 1.5
+								is_historical_focus_on = yes
+							}
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 60 }
+						}
+						10 = {
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 65 }
+						}
+						10 = {
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 70 }
+						}
+						10 = {
+							modifier = {
+								factor = 0.8
+								is_historical_focus_on = yes
+							}
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 75 }
+						}
+						10 = {
+							modifier = {
+								factor = 0.5
+								is_historical_focus_on = yes
+							}
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 80 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						HDR = {
+							check_variable = { var = gon_temp_harondor_influence value = 0 compare = greater_than }
+							OR = {
+								AND = {
+									NOT = { has_country_flag = HDR_harondor_influence_gondor_lead_flag }
+									NOT = { has_country_flag = HDR_harondor_influence_harad_lead_flag }
+								}
+								has_country_flag = HDR_harondor_influence_harad_lead_flag
+							}
+						}
+					}
+					HDR = {
+						clr_country_flag = HDR_harondor_influence_harad_lead_flag
+						set_country_flag = HDR_harondor_influence_gondor_lead_flag
+					}
+					HDR = { country_event = { id = harondor.1 } }
+					HAR = { country_event = { id = harondor.1 } }
+				}
+				if = {
+					limit = {
+						HDR = {
+							check_variable = { var = har_temp_harondor_influence value = 0 compare = greater_than }
+							OR = {
+								AND = {
+									NOT = { has_country_flag = HDR_harondor_influence_gondor_lead_flag }
+									NOT = { has_country_flag = HDR_harondor_influence_harad_lead_flag }
+								}
+								has_country_flag = HDR_harondor_influence_gondor_lead_flag
+							}
+						}
+					}
+					HDR = {
+						clr_country_flag = HDR_harondor_influence_gondor_lead_flag
+						set_country_flag = HDR_harondor_influence_harad_lead_flag
+					}
+					HDR = { country_event = { id = harondor.2 } }
+					GON = { country_event = { id = harondor.2 } }
+				}
+			}
+			effect_tooltip = { add_political_power = HDR.harondor_influence_pp_total }
+		}
+	}
+}
+
+HDR_maintain_neutrality_har_category = {
+
+	HDR_make_moves_harad = {
+
+		icon = generic_cooperation
+
+		allowed = {
+			tag = HAR
+		}
+
+		available = {
+			has_completed_focus = HAR_manouvers_for_harondor
+		}
+
+		targets = { HDR }
+
+		target_trigger = {
+			FROM = {
+				tag = HDR
+			}
+		}
+
+		days_remove = 20
+
+		cost = 10
+
+		fire_only_once = no
+
+		ai_will_do = {
+			base = 0.01
+			modifier = {
+				factor = 10
+				date > 3018.08.01
+			}
+			modifier = {
+				factor = 10
+				date > 3019.01.01
+			}
+			modifier = {
+				factor = 2
+				HDR = {
+					check_variable = { var = HAR.har_harondor_influence value = 20 compare = greater_than_or_equals }
+					check_variable = { var = har_temp_harondor_influence value = 10 compare = greater_than_or_equals }
+				}
+			}
+			modifier = {
+				factor = 0
+				HDR = {
+					check_variable = { var = har_temp_harondor_influence value = 10 compare = greater_than_or_equals }
+					NOT = { check_variable = { var = HAR.har_harondor_influence value = 20 compare = greater_than_or_equals } }
+				}
+			}
+			modifier = {
+				factor = 0
+				has_country_flag = HDR_harondor_influence_ai_timer_flag
+				NOT = { date > 3019.01.01 }
+			}
+		}
+
+		complete_effect = {
+		}
+
+		remove_effect = {
+			HDR = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = increased_dutch_trade_opm
+				}	
+			}
+			add_to_variable = { var = har_harondor_influence value = 5 }
+			HDR = {
+				set_variable = { var = har_temp_harondor_influence value = HAR.har_harondor_influence }
+				subtract_from_variable = { var = har_temp_harondor_influence value = GON.gon_harondor_influence }
+				set_variable = { var = gon_temp_harondor_influence value = GON.gon_harondor_influence }
+				subtract_from_variable = { var = gon_temp_harondor_influence value = HAR.har_harondor_influence }
+				add_to_variable = { var = harondor_influence_pp_total value = 10 }
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						date < 3018.08.01
+					}
+					random_list = {
+						10 = {
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 50 }
+						}
+						10 = {
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 55 }
+						}
+						10 = {
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 60 }
+						}
+						10 = {
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 65 }
+						}
+						10 = {
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 70 }
+						}
+						10 = {
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 75 }
+						}
+						10 = {
+							set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 80 }
+						}
+					}
+				}
+				if = {
+					limit = {
+						HDR = {
+							check_variable = { var = gon_temp_harondor_influence value = 0 compare = greater_than }
+							OR = {
+								NOT = { has_country_flag = HDR_harondor_influence_gondor_lead_flag }
+								has_country_flag = HDR_harondor_influence_harad_lead_flag
+							}
+						}
+					}
+					HDR = {
+						clr_country_flag = HDR_harondor_influence_harad_lead_flag
+						set_country_flag = HDR_harondor_influence_gondor_lead_flag
+					}
+					HDR = { country_event = { id = harondor.1 } }
+					HAR = { country_event = { id = harondor.1 } }
+				}
+				if = {
+					limit = {
+						HDR = {
+							check_variable = { var = har_temp_harondor_influence value = 0 compare = greater_than }
+							OR = {
+								NOT = { has_country_flag = HDR_harondor_influence_harad_lead_flag }
+								has_country_flag = HDR_harondor_influence_gondor_lead_flag
+							}
+						}
+					}
+					HDR = {
+						clr_country_flag = HDR_harondor_influence_gondor_lead_flag
+						set_country_flag = HDR_harondor_influence_harad_lead_flag
+					}
+					HDR = { country_event = { id = harondor.2 } }
+					GON = { country_event = { id = harondor.2 } }
+				}
+			}
+			effect_tooltip = { add_political_power = HDR.harondor_influence_pp_total }
+		}
+	}
+}
+
+HDR_maintain_neutrality_hdr_category = {
+
+	HDR_placate_gondor = {
+
+		icon = generic_cooperation
+
+		allowed = {
+			tag = HDR
+		}
+
+		available = {
+			GON = {
+				exists = yes
+			}
+			OR = {
+				GON = {
+					has_completed_focus = GON_express_intressed_in_haronder
+				}
+				HAR = {
+					has_completed_focus = HAR_manouvers_for_harondor
+				}
+			}
+		}
+
+		targets = { GON }
+
+		target_trigger = {
+			FROM = {
+				tag = GON
+			}
+		}
+
+		days_remove = 10
+
+		cost = 10
+
+		fire_only_once = no
+
+		ai_will_do = {
+			factor = 0.1
+			modifier = {
+				factor = 0
+				has_country_flag = HDR_harondor_influence_ai_timer_flag
+				NOT = { date > 3019.01.01 }
+			}
+		}
+
+		complete_effect = {
+		}
+
+		remove_effect = {
+			GON = { 
+				custom_effect_tooltip = harondor_influence_tt
+				add_to_variable = { var = gon_harondor_influence value = 5 } 
+			}
+			set_variable = { var = gon_temp_harondor_influence value = GON.gon_harondor_influence }
+			subtract_from_variable = { var = gon_temp_harondor_influence value = HAR.har_harondor_influence }
+			set_variable = { var = har_temp_harondor_influence value = HAR.har_harondor_influence }
+			subtract_from_variable = { var = har_temp_harondor_influence value = GON.gon_harondor_influence }
+			add_to_variable = { var = harondor_influence_pp_total value = 10 }
+			hidden_effect = {
+				random_list = {
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 20 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 25 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 30 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 35 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 40 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 45 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 50 }
+					}
+				}
+				if = {
+					limit = {
+						HDR = {
+							check_variable = { var = gon_temp_harondor_influence value = 0 compare = greater_than }
+							OR = {
+								NOT = { has_country_flag = HDR_harondor_influence_gondor_lead_flag }
+								has_country_flag = HDR_harondor_influence_harad_lead_flag
+							}
+						}
+					}
+					clr_country_flag = HDR_harondor_influence_harad_lead_flag
+					set_country_flag = HDR_harondor_influence_gondor_lead_flag
+					country_event = { id = harondor.1 }
+					HAR = { country_event = { id = harondor.1 } }
+				}
+				if = {
+					limit = {
+						HDR = {
+							check_variable = { var = har_temp_harondor_influence value = 0 compare = greater_than }
+							OR = {
+								NOT = { has_country_flag = HDR_harondor_influence_harad_lead_flag }
+								has_country_flag = HDR_harondor_influence_gondor_lead_flag
+							}
+						}
+					}
+					clr_country_flag = HDR_harondor_influence_gondor_lead_flag
+					set_country_flag = HDR_harondor_influence_harad_lead_flag
+					country_event = { id = harondor.2 }
+					GON = { country_event = { id = harondor.2 } }
+				}
+			}
+		}
+	}
+
+	HDR_placate_harad = {
+
+		icon = generic_cooperation
+
+		allowed = {
+			tag = HDR
+		}
+
+		available = {
+			HAR = {
+				exists = yes
+			}
+			OR = {
+				GON = {
+					has_completed_focus = GON_express_intressed_in_haronder
+				}
+				HAR = {
+					has_completed_focus = HAR_manouvers_for_harondor
+				}
+			}
+		}
+
+		targets = { HAR }
+
+		target_trigger = {
+			FROM = {
+				tag = HAR
+			}
+		}
+
+		days_remove = 10
+
+		cost = 10
+
+		fire_only_once = no
+
+		ai_will_do = {
+			factor = 0.1
+			modifier = {
+				factor = 0
+				has_country_flag = HDR_harondor_influence_ai_timer_flag
+				NOT = { date > 3019.01.01 }
+			}
+		}
+
+		complete_effect = {
+		}
+
+		remove_effect = {
+			HAR = { 
+				custom_effect_tooltip = harondor_influence_tt
+				add_to_variable = { var = har_harondor_influence value = 5 } 
+			}
+			set_variable = { var = har_temp_harondor_influence value = HAR.har_harondor_influence }
+			subtract_from_variable = { var = har_temp_harondor_influence value = GON.gon_harondor_influence }
+			set_variable = { var = gon_temp_harondor_influence value = GON.gon_harondor_influence }
+			subtract_from_variable = { var = gon_temp_harondor_influence value = HAR.har_harondor_influence }
+			add_to_variable = { var = harondor_influence_pp_total value = 10 }
+			hidden_effect = {
+				random_list = {
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 20 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 25 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 30 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 35 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 40 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 45 }
+					}
+					10 = {
+						set_country_flag = { flag = HDR_harondor_influence_ai_timer_flag value = 1 days = 50 }
+					}
+				}
+				if = {
+					limit = {
+						HDR = {
+							check_variable = { var = gon_temp_harondor_influence value = 0 compare = greater_than }
+							OR = {
+								NOT = { has_country_flag = HDR_harondor_influence_gondor_lead_flag }
+								has_country_flag = HDR_harondor_influence_harad_lead_flag
+							}
+						}
+					}
+					clr_country_flag = HDR_harondor_influence_harad_lead_flag
+					set_country_flag = HDR_harondor_influence_gondor_lead_flag
+					country_event = { id = harondor.1 }
+					HAR = { country_event = { id = harondor.1 } }
+				}
+				if = {
+					limit = {
+						HDR = {
+							check_variable = { var = har_temp_harondor_influence value = 0 compare = greater_than }
+							OR = {
+								NOT = { has_country_flag = HDR_harondor_influence_harad_lead_flag }
+								has_country_flag = HDR_harondor_influence_gondor_lead_flag
+							}
+						}
+					}
+					clr_country_flag = HDR_harondor_influence_gondor_lead_flag
+					set_country_flag = HDR_harondor_influence_harad_lead_flag
+					country_event = { id = harondor.2 }
+					GON = { country_event = { id = harondor.2 } }
+				}
+			}
+		}
+	}
+
+}
