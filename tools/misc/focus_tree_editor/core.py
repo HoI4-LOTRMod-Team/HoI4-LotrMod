@@ -8,6 +8,7 @@ import string
 from Qt import QtCore, QtWidgets, QtGui
 
 from focus_node import FocusNode
+from pan_viewer import PanNodeViewer
 from NodeGraphQt import (
     NodeGraph,
     NodesPaletteWidget,
@@ -102,6 +103,14 @@ def add_named_focus_to_graph(graph):
 class FocusNodeGraph(NodeGraph):
 
     focus_tree = None
+
+    def __init__(self, parent=None, **kwargs):
+        # use a viewer that pans on a plain left-click drag of the background.
+        undo_stack = kwargs.get('undo_stack') or QtWidgets.QUndoStack()
+        kwargs['undo_stack'] = undo_stack
+        kwargs.setdefault('viewer', PanNodeViewer(undo_stack=undo_stack))
+
+        super(FocusNodeGraph, self).__init__(parent, **kwargs)
 
     def _on_nodes_moved(self, node_data):
         """
