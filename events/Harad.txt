@@ -4,118 +4,37 @@
 
 add_namespace = harad
 
-# Rhun making contact with the belligerents in secret
 country_event = {
 	id = harad.1
 	title = harad.1.t
 	desc = harad.1.d
-	picture = GFX_report_event_ring
+	picture = GFX_report_event_fight
 
 	is_triggered_only = yes
 
 	option = { #yes
 		name = harad.1.a
-		ai_chance = {
-			base = 40
-			modifier = {
-				add = 20
-				has_opinion = {
-					target = RHU
-					value > 75
-				}
-			}
-		}
-        add_opinion_modifier = { target = RHU modifier = medium_increase }
-        set_global_flag = RHU_made_contact_with_belligerent
-        RHU = {
-            add_opinion_modifier = { target = HAR modifier = medium_increase }
-            country_event = { id = rhun.2 }
-        }
-		custom_effect_tooltip = HAR_eastern_faction_event_tooltip
-	}
-
-	option = { #no
-		name = harad.1.b
-		ai_chance = {
-			base = 20
-		}
-		add_political_power = -100
-        RHU = {
-            add_opinion_modifier = { target = HAR modifier = small_decrease }
-            country_event = { id = rhun.1 }
-        }
+		complete_national_focus = HAR_triumph_in_the_east
 	}
 }
 
-#Harad Puppet
 country_event = {
 	id = harad.2
 	title = harad.2.t
 	desc = harad.2.d
-	picture = GFX_report_event_paper
+	picture = GFX_report_event_fight
 
 	is_triggered_only = yes
 
 	option = { # Accept
 		name = harad.2.a
-		ai_chance = {
-			base = 50
-			modifier = {
-				add = -25
-				FROM = { has_army_size = { size < 20 } }
-			}
-			modifier = {
-				add = 30
-				FROM = { has_army_size = { size > 24 } }
-			}
-			modifier = {
-				add = -100
-				has_completed_focus = join_the_dark_pact
-			}
-			modifier = {
-				add = 25
-				HAR = {
-					has_government = belligerent
-				}
-			}
-			modifier = {
-				add = -999
-				has_completed_focus = go_solo
-			}
-		}
-		RHU = {
-			puppet = HAR
-		}
- 		FROM = {country_event = { hours = 2 id = rhun.2 } }
+		complete_national_focus = HAR_an_illusion_shattered
+		set_country_flag = HAR_move_against_the_temple_cf
 	}
 	option = { # Refuse
 		name = harad.2.b
-		ai_chance = {
-			base = 25
-			modifier = {
-				factor = 0
-				is_historical_focus_on = yes
-			}
-			modifier = {
-				any_other_country = {
-					has_guaranteed = HAR
-				}
-				factor = 5
-			}
-			modifier = {
-				add = 999
-				has_completed_focus = go_solo
-			}
-		}
-		add_stability = -0.05
-		add_political_power = 50
-		add_war_support = 0.10
-		FROM = {
-			country_event = { hours = 2 id = rhun.1 } 
-			create_wargoal = {
-				type = puppet_wargoal_focus target = HAR
-			}
-		}
+		complete_national_focus = HAR_an_illusion_shattered
+		set_country_flag = HAR_recoup_from_the_fiasco_cf
 	}
 }
 country_event = {
