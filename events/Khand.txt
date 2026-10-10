@@ -392,7 +392,7 @@ country_event = {#Final Tribes' Riot
 	}
 	option = {
 		name = khand.9.a
-		complete_national_focus = KND_the_tribal_riot
+		complete_national_focus = KND_the_second_tribal_riot
 		clr_country_flag = KND_gondor_war_unrest
 		ai_chance = {
 			base = 50
@@ -746,8 +746,8 @@ country_event = { #Start of the first civil war
 			complete_national_focus = KND_call_for_haradwaiths_aid
 			set_popularities = {
 				cooperative = 0
-				belligerent = 75
-				revolutionary = 5
+				belligerent = 70
+				revolutionary = 10
 				unaligned = 20
 			}
 			random_other_country = {#Rebels do their thing
@@ -846,3 +846,305 @@ country_event = {#Can I interest you in buying some horses?
 		}
 	}
 }
+country_event = { #To Mordor - Start of getting mordor to mediate land
+	id = khand.23
+	title = khand.23.t
+	desc = khand.23.d
+	is_triggered_only = yes
+	picture = GFX_report_event_easterling_demands
+	option = { #Ask Harad to give it up
+		name = khand.23.a
+		ai_chance = {
+			base = 2
+			modifier = {
+				add = 5
+				KND = { is_ai = no }
+			}
+			modifier = {
+				add = 2
+				has_opinion = {
+					target = KND
+					value > 25
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					target = KND
+					value > 75
+				}
+			}
+		}
+		HAR = {
+			country_event = {
+				id = khand.24
+				days = 5
+			}
+		}
+	}
+	option = { #Don't Bother
+		name = khand.23.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 3
+				has_opinion = {
+					target = HAR
+					value > 75
+				}
+			}
+			modifier = {
+				factor = 0
+				is_historical_focus_on = yes
+				KND = { is_ai = yes }
+			}
+		}
+		KND = {
+			country_event = {
+				id = khand.25
+				days = 3
+			}
+		}
+		reverse_add_opinion_modifier = {
+			target = KND
+			modifier = small_decrease
+		}
+	}
+}
+country_event = { #To Harad - Mordor wants to give it to Khand
+	id = khand.24
+	title = khand.24.t
+	desc = khand.24.d
+	is_triggered_only = yes
+	picture = GFX_report_event_barad_dur
+	option = { # Deny
+		name = khand.24.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 3
+				has_opinion = {
+					target = KND
+					value <0
+				}
+			}
+			modifier = {
+				add = 10
+				309 = {
+					is_core_of = HAR
+				}
+				111 = {
+					is_core_of = HAR
+				}
+			}
+		}
+		reverse_add_opinion_modifier = {
+			target = MOR
+			modifier = medium_decrease
+		}
+		add_political_power = -35
+		KND = {
+			country_event = {
+				id = khand.27
+				days = 3
+			}
+		}
+	}
+	option = { # Agree... for a price
+		name = khand.24.b
+		ai_chance = {
+			base = 1
+		}
+		KND = {
+			country_event = {
+				id = khand.28
+				days = 3
+			}
+		}
+	}
+	option = { # Agree
+		name = khand.24.c
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 3
+				has_opinion = {
+					target = KND
+					value >35
+				}
+			}
+			modifier = {
+				add = 3
+				KND = { is_ai = no }
+			}
+		}
+		reverse_add_opinion_modifier = {
+			target = MOR
+			modifier = small_increase
+		}
+		add_political_power = 35
+		KND = {
+			country_event = {
+				id = khand.26
+				days = 3
+			}
+			transfer_state = 309
+			transfer_state = 111
+		}
+	}
+}
+country_event = { #To Khand - Sauron won't help
+	id = khand.25
+	title = khand.25.t
+	desc = khand.25.d
+	is_triggered_only = yes
+	picture = GFX_report_event_barad_dur
+	option = {
+		name = khand.25.a
+	}
+}
+country_event = { #To Khand - Harad Agrees
+	id = khand.26
+	title = khand.26.t
+	desc = khand.26.d
+	is_triggered_only = yes
+	picture = GFX_report_event_paper
+	option = {
+		name = khand.26.a
+		add_opinion_modifier = {
+			target = HAR
+			modifier = medium_increase
+		}
+	}
+}
+country_event = { #To Khand - Harad Denies
+	id = khand.27
+	title = khand.27.t
+	desc = khand.27.d
+	is_triggered_only = yes
+	picture = GFX_report_event_paper
+	option = {
+		name = khand.27.a
+		add_opinion_modifier = {
+			target = HAR
+			modifier = medium_decrease
+		}
+	}
+}
+country_event = { #To Khand - Harad Agrees for a price
+	id = khand.28
+	title = khand.28.t
+	desc = khand.28.d
+	is_triggered_only = yes
+	picture = GFX_report_event_corruption
+	option = { # Fine
+		name = khand.28.a
+		ai_chance = {
+			base = 2
+		}
+		HAR = {
+			country_event = {
+				id = khand.30
+				days = 3
+			}
+		}
+		transfer_state = 309
+		transfer_state = 111
+		add_timed_idea = {
+			idea = three_civs_cost
+			days = 250
+		}
+	}
+	option = { # Not Happening
+		name = khand.28.b
+		ai_chance = {
+			base = 1
+		}
+		HAR = {
+			country_event = {
+				id = khand.29
+				days = 3
+			}
+		}
+		add_opinion_modifier = {
+			target = HAR
+			modifier = small_decrease
+		}
+	}
+}
+country_event = { #To Harad - Khand Declines Paying us
+	id = khand.29
+	title = khand.29.t
+	desc = khand.29.d
+	is_triggered_only = yes
+	picture = GFX_report_event_no_money_gold
+	option = {
+		name = khand.29.a
+		add_opinion_modifier = {
+			target = KND
+			modifier = small_decrease
+		}
+	}
+}
+country_event = { #To Harad - Khand Accepts Paying us
+	id = khand.30
+	title = khand.30.t
+	desc = khand.30.d
+	is_triggered_only = yes
+	picture = GFX_report_event_money_gold
+	option = {
+		name = khand.30.a
+		add_timed_idea = {
+			idea = three_civs_gain
+			days = 250
+		}
+	}
+}
+country_event = { #Khand sending harad variag elites
+	id = khand.31
+	title = khand.31.t
+	desc = khand.31.d
+	is_triggered_only = yes
+	picture = GFX_report_event_rhun_eastern_army
+	option = {
+		name = khand.31.a
+		division_template = {
+			name = "Elite Variags of Khand"
+			regiments = {
+				infantry = { x = 0 y = 0 }
+				infantry = { x = 0 y = 1 }
+				artillery_brigade = { x = 0 y = 2 }
+				standard_bearer = { x = 1 y = 0 }
+				infantry = { x = 1 y = 1 }
+				infantry = { x = 1 y = 2 }
+				infantry = { x = 2 y = 0 }
+				infantry = { x = 2 y = 1 }
+				artillery_brigade = { x = 2 y = 2 }
+			}
+			support = {artillery = { x = 0 y = 0 }field_hospital = {x = 1 y = 0}} 
+		}
+		capital_scope = {
+			create_unit = {
+				division = "name = \"Elite Khandian Variags\" division_template = \"Elite Variags of Khand\" start_experience_factor = 1.0"
+				owner = HAR
+				count = 2
+			}
+		}
+	}
+}
+country_event = { #Revolutionaries still stirring
+	id = khand.32
+	title = khand.32.t
+	desc = khand.32.d
+	is_triggered_only = yes
+	picture = GFX_report_event_money_gold
+	option = {
+		name = khand.32.a
+		add_popularity = {
+			ideology = revolutionary
+			popularity = 0.1
+		}
+		add_stability = -0.025
+	}
+}
+# REPLACE KHAND.11 FIRST, ITS OBSOLETE
