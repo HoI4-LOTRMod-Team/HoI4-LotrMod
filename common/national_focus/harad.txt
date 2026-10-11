@@ -3212,6 +3212,21 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			add_popularity = {
+				ideology = cooperative
+				popularity = 0.2
+			}
+			start_civil_war = {
+				ideology = ROOT
+				ruling_party = cooperative
+				size = 0.7
+				keep_unit_leaders_trigger = {
+					has_trait = azurite_loyalties
+				}
+			}
+			hidden_effect = {
+				set_cosmetic_tag = HAR_azurite
+			}
 		}
 	}
 	focus = {
@@ -3237,6 +3252,10 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			add_timed_idea = {
+				idea = HAR_foreign_aid
+				days = 240
+			}
 		}
 	}
 	focus = {
@@ -3253,6 +3272,7 @@ focus_tree = {
 			focus = HAR_reach_out_for_a_helping_hand
 		}
 		available = {
+			has_civil_war = yes
 		}
 		bypass = {
 		}
@@ -3262,6 +3282,44 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			division_template = {
+				name = "Foreign Mercenaries"
+				priority = 1
+				template_counter = 0
+				regiments = {
+					infantry = { x = 0 y = 0 }
+					infantry = { x = 0 y = 1 }
+					infantry = { x = 0 y = 2 }
+					infantry = { x = 1 y = 0 }
+					infantry = { x = 1 y = 1 }
+					infantry = { x = 1 y = 2 }
+					infantry = { x = 2 y = 0 }
+					infantry = { x = 2 y = 1 }
+					infantry = { x = 2 y = 2 }
+				}
+				regimental_support = {
+				}
+				support = {
+				}
+			}
+			random_owned_controlled_state = {
+				create_unit = {
+					division = "name = \"1. Mercenary Regiment\" division_template = \"Foreign Mercenaries\" start_experience_factor = 0.5"
+					owner = ROOT
+				}
+			}
+			random_owned_controlled_state = {
+				create_unit = {
+					division = "name = \"2. Mercenary Regiment\" division_template = \"Foreign Mercenaries\" start_experience_factor = 0.5"
+					owner = ROOT
+				}
+			}
+			random_owned_controlled_state = {
+				create_unit = {
+					division = "name = \"3. Mercenary Regiment\" division_template = \"Foreign Mercenaries\" start_experience_factor = 0.5"
+					owner = ROOT
+				}
+			}
 		}
 	}
 	focus = {
@@ -3279,6 +3337,7 @@ focus_tree = {
 			focus = HAR_reach_out_for_a_helping_hand
 		}
 		available = {
+			has_civil_war = yes
 			GON = {
 				can_engage_in_diplo_with = yes
 			}
@@ -3309,6 +3368,7 @@ focus_tree = {
 			focus = HAR_reach_out_for_a_helping_hand
 		}
 		available = {
+			has_civil_war = yes
 			UMB = {
 				can_engage_in_diplo_with = yes
 			}
@@ -3398,6 +3458,18 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			if = {
+				limit = {
+					has_idea = HAR_templar_intrigues_2
+				}
+				remove_ideas = HAR_templar_intrigues_2
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = HAR_templar_intrigues
+					add_idea = HAR_templar_intrigues_2
+				}
+			}
 		}
 	}
 	focus = {
@@ -3848,7 +3920,7 @@ focus_tree = {
 		x = 0
 		y = 2
 		relative_position_id = HAR_antagonise_the_black_numenorians
-		cost = 5
+		cost = 10
 		available_if_capitulated = no
 		mutually_exclusive = {
 		}
@@ -3862,15 +3934,27 @@ focus_tree = {
 			focus = HAR_reinforce_ramlond
 		}
 		available = {
+			NOT = {
+				is_subject_of = UMB
+				is_in_faction_with = UMB
+			}
+			UMB = {
+				can_engage_in_diplo_with = yes
+			}
 		}
 		bypass = {
 		}
+		will_lead_to_war_with = UMB
 		search_filters = {
 		}
 		ai_will_do = {
 			factor = 1
 		}
 		completion_reward = {
+			create_wargoal = {
+				type = annex_everything
+				target = UMB
+			}
 		}
 	}
 	focus = {
@@ -3923,6 +4007,20 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			UMB = { custom_effect_tooltip = SWI_add_forts_bordering }
+			hidden_effect = {
+				every_owned_state = {
+					add_building_construction = {
+						type = bunker
+						level = 2
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_border_country = UMB
+						}
+					}
+				}
+			}
 		}
 	}
 	focus = {
@@ -3948,6 +4046,7 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			add_offsite_building = { type = dockyard level = 2 }
 		}
 	}
 	focus = {
@@ -3992,7 +4091,7 @@ focus_tree = {
 			focus = HAR_a_shift_in_the_sands
 		}
 		available = {
-			controls_state = 307
+			controls_province = 4126
 		}
 		bypass = {
 		}
@@ -4002,6 +4101,18 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			307 = {
+				add_building_construction = {
+					type = castle
+					level = 3
+					instant_build = yes
+					province = 4126
+				}
+				add_province_modifier = {
+					static_modifiers = { impregnable_fortress }
+					province = { id = 4126 }
+				}
+			}
 		}
 	}
 	focus = {
@@ -4010,7 +4121,7 @@ focus_tree = {
 		x = 0
 		y = 3
 		relative_position_id = HAR_you_shall_not_pass
-		cost = 5
+		cost = 10
 		available_if_capitulated = no
 		mutually_exclusive = {
 			focus = HAR_an_alliance_under_our_terms
@@ -4081,7 +4192,7 @@ focus_tree = {
 		x = -1
 		y = 1
 		relative_position_id = HAR_eastern_affairs
-		cost = 5
+		cost = 10
 		available_if_capitulated = no
 		mutually_exclusive = {
 			focus = HAR_rekindle_relations_with_the_tribes
@@ -4093,12 +4204,17 @@ focus_tree = {
 		}
 		bypass = {
 		}
+		will_lead_to_war_with = KND
 		search_filters = {
 		}
 		ai_will_do = {
 			factor = 1
 		}
 		completion_reward = {
+			create_wargoal = {
+				type = annex_everything
+				target = KND
+			}
 		}
 	}
 	focus = {
@@ -4133,7 +4249,7 @@ focus_tree = {
 		x = 0
 		y = 2
 		relative_position_id = HAR_eastern_affairs
-		cost = 5
+		cost = 10
 		available_if_capitulated = no
 		mutually_exclusive = {
 		}
@@ -4150,6 +4266,35 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			every_owned_state = {
+				limit = {
+					is_core_of = KND
+				}
+				add_compliance = 10
+				add_resistance = -10
+			}
+			if = {
+				limit = {
+					has_government = unaligned
+				}
+				KND = {
+					add_timed_idea = {
+						idea = unaligned_influence_weak
+						days = 365
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					has_government = cooperative
+				}
+				KND = {
+					add_timed_idea = {
+						idea = cooperative_influence_weak
+						days = 365
+					}
+				}
+			}
 		}
 	}
 	focus = {
@@ -4730,6 +4875,9 @@ focus_tree = {
 		}
 		completion_reward = {
 			set_country_flag = HAR_stabilised_the_realm_cf
+			MOR = {
+				puppet = ROOT
+			}
 			set_politics = {
 				ruling_party = belligerent
 				elections_allowed = no
@@ -4839,6 +4987,7 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -4903,6 +5052,7 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -4939,6 +5089,7 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -4985,6 +5136,7 @@ focus_tree = {
 						can_engage_in_diplo_with = no
 					}
 				}
+				has_country_flag = HAR_surrendered_cf
 			}
 		}
 		search_filters = {
@@ -5027,6 +5179,9 @@ focus_tree = {
 			focus = HAR_demand_adherence_to_sauron
 		}
 		available = {
+			NOT = {
+				has_country_flag = HAR_surrendered_cf
+			}
 		}
 		bypass = {
 		}
@@ -5433,6 +5588,16 @@ focus_tree = {
 		}
 		completion_reward = {
 			set_country_flag = HAR_stabilised_the_realm_cf
+			if = {
+				limit = {
+					MOR = {
+						has_faction = yes
+					}
+				}
+				MOR = {
+					add_to_faction = ROOT
+				}
+			}
 			add_to_tech_sharing_group = mordor_research
 			add_dynamic_modifier = {
 				modifier = HAR_mordor_doctrine_idea
@@ -5480,6 +5645,7 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -5510,6 +5676,7 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -5549,6 +5716,7 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -5578,6 +5746,7 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -5614,6 +5783,7 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -5655,6 +5825,9 @@ focus_tree = {
 			focus = HAR_a_haul_most_worthy
 		}
 		available = {
+			NOT = {
+				has_country_flag = HAR_surrendered_cf
+			}
 		}
 		bypass = {
 		}
@@ -5692,6 +5865,7 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -5727,9 +5901,13 @@ focus_tree = {
 		}
 		will_lead_to_war_with = HDR
 		bypass = {
-			HDR = {
-				can_engage_in_diplo_with = no
+			OR = {
+				has_country_flag = HAR_surrendered_cf
+				HDR = {
+					can_engage_in_diplo_with = no
+				}
 			}
+			
 		}
 		search_filters = {
 		}
@@ -5766,9 +5944,12 @@ focus_tree = {
 			}
 		}
 		bypass = {
-			HDR = {
-				all_core_state = {
-					is_core_of = ROOT
+			OR = {
+				has_country_flag = HAR_surrendered_cf
+				HDR = {
+					all_core_state = {
+						is_core_of = ROOT
+					}
 				}
 			}
 		}
@@ -5893,6 +6074,9 @@ focus_tree = {
 				}
 				can_engage_in_diplo_with = no
 			}
+			NOT = {
+				has_country_flag = HAR_surrendered_cf
+			}
 		}
 		bypass = {
 		}
@@ -5954,6 +6138,7 @@ focus_tree = {
 		will_lead_to_war_with = HDR
 		bypass = {
 			OR = {
+				has_country_flag = HAR_surrendered_cf
 				HDR = {
 					can_engage_in_diplo_with = no
 				}
@@ -5998,6 +6183,7 @@ focus_tree = {
 			}
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -6030,6 +6216,7 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			has_country_flag = HAR_surrendered_cf
 		}
 		search_filters = {
 		}
@@ -6077,6 +6264,9 @@ focus_tree = {
 			}
 			HDR = {
 				can_engage_in_diplo_with = yes
+			}
+			NOT = {
+				has_country_flag = HAR_surrendered_cf
 			}
 		}
 		bypass = {
