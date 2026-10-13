@@ -3331,7 +3331,6 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = no
 		mutually_exclusive = {
-			focus = HAR_an_uneasy_request
 		}
 		prerequisite = {
 			focus = HAR_reach_out_for_a_helping_hand
@@ -3350,6 +3349,9 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			GON = {
+				country_event = harad.24
+			}
 		}
 	}
 	focus = {
@@ -3361,7 +3363,6 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = no
 		mutually_exclusive = {
-			focus = HAR_seek_gondor_aid
 			focus = HAR_antagonise_the_black_numenorians
 		}
 		prerequisite = {
@@ -3381,6 +3382,9 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			UMB = {
+				country_event = harad.24
+			}
 		}
 	}
 	focus = {
@@ -3408,6 +3412,9 @@ focus_tree = {
 		}
 		completion_reward = {
 			set_country_flag = HAR_stabilised_the_realm_cf
+			clr_country_flag = HAR_gondor_sent_forces_cf
+			clr_country_flag = HAR_umbar_sent_forces_cf
+			add_ideas = HAR_striving_in_the_path_of_the_maiar
 		}
 	}
 	focus = {
@@ -3433,6 +3440,10 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			swap_ideas = {
+				remove_idea = HAR_striving_in_the_path_of_the_maiar
+				add_idea = HAR_striving_in_the_path_of_the_maiar_2
+			}
 		}
 	}
 	focus = {
@@ -3495,6 +3506,10 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			swap_ideas = {
+				remove_idea = HAR_striving_in_the_path_of_the_maiar_2
+				add_idea = HAR_striving_in_the_path_of_the_maiar_3
+			}
 		}
 	}
 	focus = {
@@ -3503,7 +3518,7 @@ focus_tree = {
 		x = 2
 		y = 2
 		relative_position_id = HAR_topple_the_idols_of_sauron
-		cost = 5
+		cost = 10
 		available_if_capitulated = no
 		mutually_exclusive = {
 		}
@@ -3523,6 +3538,13 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			swap_ideas = {
+				remove_idea = HAR_striving_in_the_path_of_the_maiar_3
+				add_idea = HAR_striving_in_the_path_of_the_maiar_4
+			}
+			set_rule = { 
+				can_only_justify_war_on_threat_country = no
+			}
 		}
 	}
 	focus = {
@@ -3540,6 +3562,10 @@ focus_tree = {
 			focus = HAR_declare_support_for_the_free_folk
 		}
 		available = {
+			GON = {
+				can_engage_in_diplo_with = yes
+				is_in_faction = yes
+			}
 		}
 		bypass = {
 		}
@@ -3549,6 +3575,15 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			hidden_effect = {
+				reverse_add_opinion_modifier = {
+					target = GON
+					modifier = large_increase
+				}
+			}
+			GON = {
+				country_event = generic.2
+			}
 		}
 	}
 	focus = {
@@ -3565,6 +3600,7 @@ focus_tree = {
 			focus = HAR_side_by_side_with_a_friend
 		}
 		available = {
+			is_in_faction_with = GON
 		}
 		bypass = {
 		}
@@ -3574,6 +3610,7 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			add_to_tech_sharing_group = gondor_research
 		}
 	}
 	focus = {
@@ -3590,6 +3627,8 @@ focus_tree = {
 			focus = HAR_cross_anduin_diplomacy
 		}
 		available = {
+			is_in_faction = yes
+			num_faction_members > 1
 		}
 		bypass = {
 		}
@@ -3599,6 +3638,32 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			if = {
+				limit = {
+					has_idea = HAR_joint_endeavours_idea
+				}
+				swap_ideas = {
+					remove_idea = HAR_joint_endeavours_idea
+					add_idea = HAR_joint_endeavours_idea_2
+				}
+			}
+			else = {
+				add_ideas = HAR_joint_endeavours_idea
+			}
+			every_allied_country = {
+				if = {
+					limit = {
+						has_idea = HAR_joint_endeavours_idea
+					}
+					swap_ideas = {
+						remove_idea = HAR_joint_endeavours_idea
+						add_idea = HAR_joint_endeavours_idea_2
+					}
+				}
+				else = {
+					add_ideas = HAR_joint_endeavours_idea
+				}
+			}
 		}
 	}
 	focus = {
@@ -3677,6 +3742,15 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			set_rule = { 
+				can_create_factions = yes
+			}
+			create_faction_from_template = {
+				template = faction_template_anti_belligerent
+				name = HAR_azure_alliance
+				icon = GFX_faction_logo_generic_2
+				color = { 0 87 209 }
+			}
 		}
 	}
 	focus = {
@@ -3696,6 +3770,10 @@ focus_tree = {
 			focus = HAR_open_for_commerce
 		}
 		available = {
+			UMB = {
+				can_engage_in_diplo_with = yes
+				is_in_faction = no
+			}
 		}
 		bypass = {
 		}
@@ -3705,6 +3783,15 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			hidden_effect = {
+				reverse_add_opinion_modifier = {
+					target = UMB
+					modifier = large_increase
+				}
+			}
+			UMB = {
+				country_event = generic.5
+			}
 		}
 	}
 	focus = {
@@ -3824,6 +3911,8 @@ focus_tree = {
 			focus = HAR_strength_in_unity
 		}
 		available = {
+			is_in_faction = yes
+			num_faction_members > 1
 		}
 		bypass = {
 		}
@@ -3833,6 +3922,32 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			if = {
+				limit = {
+					has_idea = HAR_joint_endeavours_idea
+				}
+				swap_ideas = {
+					remove_idea = HAR_joint_endeavours_idea
+					add_idea = HAR_joint_endeavours_idea_2
+				}
+			}
+			else = {
+				add_ideas = HAR_joint_endeavours_idea
+			}
+			every_allied_country = {
+				if = {
+					limit = {
+						has_idea = HAR_joint_endeavours_idea
+					}
+					swap_ideas = {
+						remove_idea = HAR_joint_endeavours_idea
+						add_idea = HAR_joint_endeavours_idea_2
+					}
+				}
+				else = {
+					add_ideas = HAR_joint_endeavours_idea
+				}
+			}
 		}
 	}
 	focus = {
@@ -4201,9 +4316,20 @@ focus_tree = {
 			focus = HAR_eastern_affairs
 		}
 		available = {
+			KND = {
+				
+				OR = {
+					has_government = belligerent
+					has_government = unaligned
+				}
+			}
 		}
 		bypass = {
+			KND = {
+				can_engage_in_diplo_with = no
+			}
 		}
+		enable_automatic_bypass = no
 		will_lead_to_war_with = KND
 		search_filters = {
 		}
@@ -4234,7 +4360,11 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			KND = {
+				can_engage_in_diplo_with = no
+			}
 		}
+		enable_automatic_bypass = no
 		search_filters = {
 		}
 		ai_will_do = {
@@ -4257,6 +4387,9 @@ focus_tree = {
 			focus = HAR_rekindle_relations_with_the_tribes
 		}
 		available = {
+			KND = {
+				can_engage_in_diplo_with = yes
+			}
 		}
 		bypass = {
 		}
@@ -4603,6 +4736,7 @@ focus_tree = {
 			focus = HAR_an_alliance_under_our_terms
 		}
 		available = {
+			has_country_flag = HAR_mordor_refused_our_terms_cf
 		}
 		bypass = {
 		}
@@ -4612,6 +4746,26 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			if = {
+				limit = {
+					ROOT = {
+						is_in_faction_with = MOR
+					}
+				}
+				leave_faction = yes
+			}
+			every_country = {
+				limit = {
+					has_war_with = ROOT
+				}
+				white_peace = ROOT
+			}
+			MOR = {
+				create_wargoal = {
+					type = annex_everything
+					target = ROOT
+				}
+			}
 		}
 	}
 	focus = {
@@ -4688,6 +4842,10 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			create_wargoal = {
+				type = annex_everything
+				target = HDR
+			}
 		}
 	}
 	focus = {
@@ -4705,6 +4863,12 @@ focus_tree = {
 			focus = HAR_march_on_the_march
 		}
 		available = {
+			107 = {
+				is_controlled_by = ROOT
+			}
+			GON = {
+				can_engage_in_diplo_with = yes
+			}
 		}
 		bypass = {
 		}
@@ -4714,6 +4878,48 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			activate_mission = HAR_skirmish_at_poros_mission
+			custom_effect_tooltip = generic_skip_one_line_tt
+			custom_effect_tooltip = HAR_test_the_gondorian_guard_tt
+			custom_effect_tooltip = generic_skip_one_line_tt
+			135 = {
+				controller = {
+					set_country_flag = HAR_marked_for_border_war_cf
+				}
+			}
+			start_border_war = {
+				change_state_after_war = no
+				combat_width = 180
+				minimum_duration_in_days = 40
+				attacker = {
+					on_win = harad.22
+					on_lose = harad.23
+					on_cancel = harad.23
+					state = 107
+					num_provinces = 7
+					leader_score = { # Optional score for selecting a leader 
+						base = 1
+						modifier = {
+						    skill > 2
+						    factor = 5
+						}
+						modifier = {
+						    skill > 3
+						    factor = 10
+						}
+					}
+					dig_in_factor = 0
+					terrain_factor = 0
+				}
+				
+				defender = {
+					state = 135
+					num_provinces = 6
+					on_lose = harad.22
+					on_win = harad.23
+					on_cancel = harad.23
+				}
+			}
 		}
 	}
 	focus = {
@@ -4722,7 +4928,7 @@ focus_tree = {
 		x = 1
 		y = 1
 		relative_position_id = HAR_march_on_the_march
-		cost = 5
+		cost = 10
 		available_if_capitulated = no
 		mutually_exclusive = {
 			focus = HAR_test_the_gondorian_guard
@@ -4740,6 +4946,10 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			create_wargoal = {
+				type = annex_everything
+				target = MOR
+			}
 		}
 	}
 	focus = {
