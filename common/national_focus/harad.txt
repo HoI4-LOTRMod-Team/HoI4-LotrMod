@@ -3603,6 +3603,9 @@ focus_tree = {
 			is_in_faction_with = GON
 		}
 		bypass = {
+			GON = {
+				can_engage_in_diplo_with = no
+			}
 		}
 		search_filters = {
 		}
@@ -3610,7 +3613,9 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
-			add_to_tech_sharing_group = gondor_research
+			GON = {
+				country_event = harad.27
+			}
 		}
 	}
 	focus = {
@@ -3627,7 +3632,6 @@ focus_tree = {
 			focus = HAR_cross_anduin_diplomacy
 		}
 		available = {
-			is_in_faction = yes
 			num_faction_members > 1
 		}
 		bypass = {
@@ -3681,7 +3685,15 @@ focus_tree = {
 			focus = HAR_cross_anduin_diplomacy
 		}
 		available = {
+			is_in_faction_with = GON
+			GON = {
+				can_engage_in_diplo_with = yes
+			}
+			HDR = {
+				can_engage_in_diplo_with = yes
+			}
 		}
+		will_lead_to_war_with = HDR
 		bypass = {
 		}
 		search_filters = {
@@ -3690,6 +3702,9 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			GON = {
+				country_event = harad.31
+			}
 		}
 	}
 	focus = {
@@ -3707,6 +3722,13 @@ focus_tree = {
 			focus = HAR_cross_anduin_diplomacy
 		}
 		available = {
+			is_in_faction_with = GON
+			GON = {
+				can_engage_in_diplo_with = yes
+			}
+			HDR = {
+				can_engage_in_diplo_with = yes
+			}
 		}
 		bypass = {
 		}
@@ -3716,6 +3738,9 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			HDR = {
+				country_event = harad.32
+			}
 		}
 	}
 	focus = {
@@ -3742,6 +3767,7 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			add_political_power = 50
 			set_rule = { 
 				can_create_factions = yes
 			}
@@ -3810,6 +3836,12 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			KND = {
+				OR = {
+					can_engage_in_diplo_with = no
+					has_government = belligerent
+				}
+			}
 		}
 		search_filters = {
 		}
@@ -3817,6 +3849,26 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			reverse_add_opinion_modifier = {
+				target = KND
+				modifier = large_increase
+			}
+			give_guarantee = KND
+			if = {
+				limit = {
+					KND = {
+						NOT = {
+							has_idea = cooperative_influence_weak
+						}
+					}
+				}
+				KND = {
+					add_timed_idea = {
+						idea = cooperative_influence_weak
+						days = 365
+					}
+				}
+			}
 		}
 	}
 	focus = {
@@ -3828,12 +3880,12 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = no
 		mutually_exclusive = {
-			focus = HAR_unite_with_khand
 		}
 		prerequisite = {
 			focus = HAR_send_envoys_to_the_east
 		}
 		available = {
+			num_faction_members > 1
 		}
 		bypass = {
 		}
@@ -3843,6 +3895,48 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			if = {
+				limit = {
+					KND = {
+						can_engage_in_diplo_with = yes
+					}
+				}
+				hidden_effect = {
+					reverse_add_opinion_modifier = {
+						target = KND
+						modifier = large_increase
+					}
+				}
+				KND = {
+					country_event = generic.5
+				}
+			}
+			if = {
+				limit = {
+					has_idea = HAR_joint_endeavours_idea
+				}
+				swap_ideas = {
+					remove_idea = HAR_joint_endeavours_idea
+					add_idea = HAR_joint_endeavours_idea_2
+				}
+			}
+			else = {
+				add_ideas = HAR_joint_endeavours_idea
+			}
+			every_allied_country = {
+				if = {
+					limit = {
+						has_idea = HAR_joint_endeavours_idea
+					}
+					swap_ideas = {
+						remove_idea = HAR_joint_endeavours_idea
+						add_idea = HAR_joint_endeavours_idea_2
+					}
+				}
+				else = {
+					add_ideas = HAR_joint_endeavours_idea
+				}
+			}
 		}
 	}
 	focus = {
@@ -3854,12 +3948,17 @@ focus_tree = {
 		cost = 5
 		available_if_capitulated = no
 		mutually_exclusive = {
-			focus = HAR_stand_together_stand_strong
 		}
 		prerequisite = {
 			focus = HAR_send_envoys_to_the_east
 		}
 		available = {
+			KND = {
+				can_engage_in_diplo_with = yes
+				NOT = {
+					has_government = belligerent
+				}
+			}
 		}
 		bypass = {
 		}
@@ -3869,6 +3968,9 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			KND = {
+				country_event = harad.33
+			}
 		}
 	}
 	focus = {
@@ -3885,6 +3987,12 @@ focus_tree = {
 			focus = HAR_send_envoys_to_the_east
 		}
 		available = {
+			has_equipment = {
+				infantry_equipment > 999
+			}
+			DRH = {
+				can_engage_in_diplo_with = yes
+			}
 		}
 		bypass = {
 		}
@@ -3894,6 +4002,26 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			hidden_effect = {
+				reverse_add_opinion_modifier = {
+					target = DRH
+					modifier = large_increase
+				}
+			}
+			
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = -1000
+				producer = FROM
+			}
+			DRH = {
+				country_event = generic.5
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = 1000
+					producer = ROOT
+				}
+			}
 		}
 	}
 	focus = {
@@ -3911,7 +4039,6 @@ focus_tree = {
 			focus = HAR_strength_in_unity
 		}
 		available = {
-			is_in_faction = yes
 			num_faction_members > 1
 		}
 		bypass = {
@@ -3975,6 +4102,7 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			add_war_support = 0.1
 		}
 	}
 	focus = {
@@ -3993,6 +4121,16 @@ focus_tree = {
 			focus = HAR_a_shift_in_the_sands
 		}
 		available = {
+			NOT = {
+				is_subject_of = UMB
+				is_in_faction_with = UMB
+			}
+			UMB = {
+				can_engage_in_diplo_with = yes
+				NOT = {
+					has_government = cooperative
+				}
+			}
 		}
 		bypass = {
 		}
@@ -4002,6 +4140,12 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			add_war_support = 0.05
+			reverse_add_opinion_modifier = {
+				target = UMB
+				modifier = large_decrease
+			}
+			send_embargo = UMB
 		}
 	}
 	focus = {
@@ -4018,6 +4162,16 @@ focus_tree = {
 			focus = HAR_antagonise_the_black_numenorians
 		}
 		available = {
+			NOT = {
+				is_subject_of = UMB
+				is_in_faction_with = UMB
+			}
+			UMB = {
+				can_engage_in_diplo_with = yes
+				NOT = {
+					has_government = cooperative
+				}
+			}
 		}
 		bypass = {
 		}
@@ -4027,6 +4181,14 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			custom_effect_tooltip = HAR_back_the_kindred_of_the_coins_tt
+			custom_effect_tooltip = generic_skip_one_line_tt
+			UMB = {
+				add_timed_idea = {
+					idea = cooperative_influence_weak
+					days = 365
+				}
+			}
 		}
 	}
 	focus = {
@@ -4038,9 +4200,6 @@ focus_tree = {
 		cost = 10
 		available_if_capitulated = no
 		mutually_exclusive = {
-		}
-		prerequisite = {
-			focus = HAR_flush_out_the_templar_remnants
 		}
 		prerequisite = {
 			focus = HAR_back_the_kindred_of_the_coins
@@ -4055,6 +4214,9 @@ focus_tree = {
 			}
 			UMB = {
 				can_engage_in_diplo_with = yes
+				NOT = {
+					has_government = cooperative
+				}
 			}
 		}
 		bypass = {
@@ -4066,9 +4228,82 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
-			create_wargoal = {
-				type = annex_everything
+			
+
+			declare_war_on = {
 				target = UMB
+				type = topple_government
+			}
+			
+			if = {
+				limit = {
+					UMB = {
+						cooperative > 0.4
+					}
+				}
+				UMB = {
+					start_civil_war = {
+						ruling_party = PREV
+						ideology = cooperative
+						size = 0.5
+					}
+				}
+				every_country = {
+					limit = {
+						original_tag = UMB
+						has_government = cooperative
+					}
+					PREV = {
+						puppet = {
+							target = PREV
+							end_wars = no
+							end_civil_wars = no
+						}
+					}
+					set_politics = {
+						ruling_party = cooperative
+						elections_allowed = no
+					}
+					add_popularity = {
+						ideology = cooperative
+						popularity = 0.4
+					}
+				}
+			}
+		}
+	}
+	focus = {
+		id = HAR_absorb_umbar
+		icon = GFX_goal_generic_annex_country_2
+		x = 0
+		y = 1
+		relative_position_id = HAR_contain_the_darkness_to_the_west
+		cost = 10
+		available_if_capitulated = no
+		mutually_exclusive = {
+		}
+		prerequisite = {
+			focus = HAR_contain_the_darkness_to_the_west
+		}
+		available = {
+			any_subject_country = {
+				original_tag = UMB
+				has_civil_war = no
+			}
+		}
+		bypass = {
+		}
+		search_filters = {
+		}
+		ai_will_do = {
+			factor = 1
+		}
+		completion_reward = {
+			every_subject_country = {
+				limit = {
+					original_tag = UMB
+				}
+				country_event = harad.33
 			}
 		}
 	}
@@ -4089,13 +4324,20 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			UMB = {
+				can_engage_in_diplo_with = no
+			}
 		}
+		enable_automatic_bypass = no
 		search_filters = {
 		}
 		ai_will_do = {
 			factor = 1
 		}
 		completion_reward = {
+			UMB = {
+				country_event = harad.36
+			}
 		}
 	}
 	focus = {
@@ -4115,6 +4357,9 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			UMB = {
+				can_engage_in_diplo_with = no
+			}
 		}
 		search_filters = {
 		}
@@ -4154,6 +4399,12 @@ focus_tree = {
 		available = {
 		}
 		bypass = {
+			NOT = {
+				has_idea = HAR_pact_of_convenience_idea
+				UMB = {
+					has_idea = HAR_pact_of_convenience_idea
+				}
+			}
 		}
 		search_filters = {
 		}
@@ -4170,7 +4421,7 @@ focus_tree = {
 		x = 0
 		y = 3
 		relative_position_id = HAR_a_pact_of_convenience
-		cost = 5
+		cost = 10
 		available_if_capitulated = no
 		mutually_exclusive = {
 		}
@@ -4181,6 +4432,10 @@ focus_tree = {
 			focus = HAR_lease_umbari_ports
 		}
 		available = {
+			has_idea = HAR_pact_of_convenience_idea
+			UMB = {
+				has_idea = HAR_pact_of_convenience_idea
+			}
 		}
 		bypass = {
 		}
@@ -4190,6 +4445,23 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			swap_ideas = {
+				remove_idea = HAR_pact_of_convenience_idea
+				add_idea = HAR_pact_of_convenience_idea_2
+			}
+			if = {
+				limit = {
+					UMB = {
+						has_idea = HAR_pact_of_convenience_idea
+					}
+				}
+				UMB = {
+					swap_ideas = {
+						remove_idea = HAR_pact_of_convenience_idea
+						add_idea = HAR_pact_of_convenience_idea_2
+					}
+				}
+			}
 		}
 	}
 	focus = {
@@ -4299,6 +4571,14 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			add_political_power = 50
+			every_owned_state = {
+				limit = {
+					is_core_of = KND
+				}
+				add_compliance = 10
+				add_resistance = -10
+			}
 		}
 	}
 	focus = {
@@ -4371,6 +4651,15 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
+			reverse_add_opinion_modifier = {
+				target = KND
+				modifier = large_increase
+			}
+			add_tech_bonus = {
+				bonus = 0.33
+				uses = 3
+				category = lotr_knowledge
+			}
 		}
 	}
 	focus = {
@@ -4399,16 +4688,18 @@ focus_tree = {
 			factor = 1
 		}
 		completion_reward = {
-			every_owned_state = {
-				limit = {
-					is_core_of = KND
-				}
-				add_compliance = 10
-				add_resistance = -10
+			add_collaboration = {
+				target = KND
+				value = 0.3
 			}
 			if = {
 				limit = {
 					has_government = unaligned
+					KND = {
+						NOT = {
+							has_idea = unaligned_influence_weak
+						}
+					}
 				}
 				KND = {
 					add_timed_idea = {
@@ -4420,6 +4711,11 @@ focus_tree = {
 			else_if = {
 				limit = {
 					has_government = cooperative
+					KND = {
+						NOT = {
+							has_idea = cooperative_influence_weak
+						}
+					}
 				}
 				KND = {
 					add_timed_idea = {
