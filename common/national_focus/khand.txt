@@ -778,12 +778,22 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = KND_a_lower_social_class
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_timed_idea = {
+				idea = KND_integrating_variags
+				days = 180
+			}
+		}
 	}
 	focus = {
 		id = KND_educate_the_variags_of_tribal_ways
 		icon = GFX_goal_lth_provincial_councils
 		cost = 8
+		available = {
+			NOT = {
+				has_idea = KND_integrating_variags
+			}
+		}
 		relative_position_id = KND_treat_them_as_their_own_tribe
 		x = 0
 		y = 1
@@ -814,7 +824,7 @@ focus_tree = {
 	focus = {
 		id = KND_a_lower_social_class
 		icon = GFX_goal_generic_submission_puppet
-		cost = 0
+		cost = 5
 		relative_position_id = KND_allow_the_variags_to_stay
 		x = 1
 		y = 1
@@ -824,19 +834,9 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = KND_treat_them_as_their_own_tribe
 		}
-		completion_reward = { }
-	}
-	focus = {
-		id = KND_variag_enslavement
-		icon = GFX_goal_generic_chains_slaves_prisoners
-		cost = 0
-		relative_position_id = KND_a_lower_social_class
-		x = 0
-		y = 1
-		prerequisite = {
-			focus = KND_a_lower_social_class
+		completion_reward = {
+			add_ideas = KND_repressed_variags
 		}
-		completion_reward = { }
 	}
 	focus = {
 		id = KND_return_to_nomadism
@@ -1092,12 +1092,13 @@ focus_tree = {
 			add_autonomy_score = {
 				value = -50
 			}
+			increase_variag_economy = yes
 		}
 	}
 	focus = {
 		id = KND_a_strong_khandian_identity
 		icon = GFX_goal_rhu_rhunian_khand
-		cost = 0
+		cost = 5
 		relative_position_id = KND_continued_harad_subservience
 		x = -3
 		y = 1
@@ -1107,7 +1108,9 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = KND_follow_in_harads_steps
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = KND_variag_identity
+		}
 	}
 	focus = {
 		id = KND_mend_ties_with_the_wainriders
@@ -1130,7 +1133,10 @@ focus_tree = {
 	focus = {
 		id = KND_as_harsh_as_rhun
 		icon = GFX_goal_mor_wargoal_rhun
-		cost = 0
+		cost = 5
+		available = {
+			is_in_faction_with = RHU
+		}
 		relative_position_id = KND_mend_ties_with_the_wainriders
 		x = 1
 		y = 1
@@ -1140,13 +1146,34 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_as_tenacious_as_harad
 		}
-		completion_reward = { }
+		completion_reward = {
+			if = {
+				limit = {
+					NOT = {
+						has_idea = KND_variag_identity_4
+					}
+				}
+				swap_ideas = {
+					remove_idea = KND_variag_identity_2
+					add_idea = KND_variag_identity_3
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = KND_variag_identity_4
+					add_idea = KND_variag_identity_5
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_a_piece_in_the_master_plan
 		icon = GFX_goal_RHU_mordor_sauron_doctrine
-		cost = 0
+		cost = 10
 		available = {
+			MOR = {
+				is_faction_leader = yes
+			}
 			is_in_faction_with = MOR
 		}
 		relative_position_id = KND_a_strong_khandian_identity
@@ -1155,12 +1182,22 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_a_strong_khandian_identity
 		}
-		completion_reward = { }#mordor gets to give us something small
+		completion_reward = {
+			MOR = {
+				country_event = {
+					id = khand.11
+					days = 2
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_as_assertive_as_mordor
 		icon = GFX_goal_rhu_wargoal_mordor
-		cost = 0
+		cost = 5
+		available = {
+			is_in_faction_with = MOR
+		}
 		relative_position_id = KND_a_piece_in_the_master_plan
 		x = -1
 		y = 1
@@ -1170,24 +1207,47 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_a_piece_in_the_master_plan
 		}
-		completion_reward = { }
+		completion_reward = {
+			if = {
+				limit = {
+					NOT = {
+						has_completed_focus = KND_as_harsh_as_rhun
+					}
+				}
+				swap_ideas = {
+					remove_idea = KND_variag_identity_2
+					add_idea = KND_variag_identity_4
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = KND_variag_identity_3
+					add_idea = KND_variag_identity_5
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_as_tenacious_as_harad
 		icon = GFX_goal_mor_wargoal_harad
-		cost = 0
+		cost = 5
 		relative_position_id = KND_a_strong_khandian_identity
 		x = 0
 		y = 1
 		prerequisite = {
 			focus = KND_a_strong_khandian_identity
 		}
-		completion_reward = { }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = KND_variag_identity
+				add_idea = KND_variag_identity_2
+			}
+		}
 	}
 	focus = {
 		id = KND_learn_from_our_allies
 		icon = GFX_goal_generic_peasant_knight_coop_handshake
-		cost = 0
+		cost = 10
 		relative_position_id = KND_a_strong_khandian_identity
 		x = 0
 		y = 3
@@ -1196,12 +1256,22 @@ focus_tree = {
 			focus = KND_as_assertive_as_mordor
 		}
 		completion_reward = {
+			custom_effect_tooltip = KND_learn_from_allies_tt
+			every_country = {
+				limit = {
+					is_ally_with = KND
+				}
+				KND = {
+					army_experience = 20
+					add_political_power = 25
+				}
+			}
 		}
 	}
 	focus = {
 		id = KND_follow_in_harads_steps
 		icon = GFX_goal_generic_bold_move_topple
-		cost = 0
+		cost = 5
 		available = {
 			has_government = belligerent
 			is_subject_of = HAR
@@ -1220,7 +1290,7 @@ focus_tree = {
 	focus = {
 		id = KND_learn_a_hatred_of_the_west
 		icon = GFX_goal_gon_gondor_needs_no_king_crown_broken
-		cost = 0
+		cost = 5
 		available = {
 			has_government = belligerent
 			is_subject_of = HAR
@@ -1231,7 +1301,17 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_follow_in_harads_steps
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_opinion_modifier = {
+				target = GON
+				modifier = medium_decrease
+			}
+			add_opinion_modifier = {
+				target = ROH
+				modifier = medium_decrease
+			}
+			add_war_support = 0.1
+		}
 	}
 	focus = {
 		id = KND_send_variag_elites_to_harad
@@ -1340,6 +1420,9 @@ focus_tree = {
 		id = KND_ingratiate_ourselves_with_the_haradrim
 		icon = GFX_goal_lth_shared_cause_hands
 		cost = 5
+		available = {
+			is_subject_of = HAR
+		}
 		relative_position_id = KND_continued_harad_subservience
 		x = 0
 		y = 4
@@ -1349,6 +1432,23 @@ focus_tree = {
 		completion_reward = {
 			add_political_power = 25
 			HAR = { send_delegation_to_country = yes }
+		}
+	}
+	focus = {
+		id = KND_adopt_haradan_economic_principles
+		icon = GFX_goal_generic_gold_diplo_balance_scale
+		cost = 6
+		available = {
+			is_subject_of = HAR
+		}
+		relative_position_id = KND_ingratiate_ourselves_with_the_haradrim
+		x = 1
+		y = 1
+		prerequisite = {
+			focus = KND_ingratiate_ourselves_with_the_haradrim
+		}
+		completion_reward = {
+			increase_variag_economy = yes
 		}
 	}
 	focus = {
@@ -1367,7 +1467,7 @@ focus_tree = {
 	focus = {
 		id = KND_welcome_haradrim_governers
 		icon = GFX_goal_ROH_wisdom_and_introspection_book
-		cost = 0
+		cost = 5
 		relative_position_id = KND_buy_back_our_old_territories
 		x = 2
 		y = 0
@@ -1375,31 +1475,44 @@ focus_tree = {
 			focus = KND_crawl_back_to_harad
 			focus = KND_ingratiate_ourselves_with_the_haradrim
 		}
-		completion_reward = { }
+		completion_reward = { } #unlock a political advisor
 	}
 	focus = {
 		id = KND_copy_their_government_practices
 		icon = GFX_goal_DGU_paperwork_admin_res
-		cost = 0
+		cost = 5
 		relative_position_id = KND_welcome_haradrim_governers
 		x = 0
 		y = 1
 		prerequisite = {
 			focus = KND_welcome_haradrim_governers
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = KND_puppet_government
+		}
 	}
 	focus = {
 		id = KND_study_under_harads_researchers
 		icon = GFX_goal_ROH_attract_foreign_scholars_research
-		cost = 0
+		cost = 10
 		relative_position_id = KND_copy_their_government_practices
 		x = -1
 		y = 1
 		prerequisite = {
 			focus = KND_copy_their_government_practices
 		}
-		completion_reward = { }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = KND_puppet_government
+				add_idea = KND_puppet_government_2
+			}
+			add_tech_bonus = {
+				name = jet_rocket_bonus
+				bonus = 0.5
+				uses = 1
+				category = lotr_knowledge_scriptorium
+			}
+		}
 	}
 	focus = {
 		id = KND_develop_research_strategies
@@ -1418,61 +1531,140 @@ focus_tree = {
 	focus = {
 		id = KND_ask_haradwaith_for_advice
 		icon = GFX_goal_RHU_parchments_and_scrolls
-		cost = 0
+		cost = 5
+		available = {
+			is_subject_of = HAR
+		}
 		relative_position_id = KND_copy_their_government_practices
 		x = 2
 		y = 1
 		prerequisite = {
 			focus = KND_copy_their_government_practices
 		}
-		completion_reward = { }
+		completion_reward = {
+			custom_effect_tooltip = KND_ask_harad_advice_tt
+			HAR = {
+				country_event = khand.40
+			}
+		}
 	}
 	focus = {
 		id = KND_harad_mandated_industry
 		icon = GFX_goal_generic_defensive_constr_build_white
-		cost = 0
+		cost = 10
+		available = {
+			is_subject_of = HAR
+		}
 		relative_position_id = KND_ask_haradwaith_for_advice
 		x = -1
 		y = 1
 		prerequisite = {
 			focus = KND_ask_haradwaith_for_advice
 		}
-		completion_reward = { }
+		completion_reward = {
+			if = {
+				limit = {
+					has_country_flag = KND_HAR_advice_industry_cf
+				}
+				capital_scope = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+				add_tech_bonus = {
+					name = industrial_bonus
+					bonus = 0.5
+					uses = 1
+					category = lotr_labour
+				}
+				increase_variag_economy = yes
+			}
+			else = {
+				increase_variag_economy = yes
+			}
+		}
 	}
 	focus = {
 		id = KND_harad_mandated_army
 		icon = GFX_goal_generic_armor_plate_spears_inf_equ
-		cost = 0
+		cost = 10
+		available = {
+			is_subject_of = HAR
+		}
 		relative_position_id = KND_ask_haradwaith_for_advice
 		x = 1
 		y = 1
 		prerequisite = {
 			focus = KND_ask_haradwaith_for_advice
 		}
-		completion_reward = { }
+		completion_reward = {
+			if = {
+				limit = {
+					has_country_flag = KND_HAR_advice_military_cf
+				}
+				add_manpower = 3000
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = 1000
+					producer = KND
+				}
+				add_tech_bonus = {
+					name = infantry_bonus
+					bonus = 0.75
+					uses = 1
+					category = lotr_infantry
+				}
+			}
+			else = {
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = 300
+					producer = KND
+				}
+				add_tech_bonus = {
+					name = infantry_bonus
+					bonus = 0.5
+					uses = 1
+					category = lotr_infantry
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_model_our_new_army_after_theirs
 		icon = GFX_goal_RHU_spearmen_phalanx_army
-		cost = 0
+		cost = 5
+		available = {
+			is_subject_of = HAR
+		}
 		relative_position_id = KND_ingratiate_ourselves_with_the_haradrim
 		x = 6
 		y = 1
 		prerequisite = {
 			focus = KND_ingratiate_ourselves_with_the_haradrim
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = KND_harad_model_army
+		}
 	}
 	focus = {
 		id = KND_learn_of_their_specialization
 		icon = GFX_goal_RHU_archer_equipment_bow
-		cost = 0
+		cost = 5
 		available = {
 			is_subject_of = HAR
 			HAR = {
 				OR = {
-					has_completed_focus = HAR_addressing_the_oliphant
 					has_completed_focus = HAR_an_arrow_most_deadly
+					AND = {
+						has_completed_focus = HAR_addressing_the_oliphant
+						ROOT = {
+							has_completed_focus = KND_purchase_mumakil
+						}
+					}
 				}
 			}
 		}
@@ -1482,31 +1674,95 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_model_our_new_army_after_theirs
 		}
-		completion_reward = { }
+		completion_reward = {
+			if = {
+				limit = {
+					HAR = {
+						has_completed_focus = HAR_an_arrow_most_deadly
+					}
+				}
+				swap_ideas = {
+					remove_idea = KND_harad_model_army
+					add_idea = KND_harad_model_army_a
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = KND_harad_model_army
+					add_idea = KND_harad_model_army_m
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_adapt_their_strategy_to_our_own_strengths
 		icon = GFX_goal_RHU_dev_ev_guided_army
-		cost = 0
+		cost = 10
+		available = {
+			is_subject_of = HAR
+		}
 		relative_position_id = KND_learn_of_their_specialization
 		x = 0
 		y = 1
 		prerequisite = {
 			focus = KND_learn_of_their_specialization
 		}
-		completion_reward = { }
+		completion_reward = {
+			if = {
+				limit = {
+					has_idea = KND_harad_model_army_a
+				}
+				swap_ideas = {
+					remove_idea = KND_harad_model_army_a
+					add_idea = KND_harad_model_army_a2
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = KND_harad_model_army_m
+					add_idea = KND_harad_model_army_m2
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_purchase_mumakil
 		icon = GFX_goal_generic_mumakil
-		cost = 0
+		cost = 10
+		available = {
+			is_subject_of = HAR
+		}
 		relative_position_id = KND_model_our_new_army_after_theirs
 		x = 2
 		y = 1
 		prerequisite = {
 			focus = KND_model_our_new_army_after_theirs
 		}
-		completion_reward = { }
+		completion_reward = {
+			HAR = {
+				country_event = {
+					id = khand.36
+					days = 4
+				}
+			}
+			set_technology = {
+				mumakil = 1
+			}
+			if = {
+				limit = {
+					HAR = {
+						has_tech = mumakil2
+					}
+				}
+				set_technology = {
+					mumakil2 = 1
+				}
+			}
+			add_timed_idea = {
+				idea = three_civs_cost
+				days = 200
+			}
+		}
 	}
 	focus = {
 		id = KND_find_different_allies
@@ -1539,7 +1795,10 @@ focus_tree = {
 	focus = {
 		id = KND_crawl_back_to_harad
 		icon = GFX_goal_RHU_conscript_prep
-		cost = 0
+		cost = 5
+		available = {
+			has_war = no
+		}
 		relative_position_id = KND_find_different_allies
 		x = 4
 		y = 1
@@ -1555,6 +1814,9 @@ focus_tree = {
 		id = KND_train_the_generals
 		icon = GFX_goal_lth_local_autonomy
 		cost = 10
+		available = {
+			is_subject_of = HAR
+		}
 		relative_position_id = KND_model_our_new_army_after_theirs
 		x = -2
 		y = 1
@@ -1965,7 +2227,13 @@ focus_tree = {
 	focus = {
 		id = KND_learn_from_our_new_overlord
 		icon = GFX_goal_ELU_dwarven_lore_tome_book_research
-		cost = 0
+		cost = 5
+		available = {
+			OR = {
+				is_ally_with = RHU
+				is_ally_with = MOR
+			}
+		}
 		relative_position_id = KND_sell_our_horses
 		x = 2
 		y = 0
@@ -1973,7 +2241,30 @@ focus_tree = {
 			focus = KND_sell_our_loyalty_to_sauron
 			focus = KND_sell_our_loyalty_to_rhun
 		}
-		completion_reward = { }
+		completion_reward = {
+			if = {
+				limit = {
+					has_completed_focus = KND_sell_our_loyalty_to_rhun
+				}
+				add_tech_bonus = {
+					name = infantry_bonus
+					bonus=0.75
+					uses=1
+					category=lotr_cavalry_carriages
+				}
+				add_tech_bonus = {
+					name = infantry_bonus
+					bonus=0.25
+					uses=1
+					category=lotr_infantry
+				}
+			}
+			else = {
+				set_technology = {
+					orc_society = 1
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_new_research_methods
@@ -2186,7 +2477,7 @@ focus_tree = {
 	focus = {
 		id = KND_open_up_emergency_forges
 		icon = GFX_goal_generic_white_city_forge
-		cost = 0
+		cost = 8
 		available = {
 			has_government = belligerent
 			has_civil_war = yes
@@ -2197,7 +2488,12 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_reorganize_our_logistics
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_offsite_building = {
+				type = arms_factory
+				level = 2
+			}
+		}
 	}
 	focus = {
 		id = KND_restore_variag_order
@@ -2298,7 +2594,7 @@ focus_tree = {
 	focus = {
 		id = KND_convert_tools_into_weapons
 		icon = GFX_goal_generic_swords_forge
-		cost = 0
+		cost = 5
 		available = {
 			has_government = revolutionary
 			has_civil_war = yes
@@ -2309,7 +2605,18 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_organize_temporary_leadership
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 1000
+				producer = ROOT
+			}
+			add_equipment_to_stockpile = {
+				type = light_cavalry_chassis
+				amount = 500
+				producer = ROOT
+			}
+		}
 	}
 	focus = {
 		id = KND_victory_over_the_west
@@ -2325,7 +2632,7 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = KND_the_second_tribal_riot
 		}
-		completion_reward = { }
+		completion_reward = {}
 	}
 	focus = {
 		id = KND_total_oppression_of_the_tribes
@@ -2338,7 +2645,10 @@ focus_tree = {
 			focus = KND_victory_over_the_west
 		}
 		completion_reward = {
-			add_stability = 0.3
+			swap_ideas = {
+				remove_idea = KND_variag_regime
+				add_idea = KND_variag_regime_2
+			}
 		}
 	}
 	focus = {
@@ -2382,7 +2692,7 @@ focus_tree = {
 	focus = {
 		id = KND_increased_economic_prosperity
 		icon = GFX_goal_generic_money_subsidize_farming
-		cost = 0
+		cost = 5
 		relative_position_id = KND_our_share_of_the_spoils
 		x = -1
 		y = 1
@@ -2391,7 +2701,6 @@ focus_tree = {
 		}
 		completion_reward = {
 			increase_variag_economy = yes
-			
 		}
 	}
 	focus = {
@@ -2501,7 +2810,8 @@ focus_tree = {
 		icon = GFX_goal_GOB_gold_coins_money
 		cost = 6
 		available = {
-			NOT  = {has_country_flag = KND_war_with_variags}
+			NOT = { has_completed_focus = KND_tribal_takeover }
+			NOT  = { has_country_flag = KND_war_with_variags }
 			has_country_flag = KND_has_ever_sent_mercs
 		}
 		relative_position_id = KND_to_the_highest_bidder
@@ -2721,11 +3031,20 @@ focus_tree = {
 		id = KND_demand_return_of_our_southern_territories
 		icon = GFX_goal_generic_plan_map_arrow_south
 		cost = 10
+		bypass = {
+			owns_state = 309
+			owns_state = 111
+		}
 		available = {
 			has_government = belligerent
 			has_war = no
+			is_in_faction_with = RHU
 			NOT = {
 				is_ally_with = HAR
+			}
+			HAR = {
+				owns_state = 309
+				owns_state = 111
 			}
 		}
 		relative_position_id = KND_sell_our_loyalty_to_rhun
@@ -2738,7 +3057,11 @@ focus_tree = {
 			focus = KND_join_the_great_war
 		}
 		will_lead_to_war_with = HAR
-		completion_reward = { }
+		completion_reward = {
+			HAR = {
+				country_event = khand.37
+			}
+		}
 	}
 	focus = {
 		id = KND_make_the_haradrim_work_the_land
@@ -2828,7 +3151,12 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_exchange_military_understanding
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_timed_idea = {
+				idea = KND_northern_rhun_campaigns
+				days = 1095
+			}
+		}
 	}
 	focus = {
 		id = KND_tales_of_the_istari
