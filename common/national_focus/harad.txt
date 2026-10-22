@@ -2379,16 +2379,31 @@ focus_tree = {
 				target = KND
 				modifier = large_increase
 			}
-			diplomatic_relation = {
-				country = KND
-				relation = send_attache
-				active = yes
+			every_country = {
+				limit = {
+					original_tag = KND
+					OR = {
+						has_government = belligerent
+						has_government = unaligned
+					}
+				}
+				add_opinion_modifier = {
+					target = HAR
+					modifier = large_increase
+				}
+				ROOT = {
+					diplomatic_relation = {
+						country = PREV
+						relation = send_attache
+						active = yes
+					}
+				}
 			}
 		}
 	}
 	focus = {
 		id = HAR_joint_invasion_force
-		icon = GFX_goal_RHU_banners_asseble_flags
+		icon = GFX_goal_RHU_generic_intel
 		x = 1
 		y = 1
 		relative_position_id = HAR_strike_a_pact_with_the_variags
@@ -2418,7 +2433,14 @@ focus_tree = {
 		}
 		completion_reward = {
 			add_war_support = 0.025
-			KND = {
+			every_country = {
+				limit = {
+					original_tag = KND
+					OR = {
+						has_government = belligerent
+						has_government = unaligned
+					}
+				}
 				add_war_support = 0.025
 				diplomatic_relation = {
 					country = HAR
@@ -2507,8 +2529,9 @@ focus_tree = {
 			every_country = {
 				limit = {
 					original_tag = KND
-					NOT = {
-						has_government = belligerent
+					OR = {
+						has_government = cooperative
+						has_government = revolutionary
 					}
 				}
 				ROOT = {
@@ -2580,6 +2603,13 @@ focus_tree = {
 			always = no
 		}
 		bypass = {
+			KND = {
+				has_civil_war = no
+				OR = {
+					has_government = cooperative
+					has_government = revolutionary
+				}
+			}
 		}
 		search_filters = {
 			FOCUS_FILTER_WAR_SUPPORT
@@ -6333,7 +6363,16 @@ focus_tree = {
 			always = no
 		}
 		bypass = {
-			has_country_flag = HAR_surrendered_cf
+			OR = {
+				has_country_flag = HAR_surrendered_cf
+				KND = {
+					has_civil_war = no
+					OR = {
+						has_government = belligerent
+						has_government = unaligned
+					}
+				}
+			}
 		}
 		enable_automatic_bypass = no
 		search_filters = {
