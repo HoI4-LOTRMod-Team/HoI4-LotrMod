@@ -366,6 +366,7 @@ focus_tree = {
 		available = {
 			has_civil_war = yes
 			has_government = revolutionary
+			has_war_with = HAR
 		}
 		ai_will_do = {
 			base = 3
@@ -514,6 +515,9 @@ focus_tree = {
 		available = {
 			has_civil_war = yes
 			has_government = belligerent
+			HAR = {
+				has_completed_focus = HAR_an_illusion_shattered
+			}
 		}
 		relative_position_id = KND_now_or_never
 		x = 1
@@ -613,6 +617,7 @@ focus_tree = {
 			focus = KND_call_for_haradwaiths_aid
 		}
 		completion_reward = {
+			add_political_power = 25
 			set_global_flag = KND_first_civil_war_over
 		}
 	}
@@ -650,6 +655,8 @@ focus_tree = {
 			focus = KND_rally_the_tribes
 		}
 		completion_reward = {
+			add_political_power = 50
+			set_global_flag = KND_first_civil_war_over
 		}
 	}
 	focus = {
@@ -1285,7 +1292,15 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = KND_a_strong_khandian_identity
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = KND_under_the_sun
+			HAR = {
+				add_political_power = 25
+			}
+			add_autonomy_score = {
+				value = -50
+			}
+		}
 	}
 	focus = {
 		id = KND_learn_a_hatred_of_the_west
@@ -1341,7 +1356,7 @@ focus_tree = {
 	focus = {
 		id = KND_loyalty_to_mordor_by_extension
 		icon = GFX_goal_MIR_bow_to_eye_of_sauron_submit_2
-		cost = 0
+		cost = 5
 		available = {
 			has_government = belligerent
 			is_in_faction_with = MOR
@@ -1353,12 +1368,18 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_follow_in_harads_steps
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_opinion_modifier = {
+				target = MOR
+				modifier = medium_increase
+			}
+			add_to_tech_sharing_group = mordor_research
+		}
 	}
 	focus = {
 		id = KND_strengthen_variag_paganism
 		icon = GFX_goal_rhu_khandian_lord
-		cost = 0
+		cost = 5
 		available = {
 			has_government = belligerent
 			is_subject_of = HAR
@@ -1373,12 +1394,17 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = KND_the_temple_of_the_eye
 		}
-		completion_reward = { }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = KND_under_the_sun
+				add_idea = KND_under_the_sun_v
+			}
+		}
 	}
 	focus = {
 		id = KND_the_temple_of_the_eye
 		icon = GFX_goal_generic_eye_barad_dur_2
-		cost = 0
+		cost = 5
 		available = {
 			has_government = belligerent
 			is_in_faction_with = MOR
@@ -1394,12 +1420,17 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = KND_strengthen_variag_paganism
 		}
-		completion_reward = { }
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = KND_under_the_sun
+				add_idea = KND_under_the_sun_m
+			}
+		}
 	}
 	focus = {
 		id = KND_absolute_loyalty_to_harad
 		icon = GFX_goal_lth_forsake_elves_kneeling
-		cost = 0
+		cost = 5
 		available = {
 			has_government = belligerent
 			is_subject_of = HAR
@@ -1414,7 +1445,23 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_send_variag_elites_to_harad
 		}
-		completion_reward = { }
+		completion_reward = {
+			if = {
+				limit = {
+					has_idea = KND_under_the_sun_m
+				}
+				swap_ideas = {
+					remove_idea = KND_under_the_sun_m
+					add_idea = KND_under_the_sun_m2
+				}
+			}
+			else = {
+				swap_ideas = {
+					remove_idea = KND_under_the_sun_v
+					add_idea = KND_under_the_sun_v2
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_ingratiate_ourselves_with_the_haradrim
@@ -1454,7 +1501,16 @@ focus_tree = {
 	focus = {
 		id = KND_buy_back_our_old_territories
 		icon = GFX_goal_lth_territorial_integration
-		cost = 0
+		cost = 10
+		available = {
+			is_subject_of = HAR
+			309 = {
+				is_owned_and_controlled_by = HAR
+			}
+			111 = {
+				is_owned_and_controlled_by = HAR
+			}
+		}
 		relative_position_id = KND_ingratiate_ourselves_with_the_haradrim
 		x = 0
 		y = 2
@@ -1462,7 +1518,16 @@ focus_tree = {
 			focus = KND_crawl_back_to_harad
 			focus = KND_ingratiate_ourselves_with_the_haradrim
 		}
-		completion_reward = { }
+		completion_reward = {
+			HAR = {
+				country_event = {
+					id = khand.44
+					days = 3
+				}
+			}
+            custom_effect_tooltip = if_they_accept_newline_tt
+            event_option_tooltip = khand.44.b
+		}
 	}
 	focus = {
 		id = KND_welcome_haradrim_governers
@@ -1475,7 +1540,9 @@ focus_tree = {
 			focus = KND_crawl_back_to_harad
 			focus = KND_ingratiate_ourselves_with_the_haradrim
 		}
-		completion_reward = { } #unlock a political advisor
+		completion_reward = {#unlocks a political advisor
+			custom_effect_tooltip = KND_haradrim_governer_unlock_tt
+		}
 	}
 	focus = {
 		id = KND_copy_their_government_practices
@@ -1635,7 +1702,7 @@ focus_tree = {
 	}
 	focus = {
 		id = KND_model_our_new_army_after_theirs
-		icon = GFX_goal_RHU_spearmen_phalanx_army
+		icon = GFX_goal_large_army_har_knd_banner
 		cost = 5
 		available = {
 			is_subject_of = HAR
@@ -1696,7 +1763,7 @@ focus_tree = {
 	}
 	focus = {
 		id = KND_adapt_their_strategy_to_our_own_strengths
-		icon = GFX_goal_RHU_dev_ev_guided_army
+		icon = GFX_goal_khand_harad_war
 		cost = 10
 		available = {
 			is_subject_of = HAR
@@ -1798,6 +1865,10 @@ focus_tree = {
 		cost = 5
 		available = {
 			has_war = no
+			HAR = {
+				has_government = belligerent
+				can_engage_in_diplo_with = yes
+			}
 		}
 		relative_position_id = KND_find_different_allies
 		x = 4
@@ -1808,7 +1879,15 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = KND_sell_our_loyalty_to_rhun
 		}
-		completion_reward = { }
+		completion_reward = {
+			HAR = {
+				puppet = KND
+				country_event = {
+					id = Khand.47
+					days = 1
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_train_the_generals
@@ -2159,7 +2238,49 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_serve_as_saurons_rear_guard
 		}
-		completion_reward = { }
+		completion_reward = {
+			custom_effect_tooltip = KND_shield_mordor_tt
+			hidden_effect = {
+				310 = {
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = {
+							all_provinces = yes
+							limit_to_border = yes
+						}
+					}
+				}
+				312 = {
+					add_building_construction = {
+						type = bunker
+						level = 2
+						province = {
+							all_provinces = yes
+							limit_to_border = yes
+						}
+					}
+				}
+				287 = {add_building_construction = {
+						type = bunker
+						level = 2
+						province = 9347 
+					}add_building_construction = {
+						type = bunker
+						level = 2
+						province = 9346
+					}add_building_construction = {
+						type = bunker
+						level = 2
+						province = 9377 
+					}add_building_construction = {
+						type = bunker
+						level = 2
+						province = 6890 
+					}
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_the_vanguard_of_darkness
@@ -2410,7 +2531,7 @@ focus_tree = {
 	focus = {
 		id = KND_defend_the_capital
 		icon = GFX_goal_DGU_army_camp
-		cost = 0
+		cost = 4
 		available = {
 			has_government = belligerent
 			has_civil_war = yes
@@ -2421,12 +2542,20 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_fight_back_against_the_tribes
 		}
-		completion_reward = { }
+		completion_reward = {
+			123 = {
+				add_building_construction = {
+					type = castle
+					level = 1
+					province = 7338
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_force_a_war_of_attrition
 		icon = GFX_goal_RHU_time_sand
-		cost = 0
+		cost = 5
 		available = {
 			has_government = belligerent
 			has_civil_war = yes
@@ -2437,12 +2566,14 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_fight_back_against_the_tribes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = KND_defensive_warfare
+		}
 	}
 	focus = {
 		id = KND_recall_variag_warbands
 		icon = GFX_goal_RHU_soldier_duo_inf
-		cost = 0
+		cost = 5
 		available = {
 			has_government = belligerent
 			has_civil_war = yes
@@ -2456,12 +2587,20 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_force_a_war_of_attrition
 		}
-		completion_reward = { }
+		completion_reward = {
+			custom_effect_tooltip = KND_recall_variags_tt
+			hidden_effect = {
+				country_event = {
+					id = khand.48
+					days = 40
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_reorganize_our_logistics
 		icon = GFX_goal_generic_logistics_supply_org
-		cost = 0
+		cost = 5
 		available = {
 			has_government = belligerent
 			has_civil_war = yes
@@ -2472,7 +2611,16 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_fight_back_against_the_tribes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_equipment_to_stockpile = {
+				type = train_equipment
+				amount = 10
+			}
+			add_equipment_to_stockpile = {
+				type = motorized_equipment_1
+				amount = 30
+			}
+		}
 	}
 	focus = {
 		id = KND_open_up_emergency_forges
@@ -2546,7 +2694,7 @@ focus_tree = {
 	focus = {
 		id = KND_strike_fast_and_hard
 		icon = GFX_goal_ROH_cav_charge_against_orcs
-		cost = 0
+		cost = 5
 		available = {
 			has_government = revolutionary
 			has_civil_war = yes
@@ -2557,7 +2705,12 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_against_the_variags
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_timed_idea = {
+				idea = KND_anger_of_the_oppressed
+				days = 150
+			}
+		}
 	}
 	focus = {
 		id = KND_utilize_understanding_of_the_terrain
@@ -2573,12 +2726,14 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_against_the_variags
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = KND_terrain_specialists
+		}
 	}
 	focus = {
 		id = KND_organize_temporary_leadership
 		icon = GFX_goal_scripech_crown_swords_east
-		cost = 0
+		cost = 5
 		available = {
 			has_government = revolutionary
 			has_civil_war = yes
@@ -2589,7 +2744,14 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_against_the_variags
 		}
-		completion_reward = { }
+		completion_reward = {
+			army_experience = 25
+			add_command_power = 35
+			add_timed_idea = {
+				idea = KND_new_military_leadership
+				days = 100
+			}
+		}
 	}
 	focus = {
 		id = KND_convert_tools_into_weapons
@@ -2654,26 +2816,56 @@ focus_tree = {
 	focus = {
 		id = KND_indoctrinate_tribal_youth_into_the_variags
 		icon = GFX_goal_generic_child_soldier_desp_levy
-		cost = 0
+		cost = 10
 		relative_position_id = KND_total_oppression_of_the_tribes
 		x = 0
 		y = 1
 		prerequisite = {
 			focus = KND_total_oppression_of_the_tribes
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_ideas = KND_tribal_indoctrination_program
+		}
 	}
 	focus = {
 		id = KND_our_share_of_the_spoils
 		icon = GFX_goal_generic_coins_money
-		cost = 0
+		cost = 5
+		available = {
+			has_government = belligerent
+			163 = {
+				is_controlled_by_ROOT_or_ally = yes
+			}
+		}
 		relative_position_id = KND_victory_over_the_west
 		x = 1
 		y = 3
 		prerequisite = {
 			focus = KND_victory_over_the_west
 		}
-		completion_reward = { }
+		completion_reward = {
+			163 = {
+				remove_building = {
+					type = arms_factory
+					level = 1
+				}
+				remove_building = {
+					type = industrial_complex
+					level = 3
+				}
+			}
+			capital_scope = {
+				add_extra_state_shared_building_slots = 4
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+				}
+				add_building_construction = {
+					type = industrial_complex
+					level = 3
+				}
+			}
+		}
 	}
 	focus = {
 		id = KND_plunder_the_knowledge_of_the_west
@@ -2837,7 +3029,8 @@ focus_tree = {
 		prerequisite = {
 			focus = KND_to_the_highest_bidder
 		}
-		completion_reward = {#This should also have a tooltip
+		completion_reward = {
+			custom_effect_tooltip = KND_improve_mercs_tt
 			set_country_flag = KND_improved_mercenaries
 		}
 	}
@@ -2902,28 +3095,7 @@ focus_tree = {
 			focus = KND_produce_more_equipment
 		}
 		completion_reward = {
-			division_template = {
-				name = "Elite Variags of Khand"
-				regiments = {
-					infantry = { x = 0 y = 0 }
-					infantry = { x = 0 y = 1 }
-					artillery_brigade = { x = 0 y = 2 }
-					standard_bearer = { x = 1 y = 0 }
-					infantry = { x = 1 y = 1 }
-					infantry = { x = 1 y = 2 }
-					infantry = { x = 2 y = 0 }
-					infantry = { x = 2 y = 1 }
-					artillery_brigade = { x = 2 y = 2 }
-				}
-				support = {artillery = { x = 0 y = 0 }field_hospital = {x = 1 y = 0}} 
-			}
-			capital_scope = {
-				create_unit = {
-					division = "name = \"Khandian Variags\" division_template = \"Elite Variags of Khand\" start_experience_factor = 1.0"
-					owner = KND
-					count = 2
-				}
-			}
+			KND_spawn_2_variag_units = yes
 		}
 	}
 	focus = {
@@ -2945,7 +3117,7 @@ focus_tree = {
 	}
 	focus = {
 		id = KND_the_army_of_mercenaries
-		icon = GFX_goal_lth_elven_army_training
+		icon = GFX_goal_RHU_dev_ev_guided_army
 		cost = 10
 		available = {
 			NOT  = {has_country_flag = KND_war_with_variags}
@@ -3095,7 +3267,7 @@ focus_tree = {
 						is_core_of = ROOT
 					}
 				}
-				add_compliance = 0.25
+				add_compliance = 25
 			}
 		}
 	}
@@ -3185,13 +3357,30 @@ focus_tree = {
 		id = KND_contact_the_tribes_of_rhun
 		icon = GFX_goal_RHU_desert_dune_roads
 		cost = 5
+		available = {
+			AVA = {# could remove this if the focus would have a use without AVA
+				exists = yes
+			}
+		}
 		relative_position_id = KND_tales_of_the_istari
 		x = 1
 		y = 1
 		prerequisite = {
 			focus = KND_tales_of_the_istari
 		}
-		completion_reward = { }
+		completion_reward = {
+			add_political_power = 25
+			if = {
+				limit = {
+					AVA = {
+						exists = yes
+					}
+				}
+				AVA = {
+					send_delegation_to_country = yes
+				}
+			}# This can also be used for eastern uprising stuff when that's further along
+		}
 	}
 	focus = {
 		id = KND_elven_bows
@@ -3884,7 +4073,7 @@ focus_tree = {
 	}
 	focus = {
 		id = KND_the_terrain_of_khand
-		icon = GFX_goal_generic_camel_corps
+		icon = GFX_goal_desert_painting
 		cost = 5
 		available = {
 			NOT = {

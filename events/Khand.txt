@@ -175,54 +175,7 @@ country_event = {#Khand offers us mercenaries
 			}
         }
         add_ideas = {six_civs_cost}
-        if = {
-            limit = {
-                KND = {has_country_flag = KND_improved_mercenaries}
-            }
-            division_template = {
-                name = "Elite Variags of Khand"
-                regiments = {
-                    infantry = { x = 0 y = 0 }
-                    infantry = { x = 0 y = 1 }
-                    artillery_brigade = { x = 0 y = 2 }
-                    standard_bearer = { x = 1 y = 0 }
-                    infantry = { x = 1 y = 1 }
-                    infantry = { x = 1 y = 2 }
-                    infantry = { x = 2 y = 0 }
-                    infantry = { x = 2 y = 1 }
-                    artillery_brigade = { x = 2 y = 2 }
-                }
-                support = {artillery = { x = 0 y = 0 }field_hospital = {x = 1 y = 0}} 
-            }
-            capital_scope = {
-                create_unit = {
-                    division = "name = \"Khandian Variags\" division_template = \"Elite Variags of Khand\" start_experience_factor = 1.0"
-                    owner = ROOT
-                    count = 2
-                }
-            }
-        }
-        else = {
-            division_template = {
-                name = "Variags of Khand"
-                regiments = {
-                    infantry = { x = 0 y = 0 }
-                    artillery_brigade = { x = 0 y = 1 }
-                    standard_bearer = { x = 1 y = 0 }
-                    infantry = { x = 1 y = 1 }
-                    infantry = { x = 2 y = 0 }
-                    artillery_brigade = { x = 2 y = 1 }
-                }
-                support = {} 
-            }
-            capital_scope = {
-                create_unit = {
-                    division = "name = \"Khandian Variags\" division_template = \"Variags of Khand\" start_experience_factor = 0.8"
-                    owner = ROOT
-                    count = 2
-                }
-            }
-        }
+		KND_spawn_2_variag_units = yes
     }
     option = {#Decline
         name = khand.3.b
@@ -1139,28 +1092,7 @@ country_event = { #Khand sending harad variag elites
 	picture = GFX_report_event_rhun_eastern_army
 	option = {
 		name = khand.31.a
-		division_template = {
-			name = "Elite Variags of Khand"
-			regiments = {
-				infantry = { x = 0 y = 0 }
-				infantry = { x = 0 y = 1 }
-				artillery_brigade = { x = 0 y = 2 }
-				standard_bearer = { x = 1 y = 0 }
-				infantry = { x = 1 y = 1 }
-				infantry = { x = 1 y = 2 }
-				infantry = { x = 2 y = 0 }
-				infantry = { x = 2 y = 1 }
-				artillery_brigade = { x = 2 y = 2 }
-			}
-			support = {artillery = { x = 0 y = 0 }field_hospital = {x = 1 y = 0}} 
-		}
-		capital_scope = {
-			create_unit = {
-				division = "name = \"Elite Khandian Variags\" division_template = \"Elite Variags of Khand\" start_experience_factor = 1.0"
-				owner = HAR
-				count = 2
-			}
-		}
+		KND_spawn_2_variag_units = yes
 	}
 }
 country_event = { #Revolutionaries still stirring
@@ -1319,14 +1251,14 @@ country_event = { #Asking Harad for advice
 	desc = khand.40.d
 	is_triggered_only = yes
 	picture = GFX_report_event_paper
-	option = {
+	option = { #industry
 		name = khand.40.a
 		KND = {
 			country_event = khand.41
 			set_country_flag = KND_HAR_advice_industry_cf
 		}
 	}
-	option = {
+	option = { #Military
 		name = khand.40.b
 		KND = {
 			country_event = khand.42
@@ -1344,7 +1276,7 @@ country_event = { #Harad says invest in industry
 		name = khand.41.a
 		reduce_focus_completion_cost = {
 			focus = KND_harad_mandated_army
-			cost = 5
+			cost = 35
 		}
 	}
 }
@@ -1358,7 +1290,7 @@ country_event = { #Harad says invest in military
 		name = khand.42.a
 		reduce_focus_completion_cost = {
 			focus = KND_harad_mandated_industry
-			cost = 5
+			cost = 35
 		}
 	}
 }
@@ -1371,5 +1303,158 @@ country_event = { #Successfully sold horses
 	option = {
 		name = khand.43.a
 		increase_variag_economy = yes
+	}
+}
+country_event = { #Asking Harad to sell back land
+	id = khand.44
+	title = khand.44.t
+	desc = khand.44.d
+	is_triggered_only = yes
+	picture = GFX_report_event_paper
+	option = { #no
+		name = khand.44.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = 2
+				309 = { industrial_complex > 2 }
+			}
+			modifier = {
+				add = 2
+				309 = { arms_factory > 1 }
+			}
+			modifier = {
+				add = 2
+				111 = { industrial_complex > 2 }
+			}
+			modifier = {
+				add = 2
+				111 = { arms_factory > 1 }
+			}
+			modifier = {
+				factor = 2
+				309 = { is_core_of = HAR }
+			}
+			modifier = {
+				factor = 2
+				111 = { is_core_of = HAR }
+			}
+		}
+		add_political_power = -25
+		KND = {
+			country_event = khand.45
+		}
+	}
+	option = { #yes
+		name = khand.44.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 2
+				ELU = { is_ai = no }
+			}
+			modifier = {
+				add = 2
+				309 = { industrial_complex < 3 }
+				309 = { arms_factory < 2 }
+			}
+			modifier = {
+				add = 2
+				111 = { industrial_complex < 3 }
+				111 = { arms_factory < 2 }
+			}
+		}
+		KND = {
+			country_event = khand.46
+			transfer_state = 111
+			transfer_state = 309
+			add_timed_idea = {
+				idea = six_civs_cost
+				days = 200
+			}
+		}
+		custom_effect_tooltip = generic_skip_one_line_tt
+		HAR = {
+			add_timed_idea = {
+				idea = six_civs_gain
+				days = 200
+			}
+		}
+	}
+}
+country_event = { #Harad won't sell land
+	id = khand.45
+	title = khand.45.t
+	desc = khand.45.d
+	is_triggered_only = yes
+	picture = GFX_report_event_paper
+	option = {
+		name = khand.45.a
+	}
+}
+country_event = { #Harad sells us land
+	id = khand.46
+	title = khand.46.t
+	desc = khand.46.d
+	is_triggered_only = yes
+	picture = GFX_report_event_paper
+	option = {
+		name = khand.46.a
+	}
+}
+country_event = { #Khand returns to harad subservience
+	id = khand.47
+	title = khand.47.t
+	desc = khand.47.d
+	is_triggered_only = yes
+	picture = GFX_report_event_submit_to_demands
+	option = {
+		name = khand.47.a
+		add_political_power = 50
+		KND = {
+			add_political_power = -25
+			add_autonomy_ratio = {
+				value = -0.25
+			}
+		}
+	}
+}
+country_event = { #Khand calls more variags for the 2nd civil war
+	id = khand.48
+	title = khand.48.t
+	desc = khand.48.d
+	is_triggered_only = yes
+	picture = GFX_report_event_mobilizing_army
+	option = {
+		name = khand.48.a
+		KND_spawn_2_variag_units = yes
+		KND_spawn_2_variag_units = yes
+	}
+}
+country_event = { #end of first civil war
+	id = khand.49
+	title = khand.49.t
+	desc = khand.49.d
+	trigger = {
+		original_tag = KND
+		OR = {
+			has_completed_focus = KND_rally_the_tribes
+			has_completed_focus = KND_call_for_haradwaiths_aid
+		}
+		has_civil_war = no
+	}
+	fire_only_once = yes
+	picture = GFX_report_event_army_camp
+	option = {
+		name = khand.49.a
+		if = {
+			limit = {
+				has_completed_focus = KND_rally_the_tribes
+			}
+			complete_national_focus = KND_tribal_takeover
+		}
+		else = {
+			complete_national_focus = KND_reinstate_variag_rule
+		}
 	}
 }
