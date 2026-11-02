@@ -276,7 +276,6 @@ focus_tree = {
 						light_cavalry = { x = 1 y = 0 }
 						light_cavalry = { x = 1 y = 1 }
 					}
-					support = { }
 				}
 				capital_scope = {
 					create_unit = {
@@ -397,9 +396,7 @@ focus_tree = {
 		available = {
 			has_civil_war = yes
 			has_government = revolutionary
-			NOT = {
-				has_war_with = HAR
-			}
+			date > 3019.6.1
 		}
 		ai_will_do = {
 			base = 3
@@ -414,6 +411,83 @@ focus_tree = {
 			swap_ideas = {
 				remove_idea = KND_the_tribal_defense_2
 				add_idea = KND_the_tribal_offense
+			}
+		}
+	}
+	focus = {
+		id = KND_a_ceasefire_with_the_variags
+		icon = GFX_goal_peace_white_dove
+		cost = 5
+		ai_will_do = {
+			base = 0
+		}
+		relative_position_id = KND_strike_back
+		x = 0
+		y = 1
+		prerequisite = {
+			focus = KND_strike_back
+		}
+		completion_reward = {
+			white_peace = KND
+			white_peace = HAR
+		}
+	}
+	focus = {
+		id = KND_end_the_civility
+		icon = GFX_goal_VAL_no_peace_dove
+		cost = 10
+		available = {
+			KND = {
+				has_completed_focus = KND_fight_back_against_the_tribes
+				has_civil_war = yes
+			}
+		}
+		relative_position_id = KND_a_ceasefire_with_the_variags
+		x = 0
+		y = 1
+		prerequisite = {
+			focus = KND_a_ceasefire_with_the_variags
+		}
+		will_lead_to_war_with = KND
+		completion_reward = {
+			declare_war_on = {
+				target = KND
+				type = annex_everything
+				
+			}
+			add_civil_war_target = KND
+		}
+	}
+	focus = {
+		id = KND_join_the_new_rebellion
+		icon = GFX_goal_lth_shared_cause_hands
+		cost = 2
+		available = {
+			KND = {
+				exists = no
+			}
+			any_other_country = {
+				original_tag = KND
+				has_completed_focus = KND_against_the_variags
+				NOT = {
+					has_war_with = ROOT
+				}
+			}
+		}
+		relative_position_id = KND_end_the_civility
+		x = 0
+		y = 1
+		prerequisite = {
+			focus = KND_end_the_civility
+		}
+		completion_reward = {
+			every_other_country = {
+				limit = {
+					original_tag = KND
+				}
+				every_owned_state = {
+					transfer_state_to = ROOT
+				}
 			}
 		}
 	}
@@ -442,7 +516,6 @@ focus_tree = {
 						infantry = { x = 1 y = 1 }
 						infantry = { x = 2 y = 0 }
 					}
-					support = { }
 				}
 				capital_scope = {
 					create_unit = {
@@ -450,6 +523,14 @@ focus_tree = {
 						owner = KND
 						count = 2
 					}
+				}
+				if = { #fixing missing ideas
+					limit = {
+						NOT = {
+							has_idea = KND_failing_economy
+						}
+					}
+					add_ideas = KND_failing_economy
 				}
 			}
 		}
@@ -476,63 +557,20 @@ focus_tree = {
 		}
 	}
 	focus = {
-		id = KND_accept_our_loss
-		icon = GFX_goal_generic_surrender_whit_flag
-		cost = 3
-		available = {
-			has_civil_war = yes
-			has_government = belligerent
-			surrender_progress >0
-			HAR = {
-				has_completed_focus = HAR_an_illusion_shattered
-			}
-		}
-		ai_will_do = {
-			base = 2
-		}
-		relative_position_id = KND_now_or_never
-		x = -1
-		y = 1
-		prerequisite = {
-			focus = KND_now_or_never
-		}
-		mutually_exclusive = {
-			focus = KND_keep_the_momentum
-		}
-		completion_reward = {
-			custom_effect_tooltip = KND_accept_our_loss_tt
-			hidden_effect = {
-				random_other_country = {
-					limit = {
-						original_tag = KND
-					}
-					white_peace = KND
-					annex_country = {
-						target = KND
-					}
-				}
-			}
-		}
-	}
-	focus = {
 		id = KND_keep_the_momentum
 		icon = GFX_goal_generic_spear_through_shield_break
 		cost = 5
 		available = {
 			has_civil_war = yes
 			has_government = belligerent
-			HAR = {
-				has_completed_focus = HAR_an_illusion_shattered
-			}
+			surrender_progress < 0
+			date > 3019.1.1
 		}
 		relative_position_id = KND_now_or_never
-		x = 1
+		x = 0
 		y = 1
 		prerequisite = {
 			focus = KND_now_or_never
-		}
-		mutually_exclusive = {
-			focus = KND_accept_our_loss
 		}
 		completion_reward = {
 			swap_ideas = {
@@ -625,6 +663,9 @@ focus_tree = {
 		completion_reward = {
 			add_political_power = 25
 			set_global_flag = KND_first_civil_war_over
+			HAR = {
+				puppet = KND
+			}
 		}
 	}
 	focus = {
@@ -2484,7 +2525,7 @@ focus_tree = {
 				navy_ratio = 0
 				air_ratio = 0.7
 				capital = 275
-				states = { 275 310 311 287 }
+				states = { }#275 310 311 287 } # these states might be owned by the first revolutionaries
 			}
 			hidden_effect = {
 				complete_national_focus = KND_fight_back_against_the_tribes
