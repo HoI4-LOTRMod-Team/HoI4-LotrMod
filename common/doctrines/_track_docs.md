@@ -8,15 +8,6 @@ sws = swift strike
 hrd = Horde tactics
 maw = Masterful Warfare
 
-Keep in mind that the subdoctrine are defined *separately* for each grand doctrine.
-So if you want to make changes to shield_wall, you will have to make those changes to both
-dav_shield_wall and sws_shield_wall etc.
-
-
-
-
-
-
 INFANTRY:
 	shield_wall			# dav, sws
 	pikemen_phalanx		# dav
